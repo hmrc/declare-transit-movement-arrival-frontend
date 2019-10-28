@@ -31,5 +31,7 @@ class Module extends AbstractModule {
     bind(classOf[IdentifierAction]).to(classOf[SessionIdentifierAction]).asEagerSingleton()
 
     bind(classOf[SessionRepository]).to(classOf[DefaultSessionRepository]).asEagerSingleton()
+
+    bind(classOf[MrnDataRetrievalActionProvider]).to(classOf[MrnDataRetrievalActionProviderImpl]).asEagerSingleton()
   }
 }
