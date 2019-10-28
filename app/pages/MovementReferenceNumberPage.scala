@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package generators
+package pages
 
-import org.scalacheck.Arbitrary
-import pages._
+import play.api.libs.json.JsPath
 
-trait PageGenerators {
+case object MovementReferenceNumberPage extends QuestionPage[String] {
 
-  implicit lazy val arbitraryMovementReferenceNumberPage: Arbitrary[MovementReferenceNumberPage.type] =
-    Arbitrary(MovementReferenceNumberPage)
+  override def path: JsPath = JsPath \ toString
+
+  override def toString: String = "movementReferenceNumber"
 }

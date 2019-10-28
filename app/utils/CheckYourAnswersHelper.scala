@@ -29,6 +29,21 @@ import uk.gov.hmrc.viewmodels.Text.Literal
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messages) {
 
+  def movementReferenceNumber: Option[Row] = userAnswers.get(MovementReferenceNumberPage) map {
+    answer =>
+      Row(
+        key     = Key(msg"movementReferenceNumber.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(lit"$answer"),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = routes.MovementReferenceNumberController.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"movementReferenceNumber.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
   private def yesOrNo(answer: Boolean): Content =
     if (answer) {
       msg"site.yes"
