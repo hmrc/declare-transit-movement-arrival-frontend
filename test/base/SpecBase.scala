@@ -18,7 +18,7 @@ package base
 
 import config.FrontendAppConfig
 import controllers.actions._
-import models.UserAnswers
+import models.{MovementReferenceNumber, UserAnswers}
 import org.mockito.Mockito
 import org.scalatest.{BeforeAndAfterEach, FreeSpec, MustMatchers, OptionValues, TryValues}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
@@ -40,7 +40,7 @@ trait SpecBase extends FreeSpec with MustMatchers with GuiceOneAppPerSuite with 
     Mockito.reset(mockRenderer)
   }
 
-  val userAnswersId = "id"
+  val userAnswersId = MovementReferenceNumber("id")
 
   def emptyUserAnswers = UserAnswers(userAnswersId, Json.obj())
 
