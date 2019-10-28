@@ -16,55 +16,80 @@
 
 package controllers.actions
 
-import base.SpecBase
+import generators.ModelGenerators
 import models.{MovementReferenceNumber, UserAnswers}
 import models.requests.{IdentifierRequest, OptionalDataRequest}
+import org.mockito.Matchers._
 import org.mockito.Mockito._
+import org.scalacheck.Arbitrary.arbitrary
+import org.scalatest.{FreeSpec, MustMatchers, OptionValues}
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.mockito.MockitoSugar
-import play.api.libs.json.Json
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import play.api.Application
+import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.mvc.{AnyContent, Request, Results}
+import play.api.test.FakeRequest
+import play.api.test.Helpers._
 import repositories.SessionRepository
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutures {
 
-  class Harness(sessionRepository: SessionRepository) extends DataRetrievalActionImpl(sessionRepository) {
-    def callTransform[A](request: IdentifierRequest[A]): Future[OptionalDataRequest[A]] = transform(request)
+class DataRetrievalActionSpec extends FreeSpec with MustMatchers with GuiceOneAppPerSuite with ScalaFutures
+  with MockitoSugar with ModelGenerators with OptionValues {
+
+  val sessionRepository: SessionRepository = mock[SessionRepository]
+  val mrn: MovementReferenceNumber = arbitrary[MovementReferenceNumber].sample.value
+
+  override lazy val app: Application = {
+
+    import play.api.inject._
+
+    new GuiceApplicationBuilder()
+      .overrides(
+        bind[SessionRepository].toInstance(sessionRepository)
+      ).build()
   }
 
-  "Data Retrieval Action" - {
+  def harness(mrn: MovementReferenceNumber, f: OptionalDataRequest[AnyContent] => Unit): Unit = {
 
-    "when there is no data in the cache" - {
+    lazy val actionProvider = app.injector.instanceOf[DataRetrievalActionProviderImpl]
 
-      "must set userAnswers to 'None' in the request" in {
+    actionProvider(mrn).invokeBlock(IdentifierRequest(FakeRequest(GET, "/").asInstanceOf[Request[AnyContent]], ""), {
+      request: OptionalDataRequest[AnyContent] =>
+        f(request)
+        Future.successful(Results.Ok)
+    }).futureValue
+  }
 
-        val sessionRepository = mock[SessionRepository]
-        when(sessionRepository.get("id")) thenReturn Future(None)
-        val action = new Harness(sessionRepository)
+  "a data retrieval action" - {
 
-        val futureResult = action.callTransform(new IdentifierRequest(fakeRequest, "id"))
+    "must return an OptionalDataRequest with an empty UserAnswers" - {
 
-        whenReady(futureResult) { result =>
-          result.userAnswers.isEmpty mustBe true
-        }
+      "where there are no existing answers for this MRN" in {
+
+        when(sessionRepository.get(any())) thenReturn Future.successful(None)
+
+        harness(mrn, {
+          request =>
+
+            request.userAnswers must not be defined
+        })
       }
     }
 
-    "when there is data in the cache" - {
+    "must return an OptionalDataRequest with some defined UserAnswers" - {
 
-      "must build a userAnswers object and add it to the request" in {
+      "when there are existing answers for this MRN" in {
 
-        val sessionRepository = mock[SessionRepository]
-        when(sessionRepository.get("id")) thenReturn Future(Some(new UserAnswers(MovementReferenceNumber("id"))))
-        val action = new Harness(sessionRepository)
+        when(sessionRepository.get(any())) thenReturn Future.successful(Some(UserAnswers(mrn)))
 
-        val futureResult = action.callTransform(new IdentifierRequest(fakeRequest, "id"))
+        harness(mrn, {
+          request =>
 
-        whenReady(futureResult) { result =>
-          result.userAnswers.isDefined mustBe true
-        }
+            request.userAnswers mustBe defined
+        })
       }
     }
   }

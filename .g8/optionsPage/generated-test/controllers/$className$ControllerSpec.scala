@@ -25,7 +25,7 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar with Nunjucks
 
   def onwardRoute = Call("GET", "/foo")
 
-  lazy val $className;format="decap"$Route = routes.$className$Controller.onPageLoad(NormalMode).url
+  lazy val $className;format="decap"$Route = routes.$className$Controller.onPageLoad(mrn, NormalMode).url
 
   val formProvider = new $className$FormProvider()
   val form = formProvider()
@@ -51,6 +51,7 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar with Nunjucks
       val expectedJson = Json.obj(
         "form"   -> form,
         "mode"   -> NormalMode,
+        "mrn"    -> mrn,
         "radios" -> $className$.radios(form)
       )
 
@@ -65,7 +66,7 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar with Nunjucks
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set($className$Page, $className$.values.head).success.value
+      val userAnswers = UserAnswers(mrn).set($className$Page, $className$.values.head).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, $className;format="decap"$Route)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -82,6 +83,7 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar with Nunjucks
       val expectedJson = Json.obj(
         "form"   -> filledForm,
         "mode"   -> NormalMode,
+        "mrn"    -> mrn,
         "radios" -> $className$.radios(filledForm)
       )
 
@@ -138,6 +140,7 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar with Nunjucks
       val expectedJson = Json.obj(
         "form"   -> boundForm,
         "mode"   -> NormalMode,
+        "mrn"    -> mrn,
         "radios" -> $className$.radios(boundForm)
       )
 

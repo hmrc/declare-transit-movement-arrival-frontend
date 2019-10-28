@@ -24,7 +24,6 @@ class Module extends AbstractModule {
 
   override def configure(): Unit = {
 
-    bind(classOf[DataRetrievalAction]).to(classOf[DataRetrievalActionImpl]).asEagerSingleton()
     bind(classOf[DataRequiredAction]).to(classOf[DataRequiredActionImpl]).asEagerSingleton()
 
     // For session based storage instead of cred based, change to SessionIdentifierAction
@@ -32,6 +31,6 @@ class Module extends AbstractModule {
 
     bind(classOf[SessionRepository]).to(classOf[DefaultSessionRepository]).asEagerSingleton()
 
-    bind(classOf[MrnDataRetrievalActionProvider]).to(classOf[MrnDataRetrievalActionProviderImpl]).asEagerSingleton()
+    bind(classOf[DataRetrievalActionProvider]).to(classOf[DataRetrievalActionProviderImpl]).asEagerSingleton()
   }
 }

@@ -3,7 +3,7 @@ package controllers
 import controllers.actions._
 import forms.$className$FormProvider
 import javax.inject.Inject
-import models.{Mode, $className$}
+import models.{Mode, MovementReferenceNumber, $className$}
 import navigation.Navigator
 import pages.$className$Page
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -17,20 +17,20 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 import scala.concurrent.{ExecutionContext, Future}
 
 class $className$Controller @Inject()(
-    override val messagesApi: MessagesApi,
-    sessionRepository: SessionRepository,
-    navigator: Navigator,
-    identify: IdentifierAction,
-    getData: DataRetrievalAction,
-    requireData: DataRequiredAction,
-    formProvider: $className$FormProvider,
-    val controllerComponents: MessagesControllerComponents,
-    renderer: Renderer
+                                       override val messagesApi: MessagesApi,
+                                       sessionRepository: SessionRepository,
+                                       navigator: Navigator,
+                                       identify: IdentifierAction,
+                                       getData: DataRetrievalActionProvider,
+                                       requireData: DataRequiredAction,
+                                       formProvider: $className$FormProvider,
+                                       val controllerComponents: MessagesControllerComponents,
+                                       renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
 
       val preparedForm = request.userAnswers.get($className$Page) match {
@@ -41,13 +41,14 @@ class $className$Controller @Inject()(
       val json = Json.obj(
         "form"       -> preparedForm,
         "mode"       -> mode,
+        "mrn"        -> mrn,
         "checkboxes" -> $className$.checkboxes(preparedForm)
       )
 
       renderer.render("$className;format="decap"$.njk", json).map(Ok(_))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -56,6 +57,7 @@ class $className$Controller @Inject()(
           val json = Json.obj(
             "form"       -> formWithErrors,
             "mode"       -> mode,
+            "mrn"        -> mrn,
             "checkboxes" -> $className$.checkboxes(formWithErrors)
           )
 

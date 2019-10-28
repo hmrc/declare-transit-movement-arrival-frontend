@@ -32,9 +32,7 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar with Nunjucks
 
   val validAnswer = LocalDate.now(ZoneOffset.UTC)
 
-  lazy val $className;format="decap"$Route = routes.$className$Controller.onPageLoad(NormalMode).url
-
-  override val emptyUserAnswers = UserAnswers(userAnswersId)
+  lazy val $className;format="decap"$Route = routes.$className$Controller.onPageLoad(mrn, NormalMode).url
 
   def getRequest(): FakeRequest[AnyContentAsEmpty.type] =
     FakeRequest(GET, $className;format="decap"$Route)
@@ -69,6 +67,7 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar with Nunjucks
       val expectedJson = Json.obj(
         "form" -> form,
         "mode" -> NormalMode,
+        "mrn"  -> mrn,
         "date" -> viewModel
       )
 
@@ -83,7 +82,7 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar with Nunjucks
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set($className$Page, validAnswer).success.value
+      val userAnswers = UserAnswers(mrn).set($className$Page, validAnswer).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
@@ -107,6 +106,7 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar with Nunjucks
       val expectedJson = Json.obj(
         "form" -> filledForm,
         "mode" -> NormalMode,
+        "mrn"  -> mrn,
         "date" -> viewModel
       )
 
@@ -161,6 +161,7 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar with Nunjucks
       val expectedJson = Json.obj(
         "form" -> boundForm,
         "mode" -> NormalMode,
+        "mrn"  -> mrn,
         "date" -> viewModel
       )
 

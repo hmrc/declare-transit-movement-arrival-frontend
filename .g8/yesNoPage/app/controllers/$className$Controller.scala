@@ -3,7 +3,7 @@ package controllers
 import controllers.actions._
 import forms.$className$FormProvider
 import javax.inject.Inject
-import models.Mode
+import models.{Mode, MovementReferenceNumber}
 import navigation.Navigator
 import pages.$className$Page
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -21,7 +21,7 @@ class $className;format="cap"$Controller @Inject()(
     sessionRepository: SessionRepository,
     navigator: Navigator,
     identify: IdentifierAction,
-    getData: DataRetrievalAction,
+    getData: DataRetrievalActionProvider,
     requireData: DataRequiredAction,
     formProvider: $className$FormProvider,
     val controllerComponents: MessagesControllerComponents,
@@ -30,7 +30,7 @@ class $className;format="cap"$Controller @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
 
       val preparedForm = request.userAnswers.get($className$Page) match {
@@ -41,13 +41,14 @@ class $className;format="cap"$Controller @Inject()(
       val json = Json.obj(
         "form"   -> preparedForm,
         "mode"   -> mode,
+        "mrn"    -> mrn,
         "radios" -> Radios.yesNo(preparedForm("value"))
       )
 
       renderer.render("$className;format="decap"$.njk", json).map(Ok(_))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -56,6 +57,7 @@ class $className;format="cap"$Controller @Inject()(
           val json = Json.obj(
             "form"   -> formWithErrors,
             "mode"   -> mode,
+            "mrn"    -> mrn,
             "radios" -> Radios.yesNo(formWithErrors("value"))
           )
     

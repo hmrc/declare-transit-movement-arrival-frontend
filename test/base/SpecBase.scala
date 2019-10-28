@@ -39,9 +39,9 @@ trait SpecBase extends FreeSpec with MustMatchers with GuiceOneAppPerSuite with 
     Mockito.reset(mockRenderer)
   }
 
-  val userAnswersId = MovementReferenceNumber("id")
+  val mrn = MovementReferenceNumber("id")
 
-  def emptyUserAnswers = UserAnswers(userAnswersId, Json.obj())
+  def emptyUserAnswers = UserAnswers(mrn, Json.obj())
 
   def injector: Injector = app.injector
 
@@ -60,8 +60,7 @@ trait SpecBase extends FreeSpec with MustMatchers with GuiceOneAppPerSuite with 
       .overrides(
         bind[DataRequiredAction].to[DataRequiredActionImpl],
         bind[IdentifierAction].to[FakeIdentifierAction],
-        bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers)),
-        bind[MrnDataRetrievalActionProvider].toInstance(new FakeMrnDataRetrievalActionProvider(userAnswers)),
+        bind[DataRetrievalActionProvider].toInstance(new FakeDataRetrievalActionProvider(userAnswers)),
         bind[NunjucksRenderer].toInstance(mockRenderer)
       )
 }

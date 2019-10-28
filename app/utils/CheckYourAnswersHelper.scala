@@ -19,7 +19,7 @@ package utils
 import java.time.format.DateTimeFormatter
 
 import controllers.routes
-import models.{CheckMode, UserAnswers}
+import models.{CheckMode, MovementReferenceNumber, UserAnswers}
 import pages._
 import play.api.i18n.Messages
 import CheckYourAnswersHelper._
@@ -35,6 +35,8 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messag
     } else {
       msg"site.no"
     }
+
+  private def mrn: MovementReferenceNumber = userAnswers.id
 }
 
 object CheckYourAnswersHelper {

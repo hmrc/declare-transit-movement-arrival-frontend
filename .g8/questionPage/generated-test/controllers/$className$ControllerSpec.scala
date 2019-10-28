@@ -28,10 +28,10 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar with Nunjucks
   val formProvider = new $className$FormProvider()
   val form = formProvider()
 
-  lazy val $className;format="decap"$Route = routes.$className$Controller.onPageLoad(NormalMode).url
+  lazy val $className;format="decap"$Route = routes.$className$Controller.onPageLoad(mrn, NormalMode).url
 
   val userAnswers = UserAnswers(
-    userAnswersId,
+    mrn,
     Json.obj(
       $className$Page.toString -> Json.obj(
         "$field1Name$" -> "value 1",
@@ -60,6 +60,7 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar with Nunjucks
 
       val expectedJson = Json.obj(
         "form" -> form,
+        "mrn"  -> mrn,
         "mode" -> NormalMode
       )
 
@@ -94,6 +95,7 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar with Nunjucks
 
       val expectedJson = Json.obj(
         "form" -> filledForm,
+        "mrn"  -> mrn,
         "mode" -> NormalMode
       )
 
@@ -149,8 +151,9 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar with Nunjucks
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form"   -> boundForm,
-        "mode"   -> NormalMode
+        "form" -> boundForm,
+        "mrn"  -> mrn,
+        "mode" -> NormalMode
       )
 
       templateCaptor.getValue mustEqual "$className;format="decap"$.njk"
