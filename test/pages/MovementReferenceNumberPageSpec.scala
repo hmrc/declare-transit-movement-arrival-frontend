@@ -14,13 +14,19 @@
  * limitations under the License.
  */
 
-package generators
+package pages
 
-import org.scalacheck.Arbitrary
-import pages._
+import pages.behaviours.PageBehaviours
 
-trait PageGenerators {
 
-  implicit lazy val arbitraryMovementReferenceNumberPage: Arbitrary[MovementReferenceNumberPage.type] =
-    Arbitrary(MovementReferenceNumberPage)
+class MovementReferenceNumberPageSpec extends PageBehaviours {
+
+  "MovementReferenceNumberPage" - {
+
+    beRetrievable[String](MovementReferenceNumberPage)
+
+    beSettable[String](MovementReferenceNumberPage)
+
+    beRemovable[String](MovementReferenceNumberPage)
+  }
 }
