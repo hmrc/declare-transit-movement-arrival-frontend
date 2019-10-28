@@ -14,7 +14,7 @@ GET        /unauthorised                                controllers.Unauthorised
 
 GET        /accessibility-statement                     controllers.AccessibilityController.onPageLoad
 
-GET        /movementReferenceNumber                        controllers.MovementReferenceNumberController.onPageLoad(mode: Mode = NormalMode)
-POST       /movementReferenceNumber                        controllers.MovementReferenceNumberController.onSubmit(mode: Mode = NormalMode)
-GET        /changeMovementReferenceNumber                  controllers.MovementReferenceNumberController.onPageLoad(mode: Mode = CheckMode)
-POST       /changeMovementReferenceNumber                  controllers.MovementReferenceNumberController.onSubmit(mode: Mode = CheckMode)
+GET        /movementReferenceNumber                        controllers.MovementReferenceNumberController.onPageLoad
+POST       /movementReferenceNumber                        controllers.MovementReferenceNumberController.onSubmit
+GET        /changeMovementReferenceNumber                  controllers.MovementReferenceNumberController.onPageLoad
+POST       /changeMovementReferenceNumber                  controllers.MovementReferenceNumberController.onSubmit
