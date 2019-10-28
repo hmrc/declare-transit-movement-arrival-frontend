@@ -16,6 +16,7 @@
 
 package models
 
+import play.api.libs.json.{JsString, Writes}
 import play.api.mvc.JavascriptLiteral
 
 sealed trait Mode
@@ -27,8 +28,13 @@ object Mode {
 
   implicit val jsLiteral: JavascriptLiteral[Mode] = new JavascriptLiteral[Mode] {
     override def to(value: Mode): String = value match {
-      case NormalMode => "NormalMode"
-      case CheckMode => "CheckMode"
+      case NormalMode => """"NormalMode""""
+      case CheckMode => """"CheckMode""""
     }
+  }
+
+  implicit val writes: Writes[Mode] = Writes {
+    case NormalMode => JsString("NormalMode")
+    case CheckMode => JsString("CheckMode")
   }
 }

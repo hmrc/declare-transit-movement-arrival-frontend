@@ -29,11 +29,11 @@ class SessionActionSpec extends SpecBase {
     def onPageLoad() = action { request => Results.Ok }
   }
 
-  "Session Action" when {
+  "Session Action" - {
 
-    "there's no active session" must {
+    "when there's no active session" - {
 
-      "redirect to the session expired page" in {
+      "must redirect to the session expired page" in {
 
         val application = applicationBuilder(userAnswers = None).build()
 
@@ -50,9 +50,9 @@ class SessionActionSpec extends SpecBase {
       }
     }
 
-    "there's an active session" must {
+    "when there is an active session" - {
 
-      "perform the action" in {
+      "must perform the action" in {
 
         val application = applicationBuilder(userAnswers = None).build()
 
