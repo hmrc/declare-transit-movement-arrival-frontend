@@ -19,15 +19,13 @@ package controllers
 import base.SpecBase
 import forms.MovementReferenceNumberFormProvider
 import matchers.JsonMatchers
-import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.MovementReferenceNumberPage
 import play.api.inject.bind
-import play.api.libs.json.{JsObject, JsString, Json}
+import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -44,7 +42,7 @@ class MovementReferenceNumberControllerSpec extends SpecBase with MockitoSugar w
   val formProvider = new MovementReferenceNumberFormProvider()
   val form = formProvider()
 
-  lazy val movementReferenceNumberRoute = routes.MovementReferenceNumberController.onPageLoad(NormalMode).url
+  lazy val movementReferenceNumberRoute = routes.MovementReferenceNumberController.onPageLoad().url
 
   "MovementReferenceNumber Controller" - {
 
@@ -53,7 +51,7 @@ class MovementReferenceNumberControllerSpec extends SpecBase with MockitoSugar w
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = None).build()
       val request = FakeRequest(GET, movementReferenceNumberRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
@@ -65,38 +63,7 @@ class MovementReferenceNumberControllerSpec extends SpecBase with MockitoSugar w
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form" -> form,
-        "mode" -> NormalMode
-      )
-
-      templateCaptor.getValue mustEqual "movementReferenceNumber.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
-    }
-
-    "must populate the view correctly on a GET when the question has previously been answered" in {
-
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
-      val userAnswers = UserAnswers(userAnswersId).set(MovementReferenceNumberPage, "answer").success.value
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-      val request = FakeRequest(GET, movementReferenceNumberRoute)
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
-
-      val result = route(application, request).value
-
-      status(result) mustEqual OK
-
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-
-      val filledForm = form.bind(Map("value" -> "answer"))
-
-      val expectedJson = Json.obj(
-        "form" -> filledForm,
-        "mode" -> NormalMode
+        "form" -> form
       )
 
       templateCaptor.getValue mustEqual "movementReferenceNumber.njk"
@@ -112,7 +79,7 @@ class MovementReferenceNumberControllerSpec extends SpecBase with MockitoSugar w
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        applicationBuilder(userAnswers = None)
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
@@ -149,44 +116,11 @@ class MovementReferenceNumberControllerSpec extends SpecBase with MockitoSugar w
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form" -> boundForm,
-        "mode" -> NormalMode
+        "form" -> boundForm
       )
 
       templateCaptor.getValue mustEqual "movementReferenceNumber.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
-    }
-
-    "must redirect to Session Expired for a GET if no existing data is found" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
-
-      val request = FakeRequest(GET, movementReferenceNumberRoute)
-
-      val result = route(application, request).value
-
-      status(result) mustEqual SEE_OTHER
-
-      redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
-
-      application.stop()
-    }
-
-    "must redirect to Session Expired for a POST if no existing data is found" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
-
-      val request =
-        FakeRequest(POST, movementReferenceNumberRoute)
-          .withFormUrlEncodedBody(("value", "answer"))
-
-      val result = route(application, request).value
-
-      status(result) mustEqual SEE_OTHER
-
-      redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
 
       application.stop()
     }

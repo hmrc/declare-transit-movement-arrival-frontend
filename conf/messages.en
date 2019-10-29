@@ -130,8 +130,8 @@ compliant.nine.p2.2=Digital Accessibility Centre
 compliant.nine.p2.3=The full service was tested by HMRC and included disabled users.
 compliant.nine.p3=This page was prepared on [date when it was first published]. It was last updated on [date when it was last updated].
 
-movementReferenceNumber.title = movementReferenceNumber
-movementReferenceNumber.heading = movementReferenceNumber
-movementReferenceNumber.checkYourAnswersLabel = movementReferenceNumber
-movementReferenceNumber.error.required = Enter movementReferenceNumber
-movementReferenceNumber.error.length = MovementReferenceNumber must be 21 characters or less
+movementReferenceNumber.title = What is the Movement Reference Number (MRN)?
+movementReferenceNumber.heading = What is the Movement Reference Number (MRN)?
+movementReferenceNumber.checkYourAnswersLabel = Movement Reference Number
+movementReferenceNumber.error.required = Enter the Movement Reference Number
+movementReferenceNumber.error.length = Movement Reference Number must be 21 characters or less

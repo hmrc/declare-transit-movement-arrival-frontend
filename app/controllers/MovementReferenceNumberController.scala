@@ -19,14 +19,13 @@ package controllers
 import controllers.actions._
 import forms.MovementReferenceNumberFormProvider
 import javax.inject.Inject
-import models.Mode
+import models.{NormalMode, UserAnswers}
 import navigation.Navigator
 import pages.MovementReferenceNumberPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
-import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
@@ -34,11 +33,8 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class MovementReferenceNumberController @Inject()(
     override val messagesApi: MessagesApi,
-    sessionRepository: SessionRepository,
     navigator: Navigator,
     identify: IdentifierAction,
-    getData: DataRetrievalAction,
-    requireData: DataRequiredAction,
     formProvider: MovementReferenceNumberFormProvider,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
@@ -46,40 +42,26 @@ class MovementReferenceNumberController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(): Action[AnyContent] = identify.async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(MovementReferenceNumberPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
-      }
-
-      val json = Json.obj(
-        "form" -> preparedForm,
-        "mode" -> mode
-      )
+      val json = Json.obj("form" -> form)
 
       renderer.render("movementReferenceNumber.njk", json).map(Ok(_))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(): Action[AnyContent] = identify.async {
     implicit request =>
 
       form.bindFromRequest().fold(
         formWithErrors => {
 
-          val json = Json.obj(
-            "form" -> formWithErrors,
-            "mode" -> mode
-          )
+          val json = Json.obj("form" -> formWithErrors)
 
           renderer.render("movementReferenceNumber.njk", json).map(BadRequest(_))
         },
         value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(MovementReferenceNumberPage, value))
-            _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(MovementReferenceNumberPage, mode, updatedAnswers))
+          Future(Redirect(navigator.nextPage(MovementReferenceNumberPage, NormalMode, UserAnswers(value))))
       )
   }
 }

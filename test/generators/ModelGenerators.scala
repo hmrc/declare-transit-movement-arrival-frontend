@@ -21,4 +21,11 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 
 trait ModelGenerators {
+
+  implicit lazy  val arbitraryMovementReferenceNumber: Arbitrary[MovementReferenceNumber] =
+    Arbitrary {
+      for {
+        value <- arbitrary[String]
+      } yield MovementReferenceNumber(value)
+    }
 }

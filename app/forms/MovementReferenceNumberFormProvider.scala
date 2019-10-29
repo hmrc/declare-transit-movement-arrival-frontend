@@ -17,15 +17,16 @@
 package forms
 
 import javax.inject.Inject
-
 import forms.mappings.Mappings
+import models.MovementReferenceNumber
 import play.api.data.Form
 
 class MovementReferenceNumberFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[String] =
+  def apply(): Form[MovementReferenceNumber] =
     Form(
       "value" -> text("movementReferenceNumber.error.required")
         .verifying(maxLength(21, "movementReferenceNumber.error.length"))
+        .transform(MovementReferenceNumber(_), (_: MovementReferenceNumber).value)
     )
 }
