@@ -19,7 +19,7 @@ package controllers
 import controllers.actions._
 import forms.GoodsLocationFormProvider
 import javax.inject.Inject
-import models.{Mode, MovementReferenceNumber, GoodsLocation}
+import models.{GoodsLocation, Mode, MovementReferenceNumber, UserAnswers}
 import navigation.Navigator
 import pages.GoodsLocationPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -38,7 +38,6 @@ class GoodsLocationController @Inject()(
                                        navigator: Navigator,
                                        identify: IdentifierAction,
                                        getData: DataRetrievalActionProvider,
-                                       requireData: DataRequiredAction,
                                        formProvider: GoodsLocationFormProvider,
                                        val controllerComponents: MessagesControllerComponents,
                                        renderer: Renderer
@@ -46,10 +45,10 @@ class GoodsLocationController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onPageLoad(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn)).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(GoodsLocationPage) match {
+      val preparedForm = request.userAnswers.getOrElse(UserAnswers(mrn)).get(GoodsLocationPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -64,7 +63,7 @@ class GoodsLocationController @Inject()(
       renderer.render("goodsLocation.njk", json).map(Ok(_))
   }
 
-  def onSubmit(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onSubmit(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn)).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -81,7 +80,7 @@ class GoodsLocationController @Inject()(
         },
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(GoodsLocationPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(mrn)).set(GoodsLocationPage, value))
             _              <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(GoodsLocationPage, mode, updatedAnswers))
       )
