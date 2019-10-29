@@ -53,6 +53,16 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         }
 
       }
+
+      "must go from 'goods location' to  'presentation office' when user chooses 'Border Force Office'" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers = answers.set(GoodsLocationPage, GoodsLocation.Borderforceoffice).success.value
+            navigator.nextPage(GoodsLocationPage, NormalMode, updatedAnswers)
+              .mustBe(routes.PresentationOfficeController.onPageLoad(updatedAnswers.id, NormalMode))
+        }
+      }
     }
 
     "in Check mode" - {

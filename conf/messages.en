@@ -143,8 +143,8 @@ goodsLocation.authorisedConsigneesLocation = Authorised Consignee’s location
 goodsLocation.checkYourAnswersLabel = Where are the goods?
 goodsLocation.error.required = Select where the goods are
 
-presentationOffice.title = presentationOffice
-presentationOffice.heading = presentationOffice
-presentationOffice.checkYourAnswersLabel = presentationOffice
-presentationOffice.error.required = Enter presentationOffice
-presentationOffice.error.length = PresentationOffice must be 8 characters or less
+presentationOffice.title = Where are the goods located?
+presentationOffice.heading = Where are the goods located?
+presentationOffice.checkYourAnswersLabel = Where are the goods located?
+presentationOffice.error.required = Enter where the goods are located
+presentationOffice.error.length = Where the goods are located must be 8 characters or less
