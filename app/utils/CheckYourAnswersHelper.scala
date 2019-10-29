@@ -29,6 +29,21 @@ import uk.gov.hmrc.viewmodels.Text.Literal
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messages) {
 
+  def presentationOffice: Option[Row] = userAnswers.get(PresentationOfficePage) map {
+    answer =>
+      Row(
+        key     = Key(msg"presentationOffice.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(lit"$answer"),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = routes.PresentationOfficeController.onPageLoad(mrn, CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"presentationOffice.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
   def goodsLocation: Option[Row] = userAnswers.get(GoodsLocationPage) map {
     answer =>
       Row(

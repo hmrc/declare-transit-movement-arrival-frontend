@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package generators
+package pages
 
-import org.scalacheck.Arbitrary
-import pages._
+import pages.behaviours.PageBehaviours
 
-trait PageGenerators {
 
-  implicit lazy val arbitraryPresentationOfficePage: Arbitrary[PresentationOfficePage.type] =
-    Arbitrary(PresentationOfficePage)
+class PresentationOfficePageSpec extends PageBehaviours {
 
-  implicit lazy val arbitraryGoodsLocationPage: Arbitrary[GoodsLocationPage.type] =
-    Arbitrary(GoodsLocationPage)
+  "PresentationOfficePage" - {
 
-  implicit lazy val arbitraryMovementReferenceNumberPage: Arbitrary[MovementReferenceNumberPage.type] =
-    Arbitrary(MovementReferenceNumberPage)
+    beRetrievable[String](PresentationOfficePage)
+
+    beSettable[String](PresentationOfficePage)
+
+    beRemovable[String](PresentationOfficePage)
+  }
 }

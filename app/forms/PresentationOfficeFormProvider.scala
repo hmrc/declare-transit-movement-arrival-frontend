@@ -14,19 +14,18 @@
  * limitations under the License.
  */
 
-package generators
+package forms
 
-import org.scalacheck.Arbitrary
-import pages._
+import javax.inject.Inject
 
-trait PageGenerators {
+import forms.mappings.Mappings
+import play.api.data.Form
 
-  implicit lazy val arbitraryPresentationOfficePage: Arbitrary[PresentationOfficePage.type] =
-    Arbitrary(PresentationOfficePage)
+class PresentationOfficeFormProvider @Inject() extends Mappings {
 
-  implicit lazy val arbitraryGoodsLocationPage: Arbitrary[GoodsLocationPage.type] =
-    Arbitrary(GoodsLocationPage)
-
-  implicit lazy val arbitraryMovementReferenceNumberPage: Arbitrary[MovementReferenceNumberPage.type] =
-    Arbitrary(MovementReferenceNumberPage)
+  def apply(): Form[String] =
+    Form(
+      "value" -> text("presentationOffice.error.required")
+        .verifying(maxLength(8, "presentationOffice.error.length"))
+    )
 }
