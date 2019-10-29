@@ -142,3 +142,9 @@ goodsLocation.borderForceOffice = Border Force office
 goodsLocation.authorisedConsigneesLocation = Authorised Consignee’s location
 goodsLocation.checkYourAnswersLabel = Where are the goods?
 goodsLocation.error.required = Select where the goods are
+
+presentationOffice.title = presentationOffice
+presentationOffice.heading = presentationOffice
+presentationOffice.checkYourAnswersLabel = presentationOffice
+presentationOffice.error.required = Enter presentationOffice
+presentationOffice.error.length = PresentationOffice must be 8 characters or less

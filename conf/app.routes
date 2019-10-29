@@ -23,3 +23,8 @@ GET        /:mrn/goodsLocation                        controllers.GoodsLocationC
 POST       /:mrn/goodsLocation                        controllers.GoodsLocationController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
 GET        /:mrn/changeGoodsLocation                  controllers.GoodsLocationController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
 POST       /:mrn/changeGoodsLocation                  controllers.GoodsLocationController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
+
+GET        /:mrn/presentationOffice                        controllers.PresentationOfficeController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
+POST       /:mrn/presentationOffice                        controllers.PresentationOfficeController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
+GET        /:mrn/changePresentationOffice                  controllers.PresentationOfficeController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
+POST       /:mrn/changePresentationOffice                  controllers.PresentationOfficeController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
