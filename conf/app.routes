@@ -18,3 +18,8 @@ GET        /movementReferenceNumber                        controllers.MovementR
 POST       /movementReferenceNumber                        controllers.MovementReferenceNumberController.onSubmit
 GET        /changeMovementReferenceNumber                  controllers.MovementReferenceNumberController.onPageLoad
 POST       /changeMovementReferenceNumber                  controllers.MovementReferenceNumberController.onSubmit
+
+GET        /:mrn/goodsLocation                        controllers.GoodsLocationController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
+POST       /:mrn/goodsLocation                        controllers.GoodsLocationController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
+GET        /:mrn/changeGoodsLocation                  controllers.GoodsLocationController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
+POST       /:mrn/changeGoodsLocation                  controllers.GoodsLocationController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)

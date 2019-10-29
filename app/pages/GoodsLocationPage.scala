@@ -14,23 +14,14 @@
  * limitations under the License.
  */
 
-package generators
+package pages
 
-import models._
-import org.scalacheck.Arbitrary.arbitrary
-import org.scalacheck.{Arbitrary, Gen}
+import models.GoodsLocation
+import play.api.libs.json.JsPath
 
-trait ModelGenerators {
+case object GoodsLocationPage extends QuestionPage[GoodsLocation] {
 
-  implicit lazy val arbitraryGoodsLocation: Arbitrary[GoodsLocation] =
-    Arbitrary {
-      Gen.oneOf(GoodsLocation.values.toSeq)
-    }
+  override def path: JsPath = JsPath \ toString
 
-  implicit lazy  val arbitraryMovementReferenceNumber: Arbitrary[MovementReferenceNumber] =
-    Arbitrary {
-      for {
-        value <- arbitrary[String]
-      } yield MovementReferenceNumber(value)
-    }
+  override def toString: String = "goodsLocation"
 }
