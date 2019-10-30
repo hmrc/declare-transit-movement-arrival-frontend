@@ -22,6 +22,19 @@ import org.scalacheck.{Arbitrary, Gen}
 
 trait ModelGenerators {
 
+  implicit lazy val arbitraryTraderAddress: Arbitrary[TraderAddress] =
+    Arbitrary {
+      for {
+        buildingAndStreet <- arbitrary[String]
+        postcode <- arbitrary[String]
+      } yield TraderAddress(buildingAndStreet, postcode)
+    }
+
+  implicit lazy val arbitraryIncidentOnRoute: Arbitrary[IncidentOnRoute] =
+    Arbitrary {
+      Gen.oneOf(IncidentOnRoute.values.toSeq)
+    }
+
   implicit lazy val arbitraryGoodsLocation: Arbitrary[GoodsLocation] =
     Arbitrary {
       Gen.oneOf(GoodsLocation.values.toSeq)

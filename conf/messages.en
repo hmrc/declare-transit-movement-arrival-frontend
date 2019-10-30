@@ -160,3 +160,32 @@ authorisedLocation.heading = What is the authorised location code?
 authorisedLocation.checkYourAnswersLabel = Authorised location
 authorisedLocation.error.required = Enter authorised location code
 authorisedLocation.error.length = AuthorisedLocation must be 8 characters or less
+
+incidentOnRoute.title = Has something happened on route?
+incidentOnRoute.heading = Has something happened on route?
+incidentOnRoute.yes = Yes
+incidentOnRoute.no = No
+incidentOnRoute.checkYourAnswersLabel = Has something happened on route?
+incidentOnRoute.error.required = Select incidentOnRoute
+
+traderAddress.title = What is the address of the trader at destination?
+traderAddress.heading = What is the address of the trader at destination?
+traderAddress.buildingAndStreet = Building and street
+traderAddress.postcode = Postcode
+traderAddress.checkYourAnswersLabel = What is the address of the trader at destination?
+traderAddress.error.buildingAndStreet.required = Enter building and street
+traderAddress.error.postcode.required = Enter postcode
+traderAddress.error.buildingAndStreet.length = Building and street name must be 32 characters or less
+traderAddress.error.postcode.length = Postcode must be 32 characters or less
+
+traderEori.title = What is the EORI number of the trader at destination?
+traderEori.heading = What is the EORI number of the trader at destination?
+traderEori.checkYourAnswersLabel = What is the EORI number of the trader at destination?
+traderEori.error.required = Enter trader Eori number
+traderEori.error.length = Trader Eori number must be 32 characters or less
+
+traderName.title = What is the name of the trader at destination?
+traderName.heading = What is the name of the trader at destination?
+traderName.checkYourAnswersLabel = What is the name of the trader at destination?
+traderName.error.required = Enter trader name
+traderName.error.length = Trader name must be 32 characters or less
