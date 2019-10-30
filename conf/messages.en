@@ -149,8 +149,8 @@ presentationOffice.checkYourAnswersLabel = Where are the goods located?
 presentationOffice.error.required = Enter where the goods are located
 presentationOffice.error.length = Where the goods are located must be 8 characters or less
 
-customsSubPlace.title = customsSubPlace
-customsSubPlace.heading = customsSubPlace
-customsSubPlace.checkYourAnswersLabel = customsSubPlace
-customsSubPlace.error.required = Enter customsSubPlace
+customsSubPlace.title = Which customs approved location has the goods?
+customsSubPlace.heading = Which customs approved location has the goods?
+customsSubPlace.checkYourAnswersLabel = Which customs approved location has the goods?
+customsSubPlace.error.required = Enter customs approved location
 customsSubPlace.error.length = CustomsSubPlace must be 8 characters or less
