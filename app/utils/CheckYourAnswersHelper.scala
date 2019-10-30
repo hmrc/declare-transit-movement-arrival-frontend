@@ -29,6 +29,66 @@ import uk.gov.hmrc.viewmodels.Text.Literal
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messages) {
 
+  def traderName: Option[Row] = userAnswers.get(TraderNamePage) map {
+    answer =>
+      Row(
+        key     = Key(msg"traderName.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(lit"$answer"),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = routes.TraderNameController.onPageLoad(mrn, CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"traderName.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
+  def traderEori: Option[Row] = userAnswers.get(TraderEoriPage) map {
+    answer =>
+      Row(
+        key     = Key(msg"traderEori.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(lit"$answer"),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = routes.TraderEoriController.onPageLoad(mrn, CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"traderEori.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
+  def traderAddress: Option[Row] = userAnswers.get(TraderAddressPage) map {
+    answer =>
+      Row(
+        key     = Key(msg"traderAddress.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(lit"${answer.buildingAndStreet} ${answer.postcode}"),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = routes.TraderAddressController.onPageLoad(mrn, CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"traderAddress.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
+  def incidentOnRoute: Option[Row] = userAnswers.get(IncidentOnRoutePage) map {
+    answer =>
+      Row(
+        key     = Key(msg"incidentOnRoute.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(msg"incidentOnRoute.$answer"),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = routes.IncidentOnRouteController.onPageLoad(mrn, CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"incidentOnRoute.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
   def authorisedLocation: Option[Row] = userAnswers.get(AuthorisedLocationPage) map {
     answer =>
       Row(

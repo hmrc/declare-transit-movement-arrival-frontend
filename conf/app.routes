@@ -38,3 +38,23 @@ GET        /:mrn/authorisedLocation                        controllers.Authorise
 POST       /:mrn/authorisedLocation                        controllers.AuthorisedLocationController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
 GET        /:mrn/changeAuthorisedLocation                  controllers.AuthorisedLocationController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
 POST       /:mrn/changeAuthorisedLocation                  controllers.AuthorisedLocationController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
+
+GET        /:mrn/incidentOnRoute                        controllers.IncidentOnRouteController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
+POST       /:mrn/incidentOnRoute                        controllers.IncidentOnRouteController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
+GET        /:mrn/changeIncidentOnRoute                  controllers.IncidentOnRouteController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
+POST       /:mrn/changeIncidentOnRoute                  controllers.IncidentOnRouteController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
+
+GET        /:mrn/traderAddress                        controllers.TraderAddressController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
+POST       /:mrn/traderAddress                        controllers.TraderAddressController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
+GET        /:mrn/changeTraderAddress                  controllers.TraderAddressController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
+POST       /:mrn/changeTraderAddress                  controllers.TraderAddressController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
+
+GET        /:mrn/traderEori                        controllers.TraderEoriController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
+POST       /:mrn/traderEori                        controllers.TraderEoriController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
+GET        /:mrn/changeTraderEori                  controllers.TraderEoriController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
+POST       /:mrn/changeTraderEori                  controllers.TraderEoriController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
+
+GET        /:mrn/traderName                        controllers.TraderNameController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
+POST       /:mrn/traderName                        controllers.TraderNameController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
+GET        /:mrn/changeTraderName                  controllers.TraderNameController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
+POST       /:mrn/changeTraderName                  controllers.TraderNameController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
