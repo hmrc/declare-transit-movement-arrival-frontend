@@ -33,3 +33,8 @@ GET        /:mrn/customsSubPlace                        controllers.CustomsSubPl
 POST       /:mrn/customsSubPlace                        controllers.CustomsSubPlaceController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
 GET        /:mrn/changeCustomsSubPlace                  controllers.CustomsSubPlaceController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
 POST       /:mrn/changeCustomsSubPlace                  controllers.CustomsSubPlaceController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
+
+GET        /:mrn/authorisedLocation                        controllers.AuthorisedLocationController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
+POST       /:mrn/authorisedLocation                        controllers.AuthorisedLocationController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
+GET        /:mrn/changeAuthorisedLocation                  controllers.AuthorisedLocationController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
+POST       /:mrn/changeAuthorisedLocation                  controllers.AuthorisedLocationController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)

@@ -72,6 +72,16 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
               .mustBe(routes.CustomsSubPlaceController.onPageLoad(answers.id, NormalMode))
         }
       }
+
+      "must go from 'goods location' to  'authorised location' when user chooses 'Authorised consignee’s location'" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers = answers.set(GoodsLocationPage, GoodsLocation.Authorisedconsigneeslocation).success.value
+            navigator.nextPage(GoodsLocationPage, NormalMode, updatedAnswers)
+              .mustBe(routes.AuthorisedLocationController.onPageLoad(updatedAnswers.id, NormalMode))
+        }
+      }
     }
 
     "in Check mode" - {
