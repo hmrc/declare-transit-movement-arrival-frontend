@@ -28,3 +28,8 @@ GET        /:mrn/presentationOffice                        controllers.Presentat
 POST       /:mrn/presentationOffice                        controllers.PresentationOfficeController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
 GET        /:mrn/changePresentationOffice                  controllers.PresentationOfficeController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
 POST       /:mrn/changePresentationOffice                  controllers.PresentationOfficeController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
+
+GET        /:mrn/customsSubPlace                        controllers.CustomsSubPlaceController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
+POST       /:mrn/customsSubPlace                        controllers.CustomsSubPlaceController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
+GET        /:mrn/changeCustomsSubPlace                  controllers.CustomsSubPlaceController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
+POST       /:mrn/changeCustomsSubPlace                  controllers.CustomsSubPlaceController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)

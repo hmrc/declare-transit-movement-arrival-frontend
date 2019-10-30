@@ -14,22 +14,19 @@
  * limitations under the License.
  */
 
-package generators
+package pages
 
-import org.scalacheck.Arbitrary
-import pages._
+import pages.behaviours.PageBehaviours
 
-trait PageGenerators {
 
-  implicit lazy val arbitraryCustomsSubPlacePage: Arbitrary[CustomsSubPlacePage.type] =
-    Arbitrary(CustomsSubPlacePage)
+class CustomsSubPlacePageSpec extends PageBehaviours {
 
-  implicit lazy val arbitraryPresentationOfficePage: Arbitrary[PresentationOfficePage.type] =
-    Arbitrary(PresentationOfficePage)
+  "CustomsSubPlacePage" - {
 
-  implicit lazy val arbitraryGoodsLocationPage: Arbitrary[GoodsLocationPage.type] =
-    Arbitrary(GoodsLocationPage)
+    beRetrievable[String](CustomsSubPlacePage)
 
-  implicit lazy val arbitraryMovementReferenceNumberPage: Arbitrary[MovementReferenceNumberPage.type] =
-    Arbitrary(MovementReferenceNumberPage)
+    beSettable[String](CustomsSubPlacePage)
+
+    beRemovable[String](CustomsSubPlacePage)
+  }
 }
