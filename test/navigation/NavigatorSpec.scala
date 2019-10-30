@@ -63,6 +63,15 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
               .mustBe(routes.PresentationOfficeController.onPageLoad(updatedAnswers.id, NormalMode))
         }
       }
+
+      "must go from 'presentation office' to  'customs approved location'" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            navigator.nextPage(PresentationOfficePage, NormalMode, answers)
+              .mustBe(routes.CustomsSubPlaceController.onPageLoad(answers.id, NormalMode))
+        }
+      }
     }
 
     "in Check mode" - {
