@@ -28,7 +28,12 @@ class Navigator @Inject()() {
 
   private val normalRoutes: Page => UserAnswers => Call = {
     case MovementReferenceNumberPage => ua => routes.GoodsLocationController.onPageLoad(ua.id, NormalMode)
-    case GoodsLocationPage => ua => routes.PresentationOfficeController.onPageLoad(ua.id, NormalMode)
+    case GoodsLocationPage => ua =>
+      if (ua.get(GoodsLocationPage).contains(GoodsLocation.Borderforceoffice)) {
+        routes.PresentationOfficeController.onPageLoad(ua.id, NormalMode)
+      } else {
+        routes.AuthorisedLocationController.onPageLoad(ua.id, NormalMode)
+      }
     case PresentationOfficePage => ua => routes.CustomsSubPlaceController.onPageLoad(ua.id, NormalMode)
     case _ => _ => routes.IndexController.onPageLoad()
   }

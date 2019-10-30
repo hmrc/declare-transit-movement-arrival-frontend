@@ -145,12 +145,18 @@ goodsLocation.error.required = Select where the goods are
 
 presentationOffice.title = Where are the goods located?
 presentationOffice.heading = Where are the goods located?
-presentationOffice.checkYourAnswersLabel = Where are the goods located?
+presentationOffice.checkYourAnswersLabel = Goods location
 presentationOffice.error.required = Enter where the goods are located
 presentationOffice.error.length = Where the goods are located must be 8 characters or less
 
 customsSubPlace.title = Which customs approved location has the goods?
 customsSubPlace.heading = Which customs approved location has the goods?
-customsSubPlace.checkYourAnswersLabel = Which customs approved location has the goods?
+customsSubPlace.checkYourAnswersLabel = Customs approved location
 customsSubPlace.error.required = Enter customs approved location
 customsSubPlace.error.length = CustomsSubPlace must be 8 characters or less
+
+authorisedLocation.title = What is the authorised location code?
+authorisedLocation.heading = What is the authorised location code?
+authorisedLocation.checkYourAnswersLabel = Authorised location
+authorisedLocation.error.required = Enter authorised location code
+authorisedLocation.error.length = AuthorisedLocation must be 8 characters or less
