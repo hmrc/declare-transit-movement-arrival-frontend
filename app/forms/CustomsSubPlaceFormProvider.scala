@@ -26,6 +26,6 @@ class CustomsSubPlaceFormProvider @Inject() extends Mappings {
   def apply(): Form[String] =
     Form(
       "value" -> text("customsSubPlace.error.required")
-        .verifying(maxLength(8, "customsSubPlace.error.length"))
+        .verifying(maxLength(17, "customsSubPlace.error.length"))
     )
 }

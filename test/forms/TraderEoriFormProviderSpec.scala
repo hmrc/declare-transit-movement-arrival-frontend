@@ -23,7 +23,7 @@ class TraderEoriFormProviderSpec extends StringFieldBehaviours {
 
   val requiredKey = "traderEori.error.required"
   val lengthKey = "traderEori.error.length"
-  val maxLength = 32
+  val maxLength = 17
 
   val form = new TraderEoriFormProvider()()
 

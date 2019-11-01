@@ -26,6 +26,6 @@ class AuthorisedLocationFormProvider @Inject() extends Mappings {
   def apply(): Form[String] =
     Form(
       "value" -> text("authorisedLocation.error.required")
-        .verifying(maxLength(8, "authorisedLocation.error.length"))
+        .verifying(maxLength(17, "authorisedLocation.error.length"))
     )
 }

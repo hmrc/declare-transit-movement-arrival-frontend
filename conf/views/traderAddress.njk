@@ -47,6 +47,16 @@
 
           {{ govukInput({
             label: {
+              text: messages('traderAddress.city')
+            },
+            id: "city",
+            name: "city",
+            value: form.city.value,
+            errorMessage: form.city.error
+          }) }}
+
+          {{ govukInput({
+            label: {
               text: messages('traderAddress.postcode')
             },
             id: "postcode",

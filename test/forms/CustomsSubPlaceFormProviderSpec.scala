@@ -23,7 +23,7 @@ class CustomsSubPlaceFormProviderSpec extends StringFieldBehaviours {
 
   val requiredKey = "customsSubPlace.error.required"
   val lengthKey = "customsSubPlace.error.length"
-  val maxLength = 8
+  val maxLength = 17
 
   val form = new CustomsSubPlaceFormProvider()()
 

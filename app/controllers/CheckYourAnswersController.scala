@@ -17,9 +17,9 @@
 package controllers
 
 import com.google.inject.Inject
-import controllers.actions.{DataRequiredAction, IdentifierAction, DataRetrievalActionProvider}
-import models.MovementReferenceNumber
-import play.api.i18n.{I18nSupport, MessagesApi}
+import controllers.actions.{DataRequiredAction, DataRetrievalActionProvider, IdentifierAction}
+import models.{MovementReferenceNumber, UserAnswers}
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
@@ -36,18 +36,29 @@ class CheckYourAnswersController @Inject()(
                                             requireData: DataRequiredAction,
                                             val controllerComponents: MessagesControllerComponents,
                                             renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
+                                          )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
 
   def onPageLoad(mrn: MovementReferenceNumber): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
 
-      val helper = new CheckYourAnswersHelper(request.userAnswers)
-
-      val answers: Seq[SummaryList.Row] = Seq()
+      val answers: scala.Seq[SummaryList.Row] = getSections(request.userAnswers)
 
       renderer.render(
         "check-your-answers.njk",
         Json.obj("list" -> answers)
       ).map(Ok(_))
+  }
+
+  private def getSections(userAnswers: UserAnswers)(implicit messages: Messages): Seq[SummaryList.Row] = {
+    val helper = new CheckYourAnswersHelper(userAnswers)
+
+    (helper.goodsLocation
+      ++ helper.presentationOffice
+      ++ helper.customsSubPlace
+      ++ helper.traderName
+      ++ helper.traderAddress
+      ++ helper.traderEori
+      ++ helper.incidentOnRoute
+      ).toSeq
   }
 }

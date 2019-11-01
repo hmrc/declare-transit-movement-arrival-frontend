@@ -28,7 +28,34 @@ class TraderAddressFormProviderSpec extends StringFieldBehaviours {
     val fieldName = "buildingAndStreet"
     val requiredKey = "traderAddress.error.buildingAndStreet.required"
     val lengthKey = "traderAddress.error.buildingAndStreet.length"
-    val maxLength = 32
+    val maxLength = 35
+
+    behave like fieldThatBindsValidData(
+      form,
+      fieldName,
+      stringsWithMaxLength(maxLength)
+    )
+
+    behave like fieldWithMaxLength(
+      form,
+      fieldName,
+      maxLength = maxLength,
+      lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
+    )
+
+    behave like mandatoryField(
+      form,
+      fieldName,
+      requiredError = FormError(fieldName, requiredKey)
+    )
+  }
+
+  ".city" - {
+
+    val fieldName = "city"
+    val requiredKey = "traderAddress.error.city.required"
+    val lengthKey = "traderAddress.error.city.length"
+    val maxLength = 35
 
     behave like fieldThatBindsValidData(
       form,
@@ -55,7 +82,7 @@ class TraderAddressFormProviderSpec extends StringFieldBehaviours {
     val fieldName = "postcode"
     val requiredKey = "traderAddress.error.postcode.required"
     val lengthKey = "traderAddress.error.postcode.length"
-    val maxLength = 32
+    val maxLength = 9
 
     behave like fieldThatBindsValidData(
       form,

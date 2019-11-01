@@ -51,7 +51,8 @@ class TraderAddressControllerSpec extends SpecBase with MockitoSugar with Nunjuc
     Json.obj(
       TraderAddressPage.toString -> Json.obj(
         "buildingAndStreet" -> "value 1",
-        "postcode" -> "value 2"
+        "city" -> "value 3",
+        "postcode" -> "value 4"
       )
     )
   )
@@ -105,7 +106,8 @@ class TraderAddressControllerSpec extends SpecBase with MockitoSugar with Nunjuc
       val filledForm = form.bind(
         Map(
           "buildingAndStreet" -> "value 1",
-          "postcode" -> "value 2"
+          "city" -> "value 3",
+          "postcode" -> "value 4"
         )
       )
 
@@ -138,7 +140,7 @@ class TraderAddressControllerSpec extends SpecBase with MockitoSugar with Nunjuc
 
       val request =
         FakeRequest(POST, traderAddressRoute)
-          .withFormUrlEncodedBody(("buildingAndStreet", "value 1"), ("postcode", "value 2"))
+          .withFormUrlEncodedBody(("buildingAndStreet", "value 1"), ("city", "value 3"), ("postcode", "value 4"))
 
       val result = route(application, request).value
 

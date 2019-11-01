@@ -23,7 +23,7 @@ class AuthorisedLocationFormProviderSpec extends StringFieldBehaviours {
 
   val requiredKey = "authorisedLocation.error.required"
   val lengthKey = "authorisedLocation.error.length"
-  val maxLength = 8
+  val maxLength = 17
 
   val form = new AuthorisedLocationFormProvider()()
 

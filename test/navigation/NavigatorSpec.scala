@@ -82,6 +82,53 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
               .mustBe(routes.AuthorisedLocationController.onPageLoad(updatedAnswers.id, NormalMode))
         }
       }
+
+      "must go from 'customs approved location' to  'traders name'" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            navigator.nextPage(CustomsSubPlacePage, NormalMode, answers)
+              .mustBe(routes.TraderNameController.onPageLoad(answers.id, NormalMode))
+        }
+      }
+
+      "must go from 'traders name' to 'traders address'" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            navigator.nextPage(TraderNamePage, NormalMode, answers)
+              .mustBe(routes.TraderAddressController.onPageLoad(answers.id, NormalMode))
+        }
+      }
+
+      "must go from 'traders address' to 'traders eori'" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            navigator.nextPage(TraderAddressPage, NormalMode, answers)
+              .mustBe(routes.TraderEoriController.onPageLoad(answers.id, NormalMode))
+        }
+      }
+
+      "must go from 'traders eori' to 'incident on route page'" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            navigator.nextPage(TraderEoriPage, NormalMode, answers)
+              .mustBe(routes.IncidentOnRouteController.onPageLoad(answers.id, NormalMode))
+        }
+      }
+
+      "must go from 'incident on route' to 'check your answers page'" in {
+
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            navigator.nextPage(IncidentOnRoutePage, NormalMode, answers)
+              .mustBe(routes.CheckYourAnswersController.onPageLoad(answers.id))
+        }
+      }
+
     }
 
     "in Check mode" - {

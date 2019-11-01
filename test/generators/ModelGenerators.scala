@@ -26,8 +26,9 @@ trait ModelGenerators {
     Arbitrary {
       for {
         buildingAndStreet <- arbitrary[String]
+        city <- arbitrary[String]
         postcode <- arbitrary[String]
-      } yield TraderAddress(buildingAndStreet, postcode)
+      } yield TraderAddress(buildingAndStreet, city, postcode)
     }
 
   implicit lazy val arbitraryIncidentOnRoute: Arbitrary[IncidentOnRoute] =
