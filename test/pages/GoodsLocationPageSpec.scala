@@ -16,10 +16,11 @@
 
 package pages
 
-import models.GoodsLocation
+import models.{GoodsLocation, UserAnswers}
+import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
 
-class GoodsLocationSpec extends PageBehaviours {
+class GoodsLocationPageSpec extends PageBehaviours {
 
   "GoodsLocationPage" - {
 
@@ -28,5 +29,27 @@ class GoodsLocationSpec extends PageBehaviours {
     beSettable[GoodsLocation](GoodsLocationPage)
 
     beRemovable[GoodsLocation](GoodsLocationPage)
+
+    "must remove Authorised Location Code when the user selected Border Force office" in {
+
+      forAll(arbitrary[UserAnswers]) {
+        answers =>
+
+          val result = answers.set(GoodsLocationPage, GoodsLocation.BorderForceOffice).success.value
+
+          result.get(AuthorisedLocationPage) must not be defined
+      }
+    }
+
+    "must remove Customs Sub Place when teh user selects Authorised Consignees Location" in {
+
+      forAll(arbitrary[UserAnswers]) {
+        answers =>
+
+          val result = answers.set(GoodsLocationPage, GoodsLocation.AuthorisedConsigneesLocation).success.value
+
+          result.get(CustomsSubPlacePage) must not be defined
+      }
+    }
   }
 }

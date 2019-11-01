@@ -25,20 +25,20 @@ sealed trait GoodsLocation
 
 object GoodsLocation extends Enumerable.Implicits {
 
-  case object Borderforceoffice extends WithName("borderForceOffice") with GoodsLocation
-  case object Authorisedconsigneeslocation extends WithName("authorisedConsigneesLocation") with GoodsLocation
+  case object BorderForceOffice extends WithName("borderForceOffice") with GoodsLocation
+  case object AuthorisedConsigneesLocation extends WithName("authorisedConsigneesLocation") with GoodsLocation
 
   val values: Seq[GoodsLocation] = Seq(
-    Borderforceoffice,
-    Authorisedconsigneeslocation
+    BorderForceOffice,
+    AuthorisedConsigneesLocation
   )
 
   def radios(form: Form[_])(implicit messages: Messages): Seq[Radios.Item] = {
 
     val field = form("value")
     val items = Seq(
-      Radios.Radio(msg"goodsLocation.borderForceOffice", Borderforceoffice.toString),
-      Radios.Radio(msg"goodsLocation.authorisedConsigneesLocation", Authorisedconsigneeslocation.toString)
+      Radios.Radio(msg"goodsLocation.borderForceOffice", BorderForceOffice.toString),
+      Radios.Radio(msg"goodsLocation.authorisedConsigneesLocation", AuthorisedConsigneesLocation.toString)
     )
 
     Radios(field, items)

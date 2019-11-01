@@ -58,7 +58,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         forAll(arbitrary[UserAnswers]) {
           answers =>
 
-            val updatedAnswers = answers.set(GoodsLocationPage, GoodsLocation.Borderforceoffice).success.value
+            val updatedAnswers = answers.set(GoodsLocationPage, GoodsLocation.BorderForceOffice).success.value
             navigator.nextPage(GoodsLocationPage, NormalMode, updatedAnswers)
               .mustBe(routes.PresentationOfficeController.onPageLoad(updatedAnswers.id, NormalMode))
         }
@@ -77,7 +77,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         forAll(arbitrary[UserAnswers]) {
           answers =>
 
-            val updatedAnswers = answers.set(GoodsLocationPage, GoodsLocation.Authorisedconsigneeslocation).success.value
+            val updatedAnswers = answers.set(GoodsLocationPage, GoodsLocation.AuthorisedConsigneesLocation).success.value
             navigator.nextPage(GoodsLocationPage, NormalMode, updatedAnswers)
               .mustBe(routes.AuthorisedLocationController.onPageLoad(updatedAnswers.id, NormalMode))
         }
@@ -142,6 +142,78 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator.nextPage(UnknownPage, CheckMode, answers)
               .mustBe(routes.CheckYourAnswersController.onPageLoad(answers.id))
+        }
+      }
+
+      "must go from Goods Location" - {
+
+        "to Check Your Answers" - {
+
+          "when the user answers Border Force Office and they have already answered Customs Sub Place" in {
+
+            forAll(arbitrary[UserAnswers], arbitrary[String]) {
+              (answers, subPlace) =>
+
+                val updatedAnswers =
+                  answers
+                    .set(GoodsLocationPage, GoodsLocation.BorderForceOffice).success.value
+                    .set(CustomsSubPlacePage, subPlace).success.value
+
+                navigator.nextPage(GoodsLocationPage, CheckMode, updatedAnswers)
+                  .mustBe(routes.CheckYourAnswersController.onPageLoad(answers.id))
+            }
+          }
+
+          "when the user answers Authorised Consignee and they have already answered Authoerised Location" in {
+
+            forAll(arbitrary[UserAnswers], arbitrary[String]) {
+              (answers, location) =>
+
+                val updatedAnswers =
+                  answers
+                    .set(GoodsLocationPage, GoodsLocation.AuthorisedConsigneesLocation).success.value
+                    .set(AuthorisedLocationPage, location).success.value
+
+                navigator.nextPage(GoodsLocationPage, CheckMode, updatedAnswers)
+                  .mustBe(routes.CheckYourAnswersController.onPageLoad(answers.id))
+            }
+          }
+        }
+
+        "to Customs Sub Place" - {
+
+          "when the user answers Border Force Office and had not answered Customs Sub Place" in {
+
+            forAll(arbitrary[UserAnswers]) {
+              answers =>
+
+                val updatedAnswers =
+                  answers
+                    .set(GoodsLocationPage, GoodsLocation.BorderForceOffice).success.value
+                    .remove(CustomsSubPlacePage).success.value
+
+                navigator.nextPage(GoodsLocationPage, CheckMode, updatedAnswers)
+                  .mustBe(routes.CustomsSubPlaceController.onPageLoad(answers.id, CheckMode))
+            }
+          }
+        }
+
+        "to Authorised Location" - {
+
+          "when the user answers Authorised Consignee and had not answered Authorised Location" in {
+
+            forAll(arbitrary[UserAnswers]) {
+              answers =>
+
+                val updatedAnswers =
+                  answers
+                    .set(GoodsLocationPage, GoodsLocation.AuthorisedConsigneesLocation).success.value
+                    .remove(AuthorisedLocationPage).success.value
+
+                navigator.nextPage(GoodsLocationPage, CheckMode, updatedAnswers)
+                  .mustBe(routes.AuthorisedLocationController.onPageLoad(answers.id, CheckMode))
+            }
+          }
         }
       }
     }

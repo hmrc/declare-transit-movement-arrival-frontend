@@ -17,7 +17,6 @@
 package navigation
 
 import javax.inject.{Inject, Singleton}
-
 import play.api.mvc.Call
 import controllers.routes
 import pages._
@@ -39,7 +38,8 @@ class Navigator @Inject()() {
   }
 
   private val checkRouteMap: Page => UserAnswers => Call = {
-    case _ => ua => routes.CheckYourAnswersController.onPageLoad(ua.id)
+    case GoodsLocationPage => goodsLocationCheckRoute
+    case _                 => ua => routes.CheckYourAnswersController.onPageLoad(ua.id)
   }
 
   def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = mode match {
@@ -50,10 +50,21 @@ class Navigator @Inject()() {
   }
 
   private def goodsLocationPageRoutes(ua: UserAnswers): Call = {
-    if (ua.get(GoodsLocationPage).contains(GoodsLocation.Borderforceoffice)) {
+    if (ua.get(GoodsLocationPage).contains(GoodsLocation.BorderForceOffice)) {
       routes.PresentationOfficeController.onPageLoad(ua.id, NormalMode)
     } else {
       routes.AuthorisedLocationController.onPageLoad(ua.id, NormalMode)
+    }
+  }
+
+  private def goodsLocationCheckRoute(ua: UserAnswers): Call = {
+
+    import GoodsLocation._
+
+    (ua.get(GoodsLocationPage), ua.get(AuthorisedLocationPage), ua.get(CustomsSubPlacePage)) match {
+      case (Some(BorderForceOffice), _, None)            => routes.CustomsSubPlaceController.onPageLoad(ua.id, CheckMode)
+      case (Some(AuthorisedConsigneesLocation), None, _) => routes.AuthorisedLocationController.onPageLoad(ua.id, CheckMode)
+      case _                                             => routes.CheckYourAnswersController.onPageLoad(ua.id)
     }
   }
 }
