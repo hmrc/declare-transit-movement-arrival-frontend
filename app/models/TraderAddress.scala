@@ -19,10 +19,9 @@ package models
 import play.api.libs.json._
 import uk.gov.hmrc.viewmodels.Html
 
-case class TraderAddress (buildingAndStreet: Option[String], city: Option[String],  postcode: Option[String]) {
+case class TraderAddress (buildingAndStreet: String, city: String,  postcode: String) {
   def toHtml = Html(
     Seq(buildingAndStreet, city, postcode)
-      .flatten
       .mkString(",<br>")
   )
 }
