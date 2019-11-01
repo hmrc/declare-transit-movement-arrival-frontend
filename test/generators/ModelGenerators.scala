@@ -25,9 +25,9 @@ trait ModelGenerators {
   implicit lazy val arbitraryTraderAddress: Arbitrary[TraderAddress] =
     Arbitrary {
       for {
-        buildingAndStreet <- arbitrary[String]
-        city <- arbitrary[String]
-        postcode <- arbitrary[String]
+        buildingAndStreet <- arbitrary[Option[String]]
+        city <- arbitrary[Option[String]]
+        postcode <- arbitrary[Option[String]]
       } yield TraderAddress(buildingAndStreet, city, postcode)
     }
 

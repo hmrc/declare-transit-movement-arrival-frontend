@@ -27,12 +27,18 @@ class TraderAddressFormProvider @Inject() extends Mappings {
 
   def apply(): Form[TraderAddress] = Form(
     mapping(
-      "buildingAndStreet" -> text("traderAddress.error.buildingAndStreet.required")
-        .verifying(maxLength(35, "traderAddress.error.buildingAndStreet.length")),
-      "city" -> text("traderAddress.error.city.required")
-        .verifying(maxLength(35, "traderAddress.error.city.length")),
-      "postcode" -> text("traderAddress.error.postcode.required")
-        .verifying(maxLength(9, "traderAddress.error.postcode.length"))
+      "buildingAndStreet" ->
+        optional(text("traderAddress.error.buildingAndStreet.required")
+          .verifying(maxLength(35, "traderAddress.error.buildingAndStreet.length"))),
+      "city" ->
+        optional(text("traderAddress.error.city.required")
+          .verifying(maxLength(35, "traderAddress.error.city.length"))),
+      "postcode" ->
+        optional(text("traderAddress.error.postcode.required")
+          .verifying(maxLength(9, "traderAddress.error.postcode.length")))
     )(TraderAddress.apply)(TraderAddress.unapply)
+      .verifying("traderAddress.error.required", address => {
+        (address.buildingAndStreet.nonEmpty || address.city.nonEmpty|| address.postcode.nonEmpty)
+      })
   )
 }

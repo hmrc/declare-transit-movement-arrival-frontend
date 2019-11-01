@@ -63,7 +63,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messag
     answer =>
       Row(
         key     = Key(msg"traderAddress.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(lit"${answer.buildingAndStreet} ${answer.postcode}"),
+        value   = Value(answer.toHtml),
         actions = List(
           Action(
             content            = msg"site.edit",
@@ -148,6 +148,11 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messag
         )
       )
   }
+
+  def movementReferenceNumber: Row = Row(
+    key     = Key(msg"movementReferenceNumber.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+    value   = Value(lit"${mrn.value}")
+  )
 
   private def yesOrNo(answer: Boolean): Content =
     if (answer) {
