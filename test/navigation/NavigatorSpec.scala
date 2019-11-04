@@ -59,6 +59,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
 
             val updatedAnswers = answers.set(GoodsLocationPage, GoodsLocation.BorderForceOffice).success.value
+
             navigator.nextPage(GoodsLocationPage, NormalMode, updatedAnswers)
               .mustBe(routes.PresentationOfficeController.onPageLoad(updatedAnswers.id, NormalMode))
         }
@@ -73,13 +74,14 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         }
       }
 
-      "must go from 'goods location' to  'authorised location' when user chooses 'Authorised consignee’s location'" in {
+      "must go from 'goods location' to  'use different service' when user chooses 'Authorised consignee’s location'" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
 
             val updatedAnswers = answers.set(GoodsLocationPage, GoodsLocation.AuthorisedConsigneesLocation).success.value
+
             navigator.nextPage(GoodsLocationPage, NormalMode, updatedAnswers)
-              .mustBe(routes.AuthorisedLocationController.onPageLoad(updatedAnswers.id, NormalMode))
+              .mustBe(routes.UseDifferentServiceController.onPageLoad(updatedAnswers.id))
         }
       }
 
@@ -163,21 +165,6 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
                   .mustBe(routes.CheckYourAnswersController.onPageLoad(answers.id))
             }
           }
-
-          "when the user answers Authorised Consignee and they have already answered Authoerised Location" in {
-
-            forAll(arbitrary[UserAnswers], arbitrary[String]) {
-              (answers, location) =>
-
-                val updatedAnswers =
-                  answers
-                    .set(GoodsLocationPage, GoodsLocation.AuthorisedConsigneesLocation).success.value
-                    .set(AuthorisedLocationPage, location).success.value
-
-                navigator.nextPage(GoodsLocationPage, CheckMode, updatedAnswers)
-                  .mustBe(routes.CheckYourAnswersController.onPageLoad(answers.id))
-            }
-          }
         }
 
         "to Customs Sub Place" - {
@@ -198,20 +185,17 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           }
         }
 
-        "to Authorised Location" - {
+        "to Use Different Service" - {
 
-          "when the user answers Authorised Consignee and had not answered Authorised Location" in {
+          "when the user answers Authorised Consignee" in {
 
             forAll(arbitrary[UserAnswers]) {
               answers =>
 
-                val updatedAnswers =
-                  answers
-                    .set(GoodsLocationPage, GoodsLocation.AuthorisedConsigneesLocation).success.value
-                    .remove(AuthorisedLocationPage).success.value
+                val updatedAnswers = answers.set(GoodsLocationPage, GoodsLocation.AuthorisedConsigneesLocation).success.value
 
                 navigator.nextPage(GoodsLocationPage, CheckMode, updatedAnswers)
-                  .mustBe(routes.AuthorisedLocationController.onPageLoad(answers.id, CheckMode))
+                  .mustBe(routes.UseDifferentServiceController.onPageLoad(answers.id))
             }
           }
         }
