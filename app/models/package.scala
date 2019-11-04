@@ -25,6 +25,41 @@ package object models {
 
     def removeObject(path: JsPath): JsResult[JsObject] =
       jsObject.remove(path).flatMap(_.validate[JsObject])
+
+    def filterNot(f: (String, JsValue) => Boolean): JsObject =
+      JsObject(jsObject.fields.filterNot(f.tupled))
+
+    private def map(f: (String, JsValue) => (String, JsValue)): JsObject =
+      JsObject(jsObject.fields.map(f.tupled))
+
+    def filterNulls: JsObject =
+      map {
+        case (k, v: JsObject) =>
+          k -> v.filterNulls
+        case (k, v: JsArray) =>
+          k -> v.filterNulls
+        case (k, v) =>
+          k -> v
+      }.filterNot((_, v) => v == JsNull || v == Json.obj() || v == JsArray())
+  }
+
+  implicit class RichJsArray(arr: JsArray) {
+
+    def map(f: JsValue => JsValue): JsArray =
+      JsArray(arr.value.map(f))
+
+    def filter(f: JsValue => Boolean): JsArray =
+      JsArray(arr.value.filter(f))
+
+    def filterNot(f: JsValue => Boolean): JsArray =
+      JsArray(arr.value.filterNot(f))
+
+    def filterNulls: JsArray =
+      map {
+        case v: JsObject => v.filterNulls
+        case v: JsArray  => v.filterNulls
+        case v           => v
+      }.filterNot(v => v == JsNull || v == Json.obj() || v == JsArray())
   }
 
   implicit class RichJsValue(jsValue: JsValue) {
@@ -45,26 +80,28 @@ package object models {
           setKeyNode(n, jsValue, value)
 
         case (first :: second :: rest, oldValue) =>
-          Reads.optionNoError(Reads.at[JsValue](JsPath(first :: Nil)))
-            .reads(oldValue).flatMap {
-            opt =>
-
-              opt.map(JsSuccess(_)).getOrElse {
-                second match {
-                  case _: KeyPathNode =>
-                    JsSuccess(Json.obj())
-                  case _: IdxPathNode =>
-                    JsSuccess(Json.arr())
-                  case _: RecursiveSearch =>
-                    JsError("recursive search is not supported")
+          Reads
+            .optionNoError(Reads.at[JsValue](JsPath(first :: Nil)))
+            .reads(oldValue)
+            .flatMap { opt =>
+              opt
+                .map(JsSuccess(_))
+                .getOrElse {
+                  second match {
+                    case _: KeyPathNode =>
+                      JsSuccess(Json.obj())
+                    case _: IdxPathNode =>
+                      JsSuccess(Json.arr())
+                    case _: RecursiveSearch =>
+                      JsError("recursive search is not supported")
+                  }
                 }
-              }.flatMap {
-                _.set(JsPath(second :: rest), value).flatMap {
-                  newValue =>
+                .flatMap {
+                  _.set(JsPath(second :: rest), value).flatMap { newValue =>
                     oldValue.set(JsPath(first :: Nil), newValue)
+                  }
                 }
-              }
-          }
+            }
       }
 
     private def setIndexNode(node: IdxPathNode, oldValue: JsValue, newValue: JsValue): JsResult[JsValue] = {
@@ -90,10 +127,11 @@ package object models {
 
       valueToRemoveFrom match {
         case valueToRemoveFrom: JsArray if index >= 0 && index < valueToRemoveFrom.value.length =>
-          val updatedJsArray = valueToRemoveFrom.value.slice(0, index) ++ valueToRemoveFrom.value.slice(index + 1, valueToRemoveFrom.value.size)
+          val updatedJsArray = valueToRemoveFrom.value.slice(0, index) ++ valueToRemoveFrom.value
+            .slice(index + 1, valueToRemoveFrom.value.size)
           JsSuccess(JsArray(updatedJsArray))
         case valueToRemoveFrom: JsArray => JsError(s"array index out of bounds: $index, $valueToRemoveFrom")
-        case _ => JsError(s"cannot set an index on $valueToRemoveFrom")
+        case _                          => JsError(s"cannot set an index on $valueToRemoveFrom")
       }
     }
 
@@ -109,37 +147,36 @@ package object models {
       }
     }
 
-    def remove(path: JsPath): JsResult[JsValue] = {
-
+    def remove(path: JsPath): JsResult[JsValue] =
       (path.path, jsValue) match {
-        case (Nil, _) => JsError("path cannot be empty")
-        case ((n: KeyPathNode) :: Nil, value: JsObject) if value.keys.contains(n.key) => JsSuccess(value - n.key)
+        case (Nil, _)                                                                  => JsError("path cannot be empty")
+        case ((n: KeyPathNode) :: Nil, value: JsObject) if value.keys.contains(n.key)  => JsSuccess(value - n.key)
         case ((n: KeyPathNode) :: Nil, value: JsObject) if !value.keys.contains(n.key) => JsSuccess(value)
-        case ((n: IdxPathNode) :: Nil, value: JsArray) => removeIndexNode(n, value)
-        case ((_: KeyPathNode) :: Nil, _) => JsError(s"cannot remove a key on $jsValue")
+        case ((n: IdxPathNode) :: Nil, value: JsArray)                                 => removeIndexNode(n, value)
+        case ((_: KeyPathNode) :: Nil, _)                                              => JsError(s"cannot remove a key on $jsValue")
         case (first :: second :: rest, oldValue) =>
-
-          Reads.optionNoError(Reads.at[JsValue](JsPath(first :: Nil)))
-            .reads(oldValue).flatMap {
-            opt: Option[JsValue] =>
-
-              opt.map(JsSuccess(_)).getOrElse {
-                second match {
-                  case _: KeyPathNode =>
-                    JsSuccess(Json.obj())
-                  case _: IdxPathNode =>
-                    JsSuccess(Json.arr())
-                  case _: RecursiveSearch =>
-                    JsError("recursive search is not supported")
+          Reads
+            .optionNoError(Reads.at[JsValue](JsPath(first :: Nil)))
+            .reads(oldValue)
+            .flatMap { opt: Option[JsValue] =>
+              opt
+                .map(JsSuccess(_))
+                .getOrElse {
+                  second match {
+                    case _: KeyPathNode =>
+                      JsSuccess(Json.obj())
+                    case _: IdxPathNode =>
+                      JsSuccess(Json.arr())
+                    case _: RecursiveSearch =>
+                      JsError("recursive search is not supported")
+                  }
                 }
-              }.flatMap {
-                _.remove(JsPath(second :: rest)).flatMap {
-                  newValue =>
+                .flatMap {
+                  _.remove(JsPath(second :: rest)).flatMap { newValue =>
                     oldValue.set(JsPath(first :: Nil), newValue)
+                  }
                 }
-              }
-          }
+            }
       }
-    }
   }
 }
