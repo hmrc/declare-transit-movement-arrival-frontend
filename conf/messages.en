@@ -192,3 +192,6 @@ traderName.heading = What is the name of the trader at destination?
 traderName.checkYourAnswersLabel = Name
 traderName.error.required = Enter the name of the trader
 traderName.error.length = Name of the trader must be 35 characters or less
+
+useDifferentService.title = useDifferentService
+useDifferentService.heading = useDifferentService
