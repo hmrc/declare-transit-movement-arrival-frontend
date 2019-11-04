@@ -193,5 +193,9 @@ traderName.checkYourAnswersLabel = Name
 traderName.error.required = Enter the name of the trader
 traderName.error.length = Name of the trader must be 35 characters or less
 
-useDifferentService.title = useDifferentService
-useDifferentService.heading = useDifferentService
+useDifferentService.title = You need to use a different service
+useDifferentService.heading = You need to use a different service
+useDifferentService.guidance.1 = Use the
+useDifferentService.link = New Computerised Transit System (NCTS)
+useDifferentService.guidance.2 = if the goods are at an authorised consignee’s location.
+useDifferentService.guidance.3 = We are improving this service. You will be able to do this in future.

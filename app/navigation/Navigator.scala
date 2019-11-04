@@ -53,7 +53,7 @@ class Navigator @Inject()() {
     if (ua.get(GoodsLocationPage).contains(GoodsLocation.BorderForceOffice)) {
       routes.PresentationOfficeController.onPageLoad(ua.id, NormalMode)
     } else {
-      routes.AuthorisedLocationController.onPageLoad(ua.id, NormalMode)
+      routes.UseDifferentServiceController.onPageLoad(ua.id)
     }
   }
 
@@ -62,9 +62,9 @@ class Navigator @Inject()() {
     import GoodsLocation._
 
     (ua.get(GoodsLocationPage), ua.get(AuthorisedLocationPage), ua.get(CustomsSubPlacePage)) match {
-      case (Some(BorderForceOffice), _, None)            => routes.CustomsSubPlaceController.onPageLoad(ua.id, CheckMode)
-      case (Some(AuthorisedConsigneesLocation), None, _) => routes.AuthorisedLocationController.onPageLoad(ua.id, CheckMode)
-      case _                                             => routes.CheckYourAnswersController.onPageLoad(ua.id)
+      case (Some(BorderForceOffice), _, None)         => routes.CustomsSubPlaceController.onPageLoad(ua.id, CheckMode)
+      case (Some(AuthorisedConsigneesLocation), _, _) => routes.UseDifferentServiceController.onPageLoad(ua.id)
+      case _                                          => routes.CheckYourAnswersController.onPageLoad(ua.id)
     }
   }
 }
