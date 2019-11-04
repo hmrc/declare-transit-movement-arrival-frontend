@@ -52,13 +52,15 @@ class CheckYourAnswersController @Inject()(
   private def getSections(userAnswers: UserAnswers)(implicit messages: Messages): Seq[SummaryList.Row] = {
     val helper = new CheckYourAnswersHelper(userAnswers)
 
-    (helper.goodsLocation
-      ++ helper.presentationOffice
-      ++ helper.customsSubPlace
-      ++ helper.traderName
-      ++ helper.traderAddress
-      ++ helper.traderEori
-      ++ helper.incidentOnRoute
-      ).toSeq
+    Seq(
+      Some(helper.movementReferenceNumber),
+      helper.goodsLocation,
+      helper.presentationOffice,
+      helper.customsSubPlace,
+      helper.traderName,
+      helper.traderAddress,
+      helper.traderEori,
+      helper.incidentOnRoute
+    ).flatten
   }
 }

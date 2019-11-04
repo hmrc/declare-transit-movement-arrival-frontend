@@ -19,13 +19,11 @@ package utils
 import java.time.format.DateTimeFormatter
 
 import controllers.routes
-import models.{CheckMode, MovementReferenceNumber, UserAnswers}
+import models.{CheckMode, MovementReferenceNumber, TraderAddress, UserAnswers}
 import pages._
 import play.api.i18n.Messages
-import CheckYourAnswersHelper._
-import uk.gov.hmrc.viewmodels._
 import uk.gov.hmrc.viewmodels.SummaryList._
-import uk.gov.hmrc.viewmodels.Text.Literal
+import uk.gov.hmrc.viewmodels._
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messages) {
 
@@ -63,7 +61,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messag
     answer =>
       Row(
         key     = Key(msg"traderAddress.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(lit"${answer.buildingAndStreet} ${answer.postcode}"),
+        value   = Value(addressHtml(answer)),
         actions = List(
           Action(
             content            = msg"site.edit",
@@ -149,6 +147,11 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messag
       )
   }
 
+  def movementReferenceNumber: Row = Row(
+    key     = Key(msg"movementReferenceNumber.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+    value   = Value(lit"${mrn.value}")
+  )
+
   private def yesOrNo(answer: Boolean): Content =
     if (answer) {
       msg"site.yes"
@@ -157,6 +160,11 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messag
     }
 
   private def mrn: MovementReferenceNumber = userAnswers.id
+
+  private def  addressHtml(address: TraderAddress): Html = Html(
+    Seq(address.buildingAndStreet, address.city, address.postcode)
+      .mkString(",<br>")
+  )
 }
 
 object CheckYourAnswersHelper {
