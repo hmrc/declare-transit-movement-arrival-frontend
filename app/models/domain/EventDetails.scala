@@ -16,6 +16,7 @@
 
 package models.domain
 
+import models._
 import play.api.libs.json._
 
 sealed trait EventDetails
