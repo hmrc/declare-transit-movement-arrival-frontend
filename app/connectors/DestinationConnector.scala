@@ -19,8 +19,9 @@ package connectors
 import config.FrontendAppConfig
 import javax.inject.Inject
 import models.domain.messages.ArrivalNotification
-import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import models._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -31,11 +32,4 @@ class DestinationConnector @Inject()(val config: FrontendAppConfig, val http: Ht
     val serviceUrl = s"${config.destinationUrl}/common-transit-convention-trader-at-destination/arrival-notification"
     http.POST[ArrivalNotification, HttpResponse](serviceUrl, model)
   }
-
-  implicit val httpReads: HttpReads[HttpResponse] =
-    new HttpReads[HttpResponse] {
-      override def read(method: String, url: String, response: HttpResponse): HttpResponse =
-        response
-    }
-
 }

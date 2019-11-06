@@ -15,6 +15,7 @@
  */
 
 import play.api.libs.json._
+import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 
 package object models {
 
@@ -179,4 +180,10 @@ package object models {
             }
       }
   }
+
+  implicit val httpReads: HttpReads[HttpResponse] =
+    new HttpReads[HttpResponse] {
+      override def read(method: String, url: String, response: HttpResponse): HttpResponse =
+        response
+    }
 }
