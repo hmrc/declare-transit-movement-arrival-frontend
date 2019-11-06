@@ -54,18 +54,13 @@ class CheckYourAnswersController @Inject()(
   }
 
   def createSections(userAnswers: UserAnswers)(implicit messages: Messages) = {
-    import uk.gov.hmrc.viewmodels.SummaryList.Row._
 
     val helper = new CheckYourAnswersHelper(userAnswers)
 
     val mrn = Section("", Seq(helper.movementReferenceNumber))
     val goodsLocation = Section("Goods Location", Seq(helper.goodsLocation).flatten)
     val traderDetails = Section("Trader Details", Seq(helper.traderName, helper.traderAddress, helper.traderEori).flatten)
-/*
-    val mrn = Map("" -> Seq(helper.movementReferenceNumber))
-    val goodsLocation = Map("Goods Location" -> Seq(helper.goodsLocation).flatten)
-    val traderDetails = Map("Trader Details" -> Seq(helper.traderName, helper.traderAddress, helper.traderEori).flatten)
-*/
+
     val x: Seq[Section] = Seq(mrn, goodsLocation, traderDetails)
 
     Json.toJson(x)

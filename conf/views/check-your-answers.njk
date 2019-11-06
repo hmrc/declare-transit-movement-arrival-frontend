@@ -14,6 +14,7 @@
     text: messages("site.back")
   }) }}
 
+
   <div class="govuk-main-wrapper">
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-two-thirds">
@@ -23,19 +24,15 @@
         </h1>
 
         {% for section in sections %}
-          {% for sectionTitle, sectionRows in section %}
-            <div class="govuk-summary-sectionRows__row"></class>
-            {% if sectionTitle %}
-              <h2 class="govuk-heading-m">{{ sectionTitle }}</h2>
+            <div class="govuk-summary-sectionRows__row">
+            {% if section.sectionTitle %}
+              <h2 class="govuk-heading-m">{{ section.sectionTitle }}</h2>
             {%  endif %}
             {{ govukSummaryList({
-              rows: sectionRows
+              rows: section.rows
             }) }}
-          {% endfor %}
           </div>
         {% endfor %}
-
-
 
       </div>
     </div>
