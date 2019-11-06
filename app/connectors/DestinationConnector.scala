@@ -21,7 +21,6 @@ import javax.inject.Inject
 import models.domain.messages.ArrivalNotification
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
-import models._
 
 import scala.concurrent.{ExecutionContext, Future}
 
