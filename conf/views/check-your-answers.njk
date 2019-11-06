@@ -2,6 +2,7 @@
 
 {% from "govuk/components/back-link/macro.njk"     import govukBackLink %}
 {% from "govuk/components/summary-list/macro.njk"  import govukSummaryList %}
+{% from "govuk/components/button/macro.njk"        import govukButton %}
 {% from "macros/title.njk"                         import title %}
 
 {% block pageTitle %}
@@ -34,6 +35,20 @@
           </div>
         {% endfor %}
 
+        <h2 class="govuk-heading-m">{{ messages("checkYourAnswers.h2") }}</h2>
+
+        <p class="govuk-body">{{ messages("checkYourAnswers.p1") }}</p>
+
+         <form action="{{ routes.controllers.CheckYourAnswersController.onSubmit.url }}" method="post">
+
+              {{ csrf() | safe }}
+
+               {{ govukButton({
+                  text: messages("site.confirmAndSend"),
+                  attributes: {id:"submit"}
+               }) }}
+
+         </form>
       </div>
     </div>
   </div>

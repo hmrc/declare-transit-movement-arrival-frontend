@@ -10,6 +10,7 @@ site.edit.hidden = Change {0}
 site.no = No
 site.yes = Yes
 site.continue = Save and continue
+site.confirmAndSend = Confirm and send
 site.service_name = common-transit-convention-trader-arrival-notification-frontend
 site.textarea.char_limit = (Limit is {0} characters)
 site.title.suffix = - common-transit-convention-trader-arrival-notification-frontend - GOV.UK
@@ -36,6 +37,9 @@ phaseBanner.3 = will help us to improve it.
 
 checkYourAnswers.title = Check your answers
 checkYourAnswers.heading = Check your answers
+checkYourAnswers.h2 = Now send your arrival notification
+checkYourAnswers.p1 = By sending this notification you are confirming that, to the best of your knowledge, the details you are providing are correct.
+
 
 index.title = common-transit-convention-trader-arrival-notification-frontend
 index.heading = common-transit-convention-trader-arrival-notification-frontend

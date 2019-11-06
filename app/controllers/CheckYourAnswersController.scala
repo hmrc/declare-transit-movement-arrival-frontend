@@ -18,13 +18,12 @@ package controllers
 
 import com.google.inject.Inject
 import controllers.actions.{DataRequiredAction, DataRetrievalActionProvider, IdentifierAction}
-import models.{MovementReferenceNumber, UserAnswers}
+import models.{Mode, MovementReferenceNumber, UserAnswers}
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
-import uk.gov.hmrc.viewmodels.SummaryList.Row
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, SummaryList}
 import utils.CheckYourAnswersHelper
 import viewModels.Section
@@ -53,7 +52,9 @@ class CheckYourAnswersController @Inject()(
       ).map(Ok(_))
   }
 
-  def createSections(userAnswers: UserAnswers)(implicit messages: Messages) = {
+  def onSubmit(mrn: MovementReferenceNumber): Action[AnyContent] = ???
+
+  private def createSections(userAnswers: UserAnswers)(implicit messages: Messages) = {
 
     val helper = new CheckYourAnswersHelper(userAnswers)
 
