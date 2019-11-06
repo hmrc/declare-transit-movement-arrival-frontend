@@ -24,10 +24,14 @@ import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
+import uk.gov.hmrc.viewmodels.SummaryList.Row
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, SummaryList}
 import utils.CheckYourAnswersHelper
+import viewModels.Section
 
 import scala.concurrent.ExecutionContext
+
+
 
 class CheckYourAnswersController @Inject()(
                                             override val messagesApi: MessagesApi,
@@ -41,12 +45,30 @@ class CheckYourAnswersController @Inject()(
   def onPageLoad(mrn: MovementReferenceNumber): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
 
-      val answers: scala.Seq[SummaryList.Row] = getSections(request.userAnswers)
+      val answers = createSections(request.userAnswers)
 
       renderer.render(
         "check-your-answers.njk",
-        Json.obj("list" -> answers)
+        Json.obj("sections" -> answers)
       ).map(Ok(_))
+  }
+
+  def createSections(userAnswers: UserAnswers)(implicit messages: Messages) = {
+    import uk.gov.hmrc.viewmodels.SummaryList.Row._
+
+    val helper = new CheckYourAnswersHelper(userAnswers)
+
+    val mrn = Section("", Seq(helper.movementReferenceNumber))
+    val goodsLocation = Section("Goods Location", Seq(helper.goodsLocation).flatten)
+    val traderDetails = Section("Trader Details", Seq(helper.traderName, helper.traderAddress, helper.traderEori).flatten)
+/*
+    val mrn = Map("" -> Seq(helper.movementReferenceNumber))
+    val goodsLocation = Map("Goods Location" -> Seq(helper.goodsLocation).flatten)
+    val traderDetails = Map("Trader Details" -> Seq(helper.traderName, helper.traderAddress, helper.traderEori).flatten)
+*/
+    val x: Seq[Section] = Seq(mrn, goodsLocation, traderDetails)
+
+    Json.toJson(x)
   }
 
   private def getSections(userAnswers: UserAnswers)(implicit messages: Messages): Seq[SummaryList.Row] = {

@@ -22,9 +22,20 @@
           {{ messages("checkYourAnswers.heading") }}
         </h1>
 
-        {{ govukSummaryList({
-          rows: list
-        }) }}
+        {% for section in sections %}
+          {% for sectionTitle, sectionRows in section %}
+            <div class="govuk-summary-sectionRows__row"></class>
+            {% if sectionTitle %}
+              <h2 class="govuk-heading-m">{{ sectionTitle }}</h2>
+            {%  endif %}
+            {{ govukSummaryList({
+              rows: sectionRows
+            }) }}
+          {% endfor %}
+          </div>
+        {% endfor %}
+
+
 
       </div>
     </div>
