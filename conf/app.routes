@@ -9,7 +9,7 @@ GET        /language/:lang                              controllers.LanguageSwit
 GET        /this-service-has-been-reset                 controllers.SessionExpiredController.onPageLoad
 
 GET        /:mrn/check-your-answers                          controllers.CheckYourAnswersController.onPageLoad(mrn: MovementReferenceNumber)
-POST       /:mrn/check-your-answers                          controllers.CheckYourAnswersController.onSubmit(mrn: MovementReferenceNumber)
+POST       /:mrn/check-your-answers                          controllers.CheckYourAnswersController.onPost(mrn: MovementReferenceNumber)
 
 GET        /unauthorised                                controllers.UnauthorisedController.onPageLoad
 

@@ -11,44 +11,39 @@
 
 {% block mainContent %}
 
-  {{ govukBackLink({
-    text: messages("site.back")
-  }) }}
-
-
   <div class="govuk-main-wrapper">
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-two-thirds">
 
-        <h1 class="govuk-heading-xl">
-          {{ messages("checkYourAnswers.heading") }}
-        </h1>
+        <h1 class="govuk-heading-xl">{{ messages("checkYourAnswers.heading") }}</h1>
+
+        {{ csrf() | safe }}
 
         {% for section in sections %}
+          {% if section.rows|length %}
             <div class="govuk-summary-sectionRows__row">
-            {% if section.sectionTitle %}
-              <h2 class="govuk-heading-m">{{ section.sectionTitle }}</h2>
-            {%  endif %}
-            {{ govukSummaryList({
-              rows: section.rows
-            }) }}
+              {% if section.sectionTitle %}
+                <h2 class="govuk-heading-m">{{ section.sectionTitle }}</h2>
+              {%  endif %}
+              {{ govukSummaryList({
+                rows: section.rows,
+                classes:"govuk-summary-list govuk-!-margin-bottom-9"
+              }) }}
           </div>
+          {% endif %}
         {% endfor %}
 
-        <h2 class="govuk-heading-m">{{ messages("checkYourAnswers.h2") }}</h2>
+        <h2 class="govuk-heading-m">{{ messages("checkYourAnswers.confirmation.heading") }}</h2>
 
-        <p class="govuk-body">{{ messages("checkYourAnswers.p1") }}</p>
+        <p class="govuk-body">{{ messages("checkYourAnswers.confirmation.paragraph") }}</p>
 
-         <form action="{{ routes.controllers.CheckYourAnswersController.onSubmit.url }}" method="post">
+        {{ govukButton({
+          text: messages("site.confirmAndSend"),
+          href: routes.controllers.CheckYourAnswersController.onPost(mrn).url,
+          preventDoubleClick: true,
+          attributes: {id:"submit"}
+        }) }}
 
-              {{ csrf() | safe }}
-
-               {{ govukButton({
-                  text: messages("site.confirmAndSend"),
-                  attributes: {id:"submit"}
-               }) }}
-
-         </form>
       </div>
     </div>
   </div>

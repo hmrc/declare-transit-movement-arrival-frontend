@@ -18,7 +18,7 @@ package controllers
 
 import com.google.inject.Inject
 import controllers.actions.{DataRequiredAction, DataRetrievalActionProvider, IdentifierAction}
-import models.{Mode, MovementReferenceNumber, UserAnswers}
+import models.{MovementReferenceNumber, UserAnswers}
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -43,42 +43,33 @@ class CheckYourAnswersController @Inject()(
 
   def onPageLoad(mrn: MovementReferenceNumber): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
-
       val answers = createSections(request.userAnswers)
 
-      renderer.render(
-        "check-your-answers.njk",
-        Json.obj("sections" -> answers)
-      ).map(Ok(_))
+      val json = Json.obj(
+        "sections" -> answers,
+        "mrn"    -> mrn
+      )
+
+      renderer.render("check-your-answers.njk", json).map(Ok(_))
   }
 
-  def onSubmit(mrn: MovementReferenceNumber): Action[AnyContent] = ???
+  def onPost(mrn: MovementReferenceNumber): Action[AnyContent] = ???
 
   private def createSections(userAnswers: UserAnswers)(implicit messages: Messages) = {
-
     val helper = new CheckYourAnswersHelper(userAnswers)
 
-    val mrn = Section("", Seq(helper.movementReferenceNumber))
-    val goodsLocation = Section("Goods Location", Seq(helper.goodsLocation).flatten)
-    val traderDetails = Section("Trader Details", Seq(helper.traderName, helper.traderAddress, helper.traderEori).flatten)
+    val mrn = Section(None, Seq(helper.movementReferenceNumber))
+    val goodsLocation = Section(Some("Goods Location"), Seq(helper.goodsLocation, helper.authorisedLocation).flatten)
+    val traderDetails = Section(Some("Trader Details"), Seq(helper.traderName, helper.traderAddress, helper.traderEori).flatten)
+    val events = Section(Some("Events"), Seq(helper.incidentOnRoute).flatten)
 
-    val x: Seq[Section] = Seq(mrn, goodsLocation, traderDetails)
+    val sections: Seq[Section] = Seq(
+      mrn,
+      goodsLocation,
+      traderDetails,
+      events
+    )
 
-    Json.toJson(x)
-  }
-
-  private def getSections(userAnswers: UserAnswers)(implicit messages: Messages): Seq[SummaryList.Row] = {
-    val helper = new CheckYourAnswersHelper(userAnswers)
-
-    Seq(
-      Some(helper.movementReferenceNumber),
-      helper.goodsLocation,
-      helper.presentationOffice,
-      helper.customsSubPlace,
-      helper.traderName,
-      helper.traderAddress,
-      helper.traderEori,
-      helper.incidentOnRoute
-    ).flatten
+    Json.toJson(sections)
   }
 }
