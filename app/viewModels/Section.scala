@@ -17,7 +17,7 @@
 package viewModels
 
 import play.api.i18n.Messages
-import play.api.libs.json.{JsValue, Json, Writes}
+import play.api.libs.json.{JsPath, JsValue, Json, Reads, Writes}
 import uk.gov.hmrc.viewmodels.SummaryList
 
 case class Section(sectionTitle: Option[String], rows: Seq[SummaryList.Row])
@@ -30,4 +30,5 @@ object Section {
         "rows" -> Json.toJson(o.rows)
       )
   }
+
 }
