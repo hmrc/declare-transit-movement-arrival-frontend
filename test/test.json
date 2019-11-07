@@ -1,0 +1,55 @@
+{
+  "sections": [
+    {
+      "sectionTitle": null,
+      "rows": [
+        {
+          "key": {
+            "text": "Movement Reference Number",
+            "classes": "govuk-!-width-one-half"
+          },
+          "value": {
+            "text": "id"
+          }
+        }
+      ]
+    },
+    {
+      "sectionTitle": "Goods Location",
+      "rows": []
+    },
+    {
+      "sectionTitle": "Trader Details",
+      "rows": [
+        {
+          "key": {
+            "text": "Name",
+            "classes": "govuk-!-width-one-half"
+          },
+          "value": {
+            "text": "traderName"
+          },
+          "actions": {
+            "items": [
+              {
+                "href": "/common-transit-convention-trader-arrival-notification-frontend/id/changeTraderName",
+                "text": "Change",
+                "visuallyHiddenText": "Change Name"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "sectionTitle": "Events",
+      "rows": []
+    }
+  ],
+  "mrn": "id",
+  "config": {
+    "betaFeedbackUnauthenticatedUrl": "http://localhost:9250/contact/beta-feedback-unauthenticated",
+    "reportAProblemPartialUrl": "http://localhost:9250/contact/problem_reports_ajax?service=play26frontend",
+    "reportAProblemNonJSUrl": "http://localhost:9250/contact/problem_reports_nonjs?service=play26frontend"
+  }
+}
