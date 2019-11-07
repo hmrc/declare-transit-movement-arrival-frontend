@@ -59,9 +59,11 @@ class CheckYourAnswersController @Inject()(
     val helper = new CheckYourAnswersHelper(userAnswers)
 
     val mrn = Section(None, Seq(helper.movementReferenceNumber))
-    val goodsLocation = Section(Some("Goods Location"), Seq(helper.goodsLocation, helper.authorisedLocation).flatten)
-    val traderDetails = Section(Some("Trader Details"), Seq(helper.traderName, helper.traderAddress, helper.traderEori).flatten)
-    val events = Section(Some("Events"), Seq(helper.incidentOnRoute).flatten)
+    val goodsLocation = Section(Some(messages("checkYourAnswers.section.goodsLocation")),
+      Seq(helper.goodsLocation, helper.authorisedLocation).flatten)
+    val traderDetails = Section(Some(messages("checkYourAnswers.section.traderDetails")),
+      Seq(helper.traderName, helper.traderAddress, helper.traderEori).flatten)
+    val events = Section(Some(messages("checkYourAnswers.section.events")), Seq(helper.incidentOnRoute).flatten)
 
     val sections: Seq[Section] = Seq(
       mrn,
