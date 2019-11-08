@@ -1,5 +1,6 @@
 {% extends "includes/layout.njk" %}
 
+{% from "govuk/components/button/macro.njk"        import govukButton %}
 {% from "macros/title.njk"                         import title %}
 
 {% block pageTitle %}
@@ -15,6 +16,12 @@
         <h1 class="govuk-heading-xl">
           {{ messages("index.heading") }}
         </h1>
+
+        {{ govukButton({
+          text: messages("index.create_arrival"),
+          href: routes.controllers.MovementReferenceNumberController.onPageLoad().url,
+          attributes: {id:"submit"}
+        }) }}
 
       </div>
     </div>
