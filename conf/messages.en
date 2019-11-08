@@ -39,7 +39,7 @@ checkYourAnswers.heading = Check your answers
 
 index.title = Common Transit Convention for traders
 index.heading = Common Transit Convention for traders
-index.guidance = Welcome to your new frontend. Please see the README file for a guide to getting started.
+index.create_arrival = Create an arrival notification
 
 session_expired.title = For your security, this service has been reset
 session_expired.heading = For your security, this service has been reset
