@@ -17,21 +17,14 @@
 package controllers
 
 import base.SpecBase
-import controllers.CheckYourAnswersControllerSpec._
 import matchers.JsonMatchers
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
-import pages.TraderNamePage
-import play.api.i18n.Messages
-import play.api.libs.json.{JsObject, JsPath, Reads, __}
+import play.api.libs.json.JsObject
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import uk.gov.hmrc.viewmodels.{Content, Html => VmHtml, SummaryList, Text}
-import uk.gov.hmrc.viewmodels.SummaryList.{Action, Key, Row, Value}
-import play.api.libs.functional.syntax._
-import viewModels.Section
 
 import scala.concurrent.Future
 
@@ -62,31 +55,6 @@ class CheckYourAnswersControllerSpec extends SpecBase with JsonMatchers {
       application.stop()
     }
 
-    "must pass correct data to the template" in {
-
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
-      val ua = emptyUserAnswers.set[String](TraderNamePage, "traderName").success.value
-
-      val application = applicationBuilder(userAnswers = Some(ua)).build()
-
-      val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad(mrn).url)
-
-      val result = route(application, request).value
-
-      status(result) mustEqual OK
-
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
-
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-
-      //val sections: Seq[Value] = jsonCaptor.getValue.validate[Seq[Section]].asOpt.value.flatMap(_.rows.map(_.value))
-
-      application.stop()
-    }
-
     "must redirect to Session Expired for a GET if no existing data is found" in {
 
       val application = applicationBuilder(userAnswers = None).build()
@@ -102,24 +70,4 @@ class CheckYourAnswersControllerSpec extends SpecBase with JsonMatchers {
       application.stop()
     }
   }
-}
-
-object CheckYourAnswersControllerSpec {
-
-
-/*  implicit def contentReads(implicit messages: Messages): Reads[Content] = ???
-
-  implicit def keyReads(implicit messages: Messages): Reads[Key] = (
-    (__ \ "content").read[Content] and
-      (__ \ "classes").read[String]
-    )((x, y) =>Key(x, y.split(" ")))
-
-  implicit def valueReads(implicit messages: Messages): Reads[Value] = ???
-  implicit def actionReads(implicit messages: Messages): Reads[Action] = ???
-  implicit def rowReads(implicit messages: Messages): Reads[Row] = ???
-
-  implicit def sectionReads(implicit messages: Messages): Reads[Section] = (
-    (JsPath \ "sectionTitle").readNullable[String] and
-      (JsPath \ "rows").read[Seq[SummaryList.Row]]
-    )(Section.apply _)*/
 }

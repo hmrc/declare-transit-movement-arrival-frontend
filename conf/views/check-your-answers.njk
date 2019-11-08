@@ -37,13 +37,16 @@
 
         <p class="govuk-body">{{ messages("checkYourAnswers.confirmation.paragraph") }}</p>
 
-        {{ govukButton({
-          text: messages("site.confirmAndSend"),
-          href: routes.controllers.CheckYourAnswersController.onPost(mrn).url,
-          preventDoubleClick: true,
-          attributes: {id:"submit"}
-        }) }}
+        <form action="{{ routes.controllers.CheckYourAnswersController.onSubmit.url }}" method="post">
+            {{ csrf() | safe }}
 
+            {{ govukButton({
+              text: messages("site.confirmAndSend"),
+              preventDoubleClick: true,
+              attributes: {id:"submit"}
+            }) }}
+
+         </form>
       </div>
     </div>
   </div>
