@@ -199,3 +199,6 @@ useDifferentService.guidance.1 = Use the
 useDifferentService.link = New Computerised Transit System (NCTS)
 useDifferentService.guidance.2 = if the goods are at an authorised consignee’s location.
 useDifferentService.guidance.3 = We are improving this service. You will be able to do this in future.
+
+arrivalComplete.title = arrivalComplete
+arrivalComplete.heading = arrivalComplete

@@ -60,3 +60,5 @@ GET        /:mrn/changeTraderName                  controllers.TraderNameControl
 POST       /:mrn/changeTraderName                  controllers.TraderNameController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
 
 GET        /:mrn/useDifferentService                       controllers.UseDifferentServiceController.onPageLoad(mrn: MovementReferenceNumber)
+
+GET        /:mrn/arrivalComplete                       controllers.ArrivalCompleteController.onPageLoad(mrn: MovementReferenceNumber)
