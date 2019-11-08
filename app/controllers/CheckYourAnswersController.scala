@@ -49,7 +49,6 @@ class CheckYourAnswersController @Inject()(
         "sections" -> Json.toJson(answers),
         "mrn"    -> mrn
       )
-
       renderer.render("check-your-answers.njk", json).map(Ok(_))
   }
 
@@ -71,7 +70,6 @@ class CheckYourAnswersController @Inject()(
       traderDetails,
       events
     )
-
     sections
   }
 }

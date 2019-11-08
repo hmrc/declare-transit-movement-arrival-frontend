@@ -82,7 +82,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with JsonMatchers {
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val sections: Seq[Value] = jsonCaptor.getValue.validate[Seq[Section]].asOpt.value.flatMap(_.rows.map(_.value))
+      //val sections: Seq[Value] = jsonCaptor.getValue.validate[Seq[Section]].asOpt.value.flatMap(_.rows.map(_.value))
 
       application.stop()
     }
@@ -107,7 +107,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with JsonMatchers {
 object CheckYourAnswersControllerSpec {
 
 
-  implicit def contentReads(implicit messages: Messages): Reads[Content] = ???
+/*  implicit def contentReads(implicit messages: Messages): Reads[Content] = ???
 
   implicit def keyReads(implicit messages: Messages): Reads[Key] = (
     (__ \ "content").read[Content] and
@@ -121,5 +121,5 @@ object CheckYourAnswersControllerSpec {
   implicit def sectionReads(implicit messages: Messages): Reads[Section] = (
     (JsPath \ "sectionTitle").readNullable[String] and
       (JsPath \ "rows").read[Seq[SummaryList.Row]]
-    )(Section.apply _)
+    )(Section.apply _)*/
 }
