@@ -1,5 +1,5 @@
 
-# common-transit-convention-trader-arrival-notification-frontend
+# declare-transit-movement-arrival-frontend
 
 This is a placeholder README.md for a new repository
 

@@ -11,9 +11,9 @@ site.no = No
 site.yes = Yes
 site.continue = Save and continue
 site.confirmAndSend = Confirm and send
-site.service_name = common-transit-convention-trader-arrival-notification-frontend
+site.service_name = Common Transit Convention for traders
 site.textarea.char_limit = (Limit is {0} characters)
-site.title.suffix = - common-transit-convention-trader-arrival-notification-frontend - GOV.UK
+site.title.suffix = - Common Transit Convention for traders - GOV.UK
 
 error.title.prefix = Error:
 error.summary.title = There is a problem
@@ -43,9 +43,8 @@ checkYourAnswers.section.events = Events
 checkYourAnswers.confirmation.heading = Now send your arrival notification
 checkYourAnswers.confirmation.paragraph = By sending this notification you are confirming that, to the best of your knowledge, the details you are providing are correct.
 
-
-index.title = common-transit-convention-trader-arrival-notification-frontend
-index.heading = common-transit-convention-trader-arrival-notification-frontend
+index.title = Common Transit Convention for traders
+index.heading = Common Transit Convention for traders
 index.guidance = Welcome to your new frontend. Please see the README file for a guide to getting started.
 
 session_expired.title = For your security, this service has been reset
