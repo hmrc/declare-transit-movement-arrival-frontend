@@ -19,6 +19,8 @@ package models.domain
 import models._
 import play.api.libs.json._
 
+import scala.language.implicitConversions
+
 sealed trait EventDetails
 
 object EventDetails {

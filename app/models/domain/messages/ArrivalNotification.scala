@@ -17,9 +17,12 @@
 package models.domain.messages
 
 import java.time.LocalDate
+
 import models._
 import models.domain.{EnRouteEvent, ProcedureType, Trader}
 import play.api.libs.json._
+
+import scala.language.implicitConversions
 
 sealed trait ArrivalNotification
 
