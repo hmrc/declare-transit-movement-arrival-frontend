@@ -18,11 +18,13 @@ package controllers
 
 import com.google.inject.Inject
 import controllers.actions.{DataRequiredAction, DataRetrievalActionProvider, IdentifierAction}
+import handlers.ErrorHandler
 import models.{MovementReferenceNumber, UserAnswers}
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
+import services.ArrivalNotificationService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 import utils.CheckYourAnswersHelper
@@ -35,6 +37,8 @@ class CheckYourAnswersController @Inject()(
                                             identify: IdentifierAction,
                                             getData: DataRetrievalActionProvider,
                                             requireData: DataRequiredAction,
+                                            service: ArrivalNotificationService,
+                                            errorHandler: ErrorHandler,
                                             val controllerComponents: MessagesControllerComponents,
                                             renderer: Renderer
                                           )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
@@ -45,14 +49,19 @@ class CheckYourAnswersController @Inject()(
 
       val json = Json.obj(
         "sections" -> Json.toJson(answers),
-        "mrn"    -> mrn
+        "mrn" -> mrn
       )
       renderer.render("check-your-answers.njk", json).map(Ok(_))
   }
 
   def onPost(mrn: MovementReferenceNumber): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
-      Future.successful(Redirect(routes.ArrivalCompleteController.onPageLoad(mrn)))
+      service.submit(request.userAnswers) flatMap { result =>
+          result.status match {
+            case OK => Future.successful(Redirect(routes.ArrivalCompleteController.onPageLoad(mrn)))
+            case status => errorHandler.onClientError(request, status)
+          }
+      }
   }
 
   private def createSections(userAnswers: UserAnswers)(implicit messages: Messages): Seq[Section] = {
