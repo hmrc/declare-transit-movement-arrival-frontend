@@ -16,18 +16,19 @@
 
 package services.conversion
 
+import java.time.LocalDate
+
 import base.SpecBase
-import generators.{DomainModelGenerators, Generators, UserAnswersGenerator}
+import generators.DomainModelGenerators
 import models.GoodsLocation.BorderForceOffice
-import models.{IncidentOnRoute, TraderAddress, UserAnswers}
 import models.domain.messages.NormalNotification
+import models.{IncidentOnRoute, TraderAddress, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import pages.{CustomsSubPlacePage, GoodsLocationPage, IncidentOnRoutePage, MovementReferenceNumberPage, PresentationOfficePage, TraderAddressPage, TraderEoriPage, TraderNamePage}
+import pages._
 
-class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckPropertyChecks
-  with Generators with DomainModelGenerators with UserAnswersGenerator {
+class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckPropertyChecks with DomainModelGenerators {
 
   val service = injector.instanceOf[ArrivalNotificationConversionService]
 
@@ -36,18 +37,23 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
     "constructs an Arrival Notification message from a empty userAnswers" in {
       service.convertToArrivalNotification(emptyUserAnswers) mustEqual(None)
     }
-    "constructs an Arrival Notification message from a userAnswers" in {
-      forAll(arbitrary[NormalNotification], generatorTraderWithEoriAllValues, Gen.alphaNumStr) {
-        case (arbArrivalNotification, trader, subplace) =>
 
-          val arrivalNotification: NormalNotification = arbArrivalNotification.copy(trader = trader).copy(customsSubPlace = Some(subplace))
+    "constructs an Arrival Notification message from userAnswers" in {
+      forAll(arbitrary[NormalNotification], generatorTraderWithEoriAllValues, Gen.alphaNumStr) {
+        case (arbArrivalNotification, trader, subPlace) =>
+
+          val arrivalNotification: NormalNotification = arbArrivalNotification.copy(movementReferenceNumber = mrn.value)
+            .copy(trader = trader)
+            .copy(customsSubPlace = Some(subPlace))
+            .copy(notificationDate = LocalDate.now())
+            .copy(notificationPlace = "") //TODO
 
           val userAnswers: UserAnswers =
             emptyUserAnswers
               .set(MovementReferenceNumberPage, arrivalNotification.movementReferenceNumber).success.value
               .set(GoodsLocationPage, BorderForceOffice).success.value
               .set(PresentationOfficePage, arrivalNotification.presentationOffice).success.value
-              .set(CustomsSubPlacePage, subplace).success.value
+              .set(CustomsSubPlacePage, subPlace).success.value
               .set(TraderNamePage, trader.name.value).success.value
               .set(TraderAddressPage, TraderAddress(
                 buildingAndStreet = trader.streetAndNumber.value,

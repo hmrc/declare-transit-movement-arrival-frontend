@@ -16,14 +16,9 @@
 
 package services
 
-import java.time.LocalDate
-
 import connectors.DestinationConnector
 import javax.inject.Inject
 import models.UserAnswers
-import models.domain.messages.{ArrivalNotification, NormalNotification}
-import models.domain.{Trader, TraderWithEori}
-import pages._
 import services.conversion.ArrivalNotificationConversionService
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
@@ -37,7 +32,6 @@ class ArrivalNotificationService @Inject()(converterService: ArrivalNotification
       case Some(notification) => connector.submitArrivalNotification(notification).map(Some(_))
       case None => Future.successful(None)
     }
-
   }
 
 }

@@ -42,7 +42,6 @@ class ArrivalNotificationConversionService {
 
   private def traderAddress(userAnswers: UserAnswers): Trader = {
     val traderAddress = userAnswers.get(TraderAddressPage)
-
     TraderWithEori(
       userAnswers.get(TraderEoriPage).getOrElse(""),
       userAnswers.get(TraderNamePage),
