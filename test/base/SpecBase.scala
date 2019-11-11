@@ -42,7 +42,7 @@ trait SpecBase extends FreeSpec with MustMatchers with GuiceOneAppPerSuite with 
 
   val mrn = MovementReferenceNumber("id")
 
-  def emptyUserAnswers = UserAnswers(mrn, Json.obj())
+  val emptyUserAnswers = UserAnswers(mrn, Json.obj())
 
   def injector: Injector = app.injector
 

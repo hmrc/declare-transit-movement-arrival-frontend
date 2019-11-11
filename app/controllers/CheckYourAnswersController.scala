@@ -54,13 +54,16 @@ class CheckYourAnswersController @Inject()(
       renderer.render("check-your-answers.njk", json).map(Ok(_))
   }
 
-  def onPost(mrn: MovementReferenceNumber): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onPost(mrn: MovementReferenceNumber): Action[AnyContent] =
+    (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
-      service.submit(request.userAnswers) flatMap { result =>
+      service.submit(request.userAnswers) flatMap {
+        case Some(result) =>
           result.status match {
             case OK => Future.successful(Redirect(routes.ArrivalCompleteController.onPageLoad(mrn)))
             case status => errorHandler.onClientError(request, status)
           }
+        case None => ???
       }
   }
 

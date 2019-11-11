@@ -24,18 +24,8 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 
 trait DomainModelGenerators {
-
-  def datesBetween(min: LocalDate, max: LocalDate): Gen[LocalDate] = {
-
-    def toMillis(date: LocalDate): Long =
-      date.atStartOfDay.atZone(ZoneOffset.UTC).toInstant.toEpochMilli
-
-    Gen.choose(toMillis(min), toMillis(max)).map {
-      millis =>
-        Instant.ofEpochMilli(millis).atOffset(ZoneOffset.UTC).toLocalDate
-    }
-  }
-
+  self: Generators =>
+  
   implicit lazy val arbitraryProcedureType: Arbitrary[ProcedureType] =
     Arbitrary {
       Gen.oneOf(ProcedureType.Normal, ProcedureType.Simplified)
@@ -172,4 +162,15 @@ trait DomainModelGenerators {
 
       Gen.oneOf(arbitrary[NormalNotification], arbitrary[SimplifiedNotification])
     }
+
+  lazy val generatorTraderWithEoriAllValues: Gen[TraderWithEori] =
+    for {
+      eori            <- arbitrary[String]
+      name            <- arbitrary[String]
+      streetAndNumber <- arbitrary[String]
+      postCode        <- arbitrary[String]
+      city            <- arbitrary[String]
+      countryCode     <- arbitrary[String]
+    } yield TraderWithEori(eori, Some(name), Some(streetAndNumber), Some(postCode), Some(city), Some(countryCode))
+
 }

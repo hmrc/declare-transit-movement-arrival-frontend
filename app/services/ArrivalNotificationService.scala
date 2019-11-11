@@ -24,36 +24,20 @@ import models.UserAnswers
 import models.domain.messages.{ArrivalNotification, NormalNotification}
 import models.domain.{Trader, TraderWithEori}
 import pages._
+import services.conversion.ArrivalNotificationConversionService
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class ArrivalNotificationService @Inject()(connector: DestinationConnector) {
+class ArrivalNotificationService @Inject()(converterService: ArrivalNotificationConversionService,
+                                           connector: DestinationConnector) {
 
-  def submit(userAnswers: UserAnswers)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = {
-    connector.submitArrivalNotification(convertToArrivalNotification(userAnswers))
+  def submit(userAnswers: UserAnswers)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[HttpResponse]] = {
+    converterService.convertToArrivalNotification(userAnswers) match {
+      case Some(notification) => connector.submitArrivalNotification(notification).map(Some(_))
+      case None => Future.successful(None)
+    }
+
   }
 
-  def convertToArrivalNotification(userAnswers: UserAnswers): ArrivalNotification = {
-    NormalNotification(userAnswers.id.value,
-      "", //TODO notificationPlace
-      LocalDate.now(),
-      userAnswers.get(CustomsSubPlacePage),
-      traderAddress(userAnswers),
-      userAnswers.get(PresentationOfficePage).getOrElse(""),
-      Seq.empty
-    )
-  }
-
-  private def traderAddress(userAnswers: UserAnswers): Trader = {
-    val traderAddress = userAnswers.get(TraderAddressPage)
-
-    TraderWithEori(userAnswers.get(TraderEoriPage).getOrElse(""),
-      userAnswers.get(TraderNamePage),
-      traderAddress.map(_.buildingAndStreet),
-      traderAddress.map(_.postcode),
-      traderAddress.map(_.city),
-      Some("GB")
-    )
-  }
 }
