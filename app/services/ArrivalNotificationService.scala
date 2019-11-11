@@ -33,5 +33,4 @@ class ArrivalNotificationService @Inject()(converterService: ArrivalNotification
       case None => Future.successful(None)
     }
   }
-
 }
