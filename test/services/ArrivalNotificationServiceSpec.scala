@@ -21,8 +21,7 @@ import java.time.LocalDate
 import base.SpecBase
 import connectors.DestinationConnector
 import models.domain.TraderWithoutEori
-import models.domain.messages.{ArrivalNotification, NormalNotification}
-import org.mockito.Mockito._
+import models.domain.messages.NormalNotification
 import org.mockito.Matchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
@@ -41,8 +40,11 @@ class ArrivalNotificationServiceSpec extends SpecBase with MockitoSugar {
 
   "ArrivalNotificationService" - {
     "must submit data for valid input " in {
+      val traderWithoutEori = TraderWithoutEori("", "", "", "", "")
+      val normalNotification = NormalNotification(mrn.value, "", LocalDate.now(), None, traderWithoutEori, "", Seq.empty)
+
       when(mockConverterService.convertToArrivalNotification(any()))
-        .thenReturn(Some(NormalNotification(mrn.value, "", LocalDate.now(), None, TraderWithoutEori("", "", "", "", ""), "", Seq.empty)))
+        .thenReturn(Some(normalNotification))
       when(mockDestinationConnector.submitArrivalNotification(any())(any(), any()))
         .thenReturn(Future.successful(HttpResponse(OK)))
 
@@ -55,7 +57,8 @@ class ArrivalNotificationServiceSpec extends SpecBase with MockitoSugar {
 
       val arrivalNotificationService = application.injector.instanceOf[ArrivalNotificationService]
 
-      arrivalNotificationService.submit(emptyUserAnswers).futureValue mustBe Some(HttpResponse(OK))
+      val response = arrivalNotificationService.submit(emptyUserAnswers).futureValue.get
+      response.status mustBe OK
     }
 
     "must return None on submission of invalid data" in {
