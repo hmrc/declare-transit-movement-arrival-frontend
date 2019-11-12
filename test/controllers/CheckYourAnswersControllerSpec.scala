@@ -28,7 +28,7 @@ import play.twirl.api.Html
 
 import scala.concurrent.Future
 
-class CheckYourAnswersControllerSpec extends SpecBase with JsonMatchers{
+class CheckYourAnswersControllerSpec extends SpecBase with JsonMatchers {
 
   "Check Your Answers Controller" - {
 
@@ -66,6 +66,21 @@ class CheckYourAnswersControllerSpec extends SpecBase with JsonMatchers{
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
+
+      application.stop()
+    }
+
+    "must redirect to 'Arrival Complete' page on valid submission" in {
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+      val request = FakeRequest(POST, routes.CheckYourAnswersController.onPost(mrn).url)
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+
+      redirectLocation(result).value mustEqual routes.ArrivalCompleteController.onPageLoad(mrn).url
 
       application.stop()
     }

@@ -24,10 +24,11 @@ import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
-import uk.gov.hmrc.viewmodels.{NunjucksSupport, SummaryList}
+import uk.gov.hmrc.viewmodels.NunjucksSupport
 import utils.CheckYourAnswersHelper
+import viewModels.Section
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class CheckYourAnswersController @Inject()(
                                             override val messagesApi: MessagesApi,
@@ -40,27 +41,36 @@ class CheckYourAnswersController @Inject()(
 
   def onPageLoad(mrn: MovementReferenceNumber): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
+      val answers: Seq[Section] = createSections(request.userAnswers)
 
-      val answers: scala.Seq[SummaryList.Row] = getSections(request.userAnswers)
-
-      renderer.render(
-        "check-your-answers.njk",
-        Json.obj("list" -> answers)
-      ).map(Ok(_))
+      val json = Json.obj(
+        "sections" -> Json.toJson(answers),
+        "mrn"    -> mrn
+      )
+      renderer.render("check-your-answers.njk", json).map(Ok(_))
   }
 
-  private def getSections(userAnswers: UserAnswers)(implicit messages: Messages): Seq[SummaryList.Row] = {
+  def onPost(mrn: MovementReferenceNumber): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+    implicit request =>
+      Future.successful(Redirect(routes.ArrivalCompleteController.onPageLoad(mrn)))
+  }
+
+  private def createSections(userAnswers: UserAnswers)(implicit messages: Messages): Seq[Section] = {
     val helper = new CheckYourAnswersHelper(userAnswers)
 
-    Seq(
-      Some(helper.movementReferenceNumber),
-      helper.goodsLocation,
-      helper.presentationOffice,
-      helper.customsSubPlace,
-      helper.traderName,
-      helper.traderAddress,
-      helper.traderEori,
-      helper.incidentOnRoute
-    ).flatten
+    val mrn = Section(None, Seq(helper.movementReferenceNumber))
+    val goodsLocation = Section(Some(messages("checkYourAnswers.section.goodsLocation")),
+      Seq(helper.goodsLocation, helper.authorisedLocation).flatten)
+    val traderDetails = Section(Some(messages("checkYourAnswers.section.traderDetails")),
+      Seq(helper.traderName, helper.traderAddress, helper.traderEori).flatten)
+    val events = Section(Some(messages("checkYourAnswers.section.events")), Seq(helper.incidentOnRoute).flatten)
+
+    val sections: Seq[Section] = Seq(
+      mrn,
+      goodsLocation,
+      traderDetails,
+      events
+    )
+    sections
   }
 }

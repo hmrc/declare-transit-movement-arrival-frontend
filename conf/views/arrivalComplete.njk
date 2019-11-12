@@ -1,5 +1,5 @@
 {% extends "includes/layout.njk" %}
-
+{% from "govuk/components/button/macro.njk"        import govukButton %}
 {% from "macros/title.njk"                         import title %}
 
 {% block pageTitle %}
@@ -12,9 +12,24 @@
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-two-thirds">
 
-        <h1 class="govuk-heading-xl">
-          {{ messages("arrivalComplete.heading") }}
-        </h1>
+        <div class="govuk-panel govuk-panel--confirmation">
+          <h1 class="govuk-panel__title">
+            {{ messages("arrivalComplete.heading") }}
+          </h1>
+
+          <div class="govuk-panel__body">
+            Your reference number<br><strong>HDJ2123F</strong>
+          </div>
+
+        </div>
+
+         <p class="govuk-body"> {{ messages("arrivalComplete.confirmationEmail") }}</p>
+
+         {{ govukButton({
+                   text: messages("site.acceptAndSend"),
+                   preventDoubleClick: true,
+                   attributes: {id:"submit"}
+          }) }}
 
       </div>
     </div>
