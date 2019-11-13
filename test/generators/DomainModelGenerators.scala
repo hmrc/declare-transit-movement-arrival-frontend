@@ -150,7 +150,7 @@ trait DomainModelGenerators {
         trader             <- arbitrary[Trader]
         presentationOffice <- arbitrary[String]
         events             <- arbitrary[Seq[EnRouteEvent]]
-      } yield NormalNotification(mrn, place, date, subPlace, trader, presentationOffice, events)
+      } yield NormalNotification(mrn, place, date, subPlace, trader, presentationOffice, Nil) //TODO replace with events when we implement
     }
 
   implicit lazy val arbitrarySimplifiedNotification: Arbitrary[SimplifiedNotification] =
@@ -172,4 +172,14 @@ trait DomainModelGenerators {
 
       Gen.oneOf(arbitrary[NormalNotification], arbitrary[SimplifiedNotification])
     }
+
+  lazy val generatorTraderWithEoriAllValues: Gen[TraderWithEori] =
+    for {
+      eori            <- arbitrary[String]
+      name            <- arbitrary[String]
+      streetAndNumber <- arbitrary[String]
+      postCode        <- arbitrary[String]
+      city            <- arbitrary[String]
+    } yield TraderWithEori(eori, Some(name), Some(streetAndNumber), Some(postCode), Some(city), Some("GB"))
+
 }

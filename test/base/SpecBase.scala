@@ -20,8 +20,8 @@ import config.FrontendAppConfig
 import controllers.actions._
 import models.{MovementReferenceNumber, UserAnswers}
 import org.mockito.Mockito
-import org.scalatest.{BeforeAndAfterEach, FreeSpec, MustMatchers, OptionValues, TryValues}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
+import org.scalatest._
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice._
 import play.api.i18n.{Messages, MessagesApi}
@@ -42,7 +42,7 @@ trait SpecBase extends FreeSpec with MustMatchers with GuiceOneAppPerSuite with 
 
   val mrn = MovementReferenceNumber("id")
 
-  def emptyUserAnswers = UserAnswers(mrn, Json.obj())
+  val emptyUserAnswers = UserAnswers(mrn, Json.obj())
 
   def injector: Injector = app.injector
 

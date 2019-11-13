@@ -14,21 +14,23 @@
  * limitations under the License.
  */
 
-package connectors
+package services
 
-import config.FrontendAppConfig
+import connectors.DestinationConnector
 import javax.inject.Inject
-import models.domain.messages.ArrivalNotification
+import models.UserAnswers
+import services.conversion.ArrivalNotificationConversionService
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class DestinationConnector @Inject()(val config: FrontendAppConfig, val http: HttpClient) {
+class ArrivalNotificationService @Inject()(converterService: ArrivalNotificationConversionService,
+                                           connector: DestinationConnector) {
 
-  def submitArrivalNotification(model: ArrivalNotification)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = {
-
-    val serviceUrl = s"${config.destinationUrl}/transit-movements-trader-at-destination/arrival-notification"
-    http.POST[ArrivalNotification, HttpResponse](serviceUrl, model)
+  def submit(userAnswers: UserAnswers)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[HttpResponse]] = {
+    converterService.convertToArrivalNotification(userAnswers) match {
+      case Some(notification) => connector.submitArrivalNotification(notification).map(Some(_))
+      case None => Future.successful(None)
+    }
   }
 }

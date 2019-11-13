@@ -21,14 +21,19 @@ import matchers.JsonMatchers
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
+import play.api.inject.bind
 import play.api.libs.json.JsObject
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
+import services.ArrivalNotificationService
+import uk.gov.hmrc.http.HttpResponse
 
 import scala.concurrent.Future
 
 class CheckYourAnswersControllerSpec extends SpecBase with JsonMatchers {
+
+  val mockService: ArrivalNotificationService = mock[ArrivalNotificationService]
 
   "Check Your Answers Controller" - {
 
@@ -70,9 +75,13 @@ class CheckYourAnswersControllerSpec extends SpecBase with JsonMatchers {
       application.stop()
     }
 
-    "must redirect to 'Arrival Complete' page on valid submission" in {
+    "must redirect to 'Application Complete' page on valid submission" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .overrides(bind[ArrivalNotificationService].toInstance(mockService))
+        .build()
+
+      when(mockService.submit(any())(any(), any())).thenReturn(Future.successful(Some(HttpResponse(OK))))
 
       val request = FakeRequest(POST, routes.CheckYourAnswersController.onPost(mrn).url)
 
@@ -81,6 +90,48 @@ class CheckYourAnswersControllerSpec extends SpecBase with JsonMatchers {
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual routes.ArrivalCompleteController.onPageLoad(mrn).url
+
+      application.stop()
+    }
+
+    "must fail with bad request error on invalid submission" in {
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .overrides(bind[ArrivalNotificationService].toInstance(mockService))
+        .build()
+
+      when(mockRenderer.render(any(), any())(any())).thenReturn(Future.successful(Html("")))
+      when(mockService.submit(any())(any(), any())).thenReturn(Future.successful(Some(HttpResponse(BAD_REQUEST))))
+
+      val request = FakeRequest(POST, routes.CheckYourAnswersController.onPost(mrn).url)
+
+      val result = route(application, request).value
+
+      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+
+      status(result) mustEqual BAD_REQUEST
+
+      verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
+
+      templateCaptor.getValue mustEqual "badRequest.njk"
+
+      application.stop()
+    }
+
+    "must fail with internal server error when service fails" in {
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .overrides(bind[ArrivalNotificationService].toInstance(mockService))
+        .build()
+
+      when(mockRenderer.render(any(), any())(any())).thenReturn(Future.successful(Html("")))
+      when(mockService.submit(any())(any(), any())).thenReturn(Future.successful(None))
+
+      val request = FakeRequest(POST, routes.CheckYourAnswersController.onPost(mrn).url)
+
+      val result = route(application, request).value
+
+      status(result) mustEqual BAD_REQUEST
 
       application.stop()
     }
