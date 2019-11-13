@@ -34,10 +34,6 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
 
   "ArrivalNotificationConversionService" - {
 
-    "must return 'None' from empty userAnswers" in {
-      service.convertToArrivalNotification(emptyUserAnswers) mustEqual(None)
-    }
-
     "must return 'Normal Arrival Notification' message from valid userAnswers" in {
       forAll(arbitrary[NormalNotification], generatorTraderWithEoriAllValues, Gen.alphaNumStr) {
         case (arbArrivalNotification, trader, subPlace) =>
@@ -65,6 +61,10 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
 
           service.convertToArrivalNotification(userAnswers).value mustEqual arrivalNotification
       }
+    }
+
+    "must return 'None' from empty userAnswers" in {
+      service.convertToArrivalNotification(emptyUserAnswers) mustEqual(None)
     }
 
     "must return 'None' from a partly filled userAnswers" in {

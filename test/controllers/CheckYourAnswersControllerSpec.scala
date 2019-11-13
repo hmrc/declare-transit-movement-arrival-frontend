@@ -125,11 +125,13 @@ class CheckYourAnswersControllerSpec extends SpecBase with JsonMatchers {
         .build()
 
       when(mockRenderer.render(any(), any())(any())).thenReturn(Future.successful(Html("")))
-      when(mockService.submit(any())(any(), any())).thenReturn(Future.failed(new Exception("some exception")))
+      when(mockService.submit(any())(any(), any())).thenReturn(Future.successful(None))
 
       val request = FakeRequest(POST, routes.CheckYourAnswersController.onPost(mrn).url)
 
-      intercept[Exception](route(application, request).value.futureValue)
+      val result = route(application, request).value
+
+      status(result) mustEqual BAD_REQUEST
 
       application.stop()
     }

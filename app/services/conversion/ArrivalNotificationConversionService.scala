@@ -25,6 +25,8 @@ import pages.{CustomsSubPlacePage, PresentationOfficePage, TraderAddressPage, Tr
 
 class ArrivalNotificationConversionService {
 
+  val countryCode_GB = "GB"
+
   def convertToArrivalNotification(userAnswers: UserAnswers): Option[ArrivalNotification] = {
 
     for {
@@ -46,6 +48,7 @@ class ArrivalNotificationConversionService {
     }
   }
 
+
   private def traderAddress(traderAddress: TraderAddress, traderEori: String,
                             traderName: String): Trader =
     TraderWithEori(
@@ -54,5 +57,5 @@ class ArrivalNotificationConversionService {
       Some(traderAddress.buildingAndStreet),
       Some(traderAddress.postcode),
       Some(traderAddress.city),
-      Some("GB"))
+      Some(countryCode_GB))
 }
