@@ -18,7 +18,7 @@ package services.conversion
 
 import java.time.LocalDate
 
-import models.UserAnswers
+import models.{TraderAddress, UserAnswers}
 import models.domain.{Trader, TraderWithEori}
 import models.domain.messages.{ArrivalNotification, NormalNotification}
 import pages.{CustomsSubPlacePage, PresentationOfficePage, TraderAddressPage, TraderEoriPage, TraderNamePage}
@@ -26,30 +26,33 @@ import pages.{CustomsSubPlacePage, PresentationOfficePage, TraderAddressPage, Tr
 class ArrivalNotificationConversionService {
 
   def convertToArrivalNotification(userAnswers: UserAnswers): Option[ArrivalNotification] = {
-    userAnswers.get(PresentationOfficePage) map {
-      presentationOffice =>
-        NormalNotification(
-          userAnswers.id.value,
-          "", //TODO notificationPlace
-          LocalDate.now(),
-          userAnswers.get(CustomsSubPlacePage),
-          traderAddress(userAnswers),
-          presentationOffice,
-          Seq.empty
-        )
+
+    for {
+      presentationOffice <- userAnswers.get(PresentationOfficePage)
+      customsSubPlace <- userAnswers.get(CustomsSubPlacePage)
+      tradersAddress <- userAnswers.get(TraderAddressPage)
+      traderEori <- userAnswers.get(TraderEoriPage)
+      traderName <- userAnswers.get(TraderNamePage)
+    } yield {
+      NormalNotification(
+        userAnswers.id.value,
+        "", //TODO notificationPlace
+        LocalDate.now(),
+        Some(customsSubPlace),
+        traderAddress(tradersAddress, traderEori, traderName),
+        presentationOffice,
+        Seq.empty //TODO EnRouteEvent conversion
+      )
     }
   }
 
-  private def traderAddress(userAnswers: UserAnswers): Trader = {
-    val traderAddress = userAnswers.get(TraderAddressPage)
+  private def traderAddress(traderAddress: TraderAddress, traderEori: String,
+                            traderName: String): Trader =
     TraderWithEori(
-      userAnswers.get(TraderEoriPage).getOrElse(""),
-      userAnswers.get(TraderNamePage),
-      traderAddress.map(_.buildingAndStreet),
-      traderAddress.map(_.postcode),
-      traderAddress.map(_.city),
-      Some("GB")
-    )
-  }
-
+      traderEori,
+      Some(traderName),
+      Some(traderAddress.buildingAndStreet),
+      Some(traderAddress.postcode),
+      Some(traderAddress.city),
+      Some("GB"))
 }

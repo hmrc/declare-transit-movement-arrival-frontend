@@ -28,7 +28,7 @@ class DestinationConnector @Inject()(val config: FrontendAppConfig, val http: Ht
 
   def submitArrivalNotification(model: ArrivalNotification)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = {
 
-    val serviceUrl = s"${config.destinationUrl}/common-transit-convention-trader-at-destination/arrival-notification"
+    val serviceUrl = s"${config.destinationUrl}/transit-movements-trader-at-destination/arrival-notification"
     http.POST[ArrivalNotification, HttpResponse](serviceUrl, model)
   }
 }

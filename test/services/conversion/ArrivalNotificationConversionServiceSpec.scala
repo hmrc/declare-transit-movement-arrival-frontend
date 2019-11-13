@@ -32,13 +32,13 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
 
   val service = injector.instanceOf[ArrivalNotificationConversionService]
 
-  "convertToArrivalNotification" - {
+  "ArrivalNotificationConversionService" - {
 
-    "constructs an Arrival Notification message from a empty userAnswers" in {
+    "must return 'None' from empty userAnswers" in {
       service.convertToArrivalNotification(emptyUserAnswers) mustEqual(None)
     }
 
-    "constructs an Arrival Notification message from userAnswers" in {
+    "must return 'Normal Arrival Notification' message from valid userAnswers" in {
       forAll(arbitrary[NormalNotification], generatorTraderWithEoriAllValues, Gen.alphaNumStr) {
         case (arbArrivalNotification, trader, subPlace) =>
 
@@ -64,6 +64,20 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
               .set(IncidentOnRoutePage, IncidentOnRoute.No).success.value
 
           service.convertToArrivalNotification(userAnswers).value mustEqual arrivalNotification
+      }
+    }
+
+    "must return 'None' from a partly filled userAnswers" in {
+      forAll(arbitrary[NormalNotification], generatorTraderWithEoriAllValues) {
+        case (arrivalNotification, trader) =>
+
+        val userAnswers: UserAnswers =
+          emptyUserAnswers
+            .set(MovementReferenceNumberPage, arrivalNotification.movementReferenceNumber).success.value
+            .set(TraderEoriPage, trader.eori).success.value
+            .set(IncidentOnRoutePage, IncidentOnRoute.No).success.value
+
+        service.convertToArrivalNotification(userAnswers) mustEqual(None)
       }
     }
   }
