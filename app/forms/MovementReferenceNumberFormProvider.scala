@@ -25,8 +25,6 @@ class MovementReferenceNumberFormProvider @Inject() extends Mappings {
 
   def apply(): Form[MovementReferenceNumber] =
     Form(
-      "value" -> text("movementReferenceNumber.error.required")
-        .verifying(maxLength(21, "movementReferenceNumber.error.length"))
-        .transform(MovementReferenceNumber(_), (_: MovementReferenceNumber).value)
+      "value" -> mrn("movementReferenceNumber.error.required", "movementReferenceNumber.error.invalid")
     )
 }

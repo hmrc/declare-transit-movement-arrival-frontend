@@ -149,7 +149,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messag
 
   def movementReferenceNumber: Row = Row(
     key     = Key(msg"movementReferenceNumber.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-    value   = Value(lit"${mrn.value}")
+    value   = Value(lit"${mrn.toString}")
   )
 
   private def yesOrNo(answer: Boolean): Content =

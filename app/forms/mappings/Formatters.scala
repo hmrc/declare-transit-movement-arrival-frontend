@@ -18,7 +18,7 @@ package forms.mappings
 
 import play.api.data.FormError
 import play.api.data.format.Formatter
-import models.Enumerable
+import models.{Enumerable, MovementReferenceNumber}
 
 import scala.util.control.Exception.nonFatalCatch
 
@@ -92,4 +92,20 @@ trait Formatters {
       override def unbind(key: String, value: A): Map[String, String] =
         baseFormatter.unbind(key, value.toString)
     }
+
+  private[mappings] def mrnFormatter(requiredKey: String, invalidKey: String): Formatter[MovementReferenceNumber] =
+    new Formatter[MovementReferenceNumber] {
+
+      override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], MovementReferenceNumber] =
+        stringFormatter(requiredKey)
+          .bind(key, data)
+          .right.flatMap {
+            str =>
+              MovementReferenceNumber(str).map(Right.apply).getOrElse(Left(Seq(FormError(key, invalidKey))))
+          }
+
+      override def unbind(key: String, value: MovementReferenceNumber): Map[String, String] =
+        Map(key -> value.toString)
+    }
+
 }

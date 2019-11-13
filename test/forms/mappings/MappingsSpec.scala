@@ -16,9 +16,12 @@
 
 package forms.mappings
 
+import generators.ModelGenerators
+import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.{FreeSpec, MustMatchers, OptionValues}
 import play.api.data.{Form, FormError}
-import models.Enumerable
+import models.{Enumerable, MovementReferenceNumber}
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
 object MappingsSpec {
 
@@ -35,7 +38,7 @@ object MappingsSpec {
   }
 }
 
-class MappingsSpec extends FreeSpec with MustMatchers with OptionValues with Mappings {
+class MappingsSpec extends FreeSpec with MustMatchers with OptionValues with Mappings with ScalaCheckPropertyChecks with ModelGenerators {
 
   import MappingsSpec._
 
@@ -158,6 +161,36 @@ class MappingsSpec extends FreeSpec with MustMatchers with OptionValues with Map
     "must not bind an empty map" in {
       val result = testForm.bind(Map.empty[String, String])
       result.errors must contain(FormError("value", "error.required"))
+    }
+  }
+
+  "mrn" - {
+
+    val testForm = Form(
+      "value" -> mrn("error.required", "error.invalid")
+    )
+
+    "must bind valid MRNs" in {
+
+      forAll(arbitrary[MovementReferenceNumber]) {
+        mrn =>
+
+          val result = testForm.bind(Map("value" -> mrn.toString))
+          result.get mustEqual mrn
+      }
+    }
+
+    "must not bind invalid MRNs" in {
+
+      forAll(arbitrary[String]) {
+        value =>
+
+          whenever (value != "" && MovementReferenceNumber(value).isEmpty) {
+
+            val result = testForm.bind(Map("value" -> value))
+            result.errors must contain(FormError("value", "error.invalid"))
+          }
+      }
     }
   }
 }

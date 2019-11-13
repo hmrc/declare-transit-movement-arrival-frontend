@@ -88,7 +88,7 @@ class MovementReferenceNumberControllerSpec extends SpecBase with MockitoSugar w
 
       val request =
         FakeRequest(POST, movementReferenceNumberRoute)
-          .withFormUrlEncodedBody(("value", "answer"))
+          .withFormUrlEncodedBody(("value", "99IT9876AB88901209"))
 
       val result = route(application, request).value
 

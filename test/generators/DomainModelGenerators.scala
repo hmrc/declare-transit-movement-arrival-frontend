@@ -16,11 +16,11 @@
 
 package generators
 
-import java.time.{Instant, LocalDate, ZoneOffset}
+import java.time.LocalDate
 
 import models.MovementReferenceNumber
-import models.domain.messages.{ArrivalNotification, NormalNotification, SimplifiedNotification}
 import models.domain._
+import models.domain.messages.{ArrivalNotification, NormalNotification, SimplifiedNotification}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 
