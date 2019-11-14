@@ -41,7 +41,7 @@ class ArrivalNotificationServiceSpec extends SpecBase with MockitoSugar {
   "ArrivalNotificationService" - {
     "must submit data for valid input " in {
       val traderWithoutEori = TraderWithoutEori("", "", "", "", "")
-      val normalNotification = NormalNotification(mrn.value, "", LocalDate.now(), None, traderWithoutEori, "", Seq.empty)
+      val normalNotification = NormalNotification(mrn.toString, "", LocalDate.now(), None, traderWithoutEori, "", Seq.empty)
 
       when(mockConverterService.convertToArrivalNotification(any()))
         .thenReturn(Some(normalNotification))
