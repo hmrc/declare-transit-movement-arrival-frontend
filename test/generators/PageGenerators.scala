@@ -21,6 +21,9 @@ import pages._
 
 trait PageGenerators {
 
+  implicit lazy val arbitraryIncidentOnRoutePage: Arbitrary[IncidentOnRoutePage.type] =
+    Arbitrary(IncidentOnRoutePage)
+
   implicit lazy val arbitraryTraderNamePage: Arbitrary[TraderNamePage.type] =
     Arbitrary(TraderNamePage)
 
@@ -29,9 +32,6 @@ trait PageGenerators {
 
   implicit lazy val arbitraryTraderAddressPage: Arbitrary[TraderAddressPage.type] =
     Arbitrary(TraderAddressPage)
-
-  implicit lazy val arbitraryIncidentOnRoutePage: Arbitrary[IncidentOnRoutePage.type] =
-    Arbitrary(IncidentOnRoutePage)
 
   implicit lazy val arbitraryAuthorisedLocationPage: Arbitrary[AuthorisedLocationPage.type] =
     Arbitrary(AuthorisedLocationPage)

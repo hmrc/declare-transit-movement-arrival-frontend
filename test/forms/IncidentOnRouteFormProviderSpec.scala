@@ -16,24 +16,24 @@
 
 package forms
 
-import forms.behaviours.OptionFieldBehaviours
-import models.IncidentOnRoute
+import forms.behaviours.BooleanFieldBehaviours
 import play.api.data.FormError
 
-class IncidentOnRouteFormProviderSpec extends OptionFieldBehaviours {
+class IncidentOnRouteFormProviderSpec extends BooleanFieldBehaviours {
+
+  val requiredKey = "incidentOnRoute.error.required"
+  val invalidKey = "error.boolean"
 
   val form = new IncidentOnRouteFormProvider()()
 
   ".value" - {
 
     val fieldName = "value"
-    val requiredKey = "incidentOnRoute.error.required"
 
-    behave like optionsField[IncidentOnRoute](
+    behave like booleanField(
       form,
       fieldName,
-      validValues  = IncidentOnRoute.values,
-      invalidError = FormError(fieldName, "error.invalid")
+      invalidError = FormError(fieldName, invalidKey)
     )
 
     behave like mandatoryField(

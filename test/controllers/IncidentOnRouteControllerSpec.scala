@@ -19,7 +19,7 @@ package controllers
 import base.SpecBase
 import forms.IncidentOnRouteFormProvider
 import matchers.JsonMatchers
-import models.{NormalMode, IncidentOnRoute, UserAnswers}
+import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
@@ -33,7 +33,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import repositories.SessionRepository
-import uk.gov.hmrc.viewmodels.NunjucksSupport
+import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.Future
 
@@ -41,10 +41,10 @@ class IncidentOnRouteControllerSpec extends SpecBase with MockitoSugar with Nunj
 
   def onwardRoute = Call("GET", "/foo")
 
-  lazy val incidentOnRouteRoute = routes.IncidentOnRouteController.onPageLoad(mrn, NormalMode).url
-
   val formProvider = new IncidentOnRouteFormProvider()
   val form = formProvider()
+
+  lazy val incidentOnRouteRoute = routes.IncidentOnRouteController.onPageLoad(mrn, NormalMode).url
 
   "IncidentOnRoute Controller" - {
 
@@ -68,7 +68,7 @@ class IncidentOnRouteControllerSpec extends SpecBase with MockitoSugar with Nunj
         "form"   -> form,
         "mode"   -> NormalMode,
         "mrn"    -> mrn,
-        "radios" -> IncidentOnRoute.radios(form)
+        "radios" -> Radios.yesNo(form("value"))
       )
 
       templateCaptor.getValue mustEqual "incidentOnRoute.njk"
@@ -82,7 +82,7 @@ class IncidentOnRouteControllerSpec extends SpecBase with MockitoSugar with Nunj
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(mrn).set(IncidentOnRoutePage, IncidentOnRoute.values.head).success.value
+      val userAnswers = UserAnswers(mrn).set(IncidentOnRoutePage, true).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, incidentOnRouteRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -94,13 +94,13 @@ class IncidentOnRouteControllerSpec extends SpecBase with MockitoSugar with Nunj
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = form.bind(Map("value" -> IncidentOnRoute.values.head.toString))
+      val filledForm = form.bind(Map("value" -> "true"))
 
       val expectedJson = Json.obj(
         "form"   -> filledForm,
         "mode"   -> NormalMode,
         "mrn"    -> mrn,
-        "radios" -> IncidentOnRoute.radios(filledForm)
+        "radios" -> Radios.yesNo(filledForm("value"))
       )
 
       templateCaptor.getValue mustEqual "incidentOnRoute.njk"
@@ -125,7 +125,7 @@ class IncidentOnRouteControllerSpec extends SpecBase with MockitoSugar with Nunj
 
       val request =
         FakeRequest(POST, incidentOnRouteRoute)
-          .withFormUrlEncodedBody(("value", IncidentOnRoute.values.head.toString))
+          .withFormUrlEncodedBody(("value", "true"))
 
       val result = route(application, request).value
 
@@ -142,8 +142,8 @@ class IncidentOnRouteControllerSpec extends SpecBase with MockitoSugar with Nunj
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(POST, incidentOnRouteRoute).withFormUrlEncodedBody(("value", "invalid value"))
-      val boundForm = form.bind(Map("value" -> "invalid value"))
+      val request = FakeRequest(POST, incidentOnRouteRoute).withFormUrlEncodedBody(("value", ""))
+      val boundForm = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -157,7 +157,7 @@ class IncidentOnRouteControllerSpec extends SpecBase with MockitoSugar with Nunj
         "form"   -> boundForm,
         "mode"   -> NormalMode,
         "mrn"    -> mrn,
-        "radios" -> IncidentOnRoute.radios(boundForm)
+        "radios" -> Radios.yesNo(boundForm("value"))
       )
 
       templateCaptor.getValue mustEqual "incidentOnRoute.njk"
@@ -175,6 +175,7 @@ class IncidentOnRouteControllerSpec extends SpecBase with MockitoSugar with Nunj
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
+
       redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
 
       application.stop()
@@ -186,7 +187,7 @@ class IncidentOnRouteControllerSpec extends SpecBase with MockitoSugar with Nunj
 
       val request =
         FakeRequest(POST, incidentOnRouteRoute)
-          .withFormUrlEncodedBody(("value", IncidentOnRoute.values.head.toString))
+          .withFormUrlEncodedBody(("value", "true"))
 
       val result = route(application, request).value
 

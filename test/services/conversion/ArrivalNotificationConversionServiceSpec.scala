@@ -22,7 +22,7 @@ import base.SpecBase
 import generators.DomainModelGenerators
 import models.GoodsLocation.BorderForceOffice
 import models.domain.messages.NormalNotification
-import models.{IncidentOnRoute, TraderAddress, UserAnswers}
+import models.{TraderAddress, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -57,7 +57,7 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
                 postcode = trader.postCode.value)
               ).success.value
               .set(TraderEoriPage, trader.eori).success.value
-              .set(IncidentOnRoutePage, IncidentOnRoute.No).success.value
+              .set(IncidentOnRoutePage, false).success.value
 
           service.convertToArrivalNotification(userAnswers).value mustEqual arrivalNotification
       }
@@ -75,7 +75,7 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
           emptyUserAnswers
             .set(MovementReferenceNumberPage, arrivalNotification.movementReferenceNumber).success.value
             .set(TraderEoriPage, trader.eori).success.value
-            .set(IncidentOnRoutePage, IncidentOnRoute.No).success.value
+            .set(IncidentOnRoutePage, false).success.value
 
         service.convertToArrivalNotification(userAnswers) mustEqual(None)
       }

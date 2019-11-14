@@ -24,6 +24,14 @@ import play.api.libs.json.{JsValue, Json}
 
 trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
 
+  implicit lazy val arbitraryIncidentOnRouteUserAnswersEntry: Arbitrary[(IncidentOnRoutePage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[IncidentOnRoutePage.type]
+        value <- arbitrary[Boolean].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
   implicit lazy val arbitraryTraderNameUserAnswersEntry: Arbitrary[(TraderNamePage.type, JsValue)] =
     Arbitrary {
       for {
@@ -45,14 +53,6 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       for {
         page  <- arbitrary[TraderAddressPage.type]
         value <- arbitrary[TraderAddress].map(Json.toJson(_))
-      } yield (page, value)
-    }
-
-  implicit lazy val arbitraryIncidentOnRouteUserAnswersEntry: Arbitrary[(IncidentOnRoutePage.type, JsValue)] =
-    Arbitrary {
-      for {
-        page  <- arbitrary[IncidentOnRoutePage.type]
-        value <- arbitrary[IncidentOnRoute].map(Json.toJson(_))
       } yield (page, value)
     }
 

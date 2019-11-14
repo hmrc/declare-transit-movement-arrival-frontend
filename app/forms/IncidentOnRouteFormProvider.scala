@@ -20,12 +20,11 @@ import javax.inject.Inject
 
 import forms.mappings.Mappings
 import play.api.data.Form
-import models.IncidentOnRoute
 
 class IncidentOnRouteFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[IncidentOnRoute] =
+  def apply(): Form[Boolean] =
     Form(
-      "value" -> enumerable[IncidentOnRoute]("incidentOnRoute.error.required")
+      "value" -> boolean("incidentOnRoute.error.required")
     )
 }
