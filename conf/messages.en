@@ -142,7 +142,7 @@ movementReferenceNumber.title = What is the Movement Reference Number (MRN)?
 movementReferenceNumber.heading = What is the Movement Reference Number (MRN)?
 movementReferenceNumber.checkYourAnswersLabel = Movement Reference Number
 movementReferenceNumber.error.required = Enter the Movement Reference Number
-movementReferenceNumber.error.length = Movement Reference Number must be 21 characters or less
+movementReferenceNumber.error.invalid = Enter a valid Movement Reference Number
 
 goodsLocation.title = Where are the goods?
 goodsLocation.heading = Where are the goods?

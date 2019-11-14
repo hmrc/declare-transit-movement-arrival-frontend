@@ -40,7 +40,7 @@ trait SpecBase extends FreeSpec with MustMatchers with GuiceOneAppPerSuite with 
     Mockito.reset(mockRenderer)
   }
 
-  val mrn = MovementReferenceNumber("id")
+  val mrn = MovementReferenceNumber("19", "GB", "1234567890123")
 
   val emptyUserAnswers = UserAnswers(mrn, Json.obj())
 
