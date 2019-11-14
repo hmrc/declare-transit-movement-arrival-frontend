@@ -38,7 +38,7 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
       forAll(arbitrary[NormalNotification], generatorTraderWithEoriAllValues, Gen.alphaNumStr) {
         case (arbArrivalNotification, trader, subPlace) =>
 
-          val arrivalNotification: NormalNotification = arbArrivalNotification.copy(movementReferenceNumber = mrn.value)
+          val arrivalNotification: NormalNotification = arbArrivalNotification.copy(movementReferenceNumber = mrn.toString)
             .copy(trader = trader)
             .copy(customsSubPlace = Some(subPlace))
             .copy(notificationDate = LocalDate.now())

@@ -37,7 +37,7 @@ class ArrivalNotificationConversionService {
       traderName <- userAnswers.get(TraderNamePage)
     } yield {
       NormalNotification(
-        userAnswers.id.value,
+        userAnswers.id.toString,
         "", //TODO notificationPlace
         LocalDate.now(),
         Some(customsSubPlace),
