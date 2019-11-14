@@ -19,7 +19,7 @@ package controllers
 import controllers.actions._
 import forms.IncidentOnRouteFormProvider
 import javax.inject.Inject
-import models.{Mode, MovementReferenceNumber, IncidentOnRoute}
+import models.{Mode, MovementReferenceNumber}
 import navigation.Navigator
 import pages.IncidentOnRoutePage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -28,20 +28,20 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
-import uk.gov.hmrc.viewmodels.NunjucksSupport
+import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class IncidentOnRouteController @Inject()(
-                                       override val messagesApi: MessagesApi,
-                                       sessionRepository: SessionRepository,
-                                       navigator: Navigator,
-                                       identify: IdentifierAction,
-                                       getData: DataRetrievalActionProvider,
-                                       requireData: DataRequiredAction,
-                                       formProvider: IncidentOnRouteFormProvider,
-                                       val controllerComponents: MessagesControllerComponents,
-                                       renderer: Renderer
+    override val messagesApi: MessagesApi,
+    sessionRepository: SessionRepository,
+    navigator: Navigator,
+    identify: IdentifierAction,
+    getData: DataRetrievalActionProvider,
+    requireData: DataRequiredAction,
+    formProvider: IncidentOnRouteFormProvider,
+    val controllerComponents: MessagesControllerComponents,
+    renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
 
   private val form = formProvider()
@@ -58,7 +58,7 @@ class IncidentOnRouteController @Inject()(
         "form"   -> preparedForm,
         "mode"   -> mode,
         "mrn"    -> mrn,
-        "radios"  -> IncidentOnRoute.radios(preparedForm)
+        "radios" -> Radios.yesNo(preparedForm("value"))
       )
 
       renderer.render("incidentOnRoute.njk", json).map(Ok(_))
@@ -74,7 +74,7 @@ class IncidentOnRouteController @Inject()(
             "form"   -> formWithErrors,
             "mode"   -> mode,
             "mrn"    -> mrn,
-            "radios" -> IncidentOnRoute.radios(formWithErrors)
+            "radios" -> Radios.yesNo(formWithErrors("value"))
           )
 
           renderer.render("incidentOnRoute.njk", json).map(BadRequest(_))

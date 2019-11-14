@@ -27,6 +27,21 @@ import uk.gov.hmrc.viewmodels._
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messages) {
 
+  def incidentOnRoute: Option[Row] = userAnswers.get(IncidentOnRoutePage) map {
+    answer =>
+      Row(
+        key     = Key(msg"incidentOnRoute.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(yesOrNo(answer)),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = routes.IncidentOnRouteController.onPageLoad(mrn, CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"incidentOnRoute.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
   def traderName: Option[Row] = userAnswers.get(TraderNamePage) map {
     answer =>
       Row(
@@ -67,21 +82,6 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messag
             content            = msg"site.edit",
             href               = routes.TraderAddressController.onPageLoad(mrn, CheckMode).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"traderAddress.checkYourAnswersLabel"))
-          )
-        )
-      )
-  }
-
-  def incidentOnRoute: Option[Row] = userAnswers.get(IncidentOnRoutePage) map {
-    answer =>
-      Row(
-        key     = Key(msg"incidentOnRoute.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(msg"incidentOnRoute.$answer"),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = routes.IncidentOnRouteController.onPageLoad(mrn, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"incidentOnRoute.checkYourAnswersLabel"))
           )
         )
       )

@@ -31,11 +31,6 @@ trait ModelGenerators {
       } yield TraderAddress(buildingAndStreet, city, postcode)
     }
 
-  implicit lazy val arbitraryIncidentOnRoute: Arbitrary[IncidentOnRoute] =
-    Arbitrary {
-      Gen.oneOf(IncidentOnRoute.values.toSeq)
-    }
-
   implicit lazy val arbitraryGoodsLocation: Arbitrary[GoodsLocation] =
     Arbitrary {
       Gen.oneOf(GoodsLocation.values.toSeq)

@@ -16,17 +16,16 @@
 
 package pages
 
-import models.IncidentOnRoute
 import pages.behaviours.PageBehaviours
 
-class IncidentOnRouteSpec extends PageBehaviours {
+class IncidentOnRoutePageSpec extends PageBehaviours {
 
   "IncidentOnRoutePage" - {
 
-    beRetrievable[IncidentOnRoute](IncidentOnRoutePage)
+    beRetrievable[Boolean](IncidentOnRoutePage)
 
-    beSettable[IncidentOnRoute](IncidentOnRoutePage)
+    beSettable[Boolean](IncidentOnRoutePage)
 
-    beRemovable[IncidentOnRoute](IncidentOnRoutePage)
+    beRemovable[Boolean](IncidentOnRoutePage)
   }
 }

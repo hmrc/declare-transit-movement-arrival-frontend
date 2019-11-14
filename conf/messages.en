@@ -169,13 +169,6 @@ authorisedLocation.checkYourAnswersLabel = Authorised location
 authorisedLocation.error.required = Enter authorised location code
 authorisedLocation.error.length = Authorised location code must be 17 characters or less
 
-incidentOnRoute.title = Has something happened on route?
-incidentOnRoute.heading = Has something happened on route?
-incidentOnRoute.yes = Yes
-incidentOnRoute.no = No
-incidentOnRoute.checkYourAnswersLabel = Has something happened on route?
-incidentOnRoute.error.required = Select incidentOnRoute
-
 traderAddress.title = What is the address of the trader at destination?
 traderAddress.heading = What is the address of the trader at destination?
 traderAddress.buildingAndStreet = Building and street
@@ -212,3 +205,8 @@ arrivalComplete.title = Application Complete
 arrivalComplete.heading = Application Complete
 arrivalComplete.yourReferenceNumber = Your reference number {0}
 arrivalComplete.confirmationEmail = We have sent you a confirmation email.
+
+incidentOnRoute.title = Has something happened on route?
+incidentOnRoute.heading = Has something happened on route?
+incidentOnRoute.checkYourAnswersLabel = Has something happened on route?
+incidentOnRoute.error.required = Select yes if something happened on route

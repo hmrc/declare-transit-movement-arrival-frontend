@@ -14,12 +14,10 @@ echo "POST       /:mrn/changeIncidentOnRoute                  controllers.Incide
 
 echo "Adding messages to conf.messages"
 echo "" >> ../conf/messages.en
-echo "incidentOnRoute.title = Has something happened on route?" >> ../conf/messages.en
-echo "incidentOnRoute.heading = Has something happened on route?" >> ../conf/messages.en
-echo "incidentOnRoute.yes = Yes" >> ../conf/messages.en
-echo "incidentOnRoute.no = No" >> ../conf/messages.en
-echo "incidentOnRoute.checkYourAnswersLabel = Has something happened on route?" >> ../conf/messages.en
-echo "incidentOnRoute.error.required = Select incidentOnRoute" >> ../conf/messages.en
+echo "incidentOnRoute.title = incidentOnRoute" >> ../conf/messages.en
+echo "incidentOnRoute.heading = incidentOnRoute" >> ../conf/messages.en
+echo "incidentOnRoute.checkYourAnswersLabel = incidentOnRoute" >> ../conf/messages.en
+echo "incidentOnRoute.error.required = Select yes if incidentOnRoute" >> ../conf/messages.en
 
 echo "Adding to UserAnswersEntryGenerators"
 awk '/trait UserAnswersEntryGenerators/ {\
@@ -29,7 +27,7 @@ awk '/trait UserAnswersEntryGenerators/ {\
     print "    Arbitrary {";\
     print "      for {";\
     print "        page  <- arbitrary[IncidentOnRoutePage.type]";\
-    print "        value <- arbitrary[IncidentOnRoute].map(Json.toJson(_))";\
+    print "        value <- arbitrary[Boolean].map(Json.toJson(_))";\
     print "      } yield (page, value)";\
     print "    }";\
     next }1' ../test/generators/UserAnswersEntryGenerators.scala > tmp && mv tmp ../test/generators/UserAnswersEntryGenerators.scala
@@ -41,16 +39,6 @@ awk '/trait PageGenerators/ {\
     print "  implicit lazy val arbitraryIncidentOnRoutePage: Arbitrary[IncidentOnRoutePage.type] =";\
     print "    Arbitrary(IncidentOnRoutePage)";\
     next }1' ../test/generators/PageGenerators.scala > tmp && mv tmp ../test/generators/PageGenerators.scala
-
-echo "Adding to ModelGenerators"
-awk '/trait ModelGenerators/ {\
-    print;\
-    print "";\
-    print "  implicit lazy val arbitraryIncidentOnRoute: Arbitrary[IncidentOnRoute] =";\
-    print "    Arbitrary {";\
-    print "      Gen.oneOf(IncidentOnRoute.values.toSeq)";\
-    print "    }";\
-    next }1' ../test/generators/ModelGenerators.scala > tmp && mv tmp ../test/generators/ModelGenerators.scala
 
 echo "Adding to UserAnswersGenerator"
 awk '/val generators/ {\
@@ -66,7 +54,7 @@ awk '/class CheckYourAnswersHelper/ {\
      print "    answer =>";\
      print "      Row(";\
      print "        key     = Key(msg\"incidentOnRoute.checkYourAnswersLabel\", classes = Seq(\"govuk-!-width-one-half\")),";\
-     print "        value   = Value(msg\"incidentOnRoute.$answer\"),";\
+     print "        value   = Value(yesOrNo(answer)),";\
      print "        actions = List(";\
      print "          Action(";\
      print "            content            = msg\"site.edit\",";\

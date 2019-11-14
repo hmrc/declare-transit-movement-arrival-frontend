@@ -16,10 +16,9 @@
 
 package pages
 
-import models.IncidentOnRoute
 import play.api.libs.json.JsPath
 
-case object IncidentOnRoutePage extends QuestionPage[IncidentOnRoute] {
+case object IncidentOnRoutePage extends QuestionPage[Boolean] {
 
   override def path: JsPath = JsPath \ toString
 
