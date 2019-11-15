@@ -243,3 +243,6 @@ sealsChanged.title = Have any of the seals changed?
 sealsChanged.heading = Have any of the seals changed?
 sealsChanged.checkYourAnswersLabel = Have any of the seals changed?
 sealsChanged.error.required = Select yes if any of the seals have changed
+
+checkEventAnswers.title = Check event answers
+checkEventAnswers.heading = Check event answers
