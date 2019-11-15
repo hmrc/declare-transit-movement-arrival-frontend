@@ -210,3 +210,36 @@ incidentOnRoute.title = Has something happened on route?
 incidentOnRoute.heading = Has something happened on route?
 incidentOnRoute.checkYourAnswersLabel = Has something happened on route?
 incidentOnRoute.error.required = Select yes if something happened on route
+
+eventCountry.title = eventCountry
+eventCountry.heading = eventCountry
+eventCountry.checkYourAnswersLabel = eventCountry
+eventCountry.error.required = Enter eventCountry
+eventCountry.error.length = EventCountry must be 2 characters or less
+
+eventPlace.title = eventPlace
+eventPlace.heading = eventPlace
+eventPlace.checkYourAnswersLabel = eventPlace
+eventPlace.error.required = Enter eventPlace
+eventPlace.error.length = EventPlace must be 35 characters or less
+
+eventReported.title = eventReported
+eventReported.heading = eventReported
+eventReported.checkYourAnswersLabel = eventReported
+eventReported.error.required = Select yes if eventReported
+
+incidentInformation.title = incidentInformation
+incidentInformation.heading = incidentInformation
+incidentInformation.checkYourAnswersLabel = incidentInformation
+incidentInformation.error.required = Enter incidentInformation
+incidentInformation.error.length = IncidentInformation must be 350 characters or less
+
+isTranshipment.title = isTranshipment
+isTranshipment.heading = isTranshipment
+isTranshipment.checkYourAnswersLabel = isTranshipment
+isTranshipment.error.required = Select yes if isTranshipment
+
+sealsChanged.title = sealsChanged
+sealsChanged.heading = sealsChanged
+sealsChanged.checkYourAnswersLabel = sealsChanged
+sealsChanged.error.required = Select yes if sealsChanged

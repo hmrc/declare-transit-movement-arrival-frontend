@@ -63,3 +63,33 @@ GET        /:mrn/incidentOnRoute                        controllers.IncidentOnRo
 POST       /:mrn/incidentOnRoute                        controllers.IncidentOnRouteController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
 GET        /:mrn/changeIncidentOnRoute                  controllers.IncidentOnRouteController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
 POST       /:mrn/changeIncidentOnRoute                  controllers.IncidentOnRouteController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
+
+GET        /:mrn/eventCountry                        controllers.EventCountryController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
+POST       /:mrn/eventCountry                        controllers.EventCountryController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
+GET        /:mrn/changeEventCountry                  controllers.EventCountryController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
+POST       /:mrn/changeEventCountry                  controllers.EventCountryController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
+
+GET        /:mrn/eventPlace                        controllers.EventPlaceController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
+POST       /:mrn/eventPlace                        controllers.EventPlaceController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
+GET        /:mrn/changeEventPlace                  controllers.EventPlaceController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
+POST       /:mrn/changeEventPlace                  controllers.EventPlaceController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
+
+GET        /:mrn/eventReported                        controllers.EventReportedController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
+POST       /:mrn/eventReported                        controllers.EventReportedController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
+GET        /:mrn/changeEventReported                  controllers.EventReportedController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
+POST       /:mrn/changeEventReported                  controllers.EventReportedController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
+
+GET        /:mrn/incidentInformation                        controllers.IncidentInformationController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
+POST       /:mrn/incidentInformation                        controllers.IncidentInformationController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
+GET        /:mrn/changeIncidentInformation                  controllers.IncidentInformationController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
+POST       /:mrn/changeIncidentInformation                  controllers.IncidentInformationController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
+
+GET        /:mrn/isTranshipment                        controllers.IsTranshipmentController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
+POST       /:mrn/isTranshipment                        controllers.IsTranshipmentController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
+GET        /:mrn/changeIsTranshipment                  controllers.IsTranshipmentController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
+POST       /:mrn/changeIsTranshipment                  controllers.IsTranshipmentController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
+
+GET        /:mrn/sealsChanged                        controllers.SealsChangedController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
+POST       /:mrn/sealsChanged                        controllers.SealsChangedController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
+GET        /:mrn/changeSealsChanged                  controllers.SealsChangedController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
+POST       /:mrn/changeSealsChanged                  controllers.SealsChangedController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
