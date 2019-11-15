@@ -18,36 +18,50 @@ package controllers
 
 import com.google.inject.Inject
 import controllers.actions.{DataRequiredAction, DataRetrievalActionProvider, IdentifierAction}
-import handlers.ErrorHandler
 import models.{MovementReferenceNumber, UserAnswers}
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
-import services.ArrivalNotificationService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 import utils.CheckYourAnswersHelper
 import viewModels.Section
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class CheckEventAnswersController @Inject()(
-                                            override val messagesApi: MessagesApi,
-                                            identify: IdentifierAction,
-                                            getData: DataRetrievalActionProvider,
-                                            requireData: DataRequiredAction,
-                                            val controllerComponents: MessagesControllerComponents,
-                                            renderer: Renderer
-                                          )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
+                                             override val messagesApi: MessagesApi,
+                                             identify: IdentifierAction,
+                                             getData: DataRetrievalActionProvider,
+                                             requireData: DataRequiredAction,
+                                             val controllerComponents: MessagesControllerComponents,
+                                             renderer: Renderer
+                                           )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
+
 
   def onPageLoad(mrn: MovementReferenceNumber): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
 
+      val sections: Seq[Section] = eventSections(request.userAnswers)
       val json = Json.obj(
-        "sections" -> Json.obj(),
+        "sections" -> Json.toJson(sections),
         "mrn" -> mrn
       )
       renderer.render("check-event-answers.njk", json).map(Ok(_))
+  }
+
+  private def eventSections(userAnswers: UserAnswers)(implicit messages: Messages): Seq[Section] = {
+    val helper = new CheckYourAnswersHelper(userAnswers)
+    val events = Seq(
+      helper.eventCountry,
+      helper.eventPlace,
+      helper.eventReported,
+      helper.isTranshipment,
+      helper.incidentInformation,
+      helper.sealsChanged
+    ).flatten
+
+    Seq(Section(None, events))
   }
 }
