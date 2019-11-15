@@ -121,16 +121,109 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         }
       }
 
-      "must go from 'incident on route' to 'check your answers page'" in {
+      "must go from 'incident on route'" - {
+
+        "to 'check your answers' when the user answers no" in {
+
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+
+            val updatedAnswers = answers.set(IncidentOnRoutePage, false).success.value
+
+            navigator.nextPage(IncidentOnRoutePage, NormalMode, updatedAnswers)
+              .mustBe(routes.CheckYourAnswersController.onPageLoad(answers.id))
+          }
+        }
+
+        "to Event Country when the user answers yes" in {
+
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+
+              val updatedAnswers = answers.set(IncidentOnRoutePage, true).success.value
+
+              navigator.nextPage(IncidentOnRoutePage, NormalMode, updatedAnswers)
+                .mustBe(routes.EventCountryController.onPageLoad(answers.id, NormalMode))
+          }
+        }
+      }
+
+      "must go from Event Country to Event Place" in  {
 
         forAll(arbitrary[UserAnswers]) {
           answers =>
 
-            navigator.nextPage(IncidentOnRoutePage, NormalMode, answers)
-              .mustBe(routes.CheckYourAnswersController.onPageLoad(answers.id))
+            navigator.nextPage(EventCountryPage, NormalMode, answers)
+              .mustBe(routes.EventPlaceController.onPageLoad(answers.id, NormalMode))
         }
       }
 
+      "must go from Event Place to Event Reported" in  {
+
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            navigator.nextPage(EventPlacePage, NormalMode, answers)
+              .mustBe(routes.EventReportedController.onPageLoad(answers.id, NormalMode))
+        }
+      }
+
+      "must go from Event Reported to Is Transhipment" in  {
+
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            navigator.nextPage(EventReportedPage, NormalMode, answers)
+              .mustBe(routes.IsTranshipmentController.onPageLoad(answers.id, NormalMode))
+        }
+      }
+
+      "must go from Is Transhipment" - {
+
+        "to Incident Information when the event has not been reported" in {
+
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+
+              val updatedAnswers = answers.set(EventReportedPage, false).success.value
+
+              navigator.nextPage(IsTranshipmentPage, NormalMode, updatedAnswers)
+                .mustBe(routes.IncidentInformationController.onPageLoad(updatedAnswers.id, NormalMode))
+          }
+        }
+
+        "to Seals Changed when the event has been reported" in {
+
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+
+              val updatedAnswers = answers.set(EventReportedPage, true).success.value
+
+              navigator.nextPage(IsTranshipmentPage, NormalMode, updatedAnswers)
+                .mustBe(routes.SealsChangedController.onPageLoad(updatedAnswers.id, NormalMode))
+          }
+        }
+      }
+
+      "must go from Incident Information to Seals Changed" in {
+
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            navigator.nextPage(IncidentInformationPage, NormalMode, answers)
+              .mustBe(routes.SealsChangedController.onPageLoad(answers.id, NormalMode))
+        }
+      }
+
+      "must go from Seals Changed to Check Event Answers" in {
+
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            navigator.nextPage(SealsChangedPage, NormalMode, answers)
+              .mustBe(routes.CheckEventAnswersController.onPageLoad(answers.id))
+        }
+      }
     }
 
     "in Check mode" - {
