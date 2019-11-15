@@ -45,6 +45,7 @@ class Navigator @Inject()() {
 
   private val checkRouteMap: Page => UserAnswers => Call = {
     case GoodsLocationPage => goodsLocationCheckRoute
+    case page if eventsPages(page) => ua => routes.CheckEventAnswersController.onPageLoad(ua.id)
     case _                 => ua => routes.CheckYourAnswersController.onPageLoad(ua.id)
   }
 
@@ -55,6 +56,13 @@ class Navigator @Inject()() {
       checkRouteMap(page)(userAnswers)
   }
 
+  private def eventsPages(page: Page): Boolean = {
+    page match {
+      case EventCountryPage | EventPlacePage | EventReportedPage | IsTranshipmentPage | IncidentInformationPage | SealsChangedPage => true
+      case _ => false
+    }
+
+  }
   private def goodsLocationPageRoutes(ua: UserAnswers): Call = {
     if (ua.get(GoodsLocationPage).contains(GoodsLocation.BorderForceOffice)) {
       routes.PresentationOfficeController.onPageLoad(ua.id, NormalMode)

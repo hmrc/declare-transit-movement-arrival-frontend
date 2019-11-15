@@ -28,6 +28,13 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
   val navigator = new Navigator
 
+  private val cyaEventPages = Seq(EventCountryPage,
+    EventPlacePage,
+    EventReportedPage,
+    IsTranshipmentPage,
+    IncidentInformationPage,
+    SealsChangedPage)
+
   "Navigator" - {
 
     "in Normal mode" - {
@@ -313,6 +320,20 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
                 navigator.nextPage(GoodsLocationPage, CheckMode, updatedAnswers)
                   .mustBe(routes.UseDifferentServiceController.onPageLoad(answers.id))
+            }
+          }
+        }
+      }
+
+      for (page <- cyaEventPages) {
+        s"from $page pages" - {
+          "must go to check event answers" in {
+            forAll(arbitrary[UserAnswers]) {
+              answers =>
+
+                navigator.nextPage(page, CheckMode, answers)
+                  .mustBe(routes.CheckEventAnswersController.onPageLoad(answers.id))
+
             }
           }
         }
