@@ -146,6 +146,18 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
                 .mustBe(routes.EventCountryController.onPageLoad(answers.id, NormalMode))
           }
         }
+
+        "to Session Expired when we cannot tell if an event happened on route" in {
+
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+
+              val updatedAnswers = answers.remove(IncidentOnRoutePage).success.value
+
+              navigator.nextPage(IncidentOnRoutePage, NormalMode, updatedAnswers)
+                .mustBe(routes.SessionExpiredController.onPageLoad())
+          }
+        }
       }
 
       "must go from Event Country to Event Place" in  {
@@ -201,6 +213,18 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
               navigator.nextPage(IsTranshipmentPage, NormalMode, updatedAnswers)
                 .mustBe(routes.SealsChangedController.onPageLoad(updatedAnswers.id, NormalMode))
+          }
+        }
+
+        "to Session Expired when we cannot tell if the event has been reported" in {
+
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+
+              val updatedAnswers = answers.remove(EventReportedPage).success.value
+
+              navigator.nextPage(IsTranshipmentPage, NormalMode, updatedAnswers)
+                .mustBe(routes.SessionExpiredController.onPageLoad())
           }
         }
       }
