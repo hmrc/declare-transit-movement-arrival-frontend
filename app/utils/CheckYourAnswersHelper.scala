@@ -27,6 +27,96 @@ import uk.gov.hmrc.viewmodels._
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messages) {
 
+  def sealsChanged: Option[Row] = userAnswers.get(SealsChangedPage) map {
+    answer =>
+      Row(
+        key     = Key(msg"sealsChanged.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(yesOrNo(answer)),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = routes.SealsChangedController.onPageLoad(mrn, CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"sealsChanged.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
+  def isTranshipment: Option[Row] = userAnswers.get(IsTranshipmentPage) map {
+    answer =>
+      Row(
+        key     = Key(msg"isTranshipment.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(yesOrNo(answer)),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = routes.IsTranshipmentController.onPageLoad(mrn, CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"isTranshipment.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
+  def incidentInformation: Option[Row] = userAnswers.get(IncidentInformationPage) map {
+    answer =>
+      Row(
+        key     = Key(msg"incidentInformation.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(lit"$answer"),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = routes.IncidentInformationController.onPageLoad(mrn, CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"incidentInformation.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
+  def eventReported: Option[Row] = userAnswers.get(EventReportedPage) map {
+    answer =>
+      Row(
+        key     = Key(msg"eventReported.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(yesOrNo(answer)),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = routes.EventReportedController.onPageLoad(mrn, CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"eventReported.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
+  def eventPlace: Option[Row] = userAnswers.get(EventPlacePage) map {
+    answer =>
+      Row(
+        key     = Key(msg"eventPlace.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(lit"$answer"),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = routes.EventPlaceController.onPageLoad(mrn, CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"eventPlace.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
+  def eventCountry: Option[Row] = userAnswers.get(EventCountryPage) map {
+    answer =>
+      Row(
+        key     = Key(msg"eventCountry.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(lit"$answer"),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = routes.EventCountryController.onPageLoad(mrn, CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"eventCountry.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
   def incidentOnRoute: Option[Row] = userAnswers.get(IncidentOnRoutePage) map {
     answer =>
       Row(

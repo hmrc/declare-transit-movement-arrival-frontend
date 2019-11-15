@@ -21,6 +21,24 @@ import pages._
 
 trait PageGenerators {
 
+  implicit lazy val arbitrarySealsChangedPage: Arbitrary[SealsChangedPage.type] =
+    Arbitrary(SealsChangedPage)
+
+  implicit lazy val arbitraryIsTranshipmentPage: Arbitrary[IsTranshipmentPage.type] =
+    Arbitrary(IsTranshipmentPage)
+
+  implicit lazy val arbitraryIncidentInformationPage: Arbitrary[IncidentInformationPage.type] =
+    Arbitrary(IncidentInformationPage)
+
+  implicit lazy val arbitraryEventReportedPage: Arbitrary[EventReportedPage.type] =
+    Arbitrary(EventReportedPage)
+
+  implicit lazy val arbitraryEventPlacePage: Arbitrary[EventPlacePage.type] =
+    Arbitrary(EventPlacePage)
+
+  implicit lazy val arbitraryEventCountryPage: Arbitrary[EventCountryPage.type] =
+    Arbitrary(EventCountryPage)
+
   implicit lazy val arbitraryIncidentOnRoutePage: Arbitrary[IncidentOnRoutePage.type] =
     Arbitrary(IncidentOnRoutePage)
 

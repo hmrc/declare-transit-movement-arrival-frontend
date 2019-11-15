@@ -24,6 +24,54 @@ import play.api.libs.json.{JsValue, Json}
 
 trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
 
+  implicit lazy val arbitrarySealsChangedUserAnswersEntry: Arbitrary[(SealsChangedPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[SealsChangedPage.type]
+        value <- arbitrary[Boolean].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryIsTranshipmentUserAnswersEntry: Arbitrary[(IsTranshipmentPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[IsTranshipmentPage.type]
+        value <- arbitrary[Boolean].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryIncidentInformationUserAnswersEntry: Arbitrary[(IncidentInformationPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[IncidentInformationPage.type]
+        value <- arbitrary[String].suchThat(_.nonEmpty).map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryEventReportedUserAnswersEntry: Arbitrary[(EventReportedPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[EventReportedPage.type]
+        value <- arbitrary[Boolean].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryEventPlaceUserAnswersEntry: Arbitrary[(EventPlacePage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[EventPlacePage.type]
+        value <- arbitrary[String].suchThat(_.nonEmpty).map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryEventCountryUserAnswersEntry: Arbitrary[(EventCountryPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[EventCountryPage.type]
+        value <- arbitrary[String].suchThat(_.nonEmpty).map(Json.toJson(_))
+      } yield (page, value)
+    }
+
   implicit lazy val arbitraryIncidentOnRouteUserAnswersEntry: Arbitrary[(IncidentOnRoutePage.type, JsValue)] =
     Arbitrary {
       for {
