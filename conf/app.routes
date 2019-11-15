@@ -93,3 +93,5 @@ GET        /:mrn/sealsChanged                        controllers.SealsChangedCon
 POST       /:mrn/sealsChanged                        controllers.SealsChangedController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
 GET        /:mrn/changeSealsChanged                  controllers.SealsChangedController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
 POST       /:mrn/changeSealsChanged                  controllers.SealsChangedController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
+
+GET        /:mrn/check-event-answers                 controllers.CheckEventAnswersController.onPageLoad(mrn: MovementReferenceNumber)

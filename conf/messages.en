@@ -211,35 +211,38 @@ incidentOnRoute.heading = Has something happened on route?
 incidentOnRoute.checkYourAnswersLabel = Has something happened on route?
 incidentOnRoute.error.required = Select yes if something happened on route
 
-eventCountry.title = eventCountry
-eventCountry.heading = eventCountry
-eventCountry.checkYourAnswersLabel = eventCountry
-eventCountry.error.required = Enter eventCountry
-eventCountry.error.length = EventCountry must be 2 characters or less
+eventCountry.title = Which country did the event happen in?
+eventCountry.heading = Which country did the event happen in?
+eventCountry.checkYourAnswersLabel = Which country did the event happen in?
+eventCountry.error.required = Enter the country the event happened in
+eventCountry.error.length = Country must be 2 characters or less
 
-eventPlace.title = eventPlace
-eventPlace.heading = eventPlace
-eventPlace.checkYourAnswersLabel = eventPlace
-eventPlace.error.required = Enter eventPlace
-eventPlace.error.length = EventPlace must be 35 characters or less
+eventPlace.title = Where did the event happen?
+eventPlace.heading = Where did the event happen?
+eventPlace.checkYourAnswersLabel = Where did the event happen?
+eventPlace.error.required = Enter where the event happened
+eventPlace.error.length = Where the event happened must be 35 characters or less
 
-eventReported.title = eventReported
-eventReported.heading = eventReported
-eventReported.checkYourAnswersLabel = eventReported
-eventReported.error.required = Select yes if eventReported
+eventReported.title = Has this event been reported to a customs office?
+eventReported.heading = Has this event been reported to a customs office?
+eventReported.checkYourAnswersLabel = Has this event been reported to a customs office?
+eventReported.error.required = Select yes if the event has been reported
 
-incidentInformation.title = incidentInformation
-incidentInformation.heading = incidentInformation
-incidentInformation.checkYourAnswersLabel = incidentInformation
-incidentInformation.error.required = Enter incidentInformation
-incidentInformation.error.length = IncidentInformation must be 350 characters or less
+incidentInformation.title = What happened on the route?
+incidentInformation.heading = What happened on the route?
+incidentInformation.checkYourAnswersLabel = What happened on the route?
+incidentInformation.error.required = Enter what happened on the route
+incidentInformation.error.length = What happened on the route must be 350 characters or less
 
-isTranshipment.title = isTranshipment
-isTranshipment.heading = isTranshipment
-isTranshipment.checkYourAnswersLabel = isTranshipment
-isTranshipment.error.required = Select yes if isTranshipment
+isTranshipment.title = Did the goods move to a different vehicle or container?
+isTranshipment.heading = Did the goods move to a different vehicle or container?
+isTranshipment.checkYourAnswersLabel = Did the goods move to a different vehicle or container?
+isTranshipment.error.required = Select yes if the goods moved to a different vehicle or container
 
-sealsChanged.title = sealsChanged
-sealsChanged.heading = sealsChanged
-sealsChanged.checkYourAnswersLabel = sealsChanged
-sealsChanged.error.required = Select yes if sealsChanged
+sealsChanged.title = Have any of the seals changed?
+sealsChanged.heading = Have any of the seals changed?
+sealsChanged.checkYourAnswersLabel = Have any of the seals changed?
+sealsChanged.error.required = Select yes if any of the seals have changed
+
+checkEventAnswers.title = Check event answers
+checkEventAnswers.heading = Check event answers

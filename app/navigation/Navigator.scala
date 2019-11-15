@@ -33,7 +33,13 @@ class Navigator @Inject()() {
     case TraderNamePage => ua => routes.TraderAddressController.onPageLoad(ua.id, NormalMode)
     case TraderAddressPage => ua => routes.TraderEoriController.onPageLoad(ua.id, NormalMode)
     case TraderEoriPage => ua => routes.IncidentOnRouteController.onPageLoad(ua.id, NormalMode)
-    case IncidentOnRoutePage => ua => routes.CheckYourAnswersController.onPageLoad(ua.id)
+    case IncidentOnRoutePage =>incidentOnRouteRoute
+    case EventCountryPage => ua => routes.EventPlaceController.onPageLoad(ua.id, NormalMode)
+    case EventPlacePage => ua => routes.EventReportedController.onPageLoad(ua.id, NormalMode)
+    case EventReportedPage => ua => routes.IsTranshipmentController.onPageLoad(ua.id, NormalMode)
+    case IsTranshipmentPage => isTranshipmentRoute
+    case IncidentInformationPage => ua => routes.SealsChangedController.onPageLoad(ua.id, NormalMode)
+    case SealsChangedPage => ua => routes.CheckEventAnswersController.onPageLoad(ua.id)
     case _ => _ => routes.IndexController.onPageLoad()
   }
 
@@ -55,6 +61,18 @@ class Navigator @Inject()() {
     } else {
       routes.UseDifferentServiceController.onPageLoad(ua.id)
     }
+  }
+
+  private def incidentOnRouteRoute(ua: UserAnswers): Call = ua.get(IncidentOnRoutePage) match {
+    case Some(true)  => routes.EventCountryController.onPageLoad(ua.id, NormalMode)
+    case Some(false) => routes.CheckYourAnswersController.onPageLoad(ua.id)
+    case None        => routes.SessionExpiredController.onPageLoad()
+  }
+
+  private def isTranshipmentRoute(ua: UserAnswers): Call = ua.get(EventReportedPage) match {
+    case Some(true)  => routes.SealsChangedController.onPageLoad(ua.id, NormalMode)
+    case Some(false) => routes.IncidentInformationController.onPageLoad(ua.id, NormalMode)
+    case None        => routes.SessionExpiredController.onPageLoad()
   }
 
   private def goodsLocationCheckRoute(ua: UserAnswers): Call = {
