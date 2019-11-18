@@ -251,3 +251,9 @@ isTraderAddressPlaceOfNotification.title = isTraderAddressPlaceOfNotification
 isTraderAddressPlaceOfNotification.heading = isTraderAddressPlaceOfNotification
 isTraderAddressPlaceOfNotification.checkYourAnswersLabel = isTraderAddressPlaceOfNotification
 isTraderAddressPlaceOfNotification.error.required = Select yes if isTraderAddressPlaceOfNotification
+
+placeOfNotification.title = placeOfNotification
+placeOfNotification.heading = placeOfNotification
+placeOfNotification.checkYourAnswersLabel = placeOfNotification
+placeOfNotification.error.required = Enter placeOfNotification
+placeOfNotification.error.length = PlaceOfNotification must be 35 characters or less
