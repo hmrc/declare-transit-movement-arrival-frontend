@@ -246,3 +246,8 @@ sealsChanged.error.required = Select yes if any of the seals have changed
 
 checkEventAnswers.title = Check event answers
 checkEventAnswers.heading = Check event answers
+
+isTraderAddressPlaceOfNotification.title = isTraderAddressPlaceOfNotification
+isTraderAddressPlaceOfNotification.heading = isTraderAddressPlaceOfNotification
+isTraderAddressPlaceOfNotification.checkYourAnswersLabel = isTraderAddressPlaceOfNotification
+isTraderAddressPlaceOfNotification.error.required = Select yes if isTraderAddressPlaceOfNotification

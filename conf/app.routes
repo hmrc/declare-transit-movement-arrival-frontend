@@ -95,3 +95,8 @@ GET        /:mrn/changeSealsChanged                  controllers.SealsChangedCon
 POST       /:mrn/changeSealsChanged                  controllers.SealsChangedController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
 
 GET        /:mrn/check-event-answers                 controllers.CheckEventAnswersController.onPageLoad(mrn: MovementReferenceNumber)
+
+GET        /:mrn/isTraderAddressPlaceOfNotification                        controllers.IsTraderAddressPlaceOfNotificationController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
+POST       /:mrn/isTraderAddressPlaceOfNotification                        controllers.IsTraderAddressPlaceOfNotificationController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
+GET        /:mrn/changeIsTraderAddressPlaceOfNotification                  controllers.IsTraderAddressPlaceOfNotificationController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
+POST       /:mrn/changeIsTraderAddressPlaceOfNotification                  controllers.IsTraderAddressPlaceOfNotificationController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)

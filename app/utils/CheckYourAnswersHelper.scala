@@ -27,6 +27,21 @@ import uk.gov.hmrc.viewmodels._
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messages) {
 
+  def isTraderAddressPlaceOfNotification: Option[Row] = userAnswers.get(IsTraderAddressPlaceOfNotificationPage) map {
+    answer =>
+      Row(
+        key     = Key(msg"isTraderAddressPlaceOfNotification.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(yesOrNo(answer)),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = routes.IsTraderAddressPlaceOfNotificationController.onPageLoad(mrn, CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"isTraderAddressPlaceOfNotification.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
   def sealsChanged: Option[Row] = userAnswers.get(SealsChangedPage) map {
     answer =>
       Row(
