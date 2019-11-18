@@ -110,12 +110,12 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         }
       }
 
-      "must go from 'traders address' to 'incident on route page'" in {
+      "must go from 'traders address' to 'IsTraderAddressPlaceOfNotificationController'" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
 
             navigator.nextPage(TraderAddressPage, NormalMode, answers)
-              .mustBe(routes.IncidentOnRouteController.onPageLoad(answers.id, NormalMode))
+              .mustBe(routes.IsTraderAddressPlaceOfNotificationController.onPageLoad(answers.id, NormalMode))
         }
       }
 
@@ -127,6 +127,39 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
               .mustBe(routes.TraderAddressController.onPageLoad(answers.id, NormalMode))
         }
       }
+
+      "must go from 'IsTraderAddressPlaceOfNotificationController'" - {
+        "to 'PlaceOfNotificationController' when answer is 'No'" in {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val updatedUserAnswers = answers.set(IsTraderAddressPlaceOfNotificationPage, false).success.value
+
+              navigator.nextPage(IsTraderAddressPlaceOfNotificationPage, NormalMode, updatedUserAnswers)
+                .mustBe(routes.PlaceOfNotificationController.onPageLoad(updatedUserAnswers.id, NormalMode))
+          }
+        }
+
+        "to 'IncidentOnRouteController' when answer is 'Yes'" in {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val updatedUserAnswers = answers.set(IsTraderAddressPlaceOfNotificationPage, true).success.value
+
+              navigator.nextPage(IsTraderAddressPlaceOfNotificationPage, NormalMode, updatedUserAnswers)
+                .mustBe(routes.IncidentOnRouteController.onPageLoad(updatedUserAnswers.id, NormalMode))
+          }
+        }
+      }
+
+      "go from 'Place of Notification' to 'IncidentOnRoute" in {
+        forAll(arbitrary[UserAnswers], stringsWithMaxLength(35)) {
+          case (answers, placeOfNotification) =>
+            val updatedUserAnswers = answers.set(PlaceOfNotificationPage, placeOfNotification).success.value
+
+            navigator.nextPage(PlaceOfNotificationPage, NormalMode, updatedUserAnswers)
+              .mustBe(routes.IncidentOnRouteController.onPageLoad(updatedUserAnswers.id, NormalMode))
+        }
+      }
+
 
       "must go from 'incident on route'" - {
 
@@ -338,6 +371,39 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           }
         }
       }
+
+      "must go from 'IsTraderAddressPlaceOfNotificationController'" - {
+        "to 'PlaceOfNotificationController' when answer is 'No'" in {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val updatedUserAnswers = answers.set(IsTraderAddressPlaceOfNotificationPage, false).success.value
+
+              navigator.nextPage(IsTraderAddressPlaceOfNotificationPage, CheckMode, updatedUserAnswers)
+                .mustBe(routes.PlaceOfNotificationController.onPageLoad(updatedUserAnswers.id, CheckMode))
+          }
+        }
+
+        "to 'CheckYourAnswersController' when answer is 'Yes'" in {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val updatedUserAnswers = answers.set(IsTraderAddressPlaceOfNotificationPage, true).success.value
+
+              navigator.nextPage(IsTraderAddressPlaceOfNotificationPage, CheckMode, updatedUserAnswers)
+                .mustBe(routes.CheckYourAnswersController.onPageLoad(updatedUserAnswers.id))
+          }
+        }
+      }
+
+      "go from 'Place of Notification' to CheckYourAnswer" in {
+        forAll(arbitrary[UserAnswers], stringsWithMaxLength(35)) {
+          case (answers, placeOfNotification) =>
+            val updatedUserAnswers = answers.set(PlaceOfNotificationPage, placeOfNotification).success.value
+
+            navigator.nextPage(PlaceOfNotificationPage, CheckMode, updatedUserAnswers)
+              .mustBe(routes.CheckYourAnswersController.onPageLoad(updatedUserAnswers.id))
+        }
+      }
+
     }
   }
 }
