@@ -23,6 +23,7 @@ import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.{BeforeAndAfterEach, FreeSpec, MustMatchers}
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import play.api.Configuration
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json._
@@ -43,6 +44,7 @@ class RendererSpec extends FreeSpec with MustMatchers with GuiceOneAppPerSuite w
 
   private val applicationBuilder =
     new GuiceApplicationBuilder()
+      .configure(Configuration("metrics.enabled" -> "false"))
       .overrides(
         bind[NunjucksRenderer].toInstance(mockNunjucksRenderer)
       )
