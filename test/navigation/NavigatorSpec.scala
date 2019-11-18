@@ -101,30 +101,30 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         }
       }
 
-      "must go from 'traders name' to 'traders address'" in {
+      "must go from 'traders name' to 'traders eori'" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
 
             navigator.nextPage(TraderNamePage, NormalMode, answers)
-              .mustBe(routes.TraderAddressController.onPageLoad(answers.id, NormalMode))
-        }
-      }
-
-      "must go from 'traders address' to 'traders eori'" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-
-            navigator.nextPage(TraderAddressPage, NormalMode, answers)
               .mustBe(routes.TraderEoriController.onPageLoad(answers.id, NormalMode))
         }
       }
 
-      "must go from 'traders eori' to 'incident on route page'" in {
+      "must go from 'traders address' to 'incident on route page'" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            navigator.nextPage(TraderAddressPage, NormalMode, answers)
+              .mustBe(routes.IncidentOnRouteController.onPageLoad(answers.id, NormalMode))
+        }
+      }
+
+      "must go from 'traders eori' to 'traders address'" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
 
             navigator.nextPage(TraderEoriPage, NormalMode, answers)
-              .mustBe(routes.IncidentOnRouteController.onPageLoad(answers.id, NormalMode))
+              .mustBe(routes.TraderAddressController.onPageLoad(answers.id, NormalMode))
         }
       }
 

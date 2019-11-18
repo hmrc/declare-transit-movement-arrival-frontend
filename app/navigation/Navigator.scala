@@ -30,10 +30,10 @@ class Navigator @Inject()() {
     case GoodsLocationPage => ua => goodsLocationPageRoutes(ua)
     case PresentationOfficePage => ua => routes.CustomsSubPlaceController.onPageLoad(ua.id, NormalMode)
     case CustomsSubPlacePage => ua => routes.TraderNameController.onPageLoad(ua.id, NormalMode)
-    case TraderNamePage => ua => routes.TraderAddressController.onPageLoad(ua.id, NormalMode)
-    case TraderAddressPage => ua => routes.TraderEoriController.onPageLoad(ua.id, NormalMode)
-    case TraderEoriPage => ua => routes.IncidentOnRouteController.onPageLoad(ua.id, NormalMode)
-    case IncidentOnRoutePage =>incidentOnRouteRoute
+    case TraderNamePage => ua => routes.TraderEoriController.onPageLoad(ua.id, NormalMode)
+    case TraderAddressPage => ua => routes.IncidentOnRouteController.onPageLoad(ua.id, NormalMode)
+    case TraderEoriPage => ua => routes.TraderAddressController.onPageLoad(ua.id, NormalMode)
+    case IncidentOnRoutePage => incidentOnRouteRoute
     case EventCountryPage => ua => routes.EventPlaceController.onPageLoad(ua.id, NormalMode)
     case EventPlacePage => ua => routes.EventReportedController.onPageLoad(ua.id, NormalMode)
     case EventReportedPage => ua => routes.IsTranshipmentController.onPageLoad(ua.id, NormalMode)
