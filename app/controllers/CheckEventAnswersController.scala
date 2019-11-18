@@ -52,9 +52,9 @@ class CheckEventAnswersController @Inject()(
   }
 
   def onSubmit(mrn: MovementReferenceNumber): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
-      implicit request =>
+    implicit request =>
       Future.successful(Redirect(routes.CheckYourAnswersController.onPageLoad(mrn)))
-    }
+  }
 
   private def completeSections(userAnswers: UserAnswers)(implicit messages: Messages): Seq[Section] = {
     val helper = new CheckYourAnswersHelper(userAnswers)
@@ -62,7 +62,7 @@ class CheckEventAnswersController @Inject()(
   }
 
   private def eventsSection(helper: CheckYourAnswersHelper): Seq[Row] = {
-    val events = Seq(
+    Seq(
       helper.eventCountry,
       helper.eventPlace,
       helper.eventReported,
@@ -70,6 +70,5 @@ class CheckEventAnswersController @Inject()(
       helper.incidentInformation,
       helper.sealsChanged
     ).flatten
-    events
   }
 }
