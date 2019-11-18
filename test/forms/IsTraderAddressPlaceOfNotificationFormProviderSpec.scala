@@ -17,14 +17,17 @@
 package forms
 
 import forms.behaviours.BooleanFieldBehaviours
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.FormError
+import play.api.i18n.Messages
 
-class IsTraderAddressPlaceOfNotificationFormProviderSpec extends BooleanFieldBehaviours {
+class IsTraderAddressPlaceOfNotificationFormProviderSpec extends BooleanFieldBehaviours with MockitoSugar {
 
   val requiredKey = "isTraderAddressPlaceOfNotification.error.required"
   val invalidKey = "error.boolean"
+  val messagesApi = mock[Messages]
 
-  val form = new IsTraderAddressPlaceOfNotificationFormProvider()()
+  val form = new IsTraderAddressPlaceOfNotificationFormProvider()("")(messagesApi)
 
   ".value" - {
 

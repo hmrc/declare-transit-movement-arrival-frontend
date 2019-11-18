@@ -34,64 +34,75 @@ import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 import scala.concurrent.{ExecutionContext, Future}
 
 class IsTraderAddressPlaceOfNotificationController @Inject()(
-    override val messagesApi: MessagesApi,
-    sessionRepository: SessionRepository,
-    navigator: Navigator,
-    identify: IdentifierAction,
-    getData: DataRetrievalActionProvider,
-    requireData: DataRequiredAction,
-    formProvider: IsTraderAddressPlaceOfNotificationFormProvider,
-    val controllerComponents: MessagesControllerComponents,
-    renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with uk.gov.hmrc.nunjucks.NunjucksSupport {
+                                                              override val messagesApi: MessagesApi,
+                                                              sessionRepository: SessionRepository,
+                                                              navigator: Navigator,
+                                                              identify: IdentifierAction,
+                                                              getData: DataRetrievalActionProvider,
+                                                              requireData: DataRequiredAction,
+                                                              formProvider: IsTraderAddressPlaceOfNotificationFormProvider,
+                                                              val controllerComponents: MessagesControllerComponents,
+                                                              renderer: Renderer
+                                                            )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with uk.gov.hmrc.nunjucks.NunjucksSupport {
 
 
   def onPageLoad(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
 
-      val postcode = request.userAnswers.get(TraderAddressPage).map(_.postcode).get
-      val form = formProvider(postcode)
+      request.userAnswers.get(TraderAddressPage) match {
+        case Some(traderAddress) => {
+          val postcode = traderAddress.postcode
+          val form = formProvider(postcode)
 
-      val preparedForm = request.userAnswers.get(IsTraderAddressPlaceOfNotificationPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
+          val preparedForm = request.userAnswers.get(IsTraderAddressPlaceOfNotificationPage) match {
+            case None => form
+            case Some(value) => form.fill(value)
+          }
+
+          val json = Json.obj(
+            "form" -> preparedForm,
+            "mode" -> mode,
+            "mrn" -> mrn,
+            "traderPostcode" -> postcode,
+            "radios" -> Radios.yesNo(preparedForm("value"))
+          )
+
+          renderer.render("isTraderAddressPlaceOfNotification.njk", json).map(Ok(_))
+        }
+        case _ => Future.successful(Redirect(routes.SessionExpiredController.onPageLoad()))
       }
 
-      val json = Json.obj(
-        "form"   -> preparedForm,
-        "mode"   -> mode,
-        "mrn"    -> mrn,
-        "traderPostcode" -> postcode,
-        "radios" -> Radios.yesNo(preparedForm("value"))
-      )
-
-      renderer.render("isTraderAddressPlaceOfNotification.njk", json).map(Ok(_))
   }
 
   def onSubmit(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
 
-      val postcode = request.userAnswers.get(TraderAddressPage).map(_.postcode).get
-      val form = formProvider(postcode)
+      request.userAnswers.get(TraderAddressPage) match {
+        case Some(traderAddress) => {
+          val postcode = traderAddress.postcode
+          val form = formProvider(postcode)
 
-      form.bindFromRequest().fold(
-        formWithErrors => {
+          form.bindFromRequest().fold(
+            formWithErrors => {
 
-          val json = Json.obj(
-            "form"   -> formWithErrors,
-            "mode"   -> mode,
-            "mrn"    -> mrn,
-            "traderPostcode" -> postcode,
-            "radios" -> Radios.yesNo(formWithErrors("value"))
+              val json = Json.obj(
+                "form" -> formWithErrors,
+                "mode" -> mode,
+                "mrn" -> mrn,
+                "traderPostcode" -> postcode,
+                "radios" -> Radios.yesNo(formWithErrors("value"))
+              )
+
+              renderer.render("isTraderAddressPlaceOfNotification.njk", json).map(BadRequest(_))
+            },
+            value =>
+              for {
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(IsTraderAddressPlaceOfNotificationPage, value))
+                _ <- sessionRepository.set(updatedAnswers)
+              } yield Redirect(navigator.nextPage(IsTraderAddressPlaceOfNotificationPage, mode, updatedAnswers))
           )
-
-          renderer.render("isTraderAddressPlaceOfNotification.njk", json).map(BadRequest(_))
-        },
-        value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(IsTraderAddressPlaceOfNotificationPage, value))
-            _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(IsTraderAddressPlaceOfNotificationPage, mode, updatedAnswers))
-      )
+        }
+        case _ => Future.successful(Redirect(routes.SessionExpiredController.onPageLoad()))
+      }
   }
 }

@@ -70,7 +70,10 @@ class Navigator @Inject()() {
     (ua.get(IsTraderAddressPlaceOfNotificationPage), mode) match {
       case (Some(true), NormalMode) => routes.IncidentOnRouteController.onPageLoad(ua.id, mode)
       case (Some(true), CheckMode) => routes.CheckYourAnswersController.onPageLoad(ua.id)
-      case (Some(false), _) => routes.PlaceOfNotificationController.onPageLoad(ua.id, mode)
+      case (Some(false), _) => ua.get(PlaceOfNotificationPage) match {
+        case Some(_) => routes.CheckYourAnswersController.onPageLoad(ua.id)
+        case None => routes.PlaceOfNotificationController.onPageLoad(ua.id, mode)
+      }
       case (None, _) => routes.SessionExpiredController.onPageLoad()
     }
 

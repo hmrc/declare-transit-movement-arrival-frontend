@@ -132,7 +132,9 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         "to 'PlaceOfNotificationController' when answer is 'No'" in {
           forAll(arbitrary[UserAnswers]) {
             answers =>
-              val updatedUserAnswers = answers.set(IsTraderAddressPlaceOfNotificationPage, false).success.value
+              val updatedUserAnswers = answers
+                .set(IsTraderAddressPlaceOfNotificationPage, false).success.value
+                .remove(PlaceOfNotificationPage).success.value
 
               navigator.nextPage(IsTraderAddressPlaceOfNotificationPage, NormalMode, updatedUserAnswers)
                 .mustBe(routes.PlaceOfNotificationController.onPageLoad(updatedUserAnswers.id, NormalMode))
@@ -373,13 +375,27 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
       }
 
       "must go from 'IsTraderAddressPlaceOfNotificationController'" - {
-        "to 'PlaceOfNotificationController' when answer is 'No'" in {
+        "to 'PlaceOfNotificationController' when answer is 'No' and there is no 'Place of notificatin'" in {
           forAll(arbitrary[UserAnswers]) {
             answers =>
-              val updatedUserAnswers = answers.set(IsTraderAddressPlaceOfNotificationPage, false).success.value
+              val updatedUserAnswers = answers
+                .set(IsTraderAddressPlaceOfNotificationPage, false).success.value
+                .remove(PlaceOfNotificationPage).success.value
 
               navigator.nextPage(IsTraderAddressPlaceOfNotificationPage, CheckMode, updatedUserAnswers)
                 .mustBe(routes.PlaceOfNotificationController.onPageLoad(updatedUserAnswers.id, CheckMode))
+          }
+        }
+
+        "to 'CheckYourAnswersController' when answer is 'No' and there is a 'Place of notification'" in {
+          forAll(arbitrary[UserAnswers], arbitrary[String]) {
+            (answers, placeOfNotification) =>
+              val updatedUserAnswers = answers
+                .set(IsTraderAddressPlaceOfNotificationPage, false).success.value
+                .set(PlaceOfNotificationPage, placeOfNotification).success.value
+
+              navigator.nextPage(IsTraderAddressPlaceOfNotificationPage, CheckMode, updatedUserAnswers)
+                .mustBe(routes.CheckYourAnswersController.onPageLoad(updatedUserAnswers.id))
           }
         }
 
