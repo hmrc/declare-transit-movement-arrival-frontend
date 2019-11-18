@@ -75,12 +75,15 @@ class CheckYourAnswersController @Inject()(
       Seq(helper.goodsLocation, helper.authorisedLocation).flatten)
     val traderDetails = Section(Some(messages("checkYourAnswers.section.traderDetails")),
       Seq(helper.traderName, helper.traderAddress, helper.traderEori).flatten)
+    val notificationDetails = Section(Some(messages("checkYourAnswers.section.notifictionDetails")),
+      Seq(helper.isTraderAddressPlaceOfNotification, helper.placeOfNotification).flatten)
     val events = Section(Some(messages("checkYourAnswers.section.events")), Seq(helper.incidentOnRoute).flatten)
 
     val sections: Seq[Section] = Seq(
       mrn,
       goodsLocation,
       traderDetails,
+      notificationDetails,
       events
     )
     sections

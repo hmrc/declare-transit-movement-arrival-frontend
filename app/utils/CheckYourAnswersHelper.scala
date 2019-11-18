@@ -44,8 +44,10 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messag
 
   def isTraderAddressPlaceOfNotification: Option[Row] = userAnswers.get(IsTraderAddressPlaceOfNotificationPage) map {
     answer =>
+      val postcode = userAnswers.get(TraderAddressPage).map(_.postcode).get
+      val message = messages("isTraderAddressPlaceOfNotification.checkYourAnswersLabel", postcode)
       Row(
-        key     = Key(msg"isTraderAddressPlaceOfNotification.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        key     = Key(msg"$message", classes = Seq("govuk-!-width-one-half")),
         value   = Value(yesOrNo(answer)),
         actions = List(
           Action(

@@ -19,14 +19,15 @@ package controllers
 import controllers.actions._
 import forms.IsTraderAddressPlaceOfNotificationFormProvider
 import javax.inject.Inject
-import models.{Mode, MovementReferenceNumber}
+import models._
 import navigation.Navigator
-import pages.IsTraderAddressPlaceOfNotificationPage
+import pages.{IsTraderAddressPlaceOfNotificationPage, TraderAddressPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
+//import uk.gov.hmrc.nunjucks.NunjucksSupport
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
@@ -42,12 +43,14 @@ class IsTraderAddressPlaceOfNotificationController @Inject()(
     formProvider: IsTraderAddressPlaceOfNotificationFormProvider,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
+)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with uk.gov.hmrc.nunjucks.NunjucksSupport {
 
-  private val form = formProvider()
 
   def onPageLoad(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
+
+      val postcode = request.userAnswers.get(TraderAddressPage).map(_.postcode).get
+      val form = formProvider(postcode)
 
       val preparedForm = request.userAnswers.get(IsTraderAddressPlaceOfNotificationPage) match {
         case None => form
@@ -58,6 +61,7 @@ class IsTraderAddressPlaceOfNotificationController @Inject()(
         "form"   -> preparedForm,
         "mode"   -> mode,
         "mrn"    -> mrn,
+        "traderPostcode" -> postcode,
         "radios" -> Radios.yesNo(preparedForm("value"))
       )
 
@@ -67,6 +71,9 @@ class IsTraderAddressPlaceOfNotificationController @Inject()(
   def onSubmit(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
 
+      val postcode = request.userAnswers.get(TraderAddressPage).map(_.postcode).get
+      val form = formProvider(postcode)
+
       form.bindFromRequest().fold(
         formWithErrors => {
 
@@ -74,6 +81,7 @@ class IsTraderAddressPlaceOfNotificationController @Inject()(
             "form"   -> formWithErrors,
             "mode"   -> mode,
             "mrn"    -> mrn,
+            "traderPostcode" -> postcode,
             "radios" -> Radios.yesNo(formWithErrors("value"))
           )
 

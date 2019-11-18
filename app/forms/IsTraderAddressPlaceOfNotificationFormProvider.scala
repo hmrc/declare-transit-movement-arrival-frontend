@@ -17,14 +17,14 @@
 package forms
 
 import javax.inject.Inject
-
 import forms.mappings.Mappings
 import play.api.data.Form
+import play.api.i18n.Messages
 
 class IsTraderAddressPlaceOfNotificationFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[Boolean] =
+  def apply(traderPostcode: String)(implicit messages: Messages): Form[Boolean] =
     Form(
-      "value" -> boolean("isTraderAddressPlaceOfNotification.error.required")
+      "value" -> boolean(messages("isTraderAddressPlaceOfNotification.error.required", traderPostcode))
     )
 }
