@@ -141,7 +141,7 @@ trait DomainModelGenerators extends Generators {
         trader             <- arbitrary[Trader]
         presentationOffice <- stringsWithMaxLength(8)
         events             <- arbitrary[Seq[EnRouteEvent]]
-      } yield NormalNotification(mrn, place, date, subPlace, trader, presentationOffice, Nil) //TODO replace with events when we implement
+      } yield NormalNotification(mrn, place, date, subPlace, trader, presentationOffice, events)
     }
 
   implicit lazy val arbitrarySimplifiedNotification: Arbitrary[SimplifiedNotification] =
