@@ -61,7 +61,7 @@ class CheckEventAnswersController @Inject()(
     Seq(Section(None, eventsSection(helper)))
   }
 
-  private def eventsSection(helper: CheckYourAnswersHelper): Seq[Row] = {
+  private def eventsSection(helper: CheckYourAnswersHelper): Seq[Row] =
     Seq(
       helper.eventCountry,
       helper.eventPlace,
@@ -70,5 +70,4 @@ class CheckEventAnswersController @Inject()(
       helper.incidentInformation,
       helper.sealsChanged
     ).flatten
-  }
 }
