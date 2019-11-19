@@ -21,8 +21,8 @@ import java.time.LocalDate
 import base.SpecBase
 import generators.DomainModelGenerators
 import models.GoodsLocation.BorderForceOffice
-import models.domain.messages.NormalNotification
-import models.domain.{EnRouteEvent, Endorsement, Incident, TraderWithEori}
+import models.domain.messages.{ArrivalNotification, NormalNotification}
+import models.domain.{EnRouteEvent, Endorsement, EventDetails, Incident, Trader, TraderWithEori}
 import models.{TraderAddress, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
@@ -35,46 +35,39 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
 
   "ArrivalNotificationConversionService" - {
 
-    "must return 'Normal Arrival Notification' message from valid userAnswers" in {
-      forAll(arbitrary[NormalNotification], generatorTraderWithEoriAllValues, Gen.alphaNumStr) {
-        case (arbArrivalNotification, trader, subPlace) =>
+    "must return 'Normal Arrival Notification' message when there are no EventDetails on route" in {
 
-          val arrivalNotification: NormalNotification = createArrivalNotification(arbArrivalNotification, trader, subPlace).copy(enRouteEvents = Seq.empty)
+      forAll(normalNotificationWithTraderWithEoriWithSubplace) {
+        case (arbArrivalNotification, trader) =>
 
-          val userAnswers: UserAnswers = createBasicUserAnswers(trader, subPlace, arrivalNotification)
+          val expectedArrivalNotification: NormalNotification = arbArrivalNotification.copy(enRouteEvents = Seq.empty)
 
-          service.convertToArrivalNotification(userAnswers).value mustEqual arrivalNotification
+          val userAnswers: UserAnswers = createBasicUserAnswers(trader, expectedArrivalNotification)
+
+          service.convertToArrivalNotification(userAnswers).value mustEqual expectedArrivalNotification
 
       }
     }
 
     "must return 'Normal Arrival Notification' message when there is on incident on route" in {
-      forAll(arbitrary[NormalNotification], generatorTraderWithEoriAllValues, Gen.alphaNumStr, arbitrary[EnRouteEvent]) {
-        case (arbArrivalNotification, trader, subPlace, enRouteEvent) =>
 
-          val incidentInformation = enRouteEvent.eventDetails match {
-            case incident:Incident => incident.information
-            case _ => None
-          }
+        forAll(normalNotificationWithTraderWithEoriWithSubplace, enRouteEventIncident) {
+        case ((arbArrivalNotification, trader), (enRouteEvent, incident)) =>
 
-          val routeEvent = enRouteEvent
+          val routeEvent: EnRouteEvent = enRouteEvent
             .copy(seals = Seq.empty)
-            .copy(eventDetails = Incident(incidentInformation, Endorsement(None, None, None, None)))
+            .copy(eventDetails = incident.copy(endorsement = Endorsement(None, None, None, None)))
 
-          val arrivalNotification: NormalNotification = createArrivalNotification(arbArrivalNotification, trader, subPlace)
-            .copy(enRouteEvents = Seq(routeEvent))
+          val arrivalNotification: NormalNotification = arbArrivalNotification.copy(enRouteEvents = Seq(routeEvent))
 
-          val userAnswers: UserAnswers = createBasicUserAnswers(trader, subPlace, arrivalNotification, true)
-              .set(IsTranshipmentPage, false).success.value
-              .set(EventPlacePage, routeEvent.place).success.value
-              .set(EventCountryPage, routeEvent.countryCode).success.value
-              .set(EventReportedPage, routeEvent.alreadyInNcts).success.value
+          val userAnswers: UserAnswers = createBasicUserAnswers(trader, arrivalNotification, true)
+            .set(IsTranshipmentPage, false).success.value
+            .set(EventPlacePage, routeEvent.place).success.value
+            .set(EventCountryPage, routeEvent.countryCode).success.value
+            .set(EventReportedPage, routeEvent.alreadyInNcts).success.value
+            .set(IncidentInformationPage, incident.information.value).success.value
 
-            val updatedAnswers = incidentInformation.fold[UserAnswers](userAnswers) {_ =>
-              userAnswers.set(IncidentInformationPage, incidentInformation.value).success.value
-            }
-
-          service.convertToArrivalNotification(updatedAnswers).value mustEqual arrivalNotification
+          service.convertToArrivalNotification(userAnswers).value mustEqual arrivalNotification
       }
     }
 
@@ -97,23 +90,15 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
     }
   }
 
-  private def createArrivalNotification(arrivalNotification: NormalNotification, trader: TraderWithEori, subPlace: String) = {
-    arrivalNotification.copy(movementReferenceNumber = mrn.toString)
-      .copy(trader = trader)
-      .copy(customsSubPlace = Some(subPlace))
-      .copy(notificationDate = LocalDate.now())
-      .copy(notificationPlace = "") //TODO
-  }
-
-  private def createBasicUserAnswers(trader: TraderWithEori,
-                               subPlace: String,
+  private def createBasicUserAnswers(
+                               trader: TraderWithEori,
                                arrivalNotification: NormalNotification,
                                isIncidentOnRoute: Boolean = false): UserAnswers = {
       emptyUserAnswers
         .set(MovementReferenceNumberPage, arrivalNotification.movementReferenceNumber).success.value
         .set(GoodsLocationPage, BorderForceOffice).success.value
         .set(PresentationOfficePage, arrivalNotification.presentationOffice).success.value
-        .set(CustomsSubPlacePage, subPlace).success.value
+        .set(CustomsSubPlacePage, arrivalNotification.customsSubPlace.value).success.value
         .set(TraderNamePage, trader.name.value).success.value
         .set(TraderAddressPage, TraderAddress(
           buildingAndStreet = trader.streetAndNumber.value,
@@ -123,4 +108,26 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
         .set(TraderEoriPage, trader.eori).success.value
         .set(IncidentOnRoutePage, isIncidentOnRoute).success.value
   }
+
+  private val normalNotificationWithTraderWithEoriWithSubplace =
+    for {
+      base <- arbitrary[NormalNotification]
+      trader <- generatorTraderWithEoriAllValues
+      subPlace <- stringsWithMaxLength(17)
+    } yield {
+
+      val expected: NormalNotification = base
+        .copy(movementReferenceNumber = mrn.toString)
+        .copy(trader = trader)
+        .copy(customsSubPlace = Some(subPlace))
+        .copy(notificationDate = LocalDate.now())
+        .copy(notificationPlace = "")
+
+      (expected, trader)
+    }
+
+  private val enRouteEventIncident: Gen[(EnRouteEvent, Incident)] = for {
+    enRouteEvent  <- arbitrary[EnRouteEvent]
+    incident      <- arbitrary[Incident]
+  } yield (enRouteEvent.copy(eventDetails = incident), incident)
 }

@@ -24,7 +24,7 @@ import org.scalacheck.{Gen, Shrink}
 
 trait Generators extends UserAnswersGenerator with PageGenerators with ModelGenerators with UserAnswersEntryGenerators {
 
-  implicit val dontShrink: Shrink[String] = Shrink.shrinkAny
+  implicit def dontShrink[A]: Shrink[A] = Shrink.shrinkAny
 
   def genIntersperseString(gen: Gen[String],
                            value: String,
