@@ -48,12 +48,12 @@ class ArrivalNotificationConversionService {
     }
   }
 
-  private def eventDetails(isTranshipment: Boolean, userAnswers: UserAnswers): EventDetails = {
+  private def eventDetails(isTranshipment: Boolean, incidentInformation: Option[String]): EventDetails = {
     if(isTranshipment) {
       ???
     } else {
       Incident(
-        information = userAnswers.get(IncidentInformationPage),
+        information = incidentInformation,
         endorsement = Endorsement(None, None, None, None)
       )
     }
@@ -70,7 +70,7 @@ class ArrivalNotificationConversionService {
         place = place,
         countryCode = country,
         alreadyInNcts = isReported,
-        eventDetails = eventDetails(isTranshipment, userAnswers),
+        eventDetails = eventDetails(isTranshipment, userAnswers.get(IncidentInformationPage)),
         Seq.empty //TODO Seals
       ))
     }).getOrElse(Seq.empty)
