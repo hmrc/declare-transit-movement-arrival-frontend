@@ -25,10 +25,11 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
+import uk.gov.hmrc.viewmodels.SummaryList.Row
 import utils.CheckYourAnswersHelper
 import viewModels.Section
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class CheckEventAnswersController @Inject()(
                                              override val messagesApi: MessagesApi,
@@ -43,17 +44,25 @@ class CheckEventAnswersController @Inject()(
   def onPageLoad(mrn: MovementReferenceNumber): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
 
-      val sections: Seq[Section] = eventSections(request.userAnswers)
       val json = Json.obj(
-        "sections" -> Json.toJson(sections),
+        "sections" -> Json.toJson(completeSections(request.userAnswers)),
         "mrn" -> mrn
       )
       renderer.render("check-event-answers.njk", json).map(Ok(_))
   }
 
-  private def eventSections(userAnswers: UserAnswers)(implicit messages: Messages): Seq[Section] = {
+  def onSubmit(mrn: MovementReferenceNumber): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+    implicit request =>
+      Future.successful(Redirect(routes.CheckYourAnswersController.onPageLoad(mrn)))
+  }
+
+  private def completeSections(userAnswers: UserAnswers)(implicit messages: Messages): Seq[Section] = {
     val helper = new CheckYourAnswersHelper(userAnswers)
-    val events = Seq(
+    Seq(Section(None, eventsSection(helper)))
+  }
+
+  private def eventsSection(helper: CheckYourAnswersHelper): Seq[Row] =
+    Seq(
       helper.eventCountry,
       helper.eventPlace,
       helper.eventReported,
@@ -61,7 +70,4 @@ class CheckEventAnswersController @Inject()(
       helper.incidentInformation,
       helper.sealsChanged
     ).flatten
-
-    Seq(Section(None, events))
-  }
 }

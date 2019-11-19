@@ -23,6 +23,7 @@ sealed trait Trader
 object Trader {
 
   implicit lazy val reads: Reads[Trader] = {
+    import scala.language.implicitConversions
 
     implicit class ReadsWithContravariantOr[A](a: Reads[A]) {
 

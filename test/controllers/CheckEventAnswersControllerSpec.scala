@@ -73,5 +73,24 @@ class CheckEventAnswersControllerSpec extends SpecBase with JsonMatchers {
 
       application.stop()
     }
+
+    "must redirect to check your answers page" in {
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .build()
+
+      when(mockRenderer.render(any(), any())(any())).thenReturn(Future.successful(Html("")))
+
+      val request = FakeRequest(POST, routes.CheckEventAnswersController.onSubmit(mrn).url)
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+
+      redirectLocation(result).value mustEqual routes.CheckYourAnswersController.onPageLoad(mrn).url
+
+      application.stop()
+
+    }
   }
 }

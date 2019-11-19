@@ -19,9 +19,9 @@ package services.conversion
 import java.time.LocalDate
 
 import models.{TraderAddress, UserAnswers}
-import models.domain.{Trader, TraderWithEori}
+import models.domain.{EnRouteEvent, Endorsement, EventDetails, Incident, Trader, TraderWithEori}
 import models.domain.messages.{ArrivalNotification, NormalNotification}
-import pages.{CustomsSubPlacePage, PresentationOfficePage, TraderAddressPage, TraderEoriPage, TraderNamePage}
+import pages._
 
 class ArrivalNotificationConversionService {
 
@@ -36,26 +36,54 @@ class ArrivalNotificationConversionService {
       traderEori <- userAnswers.get(TraderEoriPage)
       traderName <- userAnswers.get(TraderNamePage)
     } yield {
-      NormalNotification(
-        userAnswers.id.toString,
-        "", //TODO notificationPlace
-        LocalDate.now(),
-        Some(customsSubPlace),
-        traderAddress(tradersAddress, traderEori, traderName),
-        presentationOffice,
-        Seq.empty //TODO EnRouteEvent conversion
+      NormalNotification (
+        movementReferenceNumber = userAnswers.id.toString,
+        notificationPlace = "", //TODO notificationPlace
+        notificationDate = LocalDate.now(),
+        customsSubPlace = Some(customsSubPlace),
+        trader = traderAddress(tradersAddress, traderEori, traderName),
+        presentationOffice = presentationOffice,
+        enRouteEvents = enRouteEvents(userAnswers)
       )
     }
   }
 
+  private def eventDetails(isTranshipment: Boolean, incidentInformation: Option[String]): EventDetails = {
+    if(isTranshipment) {
+      ???
+    } else {
+      Incident(
+        information = incidentInformation,
+        endorsement = Endorsement(None, None, None, None) // TODO: Find out where this data comes from
+      )
+    }
+  }
+
+  private def enRouteEvents(userAnswers: UserAnswers): Seq[EnRouteEvent] = {
+     (for{
+      place <- userAnswers.get(EventPlacePage)
+      country <- userAnswers.get(EventCountryPage)
+      isReported <- userAnswers.get(EventReportedPage)
+      isTranshipment <- userAnswers.get(IsTranshipmentPage)
+    } yield {
+      Seq(EnRouteEvent(
+        place = place,
+        countryCode = country,
+        alreadyInNcts = isReported,
+        eventDetails = eventDetails(isTranshipment, userAnswers.get(IncidentInformationPage)),
+        Seq.empty //TODO Seals
+      ))
+    }).getOrElse(Seq.empty)
+  }
 
   private def traderAddress(traderAddress: TraderAddress, traderEori: String,
                             traderName: String): Trader =
     TraderWithEori(
-      traderEori,
-      Some(traderName),
-      Some(traderAddress.buildingAndStreet),
-      Some(traderAddress.postcode),
-      Some(traderAddress.city),
-      Some(countryCode_GB))
+      eori = traderEori,
+      name  = Some(traderName),
+      streetAndNumber = Some(traderAddress.buildingAndStreet),
+      postCode = Some(traderAddress.postcode),
+      city = Some(traderAddress.city),
+      countryCode = Some(countryCode_GB)
+    )
 }
