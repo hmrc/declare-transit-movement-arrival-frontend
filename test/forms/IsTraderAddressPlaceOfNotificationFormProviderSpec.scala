@@ -27,7 +27,7 @@ class IsTraderAddressPlaceOfNotificationFormProviderSpec extends BooleanFieldBeh
   val invalidKey = "error.boolean"
   val messagesApi = mock[Messages]
 
-  val form = new IsTraderAddressPlaceOfNotificationFormProvider()("")(messagesApi)
+  val form = new IsTraderAddressPlaceOfNotificationFormProvider()("NE99 1NX")(messagesApi)
 
   ".value" - {
 

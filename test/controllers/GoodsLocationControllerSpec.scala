@@ -19,13 +19,14 @@ package controllers
 import base.SpecBase
 import forms.GoodsLocationFormProvider
 import matchers.JsonMatchers
-import models.{NormalMode, GoodsLocation, UserAnswers}
+import models.{GoodsLocation, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.GoodsLocationPage
+import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
