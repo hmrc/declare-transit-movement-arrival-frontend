@@ -65,9 +65,13 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
             .set(EventPlacePage, routeEvent.place).success.value
             .set(EventCountryPage, routeEvent.countryCode).success.value
             .set(EventReportedPage, routeEvent.alreadyInNcts).success.value
-            .set(IncidentInformationPage, incident.information.value).success.value
 
-          service.convertToArrivalNotification(userAnswers).value mustEqual arrivalNotification
+
+          val updatedAnswers = incident.information.fold[UserAnswers](userAnswers) {_ =>
+            userAnswers.set(IncidentInformationPage, incident.information.value).success.value
+          }
+
+          service.convertToArrivalNotification(updatedAnswers).value mustEqual arrivalNotification
       }
     }
 
