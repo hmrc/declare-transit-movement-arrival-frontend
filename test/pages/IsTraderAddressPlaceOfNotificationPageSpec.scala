@@ -16,6 +16,8 @@
 
 package pages
 
+import models.UserAnswers
+import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
 
 class IsTraderAddressPlaceOfNotificationPageSpec extends PageBehaviours {
@@ -27,5 +29,26 @@ class IsTraderAddressPlaceOfNotificationPageSpec extends PageBehaviours {
     beSettable[Boolean](IsTraderAddressPlaceOfNotificationPage)
 
     beRemovable[Boolean](IsTraderAddressPlaceOfNotificationPage)
+
+    "must clean down 'PlaceOfNotificationPage' when 'true'" in {
+      forAll(arbitrary[UserAnswers]) {
+        answers =>
+          val result = answers.set(IsTraderAddressPlaceOfNotificationPage, true).success.value
+
+          result.get(PlaceOfNotificationPage) must not be defined
+      }
+    }
+
+    "must not clean down 'PlaceOfNotificationPage' when 'false' and page is defined" in {
+      forAll(arbitrary[UserAnswers], stringsWithMaxLength(35)) {
+        (answers, placeOfNotification) =>
+          val ua = answers
+            .set(PlaceOfNotificationPage, placeOfNotification).success.value
+
+          val result = ua.set(IsTraderAddressPlaceOfNotificationPage, false).success.value
+
+          result.get(PlaceOfNotificationPage) mustBe defined
+      }
+    }
   }
 }

@@ -19,7 +19,7 @@ package navigation
 import javax.inject.{Inject, Singleton}
 import play.api.mvc.Call
 import controllers.routes
-import models.GoodsLocation.BorderForceOffice
+import models.GoodsLocation.{AuthorisedConsigneesLocation, BorderForceOffice}
 import pages._
 import models._
 
@@ -60,9 +60,9 @@ class Navigator @Inject()() {
       checkRouteMap(page)(userAnswers)
   }
 
-  private val eventPages = Seq(EventCountryPage, EventPlacePage, EventReportedPage, IsTranshipmentPage, IncidentInformationPage, SealsChangedPage)
-
-  private def eventsPages(page: Page): Boolean = eventPages.contains(page)
+  private val eventsPages = (page: Page) =>
+    Seq(EventCountryPage, EventPlacePage, EventReportedPage, IsTranshipmentPage, IncidentInformationPage, SealsChangedPage)
+      .contains(page)
 
   private def isTraderAddressPlaceOfNotificationRoute(mode: Mode)(ua: UserAnswers) =
     (ua.get(IsTraderAddressPlaceOfNotificationPage), mode) match {
@@ -77,9 +77,18 @@ class Navigator @Inject()() {
 
   private def goodsLocationPageRoutes(ua: UserAnswers): Call = ua.get(GoodsLocationPage) match {
     case Some(BorderForceOffice) => routes.PresentationOfficeController.onPageLoad(ua.id, NormalMode)
-    case Some(GoodsLocation.AuthorisedConsigneesLocation) => routes.UseDifferentServiceController.onPageLoad(ua.id)
+    case Some(AuthorisedConsigneesLocation) => routes.UseDifferentServiceController.onPageLoad(ua.id)
     case _ => routes.SessionExpiredController.onPageLoad()
   }
+
+  private def goodsLocationCheckRoute(ua: UserAnswers): Call = {
+    (ua.get(GoodsLocationPage), ua.get(AuthorisedLocationPage), ua.get(CustomsSubPlacePage)) match {
+      case (Some(BorderForceOffice), _, None)         => routes.CustomsSubPlaceController.onPageLoad(ua.id, CheckMode)
+      case (Some(AuthorisedConsigneesLocation), _, _) => routes.UseDifferentServiceController.onPageLoad(ua.id)
+      case _                                          => routes.CheckYourAnswersController.onPageLoad(ua.id)
+    }
+  }
+
 
   private def incidentOnRouteRoute(ua: UserAnswers): Call = ua.get(IncidentOnRoutePage) match {
     case Some(true)  => routes.EventCountryController.onPageLoad(ua.id, NormalMode)
@@ -91,16 +100,5 @@ class Navigator @Inject()() {
     case Some(true)  => routes.SealsChangedController.onPageLoad(ua.id, NormalMode)
     case Some(false) => routes.IncidentInformationController.onPageLoad(ua.id, NormalMode)
     case None        => routes.SessionExpiredController.onPageLoad()
-  }
-
-  private def goodsLocationCheckRoute(ua: UserAnswers): Call = {
-
-    import GoodsLocation._
-
-    (ua.get(GoodsLocationPage), ua.get(AuthorisedLocationPage), ua.get(CustomsSubPlacePage)) match {
-      case (Some(BorderForceOffice), _, None)         => routes.CustomsSubPlaceController.onPageLoad(ua.id, CheckMode)
-      case (Some(AuthorisedConsigneesLocation), _, _) => routes.UseDifferentServiceController.onPageLoad(ua.id)
-      case _                                          => routes.CheckYourAnswersController.onPageLoad(ua.id)
-    }
   }
 }
