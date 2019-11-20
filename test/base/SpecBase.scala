@@ -20,6 +20,7 @@ import config.FrontendAppConfig
 import controllers.actions._
 import models.{MovementReferenceNumber, TraderAddress, UserAnswers}
 import org.mockito.Mockito
+import org.scalacheck.Shrink
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest._
 import org.scalatestplus.mockito.MockitoSugar
