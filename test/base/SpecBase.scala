@@ -20,9 +20,8 @@ import config.FrontendAppConfig
 import controllers.actions._
 import models.{MovementReferenceNumber, UserAnswers}
 import org.mockito.Mockito
-import org.scalacheck.Shrink
-import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest._
+import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice._
 import play.api.Configuration
@@ -52,7 +51,7 @@ trait SpecBase extends FreeSpec with MustMatchers with GuiceOneAppPerSuite with 
 
   def messagesApi: MessagesApi = injector.instanceOf[MessagesApi]
 
-  implicit val hc = HeaderCarrier()
+  implicit val hc: HeaderCarrier = HeaderCarrier()
 
   def fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("", "")
 

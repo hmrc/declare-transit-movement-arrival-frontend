@@ -16,6 +16,8 @@
 
 package pages
 
+import models.UserAnswers
+import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
 
 class IsTranshipmentPageSpec extends PageBehaviours {
@@ -27,5 +29,26 @@ class IsTranshipmentPageSpec extends PageBehaviours {
     beSettable[Boolean](IsTranshipmentPage)
 
     beRemovable[Boolean](IsTranshipmentPage)
+
+    "must remove incident pages data when user selects option 'Yes' on transhipment page" in {
+
+      forAll(arbitrary[UserAnswers]) { userAnswers =>
+
+        val result = userAnswers.set(IsTranshipmentPage, true).success.value
+
+        result.get(IncidentInformationPage) must not be defined
+      }
+    }
+
+    "must remove transhipment pages data when user selects option 'No' on transhipment page" in {
+
+      forAll(arbitrary[UserAnswers]) { userAnswers =>
+
+        val result: Throwable = userAnswers.set(IsTranshipmentPage, false).failure.exception
+
+        result.getMessage mustBe "an implementation is missing"
+
+      }
+    }
   }
 }
