@@ -16,6 +16,8 @@
 
 package pages
 
+import models.UserAnswers
+import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
 
 class IncidentOnRoutePageSpec extends PageBehaviours {
@@ -27,5 +29,19 @@ class IncidentOnRoutePageSpec extends PageBehaviours {
     beSettable[Boolean](IncidentOnRoutePage)
 
     beRemovable[Boolean](IncidentOnRoutePage)
+
+    "must remove incident on route pages when user selects option 'No' for incidents on route question?" in {
+      forAll(arbitrary[UserAnswers]) {
+        answers =>
+
+          val result = answers.set(IncidentOnRoutePage, false).success.value
+
+          result.get(EventCountryPage) must not be defined
+          result.get(EventPlacePage) must not be defined
+          result.get(EventReportedPage) must not be defined
+
+      }
+    }
   }
+
 }

@@ -41,7 +41,7 @@ class GoodsLocationPageSpec extends PageBehaviours {
       }
     }
 
-    "must remove Customs Sub Place when teh user selects Authorised Consignees Location" in {
+    "must remove Customs Sub Place when the user selects Authorised Consignees Location" in {
 
       forAll(arbitrary[UserAnswers]) {
         answers =>
