@@ -17,17 +17,24 @@
 package forms
 
 import forms.behaviours.BooleanFieldBehaviours
-import org.scalatestplus.mockito.MockitoSugar
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.data.FormError
-import play.api.i18n.Messages
+import play.api.i18n.{Messages, MessagesApi}
+import play.api.mvc.AnyContentAsEmpty
+import play.api.test.FakeRequest
 
-class IsTraderAddressPlaceOfNotificationFormProviderSpec extends BooleanFieldBehaviours with MockitoSugar {
+class IsTraderAddressPlaceOfNotificationFormProviderSpec extends BooleanFieldBehaviours with GuiceOneAppPerSuite {
 
-  val requiredKey = "isTraderAddressPlaceOfNotification.error.required"
-  val invalidKey = "error.boolean"
-  val messagesApi = mock[Messages]
+  private val messagesApi = app.injector.instanceOf[MessagesApi]
+  private def fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("", "")
+  private implicit def messages: Messages = messagesApi.preferred(fakeRequest)
 
-  val form = new IsTraderAddressPlaceOfNotificationFormProvider()("NE99 1NX")(messagesApi)
+  private val postcode = "NE99 1AX"
+  private val requiredKey = messages("isTraderAddressPlaceOfNotification.error.required", postcode)
+  private val invalidKey = "error.boolean"
+
+  private val formProvider = new IsTraderAddressPlaceOfNotificationFormProvider()
+  private val form = formProvider(postcode)
 
   ".value" - {
 
