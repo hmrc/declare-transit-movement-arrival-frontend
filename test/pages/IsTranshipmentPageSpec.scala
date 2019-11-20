@@ -39,16 +39,5 @@ class IsTranshipmentPageSpec extends PageBehaviours {
         result.get(IncidentInformationPage) must not be defined
       }
     }
-
-    "must remove transhipment pages data when user selects option 'No' on transhipment page" in {
-
-      forAll(arbitrary[UserAnswers]) { userAnswers =>
-
-        val result: Throwable = userAnswers.set(IsTranshipmentPage, false).failure.exception
-
-        result.getMessage mustBe "an implementation is missing"
-
-      }
-    }
   }
 }
