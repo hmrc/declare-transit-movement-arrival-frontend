@@ -31,12 +31,10 @@ import pages._
 
 class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckPropertyChecks with DomainModelGenerators {
 
-  val service = injector.instanceOf[ArrivalNotificationConversionService]
+  private val service = injector.instanceOf[ArrivalNotificationConversionService]
 
   "ArrivalNotificationConversionService" - {
-
     "must return 'Normal Arrival Notification' message when there are no EventDetails on route" in {
-
       forAll(normalNotificationWithTraderWithEoriWithSubplace) {
         case (arbArrivalNotification, trader) =>
 
@@ -45,12 +43,23 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
           val userAnswers: UserAnswers = createBasicUserAnswers(trader, expectedArrivalNotification)
 
           service.convertToArrivalNotification(userAnswers).value mustEqual expectedArrivalNotification
+      }
+    }
 
+    "must return 'Normal Arrival Notification' with trader address postcode as notification place when no notification place is set" in {
+      forAll(normalNotificationWithTraderWithEoriWithSubplace) {
+        case (arbArrivalNotification, trader) =>
+          val expectedArrivalNotification: NormalNotification = arbArrivalNotification.copy(enRouteEvents = Seq.empty)
+            .copy(notificationPlace = trader.postCode.get)
+
+          val userAnswers: UserAnswers = createBasicUserAnswers(trader, expectedArrivalNotification)
+              .remove(PlaceOfNotificationPage).success.value
+
+          service.convertToArrivalNotification(userAnswers).value mustEqual expectedArrivalNotification
       }
     }
 
     "must return 'Normal Arrival Notification' message when there is on incident on route" in {
-
         forAll(normalNotificationWithTraderWithEoriWithSubplace, enRouteEventIncident) {
         case ((arbArrivalNotification, trader), (enRouteEvent, incident)) =>
 
@@ -66,7 +75,6 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
             .set(EventCountryPage, routeEvent.countryCode).success.value
             .set(EventReportedPage, routeEvent.alreadyInNcts).success.value
 
-
           val updatedAnswers = incident.information.fold[UserAnswers](userAnswers) {_ =>
             userAnswers.set(IncidentInformationPage, incident.information.value).success.value
           }
@@ -76,7 +84,7 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
     }
 
     "must return 'None' from empty userAnswers" in {
-      service.convertToArrivalNotification(emptyUserAnswers) mustEqual (None)
+      service.convertToArrivalNotification(emptyUserAnswers) mustNot be(defined)
     }
 
     "must return 'None' from a partly filled userAnswers" in {
@@ -111,6 +119,8 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
         ).success.value
         .set(TraderEoriPage, trader.eori).success.value
         .set(IncidentOnRoutePage, isIncidentOnRoute).success.value
+        .set(PlaceOfNotificationPage, arrivalNotification.notificationPlace).success.value
+
   }
 
   private val normalNotificationWithTraderWithEoriWithSubplace =
@@ -125,7 +135,6 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
         .copy(trader = trader)
         .copy(customsSubPlace = Some(subPlace))
         .copy(notificationDate = LocalDate.now())
-        .copy(notificationPlace = "")
 
       (expected, trader)
     }
