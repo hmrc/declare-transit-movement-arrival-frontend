@@ -19,6 +19,7 @@ package navigation
 import javax.inject.{Inject, Singleton}
 import play.api.mvc.Call
 import controllers.routes
+import models.GoodsLocation.BorderForceOffice
 import pages._
 import models._
 
@@ -59,12 +60,9 @@ class Navigator @Inject()() {
       checkRouteMap(page)(userAnswers)
   }
 
-  private def eventsPages(page: Page): Boolean = {
-    page match {
-      case EventCountryPage | EventPlacePage | EventReportedPage | IsTranshipmentPage | IncidentInformationPage | SealsChangedPage => true
-      case _ => false
-    }
-  }
+  private val eventPages = Seq(EventCountryPage, EventPlacePage, EventReportedPage, IsTranshipmentPage, IncidentInformationPage, SealsChangedPage)
+
+  private def eventsPages(page: Page): Boolean = eventPages.contains(page)
 
   private def isTraderAddressPlaceOfNotificationRoute(mode: Mode)(ua: UserAnswers) =
     (ua.get(IsTraderAddressPlaceOfNotificationPage), mode) match {
@@ -77,13 +75,10 @@ class Navigator @Inject()() {
       case (None, _) => routes.SessionExpiredController.onPageLoad()
     }
 
-  private def goodsLocationPageRoutes(ua: UserAnswers): Call = {
-    // TODO: Handle None case with session expired
-    if (ua.get(GoodsLocationPage).contains(GoodsLocation.BorderForceOffice)) {
-      routes.PresentationOfficeController.onPageLoad(ua.id, NormalMode)
-    } else {
-      routes.UseDifferentServiceController.onPageLoad(ua.id)
-    }
+  private def goodsLocationPageRoutes(ua: UserAnswers): Call = ua.get(GoodsLocationPage) match {
+    case Some(BorderForceOffice) => routes.PresentationOfficeController.onPageLoad(ua.id, NormalMode)
+    case Some(GoodsLocation.AuthorisedConsigneesLocation) => routes.UseDifferentServiceController.onPageLoad(ua.id)
+    case _ => routes.SessionExpiredController.onPageLoad()
   }
 
   private def incidentOnRouteRoute(ua: UserAnswers): Call = ua.get(IncidentOnRoutePage) match {
