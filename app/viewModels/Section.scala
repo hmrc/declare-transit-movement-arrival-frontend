@@ -23,6 +23,10 @@ import uk.gov.hmrc.viewmodels.SummaryList
 case class Section(sectionTitle: Option[String], rows: Seq[SummaryList.Row])
 
 object Section {
+  def apply(sectionTitle: String, rows: Seq[SummaryList.Row]): Section = new Section(Some(sectionTitle), rows)
+
+  def apply(rows: Seq[SummaryList.Row]): Section = new Section(None, rows)
+
   implicit def sectionWrites(implicit messages: Messages): Writes[Section] = new Writes[Section] {
     override def writes(o: Section): JsValue =
       Json.obj(
