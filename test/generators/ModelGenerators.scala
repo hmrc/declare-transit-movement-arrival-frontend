@@ -17,7 +17,6 @@
 package generators
 
 import models._
-import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 
 trait ModelGenerators {
@@ -26,9 +25,9 @@ trait ModelGenerators {
   implicit lazy val arbitraryTraderAddress: Arbitrary[TraderAddress] =
     Arbitrary {
       for {
-        buildingAndStreet <- arbitrary[String]
-        city <- arbitrary[String]
-        postcode <- arbitrary[String]
+        buildingAndStreet <- stringsWithMaxLength(35)
+        city <- stringsWithMaxLength(35)
+        postcode <- stringsWithMaxLength(9)
       } yield TraderAddress(buildingAndStreet, city, postcode)
     }
 

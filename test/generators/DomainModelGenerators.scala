@@ -166,11 +166,11 @@ trait DomainModelGenerators extends Generators {
 
   lazy val generatorTraderWithEoriAllValues: Gen[TraderWithEori] =
     for {
-      eori            <- arbitrary[String]
-      name            <- arbitrary[String]
-      streetAndNumber <- arbitrary[String]
-      postCode        <- arbitrary[String]
-      city            <- arbitrary[String]
+      eori            <- stringsWithMaxLength(17)
+      name            <- stringsWithMaxLength(35)
+      streetAndNumber <- stringsWithMaxLength(35)
+      postCode        <- stringsWithMaxLength(9)
+      city            <- stringsWithMaxLength(35)
     } yield TraderWithEori(eori, Some(name), Some(streetAndNumber), Some(postCode), Some(city), Some("GB"))
 
 }

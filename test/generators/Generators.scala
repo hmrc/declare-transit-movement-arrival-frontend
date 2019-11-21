@@ -107,6 +107,13 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
       choose(0, vector.size - 1).flatMap(vector(_))
     }
 
+  def seqWithMaxLength[A](maxLength: Int): Gen[Seq[A]] =
+    for {
+      length <- choose(1, maxLength)
+      seq <- listOfN(length, arbitrary[A])
+    } yield seq
+
+
   def datesBetween(min: LocalDate, max: LocalDate): Gen[LocalDate] = {
 
     def toMillis(date: LocalDate): Long =

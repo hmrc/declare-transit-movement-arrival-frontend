@@ -85,7 +85,7 @@ trait UserAnswersEntryGenerators extends PageGenerators {
     Arbitrary {
       for {
         page  <- arbitrary[TraderNamePage.type]
-        value <- arbitrary[String].suchThat(_.nonEmpty).map(Json.toJson(_))
+        value <- stringsWithMaxLength(35).suchThat(_.nonEmpty).map(Json.toJson(_))
       } yield (page, value)
     }
 
