@@ -21,6 +21,7 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 
 trait ModelGenerators {
+  self: Generators =>
 
   implicit lazy val arbitraryTraderAddress: Arbitrary[TraderAddress] =
     Arbitrary {

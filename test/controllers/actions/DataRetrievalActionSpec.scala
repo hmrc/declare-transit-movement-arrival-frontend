@@ -16,7 +16,7 @@
 
 package controllers.actions
 
-import generators.ModelGenerators
+import generators.Generators
 import models.requests.{IdentifierRequest, OptionalDataRequest}
 import models.{MovementReferenceNumber, UserAnswers}
 import org.mockito.Matchers._
@@ -37,7 +37,7 @@ import scala.concurrent.Future
 
 
 class DataRetrievalActionSpec extends FreeSpec with MustMatchers with GuiceOneAppPerSuite with ScalaFutures
-  with MockitoSugar with ModelGenerators with OptionValues {
+  with MockitoSugar with Generators with OptionValues {
 
   val sessionRepository: SessionRepository = mock[SessionRepository]
   val mrn: MovementReferenceNumber = arbitrary[MovementReferenceNumber].sample.value
