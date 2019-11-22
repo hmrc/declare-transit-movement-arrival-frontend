@@ -96,3 +96,13 @@ POST       /:mrn/changeSealsChanged                          controllers.SealsCh
 
 GET        /:mrn/check-event-answers                         controllers.CheckEventAnswersController.onPageLoad(mrn: MovementReferenceNumber)
 POST       /:mrn/check-event-answers                         controllers.CheckEventAnswersController.onSubmit(mrn: MovementReferenceNumber)
+
+GET        /:mrn/isTraderAddressPlaceOfNotification          controllers.IsTraderAddressPlaceOfNotificationController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
+POST       /:mrn/isTraderAddressPlaceOfNotification          controllers.IsTraderAddressPlaceOfNotificationController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
+GET        /:mrn/changeIsTraderAddressPlaceOfNotification    controllers.IsTraderAddressPlaceOfNotificationController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
+POST       /:mrn/changeIsTraderAddressPlaceOfNotification    controllers.IsTraderAddressPlaceOfNotificationController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
+
+GET        /:mrn/placeOfNotification                         controllers.PlaceOfNotificationController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
+POST       /:mrn/placeOfNotification                         controllers.PlaceOfNotificationController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
+GET        /:mrn/changePlaceOfNotification                   controllers.PlaceOfNotificationController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
+POST       /:mrn/changePlaceOfNotification                   controllers.PlaceOfNotificationController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)

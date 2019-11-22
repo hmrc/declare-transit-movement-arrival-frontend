@@ -70,19 +70,17 @@ class CheckYourAnswersController @Inject()(
   private def createSections(userAnswers: UserAnswers)(implicit messages: Messages): Seq[Section] = {
     val helper = new CheckYourAnswersHelper(userAnswers)
 
-    val mrn = Section(None, Seq(helper.movementReferenceNumber))
-    val goodsLocation = Section(Some(messages("checkYourAnswers.section.goodsLocation")),
-      Seq(helper.goodsLocation, helper.authorisedLocation).flatten)
-    val traderDetails = Section(Some(messages("checkYourAnswers.section.traderDetails")),
-      Seq(helper.traderName, helper.traderAddress, helper.traderEori).flatten)
-    val events = Section(Some(messages("checkYourAnswers.section.events")), Seq(helper.incidentOnRoute).flatten)
+    val mrn = Section(Seq(helper.movementReferenceNumber))
+    val goodsLocation = Section(messages("checkYourAnswers.section.goodsLocation"), Seq(helper.goodsLocation, helper.authorisedLocation).flatten)
+    val traderDetails = Section(messages("checkYourAnswers.section.traderDetails"), Seq(helper.traderName, helper.traderAddress, helper.traderEori).flatten)
+    val notificationDetails = Section(messages("checkYourAnswers.section.notificationDetails"), Seq(helper.isTraderAddressPlaceOfNotification, helper.placeOfNotification).flatten)
+    val events = Section(messages("checkYourAnswers.section.events"), Seq(helper.incidentOnRoute).flatten)
 
-    val sections: Seq[Section] = Seq(
-      mrn,
+    Seq(mrn,
       goodsLocation,
       traderDetails,
+      notificationDetails,
       events
     )
-    sections
   }
 }

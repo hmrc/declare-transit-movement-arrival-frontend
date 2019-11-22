@@ -17,18 +17,17 @@
 package controllers
 
 import base.SpecBase
-import forms.GoodsLocationFormProvider
+import forms.PlaceOfNotificationFormProvider
 import matchers.JsonMatchers
-import models.{GoodsLocation, NormalMode, UserAnswers}
+import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.GoodsLocationPage
-import play.api.data.Form
+import pages.PlaceOfNotificationPage
 import play.api.inject.bind
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.json.{JsObject, JsString, Json}
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -38,16 +37,16 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class GoodsLocationControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class PlaceOfNotificationControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
   def onwardRoute = Call("GET", "/foo")
 
-  lazy val goodsLocationRoute = routes.GoodsLocationController.onPageLoad(mrn, NormalMode).url
-
-  val formProvider = new GoodsLocationFormProvider()
+  val formProvider = new PlaceOfNotificationFormProvider()
   val form = formProvider()
 
-  "GoodsLocation Controller" - {
+  lazy val placeOfNotificationRoute = routes.PlaceOfNotificationController.onPageLoad(mrn, NormalMode).url
+
+  "PlaceOfNotification Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
@@ -55,7 +54,7 @@ class GoodsLocationControllerSpec extends SpecBase with MockitoSugar with Nunjuc
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(GET, goodsLocationRoute)
+      val request = FakeRequest(GET, placeOfNotificationRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -66,13 +65,12 @@ class GoodsLocationControllerSpec extends SpecBase with MockitoSugar with Nunjuc
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form"   -> form,
-        "mode"   -> NormalMode,
-        "mrn"    -> mrn,
-        "radios" -> GoodsLocation.radios(form)
+        "form" -> form,
+        "mrn"  -> mrn,
+        "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "goodsLocation.njk"
+      templateCaptor.getValue mustEqual "placeOfNotification.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -83,9 +81,9 @@ class GoodsLocationControllerSpec extends SpecBase with MockitoSugar with Nunjuc
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(mrn).set(GoodsLocationPage, GoodsLocation.values.head).success.value
+      val userAnswers = UserAnswers(mrn).set(PlaceOfNotificationPage, "answer").success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-      val request = FakeRequest(GET, goodsLocationRoute)
+      val request = FakeRequest(GET, placeOfNotificationRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -95,16 +93,15 @@ class GoodsLocationControllerSpec extends SpecBase with MockitoSugar with Nunjuc
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = form.bind(Map("value" -> GoodsLocation.values.head.toString))
+      val filledForm = form.bind(Map("value" -> "answer"))
 
       val expectedJson = Json.obj(
-        "form"   -> filledForm,
-        "mode"   -> NormalMode,
-        "mrn"    -> mrn,
-        "radios" -> GoodsLocation.radios(filledForm)
+        "form" -> filledForm,
+        "mrn"  -> mrn,
+        "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "goodsLocation.njk"
+      templateCaptor.getValue mustEqual "placeOfNotification.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -125,13 +122,12 @@ class GoodsLocationControllerSpec extends SpecBase with MockitoSugar with Nunjuc
           .build()
 
       val request =
-        FakeRequest(POST, goodsLocationRoute)
-          .withFormUrlEncodedBody(("value", GoodsLocation.values.head.toString))
+        FakeRequest(POST, placeOfNotificationRoute)
+          .withFormUrlEncodedBody(("value", "answer"))
 
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
-
       redirectLocation(result).value mustEqual onwardRoute.url
 
       application.stop()
@@ -143,8 +139,8 @@ class GoodsLocationControllerSpec extends SpecBase with MockitoSugar with Nunjuc
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(POST, goodsLocationRoute).withFormUrlEncodedBody(("value", "invalid value"))
-      val boundForm = form.bind(Map("value" -> "invalid value"))
+      val request = FakeRequest(POST, placeOfNotificationRoute).withFormUrlEncodedBody(("value", ""))
+      val boundForm = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -155,14 +151,45 @@ class GoodsLocationControllerSpec extends SpecBase with MockitoSugar with Nunjuc
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form"   -> boundForm,
-        "mode"   -> NormalMode,
-        "mrn"    -> mrn,
-        "radios" -> GoodsLocation.radios(boundForm)
+        "form" -> boundForm,
+        "mrn"  -> mrn,
+        "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "goodsLocation.njk"
+      templateCaptor.getValue mustEqual "placeOfNotification.njk"
       jsonCaptor.getValue must containJson(expectedJson)
+
+      application.stop()
+    }
+
+    "must redirect to Session Expired for a GET if no existing data is found" in {
+
+      val application = applicationBuilder(userAnswers = None).build()
+
+      val request = FakeRequest(GET, placeOfNotificationRoute)
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+
+      redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
+
+      application.stop()
+    }
+
+    "must redirect to Session Expired for a POST if no existing data is found" in {
+
+      val application = applicationBuilder(userAnswers = None).build()
+
+      val request =
+        FakeRequest(POST, placeOfNotificationRoute)
+          .withFormUrlEncodedBody(("value", "answer"))
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+
+      redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
 
       application.stop()
     }

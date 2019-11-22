@@ -35,10 +35,11 @@ class ArrivalNotificationConversionService {
       tradersAddress <- userAnswers.get(TraderAddressPage)
       traderEori <- userAnswers.get(TraderEoriPage)
       traderName <- userAnswers.get(TraderNamePage)
+      notificationPlace <- userAnswers.get(PlaceOfNotificationPage) orElse Some(tradersAddress.postcode)
     } yield {
       NormalNotification (
         movementReferenceNumber = userAnswers.id.toString,
-        notificationPlace = "", //TODO notificationPlace
+        notificationPlace = notificationPlace,
         notificationDate = LocalDate.now(),
         customsSubPlace = Some(customsSubPlace),
         trader = traderAddress(tradersAddress, traderEori, traderName),

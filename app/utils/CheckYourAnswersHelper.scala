@@ -27,6 +27,38 @@ import uk.gov.hmrc.viewmodels._
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messages) {
 
+  def placeOfNotification: Option[Row] = userAnswers.get(PlaceOfNotificationPage) map {
+    answer =>
+      Row(
+        key     = Key(msg"placeOfNotification.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(lit"$answer"),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = routes.PlaceOfNotificationController.onPageLoad(mrn, CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"placeOfNotification.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
+  def isTraderAddressPlaceOfNotification: Option[Row] = userAnswers.get(IsTraderAddressPlaceOfNotificationPage) map {
+    answer =>
+      val postcode = userAnswers.get(TraderAddressPage).map(_.postcode).get
+      val message = messages("isTraderAddressPlaceOfNotification.checkYourAnswersLabel", postcode)
+      Row(
+        key     = Key(msg"$message", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(yesOrNo(answer)),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = routes.IsTraderAddressPlaceOfNotificationController.onPageLoad(mrn, CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"isTraderAddressPlaceOfNotification.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
   def sealsChanged: Option[Row] = userAnswers.get(SealsChangedPage) map {
     answer =>
       Row(

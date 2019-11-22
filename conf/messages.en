@@ -40,6 +40,7 @@ checkYourAnswers.title = Check your answers
 checkYourAnswers.heading = Check your answers
 checkYourAnswers.section.goodsLocation = Goods Location
 checkYourAnswers.section.traderDetails = Trader Details
+checkYourAnswers.section.notificationDetails = Place of Notification
 checkYourAnswers.section.events = Events
 checkYourAnswers.confirmation.heading = Now send your arrival notification
 checkYourAnswers.confirmation.paragraph = By sending this notification you are confirming that, to the best of your knowledge, the details you are providing are correct.
@@ -246,3 +247,14 @@ sealsChanged.error.required = Select yes if any of the seals have changed
 
 checkEventAnswers.title = Check event answers
 checkEventAnswers.heading = Check event answers
+
+isTraderAddressPlaceOfNotification.title = Is {0} the place of notification?
+isTraderAddressPlaceOfNotification.heading = Is {0} the place of notification?
+isTraderAddressPlaceOfNotification.checkYourAnswersLabel = Is {0} the place of notification?
+isTraderAddressPlaceOfNotification.error.required = Select yes if {0} is the place of notification
+
+placeOfNotification.title = What is the place of notification?
+placeOfNotification.heading = What is the place of notification?
+placeOfNotification.checkYourAnswersLabel = What is the place of notification?
+placeOfNotification.error.required = Enter the place of notification
+placeOfNotification.error.length = Place of notification must be 35 characters or less

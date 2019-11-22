@@ -21,6 +21,12 @@ import pages._
 
 trait PageGenerators {
 
+  implicit lazy val arbitraryPlaceOfNotificationPage: Arbitrary[PlaceOfNotificationPage.type] =
+    Arbitrary(PlaceOfNotificationPage)
+
+  implicit lazy val arbitraryIsTraderAddressPlaceOfNotificationPage: Arbitrary[IsTraderAddressPlaceOfNotificationPage.type] =
+    Arbitrary(IsTraderAddressPlaceOfNotificationPage)
+
   implicit lazy val arbitrarySealsChangedPage: Arbitrary[SealsChangedPage.type] =
     Arbitrary(SealsChangedPage)
 

@@ -18,7 +18,7 @@ package base
 
 import config.FrontendAppConfig
 import controllers.actions._
-import models.{MovementReferenceNumber, UserAnswers}
+import models.{MovementReferenceNumber, TraderAddress, UserAnswers}
 import org.mockito.Mockito
 import org.scalatest._
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
@@ -44,6 +44,8 @@ trait SpecBase extends FreeSpec with MustMatchers with GuiceOneAppPerSuite with 
   val mrn = MovementReferenceNumber("19", "GB", "1234567890123")
 
   val emptyUserAnswers = UserAnswers(mrn, Json.obj())
+
+  val traderAddress = TraderAddress("", "", "NE99 1XN")
 
   def injector: Injector = app.injector
 
