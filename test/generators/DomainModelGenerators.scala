@@ -88,7 +88,8 @@ trait DomainModelGenerators extends Generators {
         transportIdentity <- stringsWithMaxLength(27)
         transportCountry  <- stringsWithMaxLength(2)
         endorsement       <- arbitrary[Endorsement]
-        containers        <- Gen.listOf(stringsWithMaxLength(17))
+        numberOfContainers  <- Gen.choose[Int](1, 99)
+        containers          <- Gen.listOfN(numberOfContainers, stringsWithMaxLength(17))
       } yield VehicularTranshipment(transportIdentity, transportCountry, endorsement, containers)
     }
 
@@ -96,8 +97,9 @@ trait DomainModelGenerators extends Generators {
     Arbitrary {
 
       for {
-        endorsement       <- arbitrary[Endorsement]
-        containers        <- Gen.nonEmptyListOf(stringsWithMaxLength(17))
+        endorsement         <- arbitrary[Endorsement]
+        numberOfContainers  <- Gen.choose[Int](1, 99)
+        containers          <- Gen.listOfN(numberOfContainers, stringsWithMaxLength(17))
       } yield ContainerTranshipment(endorsement, containers)
     }
 
@@ -125,7 +127,7 @@ trait DomainModelGenerators extends Generators {
         countryCode   <- stringsWithMaxLength(2)
         alreadyInNcts <- arbitrary[Boolean]
         eventDetails  <- arbitrary[EventDetails]
-        numberOfSeals <- Gen.choose[Int](0, 9999)
+        numberOfSeals <- Gen.choose[Int](0, 99)
         seals         <- Gen.listOfN(numberOfSeals, stringsWithMaxLength(20))
       } yield EnRouteEvent(place, countryCode, alreadyInNcts, eventDetails, seals)
     }
@@ -140,7 +142,7 @@ trait DomainModelGenerators extends Generators {
         subPlace           <- Gen.option(stringsWithMaxLength(17))
         trader             <- arbitrary[Trader]
         presentationOffice <- stringsWithMaxLength(8)
-        events             <- arbitrary[Seq[EnRouteEvent]]
+        events             <- seqWithMaxLength[EnRouteEvent](9)
       } yield NormalNotification(mrn, place, date, subPlace, trader, presentationOffice, events)
     }
 
@@ -154,7 +156,7 @@ trait DomainModelGenerators extends Generators {
         approvedLocation   <- Gen.option(stringsWithMaxLength(17))
         trader             <- arbitrary[Trader]
         presentationOffice <- stringsWithMaxLength(8)
-        events             <- arbitrary[Seq[EnRouteEvent]]
+        events             <- seqWithMaxLength[EnRouteEvent](9)
       } yield SimplifiedNotification(mrn, place, date, approvedLocation, trader, presentationOffice, events)
     }
 
@@ -166,11 +168,11 @@ trait DomainModelGenerators extends Generators {
 
   lazy val generatorTraderWithEoriAllValues: Gen[TraderWithEori] =
     for {
-      eori            <- arbitrary[String]
-      name            <- arbitrary[String]
-      streetAndNumber <- arbitrary[String]
-      postCode        <- arbitrary[String]
-      city            <- arbitrary[String]
+      eori            <- stringsWithMaxLength(17)
+      name            <- stringsWithMaxLength(35)
+      streetAndNumber <- stringsWithMaxLength(35)
+      postCode        <- stringsWithMaxLength(9)
+      city            <- stringsWithMaxLength(35)
     } yield TraderWithEori(eori, Some(name), Some(streetAndNumber), Some(postCode), Some(city), Some("GB"))
 
 }

@@ -16,7 +16,7 @@
 
 package models
 
-import generators.ModelGenerators
+import generators.Generators
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatest.{EitherValues, FreeSpec, MustMatchers, OptionValues}
@@ -25,7 +25,7 @@ import play.api.libs.json.{JsString, JsSuccess, Json}
 import play.api.mvc.PathBindable
 
 class MovementReferenceNumberSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks
-  with ModelGenerators with EitherValues with OptionValues {
+  with Generators with EitherValues with OptionValues {
 
   "a Movement Reference Number" - {
 

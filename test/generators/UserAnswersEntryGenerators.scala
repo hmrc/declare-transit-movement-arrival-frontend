@@ -22,7 +22,8 @@ import org.scalacheck.Arbitrary.arbitrary
 import pages._
 import play.api.libs.json.{JsValue, Json}
 
-trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
+trait UserAnswersEntryGenerators extends PageGenerators {
+  self: Generators =>
 
   implicit lazy val arbitraryPlaceOfNotificationUserAnswersEntry: Arbitrary[(PlaceOfNotificationPage.type, JsValue)] =
     Arbitrary {
@@ -60,7 +61,7 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
     Arbitrary {
       for {
         page  <- arbitrary[IncidentInformationPage.type]
-        value <- arbitrary[String].suchThat(_.nonEmpty).map(Json.toJson(_))
+        value <- stringsWithMaxLength(350).suchThat(_.nonEmpty).map(Json.toJson(_))
       } yield (page, value)
     }
 
@@ -76,7 +77,7 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
     Arbitrary {
       for {
         page  <- arbitrary[EventPlacePage.type]
-        value <- arbitrary[String].suchThat(_.nonEmpty).map(Json.toJson(_))
+        value <- stringsWithMaxLength(35).suchThat(_.nonEmpty).map(Json.toJson(_))
       } yield (page, value)
     }
 
@@ -84,7 +85,7 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
     Arbitrary {
       for {
         page  <- arbitrary[EventCountryPage.type]
-        value <- arbitrary[String].suchThat(_.nonEmpty).map(Json.toJson(_))
+        value <- stringsWithMaxLength(2).suchThat(_.nonEmpty).map(Json.toJson(_))
       } yield (page, value)
     }
 
@@ -100,7 +101,7 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
     Arbitrary {
       for {
         page  <- arbitrary[TraderNamePage.type]
-        value <- arbitrary[String].suchThat(_.nonEmpty).map(Json.toJson(_))
+        value <- stringsWithMaxLength(35).suchThat(_.nonEmpty).map(Json.toJson(_))
       } yield (page, value)
     }
 
@@ -108,7 +109,7 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
     Arbitrary {
       for {
         page  <- arbitrary[TraderEoriPage.type]
-        value <- arbitrary[String].suchThat(_.nonEmpty).map(Json.toJson(_))
+        value <- stringsWithMaxLength(17).suchThat(_.nonEmpty).map(Json.toJson(_))
       } yield (page, value)
     }
 
@@ -124,7 +125,7 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
     Arbitrary {
       for {
         page  <- arbitrary[AuthorisedLocationPage.type]
-        value <- arbitrary[String].suchThat(_.nonEmpty).map(Json.toJson(_))
+        value <- stringsWithMaxLength(17).suchThat(_.nonEmpty).map(Json.toJson(_))
       } yield (page, value)
     }
 
@@ -132,7 +133,7 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
     Arbitrary {
       for {
         page  <- arbitrary[CustomsSubPlacePage.type]
-        value <- arbitrary[String].suchThat(_.nonEmpty).map(Json.toJson(_))
+        value <- stringsWithMaxLength(17).suchThat(_.nonEmpty).map(Json.toJson(_))
       } yield (page, value)
     }
 
@@ -140,7 +141,7 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
     Arbitrary {
       for {
         page  <- arbitrary[PresentationOfficePage.type]
-        value <- arbitrary[String].suchThat(_.nonEmpty).map(Json.toJson(_))
+        value <- stringsWithMaxLength(8).suchThat(_.nonEmpty).map(Json.toJson(_))
       } yield (page, value)
     }
 
