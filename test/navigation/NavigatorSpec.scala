@@ -128,20 +128,8 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         }
       }
 
-      "must go from 'IsTraderAddressPlaceOfNotificationController'" - {
-        "to 'PlaceOfNotificationController' when answer is 'No'" in {
-          forAll(arbitrary[UserAnswers]) {
-            answers =>
-              val updatedUserAnswers = answers
-                .set(IsTraderAddressPlaceOfNotificationPage, false).success.value
-                .remove(PlaceOfNotificationPage).success.value
-
-              navigator.nextPage(IsTraderAddressPlaceOfNotificationPage, NormalMode, updatedUserAnswers)
-                .mustBe(routes.PlaceOfNotificationController.onPageLoad(updatedUserAnswers.id, NormalMode))
-          }
-        }
-
-        "to 'IncidentOnRouteController' when answer is 'Yes'" in {
+      "must go from 'IsTraderAddressPlaceOfNotificationPage'" - {
+        "to 'IncidentOnRoutePage' when answer is 'Yes'" in {
           forAll(arbitrary[UserAnswers]) {
             answers =>
               val updatedUserAnswers = answers.set(IsTraderAddressPlaceOfNotificationPage, true).success.value
@@ -152,7 +140,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         }
       }
 
-      "go from 'Place of Notification' to 'IncidentOnRoute" in {
+      "go from 'Place of Notification' to 'IncidentOnRoute'" in {
         forAll(arbitrary[UserAnswers], stringsWithMaxLength(35)) {
           case (answers, placeOfNotification) =>
             val updatedUserAnswers = answers.set(PlaceOfNotificationPage, placeOfNotification).success.value
@@ -374,20 +362,8 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         }
       }
 
-      "must go from 'IsTraderAddressPlaceOfNotificationController'" - {
-        "to 'PlaceOfNotificationController' when answer is 'No' and there is no 'Place of notificatin'" in {
-          forAll(arbitrary[UserAnswers]) {
-            answers =>
-              val updatedUserAnswers = answers
-                .set(IsTraderAddressPlaceOfNotificationPage, false).success.value
-                .remove(PlaceOfNotificationPage).success.value
-
-              navigator.nextPage(IsTraderAddressPlaceOfNotificationPage, CheckMode, updatedUserAnswers)
-                .mustBe(routes.PlaceOfNotificationController.onPageLoad(updatedUserAnswers.id, CheckMode))
-          }
-        }
-
-        "to 'CheckYourAnswersController' when answer is 'No' and there is a 'Place of notification'" in {
+      "must go from 'IsTraderAddressPlaceOfNotificationPage'" - {
+        "to 'Check Your Answers' when answer is 'No' and there is a 'Place of notification'" in {
           forAll(arbitrary[UserAnswers], arbitrary[String]) {
             (answers, placeOfNotification) =>
               val updatedUserAnswers = answers
@@ -399,7 +375,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           }
         }
 
-        "to 'CheckYourAnswersController' when answer is 'Yes'" in {
+        "to 'Check Your Answers' when answer is 'Yes'" in {
           forAll(arbitrary[UserAnswers]) {
             answers =>
               val updatedUserAnswers = answers.set(IsTraderAddressPlaceOfNotificationPage, true).success.value

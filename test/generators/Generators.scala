@@ -20,7 +20,7 @@ import java.time.{Instant, LocalDate, ZoneOffset}
 
 import org.scalacheck.Arbitrary._
 import org.scalacheck.Gen._
-import org.scalacheck.{Gen, Shrink}
+import org.scalacheck.{Arbitrary, Gen, Shrink}
 
 trait Generators extends UserAnswersGenerator with PageGenerators with ModelGenerators with UserAnswersEntryGenerators {
 
@@ -106,6 +106,12 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
       val vector = xs.toVector
       choose(0, vector.size - 1).flatMap(vector(_))
     }
+
+  def seqWithMaxLength[A](maxLength: Int)(implicit a: Arbitrary[A]): Gen[Seq[A]] =
+    for {
+      length <- choose(1, maxLength)
+      seq <- listOfN(length, arbitrary[A])
+    } yield seq
 
   def datesBetween(min: LocalDate, max: LocalDate): Gen[LocalDate] = {
 
