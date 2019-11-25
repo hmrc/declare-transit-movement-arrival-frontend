@@ -21,7 +21,7 @@ import forms.PresentationOfficeFormProvider
 import javax.inject.Inject
 import models.{Mode, MovementReferenceNumber}
 import navigation.Navigator
-import pages.PresentationOfficePage
+import pages.{CustomsSubPlacePage, PresentationOfficePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -33,16 +33,16 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 import scala.concurrent.{ExecutionContext, Future}
 
 class PresentationOfficeController @Inject()(
-                                       override val messagesApi: MessagesApi,
-                                       sessionRepository: SessionRepository,
-                                       navigator: Navigator,
-                                       identify: IdentifierAction,
-                                       getData: DataRetrievalActionProvider,
-                                       requireData: DataRequiredAction,
-                                       formProvider: PresentationOfficeFormProvider,
-                                       val controllerComponents: MessagesControllerComponents,
-                                       renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
+                                              override val messagesApi: MessagesApi,
+                                              sessionRepository: SessionRepository,
+                                              navigator: Navigator,
+                                              identify: IdentifierAction,
+                                              getData: DataRetrievalActionProvider,
+                                              requireData: DataRequiredAction,
+                                              formProvider: PresentationOfficeFormProvider,
+                                              val controllerComponents: MessagesControllerComponents,
+                                              renderer: Renderer
+                                            )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
 
   private val form = formProvider()
 
@@ -53,14 +53,16 @@ class PresentationOfficeController @Inject()(
         case None => form
         case Some(value) => form.fill(value)
       }
-
-      val json = Json.obj(
-        "form" -> preparedForm,
-        "mrn"  -> mrn,
-        "mode" -> mode
-      )
-
-      renderer.render("presentationOffice.njk", json).map(Ok(_))
+      request.userAnswers.get(CustomsSubPlacePage) match {
+        case Some(subsPlace) => val json = Json.obj(
+          "form" -> preparedForm,
+          "mrn" -> mrn,
+          "mode" -> mode,
+          "subsPlace" -> subsPlace
+        )
+          renderer.render("presentationOffice.njk", json).map(Ok(_))
+        case _ => Future.successful(Redirect(routes.SessionExpiredController.onPageLoad()))
+      }
   }
 
   def onSubmit(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
@@ -68,19 +70,22 @@ class PresentationOfficeController @Inject()(
 
       form.bindFromRequest().fold(
         formWithErrors => {
-
-          val json = Json.obj(
-            "form" -> formWithErrors,
-            "mrn"  -> mrn,
-            "mode" -> mode
-          )
-
-          renderer.render("presentationOffice.njk", json).map(BadRequest(_))
+          request.userAnswers.get(CustomsSubPlacePage) match {
+              case Some(subsPlace) =>
+                val json = Json.obj(
+                "form" -> formWithErrors,
+                "mrn" -> mrn,
+                "mode" -> mode,
+                "subsPlace" -> subsPlace
+              )
+              renderer.render("presentationOffice.njk", json).map(BadRequest(_))
+            case _ => Future.successful(Redirect(routes.SessionExpiredController.onPageLoad()))
+          }
         },
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(PresentationOfficePage, value))
-            _              <- sessionRepository.set(updatedAnswers)
+            _ <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(PresentationOfficePage, mode, updatedAnswers))
       )
   }

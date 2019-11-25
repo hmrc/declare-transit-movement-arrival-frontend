@@ -139,30 +139,30 @@ compliant.nine.p2.2=Digital Accessibility Centre
 compliant.nine.p2.3=The full service was tested by HMRC and included disabled users.
 compliant.nine.p3=This page was prepared on [date when it was first published]. It was last updated on [date when it was last updated].
 
-movementReferenceNumber.title = What is the Movement Reference Number (MRN)?
-movementReferenceNumber.heading = What is the Movement Reference Number (MRN)?
+movementReferenceNumber.title = What is the movement reference number (MRN)?
+movementReferenceNumber.heading = What is the movement reference number (MRN)?
 movementReferenceNumber.checkYourAnswersLabel = Movement Reference Number
-movementReferenceNumber.error.required = Enter the Movement Reference Number
-movementReferenceNumber.error.invalid = Enter a valid Movement Reference Number
+movementReferenceNumber.error.required = Enter the movement reference number
+movementReferenceNumber.error.invalid = Enter a valid movement reference number
 
 goodsLocation.title = Where are the goods?
 goodsLocation.heading = Where are the goods?
-goodsLocation.borderForceOffice = Border Force office
-goodsLocation.authorisedConsigneesLocation = Authorised Consignee’s location
+goodsLocation.borderForceOffice = Border Force location
+goodsLocation.authorisedConsigneesLocation = Authorised consignee’s location
 goodsLocation.checkYourAnswersLabel = Where are the goods?
 goodsLocation.error.required = Select where the goods are
 
-presentationOffice.title = Where are the goods located?
-presentationOffice.heading = Where are the goods located?
+presentationOffice.title = Which Border Force office supervises {0}?
+presentationOffice.heading = Which Border Force office supervises {0}?
 presentationOffice.checkYourAnswersLabel = Goods location
-presentationOffice.error.required = Enter where the goods are located
-presentationOffice.error.length = Where the goods are located must be 8 characters or less
+presentationOffice.error.required = Enter the Border Force office which supervises {0}
+presentationOffice.error.length = Border Force office must be 8 characters
 
-customsSubPlace.title = Which customs approved location has the goods?
-customsSubPlace.heading = Which customs approved location has the goods?
+customsSubPlace.title = Which customs sub-place or approved location has the goods?
+customsSubPlace.heading = Which customs sub-place or approved location has the goods?
 customsSubPlace.checkYourAnswersLabel = Customs approved location
-customsSubPlace.error.required = Enter the customs approved location
-customsSubPlace.error.length = Customs approved location must be 17 characters or less
+customsSubPlace.error.required = Enter the customs sub-place or approved location that has the goods
+customsSubPlace.error.length = Customs sub-place or approved location must be 17 characters or less
 
 authorisedLocation.title = What is the authorised location code?
 authorisedLocation.heading = What is the authorised location code?
@@ -187,7 +187,7 @@ traderEori.title = What is the EORI number of the trader at destination?
 traderEori.heading = What is the EORI number of the trader at destination?
 traderEori.checkYourAnswersLabel = EORI number
 traderEori.error.required = Enter the EORI number
-traderEori.error.length = EORI number must be 17 characters or less
+traderEori.error.length = EORI number must be 17 characters
 
 traderName.title = What is the name of the trader at destination?
 traderName.heading = What is the name of the trader at destination?
@@ -248,10 +248,10 @@ sealsChanged.error.required = Select yes if any of the seals have changed
 checkEventAnswers.title = Check event answers
 checkEventAnswers.heading = Check event answers
 
-isTraderAddressPlaceOfNotification.title = Is {0} the place of notification?
-isTraderAddressPlaceOfNotification.heading = Is {0} the place of notification?
-isTraderAddressPlaceOfNotification.checkYourAnswersLabel = Is {0} the place of notification?
-isTraderAddressPlaceOfNotification.error.required = Select yes if {0} is the place of notification
+isTraderAddressPlaceOfNotification.title = Is {0} the postcode of the place of notification?
+isTraderAddressPlaceOfNotification.heading = Is {0} the postcode of the place of notification?
+isTraderAddressPlaceOfNotification.checkYourAnswersLabel = Is {0} the postcode of the place of notification
+isTraderAddressPlaceOfNotification.error.required = Select yes if {0} is the postcode of the place of notification
 
 placeOfNotification.title = What is the place of notification?
 placeOfNotification.heading = What is the place of notification?
