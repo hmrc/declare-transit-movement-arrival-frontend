@@ -49,18 +49,22 @@ class PresentationOfficeController @Inject()(
   def onPageLoad(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(PresentationOfficePage) match {
-        case None => form
-        case Some(value) => form.fill(value)
-      }
       request.userAnswers.get(CustomsSubPlacePage) match {
-        case Some(subsPlace) => val json = Json.obj(
-          "form" -> preparedForm,
-          "mrn" -> mrn,
-          "mode" -> mode,
-          "subsPlace" -> subsPlace
-        )
+        case Some(subsPlace) =>
+
+          val preparedForm = request.userAnswers.get(PresentationOfficePage) match {
+            case None => form
+            case Some(value) => form.fill(value)
+          }
+
+          val json = Json.obj(
+            "form" -> preparedForm,
+            "mrn" -> mrn,
+            "mode" -> mode,
+            "subsPlace" -> subsPlace
+          )
           renderer.render("presentationOffice.njk", json).map(Ok(_))
+
         case _ => Future.successful(Redirect(routes.SessionExpiredController.onPageLoad()))
       }
   }
@@ -71,8 +75,8 @@ class PresentationOfficeController @Inject()(
       form.bindFromRequest().fold(
         formWithErrors => {
           request.userAnswers.get(CustomsSubPlacePage) match {
-              case Some(subsPlace) =>
-                val json = Json.obj(
+            case Some(subsPlace) =>
+              val json = Json.obj(
                 "form" -> formWithErrors,
                 "mrn" -> mrn,
                 "mode" -> mode,
