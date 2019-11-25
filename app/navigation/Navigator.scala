@@ -29,8 +29,8 @@ class Navigator @Inject()() {
   private val normalRoutes: Page => UserAnswers => Call = {
     case MovementReferenceNumberPage => ua => routes.GoodsLocationController.onPageLoad(ua.id, NormalMode)
     case GoodsLocationPage => goodsLocationPageRoutes
-    case PresentationOfficePage => ua => routes.CustomsSubPlaceController.onPageLoad(ua.id, NormalMode)
-    case CustomsSubPlacePage => ua => routes.TraderNameController.onPageLoad(ua.id, NormalMode)
+    case PresentationOfficePage => ua => routes.TraderNameController.onPageLoad(ua.id, NormalMode)
+    case CustomsSubPlacePage => ua => routes.PresentationOfficeController.onPageLoad(ua.id, NormalMode)
     case TraderNamePage => ua => routes.TraderEoriController.onPageLoad(ua.id, NormalMode)
     case TraderAddressPage => ua => routes.IsTraderAddressPlaceOfNotificationController.onPageLoad(ua.id, NormalMode)
     case TraderEoriPage => ua => routes.TraderAddressController.onPageLoad(ua.id, NormalMode)
@@ -76,7 +76,7 @@ class Navigator @Inject()() {
     }
 
   private def goodsLocationPageRoutes(ua: UserAnswers): Call = ua.get(GoodsLocationPage) match {
-    case Some(BorderForceOffice) => routes.PresentationOfficeController.onPageLoad(ua.id, NormalMode)
+    case Some(BorderForceOffice) => routes.CustomsSubPlaceController.onPageLoad(ua.id, NormalMode)
     case Some(AuthorisedConsigneesLocation) => routes.UseDifferentServiceController.onPageLoad(ua.id)
     case _ => routes.SessionExpiredController.onPageLoad()
   }

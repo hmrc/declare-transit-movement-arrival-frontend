@@ -141,6 +141,7 @@ compliant.nine.p3=This page was prepared on [date when it was first published]. 
 
 movementReferenceNumber.title = What is the movement reference number (MRN)?
 movementReferenceNumber.heading = What is the movement reference number (MRN)?
+movementReferenceNumber.hintText = It is on the transit accompanying document (TAD) that is with the goods. It is 18 characters like 19GB00005112345678.
 movementReferenceNumber.checkYourAnswersLabel = Movement Reference Number
 movementReferenceNumber.error.required = Enter the movement reference number
 movementReferenceNumber.error.invalid = Enter a valid movement reference number
@@ -154,6 +155,7 @@ goodsLocation.error.required = Select where the goods are
 
 presentationOffice.title = Which Border Force office supervises {0}?
 presentationOffice.heading = Which Border Force office supervises {0}?
+presentationOffice.hintText = Give the office location or code. For example, Dover or GB000060.
 presentationOffice.checkYourAnswersLabel = Goods location
 presentationOffice.error.required = Enter the Border Force office which supervises {0}
 presentationOffice.error.length = Border Force office must be 8 characters
