@@ -26,20 +26,26 @@ import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
+import repositories.SessionRepository
+import play.api.inject.bind
 
 import scala.concurrent.Future
 
-class ArrivalCompleteControllerSpec extends SpecBase with MockitoSugar with JsonMatchers {
+class ConfirmationControllerSpec extends SpecBase with MockitoSugar with JsonMatchers {
 
-  "ArrivalComplete Controller" - {
+  "Confirmation Controller" - {
 
-    "return OK and the correct view for a GET" in {
+    "return OK and the correct view for a GET then remove data" in {
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(GET, routes.ArrivalCompleteController.onPageLoad(mrn).url)
+      val mockSessionRepository = mock[SessionRepository]
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+        .build()
+      val request = FakeRequest(GET, routes.ConfirmationController.onPageLoad(mrn).url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -48,6 +54,7 @@ class ArrivalCompleteControllerSpec extends SpecBase with MockitoSugar with Json
       status(result) mustEqual OK
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+      verify(mockSessionRepository,times(1)).remove(mrn.toString)
 
       val expectedJson = Json.obj("mrn" -> mrn)
 

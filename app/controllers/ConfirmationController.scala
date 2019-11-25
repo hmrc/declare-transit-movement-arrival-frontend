@@ -23,12 +23,14 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
+import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 
 import scala.concurrent.ExecutionContext
 
-class ArrivalCompleteController @Inject()(
+class ConfirmationController @Inject()(
                                        override val messagesApi: MessagesApi,
+                                       sessionRepository: SessionRepository,
                                        identify: IdentifierAction,
                                        getData: DataRetrievalActionProvider,
                                        requireData: DataRequiredAction,
@@ -40,6 +42,8 @@ class ArrivalCompleteController @Inject()(
     implicit request =>
 
       val json = Json.obj("mrn" -> mrn)
+
+      sessionRepository.remove(mrn.toString)
 
       renderer.render("arrivalComplete.njk", json).map(Ok(_))
   }
