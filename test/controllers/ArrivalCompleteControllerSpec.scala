@@ -29,9 +29,9 @@ import play.twirl.api.Html
 
 import scala.concurrent.Future
 
-class ArrivalCompleteControllerSpec extends SpecBase with MockitoSugar with JsonMatchers {
+class ConfirmationControllerSpec extends SpecBase with MockitoSugar with JsonMatchers {
 
-  "ArrivalComplete Controller" - {
+  "Confirmation Controller" - {
 
     "return OK and the correct view for a GET" in {
 
@@ -39,7 +39,7 @@ class ArrivalCompleteControllerSpec extends SpecBase with MockitoSugar with Json
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(GET, routes.ArrivalCompleteController.onPageLoad(mrn).url)
+      val request = FakeRequest(GET, routes.ConfirmationController.onPageLoad(mrn).url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
