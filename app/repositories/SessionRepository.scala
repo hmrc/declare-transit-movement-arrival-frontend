@@ -77,7 +77,7 @@ class DefaultSessionRepository @Inject()(
     }
   }
 
-  override def remove(id: String): Unit = collection.flatMap {
+  override def remove(id: String): Future[Unit] = collection.flatMap {
       _.findAndRemove(Json.obj("_id" -> id))
         .map(_ => ())
     }
@@ -91,5 +91,5 @@ trait SessionRepository {
 
   def set(userAnswers: UserAnswers): Future[Boolean]
 
-  def remove(id: String): Unit
+  def remove(id: String): Future[Unit]
 }
