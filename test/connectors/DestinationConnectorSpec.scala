@@ -32,6 +32,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 class DestinationConnectorSpec extends SpecBase with WireMockServerHandler with DomainModelGenerators with ScalaCheckPropertyChecks {
 
+  private val startUrl = "transit-movements-trader-at-destination"
+
   override lazy val app: Application = new GuiceApplicationBuilder()
     .configure(
       conf = "microservice.services.destination.port" -> server.port()
@@ -43,7 +45,7 @@ class DestinationConnectorSpec extends SpecBase with WireMockServerHandler with 
   "DestinationConnector" - {
     "must return status as OK for submission of valid arrival notification" in {
 
-      stubResponse("/common-transit-convention-trader-at-destination/arrival-notification", OK)
+      stubResponse(s"/$startUrl/arrival-notification", OK)
 
       forAll(arbitrary[NormalNotification]) { notification =>
         val result = connector.submitArrivalNotification(notification)
@@ -53,7 +55,7 @@ class DestinationConnectorSpec extends SpecBase with WireMockServerHandler with 
 
     "must return status as BAD_REQUEST for submission of invalid arrival notification" in {
 
-      stubResponse("/common-transit-convention-trader-at-destination/arrival-notification", BAD_REQUEST)
+      stubResponse(s"/$startUrl/arrival-notification", BAD_REQUEST)
 
       forAll(arbitrary[NormalNotification]) { notification =>
         val result = connector.submitArrivalNotification(notification)
@@ -63,7 +65,7 @@ class DestinationConnectorSpec extends SpecBase with WireMockServerHandler with 
 
     "must return status as INTERNAL_SERVER_ERROR for technical error incurred" in {
 
-      stubResponse("/common-transit-convention-trader-at-destination/arrival-notification", INTERNAL_SERVER_ERROR)
+      stubResponse(s"/$startUrl/arrival-notification", INTERNAL_SERVER_ERROR)
 
       forAll(arbitrary[NormalNotification]) { notification =>
         val result = connector.submitArrivalNotification(notification)
