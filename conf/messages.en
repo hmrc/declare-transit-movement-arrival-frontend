@@ -38,12 +38,12 @@ phaseBanner.3 = will help us to improve it.
 
 checkYourAnswers.title = Check your answers
 checkYourAnswers.heading = Check your answers
-checkYourAnswers.section.goodsLocation = Goods Location
-checkYourAnswers.section.traderDetails = Trader Details
+checkYourAnswers.section.goodsLocation = Goods details
+checkYourAnswers.section.traderDetails = Trader details
 checkYourAnswers.section.notificationDetails = Place of Notification
 checkYourAnswers.section.events = Events
 checkYourAnswers.confirmation.heading = Now send your arrival notification
-checkYourAnswers.confirmation.paragraph = By sending this notification you are confirming that, to the best of your knowledge, the details you are providing are correct.
+checkYourAnswers.confirmation.paragraph = By sending this you are confirming that the details you are providing are correct, to the best of your knowledge.
 
 index.title = Common Transit Convention for traders
 index.heading = Common Transit Convention for traders
@@ -141,6 +141,7 @@ compliant.nine.p3=This page was prepared on [date when it was first published]. 
 
 movementReferenceNumber.title = What is the movement reference number (MRN)?
 movementReferenceNumber.heading = What is the movement reference number (MRN)?
+movementReferenceNumber.hintText = It is on the transit accompanying document (TAD) that is with the goods. It is 18 characters like 19GB00005112345678.
 movementReferenceNumber.checkYourAnswersLabel = Movement Reference Number
 movementReferenceNumber.error.required = Enter the movement reference number
 movementReferenceNumber.error.invalid = Enter a valid movement reference number
@@ -154,6 +155,7 @@ goodsLocation.error.required = Select where the goods are
 
 presentationOffice.title = Which Border Force office supervises {0}?
 presentationOffice.heading = Which Border Force office supervises {0}?
+presentationOffice.hintText = Give the office location or code. For example, Dover or GB000060.
 presentationOffice.checkYourAnswersLabel = Goods location
 presentationOffice.error.required = Enter the Border Force office which supervises {0}
 presentationOffice.error.length = Border Force office must be 8 characters
@@ -207,19 +209,21 @@ arrivalComplete.heading = Application Complete
 arrivalComplete.yourReferenceNumber = Your reference number {0}
 arrivalComplete.confirmationEmail = We have sent you a confirmation email.
 
-incidentOnRoute.title = Has something happened on route?
-incidentOnRoute.heading = Has something happened on route?
-incidentOnRoute.checkYourAnswersLabel = Has something happened on route?
-incidentOnRoute.error.required = Select yes if something happened on route
+incidentOnRoute.title = Did something happen on the route?
+incidentOnRoute.heading = Did something happen on the route?
+incidentOnRoute.hintText = This will be on the transit accompanying document (TAD). Tell us about accidents, damage to seals, unloading goods, changes to the vehicle, type of transport or route.
+incidentOnRoute.checkYourAnswersLabel = Did something happen on the route?
+incidentOnRoute.error.required = Select yes if something did happen on the route
 
-eventCountry.title = Which country did the event happen in?
-eventCountry.heading = Which country did the event happen in?
-eventCountry.checkYourAnswersLabel = Which country did the event happen in?
-eventCountry.error.required = Enter the country the event happened in
+eventCountry.title = Which country were the goods in when it happened?
+eventCountry.heading = Which country were the goods in when it happened?
+eventCountry.checkYourAnswersLabel = Which country were the goods in when it happened?
+eventCountry.error.required = Which country were the goods in when it happened?
 eventCountry.error.length = Country must be 2 characters or less
 
 eventPlace.title = Where did the event happen?
 eventPlace.heading = Where did the event happen?
+eventPlace.hintText = Give the nearest town or road number.
 eventPlace.checkYourAnswersLabel = Where did the event happen?
 eventPlace.error.required = Enter where the event happened
 eventPlace.error.length = Where the event happened must be 35 characters or less
@@ -250,11 +254,13 @@ checkEventAnswers.heading = Check event answers
 
 isTraderAddressPlaceOfNotification.title = Is {0} the postcode of the place of notification?
 isTraderAddressPlaceOfNotification.heading = Is {0} the postcode of the place of notification?
+isTraderAddressPlaceOfNotification.hintText = Tell us if you are completing the arrival notification at the trader’s address.
 isTraderAddressPlaceOfNotification.checkYourAnswersLabel = Is {0} the postcode of the place of notification
 isTraderAddressPlaceOfNotification.error.required = Select yes if {0} is the postcode of the place of notification
 
-placeOfNotification.title = What is the place of notification?
-placeOfNotification.heading = What is the place of notification?
-placeOfNotification.checkYourAnswersLabel = What is the place of notification?
+placeOfNotification.title = Where is the place of notification?
+placeOfNotification.heading = Where is the place of notification?
+placeOfNotification.checkYourAnswersLabel = Where is the place of notification?
+placeOfNotification.hintText = Tell us where you are completing this arrival notification.
 placeOfNotification.error.required = Enter the place of notification
 placeOfNotification.error.length = Place of notification must be 35 characters or less

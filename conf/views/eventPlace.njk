@@ -32,10 +32,14 @@
           {{ csrf() | safe }}
 
           {{ govukInput({
+            classes: "govuk-input--width-20",
             label: {
               text: messages('eventPlace.title'),
               isPageHeading: true,
               classes: "govuk-label--xl"
+            },
+            hint: {
+              text: messages('eventPlace.hintText')
             },
             id: "value",
             name: "value",

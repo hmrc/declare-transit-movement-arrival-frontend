@@ -89,7 +89,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with JsonMatchers {
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual routes.ArrivalCompleteController.onPageLoad(mrn).url
+      redirectLocation(result).value mustEqual routes.ConfirmationController.onPageLoad(mrn).url
 
       application.stop()
     }

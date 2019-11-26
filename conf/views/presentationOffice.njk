@@ -32,6 +32,7 @@
           {{ csrf() | safe }}
 
           {{ govukInput({
+            classes: "govuk-input--width-20",
             label: {
               text: messages('presentationOffice.title', subsPlace),
               isPageHeading: true,
@@ -39,6 +40,9 @@
             },
             id: "value",
             name: "value",
+            hint: {
+              text: messages('presentationOffice.hintText')
+            },
             value: form.value.value,
             errorMessage: form.value.error
           }) }}

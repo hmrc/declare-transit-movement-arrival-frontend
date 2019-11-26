@@ -16,12 +16,11 @@
 
 package navigation
 
-import cats.Parallel
 import javax.inject.{Inject, Singleton}
 import play.api.mvc.Call
 import controllers.routes
 import pages._
-import models.{UserAnswers, _}
+import models._
 import GoodsLocation._
 
 @Singleton
@@ -32,6 +31,11 @@ class Navigator @Inject()() {
     case GoodsLocationPage => goodsLocationPageRoutes
     case PresentationOfficePage => ua => Some(routes.CustomsSubPlaceController.onPageLoad(ua.id, NormalMode))
     case CustomsSubPlacePage => ua => Some(routes.TraderNameController.onPageLoad(ua.id, NormalMode))
+    case TraderNamePage => ua => Some(routes.TraderEoriController.onPageLoad(ua.id, NormalMode))
+    case TraderAddressPage => ua => Some(routes.IsTraderAddressPlaceOfNotificationController.onPageLoad(ua.id, NormalMode))
+    case TraderEoriPage => ua => Some(routes.TraderAddressController.onPageLoad(ua.id, NormalMode))
+    case PresentationOfficePage => ua => Some(routes.TraderNameController.onPageLoad(ua.id, NormalMode))
+    case CustomsSubPlacePage => ua => Some(routes.PresentationOfficeController.onPageLoad(ua.id, NormalMode))
     case TraderNamePage => ua => Some(routes.TraderEoriController.onPageLoad(ua.id, NormalMode))
     case TraderAddressPage => ua => Some(routes.IsTraderAddressPlaceOfNotificationController.onPageLoad(ua.id, NormalMode))
     case TraderEoriPage => ua => Some(routes.TraderAddressController.onPageLoad(ua.id, NormalMode))
