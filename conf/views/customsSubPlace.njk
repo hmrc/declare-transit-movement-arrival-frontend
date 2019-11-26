@@ -10,7 +10,7 @@
   {{ title(messages("customsSubPlace.title"), form.errors) }}
 {% endblock %}
 
-{% block mainContent %}
+{% block mainContent %}postcode
 
   {{ govukBackLink({
     text: messages("site.back")
@@ -32,6 +32,7 @@
           {{ csrf() | safe }}
 
           {{ govukInput({
+            classes: "govuk-input--width-20",
             label: {
               text: messages('customsSubPlace.title'),
               isPageHeading: true,
