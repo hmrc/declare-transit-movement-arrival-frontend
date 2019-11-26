@@ -19,86 +19,101 @@ package navigation
 import javax.inject.{Inject, Singleton}
 import play.api.mvc.Call
 import controllers.routes
-import models.GoodsLocation.{AuthorisedConsigneesLocation, BorderForceOffice}
 import pages._
 import models._
+import GoodsLocation._
 
 @Singleton
 class Navigator @Inject()() {
 
-  private val normalRoutes: Page => UserAnswers => Call = {
-    case MovementReferenceNumberPage => ua => routes.GoodsLocationController.onPageLoad(ua.id, NormalMode)
+  private val normalRoutes: PartialFunction[Page, UserAnswers => Option[Call]]  = {
+    case MovementReferenceNumberPage => ua => Some(routes.GoodsLocationController.onPageLoad(ua.id, NormalMode))
     case GoodsLocationPage => goodsLocationPageRoutes
-    case PresentationOfficePage => ua => routes.TraderNameController.onPageLoad(ua.id, NormalMode)
-    case CustomsSubPlacePage => ua => routes.PresentationOfficeController.onPageLoad(ua.id, NormalMode)
-    case TraderNamePage => ua => routes.TraderEoriController.onPageLoad(ua.id, NormalMode)
-    case TraderAddressPage => ua => routes.IsTraderAddressPlaceOfNotificationController.onPageLoad(ua.id, NormalMode)
-    case TraderEoriPage => ua => routes.TraderAddressController.onPageLoad(ua.id, NormalMode)
+    case PresentationOfficePage => ua => Some(routes.CustomsSubPlaceController.onPageLoad(ua.id, NormalMode))
+    case CustomsSubPlacePage => ua => Some(routes.TraderNameController.onPageLoad(ua.id, NormalMode))
+    case TraderNamePage => ua => Some(routes.TraderEoriController.onPageLoad(ua.id, NormalMode))
+    case TraderAddressPage => ua => Some(routes.IsTraderAddressPlaceOfNotificationController.onPageLoad(ua.id, NormalMode))
+    case TraderEoriPage => ua => Some(routes.TraderAddressController.onPageLoad(ua.id, NormalMode))
+    case PresentationOfficePage => ua => Some(routes.TraderNameController.onPageLoad(ua.id, NormalMode))
+    case CustomsSubPlacePage => ua => Some(routes.PresentationOfficeController.onPageLoad(ua.id, NormalMode))
+    case TraderNamePage => ua => Some(routes.TraderEoriController.onPageLoad(ua.id, NormalMode))
+    case TraderAddressPage => ua => Some(routes.IsTraderAddressPlaceOfNotificationController.onPageLoad(ua.id, NormalMode))
+    case TraderEoriPage => ua => Some(routes.TraderAddressController.onPageLoad(ua.id, NormalMode))
     case IsTraderAddressPlaceOfNotificationPage => isTraderAddressPlaceOfNotificationRoute(NormalMode)
-    case PlaceOfNotificationPage => ua => routes.IncidentOnRouteController.onPageLoad(ua.id, NormalMode)
+    case PlaceOfNotificationPage => ua => Some(routes.IncidentOnRouteController.onPageLoad(ua.id, NormalMode))
     case IncidentOnRoutePage => incidentOnRouteRoute
-    case EventCountryPage => ua => routes.EventPlaceController.onPageLoad(ua.id, NormalMode)
-    case EventPlacePage => ua => routes.EventReportedController.onPageLoad(ua.id, NormalMode)
-    case EventReportedPage => ua => routes.IsTranshipmentController.onPageLoad(ua.id, NormalMode)
+    case EventCountryPage => ua => Some(routes.EventPlaceController.onPageLoad(ua.id, NormalMode))
+    case EventPlacePage => ua => Some(routes.EventReportedController.onPageLoad(ua.id, NormalMode))
+    case EventReportedPage => ua => Some(routes.IsTranshipmentController.onPageLoad(ua.id, NormalMode))
     case IsTranshipmentPage => isTranshipmentRoute
-    case IncidentInformationPage => ua => routes.SealsChangedController.onPageLoad(ua.id, NormalMode)
-    case SealsChangedPage => ua => routes.CheckEventAnswersController.onPageLoad(ua.id)
-    case _ => _ => routes.IndexController.onPageLoad()
+    case IncidentInformationPage => ua => Some(routes.SealsChangedController.onPageLoad(ua.id, NormalMode))
+    case SealsChangedPage => ua => Some(routes.CheckEventAnswersController.onPageLoad(ua.id))
   }
 
-  private val checkRouteMap: Page => UserAnswers => Call = {
-    case GoodsLocationPage => goodsLocationCheckRoute
-    case page if eventsPages(page) => ua => routes.CheckEventAnswersController.onPageLoad(ua.id)
-    case IsTraderAddressPlaceOfNotificationPage => isTraderAddressPlaceOfNotificationRoute(CheckMode)
-    case _ => ua => routes.CheckYourAnswersController.onPageLoad(ua.id)
+  private val checkRouteMap: PartialFunction[Page, UserAnswers => Option[Call]] = {
+    case GoodsLocationPage         => goodsLocationCheckRoute
+    case page if eventsPages(page) => ua => Some(routes.CheckEventAnswersController.onPageLoad(ua.id))
+    case _                         => ua => Some(routes.CheckYourAnswersController.onPageLoad(ua.id)) // move to match on checkRouteMap
   }
 
   def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = mode match {
     case NormalMode =>
-      normalRoutes(page)(userAnswers)
-    case CheckMode =>
-      checkRouteMap(page)(userAnswers)
-  }
-
-  private val eventsPages = (page: Page) =>
-    Seq(EventCountryPage, EventPlacePage, EventReportedPage, IsTranshipmentPage, IncidentInformationPage, SealsChangedPage)
-      .contains(page)
-
-  private def isTraderAddressPlaceOfNotificationRoute(mode: Mode)(ua: UserAnswers) =
-    (ua.get(IsTraderAddressPlaceOfNotificationPage), mode) match {
-      case (Some(true), NormalMode) => routes.IncidentOnRouteController.onPageLoad(ua.id, mode)
-      case (Some(true), CheckMode) => routes.CheckYourAnswersController.onPageLoad(ua.id)
-      case (Some(false), _) => ua.get(PlaceOfNotificationPage) match {
-        case Some(_) => routes.CheckYourAnswersController.onPageLoad(ua.id)
-        case None => routes.PlaceOfNotificationController.onPageLoad(ua.id, mode)
+      normalRoutes.lift(page) match {
+        case Some(call) => call(userAnswers) match {
+          case Some(onwardRoute) => onwardRoute
+          case None              => routes.SessionExpiredController.onPageLoad()
+        }
+        case None => routes.IndexController.onPageLoad()
       }
-      case (None, _) => routes.SessionExpiredController.onPageLoad()
-    }
-
-  private def goodsLocationPageRoutes(ua: UserAnswers): Call = ua.get(GoodsLocationPage) match {
-    case Some(BorderForceOffice) => routes.CustomsSubPlaceController.onPageLoad(ua.id, NormalMode)
-    case Some(AuthorisedConsigneesLocation) => routes.UseDifferentServiceController.onPageLoad(ua.id)
-    case _ => routes.SessionExpiredController.onPageLoad()
+    case CheckMode =>
+      checkRouteMap.lift(page) match {
+        case None => routes.CheckYourAnswersController.onPageLoad(userAnswers.id)
+        case Some(call) => call(userAnswers) match {
+          case Some(onwardRoute) => onwardRoute
+          case None              => routes.SessionExpiredController.onPageLoad()
+        }
+      }
   }
 
-  private def goodsLocationCheckRoute(ua: UserAnswers): Call = {
+  private def eventsPages(page: Page): Boolean = {
+    page match {
+      case EventCountryPage | EventPlacePage | EventReportedPage | IsTranshipmentPage | IncidentInformationPage | SealsChangedPage => true
+      case _ => false
+    }
+
+  }
+
+  private def goodsLocationPageRoutes(ua: UserAnswers): Option[Call] =
+    ua.get(GoodsLocationPage) map {
+      case BorderForceOffice            => routes.PresentationOfficeController.onPageLoad(ua.id, NormalMode)
+      case AuthorisedConsigneesLocation => routes.UseDifferentServiceController.onPageLoad(ua.id)
+    }
+
+  private def incidentOnRouteRoute(ua: UserAnswers): Option[Call] =
+    ua.get(IncidentOnRoutePage) map {
+      case true  => routes.EventCountryController.onPageLoad(ua.id, NormalMode)
+      case false => routes.CheckYourAnswersController.onPageLoad(ua.id)
+    }
+
+  private def isTranshipmentRoute(ua: UserAnswers): Option[Call] =
+    ua.get(EventReportedPage) map {
+      case true  => routes.SealsChangedController.onPageLoad(ua.id, NormalMode)
+      case false => routes.IncidentInformationController.onPageLoad(ua.id, NormalMode)
+    }
+
+  private def goodsLocationCheckRoute(ua: UserAnswers): Option[Call] =
+    // TODO: Get the requirements for this sorted out. AuthorisedLocationPage is not actually being used here
     (ua.get(GoodsLocationPage), ua.get(AuthorisedLocationPage), ua.get(CustomsSubPlacePage)) match {
-      case (Some(BorderForceOffice), _, None)         => routes.CustomsSubPlaceController.onPageLoad(ua.id, CheckMode)
-      case (Some(AuthorisedConsigneesLocation), _, _) => routes.UseDifferentServiceController.onPageLoad(ua.id)
-      case _                                          => routes.CheckYourAnswersController.onPageLoad(ua.id)
+      case (Some(BorderForceOffice),            _, None) => Some(routes.CustomsSubPlaceController.onPageLoad(ua.id, CheckMode))
+      case (Some(AuthorisedConsigneesLocation), _, _   ) => Some(routes.UseDifferentServiceController.onPageLoad(ua.id))
+      case _                                             => Some(routes.CheckYourAnswersController.onPageLoad(ua.id)) // TODO: This branch is ill defined and needs to be fixed
     }
-  }
 
-
-  private def incidentOnRouteRoute(ua: UserAnswers): Call = ua.get(IncidentOnRoutePage) match {
-    case Some(true)  => routes.EventCountryController.onPageLoad(ua.id, NormalMode)
-    case Some(false) => routes.CheckYourAnswersController.onPageLoad(ua.id)
-    case None        => routes.SessionExpiredController.onPageLoad()
-  }
-
-  private def isTranshipmentRoute(ua: UserAnswers): Call = ua.get(EventReportedPage) match {
-    case Some(true)  => routes.SealsChangedController.onPageLoad(ua.id, NormalMode)
-    case Some(false) => routes.IncidentInformationController.onPageLoad(ua.id, NormalMode)
-    case None        => routes.SessionExpiredController.onPageLoad()
-  }
+  private def isTraderAddressPlaceOfNotificationRoute(mode: Mode)(ua: UserAnswers): Option[Call] =
+    (ua.get(IsTraderAddressPlaceOfNotificationPage), ua.get(PlaceOfNotificationPage),  mode) match {
+      case (Some(true), _, NormalMode) => Some(routes.IncidentOnRouteController.onPageLoad(ua.id, mode))
+      case (Some(true), _, CheckMode)  => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
+      case (Some(false), Some(_), _)   => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
+      case _                           => None
+    }
 }

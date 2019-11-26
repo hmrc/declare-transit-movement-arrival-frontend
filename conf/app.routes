@@ -57,7 +57,7 @@ POST       /:mrn/changeTraderName                            controllers.TraderN
 
 GET        /:mrn/useDifferentService                         controllers.UseDifferentServiceController.onPageLoad(mrn: MovementReferenceNumber)
 
-GET        /:mrn/arrivalComplete                             controllers.ArrivalCompleteController.onPageLoad(mrn: MovementReferenceNumber)
+GET        /:mrn/confirmation                                controllers.ConfirmationController.onPageLoad(mrn: MovementReferenceNumber)
 
 GET        /:mrn/incidentOnRoute                             controllers.IncidentOnRouteController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
 POST       /:mrn/incidentOnRoute                             controllers.IncidentOnRouteController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
