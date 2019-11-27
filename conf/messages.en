@@ -158,7 +158,7 @@ presentationOffice.heading = Which Border Force office supervises {0}?
 presentationOffice.hintText = Give the office location or code. For example, Dover or GB000060.
 presentationOffice.checkYourAnswersLabel = Goods location
 presentationOffice.error.required = Enter the Border Force office which supervises {0}
-presentationOffice.error.length = Border Force office must be 8 characters
+presentationOffice.error.length = Border Force office must be 8 characters or less
 
 customsSubPlace.title = Which customs sub-place or approved location has the goods?
 customsSubPlace.heading = Which customs sub-place or approved location has the goods?
@@ -189,7 +189,7 @@ traderEori.title = What is the EORI number of the trader at destination?
 traderEori.heading = What is the EORI number of the trader at destination?
 traderEori.checkYourAnswersLabel = EORI number
 traderEori.error.required = Enter the EORI number
-traderEori.error.length = EORI number must be 17 characters
+traderEori.error.length = EORI number must be 17 characters or less
 
 traderName.title = What is the name of the trader at destination?
 traderName.heading = What is the name of the trader at destination?

@@ -61,23 +61,23 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
       }
 
-      "must go from 'goods location' to  'presentation office' when user chooses 'Border Force Office'" in {
+      "must go from 'goods location' to  'customs approved location' when user chooses 'Border Force Office'" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
 
             val updatedAnswers = answers.set(GoodsLocationPage, GoodsLocation.BorderForceOffice).success.value
 
             navigator.nextPage(GoodsLocationPage, NormalMode, updatedAnswers)
-              .mustBe(routes.PresentationOfficeController.onPageLoad(updatedAnswers.id, NormalMode))
+              .mustBe(routes.CustomsSubPlaceController.onPageLoad(updatedAnswers.id, NormalMode))
         }
       }
 
-      "must go from 'presentation office' to  'customs approved location'" in {
+      "must go from 'customs approved location' to  'presentation office'" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
 
-            navigator.nextPage(PresentationOfficePage, NormalMode, answers)
-              .mustBe(routes.CustomsSubPlaceController.onPageLoad(answers.id, NormalMode))
+            navigator.nextPage(CustomsSubPlacePage, NormalMode, answers)
+              .mustBe(routes.PresentationOfficeController.onPageLoad(answers.id, NormalMode))
         }
       }
 
@@ -92,11 +92,11 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         }
       }
 
-      "must go from 'customs approved location' to  'traders name'" in {
+      "must go from 'presentation office' to  'traders name'" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
 
-            navigator.nextPage(CustomsSubPlacePage, NormalMode, answers)
+            navigator.nextPage(PresentationOfficePage, NormalMode, answers)
               .mustBe(routes.TraderNameController.onPageLoad(answers.id, NormalMode))
         }
       }
