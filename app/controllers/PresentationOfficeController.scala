@@ -56,13 +56,13 @@ class PresentationOfficeController @Inject()(
             case None => form
             case Some(value) => form.fill(value)
           }
-          showView(mrn, mode, subsPlace, preparedForm, Results.Ok)
+          renderView(mrn, mode, subsPlace, preparedForm, Results.Ok)
 
         case _ => Future.successful(Redirect(routes.SessionExpiredController.onPageLoad()))
       }
   }
 
-  private def showView(mrn: MovementReferenceNumber,
+  private def renderView(mrn: MovementReferenceNumber,
                        mode: Mode,
                        subsPlace: String,
                        form: Form[String],
@@ -84,7 +84,7 @@ class PresentationOfficeController @Inject()(
           val form = formProvider(subsPlace)
           form.bindFromRequest().fold(
             formWithErrors => {
-              showView(mrn, mode, subsPlace, formWithErrors, Results.BadRequest)
+              renderView(mrn, mode, subsPlace, formWithErrors, Results.BadRequest)
             },
             value =>
               for {
