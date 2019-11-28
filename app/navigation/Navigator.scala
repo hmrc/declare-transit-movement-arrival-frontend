@@ -107,9 +107,13 @@ class Navigator @Inject()() {
 
   private def isTraderAddressPlaceOfNotificationRoute(mode: Mode)(ua: UserAnswers): Option[Call] =
     (ua.get(IsTraderAddressPlaceOfNotificationPage), ua.get(PlaceOfNotificationPage),  mode) match {
-      case (Some(true), _, NormalMode) => Some(routes.IncidentOnRouteController.onPageLoad(ua.id, mode))
-      case (Some(true), _, CheckMode)  => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
-      case (Some(false), Some(_), _)   => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
-      case _                           => None
+      case (Some(true), _, NormalMode)        => Some(routes.IncidentOnRouteController.onPageLoad(ua.id, mode))
+      case (Some(true), _, CheckMode)         => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
+
+      case (Some(false), _, NormalMode) => Some(routes.PlaceOfNotificationController.onPageLoad(ua.id, mode))
+
+      case (Some(false), Some(_), CheckMode)  => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
+      case _                                  => None
     }
+
 }

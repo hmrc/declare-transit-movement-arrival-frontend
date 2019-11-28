@@ -138,11 +138,23 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
                 .mustBe(routes.IncidentOnRouteController.onPageLoad(updatedUserAnswers.id, NormalMode))
           }
         }
+
+        "to 'IncidentOnRoutePage' when answer is 'No'" in {
+          forAll(arbitrary[UserAnswers]){
+            answers =>
+              val updatedUserAnswers = answers.set(IsTraderAddressPlaceOfNotificationPage, false).success.value
+
+              navigator.nextPage(IsTraderAddressPlaceOfNotificationPage, NormalMode, updatedUserAnswers)
+                .mustBe(routes.PlaceOfNotificationController.onPageLoad(updatedUserAnswers.id, NormalMode))
+          }
+
+        }
+
       }
 
       "go from 'Place of Notification' to 'IncidentOnRoute'" in {
         forAll(arbitrary[UserAnswers], stringsWithMaxLength(35)) {
-          case (answers, placeOfNotification) =>
+          (answers, placeOfNotification) =>
             val updatedUserAnswers = answers.set(PlaceOfNotificationPage, placeOfNotification).success.value
 
             navigator.nextPage(PlaceOfNotificationPage, NormalMode, updatedUserAnswers)
