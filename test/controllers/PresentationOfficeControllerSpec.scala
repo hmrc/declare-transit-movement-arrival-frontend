@@ -43,7 +43,7 @@ class PresentationOfficeControllerSpec extends SpecBase with MockitoSugar with N
   def onwardRoute = Call("GET", "/foo")
 
   val formProvider = new PresentationOfficeFormProvider()
-  val form: Form[String] = formProvider()
+  val form: Form[String] = formProvider("sub place")
 
   lazy val presentationOfficeRoute: String = routes.PresentationOfficeController.onPageLoad(mrn, NormalMode).url
 
@@ -54,7 +54,7 @@ class PresentationOfficeControllerSpec extends SpecBase with MockitoSugar with N
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = emptyUserAnswers.set(CustomsSubPlacePage, "subs place").success.value
+      val userAnswers = emptyUserAnswers.set(CustomsSubPlacePage, "sub place").success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, presentationOfficeRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -78,7 +78,7 @@ class PresentationOfficeControllerSpec extends SpecBase with MockitoSugar with N
       application.stop()
     }
 
-    "must redirect to session expired page when user hasn't answered the customs subs place question" in {
+    "must redirect to session expired page when user hasn't answered the customs sub place question" in {
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
@@ -135,8 +135,9 @@ class PresentationOfficeControllerSpec extends SpecBase with MockitoSugar with N
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
+      val userAnswers = emptyUserAnswers.set(CustomsSubPlacePage, "sub place").success.value
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
@@ -159,7 +160,7 @@ class PresentationOfficeControllerSpec extends SpecBase with MockitoSugar with N
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
-      val userAnswers = emptyUserAnswers.set(CustomsSubPlacePage, "subs place").success.value
+      val userAnswers = emptyUserAnswers.set(CustomsSubPlacePage, "sub place").success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(POST, presentationOfficeRoute).withFormUrlEncodedBody(("value", ""))
       val boundForm = form.bind(Map("value" -> ""))

@@ -22,9 +22,10 @@ import javax.inject.Inject
 import models.{Mode, MovementReferenceNumber}
 import navigation.Navigator
 import pages.{CustomsSubPlacePage, PresentationOfficePage}
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.data.Form
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc._
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
@@ -44,53 +45,54 @@ class PresentationOfficeController @Inject()(
                                               renderer: Renderer
                                             )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
 
-  private val form = formProvider()
 
   def onPageLoad(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
 
       request.userAnswers.get(CustomsSubPlacePage) match {
         case Some(subsPlace) =>
-
+          val form = formProvider(subsPlace)
           val preparedForm = request.userAnswers.get(PresentationOfficePage) match {
             case None => form
             case Some(value) => form.fill(value)
           }
-
-          val json = Json.obj(
-            "form" -> preparedForm,
-            "mrn" -> mrn,
-            "mode" -> mode,
-            "subsPlace" -> subsPlace
-          )
-          renderer.render("presentationOffice.njk", json).map(Ok(_))
+          showView(mrn, mode, subsPlace, preparedForm, Results.Ok)
 
         case _ => Future.successful(Redirect(routes.SessionExpiredController.onPageLoad()))
       }
   }
 
+  private def showView(mrn: MovementReferenceNumber,
+                       mode: Mode,
+                       subsPlace: String,
+                       form: Form[String],
+                       status: Results.Status)(implicit request: Request[AnyContent]): Future[Result] = {
+    val json = Json.obj(
+      "form" -> form,
+      "mrn" -> mrn,
+      "mode" -> mode,
+      "header" -> Messages("presentationOffice.title", subsPlace)
+    )
+    renderer.render("presentationOffice.njk", json).map(status(_))
+  }
+
   def onSubmit(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
 
-      form.bindFromRequest().fold(
-        formWithErrors => {
-          request.userAnswers.get(CustomsSubPlacePage) match {
-            case Some(subsPlace) =>
-              val json = Json.obj(
-                "form" -> formWithErrors,
-                "mrn" -> mrn,
-                "mode" -> mode,
-                "subsPlace" -> subsPlace
-              )
-              renderer.render("presentationOffice.njk", json).map(BadRequest(_))
-            case _ => Future.successful(Redirect(routes.SessionExpiredController.onPageLoad()))
-          }
-        },
-        value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(PresentationOfficePage, value))
-            _ <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(PresentationOfficePage, mode, updatedAnswers))
-      )
+      request.userAnswers.get(CustomsSubPlacePage) match {
+        case Some(subsPlace) =>
+          val form = formProvider(subsPlace)
+          form.bindFromRequest().fold(
+            formWithErrors => {
+              showView(mrn, mode, subsPlace, formWithErrors, Results.BadRequest)
+            },
+            value =>
+              for {
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(PresentationOfficePage, value))
+                _ <- sessionRepository.set(updatedAnswers)
+              } yield Redirect(navigator.nextPage(PresentationOfficePage, mode, updatedAnswers))
+          )
+        case _ => Future.successful(Redirect(routes.SessionExpiredController.onPageLoad()))
+      }
   }
 }

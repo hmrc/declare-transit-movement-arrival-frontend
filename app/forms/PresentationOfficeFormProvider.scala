@@ -17,15 +17,15 @@
 package forms
 
 import javax.inject.Inject
-
 import forms.mappings.Mappings
 import play.api.data.Form
+import play.api.i18n.Messages
 
 class PresentationOfficeFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[String] =
+  def apply(subPlace: String)(implicit messages: Messages): Form[String] =
     Form(
-      "value" -> text("presentationOffice.error.required")
+      "value" -> text(messages("presentationOffice.error.required", subPlace))
         .verifying(maxLength(8, "presentationOffice.error.length"))
     )
 }
