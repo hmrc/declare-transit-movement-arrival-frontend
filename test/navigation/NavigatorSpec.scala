@@ -32,8 +32,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
     EventPlacePage,
     EventReportedPage,
     IsTranshipmentPage,
-    IncidentInformationPage,
-    SealsChangedPage)
+    IncidentInformationPage)
 
   "Navigator" - {
 
@@ -246,7 +245,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           }
         }
 
-        "to Seals Changed when the event has been reported" in {
+        "to events summary page when the event has been reported" in {
 
           forAll(arbitrary[UserAnswers]) {
             answers =>
@@ -254,7 +253,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
               val updatedAnswers = answers.set(EventReportedPage, true).success.value
 
               navigator.nextPage(IsTranshipmentPage, NormalMode, updatedAnswers)
-                .mustBe(routes.SealsChangedController.onPageLoad(updatedAnswers.id, NormalMode))
+                .mustBe(routes.CheckEventAnswersController.onPageLoad(updatedAnswers.id))
           }
         }
 
@@ -271,25 +270,16 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         }
       }
 
-      "must go from Incident Information to Seals Changed" in {
+      "must go from Incident Information to event summary page" in {
 
         forAll(arbitrary[UserAnswers]) {
           answers =>
 
             navigator.nextPage(IncidentInformationPage, NormalMode, answers)
-              .mustBe(routes.SealsChangedController.onPageLoad(answers.id, NormalMode))
-        }
-      }
-
-      "must go from Seals Changed to Check Event Answers" in {
-
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-
-            navigator.nextPage(SealsChangedPage, NormalMode, answers)
               .mustBe(routes.CheckEventAnswersController.onPageLoad(answers.id))
         }
       }
+
     }
 
     "in Check mode" - {

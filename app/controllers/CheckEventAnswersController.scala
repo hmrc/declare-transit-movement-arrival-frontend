@@ -67,7 +67,6 @@ class CheckEventAnswersController @Inject()(
       helper.eventPlace,
       helper.eventReported,
       helper.isTranshipment,
-      helper.incidentInformation,
-      helper.sealsChanged
+      helper.incidentInformation
     ).flatten
 }
