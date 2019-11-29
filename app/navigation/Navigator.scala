@@ -42,8 +42,7 @@ class Navigator @Inject()() {
     case EventPlacePage => ua => Some(routes.EventReportedController.onPageLoad(ua.id, NormalMode))
     case EventReportedPage => ua => Some(routes.IsTranshipmentController.onPageLoad(ua.id, NormalMode))
     case IsTranshipmentPage => isTranshipmentRoute
-    case IncidentInformationPage => ua => Some(routes.SealsChangedController.onPageLoad(ua.id, NormalMode))
-    case SealsChangedPage => ua => Some(routes.CheckEventAnswersController.onPageLoad(ua.id))
+    case IncidentInformationPage => ua => Some(routes.CheckEventAnswersController.onPageLoad(ua.id))
   }
 
   private val checkRouteMap: PartialFunction[Page, UserAnswers => Option[Call]] = {
@@ -73,7 +72,7 @@ class Navigator @Inject()() {
 
   private def eventsPages(page: Page): Boolean = {
     page match {
-      case EventCountryPage | EventPlacePage | EventReportedPage | IsTranshipmentPage | IncidentInformationPage | SealsChangedPage => true
+      case EventCountryPage | EventPlacePage | EventReportedPage | IsTranshipmentPage | IncidentInformationPage  => true
       case _ => false
     }
 
@@ -93,7 +92,7 @@ class Navigator @Inject()() {
 
   private def isTranshipmentRoute(ua: UserAnswers): Option[Call] =
     ua.get(EventReportedPage) map {
-      case true  => routes.SealsChangedController.onPageLoad(ua.id, NormalMode)
+      case true  => routes.CheckEventAnswersController.onPageLoad(ua.id)
       case false => routes.IncidentInformationController.onPageLoad(ua.id, NormalMode)
     }
 

@@ -89,11 +89,6 @@ POST       /:mrn/isTranshipment                              controllers.IsTrans
 GET        /:mrn/changeIsTranshipment                        controllers.IsTranshipmentController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
 POST       /:mrn/changeIsTranshipment                        controllers.IsTranshipmentController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
 
-GET        /:mrn/sealsChanged                                controllers.SealsChangedController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
-POST       /:mrn/sealsChanged                                controllers.SealsChangedController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
-GET        /:mrn/changeSealsChanged                          controllers.SealsChangedController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
-POST       /:mrn/changeSealsChanged                          controllers.SealsChangedController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
-
 GET        /:mrn/checkEventAnswers                           controllers.CheckEventAnswersController.onPageLoad(mrn: MovementReferenceNumber)
 POST       /:mrn/checkEventAnswers                           controllers.CheckEventAnswersController.onSubmit(mrn: MovementReferenceNumber)
 

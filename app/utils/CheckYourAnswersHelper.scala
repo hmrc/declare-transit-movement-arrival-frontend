@@ -59,21 +59,6 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messag
       )
   }
 
-  def sealsChanged: Option[Row] = userAnswers.get(SealsChangedPage) map {
-    answer =>
-      Row(
-        key     = Key(msg"sealsChanged.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(yesOrNo(answer)),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = routes.SealsChangedController.onPageLoad(mrn, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"sealsChanged.checkYourAnswersLabel"))
-          )
-        )
-      )
-  }
-
   def isTranshipment: Option[Row] = userAnswers.get(IsTranshipmentPage) map {
     answer =>
       Row(
