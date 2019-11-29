@@ -57,10 +57,11 @@ class CheckYourAnswersController @Inject()(
   def onPost(mrn: MovementReferenceNumber): Action[AnyContent] =
     (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
+
       service.submit(request.userAnswers) flatMap {
         case Some(result) =>
           result.status match {
-            case OK => Future.successful(Redirect(routes.ConfirmationController.onPageLoad(mrn)))
+            case OK | NO_CONTENT => Future.successful(Redirect(routes.ConfirmationController.onPageLoad(mrn)))
             case status => errorHandler.onClientError(request, status)
           }
         case None => errorHandler.onClientError(request, BAD_REQUEST) //TODO waiting for design
