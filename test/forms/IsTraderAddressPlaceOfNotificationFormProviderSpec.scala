@@ -16,18 +16,11 @@
 
 package forms
 
+import base.SpecBase
 import forms.behaviours.BooleanFieldBehaviours
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.data.FormError
-import play.api.i18n.{Messages, MessagesApi}
-import play.api.mvc.AnyContentAsEmpty
-import play.api.test.FakeRequest
 
-class IsTraderAddressPlaceOfNotificationFormProviderSpec extends BooleanFieldBehaviours with GuiceOneAppPerSuite {
-
-  private val messagesApi = app.injector.instanceOf[MessagesApi]
-  private def fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("", "")
-  private implicit def messages: Messages = messagesApi.preferred(fakeRequest)
+class IsTraderAddressPlaceOfNotificationFormProviderSpec extends BooleanFieldBehaviours with SpecBase {
 
   private val postcode = "NE99 1AX"
   private val requiredKey = messages("isTraderAddressPlaceOfNotification.error.required", postcode)

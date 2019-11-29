@@ -16,12 +16,11 @@
 
 package navigation
 
-import cats.Parallel
 import javax.inject.{Inject, Singleton}
 import play.api.mvc.Call
 import controllers.routes
 import pages._
-import models.{UserAnswers, _}
+import models._
 import GoodsLocation._
 
 @Singleton
@@ -30,8 +29,8 @@ class Navigator @Inject()() {
   private val normalRoutes: PartialFunction[Page, UserAnswers => Option[Call]]  = {
     case MovementReferenceNumberPage => ua => Some(routes.GoodsLocationController.onPageLoad(ua.id, NormalMode))
     case GoodsLocationPage => goodsLocationPageRoutes
-    case PresentationOfficePage => ua => Some(routes.CustomsSubPlaceController.onPageLoad(ua.id, NormalMode))
-    case CustomsSubPlacePage => ua => Some(routes.TraderNameController.onPageLoad(ua.id, NormalMode))
+    case PresentationOfficePage => ua => Some(routes.TraderNameController.onPageLoad(ua.id, NormalMode))
+    case CustomsSubPlacePage => ua => Some(routes.PresentationOfficeController.onPageLoad(ua.id, NormalMode))
     case TraderNamePage => ua => Some(routes.TraderEoriController.onPageLoad(ua.id, NormalMode))
     case TraderAddressPage => ua => Some(routes.IsTraderAddressPlaceOfNotificationController.onPageLoad(ua.id, NormalMode))
     case TraderEoriPage => ua => Some(routes.TraderAddressController.onPageLoad(ua.id, NormalMode))
@@ -81,7 +80,7 @@ class Navigator @Inject()() {
 
   private def goodsLocationPageRoutes(ua: UserAnswers): Option[Call] =
     ua.get(GoodsLocationPage) map {
-      case BorderForceOffice            => routes.PresentationOfficeController.onPageLoad(ua.id, NormalMode)
+      case BorderForceOffice            => routes.CustomsSubPlaceController.onPageLoad(ua.id, NormalMode)
       case AuthorisedConsigneesLocation => routes.UseDifferentServiceController.onPageLoad(ua.id)
     }
 

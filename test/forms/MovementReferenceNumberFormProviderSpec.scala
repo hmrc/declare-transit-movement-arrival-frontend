@@ -52,7 +52,7 @@ class MovementReferenceNumberFormProviderSpec extends StringFieldBehaviours {
           whenever (value != "" && MovementReferenceNumber(value).isEmpty) {
 
             val result = form.bind(Map("value" -> value))
-            result.errors should contain(FormError("value", invalidKey))
+            result.errors must contain(FormError("value", invalidKey))
           }
       }
     }

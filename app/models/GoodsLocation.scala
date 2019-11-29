@@ -37,8 +37,8 @@ object GoodsLocation extends Enumerable.Implicits {
 
     val field = form("value")
     val items = Seq(
-      Radios.Radio(msg"goodsLocation.borderForceOffice", BorderForceOffice.toString),
-      Radios.Radio(msg"goodsLocation.authorisedConsigneesLocation", AuthorisedConsigneesLocation.toString)
+        Radios.Radio(msg"goodsLocation.authorisedConsigneesLocation", AuthorisedConsigneesLocation.toString),
+        Radios.Radio(msg"goodsLocation.borderForceOffice", BorderForceOffice.toString)
     )
 
     Radios(field, items)

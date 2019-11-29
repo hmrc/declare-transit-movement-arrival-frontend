@@ -54,7 +54,8 @@ class IsTraderAddressPlaceOfNotificationControllerSpec extends SpecBase with Moc
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = emptyUserAnswers.set(TraderAddressPage, traderAddress).success.value
+      val userAnswers = emptyUserAnswers
+        .set(TraderAddressPage, traderAddress).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, isTraderAddressPlaceOfNotificationRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])

@@ -16,16 +16,18 @@
 
 package forms
 
+import base.SpecBase
 import forms.behaviours.StringFieldBehaviours
 import play.api.data.FormError
 
-class PresentationOfficeFormProviderSpec extends StringFieldBehaviours {
+class PresentationOfficeFormProviderSpec extends StringFieldBehaviours with SpecBase {
 
-  val requiredKey = "presentationOffice.error.required"
+  var subPlace = "subPlace"
+  val requiredKey: String = messages("presentationOffice.error.required", subPlace)
   val lengthKey = "presentationOffice.error.length"
   val maxLength = 8
 
-  val form = new PresentationOfficeFormProvider()()
+  val form = new PresentationOfficeFormProvider()(subPlace)
 
   ".value" - {
 

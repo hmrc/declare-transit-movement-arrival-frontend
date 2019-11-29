@@ -7,7 +7,7 @@
 {% from "macros/title.njk"                         import title %}
 
 {% block pageTitle %}
-  {{ title(messages("presentationOffice.title"), form.errors) }}
+  {{ title(messages("presentationOffice.title", subsPlace), form.errors) }}
 {% endblock %}
 
 {% block mainContent %}
@@ -32,13 +32,17 @@
           {{ csrf() | safe }}
 
           {{ govukInput({
+            classes: "govuk-input--width-20",
             label: {
-              text: messages('presentationOffice.title'),
+              text: header,
               isPageHeading: true,
               classes: "govuk-label--xl"
             },
             id: "value",
             name: "value",
+            hint: {
+              text: messages('presentationOffice.hintText')
+            },
             value: form.value.value,
             errorMessage: form.value.error
           }) }}
