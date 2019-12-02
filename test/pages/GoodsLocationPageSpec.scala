@@ -16,7 +16,8 @@
 
 package pages
 
-import models.{GoodsLocation, UserAnswers}
+import models.GoodsLocation
+import models.UserAnswers
 import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
 
@@ -34,7 +35,6 @@ class GoodsLocationPageSpec extends PageBehaviours {
 
       forAll(arbitrary[UserAnswers]) {
         answers =>
-
           val result = answers.set(GoodsLocationPage, GoodsLocation.BorderForceOffice).success.value
 
           result.get(AuthorisedLocationPage) must not be defined
@@ -45,7 +45,6 @@ class GoodsLocationPageSpec extends PageBehaviours {
 
       forAll(arbitrary[UserAnswers]) {
         answers =>
-
           val result = answers.set(GoodsLocationPage, GoodsLocation.AuthorisedConsigneesLocation).success.value
 
           result.get(CustomsSubPlacePage) must not be defined

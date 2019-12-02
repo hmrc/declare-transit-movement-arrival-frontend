@@ -17,7 +17,8 @@
 package generators
 
 import models._
-import org.scalacheck.{Arbitrary, Gen}
+import org.scalacheck.Arbitrary
+import org.scalacheck.Gen
 
 trait ModelGenerators {
   self: Generators =>
@@ -26,8 +27,8 @@ trait ModelGenerators {
     Arbitrary {
       for {
         buildingAndStreet <- stringsWithMaxLength(35)
-        city <- stringsWithMaxLength(35)
-        postcode <- stringsWithMaxLength(9)
+        city              <- stringsWithMaxLength(35)
+        postcode          <- stringsWithMaxLength(9)
       } yield TraderAddress(buildingAndStreet, city, postcode)
     }
 
@@ -36,7 +37,7 @@ trait ModelGenerators {
       Gen.oneOf(GoodsLocation.values.toSeq)
     }
 
-  implicit lazy  val arbitraryMovementReferenceNumber: Arbitrary[MovementReferenceNumber] =
+  implicit lazy val arbitraryMovementReferenceNumber: Arbitrary[MovementReferenceNumber] =
     Arbitrary {
       for {
         year    <- Gen.choose(0, 99).map(y => f"$y%02d")

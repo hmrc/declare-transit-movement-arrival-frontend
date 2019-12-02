@@ -34,10 +34,18 @@ class IncidentOnRoutePageSpec extends PageBehaviours {
       forAll(arbitrary[UserAnswers], stringsWithMaxLength(2), stringsWithMaxLength(35), arbitrary[Boolean]) {
         (answers, eventCountry, eventPlace, eventReported) =>
           val ua = answers
-            .set(IncidentOnRoutePage, true).success.value
-            .set(EventCountryPage, eventCountry).success.value
-            .set(EventPlacePage, eventPlace).success.value
-            .set(EventReportedPage, eventReported).success.value
+            .set(IncidentOnRoutePage, true)
+            .success
+            .value
+            .set(EventCountryPage, eventCountry)
+            .success
+            .value
+            .set(EventPlacePage, eventPlace)
+            .success
+            .value
+            .set(EventReportedPage, eventReported)
+            .success
+            .value
 
           val result = ua.set(IncidentOnRoutePage, false).success.value
 
@@ -50,12 +58,19 @@ class IncidentOnRoutePageSpec extends PageBehaviours {
     "must not remove incident on route pages when user selects option 'Yes' for incidents on route question" in {
       forAll(arbitrary[UserAnswers], stringsWithMaxLength(2), stringsWithMaxLength(35), arbitrary[Boolean]) {
         (answers, eventCountry, eventPlace, eventReported) =>
-
           val ua = answers
-            .set(IncidentOnRoutePage, true).success.value
-            .set(EventCountryPage, eventCountry).success.value
-            .set(EventPlacePage, eventPlace).success.value
-            .set(EventReportedPage, eventReported).success.value
+            .set(IncidentOnRoutePage, true)
+            .success
+            .value
+            .set(EventCountryPage, eventCountry)
+            .success
+            .value
+            .set(EventPlacePage, eventPlace)
+            .success
+            .value
+            .set(EventReportedPage, eventReported)
+            .success
+            .value
 
           val result = ua.set(IncidentOnRoutePage, true).success.value
 
@@ -69,18 +84,25 @@ class IncidentOnRoutePageSpec extends PageBehaviours {
     "must remove incident on route pages when incidents on route question is removed" in {
       forAll(arbitrary[UserAnswers], stringsWithMaxLength(2), stringsWithMaxLength(35), arbitrary[Boolean]) {
         (answers, eventCountry, eventPlace, eventReported) =>
-
           val ua = answers
-            .set(IncidentOnRoutePage, true).success.value
-            .set(EventCountryPage, eventCountry).success.value
-            .set(EventPlacePage, eventPlace).success.value
-            .set(EventReportedPage, eventReported).success.value
+            .set(IncidentOnRoutePage, true)
+            .success
+            .value
+            .set(EventCountryPage, eventCountry)
+            .success
+            .value
+            .set(EventPlacePage, eventPlace)
+            .success
+            .value
+            .set(EventReportedPage, eventReported)
+            .success
+            .value
 
           val result = ua.remove(IncidentOnRoutePage).success.value
 
-          result.get(EventCountryPage) must not be(defined)
-          result.get(EventPlacePage) must not be(defined)
-          result.get(EventReportedPage) must not be(defined)
+          result.get(EventCountryPage) must not be (defined)
+          result.get(EventPlacePage) must not be (defined)
+          result.get(EventReportedPage) must not be (defined)
       }
 
     }

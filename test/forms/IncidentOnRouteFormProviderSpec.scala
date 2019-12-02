@@ -22,7 +22,7 @@ import play.api.data.FormError
 class IncidentOnRouteFormProviderSpec extends BooleanFieldBehaviours {
 
   val requiredKey = "incidentOnRoute.error.required"
-  val invalidKey = "error.boolean"
+  val invalidKey  = "error.boolean"
 
   val form = new IncidentOnRouteFormProvider()()
 

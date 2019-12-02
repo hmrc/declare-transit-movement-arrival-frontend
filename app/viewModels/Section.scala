@@ -17,7 +17,9 @@
 package viewModels
 
 import play.api.i18n.Messages
-import play.api.libs.json.{JsValue, Json, Writes}
+import play.api.libs.json.JsValue
+import play.api.libs.json.Json
+import play.api.libs.json.Writes
 import uk.gov.hmrc.viewmodels.SummaryList
 
 case class Section(sectionTitle: Option[String], rows: Seq[SummaryList.Row])
@@ -31,7 +33,7 @@ object Section {
     override def writes(o: Section): JsValue =
       Json.obj(
         "sectionTitle" -> o.sectionTitle,
-        "rows" -> Json.toJson(o.rows)
+        "rows"         -> Json.toJson(o.rows)
       )
   }
 }

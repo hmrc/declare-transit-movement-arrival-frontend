@@ -19,13 +19,17 @@ package models
 import generators.Generators
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
-import org.scalatest.{EitherValues, FreeSpec, MustMatchers, OptionValues}
+import org.scalatest.EitherValues
+import org.scalatest.FreeSpec
+import org.scalatest.MustMatchers
+import org.scalatest.OptionValues
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.libs.json.{JsString, JsSuccess, Json}
+import play.api.libs.json.JsString
+import play.api.libs.json.JsSuccess
+import play.api.libs.json.Json
 import play.api.mvc.PathBindable
 
-class MovementReferenceNumberSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks
-  with Generators with EitherValues with OptionValues {
+class MovementReferenceNumberSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with Generators with EitherValues with OptionValues {
 
   "a Movement Reference Number" - {
 
@@ -44,7 +48,6 @@ class MovementReferenceNumberSpec extends FreeSpec with MustMatchers with ScalaC
 
       forAll(arbitrary[MovementReferenceNumber]) {
         mrn =>
-
           JsString(mrn.toString).as[MovementReferenceNumber] mustEqual mrn
       }
     }
@@ -53,7 +56,6 @@ class MovementReferenceNumberSpec extends FreeSpec with MustMatchers with ScalaC
 
       forAll(arbitrary[MovementReferenceNumber]) {
         mrn =>
-
           Json.toJson(mrn) mustEqual JsString(mrn.toString)
       }
     }
@@ -67,7 +69,6 @@ class MovementReferenceNumberSpec extends FreeSpec with MustMatchers with ScalaC
 
       forAll(gen) {
         invalidMrn =>
-
           MovementReferenceNumber(invalidMrn) must not be defined
       }
     }
@@ -82,10 +83,9 @@ class MovementReferenceNumberSpec extends FreeSpec with MustMatchers with ScalaC
 
       forAll(gen) {
         case (mrn, index, character) =>
-
           val validCharacters = "1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
-          whenever (!validCharacters.contains(character)) {
+          whenever(!validCharacters.contains(character)) {
 
             val invalidMrn = mrn.toString.updated(index, character)
 
@@ -98,7 +98,6 @@ class MovementReferenceNumberSpec extends FreeSpec with MustMatchers with ScalaC
 
       forAll(arbitrary[MovementReferenceNumber], Gen.alphaUpperChar) {
         (mrn, upperCaseChar) =>
-
           val invalidMrn = mrn.toString.updated(0, upperCaseChar)
 
           MovementReferenceNumber(invalidMrn) must not be defined
@@ -109,7 +108,6 @@ class MovementReferenceNumberSpec extends FreeSpec with MustMatchers with ScalaC
 
       forAll(arbitrary[MovementReferenceNumber], Gen.alphaUpperChar) {
         (mrn, upperCaseChar) =>
-
           val invalidMrn = mrn.toString.updated(1, upperCaseChar)
 
           MovementReferenceNumber(invalidMrn) must not be defined
@@ -120,7 +118,6 @@ class MovementReferenceNumberSpec extends FreeSpec with MustMatchers with ScalaC
 
       forAll(arbitrary[MovementReferenceNumber], Gen.numChar) {
         (mrn, digit) =>
-
           val invalidMrn = mrn.toString.updated(2, digit)
 
           MovementReferenceNumber(invalidMrn) must not be defined
@@ -131,7 +128,6 @@ class MovementReferenceNumberSpec extends FreeSpec with MustMatchers with ScalaC
 
       forAll(arbitrary[MovementReferenceNumber], Gen.numChar) {
         (mrn, digit) =>
-
           val invalidMrn = mrn.toString.updated(3, digit)
 
           MovementReferenceNumber(invalidMrn) must not be defined
@@ -152,7 +148,6 @@ class MovementReferenceNumberSpec extends FreeSpec with MustMatchers with ScalaC
 
       forAll(arbitrary[MovementReferenceNumber]) {
         mrn =>
-
           MovementReferenceNumber(mrn.toString).value mustEqual mrn
       }
     }
@@ -168,7 +163,6 @@ class MovementReferenceNumberSpec extends FreeSpec with MustMatchers with ScalaC
 
       forAll(gen) {
         case (mrn, invalidCheckDigit) =>
-
           val invalidMrn = mrn.toString.updated(checkDigitPosition, invalidCheckDigit)
 
           MovementReferenceNumber(invalidMrn) must not be defined

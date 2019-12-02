@@ -104,15 +104,16 @@ object VehicularTranshipment {
   }
 
   implicit lazy val writes: OWrites[VehicularTranshipment] =
-    OWrites[VehicularTranshipment] { transhipment =>
-      Json
-        .obj(
-          "transportIdentity" -> transhipment.transportIdentity,
-          "transportCountry"  -> transhipment.transportCountry,
-          "endorsement"       -> Json.toJson(transhipment.endorsement),
-          "containers"        -> Json.toJson(transhipment.containers)
-        )
-        .filterNulls
+    OWrites[VehicularTranshipment] {
+      transhipment =>
+        Json
+          .obj(
+            "transportIdentity" -> transhipment.transportIdentity,
+            "transportCountry"  -> transhipment.transportCountry,
+            "endorsement"       -> Json.toJson(transhipment.endorsement),
+            "containers"        -> Json.toJson(transhipment.containers)
+          )
+          .filterNulls
     }
 }
 

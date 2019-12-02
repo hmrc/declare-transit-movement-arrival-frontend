@@ -19,15 +19,21 @@ package controllers
 import base.SpecBase
 import forms.TraderAddressFormProvider
 import matchers.JsonMatchers
-import models.{NormalMode, TraderAddress, UserAnswers}
-import navigation.{FakeNavigator, Navigator}
+import models.NormalMode
+import models.TraderAddress
+import models.UserAnswers
+import navigation.FakeNavigator
+import navigation.Navigator
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
-import org.mockito.Mockito.{times, verify, when}
+import org.mockito.Mockito.times
+import org.mockito.Mockito.verify
+import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.TraderAddressPage
 import play.api.inject.bind
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.json.JsObject
+import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -42,7 +48,7 @@ class TraderAddressControllerSpec extends SpecBase with MockitoSugar with Nunjuc
   def onwardRoute = Call("GET", "/foo")
 
   val formProvider = new TraderAddressFormProvider()
-  val form = formProvider()
+  val form         = formProvider()
 
   lazy val traderAddressRoute = routes.TraderAddressController.onPageLoad(mrn, NormalMode).url
 
@@ -51,8 +57,8 @@ class TraderAddressControllerSpec extends SpecBase with MockitoSugar with Nunjuc
     Json.obj(
       TraderAddressPage.toString -> Json.obj(
         "buildingAndStreet" -> "value 1",
-        "city" -> "value 3",
-        "postcode" -> "value 4"
+        "city"              -> "value 3",
+        "postcode"          -> "value 4"
       )
     )
   )
@@ -64,10 +70,10 @@ class TraderAddressControllerSpec extends SpecBase with MockitoSugar with Nunjuc
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(GET, traderAddressRoute)
+      val application    = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val request        = FakeRequest(GET, traderAddressRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(application, request).value
 
@@ -92,10 +98,10 @@ class TraderAddressControllerSpec extends SpecBase with MockitoSugar with Nunjuc
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-      val request = FakeRequest(GET, traderAddressRoute)
+      val application    = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val request        = FakeRequest(GET, traderAddressRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(application, request).value
 
@@ -106,8 +112,8 @@ class TraderAddressControllerSpec extends SpecBase with MockitoSugar with Nunjuc
       val filledForm = form.bind(
         Map(
           "buildingAndStreet" -> "value 1",
-          "city" -> "value 3",
-          "postcode" -> "value 4"
+          "city"              -> "value 3",
+          "postcode"          -> "value 4"
         )
       )
 
@@ -137,7 +143,6 @@ class TraderAddressControllerSpec extends SpecBase with MockitoSugar with Nunjuc
           )
           .build()
 
-
       val request =
         FakeRequest(POST, traderAddressRoute)
           .withFormUrlEncodedBody(("buildingAndStreet", "value 1"), ("city", "value 3"), ("postcode", "value 4"))
@@ -156,11 +161,11 @@ class TraderAddressControllerSpec extends SpecBase with MockitoSugar with Nunjuc
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(POST, traderAddressRoute).withFormUrlEncodedBody(("value", "invalid value"))
-      val boundForm = form.bind(Map("value" -> "invalid value"))
+      val application    = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val request        = FakeRequest(POST, traderAddressRoute).withFormUrlEncodedBody(("value", "invalid value"))
+      val boundForm      = form.bind(Map("value" -> "invalid value"))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(application, request).value
 
@@ -177,7 +182,7 @@ class TraderAddressControllerSpec extends SpecBase with MockitoSugar with Nunjuc
       templateCaptor.getValue mustEqual "traderAddress.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
-       application.stop()
+      application.stop()
     }
 
     "must redirect to Session Expired for a GET if no existing data is found" in {

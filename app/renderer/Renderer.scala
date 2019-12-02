@@ -18,7 +18,9 @@ package renderer
 
 import config.FrontendAppConfig
 import javax.inject.Inject
-import play.api.libs.json.{JsObject, Json, OWrites}
+import play.api.libs.json.JsObject
+import play.api.libs.json.Json
+import play.api.libs.json.OWrites
 import play.api.mvc.RequestHeader
 import play.twirl.api.Html
 import uk.gov.hmrc.nunjucks.NunjucksRenderer

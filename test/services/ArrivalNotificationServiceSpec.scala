@@ -35,12 +35,12 @@ import scala.concurrent.Future
 
 class ArrivalNotificationServiceSpec extends SpecBase with MockitoSugar {
 
-  private val mockConverterService = mock[ArrivalNotificationConversionService]
+  private val mockConverterService     = mock[ArrivalNotificationConversionService]
   private val mockDestinationConnector = mock[DestinationConnector]
 
   "ArrivalNotificationService" - {
     "must submit data for valid input " in {
-      val traderWithoutEori = TraderWithoutEori("", "", "", "", "")
+      val traderWithoutEori  = TraderWithoutEori("", "", "", "", "")
       val normalNotification = NormalNotification(mrn.toString, "", LocalDate.now(), None, traderWithoutEori, "", Seq.empty)
 
       when(mockConverterService.convertToArrivalNotification(any()))

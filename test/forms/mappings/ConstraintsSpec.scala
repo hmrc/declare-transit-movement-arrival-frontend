@@ -21,11 +21,12 @@ import java.time.LocalDate
 import generators.Generators
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import org.scalatest.{FreeSpec, MustMatchers}
-import play.api.data.validation.{Invalid, Valid}
+import org.scalatest.FreeSpec
+import org.scalatest.MustMatchers
+import play.api.data.validation.Invalid
+import play.api.data.validation.Valid
 
-class ConstraintsSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with Generators  with Constraints {
-
+class ConstraintsSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with Generators with Constraints {
 
   "firstError" - {
 
@@ -133,7 +134,6 @@ class ConstraintsSpec extends FreeSpec with MustMatchers with ScalaCheckProperty
 
       forAll(gen) {
         case (max, date) =>
-
           val result = maxDate(max, "error.future")(date)
           result mustEqual Valid
       }
@@ -148,7 +148,6 @@ class ConstraintsSpec extends FreeSpec with MustMatchers with ScalaCheckProperty
 
       forAll(gen) {
         case (max, date) =>
-
           val result = maxDate(max, "error.future", "foo")(date)
           result mustEqual Invalid("error.future", "foo")
       }
@@ -166,7 +165,6 @@ class ConstraintsSpec extends FreeSpec with MustMatchers with ScalaCheckProperty
 
       forAll(gen) {
         case (min, date) =>
-
           val result = minDate(min, "error.past", "foo")(date)
           result mustEqual Valid
       }
@@ -181,7 +179,6 @@ class ConstraintsSpec extends FreeSpec with MustMatchers with ScalaCheckProperty
 
       forAll(gen) {
         case (min, date) =>
-
           val result = minDate(min, "error.past", "foo")(date)
           result mustEqual Invalid("error.past", "foo")
       }

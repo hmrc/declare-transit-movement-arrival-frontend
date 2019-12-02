@@ -22,8 +22,8 @@ import play.api.data.FormError
 class CustomsSubPlaceFormProviderSpec extends StringFieldBehaviours {
 
   val requiredKey = "customsSubPlace.error.required"
-  val lengthKey = "customsSubPlace.error.length"
-  val maxLength = 17
+  val lengthKey   = "customsSubPlace.error.length"
+  val maxLength   = 17
 
   val form = new CustomsSubPlaceFormProvider()()
 

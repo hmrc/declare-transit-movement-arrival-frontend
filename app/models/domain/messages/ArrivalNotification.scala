@@ -18,7 +18,9 @@ package models.domain.messages
 
 import java.time.LocalDate
 import models._
-import models.domain.{EnRouteEvent, ProcedureType, Trader}
+import models.domain.EnRouteEvent
+import models.domain.ProcedureType
+import models.domain.Trader
 import play.api.libs.json._
 
 import scala.language.implicitConversions
@@ -43,20 +45,20 @@ object ArrivalNotification {
   }
 
   implicit lazy val writes: Writes[ArrivalNotification] = Writes {
-    case n: NormalNotification => Json.toJson(n)(NormalNotification.writes)
+    case n: NormalNotification     => Json.toJson(n)(NormalNotification.writes)
     case s: SimplifiedNotification => Json.toJson(s)(SimplifiedNotification.writes)
   }
 }
 
 final case class NormalNotification(
-                                     movementReferenceNumber: String,
-                                     notificationPlace: String,
-                                     notificationDate: LocalDate,
-                                     customsSubPlace: Option[String],
-                                     trader: Trader,
-                                     presentationOffice: String,
-                                     enRouteEvents: Seq[EnRouteEvent]
-                                   ) extends ArrivalNotification {
+  movementReferenceNumber: String,
+  notificationPlace: String,
+  notificationDate: LocalDate,
+  customsSubPlace: Option[String],
+  trader: Trader,
+  presentationOffice: String,
+  enRouteEvents: Seq[EnRouteEvent]
+) extends ArrivalNotification {
 
   val procedure: ProcedureType = ProcedureType.Normal
 }
@@ -69,12 +71,13 @@ object NormalNotification {
 
     (__ \ "procedure")
       .read[String]
-      .flatMap[String] { p =>
-        if (p == ProcedureType.Normal.toString) {
-          Reads(_ => JsSuccess(p))
-        } else {
-          Reads(_ => JsError("procedure must be `normal`"))
-        }
+      .flatMap[String] {
+        p =>
+          if (p == ProcedureType.Normal.toString) {
+            Reads(_ => JsSuccess(p))
+          } else {
+            Reads(_ => JsError("procedure must be `normal`"))
+          }
       }
       .andKeep(
         (
@@ -85,36 +88,37 @@ object NormalNotification {
             (__ \ "trader").read[Trader] and
             (__ \ "presentationOffice").read[String] and
             ((__ \ "enRouteEvents").read[Seq[EnRouteEvent]] or Reads.pure(Seq[EnRouteEvent]()))
-          ) (NormalNotification(_, _, _, _, _, _, _))
+        )(NormalNotification(_, _, _, _, _, _, _))
       )
   }
 
   implicit lazy val writes: OWrites[NormalNotification] =
-    OWrites[NormalNotification] { notification =>
-      Json
-        .obj(
-          "procedure" -> Json.toJson(notification.procedure),
-          "movementReferenceNumber" -> notification.movementReferenceNumber,
-          "notificationPlace" -> notification.notificationPlace,
-          "notificationDate" -> notification.notificationDate,
-          "customsSubPlace" -> notification.customsSubPlace,
-          "trader" -> Json.toJson(notification.trader),
-          "presentationOffice" -> notification.presentationOffice,
-          "enRouteEvents" -> Json.toJson(notification.enRouteEvents)
-        )
-        .filterNulls
+    OWrites[NormalNotification] {
+      notification =>
+        Json
+          .obj(
+            "procedure"               -> Json.toJson(notification.procedure),
+            "movementReferenceNumber" -> notification.movementReferenceNumber,
+            "notificationPlace"       -> notification.notificationPlace,
+            "notificationDate"        -> notification.notificationDate,
+            "customsSubPlace"         -> notification.customsSubPlace,
+            "trader"                  -> Json.toJson(notification.trader),
+            "presentationOffice"      -> notification.presentationOffice,
+            "enRouteEvents"           -> Json.toJson(notification.enRouteEvents)
+          )
+          .filterNulls
     }
 }
 
 final case class SimplifiedNotification(
-                                         movementReferenceNumber: String,
-                                         notificationPlace: String,
-                                         notificationDate: LocalDate,
-                                         approvedLocation: Option[String],
-                                         trader: Trader,
-                                         presentationOffice: String,
-                                         enRouteEvents: Seq[EnRouteEvent]
-                                       ) extends ArrivalNotification {
+  movementReferenceNumber: String,
+  notificationPlace: String,
+  notificationDate: LocalDate,
+  approvedLocation: Option[String],
+  trader: Trader,
+  presentationOffice: String,
+  enRouteEvents: Seq[EnRouteEvent]
+) extends ArrivalNotification {
 
   val procedure: ProcedureType = ProcedureType.Simplified
 }
@@ -127,12 +131,13 @@ object SimplifiedNotification {
 
     (__ \ "procedure")
       .read[String]
-      .flatMap[String] { p =>
-        if (p == ProcedureType.Simplified.toString) {
-          Reads(_ => JsSuccess(p))
-        } else {
-          Reads(_ => JsError("procedure must be `simplified`"))
-        }
+      .flatMap[String] {
+        p =>
+          if (p == ProcedureType.Simplified.toString) {
+            Reads(_ => JsSuccess(p))
+          } else {
+            Reads(_ => JsError("procedure must be `simplified`"))
+          }
       }
       .andKeep(
         (
@@ -143,24 +148,25 @@ object SimplifiedNotification {
             (__ \ "trader").read[Trader] and
             (__ \ "presentationOffice").read[String] and
             ((__ \ "enRouteEvents").read[Seq[EnRouteEvent]] or Reads.pure(Seq[EnRouteEvent]()))
-          ) (SimplifiedNotification(_, _, _, _, _, _, _))
+        )(SimplifiedNotification(_, _, _, _, _, _, _))
       )
   }
 
   implicit lazy val writes: OWrites[SimplifiedNotification] = {
-    OWrites[SimplifiedNotification] { notification =>
-      Json
-        .obj(
-          "procedure" -> Json.toJson(notification.procedure),
-          "movementReferenceNumber" -> notification.movementReferenceNumber,
-          "notificationPlace" -> notification.notificationPlace,
-          "notificationDate" -> notification.notificationDate,
-          "approvedLocation" -> notification.approvedLocation,
-          "trader" -> Json.toJson(notification.trader),
-          "presentationOffice" -> notification.presentationOffice,
-          "enRouteEvents" -> Json.toJson(notification.enRouteEvents)
-        )
-        .filterNulls
+    OWrites[SimplifiedNotification] {
+      notification =>
+        Json
+          .obj(
+            "procedure"               -> Json.toJson(notification.procedure),
+            "movementReferenceNumber" -> notification.movementReferenceNumber,
+            "notificationPlace"       -> notification.notificationPlace,
+            "notificationDate"        -> notification.notificationDate,
+            "approvedLocation"        -> notification.approvedLocation,
+            "trader"                  -> Json.toJson(notification.trader),
+            "presentationOffice"      -> notification.presentationOffice,
+            "enRouteEvents"           -> Json.toJson(notification.enRouteEvents)
+          )
+          .filterNulls
     }
   }
 }

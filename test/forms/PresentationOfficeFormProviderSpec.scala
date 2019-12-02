@@ -22,10 +22,10 @@ import play.api.data.FormError
 
 class PresentationOfficeFormProviderSpec extends StringFieldBehaviours with SpecBase {
 
-  var subPlace = "subPlace"
+  var subPlace            = "subPlace"
   val requiredKey: String = messages("presentationOffice.error.required", subPlace)
-  val lengthKey = "presentationOffice.error.length"
-  val maxLength = 8
+  val lengthKey           = "presentationOffice.error.length"
+  val maxLength           = 8
 
   val form = new PresentationOfficeFormProvider()(subPlace)
 

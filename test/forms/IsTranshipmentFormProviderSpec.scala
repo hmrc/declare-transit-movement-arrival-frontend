@@ -22,7 +22,7 @@ import play.api.data.FormError
 class IsTranshipmentFormProviderSpec extends BooleanFieldBehaviours {
 
   val requiredKey = "isTranshipment.error.required"
-  val invalidKey = "error.boolean"
+  val invalidKey  = "error.boolean"
 
   val form = new IsTranshipmentFormProvider()()
 

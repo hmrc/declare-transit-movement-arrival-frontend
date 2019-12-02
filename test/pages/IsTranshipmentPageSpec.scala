@@ -32,11 +32,11 @@ class IsTranshipmentPageSpec extends PageBehaviours {
 
     "must remove incident pages data when user selects option 'Yes' on transhipment page" in {
 
-      forAll(arbitrary[UserAnswers]) { userAnswers =>
+      forAll(arbitrary[UserAnswers]) {
+        userAnswers =>
+          val result = userAnswers.set(IsTranshipmentPage, true).success.value
 
-        val result = userAnswers.set(IsTranshipmentPage, true).success.value
-
-        result.get(IncidentInformationPage) must not be defined
+          result.get(IncidentInformationPage) must not be defined
       }
     }
   }

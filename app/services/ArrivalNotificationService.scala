@@ -20,17 +20,17 @@ import connectors.DestinationConnector
 import javax.inject.Inject
 import models.UserAnswers
 import services.conversion.ArrivalNotificationConversionService
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.HttpResponse
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
+import scala.concurrent.Future
 
-class ArrivalNotificationService @Inject()(converterService: ArrivalNotificationConversionService,
-                                           connector: DestinationConnector) {
+class ArrivalNotificationService @Inject()(converterService: ArrivalNotificationConversionService, connector: DestinationConnector) {
 
-  def submit(userAnswers: UserAnswers)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[HttpResponse]] = {
+  def submit(userAnswers: UserAnswers)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[HttpResponse]] =
     converterService.convertToArrivalNotification(userAnswers) match {
       case Some(notification) => connector.submitArrivalNotification(notification).map(Some(_))
-      case None => Future.successful(None)
+      case None               => Future.successful(None)
     }
-  }
 }
