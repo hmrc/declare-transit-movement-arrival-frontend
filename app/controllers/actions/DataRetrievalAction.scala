@@ -18,15 +18,15 @@ package controllers.actions
 
 import javax.inject.Inject
 import models.MovementReferenceNumber
-import models.requests.{IdentifierRequest, OptionalDataRequest}
+import models.requests.IdentifierRequest
+import models.requests.OptionalDataRequest
 import play.api.mvc.ActionTransformer
 import repositories.SessionRepository
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
+import scala.concurrent.Future
 
-class DataRetrievalActionProviderImpl @Inject()(
-                                                    sessionRepository: SessionRepository,
-                                                    ec: ExecutionContext) extends DataRetrievalActionProvider {
+class DataRetrievalActionProviderImpl @Inject()(sessionRepository: SessionRepository, ec: ExecutionContext) extends DataRetrievalActionProvider {
 
   def apply(mrn: MovementReferenceNumber): ActionTransformer[IdentifierRequest, OptionalDataRequest] =
     new DataRetrievalAction(mrn, ec, sessionRepository)
@@ -38,10 +38,10 @@ trait DataRetrievalActionProvider {
 }
 
 class DataRetrievalAction(
-                               mrn: MovementReferenceNumber,
-                               implicit protected val executionContext: ExecutionContext,
-                               sessionRepository: SessionRepository
-                             ) extends ActionTransformer[IdentifierRequest, OptionalDataRequest] {
+  mrn: MovementReferenceNumber,
+  implicit protected val executionContext: ExecutionContext,
+  sessionRepository: SessionRepository
+) extends ActionTransformer[IdentifierRequest, OptionalDataRequest] {
 
   override protected def transform[A](request: IdentifierRequest[A]): Future[OptionalDataRequest[A]] =
     sessionRepository.get(mrn.toString).map {

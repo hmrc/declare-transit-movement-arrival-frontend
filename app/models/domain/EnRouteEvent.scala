@@ -20,12 +20,12 @@ import models._
 import play.api.libs.json._
 
 final case class EnRouteEvent(
-                               place: String,
-                               countryCode: String,
-                               alreadyInNcts: Boolean,
-                               eventDetails: EventDetails,
-                               seals: Seq[String]
-                             )
+  place: String,
+  countryCode: String,
+  alreadyInNcts: Boolean,
+  eventDetails: EventDetails,
+  seals: Seq[String]
+)
 
 object EnRouteEvent {
 
@@ -39,19 +39,20 @@ object EnRouteEvent {
         (__ \ "alreadyInNcts").read[Boolean] and
         (__ \ "eventDetails").read[EventDetails] and
         ((__ \ "seals").read[Seq[String]] or Reads.pure(Seq[String]()))
-      ) (EnRouteEvent(_, _, _, _, _))
+    )(EnRouteEvent(_, _, _, _, _))
   }
 
   implicit lazy val writes: OWrites[EnRouteEvent] =
     OWrites[EnRouteEvent] {
       event =>
-
-        Json.obj(
-          "place"         -> event.place,
-          "countryCode"   -> event.countryCode,
-          "alreadyInNcts" -> event.alreadyInNcts,
-          "eventDetails"  -> Json.toJson(event.eventDetails),
-          "seals"         -> Json.toJson(event.seals)
-        ).filterNulls
+        Json
+          .obj(
+            "place"         -> event.place,
+            "countryCode"   -> event.countryCode,
+            "alreadyInNcts" -> event.alreadyInNcts,
+            "eventDetails"  -> Json.toJson(event.eventDetails),
+            "seals"         -> Json.toJson(event.seals)
+          )
+          .filterNulls
     }
 }

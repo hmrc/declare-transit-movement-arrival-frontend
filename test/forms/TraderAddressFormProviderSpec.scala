@@ -25,10 +25,10 @@ class TraderAddressFormProviderSpec extends StringFieldBehaviours {
 
   ".buildingAndStreet" - {
 
-    val fieldName = "buildingAndStreet"
+    val fieldName   = "buildingAndStreet"
     val requiredKey = "traderAddress.error.buildingAndStreet.required"
-    val lengthKey = "traderAddress.error.buildingAndStreet.length"
-    val maxLength = 35
+    val lengthKey   = "traderAddress.error.buildingAndStreet.length"
+    val maxLength   = 35
 
     behave like fieldThatBindsValidData(
       form,
@@ -52,10 +52,10 @@ class TraderAddressFormProviderSpec extends StringFieldBehaviours {
 
   ".city" - {
 
-    val fieldName = "city"
+    val fieldName   = "city"
     val requiredKey = "traderAddress.error.city.required"
-    val lengthKey = "traderAddress.error.city.length"
-    val maxLength = 35
+    val lengthKey   = "traderAddress.error.city.length"
+    val maxLength   = 35
 
     behave like fieldThatBindsValidData(
       form,
@@ -79,10 +79,10 @@ class TraderAddressFormProviderSpec extends StringFieldBehaviours {
 
   ".postcode" - {
 
-    val fieldName = "postcode"
+    val fieldName   = "postcode"
     val requiredKey = "traderAddress.error.postcode.required"
-    val lengthKey = "traderAddress.error.postcode.length"
-    val maxLength = 9
+    val lengthKey   = "traderAddress.error.postcode.length"
+    val maxLength   = 9
 
     behave like fieldThatBindsValidData(
       form,

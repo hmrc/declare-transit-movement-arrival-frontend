@@ -32,11 +32,13 @@ class IsTraderAddressPlaceOfNotificationPageSpec extends PageBehaviours {
 
     "must clean down 'PlaceOfNotificationPage' when 'true'" in {
       forAll(arbitrary[UserAnswers], stringsWithMaxLength(35)) {
-          (answers, placeOfNotification) =>
-            val ua = answers
-              .set(PlaceOfNotificationPage, placeOfNotification).success.value
+        (answers, placeOfNotification) =>
+          val ua = answers
+            .set(PlaceOfNotificationPage, placeOfNotification)
+            .success
+            .value
 
-            val result = ua.set(IsTraderAddressPlaceOfNotificationPage, true).success.value
+          val result = ua.set(IsTraderAddressPlaceOfNotificationPage, true).success.value
 
           result.get(PlaceOfNotificationPage) must not be defined
       }
@@ -46,8 +48,12 @@ class IsTraderAddressPlaceOfNotificationPageSpec extends PageBehaviours {
       forAll(arbitrary[UserAnswers], stringsWithMaxLength(35)) {
         (answers, placeOfNotification) =>
           val ua = answers
-            .set(IsTraderAddressPlaceOfNotificationPage, false).success.value
-            .set(PlaceOfNotificationPage, placeOfNotification).success.value
+            .set(IsTraderAddressPlaceOfNotificationPage, false)
+            .success
+            .value
+            .set(PlaceOfNotificationPage, placeOfNotification)
+            .success
+            .value
 
           val result = ua.remove(IsTraderAddressPlaceOfNotificationPage).success.value
 
@@ -59,7 +65,9 @@ class IsTraderAddressPlaceOfNotificationPageSpec extends PageBehaviours {
       forAll(arbitrary[UserAnswers], stringsWithMaxLength(35)) {
         (answers, placeOfNotification) =>
           val ua = answers
-            .set(PlaceOfNotificationPage, placeOfNotification).success.value
+            .set(PlaceOfNotificationPage, placeOfNotification)
+            .success
+            .value
 
           val result = ua.set(IsTraderAddressPlaceOfNotificationPage, false).success.value
 

@@ -16,7 +16,8 @@
 
 package pages
 
-import models.{GoodsLocation, UserAnswers}
+import models.GoodsLocation
+import models.UserAnswers
 import play.api.libs.json.JsPath
 
 import scala.util.Try

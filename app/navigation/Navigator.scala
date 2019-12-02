@@ -16,7 +16,8 @@
 
 package navigation
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.Inject
+import javax.inject.Singleton
 import play.api.mvc.Call
 import controllers.routes
 import pages._
@@ -26,6 +27,7 @@ import GoodsLocation._
 @Singleton
 class Navigator @Inject()() {
 
+  // format: off
   private val normalRoutes: PartialFunction[Page, UserAnswers => Option[Call]]  = {
     case MovementReferenceNumberPage => ua => Some(routes.GoodsLocationController.onPageLoad(ua.id, NormalMode))
     case GoodsLocationPage => goodsLocationPageRoutes
@@ -49,33 +51,34 @@ class Navigator @Inject()() {
     case page if eventsPages(page) => ua => Some(routes.CheckEventAnswersController.onPageLoad(ua.id))
     case _                         => ua => Some(routes.CheckYourAnswersController.onPageLoad(ua.id)) // move to match on checkRouteMap
   }
+  // format: on
 
   def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = mode match {
     case NormalMode =>
       normalRoutes.lift(page) match {
-        case Some(call) => call(userAnswers) match {
-          case Some(onwardRoute) => onwardRoute
-          case None              => routes.SessionExpiredController.onPageLoad()
-        }
+        case Some(call) =>
+          call(userAnswers) match {
+            case Some(onwardRoute) => onwardRoute
+            case None              => routes.SessionExpiredController.onPageLoad()
+          }
         case None => routes.IndexController.onPageLoad()
       }
     case CheckMode =>
       checkRouteMap.lift(page) match {
         case None => routes.CheckYourAnswersController.onPageLoad(userAnswers.id)
-        case Some(call) => call(userAnswers) match {
-          case Some(onwardRoute) => onwardRoute
-          case None              => routes.SessionExpiredController.onPageLoad()
-        }
+        case Some(call) =>
+          call(userAnswers) match {
+            case Some(onwardRoute) => onwardRoute
+            case None              => routes.SessionExpiredController.onPageLoad()
+          }
       }
   }
 
-  private def eventsPages(page: Page): Boolean = {
+  private def eventsPages(page: Page): Boolean =
     page match {
-      case EventCountryPage | EventPlacePage | EventReportedPage | IsTranshipmentPage | IncidentInformationPage  => true
-      case _ => false
+      case EventCountryPage | EventPlacePage | EventReportedPage | IsTranshipmentPage | IncidentInformationPage => true
+      case _                                                                                                    => false
     }
-
-  }
 
   private def goodsLocationPageRoutes(ua: UserAnswers): Option[Call] =
     ua.get(GoodsLocationPage) map {
@@ -98,20 +101,20 @@ class Navigator @Inject()() {
   private def goodsLocationCheckRoute(ua: UserAnswers): Option[Call] =
     // TODO: Get the requirements for this sorted out. AuthorisedLocationPage is not actually being used here
     (ua.get(GoodsLocationPage), ua.get(AuthorisedLocationPage), ua.get(CustomsSubPlacePage)) match {
-      case (Some(BorderForceOffice),            _, None) => Some(routes.CustomsSubPlaceController.onPageLoad(ua.id, CheckMode))
-      case (Some(AuthorisedConsigneesLocation), _, _   ) => Some(routes.UseDifferentServiceController.onPageLoad(ua.id))
-      case _                                             => Some(routes.CheckYourAnswersController.onPageLoad(ua.id)) // TODO: This branch is ill defined and needs to be fixed
+      case (Some(BorderForceOffice), _, None)         => Some(routes.CustomsSubPlaceController.onPageLoad(ua.id, CheckMode))
+      case (Some(AuthorisedConsigneesLocation), _, _) => Some(routes.UseDifferentServiceController.onPageLoad(ua.id))
+      case _                                          => Some(routes.CheckYourAnswersController.onPageLoad(ua.id)) // TODO: This branch is ill defined and needs to be fixed
     }
 
   private def isTraderAddressPlaceOfNotificationRoute(mode: Mode)(ua: UserAnswers): Option[Call] =
-    (ua.get(IsTraderAddressPlaceOfNotificationPage), ua.get(PlaceOfNotificationPage),  mode) match {
-      case (Some(true), _, NormalMode)        => Some(routes.IncidentOnRouteController.onPageLoad(ua.id, mode))
-      case (Some(true), _, CheckMode)         => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
+    (ua.get(IsTraderAddressPlaceOfNotificationPage), ua.get(PlaceOfNotificationPage), mode) match {
+      case (Some(true), _, NormalMode) => Some(routes.IncidentOnRouteController.onPageLoad(ua.id, mode))
+      case (Some(true), _, CheckMode)  => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
 
       case (Some(false), _, NormalMode) => Some(routes.PlaceOfNotificationController.onPageLoad(ua.id, mode))
 
-      case (Some(false), Some(_), CheckMode)  => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
-      case _                                  => None
+      case (Some(false), Some(_), CheckMode) => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
+      case _                                 => None
     }
 
 }

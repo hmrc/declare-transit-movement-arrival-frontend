@@ -24,7 +24,7 @@ import play.api.data.FormError
 class MovementReferenceNumberFormProviderSpec extends StringFieldBehaviours {
 
   val requiredKey = "movementReferenceNumber.error.required"
-  val invalidKey = "movementReferenceNumber.error.invalid"
+  val invalidKey  = "movementReferenceNumber.error.invalid"
 
   val form = new MovementReferenceNumberFormProvider()()
 
@@ -48,8 +48,7 @@ class MovementReferenceNumberFormProviderSpec extends StringFieldBehaviours {
 
       forAll(arbitrary[String]) {
         value =>
-
-          whenever (value != "" && MovementReferenceNumber(value).isEmpty) {
+          whenever(value != "" && MovementReferenceNumber(value).isEmpty) {
 
             val result = form.bind(Map("value" -> value))
             result.errors must contain(FormError("value", invalidKey))

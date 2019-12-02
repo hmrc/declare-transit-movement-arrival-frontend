@@ -20,14 +20,18 @@ import java.time.LocalDate
 
 import generators.DomainModelGenerators
 import models.domain.behaviours.JsonBehaviours
-import models.domain.{EnRouteEvent, ProcedureType, Trader}
+import models.domain.EnRouteEvent
+import models.domain.ProcedureType
+import models.domain.Trader
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalatest.{FreeSpec, MustMatchers}
+import org.scalatest.FreeSpec
+import org.scalatest.MustMatchers
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.libs.json.{JsError, JsSuccess, Json}
+import play.api.libs.json.JsError
+import play.api.libs.json.JsSuccess
+import play.api.libs.json.Json
 
-class ArrivalNotificationSpec extends FreeSpec with MustMatchers
-  with ScalaCheckPropertyChecks with DomainModelGenerators with JsonBehaviours {
+class ArrivalNotificationSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with DomainModelGenerators with JsonBehaviours {
 
   "Normal notification" - {
 
@@ -35,8 +39,7 @@ class ArrivalNotificationSpec extends FreeSpec with MustMatchers
 
     "must deserialise when no customs sub-place or en-route events are present" in {
       forAll(arbitrary[NormalNotification]) {
-        case  notification @ NormalNotification(mrn, place, date, _, trader, presentationOffice, _) =>
-
+        case notification @ NormalNotification(mrn, place, date, _, trader, presentationOffice, _) =>
           val json = Json.obj(
             "procedure"               -> Json.toJson(ProcedureType.Normal),
             "movementReferenceNumber" -> mrn,
@@ -54,8 +57,7 @@ class ArrivalNotificationSpec extends FreeSpec with MustMatchers
 
     "must deserialise when customs sub place and en-route events are present" in {
       forAll(arbitrary[NormalNotification]) {
-        case  notification @ NormalNotification(mrn, place, date, subPlace, trader, presentationOffice, events) =>
-
+        case notification @ NormalNotification(mrn, place, date, subPlace, trader, presentationOffice, events) =>
           val json = Json.obj(
             "procedure"               -> Json.toJson(ProcedureType.Normal),
             "movementReferenceNumber" -> mrn,
@@ -74,8 +76,7 @@ class ArrivalNotificationSpec extends FreeSpec with MustMatchers
     "must fail to deserialise when `procedure` is `simplified`" in {
 
       forAll(arbitrary[NormalNotification]) {
-        case  NormalNotification(mrn, place, date, subPlace, trader, presentationOffice, events) =>
-
+        case NormalNotification(mrn, place, date, subPlace, trader, presentationOffice, events) =>
           val json = Json.obj(
             "procedure"               -> Json.toJson(ProcedureType.Simplified),
             "movementReferenceNumber" -> mrn,
@@ -91,11 +92,10 @@ class ArrivalNotificationSpec extends FreeSpec with MustMatchers
       }
     }
 
-    "must serialise" in  {
+    "must serialise" in {
 
       forAll(stringsWithMaxLength(17), arbitrary[NormalNotification]) {
         case (subPlace, arrival @ NormalNotification(mrn, place, date, _, trader, presentationOffice, events)) =>
-
           val notification = arrival.copy(customsSubPlace = Some(subPlace))
 
           val json = if (events.isEmpty) {
@@ -134,7 +134,6 @@ class ArrivalNotificationSpec extends FreeSpec with MustMatchers
 
       forAll(arbitrary[SimplifiedNotification]) {
         case notification @ SimplifiedNotification(mrn, place, date, _, trader, presentationOffice, _) =>
-
           val json = Json.obj(
             "procedure"               -> Json.toJson(ProcedureType.Simplified),
             "movementReferenceNumber" -> mrn,
@@ -152,8 +151,7 @@ class ArrivalNotificationSpec extends FreeSpec with MustMatchers
 
     "must deserialise when approved location and en-route events are present" in {
       forAll(arbitrary[SimplifiedNotification]) {
-        case  notification @ SimplifiedNotification(mrn, place, date, approvedLocation, trader, presentationOffice, events) =>
-
+        case notification @ SimplifiedNotification(mrn, place, date, approvedLocation, trader, presentationOffice, events) =>
           val json = Json.obj(
             "procedure"               -> Json.toJson(ProcedureType.Simplified),
             "movementReferenceNumber" -> mrn,
@@ -173,7 +171,6 @@ class ArrivalNotificationSpec extends FreeSpec with MustMatchers
 
       forAll(arbitrary[SimplifiedNotification]) {
         case SimplifiedNotification(mrn, place, date, approvedLocation, trader, presentationOffice, events) =>
-
           val json = Json.obj(
             "procedure"               -> Json.toJson(ProcedureType.Normal),
             "movementReferenceNumber" -> mrn,
@@ -189,11 +186,10 @@ class ArrivalNotificationSpec extends FreeSpec with MustMatchers
       }
     }
 
-    "must serialise" in  {
+    "must serialise" in {
 
       forAll(stringsWithMaxLength(17), arbitrary[SimplifiedNotification]) {
-        case  (approvedLocation, notification @ SimplifiedNotification(mrn, place, date, _, trader, presentationOffice, events)) =>
-
+        case (approvedLocation, notification @ SimplifiedNotification(mrn, place, date, _, trader, presentationOffice, events)) =>
           val json = if (events.isEmpty) {
             Json.obj(
               "procedure"               -> Json.toJson(ProcedureType.Simplified),
@@ -232,7 +228,6 @@ class ArrivalNotificationSpec extends FreeSpec with MustMatchers
 
       forAll(arbitrary[String], arbitrary[String], date, arbitrary[Trader], arbitrary[String]) {
         (mrn, place, date, trader, presentationOffice) =>
-
           val json = Json.obj(
             "procedure"               -> Json.toJson(ProcedureType.Normal),
             "movementReferenceNumber" -> mrn,
@@ -254,7 +249,6 @@ class ArrivalNotificationSpec extends FreeSpec with MustMatchers
 
       forAll(arbitrary[String], arbitrary[String], date, arbitrary[Trader], arbitrary[String]) {
         (mrn, place, date, trader, presentationOffice) =>
-
           val json = Json.obj(
             "procedure"               -> Json.toJson(ProcedureType.Simplified),
             "movementReferenceNumber" -> mrn,
@@ -283,8 +277,7 @@ class ArrivalNotificationSpec extends FreeSpec with MustMatchers
       } yield (mrn, place, date, subPlace, trader, presentationOffice, events)
 
       forAll(gen) {
-        case  (mrn, place, date, subPlace, trader, presentationOffice, events) =>
-
+        case (mrn, place, date, subPlace, trader, presentationOffice, events) =>
           val json = if (events.isEmpty) {
             Json.obj(
               "procedure"               -> Json.toJson(ProcedureType.Normal),
@@ -327,8 +320,7 @@ class ArrivalNotificationSpec extends FreeSpec with MustMatchers
       } yield (mrn, place, date, approvedLocation, trader, presentationOffice, events)
 
       forAll(gen) {
-        case  (mrn, place, date, approvedLocation, trader, presentationOffice, events) =>
-
+        case (mrn, place, date, approvedLocation, trader, presentationOffice, events) =>
           val json = if (events.isEmpty) {
             Json.obj(
               "procedure"               -> Json.toJson(ProcedureType.Simplified),

@@ -29,6 +29,6 @@ case object IsTraderAddressPlaceOfNotificationPage extends QuestionPage[Boolean]
 
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] = value match {
     case Some(false) => super.cleanup(value, userAnswers)
-    case _ => userAnswers.remove(PlaceOfNotificationPage)
+    case _           => userAnswers.remove(PlaceOfNotificationPage)
   }
 }

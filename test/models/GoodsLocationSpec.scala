@@ -19,8 +19,12 @@ package models
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import org.scalatest.{FreeSpec, MustMatchers, OptionValues}
-import play.api.libs.json.{JsError, JsString, Json}
+import org.scalatest.FreeSpec
+import org.scalatest.MustMatchers
+import org.scalatest.OptionValues
+import play.api.libs.json.JsError
+import play.api.libs.json.JsString
+import play.api.libs.json.Json
 
 class GoodsLocationSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with OptionValues {
 
@@ -32,7 +36,6 @@ class GoodsLocationSpec extends FreeSpec with MustMatchers with ScalaCheckProper
 
       forAll(gen) {
         goodsLocation =>
-
           JsString(goodsLocation.toString).validate[GoodsLocation].asOpt.value mustEqual goodsLocation
       }
     }
@@ -43,7 +46,6 @@ class GoodsLocationSpec extends FreeSpec with MustMatchers with ScalaCheckProper
 
       forAll(gen) {
         invalidValue =>
-
           JsString(invalidValue).validate[GoodsLocation] mustEqual JsError("error.invalid")
       }
     }
@@ -54,7 +56,6 @@ class GoodsLocationSpec extends FreeSpec with MustMatchers with ScalaCheckProper
 
       forAll(gen) {
         goodsLocation =>
-
           Json.toJson(goodsLocation) mustEqual JsString(goodsLocation.toString)
       }
     }

@@ -17,11 +17,18 @@
 package controllers
 
 import com.google.inject.Inject
-import controllers.actions.{DataRequiredAction, DataRetrievalActionProvider, IdentifierAction}
-import models.{MovementReferenceNumber, UserAnswers}
-import play.api.i18n.{I18nSupport, Messages, MessagesApi}
+import controllers.actions.DataRequiredAction
+import controllers.actions.DataRetrievalActionProvider
+import controllers.actions.IdentifierAction
+import models.MovementReferenceNumber
+import models.UserAnswers
+import play.api.i18n.I18nSupport
+import play.api.i18n.Messages
+import play.api.i18n.MessagesApi
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.Action
+import play.api.mvc.AnyContent
+import play.api.mvc.MessagesControllerComponents
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
@@ -29,24 +36,26 @@ import uk.gov.hmrc.viewmodels.SummaryList.Row
 import utils.CheckYourAnswersHelper
 import viewModels.Section
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
+import scala.concurrent.Future
 
 class CheckEventAnswersController @Inject()(
-                                             override val messagesApi: MessagesApi,
-                                             identify: IdentifierAction,
-                                             getData: DataRetrievalActionProvider,
-                                             requireData: DataRequiredAction,
-                                             val controllerComponents: MessagesControllerComponents,
-                                             renderer: Renderer
-                                           )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
-
+  override val messagesApi: MessagesApi,
+  identify: IdentifierAction,
+  getData: DataRetrievalActionProvider,
+  requireData: DataRequiredAction,
+  val controllerComponents: MessagesControllerComponents,
+  renderer: Renderer
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport
+    with NunjucksSupport {
 
   def onPageLoad(mrn: MovementReferenceNumber): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
-
       val json = Json.obj(
         "sections" -> Json.toJson(completeSections(request.userAnswers)),
-        "mrn" -> mrn
+        "mrn"      -> mrn
       )
       renderer.render("check-event-answers.njk", json).map(Ok(_))
   }

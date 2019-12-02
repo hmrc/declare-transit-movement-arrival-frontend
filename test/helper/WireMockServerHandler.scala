@@ -17,7 +17,9 @@
 package helper
 
 import com.github.tomakehurst.wiremock.WireMockServer
-import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach, Suite}
+import org.scalatest.BeforeAndAfterAll
+import org.scalatest.BeforeAndAfterEach
+import org.scalatest.Suite
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
 
 trait WireMockServerHandler extends BeforeAndAfterAll with BeforeAndAfterEach {

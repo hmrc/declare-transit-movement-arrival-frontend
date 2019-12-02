@@ -22,8 +22,8 @@ import play.api.data.FormError
 class EventCountryFormProviderSpec extends StringFieldBehaviours {
 
   val requiredKey = "eventCountry.error.required"
-  val lengthKey = "eventCountry.error.length"
-  val maxLength = 2
+  val lengthKey   = "eventCountry.error.length"
+  val maxLength   = 2
 
   val form = new EventCountryFormProvider()()
 

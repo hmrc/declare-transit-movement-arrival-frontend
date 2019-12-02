@@ -19,16 +19,22 @@ package controllers
 import base.SpecBase
 import forms.IsTraderAddressPlaceOfNotificationFormProvider
 import matchers.JsonMatchers
-import models.{NormalMode, UserAnswers}
-import navigation.{FakeNavigator, Navigator}
+import models.NormalMode
+import models.UserAnswers
+import navigation.FakeNavigator
+import navigation.Navigator
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
-import org.mockito.Mockito.{times, verify, when}
+import org.mockito.Mockito.times
+import org.mockito.Mockito.verify
+import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.{IsTraderAddressPlaceOfNotificationPage, TraderAddressPage}
+import pages.IsTraderAddressPlaceOfNotificationPage
+import pages.TraderAddressPage
 import play.api.data.Form
 import play.api.inject.bind
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.json.JsObject
+import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -45,7 +51,7 @@ class IsTraderAddressPlaceOfNotificationControllerSpec extends SpecBase with Moc
   def onwardRoute = Call("GET", "/foo")
 
   private val formProvider = new IsTraderAddressPlaceOfNotificationFormProvider()
-  private val form = formProvider(traderAddress.postcode)
+  private val form         = formProvider(traderAddress.postcode)
 
   lazy val isTraderAddressPlaceOfNotificationRoute = routes.IsTraderAddressPlaceOfNotificationController.onPageLoad(mrn, NormalMode).url
 
@@ -55,11 +61,13 @@ class IsTraderAddressPlaceOfNotificationControllerSpec extends SpecBase with Moc
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers = emptyUserAnswers
-        .set(TraderAddressPage, traderAddress).success.value
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-      val request = FakeRequest(GET, isTraderAddressPlaceOfNotificationRoute)
+        .set(TraderAddressPage, traderAddress)
+        .success
+        .value
+      val application    = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val request        = FakeRequest(GET, isTraderAddressPlaceOfNotificationRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(application, request).value
 
@@ -67,11 +75,11 @@ class IsTraderAddressPlaceOfNotificationControllerSpec extends SpecBase with Moc
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form"   -> form,
-        "mode"   -> NormalMode,
-        "mrn"    -> mrn,
+        "form"           -> form,
+        "mode"           -> NormalMode,
+        "mrn"            -> mrn,
         "traderPostcode" -> traderAddress.postcode,
-        "radios" -> Radios.yesNo(form("value"))
+        "radios"         -> Radios.yesNo(form("value"))
       )
 
       templateCaptor.getValue mustEqual "isTraderAddressPlaceOfNotification.njk"
@@ -85,12 +93,16 @@ class IsTraderAddressPlaceOfNotificationControllerSpec extends SpecBase with Moc
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers = UserAnswers(mrn)
-        .set(IsTraderAddressPlaceOfNotificationPage, true).success.value
-        .set(TraderAddressPage, traderAddress).success.value
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-      val request = FakeRequest(GET, isTraderAddressPlaceOfNotificationRoute)
+        .set(IsTraderAddressPlaceOfNotificationPage, true)
+        .success
+        .value
+        .set(TraderAddressPage, traderAddress)
+        .success
+        .value
+      val application    = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val request        = FakeRequest(GET, isTraderAddressPlaceOfNotificationRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(application, request).value
 
@@ -99,11 +111,11 @@ class IsTraderAddressPlaceOfNotificationControllerSpec extends SpecBase with Moc
 
       val filledForm = form.bind(Map("value" -> "true"))
       val expectedJson = Json.obj(
-        "form"   -> filledForm,
-        "mode"   -> NormalMode,
-        "mrn"    -> mrn,
+        "form"           -> filledForm,
+        "mode"           -> NormalMode,
+        "mrn"            -> mrn,
         "traderPostcode" -> traderAddress.postcode,
-        "radios" -> Radios.yesNo(filledForm("value"))
+        "radios"         -> Radios.yesNo(filledForm("value"))
       )
 
       templateCaptor.getValue mustEqual "isTraderAddressPlaceOfNotification.njk"
@@ -141,12 +153,12 @@ class IsTraderAddressPlaceOfNotificationControllerSpec extends SpecBase with Moc
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = emptyUserAnswers.set(TraderAddressPage, traderAddress).success.value
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-      val request = FakeRequest(POST, isTraderAddressPlaceOfNotificationRoute).withFormUrlEncodedBody(("value", ""))
-      val boundForm = form.bind(Map("value" -> ""))
+      val userAnswers    = emptyUserAnswers.set(TraderAddressPage, traderAddress).success.value
+      val application    = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val request        = FakeRequest(POST, isTraderAddressPlaceOfNotificationRoute).withFormUrlEncodedBody(("value", ""))
+      val boundForm      = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(application, request).value
 
@@ -154,11 +166,11 @@ class IsTraderAddressPlaceOfNotificationControllerSpec extends SpecBase with Moc
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form"   -> boundForm,
-        "mode"   -> NormalMode,
-        "mrn"    -> mrn,
+        "form"           -> boundForm,
+        "mode"           -> NormalMode,
+        "mrn"            -> mrn,
         "traderPostcode" -> traderAddress.postcode,
-        "radios" -> Radios.yesNo(boundForm("value"))
+        "radios"         -> Radios.yesNo(boundForm("value"))
       )
 
       templateCaptor.getValue mustEqual "isTraderAddressPlaceOfNotification.njk"
@@ -169,7 +181,7 @@ class IsTraderAddressPlaceOfNotificationControllerSpec extends SpecBase with Moc
 
     "must redirect to Session Expired for a GET if no existing data is found" in {
       val application = applicationBuilder(userAnswers = None).build()
-      val request = FakeRequest(GET, isTraderAddressPlaceOfNotificationRoute)
+      val request     = FakeRequest(GET, isTraderAddressPlaceOfNotificationRoute)
 
       val result = route(application, request).value
 
@@ -181,7 +193,7 @@ class IsTraderAddressPlaceOfNotificationControllerSpec extends SpecBase with Moc
 
     "must redirect to Session Expired for a GET if no traderAddress data is found" in {
       val application = applicationBuilder(Some(emptyUserAnswers)).build()
-      val request = FakeRequest(GET, isTraderAddressPlaceOfNotificationRoute)
+      val request     = FakeRequest(GET, isTraderAddressPlaceOfNotificationRoute)
 
       val result = route(application, request).value
 
@@ -209,7 +221,7 @@ class IsTraderAddressPlaceOfNotificationControllerSpec extends SpecBase with Moc
       val application = applicationBuilder(Some(emptyUserAnswers)).build()
 
       val request = FakeRequest(POST, isTraderAddressPlaceOfNotificationRoute)
-          .withFormUrlEncodedBody(("value", "true"))
+        .withFormUrlEncodedBody(("value", "true"))
 
       val result = route(application, request).value
 

@@ -23,7 +23,8 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import org.scalatest.{FreeSpec, MustMatchers}
+import org.scalatest.FreeSpec
+import org.scalatest.MustMatchers
 import play.api.Configuration
 import play.api.mvc.Call
 
@@ -46,14 +47,12 @@ class WhitelistFilterSpec extends FreeSpec with MustMatchers with ScalaCheckProp
 
         forAll(otherConfigGen, arbitrary[String], arbitrary[String]) {
           (otherConfig, destination, excluded) =>
-
             whenever(!otherConfig.contains("filters.whitelist.ips")) {
 
               val config = Configuration(
                 (otherConfig +
                   ("filters.whitelist.destination" -> destination) +
-                  ("filters.whitelist.excluded"    -> excluded)
-                ).toSeq: _*
+                  ("filters.whitelist.excluded"    -> excluded)).toSeq: _*
               )
 
               assertThrows[ConfigException] {
@@ -70,19 +69,17 @@ class WhitelistFilterSpec extends FreeSpec with MustMatchers with ScalaCheckProp
 
         forAll(otherConfigGen, arbitrary[String], arbitrary[String]) {
           (otherConfig, destination, excluded) =>
-
             val config = Configuration(
               (otherConfig +
                 ("filters.whitelist.destination" -> destination) +
                 ("filters.whitelist.excluded"    -> excluded) +
-                ("filters.whitelist.ips"         -> "")
-              ).toSeq: _*
+                ("filters.whitelist.ips"         -> "")).toSeq: _*
             )
 
             val whitelistFilter = new WhitelistFilter(config, mockMaterializer)
 
             whitelistFilter.whitelist mustBe empty
-          }
+        }
       }
     }
 
@@ -94,15 +91,13 @@ class WhitelistFilterSpec extends FreeSpec with MustMatchers with ScalaCheckProp
 
         forAll(gen, otherConfigGen, arbitrary[String], arbitrary[String]) {
           (ips, otherConfig, destination, excluded) =>
-
             val ipString = ips.mkString(",")
 
             val config = Configuration(
               (otherConfig +
                 ("filters.whitelist.destination" -> destination) +
                 ("filters.whitelist.excluded"    -> excluded) +
-                ("filters.whitelist.ips"         -> ipString)
-              ).toSeq: _*
+                ("filters.whitelist.ips"         -> ipString)).toSeq: _*
             )
 
             val whitelistFilter = new WhitelistFilter(config, mockMaterializer)
@@ -121,14 +116,12 @@ class WhitelistFilterSpec extends FreeSpec with MustMatchers with ScalaCheckProp
 
         forAll(otherConfigGen, arbitrary[String], arbitrary[String]) {
           (otherConfig, destination, excluded) =>
-
             whenever(!otherConfig.contains("filters.whitelist.destination")) {
 
               val config = Configuration(
                 (otherConfig +
                   ("filters.whitelist.ips"      -> destination) +
-                  ("filters.whitelist.excluded" -> excluded)
-                  ).toSeq: _*
+                  ("filters.whitelist.excluded" -> excluded)).toSeq: _*
               )
 
               assertThrows[ConfigException] {
@@ -143,13 +136,11 @@ class WhitelistFilterSpec extends FreeSpec with MustMatchers with ScalaCheckProp
 
       forAll(otherConfigGen, arbitrary[String], arbitrary[String], arbitrary[String]) {
         (otherConfig, ips, destination, excluded) =>
-
           val config = Configuration(
             (otherConfig +
               ("filters.whitelist.ips"         -> destination) +
               ("filters.whitelist.excluded"    -> excluded) +
-              ("filters.whitelist.destination" -> destination)
-              ).toSeq: _*
+              ("filters.whitelist.destination" -> destination)).toSeq: _*
           )
 
           val whitelistFilter = new WhitelistFilter(config, mockMaterializer)
@@ -167,14 +158,12 @@ class WhitelistFilterSpec extends FreeSpec with MustMatchers with ScalaCheckProp
 
         forAll(otherConfigGen, arbitrary[String], arbitrary[String]) {
           (otherConfig, destination, excluded) =>
-
             whenever(!otherConfig.contains("filters.whitelist.excluded")) {
 
               val config = Configuration(
                 (otherConfig +
                   ("filters.whitelist.destination" -> destination) +
-                  ("filters.whitelist.ips"    -> excluded)
-                  ).toSeq: _*
+                  ("filters.whitelist.ips"         -> excluded)).toSeq: _*
               )
 
               assertThrows[ConfigException] {
@@ -193,15 +182,13 @@ class WhitelistFilterSpec extends FreeSpec with MustMatchers with ScalaCheckProp
 
         forAll(gen, otherConfigGen, arbitrary[String], arbitrary[String]) {
           (excludedPaths, otherConfig, destination, ips) =>
-
             val excludedPathString = excludedPaths.mkString(",")
 
             val config = Configuration(
               (otherConfig +
                 ("filters.whitelist.destination" -> destination) +
                 ("filters.whitelist.excluded"    -> excludedPathString) +
-                ("filters.whitelist.ips"         -> ips)
-                ).toSeq: _*
+                ("filters.whitelist.ips"         -> ips)).toSeq: _*
             )
 
             val expectedCalls = excludedPaths.map(Call("GET", _))

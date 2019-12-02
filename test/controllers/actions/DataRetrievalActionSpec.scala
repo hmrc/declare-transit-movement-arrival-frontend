@@ -17,30 +17,41 @@
 package controllers.actions
 
 import generators.Generators
-import models.requests.{IdentifierRequest, OptionalDataRequest}
-import models.{MovementReferenceNumber, UserAnswers}
+import models.requests.IdentifierRequest
+import models.requests.OptionalDataRequest
+import models.MovementReferenceNumber
+import models.UserAnswers
 import org.mockito.Matchers._
 import org.mockito.Mockito._
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.{FreeSpec, MustMatchers, OptionValues}
+import org.scalatest.FreeSpec
+import org.scalatest.MustMatchers
+import org.scalatest.OptionValues
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.mvc.{AnyContent, Request, Results}
+import play.api.mvc.AnyContent
+import play.api.mvc.Request
+import play.api.mvc.Results
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
 
 import scala.concurrent.Future
 
-
-class DataRetrievalActionSpec extends FreeSpec with MustMatchers with GuiceOneAppPerSuite with ScalaFutures
-  with MockitoSugar with Generators with OptionValues {
+class DataRetrievalActionSpec
+    extends FreeSpec
+    with MustMatchers
+    with GuiceOneAppPerSuite
+    with ScalaFutures
+    with MockitoSugar
+    with Generators
+    with OptionValues {
 
   val sessionRepository: SessionRepository = mock[SessionRepository]
-  val mrn: MovementReferenceNumber = arbitrary[MovementReferenceNumber].sample.value
+  val mrn: MovementReferenceNumber         = arbitrary[MovementReferenceNumber].sample.value
 
   override lazy val app: Application = {
 
@@ -49,18 +60,23 @@ class DataRetrievalActionSpec extends FreeSpec with MustMatchers with GuiceOneAp
     new GuiceApplicationBuilder()
       .overrides(
         bind[SessionRepository].toInstance(sessionRepository)
-      ).build()
+      )
+      .build()
   }
 
   def harness(mrn: MovementReferenceNumber, f: OptionalDataRequest[AnyContent] => Unit): Unit = {
 
     lazy val actionProvider = app.injector.instanceOf[DataRetrievalActionProviderImpl]
 
-    actionProvider(mrn).invokeBlock(IdentifierRequest(FakeRequest(GET, "/").asInstanceOf[Request[AnyContent]], ""), {
-      request: OptionalDataRequest[AnyContent] =>
-        f(request)
-        Future.successful(Results.Ok)
-    }).futureValue
+    actionProvider(mrn)
+      .invokeBlock(
+        IdentifierRequest(FakeRequest(GET, "/").asInstanceOf[Request[AnyContent]], ""), {
+          request: OptionalDataRequest[AnyContent] =>
+            f(request)
+            Future.successful(Results.Ok)
+        }
+      )
+      .futureValue
   }
 
   "a data retrieval action" - {
@@ -73,7 +89,6 @@ class DataRetrievalActionSpec extends FreeSpec with MustMatchers with GuiceOneAp
 
         harness(mrn, {
           request =>
-
             request.userAnswers must not be defined
         })
       }
@@ -87,7 +102,6 @@ class DataRetrievalActionSpec extends FreeSpec with MustMatchers with GuiceOneAp
 
         harness(mrn, {
           request =>
-
             request.userAnswers mustBe defined
         })
       }

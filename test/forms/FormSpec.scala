@@ -16,23 +16,27 @@
 
 package forms
 
-import org.scalatest.{Assertion, FreeSpec, MustMatchers, OptionValues}
-import play.api.data.{Form, FormError}
+import org.scalatest.Assertion
+import org.scalatest.FreeSpec
+import org.scalatest.MustMatchers
+import org.scalatest.OptionValues
+import play.api.data.Form
+import play.api.data.FormError
 
 trait FormSpec extends FreeSpec with OptionValues with MustMatchers {
 
-  def checkForError(form: Form[_], data: Map[String, String], expectedErrors: Seq[FormError]): Assertion = {
-
-    form.bind(data).fold(
-      formWithErrors => {
-        for (error <- expectedErrors) formWithErrors.errors mustBe contain(FormError(error.key, error.message, error.args))
-        formWithErrors.errors.size mustBe expectedErrors.size
-      },
-      form => {
-        fail("Expected a validation error when binding the form, but it was bound successfully.")
-      }
-    )
-  }
+  def checkForError(form: Form[_], data: Map[String, String], expectedErrors: Seq[FormError]): Assertion =
+    form
+      .bind(data)
+      .fold(
+        formWithErrors => {
+          for (error <- expectedErrors) formWithErrors.errors mustBe contain(FormError(error.key, error.message, error.args))
+          formWithErrors.errors.size mustBe expectedErrors.size
+        },
+        form => {
+          fail("Expected a validation error when binding the form, but it was bound successfully.")
+        }
+      )
 
   def error(key: String, value: String, args: Any*): Seq[FormError] = Seq(FormError(key, value, args))
 

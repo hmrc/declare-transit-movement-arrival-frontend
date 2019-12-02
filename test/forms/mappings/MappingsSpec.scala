@@ -18,9 +18,13 @@ package forms.mappings
 
 import generators.Generators
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalatest.{FreeSpec, MustMatchers, OptionValues}
-import play.api.data.{Form, FormError}
-import models.{Enumerable, MovementReferenceNumber}
+import org.scalatest.FreeSpec
+import org.scalatest.MustMatchers
+import org.scalatest.OptionValues
+import play.api.data.Form
+import play.api.data.FormError
+import models.Enumerable
+import models.MovementReferenceNumber
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
 object MappingsSpec {
@@ -65,7 +69,7 @@ class MappingsSpec extends FreeSpec with MustMatchers with OptionValues with Map
     }
 
     "must return a custom error message" in {
-      val form = Form("value" -> text("custom.error"))
+      val form   = Form("value" -> text("custom.error"))
       val result = form.bind(Map("value" -> ""))
       result.errors must contain(FormError("value", "custom.error"))
     }
@@ -174,7 +178,6 @@ class MappingsSpec extends FreeSpec with MustMatchers with OptionValues with Map
 
       forAll(arbitrary[MovementReferenceNumber]) {
         mrn =>
-
           val result = testForm.bind(Map("value" -> mrn.toString))
           result.get mustEqual mrn
       }
@@ -184,8 +187,7 @@ class MappingsSpec extends FreeSpec with MustMatchers with OptionValues with Map
 
       forAll(arbitrary[String]) {
         value =>
-
-          whenever (value != "" && MovementReferenceNumber(value).isEmpty) {
+          whenever(value != "" && MovementReferenceNumber(value).isEmpty) {
 
             val result = testForm.bind(Map("value" -> value))
             result.errors must contain(FormError("value", "error.invalid"))

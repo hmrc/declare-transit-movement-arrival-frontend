@@ -22,8 +22,8 @@ import play.api.data.FormError
 class IncidentInformationFormProviderSpec extends StringFieldBehaviours {
 
   val requiredKey = "incidentInformation.error.required"
-  val lengthKey = "incidentInformation.error.length"
-  val maxLength = 350
+  val lengthKey   = "incidentInformation.error.length"
+  val maxLength   = 350
 
   val form = new IncidentInformationFormProvider()()
 

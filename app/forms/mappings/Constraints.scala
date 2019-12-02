@@ -18,7 +18,9 @@ package forms.mappings
 
 import java.time.LocalDate
 
-import play.api.data.validation.{Constraint, Invalid, Valid}
+import play.api.data.validation.Constraint
+import play.api.data.validation.Invalid
+import play.api.data.validation.Valid
 
 trait Constraints {
 
@@ -34,7 +36,6 @@ trait Constraints {
   protected def minimumValue[A](minimum: A, errorKey: String)(implicit ev: Ordering[A]): Constraint[A] =
     Constraint {
       input =>
-
         import ev._
 
         if (input >= minimum) {
@@ -47,7 +48,6 @@ trait Constraints {
   protected def maximumValue[A](maximum: A, errorKey: String)(implicit ev: Ordering[A]): Constraint[A] =
     Constraint {
       input =>
-
         import ev._
 
         if (input <= maximum) {
@@ -60,7 +60,6 @@ trait Constraints {
   protected def inRange[A](minimum: A, maximum: A, errorKey: String)(implicit ev: Ordering[A]): Constraint[A] =
     Constraint {
       input =>
-
         import ev._
 
         if (input >= minimum && input <= maximum) {

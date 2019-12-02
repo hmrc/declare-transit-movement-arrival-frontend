@@ -20,9 +20,12 @@ import java.time.LocalDate
 
 import models.MovementReferenceNumber
 import models.domain._
-import models.domain.messages.{ArrivalNotification, NormalNotification, SimplifiedNotification}
+import models.domain.messages.ArrivalNotification
+import models.domain.messages.NormalNotification
+import models.domain.messages.SimplifiedNotification
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalacheck.{Arbitrary, Gen}
+import org.scalacheck.Arbitrary
+import org.scalacheck.Gen
 
 trait DomainModelGenerators extends Generators {
 
@@ -85,11 +88,11 @@ trait DomainModelGenerators extends Generators {
     Arbitrary {
 
       for {
-        transportIdentity <- stringsWithMaxLength(27)
-        transportCountry  <- stringsWithMaxLength(2)
-        endorsement       <- arbitrary[Endorsement]
-        numberOfContainers  <- Gen.choose[Int](1, 99)
-        containers          <- Gen.listOfN(numberOfContainers, stringsWithMaxLength(17))
+        transportIdentity  <- stringsWithMaxLength(27)
+        transportCountry   <- stringsWithMaxLength(2)
+        endorsement        <- arbitrary[Endorsement]
+        numberOfContainers <- Gen.choose[Int](1, 99)
+        containers         <- Gen.listOfN(numberOfContainers, stringsWithMaxLength(17))
       } yield VehicularTranshipment(transportIdentity, transportCountry, endorsement, containers)
     }
 
@@ -97,14 +100,14 @@ trait DomainModelGenerators extends Generators {
     Arbitrary {
 
       for {
-        endorsement         <- arbitrary[Endorsement]
-        numberOfContainers  <- Gen.choose[Int](1, 99)
-        containers          <- Gen.listOfN(numberOfContainers, stringsWithMaxLength(17))
+        endorsement        <- arbitrary[Endorsement]
+        numberOfContainers <- Gen.choose[Int](1, 99)
+        containers         <- Gen.listOfN(numberOfContainers, stringsWithMaxLength(17))
       } yield ContainerTranshipment(endorsement, containers)
     }
 
   implicit lazy val arbitraryTranshipment: Arbitrary[Transhipment] =
-    Arbitrary{
+    Arbitrary {
       Gen.oneOf[Transhipment](
         arbitrary[VehicularTranshipment],
         arbitrary[ContainerTranshipment]

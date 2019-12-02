@@ -19,32 +19,39 @@ package controllers
 import controllers.actions._
 import forms.MovementReferenceNumberFormProvider
 import javax.inject.Inject
-import models.{NormalMode, UserAnswers}
+import models.NormalMode
+import models.UserAnswers
 import navigation.Navigator
 import pages.MovementReferenceNumberPage
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.I18nSupport
+import play.api.i18n.MessagesApi
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.Action
+import play.api.mvc.AnyContent
+import play.api.mvc.MessagesControllerComponents
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
+import scala.concurrent.Future
 
 class MovementReferenceNumberController @Inject()(
-    override val messagesApi: MessagesApi,
-    navigator: Navigator,
-    identify: IdentifierAction,
-    formProvider: MovementReferenceNumberFormProvider,
-    val controllerComponents: MessagesControllerComponents,
-    renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
+  override val messagesApi: MessagesApi,
+  navigator: Navigator,
+  identify: IdentifierAction,
+  formProvider: MovementReferenceNumberFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  renderer: Renderer
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport
+    with NunjucksSupport {
 
   private val form = formProvider()
 
   def onPageLoad(): Action[AnyContent] = identify.async {
     implicit request =>
-
       val json = Json.obj("form" -> form)
 
       renderer.render("movementReferenceNumber.njk", json).map(Ok(_))
@@ -52,16 +59,16 @@ class MovementReferenceNumberController @Inject()(
 
   def onSubmit(): Action[AnyContent] = identify.async {
     implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => {
 
-      form.bindFromRequest().fold(
-        formWithErrors => {
+            val json = Json.obj("form" -> formWithErrors)
 
-          val json = Json.obj("form" -> formWithErrors)
-
-          renderer.render("movementReferenceNumber.njk", json).map(BadRequest(_))
-        },
-        value =>
-          Future(Redirect(navigator.nextPage(MovementReferenceNumberPage, NormalMode, UserAnswers(value))))
-      )
+            renderer.render("movementReferenceNumber.njk", json).map(BadRequest(_))
+          },
+          value => Future(Redirect(navigator.nextPage(MovementReferenceNumberPage, NormalMode, UserAnswers(value))))
+        )
   }
 }

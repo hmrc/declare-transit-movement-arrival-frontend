@@ -18,26 +18,32 @@ package services.conversion
 
 import java.time.LocalDate
 
-import models.{TraderAddress, UserAnswers}
-import models.domain.{EnRouteEvent, Endorsement, EventDetails, Incident, Trader, TraderWithEori}
-import models.domain.messages.{ArrivalNotification, NormalNotification}
+import models.TraderAddress
+import models.UserAnswers
+import models.domain.EnRouteEvent
+import models.domain.Endorsement
+import models.domain.EventDetails
+import models.domain.Incident
+import models.domain.Trader
+import models.domain.TraderWithEori
+import models.domain.messages.ArrivalNotification
+import models.domain.messages.NormalNotification
 import pages._
 
 class ArrivalNotificationConversionService {
 
   val countryCode_GB = "GB"
 
-  def convertToArrivalNotification(userAnswers: UserAnswers): Option[ArrivalNotification] = {
-
+  def convertToArrivalNotification(userAnswers: UserAnswers): Option[ArrivalNotification] =
     for {
       presentationOffice <- userAnswers.get(PresentationOfficePage)
-      customsSubPlace <- userAnswers.get(CustomsSubPlacePage)
-      tradersAddress <- userAnswers.get(TraderAddressPage)
-      traderEori <- userAnswers.get(TraderEoriPage)
-      traderName <- userAnswers.get(TraderNamePage)
-      notificationPlace <- userAnswers.get(PlaceOfNotificationPage) orElse Some(tradersAddress.postcode)
+      customsSubPlace    <- userAnswers.get(CustomsSubPlacePage)
+      tradersAddress     <- userAnswers.get(TraderAddressPage)
+      traderEori         <- userAnswers.get(TraderEoriPage)
+      traderName         <- userAnswers.get(TraderNamePage)
+      notificationPlace  <- userAnswers.get(PlaceOfNotificationPage) orElse Some(tradersAddress.postcode)
     } yield {
-      NormalNotification (
+      NormalNotification(
         movementReferenceNumber = userAnswers.id.toString,
         notificationPlace = notificationPlace,
         notificationDate = LocalDate.now(),
@@ -47,10 +53,9 @@ class ArrivalNotificationConversionService {
         enRouteEvents = enRouteEvents(userAnswers)
       )
     }
-  }
 
-  private def eventDetails(isTranshipment: Boolean, incidentInformation: Option[String]): EventDetails = {
-    if(isTranshipment) {
+  private def eventDetails(isTranshipment: Boolean, incidentInformation: Option[String]): EventDetails =
+    if (isTranshipment) {
       ???
     } else {
       Incident(
@@ -58,30 +63,28 @@ class ArrivalNotificationConversionService {
         endorsement = Endorsement(None, None, None, None) // TODO: Find out where this data comes from
       )
     }
-  }
 
-  private def enRouteEvents(userAnswers: UserAnswers): Seq[EnRouteEvent] = {
-     (for{
-      place <- userAnswers.get(EventPlacePage)
-      country <- userAnswers.get(EventCountryPage)
-      isReported <- userAnswers.get(EventReportedPage)
+  private def enRouteEvents(userAnswers: UserAnswers): Seq[EnRouteEvent] =
+    (for {
+      place          <- userAnswers.get(EventPlacePage)
+      country        <- userAnswers.get(EventCountryPage)
+      isReported     <- userAnswers.get(EventReportedPage)
       isTranshipment <- userAnswers.get(IsTranshipmentPage)
     } yield {
-      Seq(EnRouteEvent(
-        place = place,
-        countryCode = country,
-        alreadyInNcts = isReported,
-        eventDetails = eventDetails(isTranshipment, userAnswers.get(IncidentInformationPage)),
-        Seq.empty //TODO Seals
-      ))
+      Seq(
+        EnRouteEvent(
+          place = place,
+          countryCode = country,
+          alreadyInNcts = isReported,
+          eventDetails = eventDetails(isTranshipment, userAnswers.get(IncidentInformationPage)),
+          Seq.empty //TODO Seals
+        ))
     }).getOrElse(Seq.empty)
-  }
 
-  private def traderAddress(traderAddress: TraderAddress, traderEori: String,
-                            traderName: String): Trader =
+  private def traderAddress(traderAddress: TraderAddress, traderEori: String, traderName: String): Trader =
     TraderWithEori(
       eori = traderEori,
-      name  = Some(traderName),
+      name = Some(traderName),
       streetAndNumber = Some(traderAddress.buildingAndStreet),
       postCode = Some(traderAddress.postcode),
       city = Some(traderAddress.city),

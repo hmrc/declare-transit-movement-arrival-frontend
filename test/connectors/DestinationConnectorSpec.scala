@@ -17,7 +17,9 @@
 package connectors
 
 import base.SpecBase
-import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, post, urlEqualTo}
+import com.github.tomakehurst.wiremock.client.WireMock.aResponse
+import com.github.tomakehurst.wiremock.client.WireMock.post
+import com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import generators.DomainModelGenerators
 import helper.WireMockServerHandler
@@ -47,9 +49,10 @@ class DestinationConnectorSpec extends SpecBase with WireMockServerHandler with 
 
       stubResponse(s"/$startUrl/arrival-notification", OK)
 
-      forAll(arbitrary[NormalNotification]) { notification =>
-        val result = connector.submitArrivalNotification(notification)
-        result.futureValue.status mustBe OK
+      forAll(arbitrary[NormalNotification]) {
+        notification =>
+          val result = connector.submitArrivalNotification(notification)
+          result.futureValue.status mustBe OK
       }
     }
 
@@ -57,9 +60,10 @@ class DestinationConnectorSpec extends SpecBase with WireMockServerHandler with 
 
       stubResponse(s"/$startUrl/arrival-notification", BAD_REQUEST)
 
-      forAll(arbitrary[NormalNotification]) { notification =>
-        val result = connector.submitArrivalNotification(notification)
-        result.futureValue.status mustBe BAD_REQUEST
+      forAll(arbitrary[NormalNotification]) {
+        notification =>
+          val result = connector.submitArrivalNotification(notification)
+          result.futureValue.status mustBe BAD_REQUEST
       }
     }
 
@@ -67,14 +71,15 @@ class DestinationConnectorSpec extends SpecBase with WireMockServerHandler with 
 
       stubResponse(s"/$startUrl/arrival-notification", INTERNAL_SERVER_ERROR)
 
-      forAll(arbitrary[NormalNotification]) { notification =>
-        val result = connector.submitArrivalNotification(notification)
-        result.futureValue.status mustBe INTERNAL_SERVER_ERROR
+      forAll(arbitrary[NormalNotification]) {
+        notification =>
+          val result = connector.submitArrivalNotification(notification)
+          result.futureValue.status mustBe INTERNAL_SERVER_ERROR
       }
     }
   }
 
-  private def stubResponse(expectedUrl: String, expectedStatus: Int): StubMapping = {
+  private def stubResponse(expectedUrl: String, expectedStatus: Int): StubMapping =
     server.stubFor(
       post(urlEqualTo(expectedUrl))
         .willReturn(
@@ -82,5 +87,4 @@ class DestinationConnectorSpec extends SpecBase with WireMockServerHandler with 
             .withStatus(expectedStatus)
         )
     )
-  }
 }

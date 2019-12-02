@@ -28,11 +28,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
   val navigator = new Navigator
 
-  private val cyaEventPages = Seq(EventCountryPage,
-    EventPlacePage,
-    EventReportedPage,
-    IsTranshipmentPage,
-    IncidentInformationPage)
+  private val cyaEventPages = Seq(EventCountryPage, EventPlacePage, EventReportedPage, IsTranshipmentPage, IncidentInformationPage)
 
   "Navigator" - {
 
@@ -44,8 +40,8 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
         forAll(arbitrary[UserAnswers]) {
           answers =>
-
-            navigator.nextPage(UnknownPage, NormalMode, answers)
+            navigator
+              .nextPage(UnknownPage, NormalMode, answers)
               .mustBe(routes.IndexController.onPageLoad())
         }
       }
@@ -53,8 +49,8 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
       "must go from movement reference number to 'Good location' page" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
-
-            navigator.nextPage(MovementReferenceNumberPage, NormalMode, answers)
+            navigator
+              .nextPage(MovementReferenceNumberPage, NormalMode, answers)
               .mustBe(routes.GoodsLocationController.onPageLoad(answers.id, NormalMode))
         }
 
@@ -63,10 +59,10 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
       "must go from 'goods location' to  'customs approved location' when user chooses 'Border Force Office'" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
-
             val updatedAnswers = answers.set(GoodsLocationPage, GoodsLocation.BorderForceOffice).success.value
 
-            navigator.nextPage(GoodsLocationPage, NormalMode, updatedAnswers)
+            navigator
+              .nextPage(GoodsLocationPage, NormalMode, updatedAnswers)
               .mustBe(routes.CustomsSubPlaceController.onPageLoad(updatedAnswers.id, NormalMode))
         }
       }
@@ -74,8 +70,8 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
       "must go from 'customs approved location' to  'presentation office'" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
-
-            navigator.nextPage(CustomsSubPlacePage, NormalMode, answers)
+            navigator
+              .nextPage(CustomsSubPlacePage, NormalMode, answers)
               .mustBe(routes.PresentationOfficeController.onPageLoad(answers.id, NormalMode))
         }
       }
@@ -83,10 +79,10 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
       "must go from 'goods location' to  'use different service' when user chooses 'Authorised consignee’s location'" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
-
             val updatedAnswers = answers.set(GoodsLocationPage, GoodsLocation.AuthorisedConsigneesLocation).success.value
 
-            navigator.nextPage(GoodsLocationPage, NormalMode, updatedAnswers)
+            navigator
+              .nextPage(GoodsLocationPage, NormalMode, updatedAnswers)
               .mustBe(routes.UseDifferentServiceController.onPageLoad(updatedAnswers.id))
         }
       }
@@ -94,8 +90,8 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
       "must go from 'presentation office' to  'traders name'" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
-
-            navigator.nextPage(PresentationOfficePage, NormalMode, answers)
+            navigator
+              .nextPage(PresentationOfficePage, NormalMode, answers)
               .mustBe(routes.TraderNameController.onPageLoad(answers.id, NormalMode))
         }
       }
@@ -103,8 +99,8 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
       "must go from 'traders name' to 'traders eori'" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
-
-            navigator.nextPage(TraderNamePage, NormalMode, answers)
+            navigator
+              .nextPage(TraderNamePage, NormalMode, answers)
               .mustBe(routes.TraderEoriController.onPageLoad(answers.id, NormalMode))
         }
       }
@@ -112,8 +108,8 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
       "must go from 'traders address' to 'IsTraderAddressPlaceOfNotificationController'" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
-
-            navigator.nextPage(TraderAddressPage, NormalMode, answers)
+            navigator
+              .nextPage(TraderAddressPage, NormalMode, answers)
               .mustBe(routes.IsTraderAddressPlaceOfNotificationController.onPageLoad(answers.id, NormalMode))
         }
       }
@@ -121,8 +117,8 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
       "must go from 'traders eori' to 'traders address'" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
-
-            navigator.nextPage(TraderEoriPage, NormalMode, answers)
+            navigator
+              .nextPage(TraderEoriPage, NormalMode, answers)
               .mustBe(routes.TraderAddressController.onPageLoad(answers.id, NormalMode))
         }
       }
@@ -133,17 +129,19 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
             answers =>
               val updatedUserAnswers = answers.set(IsTraderAddressPlaceOfNotificationPage, true).success.value
 
-              navigator.nextPage(IsTraderAddressPlaceOfNotificationPage, NormalMode, updatedUserAnswers)
+              navigator
+                .nextPage(IsTraderAddressPlaceOfNotificationPage, NormalMode, updatedUserAnswers)
                 .mustBe(routes.IncidentOnRouteController.onPageLoad(updatedUserAnswers.id, NormalMode))
           }
         }
 
         "to 'IncidentOnRoutePage' when answer is 'No'" in {
-          forAll(arbitrary[UserAnswers]){
+          forAll(arbitrary[UserAnswers]) {
             answers =>
               val updatedUserAnswers = answers.set(IsTraderAddressPlaceOfNotificationPage, false).success.value
 
-              navigator.nextPage(IsTraderAddressPlaceOfNotificationPage, NormalMode, updatedUserAnswers)
+              navigator
+                .nextPage(IsTraderAddressPlaceOfNotificationPage, NormalMode, updatedUserAnswers)
                 .mustBe(routes.PlaceOfNotificationController.onPageLoad(updatedUserAnswers.id, NormalMode))
           }
 
@@ -156,11 +154,11 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           (answers, placeOfNotification) =>
             val updatedUserAnswers = answers.set(PlaceOfNotificationPage, placeOfNotification).success.value
 
-            navigator.nextPage(PlaceOfNotificationPage, NormalMode, updatedUserAnswers)
+            navigator
+              .nextPage(PlaceOfNotificationPage, NormalMode, updatedUserAnswers)
               .mustBe(routes.IncidentOnRouteController.onPageLoad(updatedUserAnswers.id, NormalMode))
         }
       }
-
 
       "must go from 'incident on route'" - {
 
@@ -168,11 +166,11 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
           forAll(arbitrary[UserAnswers]) {
             answers =>
+              val updatedAnswers = answers.set(IncidentOnRoutePage, false).success.value
 
-            val updatedAnswers = answers.set(IncidentOnRoutePage, false).success.value
-
-            navigator.nextPage(IncidentOnRoutePage, NormalMode, updatedAnswers)
-              .mustBe(routes.CheckYourAnswersController.onPageLoad(answers.id))
+              navigator
+                .nextPage(IncidentOnRoutePage, NormalMode, updatedAnswers)
+                .mustBe(routes.CheckYourAnswersController.onPageLoad(answers.id))
           }
         }
 
@@ -180,10 +178,10 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
           forAll(arbitrary[UserAnswers]) {
             answers =>
-
               val updatedAnswers = answers.set(IncidentOnRoutePage, true).success.value
 
-              navigator.nextPage(IncidentOnRoutePage, NormalMode, updatedAnswers)
+              navigator
+                .nextPage(IncidentOnRoutePage, NormalMode, updatedAnswers)
                 .mustBe(routes.EventCountryController.onPageLoad(answers.id, NormalMode))
           }
         }
@@ -192,41 +190,41 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
           forAll(arbitrary[UserAnswers]) {
             answers =>
-
               val updatedAnswers = answers.remove(IncidentOnRoutePage).success.value
 
-              navigator.nextPage(IncidentOnRoutePage, NormalMode, updatedAnswers)
+              navigator
+                .nextPage(IncidentOnRoutePage, NormalMode, updatedAnswers)
                 .mustBe(routes.SessionExpiredController.onPageLoad())
           }
         }
       }
 
-      "must go from Event Country to Event Place" in  {
+      "must go from Event Country to Event Place" in {
 
         forAll(arbitrary[UserAnswers]) {
           answers =>
-
-            navigator.nextPage(EventCountryPage, NormalMode, answers)
+            navigator
+              .nextPage(EventCountryPage, NormalMode, answers)
               .mustBe(routes.EventPlaceController.onPageLoad(answers.id, NormalMode))
         }
       }
 
-      "must go from Event Place to Event Reported" in  {
+      "must go from Event Place to Event Reported" in {
 
         forAll(arbitrary[UserAnswers]) {
           answers =>
-
-            navigator.nextPage(EventPlacePage, NormalMode, answers)
+            navigator
+              .nextPage(EventPlacePage, NormalMode, answers)
               .mustBe(routes.EventReportedController.onPageLoad(answers.id, NormalMode))
         }
       }
 
-      "must go from Event Reported to Is Transhipment" in  {
+      "must go from Event Reported to Is Transhipment" in {
 
         forAll(arbitrary[UserAnswers]) {
           answers =>
-
-            navigator.nextPage(EventReportedPage, NormalMode, answers)
+            navigator
+              .nextPage(EventReportedPage, NormalMode, answers)
               .mustBe(routes.IsTranshipmentController.onPageLoad(answers.id, NormalMode))
         }
       }
@@ -237,10 +235,10 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
           forAll(arbitrary[UserAnswers]) {
             answers =>
-
               val updatedAnswers = answers.set(EventReportedPage, false).success.value
 
-              navigator.nextPage(IsTranshipmentPage, NormalMode, updatedAnswers)
+              navigator
+                .nextPage(IsTranshipmentPage, NormalMode, updatedAnswers)
                 .mustBe(routes.IncidentInformationController.onPageLoad(updatedAnswers.id, NormalMode))
           }
         }
@@ -249,10 +247,10 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
           forAll(arbitrary[UserAnswers]) {
             answers =>
-
               val updatedAnswers = answers.set(EventReportedPage, true).success.value
 
-              navigator.nextPage(IsTranshipmentPage, NormalMode, updatedAnswers)
+              navigator
+                .nextPage(IsTranshipmentPage, NormalMode, updatedAnswers)
                 .mustBe(routes.CheckEventAnswersController.onPageLoad(updatedAnswers.id))
           }
         }
@@ -261,10 +259,10 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
           forAll(arbitrary[UserAnswers]) {
             answers =>
-
               val updatedAnswers = answers.remove(EventReportedPage).success.value
 
-              navigator.nextPage(IsTranshipmentPage, NormalMode, updatedAnswers)
+              navigator
+                .nextPage(IsTranshipmentPage, NormalMode, updatedAnswers)
                 .mustBe(routes.SessionExpiredController.onPageLoad())
           }
         }
@@ -274,8 +272,8 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
         forAll(arbitrary[UserAnswers]) {
           answers =>
-
-            navigator.nextPage(IncidentInformationPage, NormalMode, answers)
+            navigator
+              .nextPage(IncidentInformationPage, NormalMode, answers)
               .mustBe(routes.CheckEventAnswersController.onPageLoad(answers.id))
         }
       }
@@ -290,8 +288,8 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
         forAll(arbitrary[UserAnswers]) {
           answers =>
-
-            navigator.nextPage(UnknownPage, CheckMode, answers)
+            navigator
+              .nextPage(UnknownPage, CheckMode, answers)
               .mustBe(routes.CheckYourAnswersController.onPageLoad(answers.id))
         }
       }
@@ -304,13 +302,17 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             forAll(arbitrary[UserAnswers], arbitrary[String]) {
               (answers, subPlace) =>
-
                 val updatedAnswers =
                   answers
-                    .set(GoodsLocationPage, GoodsLocation.BorderForceOffice).success.value
-                    .set(CustomsSubPlacePage, subPlace).success.value
+                    .set(GoodsLocationPage, GoodsLocation.BorderForceOffice)
+                    .success
+                    .value
+                    .set(CustomsSubPlacePage, subPlace)
+                    .success
+                    .value
 
-                navigator.nextPage(GoodsLocationPage, CheckMode, updatedAnswers)
+                navigator
+                  .nextPage(GoodsLocationPage, CheckMode, updatedAnswers)
                   .mustBe(routes.CheckYourAnswersController.onPageLoad(answers.id))
             }
           }
@@ -322,13 +324,17 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             forAll(arbitrary[UserAnswers]) {
               answers =>
-
                 val updatedAnswers =
                   answers
-                    .set(GoodsLocationPage, GoodsLocation.BorderForceOffice).success.value
-                    .remove(CustomsSubPlacePage).success.value
+                    .set(GoodsLocationPage, GoodsLocation.BorderForceOffice)
+                    .success
+                    .value
+                    .remove(CustomsSubPlacePage)
+                    .success
+                    .value
 
-                navigator.nextPage(GoodsLocationPage, CheckMode, updatedAnswers)
+                navigator
+                  .nextPage(GoodsLocationPage, CheckMode, updatedAnswers)
                   .mustBe(routes.CustomsSubPlaceController.onPageLoad(answers.id, CheckMode))
             }
           }
@@ -340,10 +346,10 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             forAll(arbitrary[UserAnswers]) {
               answers =>
-
                 val updatedAnswers = answers.set(GoodsLocationPage, GoodsLocation.AuthorisedConsigneesLocation).success.value
 
-                navigator.nextPage(GoodsLocationPage, CheckMode, updatedAnswers)
+                navigator
+                  .nextPage(GoodsLocationPage, CheckMode, updatedAnswers)
                   .mustBe(routes.UseDifferentServiceController.onPageLoad(answers.id))
             }
           }
@@ -355,8 +361,8 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           "must go to check event answers" in {
             forAll(arbitrary[UserAnswers]) {
               answers =>
-
-                navigator.nextPage(page, CheckMode, answers)
+                navigator
+                  .nextPage(page, CheckMode, answers)
                   .mustBe(routes.CheckEventAnswersController.onPageLoad(answers.id))
 
             }
@@ -369,10 +375,15 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           forAll(arbitrary[UserAnswers], arbitrary[String]) {
             (answers, placeOfNotification) =>
               val updatedUserAnswers = answers
-                .set(IsTraderAddressPlaceOfNotificationPage, false).success.value
-                .set(PlaceOfNotificationPage, placeOfNotification).success.value
+                .set(IsTraderAddressPlaceOfNotificationPage, false)
+                .success
+                .value
+                .set(PlaceOfNotificationPage, placeOfNotification)
+                .success
+                .value
 
-              navigator.nextPage(IsTraderAddressPlaceOfNotificationPage, CheckMode, updatedUserAnswers)
+              navigator
+                .nextPage(IsTraderAddressPlaceOfNotificationPage, CheckMode, updatedUserAnswers)
                 .mustBe(routes.CheckYourAnswersController.onPageLoad(updatedUserAnswers.id))
           }
         }
@@ -382,7 +393,8 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
             answers =>
               val updatedUserAnswers = answers.set(IsTraderAddressPlaceOfNotificationPage, true).success.value
 
-              navigator.nextPage(IsTraderAddressPlaceOfNotificationPage, CheckMode, updatedUserAnswers)
+              navigator
+                .nextPage(IsTraderAddressPlaceOfNotificationPage, CheckMode, updatedUserAnswers)
                 .mustBe(routes.CheckYourAnswersController.onPageLoad(updatedUserAnswers.id))
           }
         }
@@ -393,7 +405,8 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           case (answers, placeOfNotification) =>
             val updatedUserAnswers = answers.set(PlaceOfNotificationPage, placeOfNotification).success.value
 
-            navigator.nextPage(PlaceOfNotificationPage, CheckMode, updatedUserAnswers)
+            navigator
+              .nextPage(PlaceOfNotificationPage, CheckMode, updatedUserAnswers)
               .mustBe(routes.CheckYourAnswersController.onPageLoad(updatedUserAnswers.id))
         }
       }

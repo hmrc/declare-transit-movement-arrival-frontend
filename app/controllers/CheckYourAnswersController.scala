@@ -17,12 +17,19 @@
 package controllers
 
 import com.google.inject.Inject
-import controllers.actions.{DataRequiredAction, DataRetrievalActionProvider, IdentifierAction}
+import controllers.actions.DataRequiredAction
+import controllers.actions.DataRetrievalActionProvider
+import controllers.actions.IdentifierAction
 import handlers.ErrorHandler
-import models.{MovementReferenceNumber, UserAnswers}
-import play.api.i18n.{I18nSupport, Messages, MessagesApi}
+import models.MovementReferenceNumber
+import models.UserAnswers
+import play.api.i18n.I18nSupport
+import play.api.i18n.Messages
+import play.api.i18n.MessagesApi
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.Action
+import play.api.mvc.AnyContent
+import play.api.mvc.MessagesControllerComponents
 import renderer.Renderer
 import services.ArrivalNotificationService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
@@ -30,18 +37,22 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 import utils.CheckYourAnswersHelper
 import viewModels.Section
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
+import scala.concurrent.Future
 
 class CheckYourAnswersController @Inject()(
-                                            override val messagesApi: MessagesApi,
-                                            identify: IdentifierAction,
-                                            getData: DataRetrievalActionProvider,
-                                            requireData: DataRequiredAction,
-                                            service: ArrivalNotificationService,
-                                            errorHandler: ErrorHandler,
-                                            val controllerComponents: MessagesControllerComponents,
-                                            renderer: Renderer
-                                          )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
+  override val messagesApi: MessagesApi,
+  identify: IdentifierAction,
+  getData: DataRetrievalActionProvider,
+  requireData: DataRequiredAction,
+  service: ArrivalNotificationService,
+  errorHandler: ErrorHandler,
+  val controllerComponents: MessagesControllerComponents,
+  renderer: Renderer
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport
+    with NunjucksSupport {
 
   def onPageLoad(mrn: MovementReferenceNumber): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
@@ -49,39 +60,34 @@ class CheckYourAnswersController @Inject()(
 
       val json = Json.obj(
         "sections" -> Json.toJson(answers),
-        "mrn" -> mrn
+        "mrn"      -> mrn
       )
       renderer.render("check-your-answers.njk", json).map(Ok(_))
   }
 
   def onPost(mrn: MovementReferenceNumber): Action[AnyContent] =
     (identify andThen getData(mrn) andThen requireData).async {
-    implicit request =>
-
-      service.submit(request.userAnswers) flatMap {
-        case Some(result) =>
-          result.status match {
-            case OK | NO_CONTENT => Future.successful(Redirect(routes.ConfirmationController.onPageLoad(mrn)))
-            case status => errorHandler.onClientError(request, status)
-          }
-        case None => errorHandler.onClientError(request, BAD_REQUEST) //TODO waiting for design
-      }
-  }
+      implicit request =>
+        service.submit(request.userAnswers) flatMap {
+          case Some(result) =>
+            result.status match {
+              case OK | NO_CONTENT => Future.successful(Redirect(routes.ConfirmationController.onPageLoad(mrn)))
+              case status          => errorHandler.onClientError(request, status)
+            }
+          case None => errorHandler.onClientError(request, BAD_REQUEST) //TODO waiting for design
+        }
+    }
 
   private def createSections(userAnswers: UserAnswers)(implicit messages: Messages): Seq[Section] = {
     val helper = new CheckYourAnswersHelper(userAnswers)
 
-    val mrn = Section(Seq(helper.movementReferenceNumber))
+    val mrn           = Section(Seq(helper.movementReferenceNumber))
     val goodsLocation = Section(messages("checkYourAnswers.section.goodsLocation"), Seq(helper.goodsLocation, helper.authorisedLocation).flatten)
     val traderDetails = Section(messages("checkYourAnswers.section.traderDetails"), Seq(helper.traderName, helper.traderAddress, helper.traderEori).flatten)
-    val notificationDetails = Section(messages("checkYourAnswers.section.notificationDetails"), Seq(helper.isTraderAddressPlaceOfNotification, helper.placeOfNotification).flatten)
+    val notificationDetails =
+      Section(messages("checkYourAnswers.section.notificationDetails"), Seq(helper.isTraderAddressPlaceOfNotification, helper.placeOfNotification).flatten)
     val events = Section(messages("checkYourAnswers.section.events"), Seq(helper.incidentOnRoute).flatten)
 
-    Seq(mrn,
-      goodsLocation,
-      traderDetails,
-      notificationDetails,
-      events
-    )
+    Seq(mrn, goodsLocation, traderDetails, notificationDetails, events)
   }
 }

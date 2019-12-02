@@ -17,16 +17,20 @@
 package viewModels
 
 import base.SpecBase
-import play.api.libs.json.{JsNull, Json}
-import uk.gov.hmrc.viewmodels.SummaryList.{Action, Key, Row, Value}
+import play.api.libs.json.JsNull
+import play.api.libs.json.Json
+import uk.gov.hmrc.viewmodels.SummaryList.Action
+import uk.gov.hmrc.viewmodels.SummaryList.Key
+import uk.gov.hmrc.viewmodels.SummaryList.Row
+import uk.gov.hmrc.viewmodels.SummaryList.Value
 import uk.gov.hmrc.viewmodels.Text
 
 class SectionSpec extends SpecBase {
 
   "Section" - {
     "must serialise to Json" in {
-      val key = Key(Text.Literal("foo"))
-      val value = Value(Text.Literal("bar"))
+      val key    = Key(Text.Literal("foo"))
+      val value  = Value(Text.Literal("bar"))
       val action = Action(Text.Literal("baz"), "quux")
 
       val row = Row(
@@ -37,15 +41,16 @@ class SectionSpec extends SpecBase {
         )
       )
 
-      val rows = Json.arr(Json.obj(
-        "key" -> key,
-        "value" -> value,
-        "actions" -> Json.obj(
-          "items" -> Json.arr(
-            action
+      val rows = Json.arr(
+        Json.obj(
+          "key"   -> key,
+          "value" -> value,
+          "actions" -> Json.obj(
+            "items" -> Json.arr(
+              action
+            )
           )
-        )
-      ))
+        ))
 
       val section = Section(Some("Some title"), Seq(row))
       Json.toJson(section) mustBe Json.obj("sectionTitle" -> "Some title", "rows" -> rows)

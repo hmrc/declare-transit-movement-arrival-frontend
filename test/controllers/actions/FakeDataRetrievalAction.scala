@@ -16,11 +16,14 @@
 
 package controllers.actions
 
-import models.{MovementReferenceNumber, UserAnswers}
-import models.requests.{IdentifierRequest, OptionalDataRequest}
+import models.MovementReferenceNumber
+import models.UserAnswers
+import models.requests.IdentifierRequest
+import models.requests.OptionalDataRequest
 import play.api.mvc.ActionTransformer
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
+import scala.concurrent.Future
 
 class FakeDataRetrievalActionProvider(dataToReturn: Option[UserAnswers]) extends DataRetrievalActionProvider {
 
@@ -33,7 +36,6 @@ class FakeDataRetrievalAction(dataToReturn: Option[UserAnswers]) extends ActionT
   override protected def transform[A](request: IdentifierRequest[A]): Future[OptionalDataRequest[A]] =
     Future(OptionalDataRequest(request.request, request.identifier, dataToReturn))
 
-  override protected implicit val executionContext: ExecutionContext =
+  implicit override protected val executionContext: ExecutionContext =
     scala.concurrent.ExecutionContext.Implicits.global
 }
-

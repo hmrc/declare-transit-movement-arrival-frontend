@@ -22,8 +22,8 @@ import play.api.data.FormError
 class AuthorisedLocationFormProviderSpec extends StringFieldBehaviours {
 
   val requiredKey = "authorisedLocation.error.required"
-  val lengthKey = "authorisedLocation.error.length"
-  val maxLength = 17
+  val lengthKey   = "authorisedLocation.error.length"
+  val maxLength   = 17
 
   val form = new AuthorisedLocationFormProvider()()
 
