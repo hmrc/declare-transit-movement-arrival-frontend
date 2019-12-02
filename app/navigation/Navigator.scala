@@ -19,10 +19,13 @@ package navigation
 import javax.inject.Inject
 import javax.inject.Singleton
 import play.api.mvc.Call
-import controllers.routes
 import pages._
 import models._
 import GoodsLocation._
+import controllers.routes
+import pages.events.EventCountryPage
+import pages.events.EventPlacePage
+import pages.events.EventReportedPage
 
 @Singleton
 class Navigator @Inject()() {
@@ -39,9 +42,9 @@ class Navigator @Inject()() {
     case IsTraderAddressPlaceOfNotificationPage => isTraderAddressPlaceOfNotificationRoute(NormalMode)
     case PlaceOfNotificationPage => ua => Some(routes.IncidentOnRouteController.onPageLoad(ua.id, NormalMode))
     case IncidentOnRoutePage => incidentOnRouteRoute
-    case EventCountryPage => ua => Some(routes.EventPlaceController.onPageLoad(ua.id, NormalMode))
-    case EventPlacePage => ua => Some(routes.EventReportedController.onPageLoad(ua.id, NormalMode))
-    case EventReportedPage => ua => Some(routes.IsTranshipmentController.onPageLoad(ua.id, NormalMode))
+    case EventCountryPage(index) => ua => Some(controllers.events.routes.EventPlaceController.onPageLoad(ua.id, index, NormalMode))
+    case EventPlacePage(index) => ua => Some(controllers.events.routes.EventReportedController.onPageLoad(ua.id, index, NormalMode))
+    case EventReportedPage(_) => ua => Some(routes.IsTranshipmentController.onPageLoad(ua.id, NormalMode))
     case IsTranshipmentPage => isTranshipmentRoute
     case IncidentInformationPage => ua => Some(routes.CheckEventAnswersController.onPageLoad(ua.id))
   }
@@ -76,8 +79,8 @@ class Navigator @Inject()() {
 
   private def eventsPages(page: Page): Boolean =
     page match {
-      case EventCountryPage | EventPlacePage | EventReportedPage | IsTranshipmentPage | IncidentInformationPage => true
-      case _                                                                                                    => false
+      case EventCountryPage(_) | EventPlacePage(_) | EventReportedPage(_) | IsTranshipmentPage | IncidentInformationPage => true
+      case _                                                                                                             => false
     }
 
   private def goodsLocationPageRoutes(ua: UserAnswers): Option[Call] =
@@ -88,12 +91,12 @@ class Navigator @Inject()() {
 
   private def incidentOnRouteRoute(ua: UserAnswers): Option[Call] =
     ua.get(IncidentOnRoutePage) map {
-      case true  => routes.EventCountryController.onPageLoad(ua.id, NormalMode)
+      case true  => controllers.events.routes.EventCountryController.onPageLoad(ua.id, 0, NormalMode)
       case false => routes.CheckYourAnswersController.onPageLoad(ua.id)
     }
 
   private def isTranshipmentRoute(ua: UserAnswers): Option[Call] =
-    ua.get(EventReportedPage) map {
+    ua.get(IsTranshipmentPage) map {
       case true  => routes.CheckEventAnswersController.onPageLoad(ua.id)
       case false => routes.IncidentInformationController.onPageLoad(ua.id, NormalMode)
     }

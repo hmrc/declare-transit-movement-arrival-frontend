@@ -17,6 +17,7 @@
 package forms
 
 import forms.behaviours.StringFieldBehaviours
+import forms.events.EventCountryFormProvider
 import play.api.data.FormError
 
 class EventCountryFormProviderSpec extends StringFieldBehaviours {

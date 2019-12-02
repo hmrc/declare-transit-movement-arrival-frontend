@@ -6,11 +6,11 @@ echo "Applying migration EventReported"
 echo "Adding routes to conf/app.routes"
 
 echo "" >> ../conf/app.routes
-echo "GET        /:mrn/eventReported                        controllers.EventReportedController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = NormalMode)" >> ../conf/app.routes
-echo "POST       /:mrn/eventReported                        controllers.EventReportedController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)" >> ../conf/app.routes
+echo "GET        /:mrn/eventReported                        controllers.events.EventReportedController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = NormalMode)" >> ../conf/app.routes
+echo "POST       /:mrn/eventReported                        controllers.events.EventReportedController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)" >> ../conf/app.routes
 
-echo "GET        /:mrn/changeEventReported                  controllers.EventReportedController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)" >> ../conf/app.routes
-echo "POST       /:mrn/changeEventReported                  controllers.EventReportedController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)" >> ../conf/app.routes
+echo "GET        /:mrn/changeEventReported                  controllers.events.EventReportedController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)" >> ../conf/app.routes
+echo "POST       /:mrn/changeEventReported                  controllers.events.EventReportedController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)" >> ../conf/app.routes
 
 echo "Adding messages to conf.messages"
 echo "" >> ../conf/messages.en

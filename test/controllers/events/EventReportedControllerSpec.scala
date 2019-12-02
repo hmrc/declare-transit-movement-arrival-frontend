@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.events
 
 import base.SpecBase
-import forms.EventPlaceFormProvider
+import forms.events.EventReportedFormProvider
 import matchers.JsonMatchers
 import models.NormalMode
 import models.UserAnswers
@@ -29,10 +29,10 @@ import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.EventPlacePage
+import pages.events.EventReportedPage
+import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.JsObject
-import play.api.libs.json.JsString
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -40,19 +40,21 @@ import play.api.test.Helpers._
 import play.twirl.api.Html
 import repositories.SessionRepository
 import uk.gov.hmrc.viewmodels.NunjucksSupport
+import uk.gov.hmrc.viewmodels.Radios
 
 import scala.concurrent.Future
 
-class EventPlaceControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class EventReportedControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
   def onwardRoute = Call("GET", "/foo")
+  val index       = 0
 
-  val formProvider = new EventPlaceFormProvider()
-  val form         = formProvider()
+  val formProvider = new EventReportedFormProvider()
+  val form: Form[Boolean] = formProvider()
 
-  lazy val eventPlaceRoute = routes.EventPlaceController.onPageLoad(mrn, NormalMode).url
+  lazy val eventReportedRoute: String = routes.EventReportedController.onPageLoad(mrn, index, NormalMode).url
 
-  "EventPlace Controller" - {
+  "EventReported Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
@@ -60,7 +62,7 @@ class EventPlaceControllerSpec extends SpecBase with MockitoSugar with NunjucksS
         .thenReturn(Future.successful(Html("")))
 
       val application    = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request        = FakeRequest(GET, eventPlaceRoute)
+      val request        = FakeRequest(GET, eventReportedRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -71,12 +73,13 @@ class EventPlaceControllerSpec extends SpecBase with MockitoSugar with NunjucksS
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form" -> form,
-        "mrn"  -> mrn,
-        "mode" -> NormalMode
+        "form"   -> form,
+        "mode"   -> NormalMode,
+        "mrn"    -> mrn,
+        "radios" -> Radios.yesNo(form("value"))
       )
 
-      templateCaptor.getValue mustEqual "eventPlace.njk"
+      templateCaptor.getValue mustEqual "eventReported.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -87,9 +90,9 @@ class EventPlaceControllerSpec extends SpecBase with MockitoSugar with NunjucksS
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers    = UserAnswers(mrn).set(EventPlacePage, "answer").success.value
+      val userAnswers    = UserAnswers(mrn).set(EventReportedPage(index), true).success.value
       val application    = applicationBuilder(userAnswers = Some(userAnswers)).build()
-      val request        = FakeRequest(GET, eventPlaceRoute)
+      val request        = FakeRequest(GET, eventReportedRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -99,15 +102,16 @@ class EventPlaceControllerSpec extends SpecBase with MockitoSugar with NunjucksS
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = form.bind(Map("value" -> "answer"))
+      val filledForm = form.bind(Map("value" -> "true"))
 
       val expectedJson = Json.obj(
-        "form" -> filledForm,
-        "mrn"  -> mrn,
-        "mode" -> NormalMode
+        "form"   -> filledForm,
+        "mode"   -> NormalMode,
+        "mrn"    -> mrn,
+        "radios" -> Radios.yesNo(filledForm("value"))
       )
 
-      templateCaptor.getValue mustEqual "eventPlace.njk"
+      templateCaptor.getValue mustEqual "eventReported.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -128,12 +132,13 @@ class EventPlaceControllerSpec extends SpecBase with MockitoSugar with NunjucksS
           .build()
 
       val request =
-        FakeRequest(POST, eventPlaceRoute)
-          .withFormUrlEncodedBody(("value", "answer"))
+        FakeRequest(POST, eventReportedRoute)
+          .withFormUrlEncodedBody(("value", "true"))
 
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
+
       redirectLocation(result).value mustEqual onwardRoute.url
 
       application.stop()
@@ -145,7 +150,7 @@ class EventPlaceControllerSpec extends SpecBase with MockitoSugar with NunjucksS
         .thenReturn(Future.successful(Html("")))
 
       val application    = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request        = FakeRequest(POST, eventPlaceRoute).withFormUrlEncodedBody(("value", ""))
+      val request        = FakeRequest(POST, eventReportedRoute).withFormUrlEncodedBody(("value", ""))
       val boundForm      = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
@@ -157,12 +162,13 @@ class EventPlaceControllerSpec extends SpecBase with MockitoSugar with NunjucksS
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form" -> boundForm,
-        "mrn"  -> mrn,
-        "mode" -> NormalMode
+        "form"   -> boundForm,
+        "mode"   -> NormalMode,
+        "mrn"    -> mrn,
+        "radios" -> Radios.yesNo(boundForm("value"))
       )
 
-      templateCaptor.getValue mustEqual "eventPlace.njk"
+      templateCaptor.getValue mustEqual "eventReported.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -172,13 +178,13 @@ class EventPlaceControllerSpec extends SpecBase with MockitoSugar with NunjucksS
 
       val application = applicationBuilder(userAnswers = None).build()
 
-      val request = FakeRequest(GET, eventPlaceRoute)
+      val request = FakeRequest(GET, eventReportedRoute)
 
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
 
       application.stop()
     }
@@ -188,14 +194,14 @@ class EventPlaceControllerSpec extends SpecBase with MockitoSugar with NunjucksS
       val application = applicationBuilder(userAnswers = None).build()
 
       val request =
-        FakeRequest(POST, eventPlaceRoute)
-          .withFormUrlEncodedBody(("value", "answer"))
+        FakeRequest(POST, eventReportedRoute)
+          .withFormUrlEncodedBody(("value", "true"))
 
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
 
       application.stop()
     }

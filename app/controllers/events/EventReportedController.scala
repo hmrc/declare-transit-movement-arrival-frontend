@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.events
 
 import controllers.actions._
-import forms.EventReportedFormProvider
+import forms.events.EventReportedFormProvider
 import javax.inject.Inject
 import models.Mode
 import models.MovementReferenceNumber
 import navigation.Navigator
-import pages.EventReportedPage
+import pages.events.EventReportedPage
 import play.api.i18n.I18nSupport
 import play.api.i18n.MessagesApi
 import play.api.libs.json.Json
@@ -55,9 +55,9 @@ class EventReportedController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onPageLoad(mrn: MovementReferenceNumber, index: Int, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
-      val preparedForm = request.userAnswers.get(EventReportedPage) match {
+      val preparedForm = request.userAnswers.get(EventReportedPage(index)) match {
         case None        => form
         case Some(value) => form.fill(value)
       }
@@ -72,7 +72,7 @@ class EventReportedController @Inject()(
       renderer.render("eventReported.njk", json).map(Ok(_))
   }
 
-  def onSubmit(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onSubmit(mrn: MovementReferenceNumber, index: Int, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
       form
         .bindFromRequest()
@@ -90,9 +90,9 @@ class EventReportedController @Inject()(
           },
           value =>
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(EventReportedPage, value))
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(EventReportedPage(index), value))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(EventReportedPage, mode, updatedAnswers))
+            } yield Redirect(navigator.nextPage(EventReportedPage(index), mode, updatedAnswers))
         )
   }
 }

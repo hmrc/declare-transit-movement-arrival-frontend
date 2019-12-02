@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package pages
+package pages.events
 
+import pages.QuestionPage
 import play.api.libs.json.JsPath
 
-case object EventReportedPage extends QuestionPage[Boolean] {
+final case class EventCountryPage(index: Int) extends QuestionPage[String] {
 
-  override def path: JsPath = JsPath \ toString
+  override def path: JsPath = JsPath \ RepeatingSectionConstants.Events \ index \ toString
 
-  override def toString: String = "eventReported"
+  override def toString: String = "eventCountry"
 }

@@ -22,6 +22,8 @@ import org.scalacheck.Arbitrary
 import org.scalacheck.Gen
 import org.scalatest.TryValues
 import pages._
+import pages.events.EventPlacePage
+import pages.events.EventReportedPage
 import play.api.libs.json.JsPath
 import play.api.libs.json.JsValue
 import play.api.libs.json.Json
@@ -34,9 +36,9 @@ trait UserAnswersGenerator extends TryValues {
       arbitrary[(IsTraderAddressPlaceOfNotificationPage.type, JsValue)] ::
       arbitrary[(IsTranshipmentPage.type, JsValue)] ::
       arbitrary[(IncidentInformationPage.type, JsValue)] ::
-      arbitrary[(EventReportedPage.type, JsValue)] ::
-      arbitrary[(EventPlacePage.type, JsValue)] ::
-      arbitrary[(EventCountryPage.type, JsValue)] ::
+      //arbitrary[(EventReportedPage.type, JsValue)] ::  //TODO handle it later
+      // arbitrary[(EventPlacePage.type, JsValue)] ::  //TODO handle it later
+      //arbitrary[(EventCountryPage.type, JsValue)] :: //TODO handle it later
       arbitrary[(IncidentOnRoutePage.type, JsValue)] ::
       arbitrary[(TraderNamePage.type, JsValue)] ::
       arbitrary[(TraderEoriPage.type, JsValue)] ::

@@ -64,8 +64,9 @@ class ArrivalNotificationConversionService {
       )
     }
 
-  private def enRouteEvents(userAnswers: UserAnswers): Seq[EnRouteEvent] =
-    (for {
+  //TODO define enRouteEvents
+  private def enRouteEvents(userAnswers: UserAnswers): Seq[EnRouteEvent] = Seq.empty
+  /*    (for {
       place          <- userAnswers.get(EventPlacePage)
       country        <- userAnswers.get(EventCountryPage)
       isReported     <- userAnswers.get(EventReportedPage)
@@ -77,9 +78,9 @@ class ArrivalNotificationConversionService {
           countryCode = country,
           alreadyInNcts = isReported,
           eventDetails = eventDetails(isTranshipment, userAnswers.get(IncidentInformationPage)),
-          Seq.empty //TODO Seals
+          Seq.empty
         ))
-    }).getOrElse(Seq.empty)
+    }).getOrElse(Seq.empty)*/
 
   private def traderAddress(traderAddress: TraderAddress, traderEori: String, traderName: String): Trader =
     TraderWithEori(

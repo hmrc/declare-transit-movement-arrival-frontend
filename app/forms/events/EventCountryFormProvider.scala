@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package forms
-
-import javax.inject.Inject
+package forms.events
 
 import forms.mappings.Mappings
+import javax.inject.Inject
 import play.api.data.Form
 
 class EventCountryFormProvider @Inject() extends Mappings {

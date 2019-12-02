@@ -14,21 +14,16 @@
  * limitations under the License.
  */
 
-package pages
+package forms.events
 
-import pages.behaviours.PageBehaviours
-import pages.events.EventReportedPage
+import forms.mappings.Mappings
+import javax.inject.Inject
+import play.api.data.Form
 
-class EventReportedPageSpec extends PageBehaviours {
+class EventReportedFormProvider @Inject() extends Mappings {
 
-  val index = 0
-
-  "EventReportedPage" - {
-
-    beRetrievable[Boolean](EventReportedPage(index))
-
-    beSettable[Boolean](EventReportedPage(index))
-
-    beRemovable[Boolean](EventReportedPage(index))
-  }
+  def apply(): Form[Boolean] =
+    Form(
+      "value" -> boolean("eventReported.error.required")
+    )
 }

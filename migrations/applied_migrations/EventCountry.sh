@@ -6,11 +6,11 @@ echo "Applying migration EventCountry"
 echo "Adding routes to conf/app.routes"
 
 echo "" >> ../conf/app.routes
-echo "GET        /:mrn/eventCountry                        controllers.EventCountryController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = NormalMode)" >> ../conf/app.routes
-echo "POST       /:mrn/eventCountry                        controllers.EventCountryController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)" >> ../conf/app.routes
+echo "GET        /:mrn/eventCountry                        controllers.events.EventCountryController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = NormalMode)" >> ../conf/app.routes
+echo "POST       /:mrn/eventCountry                        controllers.events.EventCountryController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)" >> ../conf/app.routes
 
-echo "GET        /:mrn/changeEventCountry                  controllers.EventCountryController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)" >> ../conf/app.routes
-echo "POST       /:mrn/changeEventCountry                  controllers.EventCountryController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)" >> ../conf/app.routes
+echo "GET        /:mrn/changeEventCountry                  controllers.events.EventCountryController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)" >> ../conf/app.routes
+echo "POST       /:mrn/changeEventCountry                  controllers.events.EventCountryController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)" >> ../conf/app.routes
 
 echo "Adding messages to conf.messages"
 echo "" >> ../conf/messages.en

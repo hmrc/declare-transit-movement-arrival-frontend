@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.events
 
 import controllers.actions._
-import forms.EventCountryFormProvider
+import forms.events.EventCountryFormProvider
 import javax.inject.Inject
 import models.Mode
 import models.MovementReferenceNumber
 import navigation.Navigator
-import pages.EventCountryPage
+import pages.events.EventCountryPage
 import play.api.i18n.I18nSupport
 import play.api.i18n.MessagesApi
 import play.api.libs.json.Json
@@ -54,9 +54,9 @@ class EventCountryController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onPageLoad(mrn: MovementReferenceNumber, index: Int, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
-      val preparedForm = request.userAnswers.get(EventCountryPage) match {
+      val preparedForm = request.userAnswers.get(EventCountryPage(index)) match {
         case None        => form
         case Some(value) => form.fill(value)
       }
@@ -70,7 +70,7 @@ class EventCountryController @Inject()(
       renderer.render("eventCountry.njk", json).map(Ok(_))
   }
 
-  def onSubmit(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onSubmit(mrn: MovementReferenceNumber, index: Int, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
       form
         .bindFromRequest()
@@ -87,9 +87,9 @@ class EventCountryController @Inject()(
           },
           value =>
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(EventCountryPage, value))
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(EventCountryPage(index), value))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(EventCountryPage, mode, updatedAnswers))
+            } yield Redirect(navigator.nextPage(EventCountryPage(index), mode, updatedAnswers))
         )
   }
 }

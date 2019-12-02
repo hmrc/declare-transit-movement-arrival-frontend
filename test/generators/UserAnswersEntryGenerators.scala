@@ -20,6 +20,9 @@ import models._
 import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary.arbitrary
 import pages._
+import pages.events.EventCountryPage
+import pages.events.EventPlacePage
+import pages.events.EventReportedPage
 import play.api.libs.json.JsValue
 import play.api.libs.json.Json
 

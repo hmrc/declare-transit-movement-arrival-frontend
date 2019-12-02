@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.events
 
 import base.SpecBase
-import forms.EventCountryFormProvider
+import forms.events.EventCountryFormProvider
 import matchers.JsonMatchers
 import models.NormalMode
 import models.UserAnswers
@@ -29,10 +29,10 @@ import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.EventCountryPage
+import pages.events.EventCountryPage
+import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.JsObject
-import play.api.libs.json.JsString
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -48,10 +48,11 @@ class EventCountryControllerSpec extends SpecBase with MockitoSugar with Nunjuck
   def onwardRoute = Call("GET", "/foo")
 
   val formProvider = new EventCountryFormProvider()
-  val form         = formProvider()
+  val form: Form[String] = formProvider()
 
-  lazy val eventCountryRoute = routes.EventCountryController.onPageLoad(mrn, NormalMode).url
+  lazy val eventCountryRoute: String = routes.EventCountryController.onPageLoad(mrn, index, NormalMode).url
 
+  var index = 0
   "EventCountry Controller" - {
 
     "must return OK and the correct view for a GET" in {
@@ -87,7 +88,7 @@ class EventCountryControllerSpec extends SpecBase with MockitoSugar with Nunjuck
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers    = UserAnswers(mrn).set(EventCountryPage, "GB").success.value
+      val userAnswers    = UserAnswers(mrn).set(EventCountryPage(index), "GB").success.value
       val application    = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request        = FakeRequest(GET, eventCountryRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -178,7 +179,7 @@ class EventCountryControllerSpec extends SpecBase with MockitoSugar with Nunjuck
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
 
       application.stop()
     }
@@ -195,7 +196,7 @@ class EventCountryControllerSpec extends SpecBase with MockitoSugar with Nunjuck
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
 
       application.stop()
     }

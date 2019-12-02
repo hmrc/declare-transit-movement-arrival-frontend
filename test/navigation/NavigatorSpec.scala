@@ -18,17 +18,22 @@ package navigation
 
 import base.SpecBase
 import controllers.routes
+import controllers.events.{routes => eventRoutes}
 import generators.Generators
 import pages._
 import models._
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import pages.events.EventCountryPage
+import pages.events.EventPlacePage
+import pages.events.EventReportedPage
 
 class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
   val navigator = new Navigator
+  val index     = 0
 
-  private val cyaEventPages = Seq(EventCountryPage, EventPlacePage, EventReportedPage, IsTranshipmentPage, IncidentInformationPage)
+  private val cyaEventPages = Seq(EventCountryPage(index), EventPlacePage(index), EventReportedPage(index), IsTranshipmentPage, IncidentInformationPage)
 
   "Navigator" - {
 
@@ -182,7 +187,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
               navigator
                 .nextPage(IncidentOnRoutePage, NormalMode, updatedAnswers)
-                .mustBe(routes.EventCountryController.onPageLoad(answers.id, NormalMode))
+                .mustBe(eventRoutes.EventCountryController.onPageLoad(answers.id, index, NormalMode))
           }
         }
 
@@ -204,8 +209,8 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         forAll(arbitrary[UserAnswers]) {
           answers =>
             navigator
-              .nextPage(EventCountryPage, NormalMode, answers)
-              .mustBe(routes.EventPlaceController.onPageLoad(answers.id, NormalMode))
+              .nextPage(EventCountryPage(index), NormalMode, answers)
+              .mustBe(eventRoutes.EventPlaceController.onPageLoad(answers.id, index, NormalMode))
         }
       }
 
@@ -214,8 +219,8 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         forAll(arbitrary[UserAnswers]) {
           answers =>
             navigator
-              .nextPage(EventPlacePage, NormalMode, answers)
-              .mustBe(routes.EventReportedController.onPageLoad(answers.id, NormalMode))
+              .nextPage(EventPlacePage(index), NormalMode, answers)
+              .mustBe(eventRoutes.EventReportedController.onPageLoad(answers.id, index, NormalMode))
         }
       }
 
@@ -224,18 +229,18 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         forAll(arbitrary[UserAnswers]) {
           answers =>
             navigator
-              .nextPage(EventReportedPage, NormalMode, answers)
+              .nextPage(EventReportedPage(index), NormalMode, answers)
               .mustBe(routes.IsTranshipmentController.onPageLoad(answers.id, NormalMode))
         }
       }
 
       "must go from Is Transhipment" - {
 
-        "to Incident Information when the event has not been reported" in {
+        "to Incident Information when there is no transhipment" in {
 
           forAll(arbitrary[UserAnswers]) {
             answers =>
-              val updatedAnswers = answers.set(EventReportedPage, false).success.value
+              val updatedAnswers = answers.set(IsTranshipmentPage, false).success.value
 
               navigator
                 .nextPage(IsTranshipmentPage, NormalMode, updatedAnswers)
@@ -243,11 +248,11 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           }
         }
 
-        "to events summary page when the event has been reported" in {
+        "to events summary page when there is transhipment" in {
 
           forAll(arbitrary[UserAnswers]) {
             answers =>
-              val updatedAnswers = answers.set(EventReportedPage, true).success.value
+              val updatedAnswers = answers.set(IsTranshipmentPage, true).success.value
 
               navigator
                 .nextPage(IsTranshipmentPage, NormalMode, updatedAnswers)
@@ -255,11 +260,11 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           }
         }
 
-        "to Session Expired when we cannot tell if the event has been reported" in {
+        "to Session Expired when we cannot tell if transhipment selected or not" in {
 
           forAll(arbitrary[UserAnswers]) {
             answers =>
-              val updatedAnswers = answers.remove(EventReportedPage).success.value
+              val updatedAnswers = answers.remove(IsTranshipmentPage).success.value
 
               navigator
                 .nextPage(IsTranshipmentPage, NormalMode, updatedAnswers)

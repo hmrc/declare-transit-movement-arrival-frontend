@@ -14,17 +14,10 @@
  * limitations under the License.
  */
 
-package forms
+package pages.events
 
-import javax.inject.Inject
+object RepeatingSectionConstants {
 
-import forms.mappings.Mappings
-import play.api.data.Form
+  val Events = "events"
 
-class EventReportedFormProvider @Inject() extends Mappings {
-
-  def apply(): Form[Boolean] =
-    Form(
-      "value" -> boolean("eventReported.error.required")
-    )
 }

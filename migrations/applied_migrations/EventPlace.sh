@@ -6,11 +6,11 @@ echo "Applying migration EventPlace"
 echo "Adding routes to conf/app.routes"
 
 echo "" >> ../conf/app.routes
-echo "GET        /:mrn/eventPlace                        controllers.EventPlaceController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = NormalMode)" >> ../conf/app.routes
-echo "POST       /:mrn/eventPlace                        controllers.EventPlaceController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)" >> ../conf/app.routes
+echo "GET        /:mrn/eventPlace                        controllers.events.EventPlaceController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = NormalMode)" >> ../conf/app.routes
+echo "POST       /:mrn/eventPlace                        controllers.events.EventPlaceController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)" >> ../conf/app.routes
 
-echo "GET        /:mrn/changeEventPlace                  controllers.EventPlaceController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)" >> ../conf/app.routes
-echo "POST       /:mrn/changeEventPlace                  controllers.EventPlaceController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)" >> ../conf/app.routes
+echo "GET        /:mrn/changeEventPlace                  controllers.events.EventPlaceController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)" >> ../conf/app.routes
+echo "POST       /:mrn/changeEventPlace                  controllers.events.EventPlaceController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)" >> ../conf/app.routes
 
 echo "Adding messages to conf.messages"
 echo "" >> ../conf/messages.en

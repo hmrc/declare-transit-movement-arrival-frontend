@@ -24,6 +24,7 @@ import models.MovementReferenceNumber
 import models.TraderAddress
 import models.UserAnswers
 import pages._
+import pages.events.EventReportedPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels.SummaryList._
 import uk.gov.hmrc.viewmodels._
@@ -92,7 +93,9 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messag
       )
   }
 
-  def eventReported: Option[Row] = userAnswers.get(EventReportedPage) map {
+  //TODO define event pages
+
+  def eventReported: Option[Row] = None /*userAnswers.get(EventReportedPage) map {
     answer =>
       Row(
         key = Key(msg"eventReported.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
@@ -105,9 +108,9 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messag
           )
         )
       )
-  }
+  }*/
 
-  def eventPlace: Option[Row] = userAnswers.get(EventPlacePage) map {
+  def eventPlace: Option[Row] = None /*userAnswers.get(EventPlacePage) map {
     answer =>
       Row(
         key = Key(msg"eventPlace.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
@@ -120,9 +123,9 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messag
           )
         )
       )
-  }
+  }*/
 
-  def eventCountry: Option[Row] = userAnswers.get(EventCountryPage) map {
+  def eventCountry: Option[Row] = None /*userAnswers.get(EventCountryPage) map {
     answer =>
       Row(
         key = Key(msg"eventCountry.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
@@ -135,7 +138,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messag
           )
         )
       )
-  }
+  }*/
 
   def incidentOnRoute: Option[Row] = userAnswers.get(IncidentOnRoutePage) map {
     answer =>
