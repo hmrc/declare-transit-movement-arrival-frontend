@@ -79,7 +79,7 @@ class CheckEventAnswersControllerSpec extends SpecBase with JsonMatchers {
 
       when(mockRenderer.render(any(), any())(any())).thenReturn(Future.successful(Html("")))
 
-      val request = FakeRequest(POST, routes.CheckEventAnswersController.onSubmit(mrn).url)
+      val request = FakeRequest(POST, routes.CheckEventAnswersController.onSubmit(mrn, index).url)
 
       val result = route(application, request).value
 

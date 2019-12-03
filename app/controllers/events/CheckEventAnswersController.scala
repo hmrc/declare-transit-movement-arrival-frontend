@@ -60,7 +60,7 @@ class CheckEventAnswersController @Inject()(
       renderer.render("events/check-event-answers.njk", json).map(Ok(_))
   }
 
-  def onSubmit(mrn: MovementReferenceNumber): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onSubmit(mrn: MovementReferenceNumber, index: Int): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
       Future.successful(Redirect(controllers.routes.CheckYourAnswersController.onPageLoad(mrn)))
   }

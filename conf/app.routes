@@ -90,7 +90,7 @@ GET        /:mrn/changeIsTranshipment/:index                 controllers.events.
 POST       /:mrn/changeIsTranshipment/:index                 controllers.events.IsTranshipmentController.onSubmit(mrn: MovementReferenceNumber, index: Int, mode: Mode = CheckMode)
 
 GET        /:mrn/checkEventAnswers/:index                    controllers.events.CheckEventAnswersController.onPageLoad(mrn: MovementReferenceNumber, index: Int)
-POST       /:mrn/checkEventAnswers                           controllers.events.CheckEventAnswersController.onSubmit(mrn: MovementReferenceNumber)
+POST       /:mrn/checkEventAnswers/:index                    controllers.events.CheckEventAnswersController.onSubmit(mrn: MovementReferenceNumber, index: Int)
 
 GET        /:mrn/isTraderAddressPlaceOfNotification          controllers.IsTraderAddressPlaceOfNotificationController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
 POST       /:mrn/isTraderAddressPlaceOfNotification          controllers.IsTraderAddressPlaceOfNotificationController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
