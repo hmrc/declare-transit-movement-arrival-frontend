@@ -73,7 +73,8 @@ class CheckEventAnswersController @Inject()(
     )
   }
 
-  private def eventsSection(helper: CheckYourAnswersHelper, index: Int): Seq[Row] = Seq(
+  private def eventsSection(helper: CheckYourAnswersHelper, index: Int): Seq[Row] =
+    Seq(
       helper.eventCountry(index),
       helper.eventPlace(index),
       helper.eventReported(index),
@@ -81,7 +82,8 @@ class CheckEventAnswersController @Inject()(
       helper.incidentInformation(index)
     ).flatten
 
-  private def isTranshipmentSection(helper: CheckYourAnswersHelper, index: Int): Seq[Row] = Seq(
+  private def isTranshipmentSection(helper: CheckYourAnswersHelper, index: Int): Seq[Row] =
+    Seq(
       helper.isTranshipment(index)
     ).flatten
 }

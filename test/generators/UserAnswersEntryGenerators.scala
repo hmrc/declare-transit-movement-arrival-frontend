@@ -31,6 +31,14 @@ import play.api.libs.json.Json
 trait UserAnswersEntryGenerators extends PageGenerators {
   self: Generators =>
 
+  implicit lazy val arbitraryAddEventUserAnswersEntry: Arbitrary[(AddEventPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[AddEventPage.type]
+        value <- arbitrary[Boolean].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
   implicit lazy val arbitraryPlaceOfNotificationUserAnswersEntry: Arbitrary[(PlaceOfNotificationPage.type, JsValue)] =
     Arbitrary {
       for {

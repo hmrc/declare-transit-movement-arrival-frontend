@@ -26,6 +26,9 @@ import pages.events.IsTranshipmentPage
 
 trait PageGenerators {
 
+  implicit lazy val arbitraryAddEventPage: Arbitrary[AddEventPage.type] =
+    Arbitrary(AddEventPage)
+
   implicit lazy val arbitraryPlaceOfNotificationPage: Arbitrary[PlaceOfNotificationPage.type] =
     Arbitrary(PlaceOfNotificationPage)
 

@@ -36,6 +36,21 @@ import uk.gov.hmrc.viewmodels._
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messages) {
 
+  def addEvent: Option[Row] = userAnswers.get(AddEventPage) map {
+    answer =>
+      Row(
+        key = Key(msg"addEvent.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value = Value(yesOrNo(answer)),
+        actions = List(
+          Action(
+            content = msg"site.edit",
+            href = routes.AddEventController.onPageLoad(mrn, CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"addEvent.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
   def placeOfNotification: Option[Row] = userAnswers.get(PlaceOfNotificationPage) map {
     answer =>
       Row(

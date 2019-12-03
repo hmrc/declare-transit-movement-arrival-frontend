@@ -101,3 +101,8 @@ GET        /:mrn/placeOfNotification                         controllers.PlaceOf
 POST       /:mrn/placeOfNotification                         controllers.PlaceOfNotificationController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
 GET        /:mrn/changePlaceOfNotification                   controllers.PlaceOfNotificationController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
 POST       /:mrn/changePlaceOfNotification                   controllers.PlaceOfNotificationController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
+
+GET        /:mrn/addEvent                        controllers.AddEventController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
+POST       /:mrn/addEvent                        controllers.AddEventController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
+GET        /:mrn/changeAddEvent                  controllers.AddEventController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
+POST       /:mrn/changeAddEvent                  controllers.AddEventController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)

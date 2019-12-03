@@ -266,3 +266,8 @@ placeOfNotification.checkYourAnswersLabel = Where is the place of notification?
 placeOfNotification.hintText = Tell us where you are completing this arrival notification.
 placeOfNotification.error.required = Enter the place of notification
 placeOfNotification.error.length = Place of notification must be 35 characters or less
+
+addEvent.title = addEvent
+addEvent.heading = addEvent
+addEvent.checkYourAnswersLabel = addEvent
+addEvent.error.required = Select yes if addEvent
