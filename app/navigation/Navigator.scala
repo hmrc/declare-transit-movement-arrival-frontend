@@ -23,6 +23,7 @@ import pages._
 import models._
 import GoodsLocation._
 import controllers.routes
+import controllers.events.{routes => eventRoutes}
 import pages.events.EventCountryPage
 import pages.events.EventPlacePage
 import pages.events.EventReportedPage
@@ -44,16 +45,16 @@ class Navigator @Inject()() {
     case IsTraderAddressPlaceOfNotificationPage => isTraderAddressPlaceOfNotificationRoute(NormalMode)
     case PlaceOfNotificationPage => ua => Some(routes.IncidentOnRouteController.onPageLoad(ua.id, NormalMode))
     case IncidentOnRoutePage => incidentOnRouteRoute
-    case EventCountryPage(index) => ua => Some(controllers.events.routes.EventPlaceController.onPageLoad(ua.id, index, NormalMode))
-    case EventPlacePage(index) => ua => Some(controllers.events.routes.EventReportedController.onPageLoad(ua.id, index, NormalMode))
-    case EventReportedPage(index) => ua => Some(controllers.events.routes.IsTranshipmentController.onPageLoad(ua.id, index, NormalMode))
+    case EventCountryPage(index) => ua => Some(eventRoutes.EventPlaceController.onPageLoad(ua.id, index, NormalMode))
+    case EventPlacePage(index) => ua => Some(eventRoutes.EventReportedController.onPageLoad(ua.id, index, NormalMode))
+    case EventReportedPage(index) => ua => Some(eventRoutes.IsTranshipmentController.onPageLoad(ua.id, index, NormalMode))
     case IsTranshipmentPage(index) => isTranshipmentRoute(index)
-    case IncidentInformationPage(_) => ua => Some(controllers.events.routes.CheckEventAnswersController.onPageLoad(ua.id))
+    case IncidentInformationPage(_) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id))
   }
 
   private val checkRouteMap: PartialFunction[Page, UserAnswers => Option[Call]] = {
     case GoodsLocationPage         => goodsLocationCheckRoute
-    case page if eventsPages(page) => ua => Some(controllers.events.routes.CheckEventAnswersController.onPageLoad(ua.id))
+    case page if eventsPages(page) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id))
     case _                         => ua => Some(routes.CheckYourAnswersController.onPageLoad(ua.id)) // move to match on checkRouteMap
   }
   // format: on
@@ -93,14 +94,14 @@ class Navigator @Inject()() {
 
   private def incidentOnRouteRoute(ua: UserAnswers): Option[Call] =
     ua.get(IncidentOnRoutePage) map {
-      case true  => controllers.events.routes.EventCountryController.onPageLoad(ua.id, 0, NormalMode)
+      case true  => eventRoutes.EventCountryController.onPageLoad(ua.id, 0, NormalMode)
       case false => routes.CheckYourAnswersController.onPageLoad(ua.id)
     }
 
   private def isTranshipmentRoute(index: Int)(ua: UserAnswers): Option[Call] =
     ua.get(IsTranshipmentPage(index)) map {
-      case true  => controllers.events.routes.CheckEventAnswersController.onPageLoad(ua.id)
-      case false => controllers.events.routes.IncidentInformationController.onPageLoad(ua.id, index, NormalMode)
+      case true  => eventRoutes.CheckEventAnswersController.onPageLoad(ua.id)
+      case false => eventRoutes.IncidentInformationController.onPageLoad(ua.id, index, NormalMode)
     }
 
   private def goodsLocationCheckRoute(ua: UserAnswers): Option[Call] =
