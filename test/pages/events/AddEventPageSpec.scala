@@ -20,12 +20,14 @@ import pages.behaviours.PageBehaviours
 
 class AddEventPageSpec extends PageBehaviours {
 
+  val index = 0
+
   "AddEventPage" - {
 
-    beRetrievable[Boolean](AddEventPage)
+    beRetrievable[Boolean](AddEventPage(index))
 
-    beSettable[Boolean](AddEventPage)
+    beSettable[Boolean](AddEventPage(index))
 
-    beRemovable[Boolean](AddEventPage)
+    beRemovable[Boolean](AddEventPage(index))
   }
 }

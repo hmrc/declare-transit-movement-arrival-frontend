@@ -24,6 +24,7 @@ import models._
 import GoodsLocation._
 import controllers.routes
 import controllers.events.{routes => eventRoutes}
+import pages.events.AddEventPage
 import pages.events.EventCountryPage
 import pages.events.EventPlacePage
 import pages.events.EventReportedPage
@@ -50,6 +51,7 @@ class Navigator @Inject()() {
     case EventReportedPage(index) => ua => Some(eventRoutes.IsTranshipmentController.onPageLoad(ua.id, index, NormalMode))
     case IsTranshipmentPage(index) => isTranshipmentRoute(index)
     case IncidentInformationPage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
+    case AddEventPage(index) => addEventRoute(index)
   }
 
   private val checkRouteMap: PartialFunction[Page, UserAnswers => Option[Call]] = {
@@ -83,12 +85,6 @@ class Navigator @Inject()() {
           }
       }
   }
-
-  private def eventsPages(page: Page): Boolean =
-    page match {
-      case EventCountryPage(_) | EventPlacePage(_) | EventReportedPage(_) | IsTranshipmentPage(_) | IncidentInformationPage(_) => true
-      case _                                                                                                                   => false
-    }
 
   private def goodsLocationPageRoutes(ua: UserAnswers): Option[Call] =
     ua.get(GoodsLocationPage) map {
@@ -127,4 +123,9 @@ class Navigator @Inject()() {
       case _                                 => None
     }
 
+  private def addEventRoute(index: Int)(ua: UserAnswers): Option[Call] =
+    ua.get(AddEventPage(index)) map {
+      case true  => eventRoutes.EventCountryController.onPageLoad(ua.id, index + 1, NormalMode)
+      case false => routes.CheckYourAnswersController.onPageLoad(ua.id)
+    }
 }

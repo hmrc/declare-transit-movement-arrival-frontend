@@ -21,6 +21,7 @@ import controllers.actions.DataRequiredAction
 import controllers.actions.DataRetrievalActionProvider
 import controllers.actions.IdentifierAction
 import models.MovementReferenceNumber
+import models.NormalMode
 import models.UserAnswers
 import play.api.i18n.I18nSupport
 import play.api.i18n.Messages
@@ -60,9 +61,9 @@ class CheckEventAnswersController @Inject()(
       renderer.render("events/check-event-answers.njk", json).map(Ok(_))
   }
 
-  def onSubmit(mrn: MovementReferenceNumber): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onSubmit(mrn: MovementReferenceNumber, index: Int): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
-      Future.successful(Redirect(controllers.routes.CheckYourAnswersController.onPageLoad(mrn)))
+      Future.successful(Redirect(controllers.events.routes.AddEventController.onPageLoad(mrn, index, NormalMode)))
   }
 
   private def completeSections(userAnswers: UserAnswers, index: Int)(implicit messages: Messages): Seq[Section] = {

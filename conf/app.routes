@@ -90,7 +90,7 @@ GET        /:mrn/changeIsTranshipment/:index                 controllers.events.
 POST       /:mrn/changeIsTranshipment/:index                 controllers.events.IsTranshipmentController.onSubmit(mrn: MovementReferenceNumber, index: Int, mode: Mode = CheckMode)
 
 GET        /:mrn/checkEventAnswers/:index                    controllers.events.CheckEventAnswersController.onPageLoad(mrn: MovementReferenceNumber, index: Int)
-POST       /:mrn/checkEventAnswers                           controllers.events.CheckEventAnswersController.onSubmit(mrn: MovementReferenceNumber)
+POST       /:mrn/checkEventAnswers/:index                    controllers.events.CheckEventAnswersController.onSubmit(mrn: MovementReferenceNumber, index: Int)
 
 GET        /:mrn/isTraderAddressPlaceOfNotification          controllers.IsTraderAddressPlaceOfNotificationController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
 POST       /:mrn/isTraderAddressPlaceOfNotification          controllers.IsTraderAddressPlaceOfNotificationController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
@@ -102,7 +102,7 @@ POST       /:mrn/placeOfNotification                         controllers.PlaceOf
 GET        /:mrn/changePlaceOfNotification                   controllers.PlaceOfNotificationController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
 POST       /:mrn/changePlaceOfNotification                   controllers.PlaceOfNotificationController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
 
-GET        /:mrn/addEvent                        controllers.events.AddEventController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
-POST       /:mrn/addEvent                        controllers.events.AddEventController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
-GET        /:mrn/changeAddEvent                  controllers.events.AddEventController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
-POST       /:mrn/changeAddEvent                  controllers.events.AddEventController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
+GET        /:mrn/addEvent/:index                             controllers.events.AddEventController.onPageLoad(mrn: MovementReferenceNumber, index: Int, mode: Mode = NormalMode)
+POST       /:mrn/addEvent/:index                             controllers.events.AddEventController.onSubmit(mrn: MovementReferenceNumber, index: Int, mode: Mode = NormalMode)
+GET        /:mrn/changeAddEvent/:index                       controllers.events.AddEventController.onPageLoad(mrn: MovementReferenceNumber, index: Int, mode: Mode = CheckMode)
+POST       /:mrn/changeAddEvent/:index                       controllers.events.AddEventController.onSubmit(mrn: MovementReferenceNumber, index: Int, mode: Mode = CheckMode)

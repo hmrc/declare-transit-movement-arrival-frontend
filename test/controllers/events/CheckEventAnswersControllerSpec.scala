@@ -18,6 +18,7 @@ package controllers.events
 
 import base.SpecBase
 import matchers.JsonMatchers
+import models.NormalMode
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.times
@@ -72,20 +73,20 @@ class CheckEventAnswersControllerSpec extends SpecBase with JsonMatchers {
       application.stop()
     }
 
-    "must redirect to check your answers page" in {
+    "must redirect to Add event page" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .build()
 
       when(mockRenderer.render(any(), any())(any())).thenReturn(Future.successful(Html("")))
 
-      val request = FakeRequest(POST, routes.CheckEventAnswersController.onSubmit(mrn).url)
+      val request = FakeRequest(POST, controllers.events.routes.CheckEventAnswersController.onSubmit(mrn, index).url)
 
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual controllers.routes.CheckYourAnswersController.onPageLoad(mrn).url
+      redirectLocation(result).value mustEqual controllers.events.routes.AddEventController.onPageLoad(mrn, index, NormalMode).url
 
       application.stop()
 

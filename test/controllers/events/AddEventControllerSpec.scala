@@ -50,7 +50,7 @@ class AddEventControllerSpec extends SpecBase with MockitoSugar with NunjucksSup
   val formProvider = new AddEventFormProvider()
   val form         = formProvider()
 
-  lazy val addEventRoute = routes.AddEventController.onPageLoad(mrn, NormalMode).url
+  lazy val addEventRoute = routes.AddEventController.onPageLoad(mrn, index, NormalMode).url
 
   "AddEvent Controller" - {
 
@@ -88,7 +88,7 @@ class AddEventControllerSpec extends SpecBase with MockitoSugar with NunjucksSup
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers    = UserAnswers(mrn).set(AddEventPage, true).success.value
+      val userAnswers    = UserAnswers(mrn).set(AddEventPage(index), true).success.value
       val application    = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request        = FakeRequest(GET, addEventRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])

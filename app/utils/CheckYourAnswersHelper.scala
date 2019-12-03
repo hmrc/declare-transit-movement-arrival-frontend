@@ -25,7 +25,6 @@ import models.MovementReferenceNumber
 import models.TraderAddress
 import models.UserAnswers
 import pages._
-import pages.events.AddEventPage
 import pages.events.EventCountryPage
 import pages.events.EventPlacePage
 import pages.events.EventReportedPage
@@ -36,21 +35,6 @@ import uk.gov.hmrc.viewmodels.SummaryList._
 import uk.gov.hmrc.viewmodels._
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messages) {
-
-  def addEvent: Option[Row] = userAnswers.get(AddEventPage) map {
-    answer =>
-      Row(
-        key = Key(msg"addEvent.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value = Value(yesOrNo(answer)),
-        actions = List(
-          Action(
-            content = msg"site.edit",
-            href = eventRoutes.AddEventController.onPageLoad(mrn, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"addEvent.checkYourAnswersLabel"))
-          )
-        )
-      )
-  }
 
   def placeOfNotification: Option[Row] = userAnswers.get(PlaceOfNotificationPage) map {
     answer =>

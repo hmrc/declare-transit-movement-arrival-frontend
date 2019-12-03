@@ -55,9 +55,9 @@ class AddEventController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onPageLoad(mrn: MovementReferenceNumber, index: Int, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
-      val preparedForm = request.userAnswers.get(AddEventPage) match {
+      val preparedForm = request.userAnswers.get(AddEventPage(index)) match {
         case None        => form
         case Some(value) => form.fill(value)
       }
@@ -69,10 +69,10 @@ class AddEventController @Inject()(
         "radios" -> Radios.yesNo(preparedForm("value"))
       )
 
-      renderer.render("addEvent.njk", json).map(Ok(_))
+      renderer.render("events/addEvent.njk", json).map(Ok(_))
   }
 
-  def onSubmit(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onSubmit(mrn: MovementReferenceNumber, index: Int, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
       form
         .bindFromRequest()
@@ -90,9 +90,8 @@ class AddEventController @Inject()(
           },
           value =>
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(AddEventPage, value))
-              _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(AddEventPage, mode, updatedAnswers))
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(AddEventPage(index), value))
+            } yield Redirect(navigator.nextPage(AddEventPage(index), mode, updatedAnswers))
         )
   }
 }

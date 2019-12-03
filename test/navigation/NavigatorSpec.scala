@@ -24,6 +24,7 @@ import pages._
 import models._
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import pages.events.AddEventPage
 import pages.events.EventCountryPage
 import pages.events.EventPlacePage
 import pages.events.EventReportedPage
@@ -282,6 +283,30 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
             navigator
               .nextPage(IncidentInformationPage(index), NormalMode, answers)
               .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(answers.id, index))
+        }
+      }
+
+      "must go from add event page" - {
+        "to event country page when user selects 'Yes' on add event page" in {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val updatedAnswers = answers.set(AddEventPage(index), true).success.value
+
+              navigator
+                .nextPage(AddEventPage(index), NormalMode, updatedAnswers)
+                .mustBe(eventRoutes.EventCountryController.onPageLoad(answers.id, index + 1, NormalMode))
+          }
+        }
+
+        "to check your answers page when user selects option 'No' on add event page" in {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val updatedAnswers = answers.set(AddEventPage(index), false).success.value
+
+              navigator
+                .nextPage(AddEventPage(index), NormalMode, updatedAnswers)
+                .mustBe(routes.CheckYourAnswersController.onPageLoad(answers.id))
+          }
         }
       }
 

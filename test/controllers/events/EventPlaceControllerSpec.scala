@@ -47,8 +47,8 @@ class EventPlaceControllerSpec extends SpecBase with MockitoSugar with NunjucksS
 
   def onwardRoute = Call("GET", "/foo")
 
-  val formProvider       = new EventPlaceFormProvider()
-  val form: Form[String] = formProvider()
+  val formProvider: EventPlaceFormProvider = new EventPlaceFormProvider()
+  val form: Form[String]                   = formProvider()
 
   lazy val eventPlaceRoute: String = controllers.events.routes.EventPlaceController.onPageLoad(mrn, index, NormalMode).url
 

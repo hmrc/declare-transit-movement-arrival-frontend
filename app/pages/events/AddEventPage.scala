@@ -19,9 +19,9 @@ package pages.events
 import pages.QuestionPage
 import play.api.libs.json.JsPath
 
-case object AddEventPage extends QuestionPage[Boolean] {
+final case class AddEventPage(index: Int) extends QuestionPage[Boolean] {
 
-  override def path: JsPath = JsPath \ toString
+  override def path: JsPath = JsPath \ RepeatingSectionConstants.events \ index \ toString
 
   override def toString: String = "addEvent"
 }
