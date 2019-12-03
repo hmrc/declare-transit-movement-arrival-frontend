@@ -67,7 +67,7 @@ class EventPlaceController @Inject()(
         "mode" -> mode
       )
 
-      renderer.render("eventPlace.njk", json).map(Ok(_))
+      renderer.render("events/eventPlace.njk", json).map(Ok(_))
   }
 
   def onSubmit(mrn: MovementReferenceNumber, index: Int, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
@@ -83,7 +83,7 @@ class EventPlaceController @Inject()(
               "mode" -> mode
             )
 
-            renderer.render("eventPlace.njk", json).map(BadRequest(_))
+            renderer.render("events/eventPlace.njk", json).map(BadRequest(_))
           },
           value =>
             for {

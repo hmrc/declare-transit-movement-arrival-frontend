@@ -47,9 +47,8 @@ class EventPlaceControllerSpec extends SpecBase with MockitoSugar with NunjucksS
 
   def onwardRoute = Call("GET", "/foo")
 
-  val formProvider = new EventPlaceFormProvider()
+  val formProvider       = new EventPlaceFormProvider()
   val form: Form[String] = formProvider()
-  val index        = 0
 
   lazy val eventPlaceRoute: String = controllers.events.routes.EventPlaceController.onPageLoad(mrn, index, NormalMode).url
 
@@ -77,7 +76,7 @@ class EventPlaceControllerSpec extends SpecBase with MockitoSugar with NunjucksS
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "eventPlace.njk"
+      templateCaptor.getValue mustEqual "events/eventPlace.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -108,7 +107,7 @@ class EventPlaceControllerSpec extends SpecBase with MockitoSugar with NunjucksS
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "eventPlace.njk"
+      templateCaptor.getValue mustEqual "events/eventPlace.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -163,7 +162,7 @@ class EventPlaceControllerSpec extends SpecBase with MockitoSugar with NunjucksS
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "eventPlace.njk"
+      templateCaptor.getValue mustEqual "events/eventPlace.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()

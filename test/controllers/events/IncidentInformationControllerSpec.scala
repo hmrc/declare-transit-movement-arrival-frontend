@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.events
 
 import base.SpecBase
 import forms.IncidentInformationFormProvider
@@ -29,10 +29,9 @@ import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.IncidentInformationPage
+import pages.events.IncidentInformationPage
 import play.api.inject.bind
 import play.api.libs.json.JsObject
-import play.api.libs.json.JsString
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -50,7 +49,7 @@ class IncidentInformationControllerSpec extends SpecBase with MockitoSugar with 
   val formProvider = new IncidentInformationFormProvider()
   val form         = formProvider()
 
-  lazy val incidentInformationRoute = routes.IncidentInformationController.onPageLoad(mrn, NormalMode).url
+  lazy val incidentInformationRoute = routes.IncidentInformationController.onPageLoad(mrn, index, NormalMode).url
 
   "IncidentInformation Controller" - {
 
@@ -76,7 +75,7 @@ class IncidentInformationControllerSpec extends SpecBase with MockitoSugar with 
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "incidentInformation.njk"
+      templateCaptor.getValue mustEqual "events/incidentInformation.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -87,7 +86,7 @@ class IncidentInformationControllerSpec extends SpecBase with MockitoSugar with 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers    = UserAnswers(mrn).set(IncidentInformationPage, "answer").success.value
+      val userAnswers    = UserAnswers(mrn).set(IncidentInformationPage(index), "answer").success.value
       val application    = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request        = FakeRequest(GET, incidentInformationRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -107,7 +106,7 @@ class IncidentInformationControllerSpec extends SpecBase with MockitoSugar with 
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "incidentInformation.njk"
+      templateCaptor.getValue mustEqual "events/incidentInformation.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -162,7 +161,7 @@ class IncidentInformationControllerSpec extends SpecBase with MockitoSugar with 
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "incidentInformation.njk"
+      templateCaptor.getValue mustEqual "events/incidentInformation.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -178,7 +177,7 @@ class IncidentInformationControllerSpec extends SpecBase with MockitoSugar with 
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
 
       application.stop()
     }
@@ -195,7 +194,7 @@ class IncidentInformationControllerSpec extends SpecBase with MockitoSugar with 
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
 
       application.stop()
     }

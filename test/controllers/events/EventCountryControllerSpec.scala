@@ -47,12 +47,11 @@ class EventCountryControllerSpec extends SpecBase with MockitoSugar with Nunjuck
 
   def onwardRoute = Call("GET", "/foo")
 
-  val formProvider = new EventCountryFormProvider()
+  val formProvider       = new EventCountryFormProvider()
   val form: Form[String] = formProvider()
 
   lazy val eventCountryRoute: String = routes.EventCountryController.onPageLoad(mrn, index, NormalMode).url
 
-  var index = 0
   "EventCountry Controller" - {
 
     "must return OK and the correct view for a GET" in {
@@ -77,7 +76,7 @@ class EventCountryControllerSpec extends SpecBase with MockitoSugar with Nunjuck
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "eventCountry.njk"
+      templateCaptor.getValue mustEqual "events/eventCountry.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -108,7 +107,7 @@ class EventCountryControllerSpec extends SpecBase with MockitoSugar with Nunjuck
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "eventCountry.njk"
+      templateCaptor.getValue mustEqual "events/eventCountry.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -163,7 +162,7 @@ class EventCountryControllerSpec extends SpecBase with MockitoSugar with Nunjuck
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "eventCountry.njk"
+      templateCaptor.getValue mustEqual "events/eventCountry.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()

@@ -27,13 +27,15 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.events.EventCountryPage
 import pages.events.EventPlacePage
 import pages.events.EventReportedPage
+import pages.events.IncidentInformationPage
+import pages.events.IsTranshipmentPage
 
 class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
   val navigator = new Navigator
-  val index     = 0
 
-  private val cyaEventPages = Seq(EventCountryPage(index), EventPlacePage(index), EventReportedPage(index), IsTranshipmentPage, IncidentInformationPage)
+  private val cyaEventPages =
+    Seq(EventCountryPage(index), EventPlacePage(index), EventReportedPage(index), IsTranshipmentPage(index), IncidentInformationPage(index))
 
   "Navigator" - {
 
@@ -230,7 +232,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
             navigator
               .nextPage(EventReportedPage(index), NormalMode, answers)
-              .mustBe(routes.IsTranshipmentController.onPageLoad(answers.id, NormalMode))
+              .mustBe(eventRoutes.IsTranshipmentController.onPageLoad(answers.id, index, NormalMode))
         }
       }
 
@@ -240,11 +242,11 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
           forAll(arbitrary[UserAnswers]) {
             answers =>
-              val updatedAnswers = answers.set(IsTranshipmentPage, false).success.value
+              val updatedAnswers = answers.set(IsTranshipmentPage(index), false).success.value
 
               navigator
-                .nextPage(IsTranshipmentPage, NormalMode, updatedAnswers)
-                .mustBe(routes.IncidentInformationController.onPageLoad(updatedAnswers.id, NormalMode))
+                .nextPage(IsTranshipmentPage(index), NormalMode, updatedAnswers)
+                .mustBe(eventRoutes.IncidentInformationController.onPageLoad(updatedAnswers.id, index, NormalMode))
           }
         }
 
@@ -252,11 +254,11 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
           forAll(arbitrary[UserAnswers]) {
             answers =>
-              val updatedAnswers = answers.set(IsTranshipmentPage, true).success.value
+              val updatedAnswers = answers.set(IsTranshipmentPage(index), true).success.value
 
               navigator
-                .nextPage(IsTranshipmentPage, NormalMode, updatedAnswers)
-                .mustBe(routes.CheckEventAnswersController.onPageLoad(updatedAnswers.id))
+                .nextPage(IsTranshipmentPage(index), NormalMode, updatedAnswers)
+                .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(updatedAnswers.id))
           }
         }
 
@@ -264,10 +266,10 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
           forAll(arbitrary[UserAnswers]) {
             answers =>
-              val updatedAnswers = answers.remove(IsTranshipmentPage).success.value
+              val updatedAnswers = answers.remove(IsTranshipmentPage(index)).success.value
 
               navigator
-                .nextPage(IsTranshipmentPage, NormalMode, updatedAnswers)
+                .nextPage(IsTranshipmentPage(index), NormalMode, updatedAnswers)
                 .mustBe(routes.SessionExpiredController.onPageLoad())
           }
         }
@@ -278,8 +280,8 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         forAll(arbitrary[UserAnswers]) {
           answers =>
             navigator
-              .nextPage(IncidentInformationPage, NormalMode, answers)
-              .mustBe(routes.CheckEventAnswersController.onPageLoad(answers.id))
+              .nextPage(IncidentInformationPage(index), NormalMode, answers)
+              .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(answers.id))
         }
       }
 
@@ -368,7 +370,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
               answers =>
                 navigator
                   .nextPage(page, CheckMode, answers)
-                  .mustBe(routes.CheckEventAnswersController.onPageLoad(answers.id))
+                  .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(answers.id))
 
             }
           }

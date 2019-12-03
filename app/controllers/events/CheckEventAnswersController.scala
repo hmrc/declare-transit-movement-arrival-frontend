@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.events
 
 import com.google.inject.Inject
 import controllers.actions.DataRequiredAction
@@ -57,12 +57,12 @@ class CheckEventAnswersController @Inject()(
         "sections" -> Json.toJson(completeSections(request.userAnswers)),
         "mrn"      -> mrn
       )
-      renderer.render("check-event-answers.njk", json).map(Ok(_))
+      renderer.render("events/check-event-answers.njk", json).map(Ok(_))
   }
 
   def onSubmit(mrn: MovementReferenceNumber): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
-      Future.successful(Redirect(routes.CheckYourAnswersController.onPageLoad(mrn)))
+      Future.successful(Redirect(controllers.routes.CheckYourAnswersController.onPageLoad(mrn)))
   }
 
   private def completeSections(userAnswers: UserAnswers)(implicit messages: Messages): Seq[Section] = {

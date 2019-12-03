@@ -69,7 +69,7 @@ class EventReportedController @Inject()(
         "radios" -> Radios.yesNo(preparedForm("value"))
       )
 
-      renderer.render("eventReported.njk", json).map(Ok(_))
+      renderer.render("events/eventReported.njk", json).map(Ok(_))
   }
 
   def onSubmit(mrn: MovementReferenceNumber, index: Int, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
@@ -86,7 +86,7 @@ class EventReportedController @Inject()(
               "radios" -> Radios.yesNo(formWithErrors("value"))
             )
 
-            renderer.render("eventReported.njk", json).map(BadRequest(_))
+            renderer.render("events/eventReported.njk", json).map(BadRequest(_))
           },
           value =>
             for {

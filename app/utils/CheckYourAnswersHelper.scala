@@ -25,6 +25,8 @@ import models.TraderAddress
 import models.UserAnswers
 import pages._
 import pages.events.EventReportedPage
+import pages.events.IncidentInformationPage
+import pages.events.IsTranshipmentPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels.SummaryList._
 import uk.gov.hmrc.viewmodels._
@@ -63,7 +65,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messag
       )
   }
 
-  def isTranshipment: Option[Row] = userAnswers.get(IsTranshipmentPage) map {
+  def isTranshipment: Option[Row] = userAnswers.get(IsTranshipmentPage(0)) map { //TODO fix this
     answer =>
       Row(
         key = Key(msg"isTranshipment.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
@@ -71,14 +73,14 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messag
         actions = List(
           Action(
             content = msg"site.edit",
-            href = routes.IsTranshipmentController.onPageLoad(mrn, CheckMode).url,
+            href = controllers.events.routes.IsTranshipmentController.onPageLoad(mrn, 0, CheckMode).url, //TODO and this
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"isTranshipment.checkYourAnswersLabel"))
           )
         )
       )
   }
 
-  def incidentInformation: Option[Row] = userAnswers.get(IncidentInformationPage) map {
+  def incidentInformation: Option[Row] = userAnswers.get(IncidentInformationPage(0)) map { //TODO here
     answer =>
       Row(
         key = Key(msg"incidentInformation.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
@@ -86,7 +88,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messag
         actions = List(
           Action(
             content = msg"site.edit",
-            href = routes.IncidentInformationController.onPageLoad(mrn, CheckMode).url,
+            href = controllers.events.routes.IncidentInformationController.onPageLoad(mrn, 0, CheckMode).url, //TODO here
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"incidentInformation.checkYourAnswersLabel"))
           )
         )

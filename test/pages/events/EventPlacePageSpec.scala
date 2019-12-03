@@ -14,23 +14,19 @@
  * limitations under the License.
  */
 
-package pages
+package pages.events
 
-import models.UserAnswers
-import play.api.libs.json.JsPath
+import pages.behaviours.PageBehaviours
 
-import scala.util.Try
+class EventPlacePageSpec extends PageBehaviours {
 
-case object IsTranshipmentPage extends QuestionPage[Boolean] {
+  var index = 0
+  "EventPlacePage" - {
 
-  override def path: JsPath = JsPath \ toString
+    beRetrievable[String](EventPlacePage(index))
 
-  override def toString: String = "isTranshipment"
+    beSettable[String](EventPlacePage(index))
 
-  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
-    value match {
-      case Some(true) => userAnswers.remove(IncidentInformationPage)
-      case _          => super.cleanup(value, userAnswers)
-    }
-
+    beRemovable[String](EventPlacePage(index))
+  }
 }

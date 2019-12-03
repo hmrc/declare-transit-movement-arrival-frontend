@@ -23,6 +23,8 @@ import pages._
 import pages.events.EventCountryPage
 import pages.events.EventPlacePage
 import pages.events.EventReportedPage
+import pages.events.IncidentInformationPage
+import pages.events.IsTranshipmentPage
 import play.api.libs.json.JsValue
 import play.api.libs.json.Json
 

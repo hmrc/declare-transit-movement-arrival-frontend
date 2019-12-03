@@ -14,18 +14,19 @@
  * limitations under the License.
  */
 
-package pages
+package pages.events
 
 import pages.behaviours.PageBehaviours
 
-class IncidentInformationPageSpec extends PageBehaviours {
+class EventCountryPageSpec extends PageBehaviours {
 
-  "IncidentInformationPage" - {
+  var index = 0
+  "EventCountryPage" - {
 
-    beRetrievable[String](IncidentInformationPage)
+    beRetrievable[String](EventCountryPage(index))
 
-    beSettable[String](IncidentInformationPage)
+    beSettable[String](EventCountryPage(index))
 
-    beRemovable[String](IncidentInformationPage)
+    beRemovable[String](EventCountryPage(index))
   }
 }

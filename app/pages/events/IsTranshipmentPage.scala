@@ -14,13 +14,24 @@
  * limitations under the License.
  */
 
-package pages
+package pages.events
 
+import models.UserAnswers
+import pages.QuestionPage
 import play.api.libs.json.JsPath
 
-case object IncidentInformationPage extends QuestionPage[String] {
+import scala.util.Try
 
-  override def path: JsPath = JsPath \ toString
+final case class IsTranshipmentPage(index: Int) extends QuestionPage[Boolean] {
 
-  override def toString: String = "incidentInformation"
+  override def path: JsPath = JsPath \ RepeatingSectionConstants.events \ index \ toString
+
+  override def toString: String = "isTranshipment"
+
+  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
+    value match {
+      case Some(true) => userAnswers.remove(IncidentInformationPage(index)) //TODO this logic needs to be confirmed
+      case _          => super.cleanup(value, userAnswers)
+    }
+
 }

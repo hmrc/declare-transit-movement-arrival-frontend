@@ -67,7 +67,7 @@ class EventCountryController @Inject()(
         "mode" -> mode
       )
 
-      renderer.render("eventCountry.njk", json).map(Ok(_))
+      renderer.render("events/eventCountry.njk", json).map(Ok(_))
   }
 
   def onSubmit(mrn: MovementReferenceNumber, index: Int, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
@@ -83,7 +83,7 @@ class EventCountryController @Inject()(
               "mode" -> mode
             )
 
-            renderer.render("eventCountry.njk", json).map(BadRequest(_))
+            renderer.render("events/eventCountry.njk", json).map(BadRequest(_))
           },
           value =>
             for {

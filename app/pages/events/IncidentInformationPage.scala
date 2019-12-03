@@ -14,17 +14,14 @@
  * limitations under the License.
  */
 
-package forms
+package pages.events
 
-import javax.inject.Inject
+import pages.QuestionPage
+import play.api.libs.json.JsPath
 
-import forms.mappings.Mappings
-import play.api.data.Form
+final case class IncidentInformationPage(index: Int) extends QuestionPage[String] {
 
-class IsTranshipmentFormProvider @Inject() extends Mappings {
+  override def path: JsPath = JsPath \ RepeatingSectionConstants.events \ index \ toString
 
-  def apply(): Form[Boolean] =
-    Form(
-      "value" -> boolean("isTranshipment.error.required")
-    )
+  override def toString: String = "incidentInformation"
 }

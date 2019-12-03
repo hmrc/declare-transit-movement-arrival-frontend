@@ -33,7 +33,7 @@
           {% endif %}
         {% endfor %}
 
-        <form action="{{ routes.controllers.CheckEventAnswersController.onSubmit.url }}" method="post">
+        <form action="{{ routes.controllers.events.CheckEventAnswersController.onSubmit.url }}" method="post">
             {{ csrf() | safe }}
 
             {{ govukButton({

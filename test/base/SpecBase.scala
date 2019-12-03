@@ -58,6 +58,8 @@ trait SpecBase
 
   val emptyUserAnswers = UserAnswers(mrn, Json.obj())
 
+  val index = 0
+
   val traderAddress = TraderAddress("", "", "NE99 1XN")
 
   def injector: Injector = app.injector

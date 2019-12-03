@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.events
 
 import base.SpecBase
-import forms.IsTranshipmentFormProvider
+import forms.events.IsTranshipmentFormProvider
 import matchers.JsonMatchers
 import models.NormalMode
 import models.UserAnswers
@@ -29,7 +29,7 @@ import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.IsTranshipmentPage
+import pages.events.IsTranshipmentPage
 import play.api.inject.bind
 import play.api.libs.json.JsObject
 import play.api.libs.json.Json
@@ -50,7 +50,7 @@ class IsTranshipmentControllerSpec extends SpecBase with MockitoSugar with Nunju
   val formProvider = new IsTranshipmentFormProvider()
   val form         = formProvider()
 
-  lazy val isTranshipmentRoute = routes.IsTranshipmentController.onPageLoad(mrn, NormalMode).url
+  lazy val isTranshipmentRoute = routes.IsTranshipmentController.onPageLoad(mrn, index, NormalMode).url
 
   "IsTranshipment Controller" - {
 
@@ -77,9 +77,8 @@ class IsTranshipmentControllerSpec extends SpecBase with MockitoSugar with Nunju
         "radios" -> Radios.yesNo(form("value"))
       )
 
-      templateCaptor.getValue mustEqual "isTranshipment.njk"
+      templateCaptor.getValue mustEqual "events/isTranshipment.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
       application.stop()
     }
 
@@ -88,7 +87,7 @@ class IsTranshipmentControllerSpec extends SpecBase with MockitoSugar with Nunju
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers    = UserAnswers(mrn).set(IsTranshipmentPage, true).success.value
+      val userAnswers    = UserAnswers(mrn).set(IsTranshipmentPage(index), true).success.value
       val application    = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request        = FakeRequest(GET, isTranshipmentRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -109,7 +108,7 @@ class IsTranshipmentControllerSpec extends SpecBase with MockitoSugar with Nunju
         "radios" -> Radios.yesNo(filledForm("value"))
       )
 
-      templateCaptor.getValue mustEqual "isTranshipment.njk"
+      templateCaptor.getValue mustEqual "events/isTranshipment.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -166,7 +165,7 @@ class IsTranshipmentControllerSpec extends SpecBase with MockitoSugar with Nunju
         "radios" -> Radios.yesNo(boundForm("value"))
       )
 
-      templateCaptor.getValue mustEqual "isTranshipment.njk"
+      templateCaptor.getValue mustEqual "events/isTranshipment.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -182,7 +181,7 @@ class IsTranshipmentControllerSpec extends SpecBase with MockitoSugar with Nunju
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
 
       application.stop()
     }
@@ -199,7 +198,7 @@ class IsTranshipmentControllerSpec extends SpecBase with MockitoSugar with Nunju
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
 
       application.stop()
     }

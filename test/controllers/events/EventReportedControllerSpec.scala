@@ -47,9 +47,8 @@ import scala.concurrent.Future
 class EventReportedControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
   def onwardRoute = Call("GET", "/foo")
-  val index       = 0
 
-  val formProvider = new EventReportedFormProvider()
+  val formProvider        = new EventReportedFormProvider()
   val form: Form[Boolean] = formProvider()
 
   lazy val eventReportedRoute: String = routes.EventReportedController.onPageLoad(mrn, index, NormalMode).url
@@ -79,7 +78,7 @@ class EventReportedControllerSpec extends SpecBase with MockitoSugar with Nunjuc
         "radios" -> Radios.yesNo(form("value"))
       )
 
-      templateCaptor.getValue mustEqual "eventReported.njk"
+      templateCaptor.getValue mustEqual "events/eventReported.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -111,7 +110,7 @@ class EventReportedControllerSpec extends SpecBase with MockitoSugar with Nunjuc
         "radios" -> Radios.yesNo(filledForm("value"))
       )
 
-      templateCaptor.getValue mustEqual "eventReported.njk"
+      templateCaptor.getValue mustEqual "events/eventReported.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -168,7 +167,7 @@ class EventReportedControllerSpec extends SpecBase with MockitoSugar with Nunjuc
         "radios" -> Radios.yesNo(boundForm("value"))
       )
 
-      templateCaptor.getValue mustEqual "eventReported.njk"
+      templateCaptor.getValue mustEqual "events/eventReported.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()

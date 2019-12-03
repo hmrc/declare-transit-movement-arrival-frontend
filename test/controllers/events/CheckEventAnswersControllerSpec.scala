@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.events
 
 import base.SpecBase
 import matchers.JsonMatchers
@@ -23,13 +23,10 @@ import org.mockito.Matchers.any
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.when
-import play.api.inject.bind
 import play.api.libs.json.JsObject
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import services.ArrivalNotificationService
-import uk.gov.hmrc.http.HttpResponse
 
 import scala.concurrent.Future
 
@@ -55,7 +52,7 @@ class CheckEventAnswersControllerSpec extends SpecBase with JsonMatchers {
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      templateCaptor.getValue mustEqual "check-event-answers.njk"
+      templateCaptor.getValue mustEqual "events/check-event-answers.njk"
 
       application.stop()
     }
@@ -70,7 +67,7 @@ class CheckEventAnswersControllerSpec extends SpecBase with JsonMatchers {
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
 
       application.stop()
     }
@@ -88,7 +85,7 @@ class CheckEventAnswersControllerSpec extends SpecBase with JsonMatchers {
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual routes.CheckYourAnswersController.onPageLoad(mrn).url
+      redirectLocation(result).value mustEqual controllers.routes.CheckYourAnswersController.onPageLoad(mrn).url
 
       application.stop()
 

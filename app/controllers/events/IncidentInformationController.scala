@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.events
 
 import controllers.actions._
 import forms.IncidentInformationFormProvider
@@ -22,7 +22,7 @@ import javax.inject.Inject
 import models.Mode
 import models.MovementReferenceNumber
 import navigation.Navigator
-import pages.IncidentInformationPage
+import pages.events.IncidentInformationPage
 import play.api.i18n.I18nSupport
 import play.api.i18n.MessagesApi
 import play.api.libs.json.Json
@@ -54,9 +54,9 @@ class IncidentInformationController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onPageLoad(mrn: MovementReferenceNumber, index: Int, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
-      val preparedForm = request.userAnswers.get(IncidentInformationPage) match {
+      val preparedForm = request.userAnswers.get(IncidentInformationPage(index)) match {
         case None        => form
         case Some(value) => form.fill(value)
       }
@@ -67,10 +67,10 @@ class IncidentInformationController @Inject()(
         "mode" -> mode
       )
 
-      renderer.render("incidentInformation.njk", json).map(Ok(_))
+      renderer.render("events/incidentInformation.njk", json).map(Ok(_))
   }
 
-  def onSubmit(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onSubmit(mrn: MovementReferenceNumber, index: Int, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
       form
         .bindFromRequest()
@@ -83,13 +83,13 @@ class IncidentInformationController @Inject()(
               "mode" -> mode
             )
 
-            renderer.render("incidentInformation.njk", json).map(BadRequest(_))
+            renderer.render("events/incidentInformation.njk", json).map(BadRequest(_))
           },
           value =>
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(IncidentInformationPage, value))
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(IncidentInformationPage(index), value))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(IncidentInformationPage, mode, updatedAnswers))
+            } yield Redirect(navigator.nextPage(IncidentInformationPage(index), mode, updatedAnswers))
         )
   }
 }

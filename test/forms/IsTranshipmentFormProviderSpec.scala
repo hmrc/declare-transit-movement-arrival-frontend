@@ -17,6 +17,7 @@
 package forms
 
 import forms.behaviours.BooleanFieldBehaviours
+import forms.events.IsTranshipmentFormProvider
 import play.api.data.FormError
 
 class IsTranshipmentFormProviderSpec extends BooleanFieldBehaviours {

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package pages
+package pages.events
 
 import models.UserAnswers
 import org.scalacheck.Arbitrary.arbitrary
@@ -23,20 +23,21 @@ import pages.behaviours.PageBehaviours
 class IsTranshipmentPageSpec extends PageBehaviours {
 
   "IsTranshipmentPage" - {
+    val index = 0
 
-    beRetrievable[Boolean](IsTranshipmentPage)
+    beRetrievable[Boolean](IsTranshipmentPage(index))
 
-    beSettable[Boolean](IsTranshipmentPage)
+    beSettable[Boolean](IsTranshipmentPage(index))
 
-    beRemovable[Boolean](IsTranshipmentPage)
+    beRemovable[Boolean](IsTranshipmentPage(index))
 
     "must remove incident pages data when user selects option 'Yes' on transhipment page" in {
 
       forAll(arbitrary[UserAnswers]) {
         userAnswers =>
-          val result = userAnswers.set(IsTranshipmentPage, true).success.value
+          val result = userAnswers.set(IsTranshipmentPage(index), true).success.value
 
-          result.get(IncidentInformationPage) must not be defined
+          result.get(IncidentInformationPage(index)) must not be defined
       }
     }
   }
