@@ -51,10 +51,10 @@ class CheckEventAnswersController @Inject()(
     with I18nSupport
     with NunjucksSupport {
 
-  def onPageLoad(mrn: MovementReferenceNumber): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onPageLoad(mrn: MovementReferenceNumber, index: Int): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
       val json = Json.obj(
-        "sections" -> Json.toJson(completeSections(request.userAnswers)),
+        "sections" -> Json.toJson(completeSections(request.userAnswers, index)),
         "mrn"      -> mrn
       )
       renderer.render("events/check-event-answers.njk", json).map(Ok(_))
@@ -65,17 +65,17 @@ class CheckEventAnswersController @Inject()(
       Future.successful(Redirect(controllers.routes.CheckYourAnswersController.onPageLoad(mrn)))
   }
 
-  private def completeSections(userAnswers: UserAnswers)(implicit messages: Messages): Seq[Section] = {
+  private def completeSections(userAnswers: UserAnswers, index: Int)(implicit messages: Messages): Seq[Section] = {
     val helper = new CheckYourAnswersHelper(userAnswers)
-    Seq(Section(None, eventsSection(helper)))
+    Seq(Section(None, eventsSection(helper, index)))
   }
 
-  private def eventsSection(helper: CheckYourAnswersHelper): Seq[Row] =
+  private def eventsSection(helper: CheckYourAnswersHelper, index: Int): Seq[Row] =
     Seq(
-      helper.eventCountry,
-      helper.eventPlace,
-      helper.eventReported,
-      helper.isTranshipment,
-      helper.incidentInformation
+      helper.eventCountry(index),
+      helper.eventPlace(index),
+      helper.eventReported(index),
+      helper.isTranshipment(index),
+      helper.incidentInformation(index)
     ).flatten
 }

@@ -49,12 +49,16 @@ class Navigator @Inject()() {
     case EventPlacePage(index) => ua => Some(eventRoutes.EventReportedController.onPageLoad(ua.id, index, NormalMode))
     case EventReportedPage(index) => ua => Some(eventRoutes.IsTranshipmentController.onPageLoad(ua.id, index, NormalMode))
     case IsTranshipmentPage(index) => isTranshipmentRoute(index)
-    case IncidentInformationPage(_) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id))
+    case IncidentInformationPage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
   }
 
   private val checkRouteMap: PartialFunction[Page, UserAnswers => Option[Call]] = {
     case GoodsLocationPage         => goodsLocationCheckRoute
-    case page if eventsPages(page) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id))
+    case EventCountryPage(index)   => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
+    case EventPlacePage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
+    case EventReportedPage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
+    case IsTranshipmentPage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
+    case IncidentInformationPage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
     case _                         => ua => Some(routes.CheckYourAnswersController.onPageLoad(ua.id)) // move to match on checkRouteMap
   }
   // format: on
@@ -100,7 +104,7 @@ class Navigator @Inject()() {
 
   private def isTranshipmentRoute(index: Int)(ua: UserAnswers): Option[Call] =
     ua.get(IsTranshipmentPage(index)) map {
-      case true  => eventRoutes.CheckEventAnswersController.onPageLoad(ua.id)
+      case true  => eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index)
       case false => eventRoutes.IncidentInformationController.onPageLoad(ua.id, index, NormalMode)
     }
 

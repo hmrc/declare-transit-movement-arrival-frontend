@@ -19,11 +19,14 @@ package utils
 import java.time.format.DateTimeFormatter
 
 import controllers.routes
+import controllers.events.{routes => eventRoutes}
 import models.CheckMode
 import models.MovementReferenceNumber
 import models.TraderAddress
 import models.UserAnswers
 import pages._
+import pages.events.EventCountryPage
+import pages.events.EventPlacePage
 import pages.events.EventReportedPage
 import pages.events.IncidentInformationPage
 import pages.events.IsTranshipmentPage
@@ -65,7 +68,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messag
       )
   }
 
-  def isTranshipment: Option[Row] = userAnswers.get(IsTranshipmentPage(0)) map { //TODO fix this
+  def isTranshipment(index: Int): Option[Row] = userAnswers.get(IsTranshipmentPage(index)) map {
     answer =>
       Row(
         key = Key(msg"isTranshipment.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
@@ -73,14 +76,14 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messag
         actions = List(
           Action(
             content = msg"site.edit",
-            href = controllers.events.routes.IsTranshipmentController.onPageLoad(mrn, 0, CheckMode).url, //TODO and this
+            href = controllers.events.routes.IsTranshipmentController.onPageLoad(mrn, index, CheckMode).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"isTranshipment.checkYourAnswersLabel"))
           )
         )
       )
   }
 
-  def incidentInformation: Option[Row] = userAnswers.get(IncidentInformationPage(0)) map { //TODO here
+  def incidentInformation(index: Int): Option[Row] = userAnswers.get(IncidentInformationPage(index)) map {
     answer =>
       Row(
         key = Key(msg"incidentInformation.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
@@ -88,16 +91,14 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messag
         actions = List(
           Action(
             content = msg"site.edit",
-            href = controllers.events.routes.IncidentInformationController.onPageLoad(mrn, 0, CheckMode).url, //TODO here
+            href = controllers.events.routes.IncidentInformationController.onPageLoad(mrn, index, CheckMode).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"incidentInformation.checkYourAnswersLabel"))
           )
         )
       )
   }
 
-  //TODO define event pages
-
-  def eventReported: Option[Row] = None /*userAnswers.get(EventReportedPage) map {
+  def eventReported(index: Int): Option[Row] = userAnswers.get(EventReportedPage(index)) map {
     answer =>
       Row(
         key = Key(msg"eventReported.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
@@ -105,14 +106,14 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messag
         actions = List(
           Action(
             content = msg"site.edit",
-            href = routes.EventReportedController.onPageLoad(mrn, CheckMode).url,
+            href = eventRoutes.EventReportedController.onPageLoad(mrn, index, CheckMode).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"eventReported.checkYourAnswersLabel"))
           )
         )
       )
-  }*/
+  }
 
-  def eventPlace: Option[Row] = None /*userAnswers.get(EventPlacePage) map {
+  def eventPlace(index: Int): Option[Row] = userAnswers.get(EventPlacePage(index)) map {
     answer =>
       Row(
         key = Key(msg"eventPlace.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
@@ -120,14 +121,14 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messag
         actions = List(
           Action(
             content = msg"site.edit",
-            href = routes.EventPlaceController.onPageLoad(mrn, CheckMode).url,
+            href = eventRoutes.EventPlaceController.onPageLoad(mrn, index, CheckMode).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"eventPlace.checkYourAnswersLabel"))
           )
         )
       )
-  }*/
+  }
 
-  def eventCountry: Option[Row] = None /*userAnswers.get(EventCountryPage) map {
+  def eventCountry(index: Int): Option[Row] = userAnswers.get(EventCountryPage(index)) map {
     answer =>
       Row(
         key = Key(msg"eventCountry.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
@@ -135,12 +136,12 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messag
         actions = List(
           Action(
             content = msg"site.edit",
-            href = routes.EventCountryController.onPageLoad(mrn, CheckMode).url,
+            href = eventRoutes.EventCountryController.onPageLoad(mrn, index, CheckMode).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"eventCountry.checkYourAnswersLabel"))
           )
         )
       )
-  }*/
+  }
 
   def incidentOnRoute: Option[Row] = userAnswers.get(IncidentOnRoutePage) map {
     answer =>

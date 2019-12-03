@@ -258,7 +258,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
               navigator
                 .nextPage(IsTranshipmentPage(index), NormalMode, updatedAnswers)
-                .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(updatedAnswers.id))
+                .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(updatedAnswers.id, index))
           }
         }
 
@@ -281,7 +281,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
             navigator
               .nextPage(IncidentInformationPage(index), NormalMode, answers)
-              .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(answers.id))
+              .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(answers.id, index))
         }
       }
 
@@ -370,7 +370,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
               answers =>
                 navigator
                   .nextPage(page, CheckMode, answers)
-                  .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(answers.id))
+                  .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(answers.id, index))
 
             }
           }

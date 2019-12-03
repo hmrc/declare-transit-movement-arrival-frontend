@@ -41,7 +41,7 @@ class CheckEventAnswersControllerSpec extends SpecBase with JsonMatchers {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
-      val request = FakeRequest(GET, routes.CheckEventAnswersController.onPageLoad(mrn).url)
+      val request = FakeRequest(GET, routes.CheckEventAnswersController.onPageLoad(mrn, index).url)
 
       val result = route(application, request).value
 
@@ -61,7 +61,7 @@ class CheckEventAnswersControllerSpec extends SpecBase with JsonMatchers {
 
       val application = applicationBuilder(userAnswers = None).build()
 
-      val request = FakeRequest(GET, routes.CheckEventAnswersController.onPageLoad(mrn).url)
+      val request = FakeRequest(GET, routes.CheckEventAnswersController.onPageLoad(mrn, index).url)
 
       val result = route(application, request).value
 
