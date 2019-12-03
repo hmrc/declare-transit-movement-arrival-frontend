@@ -131,7 +131,7 @@ trait DomainModelGenerators extends Generators {
         alreadyInNcts <- arbitrary[Boolean]
         eventDetails  <- arbitrary[EventDetails]
         numberOfSeals <- Gen.choose[Int](0, 99)
-        seals         <- Gen.listOfN(numberOfSeals, stringsWithMaxLength(20))
+        seals         <- Gen.option(Gen.listOfN(numberOfSeals, stringsWithMaxLength(20)))
       } yield EnRouteEvent(place, countryCode, alreadyInNcts, eventDetails, seals)
     }
 

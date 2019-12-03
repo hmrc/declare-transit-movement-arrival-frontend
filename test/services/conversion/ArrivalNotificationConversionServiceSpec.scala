@@ -72,7 +72,7 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
       forAll(normalNotificationWithTraderWithEoriWithSubplace, enRouteEventIncident) {
         case ((arbArrivalNotification, trader), (enRouteEvent, incident)) =>
           val routeEvent: EnRouteEvent = enRouteEvent
-            .copy(seals = Seq.empty)
+            .copy(seals = None)
             .copy(eventDetails = incident.copy(endorsement = Endorsement(None, None, None, None)))
 
           val arrivalNotification: NormalNotification = arbArrivalNotification.copy(enRouteEvents = Seq(routeEvent))

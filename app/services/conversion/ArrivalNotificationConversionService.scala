@@ -77,7 +77,7 @@ class ArrivalNotificationConversionService {
           countryCode = country,
           alreadyInNcts = isReported,
           eventDetails = eventDetails(isTranshipment, userAnswers.get(IncidentInformationPage)),
-          Seq.empty //TODO Seals
+          None //TODO Seals
         ))
     }).getOrElse(Seq.empty)
 
