@@ -67,15 +67,21 @@ class CheckEventAnswersController @Inject()(
 
   private def completeSections(userAnswers: UserAnswers, index: Int)(implicit messages: Messages): Seq[Section] = {
     val helper = new CheckYourAnswersHelper(userAnswers)
-    Seq(Section(None, eventsSection(helper, index)))
+    Seq(
+      Section(messages("checkEventAnswers.section.events"), eventsSection(helper, index)),
+      Section(messages("checkEventAnswers.section.vehicleOrContainer"), isTranshipmentSection(helper, index))
+    )
   }
 
-  private def eventsSection(helper: CheckYourAnswersHelper, index: Int): Seq[Row] =
-    Seq(
+  private def eventsSection(helper: CheckYourAnswersHelper, index: Int): Seq[Row] = Seq(
       helper.eventCountry(index),
       helper.eventPlace(index),
       helper.eventReported(index),
       helper.isTranshipment(index),
       helper.incidentInformation(index)
+    ).flatten
+
+  private def isTranshipmentSection(helper: CheckYourAnswersHelper, index: Int): Seq[Row] = Seq(
+      helper.isTranshipment(index)
     ).flatten
 }

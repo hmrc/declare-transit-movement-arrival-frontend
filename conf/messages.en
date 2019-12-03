@@ -251,6 +251,8 @@ sealsChanged.error.required = Select yes if any of the seals have changed
 
 checkEventAnswers.title = Check event answers
 checkEventAnswers.heading = Check event answers
+checkEventAnswers.section.events = Events
+checkEventAnswers.section.vehicleOrContainer = Vehicle or container
 
 isTraderAddressPlaceOfNotification.title = Is {0} the postcode of the place of notification?
 isTraderAddressPlaceOfNotification.heading = Is {0} the postcode of the place of notification?
