@@ -25,7 +25,7 @@ echo "$className;format="decap"$.error.$field1Name$.length = $field1Name$ must b
 echo "$className;format="decap"$.error.$field2Name$.length = $field2Name$ must be $field2MaxLength$ characters or less" >> ../conf/messages.en
 
 echo "Adding to UserAnswersEntryGenerators"
-awk '/trait UserAnswersEntryGenerators/ {\
+awk '/self: Generators =>/ {\
     print;\
     print "";\
     print "  implicit lazy val arbitrary$className$UserAnswersEntry: Arbitrary[($className$Page.type, JsValue)] =";\

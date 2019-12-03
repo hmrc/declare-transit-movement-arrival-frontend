@@ -21,7 +21,7 @@ echo "$className;format="decap"$.error.required = Enter $className;format="decap
 echo "$className;format="decap"$.error.length = $className$ must be $maxLength$ characters or less" >> ../conf/messages.en
 
 echo "Adding to UserAnswersEntryGenerators"
-awk '/trait UserAnswersEntryGenerators/ {\
+awk '/self: Generators =>/ {\
     print;\
     print "";\
     print "  implicit lazy val arbitrary$className$UserAnswersEntry: Arbitrary[($className$Page.type, JsValue)] =";\

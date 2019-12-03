@@ -23,7 +23,7 @@ echo "$className;format="decap"$.error.wholeNumber = Enter your $className;forma
 echo "$className;format="decap"$.error.outOfRange = $className$ must be between {0} and {1}" >> ../conf/messages.en
 
 echo "Adding to UserAnswersEntryGenerators"
-awk '/trait UserAnswersEntryGenerators/ {\
+awk '/self: Generators =>/ {\
     print;\
     print "";\
     print "  implicit lazy val arbitrary$className$UserAnswersEntry: Arbitrary[($className$Page.type, JsValue)] =";\
