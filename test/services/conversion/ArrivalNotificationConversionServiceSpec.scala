@@ -44,7 +44,7 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
     "must return 'Normal Arrival Notification' message when there are no EventDetails on route" in {
       forAll(normalNotificationWithTraderWithEoriWithSubplace) {
         case (arbArrivalNotification, trader) =>
-          val expectedArrivalNotification: NormalNotification = arbArrivalNotification.copy(enRouteEvents = Seq.empty)
+          val expectedArrivalNotification: NormalNotification = arbArrivalNotification.copy(enRouteEvents = None)
 
           val userAnswers: UserAnswers = createBasicUserAnswers(trader, expectedArrivalNotification)
 
@@ -56,7 +56,7 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
       forAll(normalNotificationWithTraderWithEoriWithSubplace) {
         case (arbArrivalNotification, trader) =>
           val expectedArrivalNotification: NormalNotification = arbArrivalNotification
-            .copy(enRouteEvents = Seq.empty)
+            .copy(enRouteEvents = None)
             .copy(notificationPlace = trader.postCode.get)
 
           val userAnswers: UserAnswers = createBasicUserAnswers(trader, expectedArrivalNotification)
@@ -74,10 +74,10 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
       forAll(normalNotificationWithTraderWithEoriWithSubplace, enRouteEventIncident) {
         case ((arbArrivalNotification, trader), (enRouteEvent, incident)) =>
           val routeEvent: EnRouteEvent = enRouteEvent
-            .copy(seals = Seq.empty)
+            .copy(seals = None)
             .copy(eventDetails = incident.copy(endorsement = Endorsement(None, None, None, None)))
 
-          val arrivalNotification: NormalNotification = arbArrivalNotification.copy(enRouteEvents = Seq(routeEvent))
+          val arrivalNotification: NormalNotification = arbArrivalNotification.copy(enRouteEvents = Some(Seq(routeEvent)))
 
           val userAnswers: UserAnswers = createBasicUserAnswers(trader, arrivalNotification, true)
             .set(IsTranshipmentPage, false)

@@ -64,23 +64,24 @@ class ArrivalNotificationConversionService {
       )
     }
 
-  //TODO define enRouteEvents
-  private def enRouteEvents(userAnswers: UserAnswers): Seq[EnRouteEvent] = Seq.empty
-  /*    (for {
+  private def enRouteEvents(userAnswers: UserAnswers): Option[Seq[EnRouteEvent]] = None
+/*    (for {
       place          <- userAnswers.get(EventPlacePage)
       country        <- userAnswers.get(EventCountryPage)
       isReported     <- userAnswers.get(EventReportedPage)
       isTranshipment <- userAnswers.get(IsTranshipmentPage)
     } yield {
-      Seq(
-        EnRouteEvent(
-          place = place,
-          countryCode = country,
-          alreadyInNcts = isReported,
-          eventDetails = eventDetails(isTranshipment, userAnswers.get(IncidentInformationPage)),
-          Seq.empty
-        ))
-    }).getOrElse(Seq.empty)*/
+      Some(
+        Seq(
+          EnRouteEvent(
+            place = place,
+            countryCode = country,
+            alreadyInNcts = isReported,
+            eventDetails = eventDetails(isTranshipment, userAnswers.get(IncidentInformationPage)),
+            None //TODO Seals
+          ))
+      )
+    }).flatten*/
 
   private def traderAddress(traderAddress: TraderAddress, traderEori: String, traderName: String): Trader =
     TraderWithEori(
