@@ -65,7 +65,7 @@ class ArrivalNotificationConversionService {
     }
 
   private def enRouteEvents(userAnswers: UserAnswers): Option[Seq[EnRouteEvent]] = None
-/*    (for {
+  /*    (for {
       place          <- userAnswers.get(EventPlacePage)
       country        <- userAnswers.get(EventCountryPage)
       isReported     <- userAnswers.get(EventReportedPage)
