@@ -25,6 +25,7 @@ import models.MovementReferenceNumber
 import models.TraderAddress
 import models.UserAnswers
 import pages._
+import pages.events.AddEventPage
 import pages.events.EventCountryPage
 import pages.events.EventPlacePage
 import pages.events.EventReportedPage
@@ -44,7 +45,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messag
         actions = List(
           Action(
             content = msg"site.edit",
-            href = routes.AddEventController.onPageLoad(mrn, CheckMode).url,
+            href = eventRoutes.AddEventController.onPageLoad(mrn, CheckMode).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"addEvent.checkYourAnswersLabel"))
           )
         )

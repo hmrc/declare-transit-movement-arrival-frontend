@@ -14,18 +14,16 @@
  * limitations under the License.
  */
 
-package pages
+package forms.events
 
-import pages.behaviours.PageBehaviours
+import forms.mappings.Mappings
+import javax.inject.Inject
+import play.api.data.Form
 
-class AddEventPageSpec extends PageBehaviours {
+class AddEventFormProvider @Inject() extends Mappings {
 
-  "AddEventPage" - {
-
-    beRetrievable[Boolean](AddEventPage)
-
-    beSettable[Boolean](AddEventPage)
-
-    beRemovable[Boolean](AddEventPage)
-  }
+  def apply(): Form[Boolean] =
+    Form(
+      "value" -> boolean("addEvent.error.required")
+    )
 }

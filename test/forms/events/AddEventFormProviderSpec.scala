@@ -14,17 +14,32 @@
  * limitations under the License.
  */
 
-package forms
+package forms.events
 
-import javax.inject.Inject
+import forms.behaviours.BooleanFieldBehaviours
+import play.api.data.FormError
 
-import forms.mappings.Mappings
-import play.api.data.Form
+class AddEventFormProviderSpec extends BooleanFieldBehaviours {
 
-class AddEventFormProvider @Inject() extends Mappings {
+  val requiredKey = "addEvent.error.required"
+  val invalidKey  = "error.boolean"
 
-  def apply(): Form[Boolean] =
-    Form(
-      "value" -> boolean("addEvent.error.required")
+  val form = new AddEventFormProvider()()
+
+  ".value" - {
+
+    val fieldName = "value"
+
+    behave like booleanField(
+      form,
+      fieldName,
+      invalidError = FormError(fieldName, invalidKey)
     )
+
+    behave like mandatoryField(
+      form,
+      fieldName,
+      requiredError = FormError(fieldName, requiredKey)
+    )
+  }
 }

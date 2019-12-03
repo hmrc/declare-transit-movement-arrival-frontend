@@ -20,6 +20,7 @@ import models._
 import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary.arbitrary
 import pages._
+import pages.events.AddEventPage
 import pages.events.EventCountryPage
 import pages.events.EventPlacePage
 import pages.events.EventReportedPage

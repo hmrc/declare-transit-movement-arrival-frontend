@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.events
 
 import controllers.actions._
-import forms.AddEventFormProvider
+import forms.events.AddEventFormProvider
 import javax.inject.Inject
 import models.Mode
 import models.MovementReferenceNumber
 import navigation.Navigator
-import pages.AddEventPage
+import pages.events.AddEventPage
 import play.api.i18n.I18nSupport
 import play.api.i18n.MessagesApi
 import play.api.libs.json.Json

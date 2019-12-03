@@ -22,6 +22,7 @@ import org.scalacheck.Arbitrary
 import org.scalacheck.Gen
 import org.scalatest.TryValues
 import pages._
+import pages.events.AddEventPage
 import pages.events.EventPlacePage
 import pages.events.EventReportedPage
 import pages.events.IncidentInformationPage

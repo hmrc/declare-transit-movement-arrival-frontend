@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.events
 
 import base.SpecBase
-import forms.AddEventFormProvider
+import forms.events.AddEventFormProvider
 import matchers.JsonMatchers
 import models.NormalMode
 import models.UserAnswers
@@ -29,7 +29,7 @@ import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.AddEventPage
+import pages.events.AddEventPage
 import play.api.inject.bind
 import play.api.libs.json.JsObject
 import play.api.libs.json.Json
@@ -182,7 +182,7 @@ class AddEventControllerSpec extends SpecBase with MockitoSugar with NunjucksSup
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
 
       application.stop()
     }
@@ -199,7 +199,7 @@ class AddEventControllerSpec extends SpecBase with MockitoSugar with NunjucksSup
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
 
       application.stop()
     }

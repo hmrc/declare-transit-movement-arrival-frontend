@@ -14,13 +14,18 @@
  * limitations under the License.
  */
 
-package pages
+package pages.events
 
-import play.api.libs.json.JsPath
+import pages.behaviours.PageBehaviours
 
-case object AddEventPage extends QuestionPage[Boolean] {
+class AddEventPageSpec extends PageBehaviours {
 
-  override def path: JsPath = JsPath \ toString
+  "AddEventPage" - {
 
-  override def toString: String = "addEvent"
+    beRetrievable[Boolean](AddEventPage)
+
+    beSettable[Boolean](AddEventPage)
+
+    beRemovable[Boolean](AddEventPage)
+  }
 }

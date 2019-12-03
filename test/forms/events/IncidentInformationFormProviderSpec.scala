@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package forms
+package forms.events
 
+import forms.IncidentInformationFormProvider
 import forms.behaviours.StringFieldBehaviours
-import forms.events.EventCountryFormProvider
 import play.api.data.FormError
 
-class EventCountryFormProviderSpec extends StringFieldBehaviours {
+class IncidentInformationFormProviderSpec extends StringFieldBehaviours {
 
-  val requiredKey = "eventCountry.error.required"
-  val lengthKey   = "eventCountry.error.length"
-  val maxLength   = 2
+  val requiredKey = "incidentInformation.error.required"
+  val lengthKey   = "incidentInformation.error.length"
+  val maxLength   = 350
 
-  val form = new EventCountryFormProvider()()
+  val form = new IncidentInformationFormProvider()()
 
   ".value" - {
 

@@ -14,27 +14,34 @@
  * limitations under the License.
  */
 
-package forms
+package forms.events
 
-import forms.behaviours.BooleanFieldBehaviours
-import forms.events.EventReportedFormProvider
+import forms.behaviours.StringFieldBehaviours
 import play.api.data.FormError
 
-class EventReportedFormProviderSpec extends BooleanFieldBehaviours {
+class EventPlaceFormProviderSpec extends StringFieldBehaviours {
 
-  val requiredKey = "eventReported.error.required"
-  val invalidKey  = "error.boolean"
+  val requiredKey = "eventPlace.error.required"
+  val lengthKey   = "eventPlace.error.length"
+  val maxLength   = 35
 
-  val form = new EventReportedFormProvider()()
+  val form = new EventPlaceFormProvider()()
 
   ".value" - {
 
     val fieldName = "value"
 
-    behave like booleanField(
+    behave like fieldThatBindsValidData(
       form,
       fieldName,
-      invalidError = FormError(fieldName, invalidKey)
+      stringsWithMaxLength(maxLength)
+    )
+
+    behave like fieldWithMaxLength(
+      form,
+      fieldName,
+      maxLength = maxLength,
+      lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
     )
 
     behave like mandatoryField(
