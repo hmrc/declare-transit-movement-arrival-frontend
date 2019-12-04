@@ -26,12 +26,7 @@ import uk.gov.hmrc.http.{SessionKeys, HeaderNames => HMRCHeaderNames}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class SessionIdFilter(
-  override val mat: Materializer,
-  uuid: => UUID,
-  sessionCookieBaker: SessionCookieBaker,
-  implicit val ec: ExecutionContext
-) extends Filter {
+class SessionIdFilter(override val mat: Materializer, uuid: => UUID, sessionCookieBaker: SessionCookieBaker, implicit val ec: ExecutionContext) extends Filter {
 
   @Inject
   def this(mat: Materializer, ec: ExecutionContext, sessionCookieBaker: SessionCookieBaker) {

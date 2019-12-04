@@ -44,14 +44,13 @@ object Trader {
   }
 }
 
-final case class TraderWithEori(
-  eori: String,
-  name: Option[String],
-  streetAndNumber: Option[String],
-  postCode: Option[String],
-  city: Option[String],
-  countryCode: Option[String]
-) extends Trader
+final case class TraderWithEori(eori: String,
+                                name: Option[String],
+                                streetAndNumber: Option[String],
+                                postCode: Option[String],
+                                city: Option[String],
+                                countryCode: Option[String])
+    extends Trader
 
 object TraderWithEori {
 
@@ -59,13 +58,7 @@ object TraderWithEori {
     Json.format[TraderWithEori]
 }
 
-final case class TraderWithoutEori(
-  name: String,
-  streetAndNumber: String,
-  postCode: String,
-  city: String,
-  countryCode: String
-) extends Trader
+final case class TraderWithoutEori(name: String, streetAndNumber: String, postCode: String, city: String, countryCode: String) extends Trader
 
 object TraderWithoutEori {
 

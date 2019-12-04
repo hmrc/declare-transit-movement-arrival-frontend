@@ -32,59 +32,59 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class TraderEoriController @Inject()(
-  override val messagesApi: MessagesApi,
-  sessionRepository: SessionRepository,
-  navigator: Navigator,
-  identify: IdentifierAction,
-  getData: DataRetrievalActionProvider,
-  requireData: DataRequiredAction,
-  formProvider: TraderEoriFormProvider,
-  val controllerComponents: MessagesControllerComponents,
-  renderer: Renderer
-)(implicit ec: ExecutionContext)
+class TraderEoriController @Inject()(override val messagesApi: MessagesApi,
+                                     sessionRepository: SessionRepository,
+                                     navigator: Navigator,
+                                     identify: IdentifierAction,
+                                     getData: DataRetrievalActionProvider,
+                                     requireData: DataRequiredAction,
+                                     formProvider: TraderEoriFormProvider,
+                                     val controllerComponents: MessagesControllerComponents,
+                                     renderer: Renderer)(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
     with NunjucksSupport {
 
   private val form = formProvider()
 
-  def onPageLoad(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
-    implicit request =>
-      val preparedForm = request.userAnswers.get(TraderEoriPage) match {
-        case None        => form
-        case Some(value) => form.fill(value)
-      }
+  def onPageLoad(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] =
+    (identify andThen getData(mrn) andThen requireData).async {
+      implicit request =>
+        val preparedForm = request.userAnswers.get(TraderEoriPage) match {
+          case None        => form
+          case Some(value) => form.fill(value)
+        }
 
-      val json = Json.obj(
-        "form" -> preparedForm,
-        "mrn"  -> mrn,
-        "mode" -> mode
-      )
-
-      renderer.render("traderEori.njk", json).map(Ok(_))
-  }
-
-  def onSubmit(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
-    implicit request =>
-      form
-        .bindFromRequest()
-        .fold(
-          formWithErrors => {
-
-            val json = Json.obj(
-              "form" -> formWithErrors,
-              "mrn"  -> mrn,
-              "mode" -> mode
-            )
-
-            renderer.render("traderEori.njk", json).map(BadRequest(_))
-          },
-          value =>
-            for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(TraderEoriPage, value))
-              _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(TraderEoriPage, mode, updatedAnswers))
+        val json = Json.obj(
+          "form" -> preparedForm,
+          "mrn"  -> mrn,
+          "mode" -> mode
         )
-  }
+
+        renderer.render("traderEori.njk", json).map(Ok(_))
+    }
+
+  def onSubmit(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] =
+    (identify andThen getData(mrn) andThen requireData).async {
+      implicit request =>
+        form
+          .bindFromRequest()
+          .fold(
+            formWithErrors => {
+
+              val json = Json.obj(
+                "form" -> formWithErrors,
+                "mrn"  -> mrn,
+                "mode" -> mode
+              )
+
+              renderer.render("traderEori.njk", json).map(BadRequest(_))
+            },
+            value =>
+              for {
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(TraderEoriPage, value))
+                _              <- sessionRepository.set(updatedAnswers)
+              } yield Redirect(navigator.nextPage(TraderEoriPage, mode, updatedAnswers))
+          )
+    }
 }

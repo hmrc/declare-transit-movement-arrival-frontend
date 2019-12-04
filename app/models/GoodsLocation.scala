@@ -24,7 +24,8 @@ sealed trait GoodsLocation
 
 object GoodsLocation extends Enumerable.Implicits {
 
-  case object BorderForceOffice            extends WithName("borderForceOffice") with GoodsLocation
+  case object BorderForceOffice extends WithName("borderForceOffice") with GoodsLocation
+
   case object AuthorisedConsigneesLocation extends WithName("authorisedConsigneesLocation") with GoodsLocation
 
   val values: Seq[GoodsLocation] = Seq(

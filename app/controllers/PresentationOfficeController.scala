@@ -33,35 +33,34 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class PresentationOfficeController @Inject()(
-  override val messagesApi: MessagesApi,
-  sessionRepository: SessionRepository,
-  navigator: Navigator,
-  identify: IdentifierAction,
-  getData: DataRetrievalActionProvider,
-  requireData: DataRequiredAction,
-  formProvider: PresentationOfficeFormProvider,
-  val controllerComponents: MessagesControllerComponents,
-  renderer: Renderer
-)(implicit ec: ExecutionContext)
+class PresentationOfficeController @Inject()(override val messagesApi: MessagesApi,
+                                             sessionRepository: SessionRepository,
+                                             navigator: Navigator,
+                                             identify: IdentifierAction,
+                                             getData: DataRetrievalActionProvider,
+                                             requireData: DataRequiredAction,
+                                             formProvider: PresentationOfficeFormProvider,
+                                             val controllerComponents: MessagesControllerComponents,
+                                             renderer: Renderer)(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
     with NunjucksSupport {
 
-  def onPageLoad(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
-    implicit request =>
-      request.userAnswers.get(CustomsSubPlacePage) match {
-        case Some(subsPlace) =>
-          val form = formProvider(subsPlace)
-          val preparedForm = request.userAnswers.get(PresentationOfficePage) match {
-            case None        => form
-            case Some(value) => form.fill(value)
-          }
-          renderView(mrn, mode, subsPlace, preparedForm, Results.Ok)
+  def onPageLoad(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] =
+    (identify andThen getData(mrn) andThen requireData).async {
+      implicit request =>
+        request.userAnswers.get(CustomsSubPlacePage) match {
+          case Some(subsPlace) =>
+            val form = formProvider(subsPlace)
+            val preparedForm = request.userAnswers.get(PresentationOfficePage) match {
+              case None        => form
+              case Some(value) => form.fill(value)
+            }
+            renderView(mrn, mode, subsPlace, preparedForm, Results.Ok)
 
-        case _ => Future.successful(Redirect(routes.SessionExpiredController.onPageLoad()))
-      }
-  }
+          case _ => Future.successful(Redirect(routes.SessionExpiredController.onPageLoad()))
+        }
+    }
 
   private def renderView(mrn: MovementReferenceNumber, mode: Mode, subsPlace: String, form: Form[String], status: Results.Status)(
     implicit request: Request[AnyContent]): Future[Result] = {
@@ -74,24 +73,25 @@ class PresentationOfficeController @Inject()(
     renderer.render("presentationOffice.njk", json).map(status(_))
   }
 
-  def onSubmit(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
-    implicit request =>
-      request.userAnswers.get(CustomsSubPlacePage) match {
-        case Some(subsPlace) =>
-          val form = formProvider(subsPlace)
-          form
-            .bindFromRequest()
-            .fold(
-              formWithErrors => {
-                renderView(mrn, mode, subsPlace, formWithErrors, Results.BadRequest)
-              },
-              value =>
-                for {
-                  updatedAnswers <- Future.fromTry(request.userAnswers.set(PresentationOfficePage, value))
-                  _              <- sessionRepository.set(updatedAnswers)
-                } yield Redirect(navigator.nextPage(PresentationOfficePage, mode, updatedAnswers))
-            )
-        case _ => Future.successful(Redirect(routes.SessionExpiredController.onPageLoad()))
-      }
-  }
+  def onSubmit(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] =
+    (identify andThen getData(mrn) andThen requireData).async {
+      implicit request =>
+        request.userAnswers.get(CustomsSubPlacePage) match {
+          case Some(subsPlace) =>
+            val form = formProvider(subsPlace)
+            form
+              .bindFromRequest()
+              .fold(
+                formWithErrors => {
+                  renderView(mrn, mode, subsPlace, formWithErrors, Results.BadRequest)
+                },
+                value =>
+                  for {
+                    updatedAnswers <- Future.fromTry(request.userAnswers.set(PresentationOfficePage, value))
+                    _              <- sessionRepository.set(updatedAnswers)
+                  } yield Redirect(navigator.nextPage(PresentationOfficePage, mode, updatedAnswers))
+              )
+          case _ => Future.successful(Redirect(routes.SessionExpiredController.onPageLoad()))
+        }
+    }
 }

@@ -27,7 +27,7 @@ import play.api.mvc.Call
 class Navigator @Inject()() {
 
   // format: off
-  private val normalRoutes: PartialFunction[Page, UserAnswers => Option[Call]]  = {
+  private val normalRoutes: PartialFunction[Page, UserAnswers => Option[Call]] = {
     case MovementReferenceNumberPage => ua => Some(routes.GoodsLocationController.onPageLoad(ua.id, NormalMode))
     case GoodsLocationPage => goodsLocationPageRoutes
     case PresentationOfficePage => ua => Some(routes.TraderNameController.onPageLoad(ua.id, NormalMode))
@@ -102,16 +102,15 @@ class Navigator @Inject()() {
     (ua.get(GoodsLocationPage), ua.get(AuthorisedLocationPage), ua.get(CustomsSubPlacePage)) match {
       case (Some(BorderForceOffice), _, None)         => Some(routes.CustomsSubPlaceController.onPageLoad(ua.id, CheckMode))
       case (Some(AuthorisedConsigneesLocation), _, _) => Some(routes.UseDifferentServiceController.onPageLoad(ua.id))
-      case _                                          => Some(routes.CheckYourAnswersController.onPageLoad(ua.id)) // TODO: This branch is ill defined and needs to be fixed
+      case _ =>
+        Some(routes.CheckYourAnswersController.onPageLoad(ua.id)) // TODO: This branch is ill defined and needs to be fixed
     }
 
   private def isTraderAddressPlaceOfNotificationRoute(mode: Mode)(ua: UserAnswers): Option[Call] =
     (ua.get(IsTraderAddressPlaceOfNotificationPage), ua.get(PlaceOfNotificationPage), mode) match {
-      case (Some(true), _, NormalMode) => Some(routes.IncidentOnRouteController.onPageLoad(ua.id, mode))
-      case (Some(true), _, CheckMode)  => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
-
-      case (Some(false), _, NormalMode) => Some(routes.PlaceOfNotificationController.onPageLoad(ua.id, mode))
-
+      case (Some(true), _, NormalMode)       => Some(routes.IncidentOnRouteController.onPageLoad(ua.id, mode))
+      case (Some(true), _, CheckMode)        => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
+      case (Some(false), _, NormalMode)      => Some(routes.PlaceOfNotificationController.onPageLoad(ua.id, mode))
       case (Some(false), Some(_), CheckMode) => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
       case _                                 => None
     }

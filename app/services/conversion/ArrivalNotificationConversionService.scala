@@ -38,12 +38,12 @@ class ArrivalNotificationConversionService {
     } yield {
       NormalNotification(
         movementReferenceNumber = userAnswers.id.toString,
-        notificationPlace = notificationPlace,
-        notificationDate = LocalDate.now(),
-        customsSubPlace = Some(customsSubPlace),
-        trader = traderAddress(tradersAddress, traderEori, traderName),
-        presentationOffice = presentationOffice,
-        enRouteEvents = enRouteEvents(userAnswers)
+        notificationPlace       = notificationPlace,
+        notificationDate        = LocalDate.now(),
+        customsSubPlace         = Some(customsSubPlace),
+        trader                  = traderAddress(tradersAddress, traderEori, traderName),
+        presentationOffice      = presentationOffice,
+        enRouteEvents           = enRouteEvents(userAnswers)
       )
     }
 
@@ -67,10 +67,10 @@ class ArrivalNotificationConversionService {
       Some(
         Seq(
           EnRouteEvent(
-            place = place,
-            countryCode = country,
+            place         = place,
+            countryCode   = country,
             alreadyInNcts = isReported,
-            eventDetails = eventDetails(isTranshipment, userAnswers.get(IncidentInformationPage)),
+            eventDetails  = eventDetails(isTranshipment, userAnswers.get(IncidentInformationPage)),
             None //TODO Seals
           ))
       )
@@ -78,11 +78,11 @@ class ArrivalNotificationConversionService {
 
   private def traderAddress(traderAddress: TraderAddress, traderEori: String, traderName: String): Trader =
     TraderWithEori(
-      eori = traderEori,
-      name = Some(traderName),
+      eori            = traderEori,
+      name            = Some(traderName),
       streetAndNumber = Some(traderAddress.buildingAndStreet),
-      postCode = Some(traderAddress.postcode),
-      city = Some(traderAddress.city),
-      countryCode = Some(countryCode_GB)
+      postCode        = Some(traderAddress.postcode),
+      city            = Some(traderAddress.city),
+      countryCode     = Some(countryCode_GB)
     )
 }

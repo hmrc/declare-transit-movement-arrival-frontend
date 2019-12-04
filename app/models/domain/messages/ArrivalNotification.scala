@@ -49,15 +49,14 @@ object ArrivalNotification {
   }
 }
 
-final case class NormalNotification(
-  movementReferenceNumber: String,
-  notificationPlace: String,
-  notificationDate: LocalDate,
-  customsSubPlace: Option[String],
-  trader: Trader,
-  presentationOffice: String,
-  enRouteEvents: Option[Seq[EnRouteEvent]]
-) extends ArrivalNotification {
+final case class NormalNotification(movementReferenceNumber: String,
+                                    notificationPlace: String,
+                                    notificationDate: LocalDate,
+                                    customsSubPlace: Option[String],
+                                    trader: Trader,
+                                    presentationOffice: String,
+                                    enRouteEvents: Option[Seq[EnRouteEvent]])
+    extends ArrivalNotification {
 
   val procedure: ProcedureType = ProcedureType.Normal
 }

@@ -32,16 +32,14 @@ import viewModels.Section
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class CheckYourAnswersController @Inject()(
-  override val messagesApi: MessagesApi,
-  identify: IdentifierAction,
-  getData: DataRetrievalActionProvider,
-  requireData: DataRequiredAction,
-  service: ArrivalNotificationService,
-  errorHandler: ErrorHandler,
-  val controllerComponents: MessagesControllerComponents,
-  renderer: Renderer
-)(implicit ec: ExecutionContext)
+class CheckYourAnswersController @Inject()(override val messagesApi: MessagesApi,
+                                           identify: IdentifierAction,
+                                           getData: DataRetrievalActionProvider,
+                                           requireData: DataRequiredAction,
+                                           service: ArrivalNotificationService,
+                                           errorHandler: ErrorHandler,
+                                           val controllerComponents: MessagesControllerComponents,
+                                           renderer: Renderer)(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
     with NunjucksSupport {
@@ -73,8 +71,9 @@ class CheckYourAnswersController @Inject()(
   private def createSections(userAnswers: UserAnswers)(implicit messages: Messages): Seq[Section] = {
     val helper = new CheckYourAnswersHelper(userAnswers)
 
-    val mrn           = Section(Seq(helper.movementReferenceNumber))
-    val goodsLocation = Section(messages("checkYourAnswers.section.goodsLocation"), Seq(helper.goodsLocation, helper.authorisedLocation).flatten)
+    val mrn = Section(Seq(helper.movementReferenceNumber))
+    val goodsLocation =
+      Section(messages("checkYourAnswers.section.goodsLocation"), Seq(helper.goodsLocation, helper.authorisedLocation).flatten)
     val traderDetails = Section(messages("checkYourAnswers.section.traderDetails"), Seq(helper.traderName, helper.traderAddress, helper.traderEori).flatten)
     val notificationDetails =
       Section(messages("checkYourAnswers.section.notificationDetails"), Seq(helper.isTraderAddressPlaceOfNotification, helper.placeOfNotification).flatten)

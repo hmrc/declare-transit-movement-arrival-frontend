@@ -31,10 +31,7 @@ import reactivemongo.play.json.collection.JSONCollection
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class DefaultSessionRepository @Inject()(
-  mongo: ReactiveMongoApi,
-  config: Configuration
-)(implicit ec: ExecutionContext, m: Materializer)
+class DefaultSessionRepository @Inject()(mongo: ReactiveMongoApi, config: Configuration)(implicit ec: ExecutionContext, m: Materializer)
     extends SessionRepository {
 
   private val collectionName: String = "user-answers"
@@ -45,8 +42,8 @@ class DefaultSessionRepository @Inject()(
     mongo.database.map(_.collection[JSONCollection](collectionName))
 
   private val lastUpdatedIndex = Index(
-    key = Seq("lastUpdated" -> IndexType.Ascending),
-    name = Some("user-answers-last-updated-index"),
+    key     = Seq("lastUpdated" -> IndexType.Ascending),
+    name    = Some("user-answers-last-updated-index"),
     options = BSONDocument("expireAfterSeconds" -> cacheTtl)
   )
 
