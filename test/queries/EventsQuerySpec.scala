@@ -16,12 +16,23 @@
 
 package queries
 
-import pages.QuestionPage
-import pages.events.RepeatingSectionConstants
-import play.api.libs.json.{JsArray, JsObject, JsPath}
+import org.scalacheck.Arbitrary
+import org.scalacheck.Arbitrary.arbitrary
+import pages.behaviours.PageBehaviours
+import play.api.libs.json.{JsObject, JsString, Json}
 
-case object EventsQuery extends QuestionPage[List[JsObject]] {
+class EventsQuerySpec extends PageBehaviours {
 
-  override def path: JsPath = JsPath \ RepeatingSectionConstants.events
+  "AddEventPage" - {
+
+    implicit val asdf: Arbitrary[JsObject] = Arbitrary {
+      for {
+        (key, value) <- arbitrary[(String, String)]
+      } yield Json.obj(key -> value)
+    }
+
+    beRetrievable[List[JsObject]](EventsQuery)
+
+  }
 
 }
