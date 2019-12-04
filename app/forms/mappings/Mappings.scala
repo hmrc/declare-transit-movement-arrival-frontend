@@ -18,10 +18,9 @@ package forms.mappings
 
 import java.time.LocalDate
 
+import models.{Enumerable, MovementReferenceNumber}
 import play.api.data.FieldMapping
 import play.api.data.Forms.of
-import models.Enumerable
-import models.MovementReferenceNumber
 
 trait Mappings extends Formatters with Constraints {
 

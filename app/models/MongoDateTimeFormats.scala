@@ -16,9 +16,7 @@
 
 package models
 
-import java.time.Instant
-import java.time.LocalDateTime
-import java.time.ZoneOffset
+import java.time.{Instant, LocalDateTime, ZoneOffset}
 
 import play.api.libs.json._
 

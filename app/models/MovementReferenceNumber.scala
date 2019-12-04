@@ -16,9 +16,10 @@
 
 package models
 
-import MovementReferenceNumber._
+import models.MovementReferenceNumber._
 import play.api.libs.json._
 import play.api.mvc.PathBindable
+
 import scala.math.pow
 
 final case class MovementReferenceNumber(

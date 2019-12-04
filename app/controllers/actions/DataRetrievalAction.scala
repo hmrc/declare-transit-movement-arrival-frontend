@@ -18,13 +18,11 @@ package controllers.actions
 
 import javax.inject.Inject
 import models.MovementReferenceNumber
-import models.requests.IdentifierRequest
-import models.requests.OptionalDataRequest
+import models.requests.{IdentifierRequest, OptionalDataRequest}
 import play.api.mvc.ActionTransformer
 import repositories.SessionRepository
 
-import scala.concurrent.ExecutionContext
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class DataRetrievalActionProviderImpl @Inject()(sessionRepository: SessionRepository, ec: ExecutionContext) extends DataRetrievalActionProvider {
 

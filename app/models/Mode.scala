@@ -16,8 +16,7 @@
 
 package models
 
-import play.api.libs.json.JsString
-import play.api.libs.json.Writes
+import play.api.libs.json.{JsString, Writes}
 import play.api.mvc.JavascriptLiteral
 
 sealed trait Mode

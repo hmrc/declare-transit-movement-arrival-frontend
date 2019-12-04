@@ -24,14 +24,12 @@ import models.UserAnswers
 import play.api.Configuration
 import play.api.libs.json._
 import play.modules.reactivemongo.ReactiveMongoApi
-import reactivemongo.api.indexes.Index
-import reactivemongo.api.indexes.IndexType
+import reactivemongo.api.indexes.{Index, IndexType}
 import reactivemongo.bson.BSONDocument
 import reactivemongo.play.json.ImplicitBSONHandlers.JsObjectDocumentWriter
 import reactivemongo.play.json.collection.JSONCollection
 
-import scala.concurrent.ExecutionContext
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class DefaultSessionRepository @Inject()(
   mongo: ReactiveMongoApi,

@@ -16,8 +16,7 @@
 
 package config
 
-import play.api.ConfigLoader
-import play.api.Configuration
+import play.api.{ConfigLoader, Configuration}
 
 import scala.language.implicitConversions
 

@@ -19,25 +19,18 @@ package controllers
 import controllers.actions._
 import forms.GoodsLocationFormProvider
 import javax.inject.Inject
-import models.GoodsLocation
-import models.Mode
-import models.MovementReferenceNumber
-import models.UserAnswers
+import models.{GoodsLocation, Mode, MovementReferenceNumber, UserAnswers}
 import navigation.Navigator
 import pages.GoodsLocationPage
-import play.api.i18n.I18nSupport
-import play.api.i18n.MessagesApi
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.Action
-import play.api.mvc.AnyContent
-import play.api.mvc.MessagesControllerComponents
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
-import scala.concurrent.ExecutionContext
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class GoodsLocationController @Inject()(
   override val messagesApi: MessagesApi,

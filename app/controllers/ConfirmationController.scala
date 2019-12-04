@@ -19,12 +19,9 @@ package controllers
 import controllers.actions._
 import javax.inject.Inject
 import models.MovementReferenceNumber
-import play.api.i18n.I18nSupport
-import play.api.i18n.MessagesApi
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.Action
-import play.api.mvc.AnyContent
-import play.api.mvc.MessagesControllerComponents
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController

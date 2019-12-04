@@ -18,16 +18,9 @@ package services.conversion
 
 import java.time.LocalDate
 
-import models.TraderAddress
-import models.UserAnswers
-import models.domain.EnRouteEvent
-import models.domain.Endorsement
-import models.domain.EventDetails
-import models.domain.Incident
-import models.domain.Trader
-import models.domain.TraderWithEori
-import models.domain.messages.ArrivalNotification
-import models.domain.messages.NormalNotification
+import models.domain._
+import models.domain.messages.{ArrivalNotification, NormalNotification}
+import models.{TraderAddress, UserAnswers}
 import pages._
 
 class ArrivalNotificationConversionService {

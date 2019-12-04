@@ -16,8 +16,7 @@
 
 package config
 
-import com.google.inject.Inject
-import com.google.inject.Singleton
+import com.google.inject.{Inject, Singleton}
 import controllers.routes
 import play.api.Configuration
 import play.api.i18n.Lang

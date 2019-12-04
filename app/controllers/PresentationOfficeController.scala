@@ -19,15 +19,11 @@ package controllers
 import controllers.actions._
 import forms.PresentationOfficeFormProvider
 import javax.inject.Inject
-import models.Mode
-import models.MovementReferenceNumber
+import models.{Mode, MovementReferenceNumber}
 import navigation.Navigator
-import pages.CustomsSubPlacePage
-import pages.PresentationOfficePage
+import pages.{CustomsSubPlacePage, PresentationOfficePage}
 import play.api.data.Form
-import play.api.i18n.I18nSupport
-import play.api.i18n.Messages
-import play.api.i18n.MessagesApi
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc._
 import renderer.Renderer
@@ -35,8 +31,7 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
-import scala.concurrent.ExecutionContext
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class PresentationOfficeController @Inject()(
   override val messagesApi: MessagesApi,

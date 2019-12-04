@@ -17,19 +17,12 @@
 package controllers
 
 import com.google.inject.Inject
-import controllers.actions.DataRequiredAction
-import controllers.actions.DataRetrievalActionProvider
-import controllers.actions.IdentifierAction
+import controllers.actions.{DataRequiredAction, DataRetrievalActionProvider, IdentifierAction}
 import handlers.ErrorHandler
-import models.MovementReferenceNumber
-import models.UserAnswers
-import play.api.i18n.I18nSupport
-import play.api.i18n.Messages
-import play.api.i18n.MessagesApi
+import models.{MovementReferenceNumber, UserAnswers}
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.Action
-import play.api.mvc.AnyContent
-import play.api.mvc.MessagesControllerComponents
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import services.ArrivalNotificationService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
@@ -37,8 +30,7 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 import utils.CheckYourAnswersHelper
 import viewModels.Section
 
-import scala.concurrent.ExecutionContext
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class CheckYourAnswersController @Inject()(
   override val messagesApi: MessagesApi,

@@ -16,10 +16,9 @@
 
 package forms.mappings
 
+import models.{Enumerable, MovementReferenceNumber}
 import play.api.data.FormError
 import play.api.data.format.Formatter
-import models.Enumerable
-import models.MovementReferenceNumber
 
 import scala.util.control.Exception.nonFatalCatch
 

@@ -16,13 +16,12 @@
 
 package navigation
 
-import javax.inject.Inject
-import javax.inject.Singleton
-import play.api.mvc.Call
 import controllers.routes
-import pages._
+import javax.inject.{Inject, Singleton}
+import models.GoodsLocation._
 import models._
-import GoodsLocation._
+import pages._
+import play.api.mvc.Call
 
 @Singleton
 class Navigator @Inject()() {
