@@ -33,6 +33,24 @@ import uk.gov.hmrc.viewmodels._
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messages) {
 
+  def eventSummaryPlace(place: String, index: Int): Row =
+    Row(
+      key   = Key(Text.Message("addEvent.event.label", index + 1), classes = Seq("govuk-!-width-one-half")),
+      value = Value(lit"$place"),
+      actions = List(
+        Action(
+          content            = msg"site.edit",
+          href               = eventRoutes.CheckEventAnswersController.onPageLoad(mrn, index).url,
+          visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"placeOfNotification.checkYourAnswersLabel")) // TODO change visially hidden test
+        ),
+        Action(
+          content            = msg"site.delete",
+          href               = "#",
+          visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"placeOfNotification.checkYourAnswersLabel")) // TODO change visially hidden test
+        )
+      )
+    )
+
   def placeOfNotification: Option[Row] = userAnswers.get(PlaceOfNotificationPage) map {
     answer =>
       Row(

@@ -19,24 +19,19 @@ package controllers.events
 import controllers.actions._
 import forms.events.AddEventFormProvider
 import javax.inject.Inject
-import models.Mode
-import models.MovementReferenceNumber
+import models.{Mode, MovementReferenceNumber}
 import navigation.Navigator
 import pages.events.AddEventPage
-import play.api.i18n.I18nSupport
-import play.api.i18n.MessagesApi
-import play.api.libs.json.Json
-import play.api.mvc.Action
-import play.api.mvc.AnyContent
-import play.api.mvc.MessagesControllerComponents
+import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.json.{JsObject, JsValue, Json}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import queries.EventsQuery
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
-import uk.gov.hmrc.viewmodels.NunjucksSupport
-import uk.gov.hmrc.viewmodels.Radios
+import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
-import scala.concurrent.ExecutionContext
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class AddEventController @Inject()(
   override val messagesApi: MessagesApi,
@@ -61,12 +56,16 @@ class AddEventController @Inject()(
         case None        => form
         case Some(value) => form.fill(value)
       }
+      val data: Option[List[JsObject]] = request.userAnswers.get(EventsQuery)
+      val eventPlaces: Seq[String]     = data.fold[Seq[JsValue]](Seq.empty)(_.flatMap(_.\("eventPlace").toOption)).map(_.toString())
 
       val json = Json.obj(
-        "form"   -> preparedForm,
-        "mode"   -> mode,
-        "mrn"    -> mrn,
-        "radios" -> Radios.yesNo(preparedForm("value"))
+        "form"           -> preparedForm,
+        "mode"           -> mode,
+        "mrn"            -> mrn,
+        "radios"         -> Radios.yesNo(preparedForm("value")),
+        "events"         -> eventPlaces,
+        "numberOfEvents" -> eventPlaces.size
       )
 
       renderer.render("events/addEvent.njk", json).map(Ok(_))

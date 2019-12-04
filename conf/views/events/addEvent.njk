@@ -4,6 +4,7 @@
 {% from "govuk/components/radios/macro.njk"        import govukRadios %}
 {% from "govuk/components/button/macro.njk"        import govukButton %}
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "govuk/components/summary-list/macro.njk"  import govukSummaryList %}
 {% from "macros/title.njk"                         import title %}
 
 {% block pageTitle %}
@@ -27,20 +28,70 @@
           }) }}
         {% endif %}
 
+        <h1 class="govuk-heading-xl">{{ messages("addEvent.heading", numberOfEvents) }}</h1>
+
+            {{ govukSummaryList({
+                  classes: 'govuk-!-margin-bottom-9',
+                  rows: [
+                    {
+                      key: {
+                        text: "Event 1",
+                        classes: "govuk-!-width-one-half"
+                      },
+                      value: {
+                        text: data['event-place']
+                      },
+                      actions: {
+                        classes: "govuk-!-width-one-third",
+                        items: [
+                          {
+                            href: "check-event-answers",
+                            text: "Change",
+                            visuallyHiddenText: "name"
+                          },
+                          {
+                            href: "remove-event",
+                            text: "Remove",
+                            visuallyHiddenText: ""
+                          }
+                        ]
+                      }
+                    }
+                     ]})
+             }}
+         {% for event in events %}
+           {{ messages("addEvent.event.label", loop.index) }} {{ event }}
+         {% endfor %}
+
         <form action="{{ routes.controllers.events.AddEventController.onSubmit(mrn, mode).url }}" method="post">
 
           {{ csrf() | safe }}
+
+            {% macro radioBtnHintText() %}
+                 {{ messages("addEvent.hintText.tad") }}
+                  <p class="govuk-hint">{{ messages("addEvent.hintText.tell_us") }}</p>
+                    <ul class="govuk-list govuk-list--bullet govuk-hint">
+                    <li>{{ messages("addEvent.hintText.accident") }}</li>
+                    <li>{{ messages("addEvent.hintText.goods.unloaded") }} </li>
+                    <li>{{ messages("addEvent.hintText.different.vehicle") }}</li>
+                    <li>{{ messages("addEvent.hintText.type.of.transport") }}</li>
+                    <li>{{ messages("addEvent.hintText.planned.route") }} </li>
+                    </ul>
+            {% endmacro %}
 
           {{ govukRadios({
             classes: "govuk-radios--inline",
             name: 'value',
             fieldset: {
               legend: {
-                text: messages('addEvent.title'),
-                isPageHeading: true,
-                classes: "govuk-fieldset__legend--xl"
+                text: messages('addEvent.radio.label'),
+                isPageHeading: false,
+                classes: "govuk-fieldset__legend govuk-fieldset__legend--m"
               }
             },
+             hint: {
+              html: radioBtnHintText()
+             },
             items: radios,
             errorMessage: form.value.error
           }) }}
