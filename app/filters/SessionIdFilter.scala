@@ -21,20 +21,12 @@ import java.util.UUID
 import akka.stream.Materializer
 import com.google.inject.Inject
 import play.api.mvc._
-import play.api.mvc.request.Cell
-import play.api.mvc.request.RequestAttrKey
-import uk.gov.hmrc.http.SessionKeys
-import uk.gov.hmrc.http.{HeaderNames => HMRCHeaderNames}
+import play.api.mvc.request.{Cell, RequestAttrKey}
+import uk.gov.hmrc.http.{SessionKeys, HeaderNames => HMRCHeaderNames}
 
-import scala.concurrent.ExecutionContext
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
-class SessionIdFilter(
-  override val mat: Materializer,
-  uuid: => UUID,
-  sessionCookieBaker: SessionCookieBaker,
-  implicit val ec: ExecutionContext
-) extends Filter {
+class SessionIdFilter(override val mat: Materializer, uuid: => UUID, sessionCookieBaker: SessionCookieBaker, implicit val ec: ExecutionContext) extends Filter {
 
   @Inject
   def this(mat: Materializer, ec: ExecutionContext, sessionCookieBaker: SessionCookieBaker) {

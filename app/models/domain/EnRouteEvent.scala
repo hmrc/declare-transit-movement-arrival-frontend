@@ -19,13 +19,7 @@ package models.domain
 import models._
 import play.api.libs.json._
 
-final case class EnRouteEvent(
-  place: String,
-  countryCode: String,
-  alreadyInNcts: Boolean,
-  eventDetails: EventDetails,
-  seals: Option[Seq[String]]
-)
+final case class EnRouteEvent(place: String, countryCode: String, alreadyInNcts: Boolean, eventDetails: EventDetails, seals: Option[Seq[String]])
 
 object EnRouteEvent {
 

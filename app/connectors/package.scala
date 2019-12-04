@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-import uk.gov.hmrc.http.HttpReads
-import uk.gov.hmrc.http.HttpResponse
+import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 
 package object connectors {
 

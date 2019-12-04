@@ -19,12 +19,10 @@ package connectors
 import config.FrontendAppConfig
 import javax.inject.Inject
 import models.domain.messages.ArrivalNotification
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.http.HttpResponse
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
-import scala.concurrent.ExecutionContext
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class DestinationConnector @Inject()(val config: FrontendAppConfig, val http: HttpClient) {
 

@@ -16,16 +16,13 @@
 
 package models
 
-import MovementReferenceNumber._
+import models.MovementReferenceNumber._
 import play.api.libs.json._
 import play.api.mvc.PathBindable
+
 import scala.math.pow
 
-final case class MovementReferenceNumber(
-  year: String,
-  countryCode: String,
-  serial: String
-) {
+final case class MovementReferenceNumber(year: String, countryCode: String, serial: String) {
 
   override def toString: String = s"$year$countryCode$serial$checkCharacter"
 

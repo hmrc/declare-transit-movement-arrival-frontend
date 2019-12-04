@@ -19,8 +19,7 @@ package pages
 import models.UserAnswers
 import play.api.libs.json.JsPath
 
-import scala.util.Success
-import scala.util.Try
+import scala.util.{Success, Try}
 
 case object IncidentOnRoutePage extends QuestionPage[Boolean] {
 

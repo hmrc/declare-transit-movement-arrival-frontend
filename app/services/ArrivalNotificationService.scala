@@ -20,11 +20,9 @@ import connectors.DestinationConnector
 import javax.inject.Inject
 import models.UserAnswers
 import services.conversion.ArrivalNotificationConversionService
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.http.HttpResponse
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
-import scala.concurrent.ExecutionContext
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class ArrivalNotificationService @Inject()(converterService: ArrivalNotificationConversionService, connector: DestinationConnector) {
 

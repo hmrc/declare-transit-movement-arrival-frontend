@@ -46,10 +46,7 @@ object EventDetails {
   }
 }
 
-final case class Incident(
-  information: Option[String],
-  endorsement: Endorsement
-) extends EventDetails
+final case class Incident(information: Option[String], endorsement: Endorsement) extends EventDetails
 
 object Incident {
 
@@ -82,12 +79,8 @@ object Transhipment {
   }
 }
 
-final case class VehicularTranshipment(
-  transportIdentity: String,
-  transportCountry: String,
-  endorsement: Endorsement,
-  containers: Seq[String]
-) extends Transhipment
+final case class VehicularTranshipment(transportIdentity: String, transportCountry: String, endorsement: Endorsement, containers: Seq[String])
+    extends Transhipment
 
 object VehicularTranshipment {
 
@@ -117,10 +110,7 @@ object VehicularTranshipment {
     }
 }
 
-final case class ContainerTranshipment(
-  endorsement: Endorsement,
-  containers: Seq[String]
-) extends Transhipment {
+final case class ContainerTranshipment(endorsement: Endorsement, containers: Seq[String]) extends Transhipment {
 
   require(containers.nonEmpty, "At least one container number must be provided")
 }

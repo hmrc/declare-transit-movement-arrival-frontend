@@ -16,17 +16,14 @@
 
 package controllers.actions
 
-import javax.inject.Inject
 import controllers.routes
-import models.requests.DataRequest
-import models.requests.OptionalDataRequest
+import javax.inject.Inject
+import models.requests.{DataRequest, OptionalDataRequest}
 import play.api.mvc.Results.Redirect
-import play.api.mvc.ActionRefiner
-import play.api.mvc.Result
+import play.api.mvc.{ActionRefiner, Result}
 import uk.gov.hmrc.play.HeaderCarrierConverter
 
-import scala.concurrent.ExecutionContext
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class DataRequiredActionImpl @Inject()(implicit val executionContext: ExecutionContext) extends DataRequiredAction {
 
