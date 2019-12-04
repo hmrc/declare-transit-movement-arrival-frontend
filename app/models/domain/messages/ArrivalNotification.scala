@@ -17,10 +17,9 @@
 package models.domain.messages
 
 import java.time.LocalDate
+
 import models._
-import models.domain.EnRouteEvent
-import models.domain.ProcedureType
-import models.domain.Trader
+import models.domain.{EnRouteEvent, ProcedureType, Trader}
 import play.api.libs.json._
 
 import scala.language.implicitConversions
@@ -50,15 +49,14 @@ object ArrivalNotification {
   }
 }
 
-final case class NormalNotification(
-  movementReferenceNumber: String,
-  notificationPlace: String,
-  notificationDate: LocalDate,
-  customsSubPlace: Option[String],
-  trader: Trader,
-  presentationOffice: String,
-  enRouteEvents: Option[Seq[EnRouteEvent]]
-) extends ArrivalNotification {
+final case class NormalNotification(movementReferenceNumber: String,
+                                    notificationPlace: String,
+                                    notificationDate: LocalDate,
+                                    customsSubPlace: Option[String],
+                                    trader: Trader,
+                                    presentationOffice: String,
+                                    enRouteEvents: Option[Seq[EnRouteEvent]])
+    extends ArrivalNotification {
 
   val procedure: ProcedureType = ProcedureType.Normal
 }

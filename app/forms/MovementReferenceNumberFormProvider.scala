@@ -16,8 +16,8 @@
 
 package forms
 
-import javax.inject.Inject
 import forms.mappings.Mappings
+import javax.inject.Inject
 import models.MovementReferenceNumber
 import play.api.data.Form
 

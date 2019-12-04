@@ -21,15 +21,9 @@ import java.time.LocalDateTime
 import pages._
 import play.api.libs.json._
 
-import scala.util.Failure
-import scala.util.Success
-import scala.util.Try
+import scala.util.{Failure, Success, Try}
 
-final case class UserAnswers(
-  id: MovementReferenceNumber,
-  data: JsObject = Json.obj(),
-  lastUpdated: LocalDateTime = LocalDateTime.now
-) {
+final case class UserAnswers(id: MovementReferenceNumber, data: JsObject = Json.obj(), lastUpdated: LocalDateTime = LocalDateTime.now) {
 
   def get[A](page: QuestionPage[A])(implicit rds: Reads[A]): Option[A] =
     Reads.optionNoError(Reads.at(page.path)).reads(data).getOrElse(None)

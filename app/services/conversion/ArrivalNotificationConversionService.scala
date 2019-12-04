@@ -18,16 +18,9 @@ package services.conversion
 
 import java.time.LocalDate
 
-import models.TraderAddress
-import models.UserAnswers
-import models.domain.EnRouteEvent
-import models.domain.Endorsement
-import models.domain.EventDetails
-import models.domain.Incident
-import models.domain.Trader
-import models.domain.TraderWithEori
-import models.domain.messages.ArrivalNotification
-import models.domain.messages.NormalNotification
+import models.domain._
+import models.domain.messages.{ArrivalNotification, NormalNotification}
+import models.{TraderAddress, UserAnswers}
 import pages._
 
 class ArrivalNotificationConversionService {
@@ -45,12 +38,12 @@ class ArrivalNotificationConversionService {
     } yield {
       NormalNotification(
         movementReferenceNumber = userAnswers.id.toString,
-        notificationPlace = notificationPlace,
-        notificationDate = LocalDate.now(),
-        customsSubPlace = Some(customsSubPlace),
-        trader = traderAddress(tradersAddress, traderEori, traderName),
-        presentationOffice = presentationOffice,
-        enRouteEvents = enRouteEvents(userAnswers)
+        notificationPlace       = notificationPlace,
+        notificationDate        = LocalDate.now(),
+        customsSubPlace         = Some(customsSubPlace),
+        trader                  = traderAddress(tradersAddress, traderEori, traderName),
+        presentationOffice      = presentationOffice,
+        enRouteEvents           = enRouteEvents(userAnswers)
       )
     }
 
@@ -74,10 +67,10 @@ class ArrivalNotificationConversionService {
       Some(
         Seq(
           EnRouteEvent(
-            place = place,
-            countryCode = country,
+            place         = place,
+            countryCode   = country,
             alreadyInNcts = isReported,
-            eventDetails = eventDetails(isTranshipment, userAnswers.get(IncidentInformationPage)),
+            eventDetails  = eventDetails(isTranshipment, userAnswers.get(IncidentInformationPage)),
             None //TODO Seals
           ))
       )
@@ -85,11 +78,11 @@ class ArrivalNotificationConversionService {
 
   private def traderAddress(traderAddress: TraderAddress, traderEori: String, traderName: String): Trader =
     TraderWithEori(
-      eori = traderEori,
-      name = Some(traderName),
+      eori            = traderEori,
+      name            = Some(traderName),
       streetAndNumber = Some(traderAddress.buildingAndStreet),
-      postCode = Some(traderAddress.postcode),
-      city = Some(traderAddress.city),
-      countryCode = Some(countryCode_GB)
+      postCode        = Some(traderAddress.postcode),
+      city            = Some(traderAddress.city),
+      countryCode     = Some(countryCode_GB)
     )
 }

@@ -17,9 +17,7 @@
 package viewModels
 
 import play.api.i18n.Messages
-import play.api.libs.json.JsValue
-import play.api.libs.json.Json
-import play.api.libs.json.Writes
+import play.api.libs.json.{JsValue, Json, Writes}
 import uk.gov.hmrc.viewmodels.SummaryList
 
 case class Section(sectionTitle: Option[String], rows: Seq[SummaryList.Row])
