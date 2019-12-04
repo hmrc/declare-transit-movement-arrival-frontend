@@ -34,7 +34,7 @@ class SectionSpec extends SpecBase {
       val action = Action(Text.Literal("baz"), "quux")
 
       val row = Row(
-        key = Key(Text.Literal("foo")),
+        key   = Key(Text.Literal("foo")),
         value = Value(Text.Literal("bar")),
         actions = List(
           action

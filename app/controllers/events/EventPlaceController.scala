@@ -49,11 +49,11 @@ class EventPlaceController @Inject()(override val messagesApi: MessagesApi,
 
   def onPageLoad(mrn: MovementReferenceNumber, index: Int, mode: Mode): Action[AnyContent] =
     (identify andThen getData(mrn) andThen requireData).async {
-    implicit request =>
-      val preparedForm = request.userAnswers.get(EventPlacePage(index)) match {
-        case None        => form
-        case Some(value) => form.fill(value)
-      }
+      implicit request =>
+        val preparedForm = request.userAnswers.get(EventPlacePage(index)) match {
+          case None        => form
+          case Some(value) => form.fill(value)
+        }
 
         val json = Json.obj(
           "form" -> preparedForm,
@@ -61,16 +61,16 @@ class EventPlaceController @Inject()(override val messagesApi: MessagesApi,
           "mode" -> mode
         )
 
-      renderer.render("events/eventPlace.njk", json).map(Ok(_))
-  }
+        renderer.render("events/eventPlace.njk", json).map(Ok(_))
+    }
 
   def onSubmit(mrn: MovementReferenceNumber, index: Int, mode: Mode): Action[AnyContent] =
     (identify andThen getData(mrn) andThen requireData).async {
-    implicit request =>
-      form
-        .bindFromRequest()
-        .fold(
-          formWithErrors => {
+      implicit request =>
+        form
+          .bindFromRequest()
+          .fold(
+            formWithErrors => {
 
               val json = Json.obj(
                 "form" -> formWithErrors,
@@ -84,7 +84,7 @@ class EventPlaceController @Inject()(override val messagesApi: MessagesApi,
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(EventPlacePage(index), value))
                 _              <- sessionRepository.set(updatedAnswers)
-              } yield Redirect(navigator.nextPage(EventPlacePage, mode, updatedAnswers))
+              } yield Redirect(navigator.nextPage(EventPlacePage(index), mode, updatedAnswers))
           )
     }
 }

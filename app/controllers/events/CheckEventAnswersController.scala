@@ -18,7 +18,7 @@ package controllers.events
 
 import com.google.inject.Inject
 import controllers.actions.{DataRequiredAction, DataRetrievalActionProvider, IdentifierAction}
-import models.{MovementReferenceNumber, UserAnswers}
+import models.{MovementReferenceNumber, NormalMode, UserAnswers}
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}

@@ -16,19 +16,14 @@
 
 package navigation
 
+import controllers.events.{routes => eventRoutes}
 import controllers.routes
 import javax.inject.{Inject, Singleton}
 import models.GoodsLocation._
 import models._
-import GoodsLocation._
-import controllers.routes
-import controllers.events.{routes => eventRoutes}
-import pages.events.AddEventPage
-import pages.events.EventCountryPage
-import pages.events.EventPlacePage
-import pages.events.EventReportedPage
-import pages.events.IncidentInformationPage
-import pages.events.IsTranshipmentPage
+import pages.events._
+import pages._
+import play.api.mvc.Call
 
 @Singleton
 class Navigator @Inject()() {

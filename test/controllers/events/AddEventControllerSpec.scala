@@ -77,7 +77,7 @@ class AddEventControllerSpec extends SpecBase with MockitoSugar with NunjucksSup
         "radios" -> Radios.yesNo(form("value"))
       )
 
-      templateCaptor.getValue mustEqual "addEvent.njk"
+      templateCaptor.getValue mustEqual "events/addEvent.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -109,7 +109,7 @@ class AddEventControllerSpec extends SpecBase with MockitoSugar with NunjucksSup
         "radios" -> Radios.yesNo(filledForm("value"))
       )
 
-      templateCaptor.getValue mustEqual "addEvent.njk"
+      templateCaptor.getValue mustEqual "events/addEvent.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()

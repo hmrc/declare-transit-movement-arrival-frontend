@@ -19,6 +19,7 @@ package utils
 import java.time.format.DateTimeFormatter
 
 import controllers.routes
+import controllers.events.{routes => eventRoutes}
 import models.{CheckMode, MovementReferenceNumber, TraderAddress, UserAnswers}
 import pages._
 import pages.events.EventCountryPage
@@ -72,7 +73,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messag
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = routes.IsTranshipmentController.onPageLoad(mrn, CheckMode).url,
+            href               = eventRoutes.IsTranshipmentController.onPageLoad(mrn, index, CheckMode).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"isTranshipment.checkYourAnswersLabel"))
           )
         )
@@ -87,7 +88,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messag
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = routes.IncidentInformationController.onPageLoad(mrn, CheckMode).url,
+            href               = eventRoutes.IncidentInformationController.onPageLoad(mrn, index, CheckMode).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"incidentInformation.checkYourAnswersLabel"))
           )
         )
@@ -102,7 +103,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messag
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = routes.EventReportedController.onPageLoad(mrn, CheckMode).url,
+            href               = eventRoutes.EventReportedController.onPageLoad(mrn, index, CheckMode).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"eventReported.checkYourAnswersLabel"))
           )
         )
@@ -117,7 +118,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messag
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = routes.EventPlaceController.onPageLoad(mrn, CheckMode).url,
+            href               = eventRoutes.EventPlaceController.onPageLoad(mrn, index, CheckMode).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"eventPlace.checkYourAnswersLabel"))
           )
         )
@@ -132,7 +133,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messag
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = routes.EventCountryController.onPageLoad(mrn, CheckMode).url,
+            href               = eventRoutes.EventCountryController.onPageLoad(mrn, index, CheckMode).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"eventCountry.checkYourAnswersLabel"))
           )
         )

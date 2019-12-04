@@ -50,7 +50,7 @@ class IncidentInformationController @Inject()(override val messagesApi: Messages
   def onPageLoad(mrn: MovementReferenceNumber, index: Int, mode: Mode): Action[AnyContent] =
     (identify andThen getData(mrn) andThen requireData).async {
       implicit request =>
-        val preparedForm = request.userAnswers.get(IncidentInformationPage) match {
+        val preparedForm = request.userAnswers.get(IncidentInformationPage(index)) match {
           case None        => form
           case Some(value) => form.fill(value)
         }
@@ -61,21 +61,21 @@ class IncidentInformationController @Inject()(override val messagesApi: Messages
           "mode" -> mode
         )
 
-      renderer.render("events/incidentInformation.njk", json).map(Ok(_))
-  }
+        renderer.render("events/incidentInformation.njk", json).map(Ok(_))
+    }
 
-  def onSubmit(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onSubmit(mrn: MovementReferenceNumber, index: Int, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
       form
         .bindFromRequest()
         .fold(
           formWithErrors => {
 
-              val json = Json.obj(
-                "form" -> formWithErrors,
-                "mrn"  -> mrn,
-                "mode" -> mode
-              )
+            val json = Json.obj(
+              "form" -> formWithErrors,
+              "mrn"  -> mrn,
+              "mode" -> mode
+            )
 
             renderer.render("events/incidentInformation.njk", json).map(BadRequest(_))
           },

@@ -54,15 +54,15 @@ class EventReportedController @Inject()(override val messagesApi: MessagesApi,
         case Some(value) => form.fill(value)
       }
 
-        val json = Json.obj(
-          "form"   -> preparedForm,
-          "mode"   -> mode,
-          "mrn"    -> mrn,
-          "radios" -> Radios.yesNo(preparedForm("value"))
-        )
+      val json = Json.obj(
+        "form"   -> preparedForm,
+        "mode"   -> mode,
+        "mrn"    -> mrn,
+        "radios" -> Radios.yesNo(preparedForm("value"))
+      )
 
-        renderer.render("events/eventReported.njk", json).map(Ok(_))
-    }
+      renderer.render("events/eventReported.njk", json).map(Ok(_))
+  }
 
   def onSubmit(mrn: MovementReferenceNumber, index: Int, mode: Mode): Action[AnyContent] =
     (identify andThen getData(mrn) andThen requireData).async {
@@ -85,7 +85,7 @@ class EventReportedController @Inject()(override val messagesApi: MessagesApi,
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(EventReportedPage(index), value))
                 _              <- sessionRepository.set(updatedAnswers)
-              } yield Redirect(navigator.nextPage(EventReportedPage, mode, updatedAnswers))
+              } yield Redirect(navigator.nextPage(EventReportedPage(index), mode, updatedAnswers))
           )
     }
 }

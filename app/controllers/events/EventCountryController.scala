@@ -50,11 +50,11 @@ class EventCountryController @Inject()(override val messagesApi: MessagesApi,
 
   def onPageLoad(mrn: MovementReferenceNumber, index: Int, mode: Mode): Action[AnyContent] =
     (identify andThen getData(mrn) andThen requireData).async {
-    implicit request =>
-      val preparedForm = request.userAnswers.get(EventCountryPage(index)) match {
-        case None        => form
-        case Some(value) => form.fill(value)
-      }
+      implicit request =>
+        val preparedForm = request.userAnswers.get(EventCountryPage(index)) match {
+          case None        => form
+          case Some(value) => form.fill(value)
+        }
 
         val json = Json.obj(
           "form" -> preparedForm,
@@ -62,16 +62,16 @@ class EventCountryController @Inject()(override val messagesApi: MessagesApi,
           "mode" -> mode
         )
 
-      renderer.render("events/eventCountry.njk", json).map(Ok(_))
-  }
+        renderer.render("events/eventCountry.njk", json).map(Ok(_))
+    }
 
   def onSubmit(mrn: MovementReferenceNumber, index: Int, mode: Mode): Action[AnyContent] =
     (identify andThen getData(mrn) andThen requireData).async {
-    implicit request =>
-      form
-        .bindFromRequest()
-        .fold(
-          formWithErrors => {
+      implicit request =>
+        form
+          .bindFromRequest()
+          .fold(
+            formWithErrors => {
 
               val json = Json.obj(
                 "form" -> formWithErrors,
@@ -83,9 +83,9 @@ class EventCountryController @Inject()(override val messagesApi: MessagesApi,
             },
             value =>
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(EventCountryPage, value))
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(EventCountryPage(index), value))
                 _              <- sessionRepository.set(updatedAnswers)
-              } yield Redirect(navigator.nextPage(EventCountryPage, mode, updatedAnswers))
+              } yield Redirect(navigator.nextPage(EventCountryPage(index), mode, updatedAnswers))
           )
     }
 }

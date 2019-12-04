@@ -49,11 +49,11 @@ class IsTranshipmentController @Inject()(override val messagesApi: MessagesApi,
 
   def onPageLoad(mrn: MovementReferenceNumber, index: Int, mode: Mode): Action[AnyContent] =
     (identify andThen getData(mrn) andThen requireData).async {
-    implicit request =>
-      val preparedForm = request.userAnswers.get(IsTranshipmentPage(index)) match {
-        case None        => form
-        case Some(value) => form.fill(value)
-      }
+      implicit request =>
+        val preparedForm = request.userAnswers.get(IsTranshipmentPage(index)) match {
+          case None        => form
+          case Some(value) => form.fill(value)
+        }
 
         val json = Json.obj(
           "form"   -> preparedForm,
@@ -62,8 +62,8 @@ class IsTranshipmentController @Inject()(override val messagesApi: MessagesApi,
           "radios" -> Radios.yesNo(preparedForm("value"))
         )
 
-      renderer.render("events/isTranshipment.njk", json).map(Ok(_))
-  }
+        renderer.render("events/isTranshipment.njk", json).map(Ok(_))
+    }
 
   def onSubmit(mrn: MovementReferenceNumber, index: Int, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
@@ -72,12 +72,12 @@ class IsTranshipmentController @Inject()(override val messagesApi: MessagesApi,
         .fold(
           formWithErrors => {
 
-              val json = Json.obj(
-                "form"   -> formWithErrors,
-                "mode"   -> mode,
-                "mrn"    -> mrn,
-                "radios" -> Radios.yesNo(formWithErrors("value"))
-              )
+            val json = Json.obj(
+              "form"   -> formWithErrors,
+              "mode"   -> mode,
+              "mrn"    -> mrn,
+              "radios" -> Radios.yesNo(formWithErrors("value"))
+            )
 
             renderer.render("events/isTranshipment.njk", json).map(BadRequest(_))
           },
