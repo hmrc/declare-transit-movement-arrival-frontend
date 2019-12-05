@@ -32,7 +32,7 @@ class GoodsLocationFormProviderSpec extends OptionFieldBehaviours {
     behave like optionsField[GoodsLocation](
       form,
       fieldName,
-      validValues = GoodsLocation.values,
+      validValues  = GoodsLocation.values,
       invalidError = FormError(fieldName, "error.invalid")
     )
 

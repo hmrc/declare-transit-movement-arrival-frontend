@@ -92,9 +92,10 @@ class Navigator @Inject()() {
     }
 
   private def isTranshipmentRoute(ua: UserAnswers): Option[Call] =
-    ua.get(EventReportedPage) map {
-      case true  => routes.CheckEventAnswersController.onPageLoad(ua.id)
-      case false => routes.IncidentInformationController.onPageLoad(ua.id, NormalMode)
+    ua.get(IsTranshipmentPage) map {
+      case true                                               => routes.CheckEventAnswersController.onPageLoad(ua.id) //TODO new Transhipment journey first page
+      case false if ua.get(EventReportedPage).contains(false) => routes.IncidentInformationController.onPageLoad(ua.id, NormalMode)
+      case _                                                  => routes.CheckEventAnswersController.onPageLoad(ua.id)
     }
 
   private def goodsLocationCheckRoute(ua: UserAnswers): Option[Call] =
