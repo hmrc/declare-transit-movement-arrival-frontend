@@ -92,7 +92,7 @@ trait DomainModelGenerators extends Generators {
         transportCountry   <- stringsWithMaxLength(2)
         endorsement        <- arbitrary[Endorsement]
         numberOfContainers <- Gen.choose[Int](1, 99)
-        containers         <- Gen.listOfN(numberOfContainers, stringsWithMaxLength(17))
+        containers         <- Gen.option(Gen.listOfN(numberOfContainers, stringsWithMaxLength(17)))
       } yield VehicularTranshipment(transportIdentity, transportCountry, endorsement, containers)
     }
 
