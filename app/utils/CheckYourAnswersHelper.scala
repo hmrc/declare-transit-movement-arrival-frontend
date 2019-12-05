@@ -33,24 +33,6 @@ import uk.gov.hmrc.viewmodels._
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messages) {
 
-  def eventSummaryPlace(place: String, index: Int): Row =
-    Row(
-      key   = Key(Text.Message("addEvent.event.label", index + 1), classes = Seq("govuk-!-width-one-half")),
-      value = Value(lit"$place"),
-      actions = List(
-        Action(
-          content            = msg"site.edit",
-          href               = eventRoutes.CheckEventAnswersController.onPageLoad(mrn, index).url,
-          visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"placeOfNotification.checkYourAnswersLabel")) // TODO change visially hidden test
-        ),
-        Action(
-          content            = msg"site.delete",
-          href               = "#",
-          visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"placeOfNotification.checkYourAnswersLabel")) // TODO change visially hidden test
-        )
-      )
-    )
-
   def placeOfNotification: Option[Row] = userAnswers.get(PlaceOfNotificationPage) map {
     answer =>
       Row(
@@ -131,13 +113,18 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messag
   def eventPlace(index: Int): Option[Row] = userAnswers.get(EventPlacePage(index)) map {
     answer =>
       Row(
-        key   = Key(msg"eventPlace.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        key   = Key(msg"addEvent.event.label".withArgs(index + 1), classes = Seq("govuk-!-width-one-half")), // TODO: Move harded coded interpretation of index to an Index Model
         value = Value(lit"$answer"),
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = eventRoutes.EventPlaceController.onPageLoad(mrn, index, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"eventPlace.checkYourAnswersLabel"))
+            href               = eventRoutes.CheckEventAnswersController.onPageLoad(mrn, index).url,
+            visuallyHiddenText = Some(msg"addEvent.checkYourAnswersLabel.change".withArgs(index, answer)) // TODO: Prefix in message file for is hard coded, should be the same as: site.edit.hidden
+          ),
+          Action(
+            content            = msg"site.delete",
+            href               = "#",
+            visuallyHiddenText = Some(msg"addEvent.checkYourAnswersLabel.delete".withArgs(index, answer)) // TODO: Prefix in message file for is hard coded, should be the same as: site.delete.hidden
           )
         )
       )

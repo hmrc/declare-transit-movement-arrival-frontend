@@ -8,7 +8,7 @@
 {% from "macros/title.njk"                         import title %}
 
 {% block pageTitle %}
-  {{ title(messages("addEvent.title"), form.errors) }}
+  {{ title(titleOfPage, form.errors) }}
 {% endblock %}
 
 {% block mainContent %}
@@ -28,40 +28,12 @@
           }) }}
         {% endif %}
 
-        <h1 class="govuk-heading-xl">{{ messages("addEvent.heading", numberOfEvents) }}</h1>
+        <h1 class="govuk-heading-xl">{{ heading }}</h1>
 
-            {{ govukSummaryList({
-                  classes: 'govuk-!-margin-bottom-9',
-                  rows: [
-                    {
-                      key: {
-                        text: "Event 1",
-                        classes: "govuk-!-width-one-half"
-                      },
-                      value: {
-                        text: data['event-place']
-                      },
-                      actions: {
-                        classes: "govuk-!-width-one-third",
-                        items: [
-                          {
-                            href: "check-event-answers",
-                            text: "Change",
-                            visuallyHiddenText: "name"
-                          },
-                          {
-                            href: "remove-event",
-                            text: "Remove",
-                            visuallyHiddenText: ""
-                          }
-                        ]
-                      }
-                    }
-                     ]})
-             }}
-         {% for event in events %}
-           {{ messages("addEvent.event.label", loop.index) }} {{ event }}
-         {% endfor %}
+        {{ govukSummaryList({
+            classes: 'govuk-!-margin-bottom-9',
+            rows: events
+        }) }}
 
         <form action="{{ routes.controllers.events.AddEventController.onSubmit(mrn, mode).url }}" method="post">
 
