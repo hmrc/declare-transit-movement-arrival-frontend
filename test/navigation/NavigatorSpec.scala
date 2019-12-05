@@ -235,8 +235,13 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
           forAll(arbitrary[UserAnswers]) {
             answers =>
-              val updatedAnswers = answers.set(EventReportedPage, false).success.value
-                  .set(IsTranshipmentPage, false).success.value
+              val updatedAnswers = answers
+                .set(EventReportedPage, false)
+                .success
+                .value
+                .set(IsTranshipmentPage, false)
+                .success
+                .value
 
               navigator
                 .nextPage(IsTranshipmentPage, NormalMode, updatedAnswers)
