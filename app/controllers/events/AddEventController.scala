@@ -16,6 +16,7 @@
 
 package controllers.events
 
+import computable.NumberOfEvents
 import controllers.actions._
 import forms.events.AddEventFormProvider
 import javax.inject.Inject
@@ -54,7 +55,7 @@ class AddEventController @Inject()(override val messagesApi: MessagesApi,
 
   def onPageLoad(mrn: MovementReferenceNumber, index: Int, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
-      val preparedForm: Form[Boolean] = request.userAnswers.get(AddEventPage(index)) match {
+      val preparedForm = request.userAnswers.get(AddEventPage) match {
         case None        => form
         case Some(value) => form.fill(value)
       }
@@ -71,8 +72,8 @@ class AddEventController @Inject()(override val messagesApi: MessagesApi,
           },
           value =>
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(AddEventPage(index), value))
-            } yield Redirect(navigator.nextPage(AddEventPage(index), mode, updatedAnswers))
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(AddEventPage, value))
+            } yield Redirect(navigator.nextPage(AddEventPage, mode, updatedAnswers))
         )
   }
 
@@ -94,8 +95,8 @@ class AddEventController @Inject()(override val messagesApi: MessagesApi,
     renderer.render("events/addEvent.njk", json).map(status(_))
   }
 
-  private def constructViewModel(userAnswers: UserAnswers)(implicit messages: Messages): (Text.Message, Text.Message, Seq[Row]) = {
-    val numberOfEvents = userAnswers.get(EventsQuery).map(_.size).getOrElse(0)
+  private def constructViewModel(userAnswers: UserAnswers)(implicit messages: Messages) = {
+    val numberOfEvents = userAnswers.get(NumberOfEvents).getOrElse(0)
 
     val cyaHelper            = new CheckYourAnswersHelper(userAnswers)
     val eventsRows: Seq[Row] = (0 to numberOfEvents).flatMap(cyaHelper.eventPlace) // TODO: Test rendering of this!

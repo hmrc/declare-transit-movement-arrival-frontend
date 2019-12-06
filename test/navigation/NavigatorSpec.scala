@@ -19,10 +19,12 @@ package navigation
 import base.SpecBase
 import controllers.routes
 import controllers.events.{routes => eventRoutes}
-import generators.Generators
+import generators.{DomainModelGenerators, Generators}
 import pages._
 import models._
+import models.domain.{EnRouteEvent, Incident}
 import org.scalacheck.Arbitrary.arbitrary
+import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.events.AddEventPage
 import pages.events.EventCountryPage
@@ -31,9 +33,9 @@ import pages.events.EventReportedPage
 import pages.events.IncidentInformationPage
 import pages.events.IsTranshipmentPage
 
-class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
+class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generators with DomainModelGenerators {
 
-  val navigator = new Navigator
+  val navigator = app.injector.instanceOf[Navigator]
 
   private val cyaEventPages =
     Seq(EventCountryPage(index), EventPlacePage(index), EventReportedPage(index), IsTranshipmentPage(index), IncidentInformationPage(index))
@@ -286,25 +288,81 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         }
       }
 
-      "must go from add event page" - {
-        "to event country page when user selects 'Yes' on add event page" in {
-          forAll(arbitrary[UserAnswers]) {
-            answers =>
-              val updatedAnswers = answers.set(AddEventPage(index), true).success.value
+      "must go from Add Event Page" - {
+        "when user selects 'Yes' to Event Country Page" - {
 
-              navigator
-                .nextPage(AddEventPage(index), NormalMode, updatedAnswers)
-                .mustBe(eventRoutes.EventCountryController.onPageLoad(answers.id, index + 1, NormalMode))
+          "with index 0 when there are no events" in {
+            forAll(arbitrary[UserAnswers]) {
+              answers =>
+                val updatedAnswers = answers.set(AddEventPage, true).success.value
+
+                navigator
+                  .nextPage(AddEventPage, NormalMode, updatedAnswers)
+                  .mustBe(eventRoutes.EventCountryController.onPageLoad(answers.id, index, NormalMode))
+            }
           }
+
+          "with index 1 when there is 1 event" in {
+            forAll(arbitrary[EnRouteEvent], stringsWithMaxLength(350)) {
+              case (EnRouteEvent(place, countryCode, _, _, _), information) =>
+                val updatedAnswers = emptyUserAnswers
+                  .set(IncidentOnRoutePage, false)
+                  .success
+                  .value
+                  .set(EventCountryPage(index), countryCode)
+                  .success
+                  .value
+                  .set(EventPlacePage(index), place)
+                  .success
+                  .value
+                  .set(EventReportedPage(index), false)
+                  .success
+                  .value
+                  .set(IsTranshipmentPage(index), false)
+                  .success
+                  .value
+                  .set(IncidentInformationPage(index), information)
+                  .success
+                  .value
+                  .set(AddEventPage, true)
+                  .success
+                  .value
+
+                navigator
+                  .nextPage(AddEventPage, NormalMode, updatedAnswers)
+                  .mustBe(eventRoutes.EventCountryController.onPageLoad(emptyUserAnswers.id, index + 1, NormalMode))
+            }
+          }
+
+          "with index 0 when there is partial data entered" ignore {
+            forAll(arbitrary[EnRouteEvent], stringsWithMaxLength(350)) {
+              case (EnRouteEvent(place, countryCode, _, _, _), information) =>
+                val updatedAnswers = emptyUserAnswers
+                  .set(IncidentOnRoutePage, false)
+                  .success
+                  .value
+                  .set(EventCountryPage(index), countryCode)
+                  .success
+                  .value
+                  .set(AddEventPage, true)
+                  .success
+                  .value
+
+                navigator
+                  .nextPage(AddEventPage, NormalMode, updatedAnswers)
+                  .mustBe(eventRoutes.EventCountryController.onPageLoad(emptyUserAnswers.id, index, NormalMode))
+            }
+          }
+
         }
 
         "to check your answers page when user selects option 'No' on add event page" in {
           forAll(arbitrary[UserAnswers]) {
             answers =>
-              val updatedAnswers = answers.set(AddEventPage(index), false).success.value
+              val updatedAnswers = answers.set(AddEventPage, false).success.value
 
               navigator
-                .nextPage(AddEventPage(index), NormalMode, updatedAnswers)
+                .nextPage(AddEventPage, NormalMode, updatedAnswers)
                 .mustBe(routes.CheckYourAnswersController.onPageLoad(answers.id))
           }
         }

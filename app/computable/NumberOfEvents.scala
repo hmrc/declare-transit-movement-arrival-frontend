@@ -14,14 +14,16 @@
  * limitations under the License.
  */
 
-package pages.events
+package computable
 
-import pages.QuestionPage
-import play.api.libs.json.JsPath
+import play.api.libs.json.{JsObject, JsPath}
+import queries.EventsQuery
 
-case object AddEventPage extends QuestionPage[Boolean] {
+// TODO: Should this be List[Events] (where we define a model called events?) or should there be a two?
+case object NumberOfEvents extends ComputableInformation[List[JsObject], Int] {
 
-  override def path: JsPath = JsPath \ toString
+  override val computation: List[JsObject] => Int = _.size
 
-  override def toString: String = "addEvent"
+  override def path: JsPath = EventsQuery.path
+
 }

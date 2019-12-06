@@ -24,10 +24,10 @@ class AddEventPageSpec extends PageBehaviours {
 
   "AddEventPage" - {
 
-    beRetrievable[Boolean](AddEventPage(index))
+    beRetrievable[Boolean](AddEventPage)
 
-    beSettable[Boolean](AddEventPage(index))
+    beSettable[Boolean](AddEventPage)
 
-    beRemovable[Boolean](AddEventPage(index))
+    beRemovable[Boolean](AddEventPage)
   }
 }
