@@ -21,16 +21,9 @@ import java.time.LocalDate
 import base.SpecBase
 import generators.DomainModelGenerators
 import models.GoodsLocation.BorderForceOffice
-import models.domain.messages.ArrivalNotification
+import models.{TraderAddress, UserAnswers}
+import models.domain.{EnRouteEvent, Incident, TraderWithEori}
 import models.domain.messages.NormalNotification
-import models.domain.EnRouteEvent
-import models.domain.Endorsement
-import models.domain.EventDetails
-import models.domain.Incident
-import models.domain.Trader
-import models.domain.TraderWithEori
-import models.TraderAddress
-import models.UserAnswers
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -73,7 +66,7 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
         case ((arbArrivalNotification, trader), (enRouteEvent, incident)) =>
           val routeEvent: EnRouteEvent = enRouteEvent
             .copy(seals = None)
-            .copy(eventDetails = incident.copy(endorsement = Endorsement(None, None, None, None)))
+            .copy(eventDetails = incident.copy(endorsementDate = None, endorsementAuthority = None, endorsementPlace = None, endorsementCountry = None))
 
           val arrivalNotification: NormalNotification = arbArrivalNotification.copy(enRouteEvents = Some(Seq(routeEvent)))
 

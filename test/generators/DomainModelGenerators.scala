@@ -64,46 +64,45 @@ trait DomainModelGenerators extends Generators {
       Gen.oneOf(arbitrary[TraderWithEori], arbitrary[TraderWithoutEori])
     }
 
-  implicit lazy val arbitraryEndorsement: Arbitrary[Endorsement] =
-    Arbitrary {
-
-      for {
-        date      <- Gen.option(datesBetween(LocalDate.of(1900, 1, 1), LocalDate.now))
-        authority <- Gen.option(stringsWithMaxLength(35))
-        place     <- Gen.option(stringsWithMaxLength(35))
-        country   <- Gen.option(stringsWithMaxLength(2))
-      } yield Endorsement(date, authority, place, country)
-    }
-
   implicit lazy val arbitraryIncident: Arbitrary[Incident] =
     Arbitrary {
 
       for {
-        information <- Gen.option(stringsWithMaxLength(350))
-        endorsement <- arbitrary[Endorsement]
-      } yield Incident(information, endorsement)
+        information          <- Gen.option(stringsWithMaxLength(350))
+        endorsementDate      <- Gen.option(datesBetween(LocalDate.of(1900, 1, 1), LocalDate.now))
+        endorsementAuthority <- Gen.option(stringsWithMaxLength(35))
+        endorsementPlace     <- Gen.option(stringsWithMaxLength(35))
+        endorsementCountry   <- Gen.option(stringsWithMaxLength(2))
+      } yield Incident(information, endorsementDate, endorsementAuthority, endorsementPlace, endorsementCountry)
     }
 
   implicit lazy val arbitraryVehicularTranshipment: Arbitrary[VehicularTranshipment] =
     Arbitrary {
 
       for {
-        transportIdentity  <- stringsWithMaxLength(27)
-        transportCountry   <- stringsWithMaxLength(2)
-        endorsement        <- arbitrary[Endorsement]
-        numberOfContainers <- Gen.choose[Int](1, 99)
-        containers         <- Gen.option(Gen.listOfN(numberOfContainers, stringsWithMaxLength(17)))
-      } yield VehicularTranshipment(transportIdentity, transportCountry, endorsement, containers)
+        transportIdentity    <- stringsWithMaxLength(27)
+        transportCountry     <- stringsWithMaxLength(2)
+        endorsementDate      <- Gen.option(datesBetween(LocalDate.of(1900, 1, 1), LocalDate.now))
+        endorsementAuthority <- Gen.option(stringsWithMaxLength(35))
+        endorsementPlace     <- Gen.option(stringsWithMaxLength(35))
+        endorsementCountry   <- Gen.option(stringsWithMaxLength(2))
+        numberOfContainers   <- Gen.choose[Int](1, 99)
+        containers           <- Gen.option(Gen.listOfN(numberOfContainers, stringsWithMaxLength(17)))
+      } yield
+        VehicularTranshipment(transportIdentity, transportCountry, endorsementDate, endorsementAuthority, endorsementPlace, endorsementCountry, containers)
     }
 
   implicit lazy val arbitraryContainerTranshipment: Arbitrary[ContainerTranshipment] =
     Arbitrary {
 
       for {
-        endorsement        <- arbitrary[Endorsement]
-        numberOfContainers <- Gen.choose[Int](1, 99)
-        containers         <- Gen.listOfN(numberOfContainers, stringsWithMaxLength(17))
-      } yield ContainerTranshipment(endorsement, containers)
+        endorsementDate      <- Gen.option(datesBetween(LocalDate.of(1900, 1, 1), LocalDate.now))
+        endorsementAuthority <- Gen.option(stringsWithMaxLength(35))
+        endorsementPlace     <- Gen.option(stringsWithMaxLength(35))
+        endorsementCountry   <- Gen.option(stringsWithMaxLength(2))
+        numberOfContainers   <- Gen.choose[Int](1, 99)
+        containers           <- Gen.listOfN(numberOfContainers, stringsWithMaxLength(17))
+      } yield ContainerTranshipment(endorsementDate, endorsementAuthority, endorsementPlace, endorsementCountry, containers)
     }
 
   implicit lazy val arbitraryTranshipment: Arbitrary[Transhipment] =

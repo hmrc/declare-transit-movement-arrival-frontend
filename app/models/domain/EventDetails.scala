@@ -16,6 +16,8 @@
 
 package models.domain
 
+import java.time.LocalDate
+
 import models._
 import play.api.libs.json._
 
@@ -46,7 +48,12 @@ object EventDetails {
   }
 }
 
-final case class Incident(information: Option[String], endorsement: Endorsement) extends EventDetails
+final case class Incident(information: Option[String],
+                          endorsementDate: Option[LocalDate]   = None,
+                          endorsementAuthority: Option[String] = None,
+                          endorsementPlace: Option[String]     = None,
+                          endorsementCountry: Option[String]   = None)
+    extends EventDetails
 
 object Incident {
 
@@ -79,7 +86,13 @@ object Transhipment {
   }
 }
 
-final case class VehicularTranshipment(transportIdentity: String, transportCountry: String, endorsement: Endorsement, containers: Option[Seq[String]])
+final case class VehicularTranshipment(transportIdentity: String,
+                                       transportCountry: String,
+                                       endorsementDate: Option[LocalDate],
+                                       endorsementAuthority: Option[String],
+                                       endorsementPlace: Option[String],
+                                       endorsementCountry: Option[String],
+                                       containers: Option[Seq[String]])
     extends Transhipment
 
 object VehicularTranshipment {
@@ -91,7 +104,10 @@ object VehicularTranshipment {
     (
       (__ \ "transportIdentity").read[String] and
         (__ \ "transportCountry").read[String] and
-        (__ \ "endorsement").read[Endorsement] and
+        (__ \ "endorsementDate").readNullable[LocalDate] and
+        (__ \ "endorsementAuthority").readNullable[String] and
+        (__ \ "endorsementPlace").readNullable[String] and
+        (__ \ "endorsementCountry").readNullable[String] and
         (__ \ "containers").readNullable[Seq[String]]
     )(VehicularTranshipment.apply _)
 
@@ -102,16 +118,24 @@ object VehicularTranshipment {
       transhipment =>
         Json
           .obj(
-            "transportIdentity" -> transhipment.transportIdentity,
-            "transportCountry"  -> transhipment.transportCountry,
-            "endorsement"       -> Json.toJson(transhipment.endorsement),
-            "containers"        -> Json.toJson(transhipment.containers)
+            "transportIdentity"    -> transhipment.transportIdentity,
+            "transportCountry"     -> transhipment.transportCountry,
+            "endorsementDate"      -> transhipment.endorsementDate,
+            "endorsementAuthority" -> transhipment.endorsementAuthority,
+            "endorsementPlace"     -> transhipment.endorsementPlace,
+            "endorsementCountry"   -> transhipment.endorsementCountry,
+            "containers"           -> Json.toJson(transhipment.containers)
           )
           .filterNulls
     }
 }
 
-final case class ContainerTranshipment(endorsement: Endorsement, containers: Seq[String]) extends Transhipment {
+final case class ContainerTranshipment(endorsementDate: Option[LocalDate],
+                                       endorsementAuthority: Option[String],
+                                       endorsementPlace: Option[String],
+                                       endorsementCountry: Option[String],
+                                       containers: Seq[String])
+    extends Transhipment {
 
   require(containers.nonEmpty, "At least one container number must be provided")
 }

@@ -52,8 +52,7 @@ class ArrivalNotificationConversionService {
       ???
     } else {
       Incident(
-        information = incidentInformation,
-        endorsement = Endorsement(None, None, None, None) // TODO: Find out where this data comes from
+        information = incidentInformation
       )
     }
 

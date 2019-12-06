@@ -15,6 +15,7 @@
  */
 
 package models.domain
+import models._
 
 import generators.DomainModelGenerators
 import models.domain.behaviours.JsonBehaviours
@@ -50,10 +51,10 @@ class EventDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckPropert
 
     "must fail to construct when given an empty sequence of containers" in {
 
-      forAll(arbitrary[Endorsement]) {
-        endorsement =>
+      forAll(arbitrary[ContainerTranshipment]) {
+        ct =>
           intercept[IllegalArgumentException] {
-            ContainerTranshipment(endorsement, Seq.empty)
+            ContainerTranshipment(ct.endorsementDate, ct.endorsementAuthority, ct.endorsementPlace, ct.endorsementCountry, Seq.empty)
           }
       }
     }
@@ -204,21 +205,38 @@ class EventDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckPropert
         JsObject.empty
     }
 
-    information ++ Json.obj("endorsement" -> Json.toJson(incident.endorsement))
+    information ++ Json
+      .obj(
+        "endorsementDate"      -> incident.endorsementDate,
+        "endorsementAuthority" -> incident.endorsementAuthority,
+        "endorsementPlace"     -> incident.endorsementPlace,
+        "endorsementCountry"   -> incident.endorsementCountry
+      )
+      .filterNulls
   }
 
   private def containerTranshipmentJson(containerTranshipment: ContainerTranshipment): JsObject =
-    Json.obj(
-      "endorsement" -> Json.toJson(containerTranshipment.endorsement),
-      "containers"  -> Json.toJson(containerTranshipment.containers)
-    )
+    Json
+      .obj(
+        "endorsementDate"      -> containerTranshipment.endorsementDate,
+        "endorsementAuthority" -> containerTranshipment.endorsementAuthority,
+        "endorsementPlace"     -> containerTranshipment.endorsementPlace,
+        "endorsementCountry"   -> containerTranshipment.endorsementCountry,
+        "containers"           -> Json.toJson(containerTranshipment.containers)
+      )
+      .filterNulls
 
   private def vehicularTranshipmentJson(vehicularTranshipment: VehicularTranshipment): JsObject =
-    Json.obj(
-      "transportIdentity" -> vehicularTranshipment.transportIdentity,
-      "transportCountry"  -> vehicularTranshipment.transportCountry,
-      "endorsement"       -> Json.toJson(vehicularTranshipment.endorsement)
-    ) ++ {
+    Json
+      .obj(
+        "transportIdentity"    -> vehicularTranshipment.transportIdentity,
+        "transportCountry"     -> vehicularTranshipment.transportCountry,
+        "endorsementDate"      -> vehicularTranshipment.endorsementDate,
+        "endorsementAuthority" -> vehicularTranshipment.endorsementAuthority,
+        "endorsementPlace"     -> vehicularTranshipment.endorsementPlace,
+        "endorsementCountry"   -> vehicularTranshipment.endorsementCountry
+      )
+      .filterNulls ++ {
       vehicularTranshipment.containers match {
         case Some(containers) =>
           Json.obj("containers" -> containers)
