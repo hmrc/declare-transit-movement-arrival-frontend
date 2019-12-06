@@ -49,10 +49,10 @@ object EventDetails {
 }
 
 final case class Incident(information: Option[String],
-                          endorsementDate: Option[LocalDate]   = None,
-                          endorsementAuthority: Option[String] = None,
-                          endorsementPlace: Option[String]     = None,
-                          endorsementCountry: Option[String]   = None)
+                          endorsementDate: Option[LocalDate],
+                          endorsementAuthority: Option[String],
+                          endorsementPlace: Option[String],
+                          endorsementCountry: Option[String])
     extends EventDetails
 
 object Incident {

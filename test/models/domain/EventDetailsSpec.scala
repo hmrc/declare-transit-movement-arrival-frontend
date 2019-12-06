@@ -52,9 +52,15 @@ class EventDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckPropert
     "must fail to construct when given an empty sequence of containers" in {
 
       forAll(arbitrary[ContainerTranshipment]) {
-        ct =>
+        containerTranshipment =>
           intercept[IllegalArgumentException] {
-            ContainerTranshipment(ct.endorsementDate, ct.endorsementAuthority, ct.endorsementPlace, ct.endorsementCountry, Seq.empty)
+            ContainerTranshipment(
+              containerTranshipment.endorsementDate,
+              containerTranshipment.endorsementAuthority,
+              containerTranshipment.endorsementPlace,
+              containerTranshipment.endorsementCountry,
+              Seq.empty
+            )
           }
       }
     }

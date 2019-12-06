@@ -52,7 +52,11 @@ class ArrivalNotificationConversionService {
       ???
     } else {
       Incident(
-        information = incidentInformation
+        information          = incidentInformation,
+        endorsementDate      = None,
+        endorsementAuthority = None,
+        endorsementPlace     = None,
+        endorsementCountry   = None
       )
     }
 
