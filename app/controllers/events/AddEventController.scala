@@ -19,12 +19,14 @@ package controllers.events
 import controllers.actions._
 import forms.events.AddEventFormProvider
 import javax.inject.Inject
+import models.requests.DataRequest
 import models.{Mode, MovementReferenceNumber, UserAnswers}
 import navigation.Navigator
 import pages.events.AddEventPage
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request, Result, Results}
 import queries.EventsQuery
 import renderer.Renderer
 import repositories.SessionRepository
@@ -35,17 +37,15 @@ import utils.CheckYourAnswersHelper
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class AddEventController @Inject()(
-  override val messagesApi: MessagesApi,
-  sessionRepository: SessionRepository,
-  navigator: Navigator,
-  identify: IdentifierAction,
-  getData: DataRetrievalActionProvider,
-  requireData: DataRequiredAction,
-  formProvider: AddEventFormProvider,
-  val controllerComponents: MessagesControllerComponents,
-  renderer: Renderer
-)(implicit ec: ExecutionContext)
+class AddEventController @Inject()(override val messagesApi: MessagesApi,
+                                   sessionRepository: SessionRepository,
+                                   navigator: Navigator,
+                                   identify: IdentifierAction,
+                                   getData: DataRetrievalActionProvider,
+                                   requireData: DataRequiredAction,
+                                   formProvider: AddEventFormProvider,
+                                   val controllerComponents: MessagesControllerComponents,
+                                   renderer: Renderer)(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
     with NunjucksSupport {
@@ -54,24 +54,11 @@ class AddEventController @Inject()(
 
   def onPageLoad(mrn: MovementReferenceNumber, index: Int, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
-      val preparedForm = request.userAnswers.get(AddEventPage(index)) match {
+      val preparedForm: Form[Boolean] = request.userAnswers.get(AddEventPage(index)) match {
         case None        => form
         case Some(value) => form.fill(value)
       }
-
-      val (title, heading, eventsRows) = constructViewModel(request.userAnswers)
-
-      val json = Json.obj(
-        "form"        -> preparedForm,
-        "mode"        -> mode,
-        "mrn"         -> mrn,
-        "radios"      -> Radios.yesNo(preparedForm("value")),
-        "titleOfPage" -> title,
-        "heading"     -> heading,
-        "events"      -> eventsRows
-      )
-
-      renderer.render("events/addEvent.njk", json).map(Ok(_))
+      renderView(mrn, mode, preparedForm, Results.Ok)
   }
 
   def onSubmit(mrn: MovementReferenceNumber, index: Int, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
@@ -80,20 +67,7 @@ class AddEventController @Inject()(
         .bindFromRequest()
         .fold(
           formWithErrors => {
-
-            val (title, heading, eventsRows) = constructViewModel(request.userAnswers)
-
-            val json = Json.obj(
-              "form"        -> formWithErrors,
-              "mode"        -> mode,
-              "mrn"         -> mrn,
-              "radios"      -> Radios.yesNo(formWithErrors("value")),
-              "titleOfPage" -> title,
-              "heading"     -> heading,
-              "events"      -> eventsRows
-            )
-
-            renderer.render("addEvent.njk", json).map(BadRequest(_))
+            renderView(mrn, mode, formWithErrors, Results.BadRequest)
           },
           value =>
             for {
@@ -102,7 +76,25 @@ class AddEventController @Inject()(
         )
   }
 
-  private def constructViewModel(userAnswers: UserAnswers)(implicit messages: Messages) = {
+  private def renderView(mrn: MovementReferenceNumber, mode: Mode, form: Form[Boolean], status: Results.Status)(
+    implicit request: DataRequest[AnyContent]): Future[Result] = {
+
+    val (title, heading, eventsRows) = constructViewModel(request.userAnswers)
+
+    val json = Json.obj(
+      "form"        -> form,
+      "mode"        -> mode,
+      "mrn"         -> mrn,
+      "radios"      -> Radios.yesNo(form("value")),
+      "titleOfPage" -> title,
+      "heading"     -> heading,
+      "events"      -> eventsRows
+    )
+
+    renderer.render("events/addEvent.njk", json).map(status(_))
+  }
+
+  private def constructViewModel(userAnswers: UserAnswers)(implicit messages: Messages): (Text.Message, Text.Message, Seq[Row]) = {
     val numberOfEvents = userAnswers.get(EventsQuery).map(_.size).getOrElse(0)
 
     val cyaHelper            = new CheckYourAnswersHelper(userAnswers)
