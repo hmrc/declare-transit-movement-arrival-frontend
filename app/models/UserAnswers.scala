@@ -18,6 +18,7 @@ package models
 
 import java.time.LocalDateTime
 
+import computable.Derivable
 import pages._
 import play.api.libs.json._
 import queries.Gettable
@@ -28,6 +29,9 @@ final case class UserAnswers(id: MovementReferenceNumber, data: JsObject = Json.
 
   def get[A](gettable: Gettable[A])(implicit rds: Reads[A]): Option[A] =
     Reads.optionNoError(Reads.at(gettable.path)).reads(data).getOrElse(None)
+
+  def get[A, B](derivable: Derivable[A, B])(implicit rds: Reads[A]): Option[B] =
+    get(derivable: Gettable[A]).map(derivable.derive)
 
   def set[A](page: QuestionPage[A], value: A)(implicit writes: Writes[A]): Try[UserAnswers] = {
 
