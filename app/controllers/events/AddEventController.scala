@@ -77,28 +77,13 @@ class AddEventController @Inject()(override val messagesApi: MessagesApi,
         )
   }
 
+  // TODO Move to viewmodel
   private def renderView(mrn: MovementReferenceNumber, mode: Mode, form: Form[Boolean], status: Results.Status)(
     implicit request: DataRequest[AnyContent]): Future[Result] = {
 
-    val (title, heading, eventsRows) = constructViewModel(request.userAnswers)
+    val numberOfEvents = request.userAnswers.get(NumberOfEvents).getOrElse(0)
 
-    val json = Json.obj(
-      "form"        -> form,
-      "mode"        -> mode,
-      "mrn"         -> mrn,
-      "radios"      -> Radios.yesNo(form("value")),
-      "titleOfPage" -> title,
-      "heading"     -> heading,
-      "events"      -> eventsRows
-    )
-
-    renderer.render("events/addEvent.njk", json).map(status(_))
-  }
-
-  private def constructViewModel(userAnswers: UserAnswers)(implicit messages: Messages) = {
-    val numberOfEvents = userAnswers.get(NumberOfEvents).getOrElse(0)
-
-    val cyaHelper            = new CheckYourAnswersHelper(userAnswers)
+    val cyaHelper            = new CheckYourAnswersHelper(request.userAnswers)
     val eventsRows: Seq[Row] = (0 to numberOfEvents).flatMap(cyaHelper.eventPlace) // TODO: Test rendering of this!
 
     val title =
@@ -114,5 +99,17 @@ class AddEventController @Inject()(override val messagesApi: MessagesApi,
         msg"addEvent.heading.plural".withArgs(numberOfEvents)
 
     (title, heading, eventsRows)
+
+    val json = Json.obj(
+      "form"        -> form,
+      "mode"        -> mode,
+      "mrn"         -> mrn,
+      "radios"      -> Radios.yesNo(form("value")),
+      "titleOfPage" -> title,
+      "heading"     -> heading,
+      "events"      -> eventsRows
+    )
+
+    renderer.render("events/addEvent.njk", json).map(status(_))
   }
 }
