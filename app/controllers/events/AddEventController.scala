@@ -34,7 +34,7 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.SummaryList.Row
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios, Text}
-import utils.CheckYourAnswersHelper
+import utils.{AddEventsHelper, CheckYourAnswersHelper}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -83,8 +83,8 @@ class AddEventController @Inject()(override val messagesApi: MessagesApi,
 
     val numberOfEvents = request.userAnswers.get(DeriveNumberOfEvents).getOrElse(0)
 
-    val cyaHelper            = new CheckYourAnswersHelper(request.userAnswers)
-    val eventsRows: Seq[Row] = (0 to numberOfEvents).flatMap(cyaHelper.eventPlace) // TODO: Test rendering of this!
+    val cyaHelper            = new AddEventsHelper(request.userAnswers)
+    val eventsRows: Seq[Row] = (0 to numberOfEvents).flatMap(cyaHelper.listOfEvent) // TODO: Test rendering of this!
 
     val title =
       if (numberOfEvents == 1)
@@ -97,8 +97,6 @@ class AddEventController @Inject()(override val messagesApi: MessagesApi,
         msg"addEvent.heading.singular".withArgs(numberOfEvents)
       else
         msg"addEvent.heading.plural".withArgs(numberOfEvents)
-
-    (title, heading, eventsRows)
 
     val json = Json.obj(
       "form"        -> form,
