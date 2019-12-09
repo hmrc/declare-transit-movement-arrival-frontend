@@ -246,16 +246,16 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           forAll(arbitrary[UserAnswers]) {
             answers =>
               val updatedAnswers = answers
-                .set(EventReportedPage, false)
+                .set(EventReportedPage(index), false)
                 .success
                 .value
-                .set(IsTranshipmentPage, false)
+                .set(IsTranshipmentPage(index), false)
                 .success
                 .value
 
               navigator
-                .nextPage(IsTranshipmentPage, NormalMode, updatedAnswers)
-                .mustBe(routes.IncidentInformationController.onPageLoad(updatedAnswers.id, NormalMode))
+                .nextPage(IsTranshipmentPage(index), NormalMode, updatedAnswers)
+                .mustBe(eventRoutes.IncidentInformationController.onPageLoad(updatedAnswers.id, index, NormalMode))
           }
         }
 
@@ -264,16 +264,16 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           forAll(arbitrary[UserAnswers]) {
             answers =>
               val updatedAnswers = answers
-                .set(EventReportedPage, true)
+                .set(EventReportedPage(index), true)
                 .success
                 .value
-                .set(IsTranshipmentPage, false)
+                .set(IsTranshipmentPage(index), false)
                 .success
                 .value
 
               navigator
-                .nextPage(IsTranshipmentPage, NormalMode, updatedAnswers)
-                .mustBe(routes.CheckEventAnswersController.onPageLoad(updatedAnswers.id))
+                .nextPage(IsTranshipmentPage(index), NormalMode, updatedAnswers)
+                .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(updatedAnswers.id, index))
           }
         }
 
@@ -282,16 +282,16 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           forAll(arbitrary[UserAnswers]) {
             answers =>
               val updatedAnswers = answers
-                .set(EventReportedPage, true)
+                .set(EventReportedPage(index), true)
                 .success
                 .value
-                .set(IsTranshipmentPage, true)
+                .set(IsTranshipmentPage(index), true)
                 .success
                 .value
 
               navigator
-                .nextPage(IsTranshipmentPage, NormalMode, updatedAnswers)
-                .mustBe(routes.CheckEventAnswersController.onPageLoad(updatedAnswers.id))
+                .nextPage(IsTranshipmentPage(index), NormalMode, updatedAnswers)
+                .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(updatedAnswers.id, index))
           }
         }
 
@@ -300,16 +300,16 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           forAll(arbitrary[UserAnswers]) {
             answers =>
               val updatedAnswers = answers
-                .set(EventReportedPage, false)
+                .set(EventReportedPage(index), false)
                 .success
                 .value
-                .set(IsTranshipmentPage, true)
+                .set(IsTranshipmentPage(index), true)
                 .success
                 .value
 
               navigator
-                .nextPage(IsTranshipmentPage, NormalMode, updatedAnswers)
-                .mustBe(routes.CheckEventAnswersController.onPageLoad(updatedAnswers.id))
+                .nextPage(IsTranshipmentPage(index), NormalMode, updatedAnswers)
+                .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(updatedAnswers.id, index))
           }
         }
 
@@ -318,15 +318,15 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           forAll(arbitrary[UserAnswers]) {
             answers =>
               val updatedAnswers = answers
-                .remove(EventReportedPage)
+                .remove(EventReportedPage(index))
                 .success
                 .value
-                .remove(IsTranshipmentPage)
+                .remove(IsTranshipmentPage(index))
                 .success
                 .value
 
               navigator
-                .nextPage(IsTranshipmentPage, NormalMode, updatedAnswers)
+                .nextPage(IsTranshipmentPage(index), NormalMode, updatedAnswers)
                 .mustBe(routes.SessionExpiredController.onPageLoad())
           }
         }
