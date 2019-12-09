@@ -241,38 +241,92 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
       "must go from Is Transhipment" - {
 
-        "to Incident Information when there is no transhipment" in {
+        "to Incident Information when the event has not been reported and transhipment as 'No'" in {
 
           forAll(arbitrary[UserAnswers]) {
             answers =>
-              val updatedAnswers = answers.set(IsTranshipmentPage(index), false).success.value
+              val updatedAnswers = answers
+                .set(EventReportedPage, false)
+                .success
+                .value
+                .set(IsTranshipmentPage, false)
+                .success
+                .value
 
               navigator
-                .nextPage(IsTranshipmentPage(index), NormalMode, updatedAnswers)
-                .mustBe(eventRoutes.IncidentInformationController.onPageLoad(updatedAnswers.id, index, NormalMode))
+                .nextPage(IsTranshipmentPage, NormalMode, updatedAnswers)
+                .mustBe(routes.IncidentInformationController.onPageLoad(updatedAnswers.id, NormalMode))
           }
         }
 
-        "to events summary page when there is transhipment" in {
+        "to events summary page when the event has been reported and Transhipment as 'No'" in {
 
           forAll(arbitrary[UserAnswers]) {
             answers =>
-              val updatedAnswers = answers.set(IsTranshipmentPage(index), true).success.value
+              val updatedAnswers = answers
+                .set(EventReportedPage, true)
+                .success
+                .value
+                .set(IsTranshipmentPage, false)
+                .success
+                .value
 
               navigator
-                .nextPage(IsTranshipmentPage(index), NormalMode, updatedAnswers)
-                .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(updatedAnswers.id, index))
+                .nextPage(IsTranshipmentPage, NormalMode, updatedAnswers)
+                .mustBe(routes.CheckEventAnswersController.onPageLoad(updatedAnswers.id))
           }
         }
 
-        "to Session Expired when we cannot tell if transhipment selected or not" in {
+        "to events summary page when the event has been reported and Transhipment as 'Yes'" in {
 
           forAll(arbitrary[UserAnswers]) {
             answers =>
-              val updatedAnswers = answers.remove(IsTranshipmentPage(index)).success.value
+              val updatedAnswers = answers
+                .set(EventReportedPage, true)
+                .success
+                .value
+                .set(IsTranshipmentPage, true)
+                .success
+                .value
 
               navigator
-                .nextPage(IsTranshipmentPage(index), NormalMode, updatedAnswers)
+                .nextPage(IsTranshipmentPage, NormalMode, updatedAnswers)
+                .mustBe(routes.CheckEventAnswersController.onPageLoad(updatedAnswers.id))
+          }
+        }
+
+        "to events summary page when the event has not been reported and Transhipment as 'Yes'" in {
+
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val updatedAnswers = answers
+                .set(EventReportedPage, false)
+                .success
+                .value
+                .set(IsTranshipmentPage, true)
+                .success
+                .value
+
+              navigator
+                .nextPage(IsTranshipmentPage, NormalMode, updatedAnswers)
+                .mustBe(routes.CheckEventAnswersController.onPageLoad(updatedAnswers.id))
+          }
+        }
+
+        "to Session Expired when we cannot tell if the event has been reported or if Transhipment is selected" in {
+
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val updatedAnswers = answers
+                .remove(EventReportedPage)
+                .success
+                .value
+                .remove(IsTranshipmentPage)
+                .success
+                .value
+
+              navigator
+                .nextPage(IsTranshipmentPage, NormalMode, updatedAnswers)
                 .mustBe(routes.SessionExpiredController.onPageLoad())
           }
         }
