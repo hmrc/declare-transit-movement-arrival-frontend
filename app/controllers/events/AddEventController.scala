@@ -16,7 +16,7 @@
 
 package controllers.events
 
-import computable.NumberOfEvents
+import computable.DeriveNumberOfEvents
 import controllers.actions._
 import forms.events.AddEventFormProvider
 import javax.inject.Inject
@@ -81,7 +81,7 @@ class AddEventController @Inject()(override val messagesApi: MessagesApi,
   private def renderView(mrn: MovementReferenceNumber, mode: Mode, form: Form[Boolean], status: Results.Status)(
     implicit request: DataRequest[AnyContent]): Future[Result] = {
 
-    val numberOfEvents = request.userAnswers.get(NumberOfEvents).getOrElse(0)
+    val numberOfEvents = request.userAnswers.get(DeriveNumberOfEvents).getOrElse(0)
 
     val cyaHelper            = new CheckYourAnswersHelper(request.userAnswers)
     val eventsRows: Seq[Row] = (0 to numberOfEvents).flatMap(cyaHelper.eventPlace) // TODO: Test rendering of this!

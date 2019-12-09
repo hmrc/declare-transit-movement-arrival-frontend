@@ -20,9 +20,9 @@ import play.api.libs.json.{JsObject, JsPath}
 import queries.EventsQuery
 
 // TODO: Should this be List[Events] (where we define a model called events?) or should there be a two?
-case object NumberOfEvents extends ComputableInformation[List[JsObject], Int] {
+case object DeriveNumberOfEvents extends Derivable[List[JsObject], Int] {
 
-  override val computation: List[JsObject] => Int = _.size
+  override val derive: List[JsObject] => Int = _.size
 
   override def path: JsPath = EventsQuery.path
 

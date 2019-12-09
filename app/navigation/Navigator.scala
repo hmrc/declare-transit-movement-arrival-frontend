@@ -17,7 +17,7 @@
 package navigation
 
 import com.google.inject.{Inject, Singleton}
-import computable.NumberOfEvents
+import computable.DeriveNumberOfEvents
 import controllers.events.{routes => eventRoutes}
 import controllers.routes
 import models.GoodsLocation._
@@ -119,7 +119,7 @@ class Navigator @Inject()() {
     }
 
   private def addEventRoute(ua: UserAnswers): Option[Call] =
-    (ua.get(AddEventPage), ua.get(NumberOfEvents)) match {
+    (ua.get(AddEventPage), ua.get(DeriveNumberOfEvents)) match {
       case (Some(true), Some(index)) => Some(eventRoutes.EventCountryController.onPageLoad(ua.id, index, NormalMode))
       case (Some(true), None)        => Some(eventRoutes.EventCountryController.onPageLoad(ua.id, 0, NormalMode))
       case (Some(false), _)          => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))

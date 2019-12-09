@@ -18,8 +18,8 @@ package computable
 
 import queries.Gettable
 
-trait ComputableInformation[A, B] extends Gettable[A] {
+trait Derivable[A, B] extends Gettable[A] {
 
-  val computation: A => B
+  val derive: A => B
 
 }
