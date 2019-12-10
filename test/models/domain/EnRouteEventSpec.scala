@@ -51,13 +51,7 @@ class EnRouteEventSpec extends FreeSpec with MustMatchers with ScalaCheckPropert
       "place"         -> enRouteEvent.place,
       "countryCode"   -> enRouteEvent.countryCode,
       "alreadyInNcts" -> enRouteEvent.alreadyInNcts,
-      "eventDetails"  -> Json.toJson(enRouteEvent.eventDetails)
-    ) ++ {
-      enRouteEvent.seals match {
-        case Some(seals) =>
-          Json.obj("seals" -> Json.toJson(seals))
-        case _ =>
-          JsObject.empty
-      }
-    }
+      "eventDetails"  -> Json.toJson(enRouteEvent.eventDetails),
+      "seals"         -> Json.toJson(enRouteEvent.seals)
+    )
 }
