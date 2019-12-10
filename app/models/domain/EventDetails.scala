@@ -107,7 +107,6 @@ object VehicularTranshipment {
             "endorsement"       -> Json.toJson(transhipment.endorsement),
             "containers"        -> Json.toJson(transhipment.containers)
           )
-          .filterNulls
     }
 }
 
