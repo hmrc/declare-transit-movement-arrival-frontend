@@ -47,6 +47,6 @@ object EnRouteEvent {
             "eventDetails"  -> Json.toJson(event.eventDetails),
             "seals"         -> Json.toJson(event.seals)
           )
-          .filterNulls
+
     }
 }

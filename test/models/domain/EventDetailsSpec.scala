@@ -218,7 +218,7 @@ class EventDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckPropert
       "transportIdentity" -> vehicularTranshipment.transportIdentity,
       "transportCountry"  -> vehicularTranshipment.transportCountry,
       "endorsement"       -> Json.toJson(vehicularTranshipment.endorsement),
-      "containers"       -> Json.toJson(vehicularTranshipment.containers)
+      "containers"        -> Json.toJson(vehicularTranshipment.containers)
     )
 
 }

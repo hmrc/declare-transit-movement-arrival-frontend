@@ -142,48 +142,22 @@ class ArrivalNotificationSpec extends FreeSpec with MustMatchers with ScalaCheck
       "procedure"               -> notification.procedure,
       "movementReferenceNumber" -> notification.movementReferenceNumber,
       "notificationPlace"       -> notification.notificationPlace,
-      "notificationDate"        -> notification.notificationDate
-    ) ++ {
-      notification.customsSubPlace match {
-        case Some(subPlace) =>
-          Json.obj("customsSubPlace" -> Json.toJson(subPlace))
-        case _ =>
-          JsObject.empty
-      }
-    } ++ Json.obj(
-      "trader"             -> Json.toJson(notification.trader),
-      "presentationOffice" -> notification.presentationOffice
-    ) ++ {
-      notification.enRouteEvents match {
-        case Some(enRouteEvents) =>
-          Json.obj("enRouteEvents" -> Json.toJson(notification.enRouteEvents))
-        case _ =>
-          JsObject.empty
-      }
-    }
+      "notificationDate"        -> notification.notificationDate,
+      "enRouteEvents"           -> Json.toJson(notification.enRouteEvents),
+      "customsSubPlace"         -> Json.toJson(notification.customsSubPlace),
+      "trader"                  -> Json.toJson(notification.trader),
+      "presentationOffice"      -> notification.presentationOffice
+    )
 
   private def createSimplifiedNotificationJson(notification: SimplifiedNotification): JsObject =
     Json.obj(
       "procedure"               -> notification.procedure,
       "movementReferenceNumber" -> notification.movementReferenceNumber,
       "notificationPlace"       -> notification.notificationPlace,
-      "notificationDate"        -> notification.notificationDate
-    ) ++ {
-      notification.approvedLocation match {
-        case Some(approvedLocation) =>
-          Json.obj("approvedLocation" -> approvedLocation)
-        case _ =>
-          JsObject.empty
-      }
-    } ++ Json.obj(
-      "trader"             -> Json.toJson(notification.trader),
-      "presentationOffice" -> notification.presentationOffice
-    ) ++ {
-      notification.enRouteEvents match {
-        case Some(enrouteEvents) =>
-          Json.obj("enRouteEvents" -> Json.toJson(notification.enRouteEvents))
-        case _ =>
-          JsObject.empty
-      }
-    }
+      "notificationDate"        -> notification.notificationDate,
+      "enRouteEvents"           -> Json.toJson(notification.enRouteEvents),
+      "approvedLocation"        -> Json.toJson(notification.approvedLocation),
+      "trader"                  -> Json.toJson(notification.trader),
+      "presentationOffice"      -> notification.presentationOffice
+    )
 }

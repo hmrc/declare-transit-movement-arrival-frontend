@@ -104,7 +104,6 @@ object NormalNotification {
             "presentationOffice"      -> notification.presentationOffice,
             "enRouteEvents"           -> Json.toJson(notification.enRouteEvents)
           )
-          .filterNulls
     }
 }
 
@@ -164,7 +163,6 @@ object SimplifiedNotification {
             "presentationOffice"      -> notification.presentationOffice,
             "enRouteEvents"           -> Json.toJson(notification.enRouteEvents)
           )
-          .filterNulls
     }
   }
 }
