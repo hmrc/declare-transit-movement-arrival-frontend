@@ -83,8 +83,6 @@ class AddEventController @Inject()(override val messagesApi: MessagesApi,
 
     val numberOfEvents = request.userAnswers.get(DeriveNumberOfEvents).getOrElse(0)
 
-    println(s"\n\n$numberOfEvents\n\n")
-
     val cyaHelper            = new AddEventsHelper(request.userAnswers)
     val eventsRows: Seq[Row] = (0 to numberOfEvents).flatMap(cyaHelper.listOfEvent) // TODO: Test rendering of this!
 
