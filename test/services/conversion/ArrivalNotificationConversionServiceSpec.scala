@@ -21,16 +21,9 @@ import java.time.LocalDate
 import base.SpecBase
 import generators.DomainModelGenerators
 import models.GoodsLocation.BorderForceOffice
-import models.domain.messages.ArrivalNotification
+import models.{TraderAddress, UserAnswers}
+import models.domain.{EnRouteEvent, Endorsement, Incident, TraderWithEori}
 import models.domain.messages.NormalNotification
-import models.domain.EnRouteEvent
-import models.domain.Endorsement
-import models.domain.EventDetails
-import models.domain.Incident
-import models.domain.Trader
-import models.domain.TraderWithEori
-import models.TraderAddress
-import models.UserAnswers
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks

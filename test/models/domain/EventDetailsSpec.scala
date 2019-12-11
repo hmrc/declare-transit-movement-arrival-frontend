@@ -217,14 +217,8 @@ class EventDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckPropert
     Json.obj(
       "transportIdentity" -> vehicularTranshipment.transportIdentity,
       "transportCountry"  -> vehicularTranshipment.transportCountry,
-      "endorsement"       -> Json.toJson(vehicularTranshipment.endorsement)
-    ) ++ {
-      vehicularTranshipment.containers match {
-        case Some(containers) =>
-          Json.obj("containers" -> containers)
-        case _ =>
-          JsObject.empty
-      }
-    }
+      "endorsement"       -> Json.toJson(vehicularTranshipment.endorsement),
+      "containers"        -> Json.toJson(vehicularTranshipment.containers)
+    )
 
 }
