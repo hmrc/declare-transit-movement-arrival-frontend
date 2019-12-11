@@ -16,32 +16,40 @@
 
 package utils
 
+import java.io
+
 import controllers.events.{routes => eventRoutes}
 import models.{MovementReferenceNumber, UserAnswers}
-import pages.events.EventPlacePage
+import pages.events._
 import uk.gov.hmrc.viewmodels.SummaryList.{Action, Key, Row, Value}
 import uk.gov.hmrc.viewmodels._
 
 class AddEventsHelper(userAnswers: UserAnswers) {
 
-  def listOfEvent(index: Int): Option[Row] = userAnswers.get(EventPlacePage(index)) map {
-    answer =>
-      Row(
-        key   = Key(msg"addEvent.event.label".withArgs(index + 1), classes = Seq("govuk-!-width-one-half")), // TODO: Move harded coded interpretation of index to an Index Model
-        value = Value(lit"$answer"),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = eventRoutes.CheckEventAnswersController.onPageLoad(mrn, index).url,
-            visuallyHiddenText = Some(msg"addEvent.checkYourAnswersLabel.change".withArgs(index, answer)) // TODO: Prefix in message file for is hard coded, should be the same as: site.edit.hidden
-          ),
-          Action(
-            content            = msg"site.delete",
-            href               = "#",
-            visuallyHiddenText = Some(msg"addEvent.checkYourAnswersLabel.delete".withArgs(index, answer)) // TODO: Prefix in message file for is hard coded, should be the same as: site.delete.hidden
+  def listOfEvent(index: Int): Option[Row] = {
+    val location: Option[String] = userAnswers.get(EventPlacePage(index)) match {
+      case Some(answer) => Some(answer)
+      case _            => userAnswers.get(EventCountryPage(index))
+    }
+    location.map {
+      answer =>
+        Row(
+          key   = Key(msg"addEvent.event.label".withArgs(index + 1), classes = Seq("govuk-!-width-one-half")), // TODO: Move harded coded interpretation of index to an Index Model
+          value = Value(lit"$answer"),
+          actions = List(
+            Action(
+              content            = msg"site.edit",
+              href               = eventRoutes.CheckEventAnswersController.onPageLoad(mrn, index).url,
+              visuallyHiddenText = Some(msg"addEvent.checkYourAnswersLabel.change".withArgs(index, answer)) // TODO: Prefix in message file for is hard coded, should be the same as: site.edit.hidden
+            ),
+            Action(
+              content            = msg"site.delete",
+              href               = "#",
+              visuallyHiddenText = Some(msg"addEvent.checkYourAnswersLabel.delete".withArgs(index, answer)) // TODO: Prefix in message file for is hard coded, should be the same as: site.delete.hidden
+            )
           )
         )
-      )
+    }
   }
 
   private def mrn: MovementReferenceNumber = userAnswers.id
