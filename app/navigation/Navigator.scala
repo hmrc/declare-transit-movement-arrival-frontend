@@ -56,7 +56,6 @@ class Navigator @Inject()() {
     case EventReportedPage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
     case IsTranshipmentPage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
     case IncidentInformationPage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
-    case _                         => ua => Some(routes.CheckYourAnswersController.onPageLoad(ua.id)) // TODO move to match on checkRouteMap
   }
   // format: on
 
