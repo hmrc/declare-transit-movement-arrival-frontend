@@ -364,7 +364,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
             forAll(arbitrary[EnRouteEvent], stringsWithMaxLength(350)) {
               case (EnRouteEvent(place, countryCode, _, _, _), information) =>
                 val updatedAnswers = emptyUserAnswers
-                  .set(IncidentOnRoutePage, false)
+                  .set(IncidentOnRoutePage, true)
                   .success
                   .value
                   .set(EventCountryPage(index), countryCode)

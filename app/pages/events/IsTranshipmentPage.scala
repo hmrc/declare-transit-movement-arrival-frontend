@@ -30,7 +30,7 @@ final case class IsTranshipmentPage(index: Int) extends QuestionPage[Boolean] {
 
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
     value match {
-      case Some(true) => userAnswers.remove(IncidentInformationPage(index)) //TODO this logic needs to be confirmed
+      case Some(true) => userAnswers.remove(IncidentInformationPage(index))
       case _          => super.cleanup(value, userAnswers)
     }
 

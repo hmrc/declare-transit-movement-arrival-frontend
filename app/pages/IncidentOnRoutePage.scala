@@ -18,6 +18,7 @@ package pages
 
 import models.UserAnswers
 import play.api.libs.json.JsPath
+import queries.EventsQuery
 
 import scala.util.{Success, Try}
 
@@ -27,16 +28,9 @@ case object IncidentOnRoutePage extends QuestionPage[Boolean] {
 
   override def toString: String = "incidentOnRoute"
 
-  //TODO define cleanup
-  /*override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
+  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
     value match {
       case Some(true) => Success(userAnswers)
-      case _ =>
-        userAnswers
-          .remove(EventCountryPage)
-          .flatMap(_.remove(EventPlacePage))
-          .flatMap(_.remove(EventReportedPage))
-          .flatMap(_.remove(EventPlacePage))
-          .flatMap(_.remove(IsTranshipmentPage))
-    }*/
+      case _          => userAnswers.remove(EventsQuery)
+    }
 }

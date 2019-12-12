@@ -16,8 +16,6 @@
 
 package utils
 
-import java.io
-
 import controllers.events.{routes => eventRoutes}
 import models.{MovementReferenceNumber, UserAnswers}
 import pages.events._
@@ -26,12 +24,8 @@ import uk.gov.hmrc.viewmodels._
 
 class AddEventsHelper(userAnswers: UserAnswers) {
 
-  def listOfEvent(index: Int): Option[Row] = {
-    val location: Option[String] = userAnswers.get(EventPlacePage(index)) match {
-      case Some(answer) => Some(answer)
-      case _            => userAnswers.get(EventCountryPage(index))
-    }
-    location.map {
+  def listOfEvent(index: Int): Option[Row] =
+    placeOfEvent(index).map {
       answer =>
         Row(
           key   = Key(msg"addEvent.event.label".withArgs(index + 1), classes = Seq("govuk-!-width-one-half")), // TODO: Move harded coded interpretation of index to an Index Model
@@ -50,7 +44,28 @@ class AddEventsHelper(userAnswers: UserAnswers) {
           )
         )
     }
-  }
+
+  def cyaListOfEvent(index: Int): Option[Row] =
+    placeOfEvent(index).map {
+      answer =>
+        Row(
+          key   = Key(msg"addEvent.event.label".withArgs(index + 1), classes = Seq("govuk-!-width-one-half")), // TODO: Move harded coded interpretation of index to an Index Model
+          value = Value(lit"$answer"),
+          actions = List(
+            Action(
+              content            = msg"site.edit",
+              href               = eventRoutes.CheckEventAnswersController.onPageLoad(mrn, index).url,
+              visuallyHiddenText = Some(msg"addEvent.checkYourAnswersLabel.change".withArgs(index, answer)) // TODO: Prefix in message file for is hard coded, should be the same as: site.edit.hidden
+            )
+          )
+        )
+    }
+
+  private def placeOfEvent(index: Int): Option[String] =
+    userAnswers.get(EventPlacePage(index)) match {
+      case Some(answer) => Some(answer)
+      case _            => userAnswers.get(EventCountryPage(index))
+    }
 
   private def mrn: MovementReferenceNumber = userAnswers.id
 }
