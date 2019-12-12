@@ -56,42 +56,42 @@ trait UserAnswersEntryGenerators extends PageGenerators {
       } yield (page, value)
     }
 
-  implicit lazy val arbitraryIsTranshipmentUserAnswersEntry: Arbitrary[(IsTranshipmentPage.type, JsValue)] =
+  implicit lazy val arbitraryIsTranshipmentUserAnswersEntry: Arbitrary[(IsTranshipmentPage, JsValue)] =
     Arbitrary {
       for {
-        page  <- arbitrary[IsTranshipmentPage.type]
+        page  <- arbitrary[IsTranshipmentPage]
         value <- arbitrary[Boolean].map(Json.toJson(_))
       } yield (page, value)
     }
 
-  implicit lazy val arbitraryIncidentInformationUserAnswersEntry: Arbitrary[(IncidentInformationPage.type, JsValue)] =
+  implicit lazy val arbitraryIncidentInformationUserAnswersEntry: Arbitrary[(IncidentInformationPage, JsValue)] =
     Arbitrary {
       for {
-        page  <- arbitrary[IncidentInformationPage.type]
+        page  <- arbitrary[IncidentInformationPage]
         value <- stringsWithMaxLength(350).suchThat(_.nonEmpty).map(Json.toJson(_))
       } yield (page, value)
     }
 
-  implicit lazy val arbitraryEventReportedUserAnswersEntry: Arbitrary[(EventReportedPage.type, JsValue)] =
+  implicit lazy val arbitraryEventReportedUserAnswersEntry: Arbitrary[(EventReportedPage, JsValue)] =
     Arbitrary {
       for {
-        page  <- arbitrary[EventReportedPage.type]
+        page  <- arbitrary[EventReportedPage]
         value <- arbitrary[Boolean].map(Json.toJson(_))
       } yield (page, value)
     }
 
-  implicit lazy val arbitraryEventPlaceUserAnswersEntry: Arbitrary[(EventPlacePage.type, JsValue)] =
+  implicit lazy val arbitraryEventPlaceUserAnswersEntry: Arbitrary[(EventPlacePage, JsValue)] =
     Arbitrary {
       for {
-        page  <- arbitrary[EventPlacePage.type]
+        page  <- arbitrary[EventPlacePage]
         value <- stringsWithMaxLength(35).suchThat(_.nonEmpty).map(Json.toJson(_))
       } yield (page, value)
     }
 
-  implicit lazy val arbitraryEventCountryUserAnswersEntry: Arbitrary[(EventCountryPage.type, JsValue)] =
+  implicit lazy val arbitraryEventCountryUserAnswersEntry: Arbitrary[(EventCountryPage, JsValue)] =
     Arbitrary {
       for {
-        page  <- arbitrary[EventCountryPage.type]
+        page  <- arbitrary[EventCountryPage]
         value <- stringsWithMaxLength(2).suchThat(_.nonEmpty).map(Json.toJson(_))
       } yield (page, value)
     }

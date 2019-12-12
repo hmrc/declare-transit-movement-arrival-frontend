@@ -18,32 +18,24 @@ package generators
 
 import models.UserAnswers
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalacheck.Arbitrary
-import org.scalacheck.Gen
+import org.scalacheck.{Arbitrary, Gen}
 import org.scalatest.TryValues
 import pages._
-import pages.events.AddEventPage
-import pages.events.EventPlacePage
-import pages.events.EventReportedPage
-import pages.events.IncidentInformationPage
-import pages.events.IsTranshipmentPage
-import play.api.libs.json.JsPath
-import play.api.libs.json.JsValue
-import play.api.libs.json.Json
+import pages.events._
+import play.api.libs.json.{JsValue, Json}
 
 trait UserAnswersGenerator extends TryValues {
   self: Generators =>
 
   val generators: Seq[Gen[(QuestionPage[_], JsValue)]] =
-
-    arbitrary[(PlaceOfNotificationPage.type, JsValue)] ::
+    arbitrary[(IsTranshipmentPage, JsValue)] ::
+      arbitrary[(PlaceOfNotificationPage.type, JsValue)] ::
       arbitrary[(IsTraderAddressPlaceOfNotificationPage.type, JsValue)] ::
-      //arbitrary[(IsTranshipmentPage.type, JsValue)] ::  //TODO handle it later
-      //arbitrary[(IncidentInformationPage.type, JsValue)] :: //TODO handle it later
-      //arbitrary[(EventReportedPage.type, JsValue)] ::  //TODO handle it later
-      // arbitrary[(EventPlacePage.type, JsValue)] ::  //TODO handle it later
-      //arbitrary[(EventCountryPage.type, JsValue)] :: //TODO handle it later
-      // arbitrary[(AddEventPage.type, JsValue)] ::
+      arbitrary[(IncidentInformationPage, JsValue)] ::
+      arbitrary[(EventReportedPage, JsValue)] ::
+      arbitrary[(EventPlacePage, JsValue)] ::
+      arbitrary[(EventCountryPage, JsValue)] ::
+      arbitrary[(AddEventPage.type, JsValue)] ::
       arbitrary[(IncidentOnRoutePage.type, JsValue)] ::
       arbitrary[(TraderNamePage.type, JsValue)] ::
       arbitrary[(TraderEoriPage.type, JsValue)] ::

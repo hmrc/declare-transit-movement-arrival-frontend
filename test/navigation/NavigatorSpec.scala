@@ -17,6 +17,7 @@
 package navigation
 
 import base.SpecBase
+import computable.DeriveNumberOfEvents
 import controllers.routes
 import controllers.events.{routes => eventRoutes}
 import generators.{DomainModelGenerators, Generators}
@@ -32,6 +33,7 @@ import pages.events.EventPlacePage
 import pages.events.EventReportedPage
 import pages.events.IncidentInformationPage
 import pages.events.IsTranshipmentPage
+import queries.EventsQuery
 
 class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generators with DomainModelGenerators {
 
@@ -343,12 +345,14 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
       }
 
       "must go from Add Event Page" - {
-        "when user selects 'Yes' to Event Country Page" - {
+        "when user selects 'Yes' to" - {
 
-          "with index 0 when there are no events" in {
+          "Event Country Page with index 0 when there are no events" in {
             forAll(arbitrary[UserAnswers]) {
               answers =>
-                val updatedAnswers = answers.set(AddEventPage, true).success.value
+                val withoutEvents = answers.remove(EventsQuery).success.value
+
+                val updatedAnswers = withoutEvents.set(AddEventPage, true).success.value
 
                 navigator
                   .nextPage(AddEventPage, NormalMode, updatedAnswers)
@@ -356,7 +360,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
             }
           }
 
-          "with index 1 when there is 1 event" in {
+          "Event Country Page with index 1 when there is 1 event" in {
             forAll(arbitrary[EnRouteEvent], stringsWithMaxLength(350)) {
               case (EnRouteEvent(place, countryCode, _, _, _), information) =>
                 val updatedAnswers = emptyUserAnswers
@@ -384,30 +388,9 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
                 navigator
                   .nextPage(AddEventPage, NormalMode, updatedAnswers)
-                  .mustBe(eventRoutes.EventCountryController.onPageLoad(emptyUserAnswers.id, index + 1, NormalMode))
+                  .mustBe(eventRoutes.EventCountryController.onPageLoad(emptyUserAnswers.id, 1, NormalMode))
             }
           }
-
-          "with index 0 when there is partial data entered" ignore {
-            forAll(arbitrary[EnRouteEvent], stringsWithMaxLength(350)) {
-              case (EnRouteEvent(place, countryCode, _, _, _), information) =>
-                val updatedAnswers = emptyUserAnswers
-                  .set(IncidentOnRoutePage, false)
-                  .success
-                  .value
-                  .set(EventCountryPage(index), countryCode)
-                  .success
-                  .value
-                  .set(AddEventPage, true)
-                  .success
-                  .value
-
-                navigator
-                  .nextPage(AddEventPage, NormalMode, updatedAnswers)
-                  .mustBe(eventRoutes.EventCountryController.onPageLoad(emptyUserAnswers.id, index, NormalMode))
-            }
-          }
-
         }
 
         "to check your answers page when user selects option 'No' on add event page" in {
