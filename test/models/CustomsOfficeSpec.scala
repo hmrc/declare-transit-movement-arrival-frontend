@@ -17,37 +17,33 @@
 package models
 
 import base.SpecBase
+import generators.Generators
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.MustMatchers
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.{JsValue, Json}
 
-class CustomsOfficeSpec extends SpecBase with MustMatchers with ScalaCheckPropertyChecks {
+class CustomsOfficeSpec extends SpecBase with MustMatchers with ScalaCheckPropertyChecks with Generators {
 
   "CustomOffice" - {
 
     "deserialise" in {
 
-      forAll(arbitrary[String], arbitrary[String], arbitrary[Seq[String]]) {
-        (id, name, roles) =>
+      forAll(arbitrary[CustomsOffice]) {
+        customsOffice =>
           {
-
-            val json = customsOfficeJson(id, name, roles)
-
-            json.as[CustomsOffice] mustBe CustomsOffice(id, name, roles)
+            val json = customsOfficeJson(customsOffice.id, customsOffice.name, customsOffice.roles)
+            json.as[CustomsOffice] mustBe customsOffice
           }
       }
     }
 
     "serialise" in {
 
-      forAll(arbitrary[String], arbitrary[String], arbitrary[Seq[String]]) {
-        (id, name, roles) =>
+      forAll(arbitrary[CustomsOffice]) {
+        customsOffice =>
           {
-
-            val customsOffice = CustomsOffice(id, name, roles)
-            val json          = customsOfficeJson(id, name, roles)
-
+            val json = customsOfficeJson(customsOffice.id, customsOffice.name, customsOffice.roles)
             Json.toJson(customsOffice) mustBe json
           }
       }

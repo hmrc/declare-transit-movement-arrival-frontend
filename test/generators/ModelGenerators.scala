@@ -18,6 +18,7 @@ package generators
 
 import models._
 import org.scalacheck.Arbitrary
+import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 
 trait ModelGenerators {
@@ -45,4 +46,17 @@ trait ModelGenerators {
         serial  <- Gen.pick(13, ('A' to 'Z') ++ ('0' to '9'))
       } yield MovementReferenceNumber(year, country.mkString, serial.mkString)
     }
+
+  implicit lazy val arbitraryCustomsOffice: Arbitrary[CustomsOffice] = {
+
+    val genRoles = Gen.someOf(Seq("TRA", "DEP", "DES"))
+
+    Arbitrary {
+      for {
+        id    <- arbitrary[String]
+        name  <- arbitrary[String]
+        roles <- genRoles
+      } yield CustomsOffice(id, name, roles)
+    }
+  }
 }
