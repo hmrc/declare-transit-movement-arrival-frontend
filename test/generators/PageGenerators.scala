@@ -22,6 +22,9 @@ import pages.events._
 
 trait PageGenerators {
 
+  implicit lazy val arbitraryTranshipmentTypePage: Arbitrary[TranshipmentTypePage.type] =
+    Arbitrary(TranshipmentTypePage)
+
   implicit lazy val arbitraryAddEventPage: Arbitrary[AddEventPage.type] =
     Arbitrary(AddEventPage)
 

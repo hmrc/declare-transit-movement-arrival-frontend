@@ -284,3 +284,10 @@ addEvent.checkYourAnswersLabel = addEvent
 addEvent.error.required = Select yes if you need to add another event
 addEvent.checkYourAnswersLabel.change = Change event {0} at {1}?
 addEvent.checkYourAnswersLabel.delete = Remove event {0} at {1}?
+
+transhipmentType.title = What did the goods move to?
+transhipmentType.heading = What did the goods move to?
+transhipmentType.differentContainer = A different container
+transhipmentType.differentVehicle = A different vehicle
+transhipmentType.checkYourAnswersLabel = What did the goods move to?
+transhipmentType.error.required = Select transhipmentType

@@ -33,6 +33,21 @@ import uk.gov.hmrc.viewmodels._
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers) {
 
+  def transhipmentType: Option[Row] = userAnswers.get(TranshipmentTypePage) map {
+    answer =>
+      Row(
+        key   = Key(msg"transhipmentType.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value = Value(msg"transhipmentType.$answer"),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = routes.TranshipmentTypeController.onPageLoad(mrn, CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"transhipmentType.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
   def placeOfNotification: Option[Row] = userAnswers.get(PlaceOfNotificationPage) map {
     answer =>
       Row(
