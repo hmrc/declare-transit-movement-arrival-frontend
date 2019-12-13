@@ -17,14 +17,13 @@
 package connectors
 
 import base.SpecBase
+import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, urlEqualTo}
 import generators.DomainModelGenerators
 import helper.WireMockServerHandler
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
-import com.github.tomakehurst.wiremock.client.WireMock.aResponse
-import com.github.tomakehurst.wiremock.client.WireMock.post
-import com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo
+
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class ReferenceDataConnectorSpec extends SpecBase with WireMockServerHandler with DomainModelGenerators with ScalaCheckPropertyChecks {
@@ -37,19 +36,19 @@ class ReferenceDataConnectorSpec extends SpecBase with WireMockServerHandler wit
     )
     .build()
 
-  private val connector = app.injector.instanceOf[ReferenceDataConnector]
+  lazy val connector: ReferenceDataConnector = app.injector.instanceOf[ReferenceDataConnector]
 
   "Reference Data" - {
     "return a successful response" in {
       server.stubFor(
-        post(urlEqualTo(s"/$startUrl + /customs-offices"))
+        get(urlEqualTo(s"/$startUrl/customs-offices"))
           .willReturn(
             aResponse()
               .withStatus(200)
           )
       )
 
-      connector.get mustBe 200
+      connector.get.futureValue.status mustBe 200
     }
   }
 
