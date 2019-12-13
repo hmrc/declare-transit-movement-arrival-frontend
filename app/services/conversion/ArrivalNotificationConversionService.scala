@@ -18,10 +18,12 @@ package services.conversion
 
 import java.time.LocalDate
 
+import computable.DeriveNumberOfEvents
 import models.domain._
 import models.domain.messages.{ArrivalNotification, NormalNotification}
 import models.{TraderAddress, UserAnswers}
 import pages._
+import pages.events._
 
 class ArrivalNotificationConversionService {
 
@@ -58,23 +60,26 @@ class ArrivalNotificationConversionService {
     }
 
   private def enRouteEvents(userAnswers: UserAnswers): Option[Seq[EnRouteEvent]] =
-    (for {
-      place          <- userAnswers.get(EventPlacePage)
-      country        <- userAnswers.get(EventCountryPage)
-      isReported     <- userAnswers.get(EventReportedPage)
-      isTranshipment <- userAnswers.get(IsTranshipmentPage)
-    } yield {
-      Some(
-        Seq(
-          EnRouteEvent(
-            place         = place,
-            countryCode   = country,
-            alreadyInNcts = isReported,
-            eventDetails  = eventDetails(isTranshipment, userAnswers.get(IncidentInformationPage)),
-            None //TODO Seals
-          ))
-      )
-    }).flatten
+    userAnswers.get(DeriveNumberOfEvents).map {
+      numberOfEvents =>
+        (0 to numberOfEvents).flatMap {
+          index =>
+            for {
+              place          <- userAnswers.get(EventPlacePage(index))
+              country        <- userAnswers.get(EventCountryPage(index))
+              isReported     <- userAnswers.get(EventReportedPage(index))
+              isTranshipment <- userAnswers.get(IsTranshipmentPage(index))
+            } yield {
+              EnRouteEvent(
+                place         = place,
+                countryCode   = country,
+                alreadyInNcts = isReported,
+                eventDetails  = eventDetails(isTranshipment, userAnswers.get(IncidentInformationPage(index))),
+                None //TODO Seals:waiting for design decision
+              )
+            }
+        }
+    }
 
   private def traderAddress(traderAddress: TraderAddress, traderEori: String, traderName: String): Trader =
     TraderWithEori(

@@ -1,0 +1,51 @@
+{% extends "includes/layout.njk" %}
+
+{% from "govuk/components/back-link/macro.njk"     import govukBackLink %}
+{% from "govuk/components/summary-list/macro.njk"  import govukSummaryList %}
+{% from "govuk/components/button/macro.njk"        import govukButton %}
+{% from "macros/title.njk"                         import title %}
+
+{% block pageTitle %}
+  {{ title(messages("checkEventAnswers.title")) }}
+{% endblock %}
+
+{% block mainContent %}
+
+  <div class="govuk-main-wrapper">
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+
+        <h1 class="govuk-heading-xl">{{ messages("checkEventAnswers.heading") }}</h1>
+
+        {{ csrf() | safe }}
+
+        {% for section in sections %}
+          {% if section.rows|length %}
+            <div class="govuk-summary-sectionRows__row">
+              {% if section.sectionTitle %}
+                <h2 class="govuk-heading-m">{{ section.sectionTitle }}</h2>
+              {%  endif %}
+              {{ govukSummaryList({
+                rows: section.rows,
+                classes:"govuk-summary-list govuk-!-margin-bottom-9"
+              }) }}
+          </div>
+          {% endif %}
+        {% endfor %}
+
+        <form action="{{ routes.controllers.events.CheckEventAnswersController.onSubmit.url }}" method="post">
+            {{ csrf() | safe }}
+
+            {{ govukButton({
+              text: messages("site.continue"),
+              preventDoubleClick: true,
+              attributes: {id:"submit"}
+            }) }}
+
+         </form>
+
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

@@ -20,11 +20,25 @@ import models._
 import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary.arbitrary
 import pages._
+import pages.events.AddEventPage
+import pages.events.EventCountryPage
+import pages.events.EventPlacePage
+import pages.events.EventReportedPage
+import pages.events.IncidentInformationPage
+import pages.events.IsTranshipmentPage
 import play.api.libs.json.JsValue
 import play.api.libs.json.Json
 
 trait UserAnswersEntryGenerators extends PageGenerators {
   self: Generators =>
+
+  implicit lazy val arbitraryAddEventUserAnswersEntry: Arbitrary[(AddEventPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[AddEventPage.type]
+        value <- arbitrary[Boolean].map(Json.toJson(_))
+      } yield (page, value)
+    }
 
   implicit lazy val arbitraryPlaceOfNotificationUserAnswersEntry: Arbitrary[(PlaceOfNotificationPage.type, JsValue)] =
     Arbitrary {
@@ -42,42 +56,42 @@ trait UserAnswersEntryGenerators extends PageGenerators {
       } yield (page, value)
     }
 
-  implicit lazy val arbitraryIsTranshipmentUserAnswersEntry: Arbitrary[(IsTranshipmentPage.type, JsValue)] =
+  implicit lazy val arbitraryIsTranshipmentUserAnswersEntry: Arbitrary[(IsTranshipmentPage, JsValue)] =
     Arbitrary {
       for {
-        page  <- arbitrary[IsTranshipmentPage.type]
+        page  <- arbitrary[IsTranshipmentPage]
         value <- arbitrary[Boolean].map(Json.toJson(_))
       } yield (page, value)
     }
 
-  implicit lazy val arbitraryIncidentInformationUserAnswersEntry: Arbitrary[(IncidentInformationPage.type, JsValue)] =
+  implicit lazy val arbitraryIncidentInformationUserAnswersEntry: Arbitrary[(IncidentInformationPage, JsValue)] =
     Arbitrary {
       for {
-        page  <- arbitrary[IncidentInformationPage.type]
+        page  <- arbitrary[IncidentInformationPage]
         value <- stringsWithMaxLength(350).suchThat(_.nonEmpty).map(Json.toJson(_))
       } yield (page, value)
     }
 
-  implicit lazy val arbitraryEventReportedUserAnswersEntry: Arbitrary[(EventReportedPage.type, JsValue)] =
+  implicit lazy val arbitraryEventReportedUserAnswersEntry: Arbitrary[(EventReportedPage, JsValue)] =
     Arbitrary {
       for {
-        page  <- arbitrary[EventReportedPage.type]
+        page  <- arbitrary[EventReportedPage]
         value <- arbitrary[Boolean].map(Json.toJson(_))
       } yield (page, value)
     }
 
-  implicit lazy val arbitraryEventPlaceUserAnswersEntry: Arbitrary[(EventPlacePage.type, JsValue)] =
+  implicit lazy val arbitraryEventPlaceUserAnswersEntry: Arbitrary[(EventPlacePage, JsValue)] =
     Arbitrary {
       for {
-        page  <- arbitrary[EventPlacePage.type]
+        page  <- arbitrary[EventPlacePage]
         value <- stringsWithMaxLength(35).suchThat(_.nonEmpty).map(Json.toJson(_))
       } yield (page, value)
     }
 
-  implicit lazy val arbitraryEventCountryUserAnswersEntry: Arbitrary[(EventCountryPage.type, JsValue)] =
+  implicit lazy val arbitraryEventCountryUserAnswersEntry: Arbitrary[(EventCountryPage, JsValue)] =
     Arbitrary {
       for {
-        page  <- arbitrary[EventCountryPage.type]
+        page  <- arbitrary[EventCountryPage]
         value <- stringsWithMaxLength(2).suchThat(_.nonEmpty).map(Json.toJson(_))
       } yield (page, value)
     }

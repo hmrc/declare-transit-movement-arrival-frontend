@@ -16,10 +16,13 @@
 
 package navigation
 
+import com.google.inject.{Inject, Singleton}
+import computable.DeriveNumberOfEvents
+import controllers.events.{routes => eventRoutes}
 import controllers.routes
-import javax.inject.{Inject, Singleton}
 import models.GoodsLocation._
-import models._
+import models.{CheckMode, Mode, NormalMode, UserAnswers}
+import pages.events._
 import pages._
 import play.api.mvc.Call
 
@@ -38,29 +41,33 @@ class Navigator @Inject()() {
     case IsTraderAddressPlaceOfNotificationPage => isTraderAddressPlaceOfNotificationRoute(NormalMode)
     case PlaceOfNotificationPage => ua => Some(routes.IncidentOnRouteController.onPageLoad(ua.id, NormalMode))
     case IncidentOnRoutePage => incidentOnRouteRoute
-    case EventCountryPage => ua => Some(routes.EventPlaceController.onPageLoad(ua.id, NormalMode))
-    case EventPlacePage => ua => Some(routes.EventReportedController.onPageLoad(ua.id, NormalMode))
-    case EventReportedPage => ua => Some(routes.IsTranshipmentController.onPageLoad(ua.id, NormalMode))
-    case IsTranshipmentPage => isTranshipmentRoute
-    case IncidentInformationPage => ua => Some(routes.CheckEventAnswersController.onPageLoad(ua.id))
+    case EventCountryPage(index) => ua => Some(eventRoutes.EventPlaceController.onPageLoad(ua.id, index, NormalMode))
+    case EventPlacePage(index) => ua => Some(eventRoutes.EventReportedController.onPageLoad(ua.id, index, NormalMode))
+    case EventReportedPage(index) => ua => Some(eventRoutes.IsTranshipmentController.onPageLoad(ua.id, index, NormalMode))
+    case IsTranshipmentPage(index) => isTranshipmentRoute(index)
+    case IncidentInformationPage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
+    case AddEventPage => addEventRoute
   }
 
   private val checkRouteMap: PartialFunction[Page, UserAnswers => Option[Call]] = {
     case GoodsLocationPage         => goodsLocationCheckRoute
-    case page if eventsPages(page) => ua => Some(routes.CheckEventAnswersController.onPageLoad(ua.id))
-    case _                         => ua => Some(routes.CheckYourAnswersController.onPageLoad(ua.id)) // move to match on checkRouteMap
+    case EventCountryPage(index)   => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
+    case EventPlacePage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
+    case EventReportedPage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
+    case IsTranshipmentPage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
+    case IncidentInformationPage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
   }
   // format: on
 
   def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = mode match {
     case NormalMode =>
       normalRoutes.lift(page) match {
+        case None => routes.IndexController.onPageLoad()
         case Some(call) =>
           call(userAnswers) match {
             case Some(onwardRoute) => onwardRoute
             case None              => routes.SessionExpiredController.onPageLoad()
           }
-        case None => routes.IndexController.onPageLoad()
       }
     case CheckMode =>
       checkRouteMap.lift(page) match {
@@ -73,12 +80,6 @@ class Navigator @Inject()() {
       }
   }
 
-  private def eventsPages(page: Page): Boolean =
-    page match {
-      case EventCountryPage | EventPlacePage | EventReportedPage | IsTranshipmentPage | IncidentInformationPage => true
-      case _                                                                                                    => false
-    }
-
   private def goodsLocationPageRoutes(ua: UserAnswers): Option[Call] =
     ua.get(GoodsLocationPage) map {
       case BorderForceOffice            => routes.CustomsSubPlaceController.onPageLoad(ua.id, NormalMode)
@@ -87,15 +88,15 @@ class Navigator @Inject()() {
 
   private def incidentOnRouteRoute(ua: UserAnswers): Option[Call] =
     ua.get(IncidentOnRoutePage) map {
-      case true  => routes.EventCountryController.onPageLoad(ua.id, NormalMode)
+      case true  => eventRoutes.EventCountryController.onPageLoad(ua.id, 0, NormalMode) // TODO Remove hard coded 0 here and determine this from a query
       case false => routes.CheckYourAnswersController.onPageLoad(ua.id)
     }
 
-  private def isTranshipmentRoute(ua: UserAnswers): Option[Call] =
-    ua.get(IsTranshipmentPage) map {
-      case true                                               => routes.CheckEventAnswersController.onPageLoad(ua.id) //TODO new Transhipment journey first page
-      case false if ua.get(EventReportedPage).contains(false) => routes.IncidentInformationController.onPageLoad(ua.id, NormalMode)
-      case _                                                  => routes.CheckEventAnswersController.onPageLoad(ua.id)
+  private def isTranshipmentRoute(index: Int)(ua: UserAnswers): Option[Call] =
+    ua.get(IsTranshipmentPage(index)) map {
+      case true                                                      => eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index)
+      case false if ua.get(EventReportedPage(index)).contains(false) => eventRoutes.IncidentInformationController.onPageLoad(ua.id, index, NormalMode)
+      case _                                                         => eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index)
     }
 
   private def goodsLocationCheckRoute(ua: UserAnswers): Option[Call] =
@@ -116,4 +117,11 @@ class Navigator @Inject()() {
       case _                                 => None
     }
 
+  private def addEventRoute(ua: UserAnswers): Option[Call] =
+    (ua.get(AddEventPage), ua.get(DeriveNumberOfEvents)) match {
+      case (Some(true), Some(index)) => Some(eventRoutes.EventCountryController.onPageLoad(ua.id, index, NormalMode))
+      case (Some(true), None)        => Some(eventRoutes.EventCountryController.onPageLoad(ua.id, 0, NormalMode))
+      case (Some(false), _)          => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
+      case _                         => None
+    }
 }

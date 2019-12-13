@@ -1,0 +1,82 @@
+{% extends "includes/layout.njk" %}
+
+{% from "govuk/components/back-link/macro.njk"     import govukBackLink %}
+{% from "govuk/components/radios/macro.njk"        import govukRadios %}
+{% from "govuk/components/button/macro.njk"        import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "govuk/components/summary-list/macro.njk"  import govukSummaryList %}
+{% from "macros/title.njk"                         import title %}
+
+{% block pageTitle %}
+  {{ title(titleOfPage, form.errors) }}
+{% endblock %}
+
+{% block mainContent %}
+
+  {{ govukBackLink({
+    text: messages("site.back")
+  }) }}
+
+  <div class="govuk-main-wrapper">
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+
+        {% if form.errors.length > 0 %}
+          {{ govukErrorSummary({
+            "titleText": messages("error.summary.title"),
+            "errorList": form.errors
+          }) }}
+        {% endif %}
+
+        <h1 class="govuk-heading-xl">{{ heading }}</h1>
+
+        {{ govukSummaryList({
+            classes: 'govuk-!-margin-bottom-9',
+            rows: events
+        }) }}
+
+        <form action="{{ routes.controllers.events.AddEventController.onSubmit(mrn, mode).url }}" method="post">
+
+          {{ csrf() | safe }}
+
+            {% macro radioBtnHintText() %}
+                 {{ messages("addEvent.hintText.tad") }}
+                  <p class="govuk-hint">{{ messages("addEvent.hintText.tell_us") }}</p>
+                    <ul class="govuk-list govuk-list--bullet govuk-hint">
+                    <li>{{ messages("addEvent.hintText.accident") }}</li>
+                    <li>{{ messages("addEvent.hintText.goods.unloaded") }} </li>
+                    <li>{{ messages("addEvent.hintText.different.vehicle") }}</li>
+                    <li>{{ messages("addEvent.hintText.type.of.transport") }}</li>
+                    <li>{{ messages("addEvent.hintText.planned.route") }} </li>
+                    </ul>
+            {% endmacro %}
+
+          {{ govukRadios({
+            classes: "govuk-radios--inline",
+            name: 'value',
+            fieldset: {
+              legend: {
+                text: messages('addEvent.radio.label'),
+                isPageHeading: false,
+                classes: "govuk-fieldset__legend govuk-fieldset__legend--m"
+              }
+            },
+             hint: {
+              html: radioBtnHintText()
+             },
+            items: radios,
+            errorMessage: form.value.error
+          }) }}
+
+          {{ govukButton({
+            text: messages("site.continue"),
+            attributes: {id:"submit"}
+          }) }}
+
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

@@ -18,8 +18,12 @@ package generators
 
 import org.scalacheck.Arbitrary
 import pages._
+import pages.events._
 
 trait PageGenerators {
+
+  implicit lazy val arbitraryAddEventPage: Arbitrary[AddEventPage.type] =
+    Arbitrary(AddEventPage)
 
   implicit lazy val arbitraryPlaceOfNotificationPage: Arbitrary[PlaceOfNotificationPage.type] =
     Arbitrary(PlaceOfNotificationPage)
@@ -27,20 +31,20 @@ trait PageGenerators {
   implicit lazy val arbitraryIsTraderAddressPlaceOfNotificationPage: Arbitrary[IsTraderAddressPlaceOfNotificationPage.type] =
     Arbitrary(IsTraderAddressPlaceOfNotificationPage)
 
-  implicit lazy val arbitraryIsTranshipmentPage: Arbitrary[IsTranshipmentPage.type] =
-    Arbitrary(IsTranshipmentPage)
+  implicit lazy val arbitraryIsTranshipmentPage: Arbitrary[IsTranshipmentPage] =
+    Arbitrary(IsTranshipmentPage(0))
 
-  implicit lazy val arbitraryIncidentInformationPage: Arbitrary[IncidentInformationPage.type] =
-    Arbitrary(IncidentInformationPage)
+  implicit lazy val arbitraryIncidentInformationPage: Arbitrary[IncidentInformationPage] =
+    Arbitrary(IncidentInformationPage(0))
 
-  implicit lazy val arbitraryEventReportedPage: Arbitrary[EventReportedPage.type] =
-    Arbitrary(EventReportedPage)
+  implicit lazy val arbitraryEventReportedPage: Arbitrary[EventReportedPage] =
+    Arbitrary(EventReportedPage(0))
 
-  implicit lazy val arbitraryEventPlacePage: Arbitrary[EventPlacePage.type] =
-    Arbitrary(EventPlacePage)
+  implicit lazy val arbitraryEventPlacePage: Arbitrary[EventPlacePage] =
+    Arbitrary(EventPlacePage(0))
 
-  implicit lazy val arbitraryEventCountryPage: Arbitrary[EventCountryPage.type] =
-    Arbitrary(EventCountryPage)
+  implicit lazy val arbitraryEventCountryPage: Arbitrary[EventCountryPage] =
+    Arbitrary(EventCountryPage(0))
 
   implicit lazy val arbitraryIncidentOnRoutePage: Arbitrary[IncidentOnRoutePage.type] =
     Arbitrary(IncidentOnRoutePage)

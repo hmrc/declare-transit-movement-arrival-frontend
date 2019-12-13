@@ -21,17 +21,39 @@ import java.time.LocalDate
 import base.SpecBase
 import generators.DomainModelGenerators
 import models.GoodsLocation.BorderForceOffice
-import models.{TraderAddress, UserAnswers}
-import models.domain.{EnRouteEvent, Endorsement, Incident, TraderWithEori}
 import models.domain.messages.NormalNotification
+import models.domain.{EnRouteEvent, Endorsement, Incident, TraderWithEori}
+import models.{TraderAddress, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages._
+import pages.events._
 
 class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckPropertyChecks with DomainModelGenerators {
 
   private val service = injector.instanceOf[ArrivalNotificationConversionService]
+
+  private val normalNotificationWithTraderWithEoriWithSubplace: Gen[(NormalNotification, TraderWithEori)] =
+    for {
+      base     <- arbitrary[NormalNotification]
+      trader   <- generatorTraderWithEoriAllValues
+      subPlace <- stringsWithMaxLength(17)
+    } yield {
+
+      val expected: NormalNotification = base
+        .copy(movementReferenceNumber = mrn.toString)
+        .copy(trader = trader)
+        .copy(customsSubPlace = Some(subPlace))
+        .copy(notificationDate = LocalDate.now())
+
+      (expected, trader)
+    }
+
+  private val enRouteEventIncident: Gen[(EnRouteEvent, Incident)] = for {
+    enRouteEvent <- arbitrary[EnRouteEvent]
+    incident     <- arbitrary[Incident]
+  } yield (enRouteEvent.copy(eventDetails = incident), incident)
 
   "ArrivalNotificationConversionService" - {
     "must return 'Normal Arrival Notification' message when there are no EventDetails on route" in {
@@ -70,23 +92,23 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
 
           val arrivalNotification: NormalNotification = arbArrivalNotification.copy(enRouteEvents = Some(Seq(routeEvent)))
 
-          val userAnswers: UserAnswers = createBasicUserAnswers(trader, arrivalNotification, true)
-            .set(IsTranshipmentPage, false)
+          val userAnswers: UserAnswers = createBasicUserAnswers(trader, arrivalNotification, isIncidentOnRoute = true)
+            .set(IsTranshipmentPage(index), false)
             .success
             .value
-            .set(EventPlacePage, routeEvent.place)
+            .set(EventPlacePage(index), routeEvent.place)
             .success
             .value
-            .set(EventCountryPage, routeEvent.countryCode)
+            .set(EventCountryPage(index), routeEvent.countryCode)
             .success
             .value
-            .set(EventReportedPage, routeEvent.alreadyInNcts)
+            .set(EventReportedPage(index), routeEvent.alreadyInNcts)
             .success
             .value
 
           val updatedAnswers = incident.information.fold[UserAnswers](userAnswers) {
             _ =>
-              userAnswers.set(IncidentInformationPage, incident.information.value).success.value
+              userAnswers.set(IncidentInformationPage(index), incident.information.value).success.value
           }
 
           service.convertToArrivalNotification(updatedAnswers).value mustEqual arrivalNotification
@@ -147,24 +169,4 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
       .success
       .value
 
-  private val normalNotificationWithTraderWithEoriWithSubplace =
-    for {
-      base     <- arbitrary[NormalNotification]
-      trader   <- generatorTraderWithEoriAllValues
-      subPlace <- stringsWithMaxLength(17)
-    } yield {
-
-      val expected: NormalNotification = base
-        .copy(movementReferenceNumber = mrn.toString)
-        .copy(trader = trader)
-        .copy(customsSubPlace = Some(subPlace))
-        .copy(notificationDate = LocalDate.now())
-
-      (expected, trader)
-    }
-
-  private val enRouteEventIncident: Gen[(EnRouteEvent, Incident)] = for {
-    enRouteEvent <- arbitrary[EnRouteEvent]
-    incident     <- arbitrary[Incident]
-  } yield (enRouteEvent.copy(eventDetails = incident), incident)
 }

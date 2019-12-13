@@ -17,6 +17,7 @@
 package controllers
 
 import com.google.inject.Inject
+import computable.DeriveNumberOfEvents
 import controllers.actions.{DataRequiredAction, DataRetrievalActionProvider, IdentifierAction}
 import handlers.ErrorHandler
 import models.{MovementReferenceNumber, UserAnswers}
@@ -26,8 +27,9 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import services.ArrivalNotificationService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
-import uk.gov.hmrc.viewmodels.NunjucksSupport
-import utils.CheckYourAnswersHelper
+import uk.gov.hmrc.viewmodels.SummaryList.Row
+import uk.gov.hmrc.viewmodels.{NunjucksSupport, SummaryList}
+import utils.{AddEventsHelper, CheckYourAnswersHelper}
 import viewModels.Section
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -77,8 +79,15 @@ class CheckYourAnswersController @Inject()(override val messagesApi: MessagesApi
     val traderDetails = Section(messages("checkYourAnswers.section.traderDetails"), Seq(helper.traderName, helper.traderAddress, helper.traderEori).flatten)
     val notificationDetails =
       Section(messages("checkYourAnswers.section.notificationDetails"), Seq(helper.isTraderAddressPlaceOfNotification, helper.placeOfNotification).flatten)
-    val events = Section(messages("checkYourAnswers.section.events"), Seq(helper.incidentOnRoute).flatten)
+    val events = Section(messages("checkYourAnswers.section.events"), eventList(userAnswers))
 
     Seq(mrn, goodsLocation, traderDetails, notificationDetails, events)
+  }
+
+  private def eventList(userAnswers: UserAnswers): Seq[SummaryList.Row] = {
+    val numberOfEvents = userAnswers.get(DeriveNumberOfEvents).getOrElse(0)
+    val cyaHelper      = new AddEventsHelper(userAnswers)
+
+    (0 to numberOfEvents).flatMap(cyaHelper.cyaListOfEvent)
   }
 }
