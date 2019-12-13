@@ -25,7 +25,7 @@ class EventsQuerySpec extends PageBehaviours {
 
   "AddEventPage" - {
 
-    implicit val asdf: Arbitrary[JsObject] = Arbitrary {
+    implicit val event: Arbitrary[JsObject] = Arbitrary {
       for {
         (key, value) <- arbitrary[(String, String)]
       } yield Json.obj(key -> value)
