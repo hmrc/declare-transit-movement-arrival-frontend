@@ -86,7 +86,7 @@ class CheckEventAnswersControllerSpec extends SpecBase with JsonMatchers {
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual controllers.events.routes.AddEventController.onPageLoad(mrn, index, NormalMode).url
+      redirectLocation(result).value mustEqual controllers.events.routes.AddEventController.onPageLoad(mrn, NormalMode).url
 
       application.stop()
 

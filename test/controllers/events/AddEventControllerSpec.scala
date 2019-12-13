@@ -50,7 +50,7 @@ class AddEventControllerSpec extends SpecBase with MockitoSugar with NunjucksSup
   val formProvider = new AddEventFormProvider()
   val form         = formProvider()
 
-  lazy val addEventRoute = routes.AddEventController.onPageLoad(mrn, index, NormalMode).url
+  lazy val addEventRoute = routes.AddEventController.onPageLoad(mrn, NormalMode).url
 
   "AddEvent Controller" - {
 

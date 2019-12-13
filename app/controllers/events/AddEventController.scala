@@ -21,20 +21,19 @@ import controllers.actions._
 import forms.events.AddEventFormProvider
 import javax.inject.Inject
 import models.requests.DataRequest
-import models.{Mode, MovementReferenceNumber, UserAnswers}
+import models.{Mode, MovementReferenceNumber}
 import navigation.Navigator
 import pages.events.AddEventPage
 import play.api.data.Form
-import play.api.i18n.{I18nSupport, Messages, MessagesApi}
-import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request, Result, Results}
-import queries.EventsQuery
+import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.json.Json
+import play.api.mvc._
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.SummaryList.Row
-import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios, Text}
-import utils.{AddEventsHelper, CheckYourAnswersHelper}
+import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
+import utils.AddEventsHelper
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -53,7 +52,7 @@ class AddEventController @Inject()(override val messagesApi: MessagesApi,
 
   private val form = formProvider()
 
-  def onPageLoad(mrn: MovementReferenceNumber, index: Int, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onPageLoad(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
       val preparedForm = request.userAnswers.get(AddEventPage) match {
         case None        => form
@@ -62,7 +61,7 @@ class AddEventController @Inject()(override val messagesApi: MessagesApi,
       renderView(mrn, mode, preparedForm, Results.Ok)
   }
 
-  def onSubmit(mrn: MovementReferenceNumber, index: Int, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onSubmit(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
       form
         .bindFromRequest()

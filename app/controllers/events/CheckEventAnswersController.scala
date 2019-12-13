@@ -52,7 +52,7 @@ class CheckEventAnswersController @Inject()(override val messagesApi: MessagesAp
 
   def onSubmit(mrn: MovementReferenceNumber, index: Int): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
-      Future.successful(Redirect(controllers.events.routes.AddEventController.onPageLoad(mrn, index, NormalMode)))
+      Future.successful(Redirect(controllers.events.routes.AddEventController.onPageLoad(mrn, NormalMode)))
   }
 
   private def completeSections(userAnswers: UserAnswers, index: Int)(implicit messages: Messages): Seq[Section] = {
