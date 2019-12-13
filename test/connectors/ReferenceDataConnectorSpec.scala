@@ -39,7 +39,7 @@ class ReferenceDataConnectorSpec extends SpecBase with WireMockServerHandler wit
   lazy val connector: ReferenceDataConnector = app.injector.instanceOf[ReferenceDataConnector]
 
   "Reference Data" - {
-    "return a successful response" in {
+    "return a successful response with Json body" in {
       server.stubFor(
         get(urlEqualTo(s"/$startUrl/customs-offices"))
           .willReturn(
