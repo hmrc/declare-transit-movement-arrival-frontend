@@ -17,15 +17,16 @@
 package connectors
 import config.FrontendAppConfig
 import javax.inject.Inject
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
+import models.CustomsOffice
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class ReferenceDataConnector @Inject()(val config: FrontendAppConfig, http: HttpClient) {
+class ReferenceDataConnector @Inject()(config: FrontendAppConfig, http: HttpClient) {
 
-  def get()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[HttpResponse] = {
+  def get()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[CustomsOffice]] = {
     val serviceUrl = s"${config.referenceDataUrl}/customs-offices"
-    http.GET(serviceUrl)
+    http.GET[Seq[CustomsOffice]](serviceUrl)
   }
 }

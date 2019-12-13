@@ -17,9 +17,11 @@
 package connectors
 
 import base.SpecBase
-import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, urlEqualTo}
+import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, okJson, urlEqualTo}
 import generators.DomainModelGenerators
 import helper.WireMockServerHandler
+import models.CustomsOffice
+import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -36,19 +38,61 @@ class ReferenceDataConnectorSpec extends SpecBase with WireMockServerHandler wit
     )
     .build()
 
-  lazy val connector: ReferenceDataConnector = app.injector.instanceOf[ReferenceDataConnector]
+  private lazy val connector: ReferenceDataConnector = app.injector.instanceOf[ReferenceDataConnector]
+
+  private val responseJson: String =
+    """
+      |[
+      | {
+      |   "id" : "testId1",
+      |   "name" : "testName1",
+      |   "roles" : ["role1", "role2"]
+      | },
+      | {
+      |   "id" : "testId2",
+      |   "name" : "testName2",
+      |   "roles" : ["role1", "role2"]
+      | }
+      |]
+      |""".stripMargin
 
   "Reference Data" - {
-    "return a successful response with Json body" in {
+    "return a successful future response with a sequence of CustomsOffices" in {
       server.stubFor(
         get(urlEqualTo(s"/$startUrl/customs-offices"))
-          .willReturn(
-            aResponse()
-              .withStatus(200)
-          )
+          .willReturn(okJson(responseJson))
       )
 
-      connector.get.futureValue.status mustBe 200
+      val expectedResult = {
+        Seq(
+          CustomsOffice("testId1", "testName1", Seq("role1", "role2")),
+          CustomsOffice("testId2", "testName2", Seq("role1", "role2"))
+        )
+      }
+
+      connector.get.futureValue mustBe expectedResult
+    }
+
+    "return an exception when an error response is returned" in {
+
+      val errorResponses: Gen[Int] = Gen.chooseNum(400, 599)
+
+      forAll(errorResponses) {
+        errorResponse =>
+          server.stubFor(
+            get(urlEqualTo(s"/$startUrl/customs-offices"))
+              .willReturn(
+                aResponse()
+                  .withStatus(errorResponse)
+              )
+          )
+
+          val result = connector.get
+
+          whenReady(result.failed) {
+            _ mustBe an[Exception]
+          }
+      }
     }
   }
 
