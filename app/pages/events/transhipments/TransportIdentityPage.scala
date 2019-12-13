@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package pages
+package pages.events.transhipments
 
-import models.TranshipmentType
+import pages.QuestionPage
 import play.api.libs.json.JsPath
 
-case object TranshipmentTypePage extends QuestionPage[TranshipmentType] {
+case object TransportIdentityPage extends QuestionPage[String] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "transhipmentType"
+  override def toString: String = "transportIdentity"
 }

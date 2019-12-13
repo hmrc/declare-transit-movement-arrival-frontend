@@ -19,8 +19,12 @@ package generators
 import org.scalacheck.Arbitrary
 import pages._
 import pages.events._
+import pages.events.transhipments.{TranshipmentTypePage, TransportIdentityPage}
 
 trait PageGenerators {
+
+  implicit lazy val arbitraryTransportIdentityPage: Arbitrary[TransportIdentityPage.type] =
+    Arbitrary(TransportIdentityPage)
 
   implicit lazy val arbitraryTranshipmentTypePage: Arbitrary[TranshipmentTypePage.type] =
     Arbitrary(TranshipmentTypePage)

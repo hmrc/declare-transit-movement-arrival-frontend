@@ -16,18 +16,17 @@
 
 package pages
 
-import models.TranshipmentType
 import pages.behaviours.PageBehaviours
-import pages.events.transhipments.TranshipmentTypePage
+import pages.events.transhipments.TransportIdentityPage
 
-class TranshipmentTypePageSpec extends PageBehaviours {
+class TransportIdentityPageSpec extends PageBehaviours {
 
-  "TranshipmentTypePage" - {
+  "TransportIdentityPage" - {
 
-    beRetrievable[TranshipmentType](TranshipmentTypePage)
+    beRetrievable[String](TransportIdentityPage)
 
-    beSettable[TranshipmentType](TranshipmentTypePage)
+    beSettable[String](TransportIdentityPage)
 
-    beRemovable[TranshipmentType](TranshipmentTypePage)
+    beRemovable[String](TransportIdentityPage)
   }
 }

@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.events.transhipments
 
 import controllers.actions._
-import forms.TranshipmentTypeFormProvider
+import forms.events.transhipments.TranshipmentTypeFormProvider
 import javax.inject.Inject
 import models.{Mode, MovementReferenceNumber, TranshipmentType}
 import navigation.Navigator
-import pages.TranshipmentTypePage
+import pages.events.transhipments.TranshipmentTypePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}

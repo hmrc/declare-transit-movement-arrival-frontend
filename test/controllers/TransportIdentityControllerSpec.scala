@@ -18,15 +18,15 @@ package controllers
 
 import base.SpecBase
 import controllers.events.transhipments.{routes => transhipmentRoutes}
-import forms.events.transhipments.TranshipmentTypeFormProvider
+import forms.events.transhipments.TransportIdentityFormProvider
 import matchers.JsonMatchers
-import models.{NormalMode, TranshipmentType, UserAnswers}
+import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.events.transhipments.TranshipmentTypePage
+import pages.events.transhipments.TransportIdentityPage
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
@@ -39,16 +39,16 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class TranshipmentTypeControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class TransportIdentityControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
   def onwardRoute: Call = Call("GET", "/foo")
 
-  lazy val transhipmentTypeRoute: String = transhipmentRoutes.TranshipmentTypeController.onPageLoad(mrn, NormalMode).url
+  val formProvider       = new TransportIdentityFormProvider()
+  val form: Form[String] = formProvider()
 
-  val formProvider                 = new TranshipmentTypeFormProvider()
-  val form: Form[TranshipmentType] = formProvider()
+  lazy val transportIdentityRoute: String = transhipmentRoutes.TransportIdentityController.onPageLoad(mrn, NormalMode).url
 
-  "TranshipmentType Controller" - {
+  "TransportIdentity Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
@@ -56,7 +56,7 @@ class TranshipmentTypeControllerSpec extends SpecBase with MockitoSugar with Nun
         .thenReturn(Future.successful(Html("")))
 
       val application    = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request        = FakeRequest(GET, transhipmentTypeRoute)
+      val request        = FakeRequest(GET, transportIdentityRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -67,13 +67,12 @@ class TranshipmentTypeControllerSpec extends SpecBase with MockitoSugar with Nun
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form"   -> form,
-        "mode"   -> NormalMode,
-        "mrn"    -> mrn,
-        "radios" -> TranshipmentType.radios(form)
+        "form" -> form,
+        "mrn"  -> mrn,
+        "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "transhipmentType.njk"
+      templateCaptor.getValue mustEqual "transportIdentity.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -84,9 +83,9 @@ class TranshipmentTypeControllerSpec extends SpecBase with MockitoSugar with Nun
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers    = UserAnswers(mrn).set(TranshipmentTypePage, TranshipmentType.values.head).success.value
+      val userAnswers    = UserAnswers(mrn).set(TransportIdentityPage, "answer").success.value
       val application    = applicationBuilder(userAnswers = Some(userAnswers)).build()
-      val request        = FakeRequest(GET, transhipmentTypeRoute)
+      val request        = FakeRequest(GET, transportIdentityRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -96,16 +95,15 @@ class TranshipmentTypeControllerSpec extends SpecBase with MockitoSugar with Nun
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = form.bind(Map("value" -> TranshipmentType.values.head.toString))
+      val filledForm = form.bind(Map("value" -> "answer"))
 
       val expectedJson = Json.obj(
-        "form"   -> filledForm,
-        "mode"   -> NormalMode,
-        "mrn"    -> mrn,
-        "radios" -> TranshipmentType.radios(filledForm)
+        "form" -> filledForm,
+        "mrn"  -> mrn,
+        "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "transhipmentType.njk"
+      templateCaptor.getValue mustEqual "transportIdentity.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -126,13 +124,12 @@ class TranshipmentTypeControllerSpec extends SpecBase with MockitoSugar with Nun
           .build()
 
       val request =
-        FakeRequest(POST, transhipmentTypeRoute)
-          .withFormUrlEncodedBody(("value", TranshipmentType.values.head.toString))
+        FakeRequest(POST, transportIdentityRoute)
+          .withFormUrlEncodedBody(("value", "answer"))
 
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
-
       redirectLocation(result).value mustEqual onwardRoute.url
 
       application.stop()
@@ -144,8 +141,8 @@ class TranshipmentTypeControllerSpec extends SpecBase with MockitoSugar with Nun
         .thenReturn(Future.successful(Html("")))
 
       val application    = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request        = FakeRequest(POST, transhipmentTypeRoute).withFormUrlEncodedBody(("value", "invalid value"))
-      val boundForm      = form.bind(Map("value" -> "invalid value"))
+      val request        = FakeRequest(POST, transportIdentityRoute).withFormUrlEncodedBody(("value", ""))
+      val boundForm      = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -156,13 +153,12 @@ class TranshipmentTypeControllerSpec extends SpecBase with MockitoSugar with Nun
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form"   -> boundForm,
-        "mode"   -> NormalMode,
-        "mrn"    -> mrn,
-        "radios" -> TranshipmentType.radios(boundForm)
+        "form" -> boundForm,
+        "mrn"  -> mrn,
+        "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "transhipmentType.njk"
+      templateCaptor.getValue mustEqual "transportIdentity.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -172,11 +168,12 @@ class TranshipmentTypeControllerSpec extends SpecBase with MockitoSugar with Nun
 
       val application = applicationBuilder(userAnswers = None).build()
 
-      val request = FakeRequest(GET, transhipmentTypeRoute)
+      val request = FakeRequest(GET, transportIdentityRoute)
 
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
+
       redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
 
       application.stop()
@@ -187,8 +184,8 @@ class TranshipmentTypeControllerSpec extends SpecBase with MockitoSugar with Nun
       val application = applicationBuilder(userAnswers = None).build()
 
       val request =
-        FakeRequest(POST, transhipmentTypeRoute)
-          .withFormUrlEncodedBody(("value", TranshipmentType.values.head.toString))
+        FakeRequest(POST, transportIdentityRoute)
+          .withFormUrlEncodedBody(("value", "answer"))
 
       val result = route(application, request).value
 

@@ -20,6 +20,7 @@ import java.time.format.DateTimeFormatter
 
 import controllers.routes
 import controllers.events.{routes => eventRoutes}
+import controllers.events.transhipments.{routes => transhipmentRoutes}
 import models.{CheckMode, MovementReferenceNumber, TraderAddress, UserAnswers}
 import pages._
 import pages.events.EventCountryPage
@@ -27,11 +28,27 @@ import pages.events.EventPlacePage
 import pages.events.EventReportedPage
 import pages.events.IncidentInformationPage
 import pages.events.IsTranshipmentPage
+import pages.events.transhipments.{TranshipmentTypePage, TransportIdentityPage}
 import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels.SummaryList._
 import uk.gov.hmrc.viewmodels._
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers) {
+
+  def transportIdentity: Option[Row] = userAnswers.get(TransportIdentityPage) map {
+    answer =>
+      Row(
+        key   = Key(msg"transportIdentity.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value = Value(lit"$answer"),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = transhipmentRoutes.TransportIdentityController.onPageLoad(mrn, CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"transportIdentity.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
 
   def transhipmentType: Option[Row] = userAnswers.get(TranshipmentTypePage) map {
     answer =>
@@ -41,7 +58,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = routes.TranshipmentTypeController.onPageLoad(mrn, CheckMode).url,
+            href               = transhipmentRoutes.TranshipmentTypeController.onPageLoad(mrn, CheckMode).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"transhipmentType.checkYourAnswersLabel"))
           )
         )

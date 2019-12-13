@@ -14,18 +14,19 @@
  * limitations under the License.
  */
 
-package forms
-
-import javax.inject.Inject
+package forms.events.transhipments
 
 import forms.mappings.Mappings
+import javax.inject.Inject
 import play.api.data.Form
-import models.TranshipmentType
 
-class TranshipmentTypeFormProvider @Inject() extends Mappings {
+class TransportIdentityFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[TranshipmentType] =
+  val maxLength = 35
+
+  def apply(): Form[String] =
     Form(
-      "value" -> enumerable[TranshipmentType]("transhipmentType.error.required")
+      "value" -> text("transportIdentity.error.required")
+        .verifying(maxLength(maxLength, "transportIdentity.error.length"))
     )
 }

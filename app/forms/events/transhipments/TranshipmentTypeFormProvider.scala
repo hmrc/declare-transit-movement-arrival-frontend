@@ -14,20 +14,17 @@
  * limitations under the License.
  */
 
-package pages
+package forms.events.transhipments
 
+import forms.mappings.Mappings
+import javax.inject.Inject
 import models.TranshipmentType
-import pages.behaviours.PageBehaviours
-import pages.events.transhipments.TranshipmentTypePage
+import play.api.data.Form
 
-class TranshipmentTypePageSpec extends PageBehaviours {
+class TranshipmentTypeFormProvider @Inject() extends Mappings {
 
-  "TranshipmentTypePage" - {
-
-    beRetrievable[TranshipmentType](TranshipmentTypePage)
-
-    beSettable[TranshipmentType](TranshipmentTypePage)
-
-    beRemovable[TranshipmentType](TranshipmentTypePage)
-  }
+  def apply(): Form[TranshipmentType] =
+    Form(
+      "value" -> enumerable[TranshipmentType]("transhipmentType.error.required")
+    )
 }

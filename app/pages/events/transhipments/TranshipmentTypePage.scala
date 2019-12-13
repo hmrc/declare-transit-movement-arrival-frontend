@@ -14,20 +14,15 @@
  * limitations under the License.
  */
 
-package pages
+package pages.events.transhipments
 
 import models.TranshipmentType
-import pages.behaviours.PageBehaviours
-import pages.events.transhipments.TranshipmentTypePage
+import pages.QuestionPage
+import play.api.libs.json.JsPath
 
-class TranshipmentTypePageSpec extends PageBehaviours {
+case object TranshipmentTypePage extends QuestionPage[TranshipmentType] {
 
-  "TranshipmentTypePage" - {
+  override def path: JsPath = JsPath \ toString
 
-    beRetrievable[TranshipmentType](TranshipmentTypePage)
-
-    beSettable[TranshipmentType](TranshipmentTypePage)
-
-    beRemovable[TranshipmentType](TranshipmentTypePage)
-  }
+  override def toString: String = "transhipmentType"
 }

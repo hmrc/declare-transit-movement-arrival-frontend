@@ -1,13 +1,13 @@
 {% extends "includes/layout.njk" %}
 
 {% from "govuk/components/back-link/macro.njk"     import govukBackLink %}
-{% from "govuk/components/radios/macro.njk"        import govukRadios %}
+{% from "govuk/components/input/macro.njk"         import govukInput %}
 {% from "govuk/components/button/macro.njk"        import govukButton %}
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 {% from "macros/title.njk"                         import title %}
 
 {% block pageTitle %}
-  {{ title(messages("transhipmentType.title"), form.errors) }}
+  {{ title(messages("transportIdentity.title"), form.errors) }}
 {% endblock %}
 
 {% block mainContent %}
@@ -27,20 +27,19 @@
           }) }}
         {% endif %}
 
-        <form action="{{ routes.controllers.events.transhipments.TranshipmentTypeController.onSubmit(mrn, mode).url }}" method="post">
+        <form action="{{ routes.controllers.events.transhipments.TransportIdentityController.onSubmit(mrn, mode).url }}" method="post">
 
           {{ csrf() | safe }}
 
-          {{ govukRadios({
-            name: 'value',
-            fieldset: {
-              legend: {
-                text: messages('transhipmentType.title'),
-                isPageHeading: true,
-                classes: "govuk-fieldset__legend--xl"
-              }
+          {{ govukInput({
+            label: {
+              text: messages('transportIdentity.title'),
+              isPageHeading: true,
+              classes: "govuk-label--xl"
             },
-            items: radios,
+            id: "value",
+            name: "value",
+            value: form.value.value,
             errorMessage: form.value.error
           }) }}
 

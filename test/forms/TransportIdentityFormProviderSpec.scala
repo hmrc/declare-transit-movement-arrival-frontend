@@ -16,25 +16,33 @@
 
 package forms
 
-import forms.behaviours.OptionFieldBehaviours
-import forms.events.transhipments.TranshipmentTypeFormProvider
-import models.TranshipmentType
+import forms.behaviours.StringFieldBehaviours
+import forms.events.transhipments.TransportIdentityFormProvider
 import play.api.data.FormError
 
-class TranshipmentTypeFormProviderSpec extends OptionFieldBehaviours {
+class TransportIdentityFormProviderSpec extends StringFieldBehaviours {
 
-  val form = new TranshipmentTypeFormProvider()()
+  val requiredKey = "transportIdentity.error.required"
+  val lengthKey   = "transportIdentity.error.length"
+  val maxLength   = 35
+
+  val form = new TransportIdentityFormProvider()()
 
   ".value" - {
 
-    val fieldName   = "value"
-    val requiredKey = "transhipmentType.error.required"
+    val fieldName = "value"
 
-    behave like optionsField[TranshipmentType](
+    behave like fieldThatBindsValidData(
       form,
       fieldName,
-      validValues  = TranshipmentType.values,
-      invalidError = FormError(fieldName, "error.invalid")
+      stringsWithMaxLength(maxLength)
+    )
+
+    behave like fieldWithMaxLength(
+      form,
+      fieldName,
+      maxLength   = maxLength,
+      lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
     )
 
     behave like mandatoryField(
