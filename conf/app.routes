@@ -106,3 +106,28 @@ GET        /:mrn/event/addEvent                                   controllers.ev
 POST       /:mrn/event/addEvent                                   controllers.events.AddEventController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
 GET        /:mrn/event/changeAddEvent                             controllers.events.AddEventController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
 POST       /:mrn/event/changeAddEvent                             controllers.events.AddEventController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
+
+GET        /:mrn/transhipmentType                        controllers.events.transhipments.TranshipmentTypeController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
+POST       /:mrn/transhipmentType                        controllers.events.transhipments.TranshipmentTypeController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
+GET        /:mrn/changeTranshipmentType                  controllers.events.transhipments.TranshipmentTypeController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
+POST       /:mrn/changeTranshipmentType                  controllers.events.transhipments.TranshipmentTypeController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
+
+GET        /:mrn/transportIdentity                        controllers.events.transhipments.TransportIdentityController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
+POST       /:mrn/transportIdentity                        controllers.events.transhipments.TransportIdentityController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
+GET        /:mrn/changeTransportIdentity                  controllers.events.transhipments.TransportIdentityController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
+POST       /:mrn/changeTransportIdentity                  controllers.events.transhipments.TransportIdentityController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
+
+GET        /:mrn/transportNationality                        controllers.events.transhipments.TransportNationalityController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
+POST       /:mrn/transportNationality                        controllers.events.transhipments.TransportNationalityController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
+GET        /:mrn/changeTransportNationality                  controllers.events.transhipments.TransportNationalityController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
+POST       /:mrn/changeTransportNationality                  controllers.events.transhipments.TransportNationalityController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
+
+GET        /:mrn/containerNumber                        controllers.events.transhipments.ContainerNumberController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
+POST       /:mrn/containerNumber                        controllers.events.transhipments.ContainerNumberController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
+GET        /:mrn/changeContainerNumber                  controllers.events.transhipments.ContainerNumberController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
+POST       /:mrn/changeContainerNumber                  controllers.events.transhipments.ContainerNumberController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
+
+GET        /:mrn/addContainer                        controllers.events.transhipments.AddContainerController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
+POST       /:mrn/addContainer                        controllers.events.transhipments.AddContainerController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
+GET        /:mrn/changeAddContainer                  controllers.events.transhipments.AddContainerController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
+POST       /:mrn/changeAddContainer                  controllers.events.transhipments.AddContainerController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)

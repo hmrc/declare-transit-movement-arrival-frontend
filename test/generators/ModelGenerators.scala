@@ -24,6 +24,11 @@ import org.scalacheck.Gen
 trait ModelGenerators {
   self: Generators =>
 
+  implicit lazy val arbitraryTranshipmentType: Arbitrary[TranshipmentType] =
+    Arbitrary {
+      Gen.oneOf(TranshipmentType.values.toSeq)
+    }
+
   implicit lazy val arbitraryTraderAddress: Arbitrary[TraderAddress] =
     Arbitrary {
       for {

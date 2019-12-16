@@ -20,6 +20,7 @@ import java.time.format.DateTimeFormatter
 
 import controllers.routes
 import controllers.events.{routes => eventRoutes}
+import controllers.events.transhipments.{routes => transhipmentRoutes}
 import models.{CheckMode, MovementReferenceNumber, TraderAddress, UserAnswers}
 import pages._
 import pages.events.EventCountryPage
@@ -27,11 +28,87 @@ import pages.events.EventPlacePage
 import pages.events.EventReportedPage
 import pages.events.IncidentInformationPage
 import pages.events.IsTranshipmentPage
+import pages.events.transhipments.{AddContainerPage, ContainerNumberPage, TranshipmentTypePage, TransportIdentityPage, TransportNationalityPage}
 import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels.SummaryList._
 import uk.gov.hmrc.viewmodels._
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers) {
+
+  def addContainer: Option[Row] = userAnswers.get(AddContainerPage) map {
+    answer =>
+      Row(
+        key   = Key(msg"addContainer.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value = Value(yesOrNo(answer)),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = transhipmentRoutes.AddContainerController.onPageLoad(mrn, CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"addContainer.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
+  def containerNumber: Option[Row] = userAnswers.get(ContainerNumberPage) map {
+    answer =>
+      Row(
+        key   = Key(msg"containerNumber.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value = Value(lit"$answer"),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = transhipmentRoutes.ContainerNumberController.onPageLoad(mrn, CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"containerNumber.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
+  def transportNationality: Option[Row] = userAnswers.get(TransportNationalityPage) map {
+    answer =>
+      Row(
+        key   = Key(msg"transportNationality.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value = Value(lit"$answer"),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = transhipmentRoutes.TransportNationalityController.onPageLoad(mrn, CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"transportNationality.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
+  def transportIdentity: Option[Row] = userAnswers.get(TransportIdentityPage) map {
+    answer =>
+      Row(
+        key   = Key(msg"transportIdentity.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value = Value(lit"$answer"),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = transhipmentRoutes.TransportIdentityController.onPageLoad(mrn, CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"transportIdentity.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
+  def transhipmentType: Option[Row] = userAnswers.get(TranshipmentTypePage) map {
+    answer =>
+      Row(
+        key   = Key(msg"transhipmentType.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value = Value(msg"transhipmentType.$answer"),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = transhipmentRoutes.TranshipmentTypeController.onPageLoad(mrn, CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"transhipmentType.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
 
   def placeOfNotification: Option[Row] = userAnswers.get(PlaceOfNotificationPage) map {
     answer =>
