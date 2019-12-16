@@ -22,13 +22,19 @@ import org.scalacheck.{Arbitrary, Gen}
 import org.scalatest.TryValues
 import pages._
 import pages.events._
+import pages.events.transhipments.{AddContainerPage, ContainerNumberPage, TranshipmentTypePage, TransportIdentityPage, TransportNationalityPage}
 import play.api.libs.json.{JsValue, Json}
 
 trait UserAnswersGenerator extends TryValues {
   self: Generators =>
 
   val generators: Seq[Gen[(QuestionPage[_], JsValue)]] =
-    arbitrary[(IsTranshipmentPage, JsValue)] ::
+    arbitrary[(AddContainerPage.type, JsValue)] ::
+      arbitrary[(ContainerNumberPage.type, JsValue)] ::
+      arbitrary[(TransportNationalityPage.type, JsValue)] ::
+      arbitrary[(TransportIdentityPage.type, JsValue)] ::
+      arbitrary[(TranshipmentTypePage.type, JsValue)] ::
+      arbitrary[(IsTranshipmentPage, JsValue)] ::
       arbitrary[(PlaceOfNotificationPage.type, JsValue)] ::
       arbitrary[(IsTraderAddressPlaceOfNotificationPage.type, JsValue)] ::
       arbitrary[(IncidentInformationPage, JsValue)] ::
