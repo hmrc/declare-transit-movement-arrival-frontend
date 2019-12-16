@@ -47,6 +47,7 @@ class TransportIdentityControllerSpec extends SpecBase with MockitoSugar with Nu
   val form: Form[String] = formProvider()
 
   lazy val transportIdentityRoute: String = transhipmentRoutes.TransportIdentityController.onPageLoad(mrn, NormalMode).url
+  private val transportIdentityTemplate   = "events/transhipments/transportIdentity.njk"
 
   "TransportIdentity Controller" - {
 
@@ -72,7 +73,7 @@ class TransportIdentityControllerSpec extends SpecBase with MockitoSugar with Nu
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "transportIdentity.njk"
+      templateCaptor.getValue mustEqual transportIdentityTemplate
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -103,7 +104,7 @@ class TransportIdentityControllerSpec extends SpecBase with MockitoSugar with Nu
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "transportIdentity.njk"
+      templateCaptor.getValue mustEqual transportIdentityTemplate
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -158,7 +159,7 @@ class TransportIdentityControllerSpec extends SpecBase with MockitoSugar with Nu
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "transportIdentity.njk"
+      templateCaptor.getValue mustEqual transportIdentityTemplate
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()

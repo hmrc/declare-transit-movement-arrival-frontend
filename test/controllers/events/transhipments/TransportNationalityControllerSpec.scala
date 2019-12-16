@@ -44,7 +44,8 @@ class TransportNationalityControllerSpec extends SpecBase with MockitoSugar with
   val formProvider = new TransportNationalityFormProvider()
   val form         = formProvider()
 
-  lazy val transportNationalityRoute = routes.TransportNationalityController.onPageLoad(mrn, NormalMode).url
+  lazy val transportNationalityRoute       = routes.TransportNationalityController.onPageLoad(mrn, NormalMode).url
+  private val transportNationalityTemplate = "events/transhipments/transportNationality.njk"
 
   "TransportNationality Controller" - {
 
@@ -70,7 +71,7 @@ class TransportNationalityControllerSpec extends SpecBase with MockitoSugar with
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "transportNationality.njk"
+      templateCaptor.getValue mustEqual transportNationalityTemplate
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -101,7 +102,7 @@ class TransportNationalityControllerSpec extends SpecBase with MockitoSugar with
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "transportNationality.njk"
+      templateCaptor.getValue mustEqual transportNationalityTemplate
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -156,7 +157,7 @@ class TransportNationalityControllerSpec extends SpecBase with MockitoSugar with
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "transportNationality.njk"
+      templateCaptor.getValue mustEqual transportNationalityTemplate
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()

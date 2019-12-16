@@ -62,7 +62,7 @@ class TransportIdentityController @Inject()(
         "mode" -> mode
       )
 
-      renderer.render("transportIdentity.njk", json).map(Ok(_))
+      renderer.render("events/transhipments/transportIdentity.njk", json).map(Ok(_))
   }
 
   def onSubmit(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
@@ -78,7 +78,7 @@ class TransportIdentityController @Inject()(
               "mode" -> mode
             )
 
-            renderer.render("transportIdentity.njk", json).map(BadRequest(_))
+            renderer.render("events/transhipments/transportIdentity.njk", json).map(BadRequest(_))
           },
           value =>
             for {

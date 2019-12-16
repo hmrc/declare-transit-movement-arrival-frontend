@@ -26,6 +26,7 @@ import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.events.transhipments.AddContainerPage
+import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -41,10 +42,11 @@ class AddContainerControllerSpec extends SpecBase with MockitoSugar with Nunjuck
 
   def onwardRoute = Call("GET", "/foo")
 
-  val formProvider = new AddContainerFormProvider()
-  val form         = formProvider()
+  private val formProvider        = new AddContainerFormProvider()
+  private val form: Form[Boolean] = formProvider()
 
-  lazy val addContainerRoute = routes.AddContainerController.onPageLoad(mrn, NormalMode).url
+  private lazy val addContainerRoute: String = routes.AddContainerController.onPageLoad(mrn, NormalMode).url
+  private lazy val addContainerTemplate      = "events/transhipments/addContainer.njk"
 
   "AddContainer Controller" - {
 
@@ -71,7 +73,7 @@ class AddContainerControllerSpec extends SpecBase with MockitoSugar with Nunjuck
         "radios" -> Radios.yesNo(form("value"))
       )
 
-      templateCaptor.getValue mustEqual "addContainer.njk"
+      templateCaptor.getValue mustEqual addContainerTemplate
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -103,7 +105,7 @@ class AddContainerControllerSpec extends SpecBase with MockitoSugar with Nunjuck
         "radios" -> Radios.yesNo(filledForm("value"))
       )
 
-      templateCaptor.getValue mustEqual "addContainer.njk"
+      templateCaptor.getValue mustEqual addContainerTemplate
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -160,7 +162,7 @@ class AddContainerControllerSpec extends SpecBase with MockitoSugar with Nunjuck
         "radios" -> Radios.yesNo(boundForm("value"))
       )
 
-      templateCaptor.getValue mustEqual "addContainer.njk"
+      templateCaptor.getValue mustEqual addContainerTemplate
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()

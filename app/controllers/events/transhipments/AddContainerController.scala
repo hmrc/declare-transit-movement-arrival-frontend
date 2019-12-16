@@ -63,7 +63,7 @@ class AddContainerController @Inject()(
         "radios" -> Radios.yesNo(preparedForm("value"))
       )
 
-      renderer.render("addContainer.njk", json).map(Ok(_))
+      renderer.render("events/transhipments/addContainer.njk", json).map(Ok(_))
   }
 
   def onSubmit(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
@@ -80,7 +80,7 @@ class AddContainerController @Inject()(
               "radios" -> Radios.yesNo(formWithErrors("value"))
             )
 
-            renderer.render("addContainer.njk", json).map(BadRequest(_))
+            renderer.render("events/transhipments/addContainer.njk", json).map(BadRequest(_))
           },
           value =>
             for {

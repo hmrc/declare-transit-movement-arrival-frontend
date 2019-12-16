@@ -48,6 +48,8 @@ class TranshipmentTypeControllerSpec extends SpecBase with MockitoSugar with Nun
   val formProvider                 = new TranshipmentTypeFormProvider()
   val form: Form[TranshipmentType] = formProvider()
 
+  private val transhipmentTypeTemplate = "events/transhipments/transhipmentType.njk"
+
   "TranshipmentType Controller" - {
 
     "must return OK and the correct view for a GET" in {
@@ -73,7 +75,7 @@ class TranshipmentTypeControllerSpec extends SpecBase with MockitoSugar with Nun
         "radios" -> TranshipmentType.radios(form)
       )
 
-      templateCaptor.getValue mustEqual "transhipmentType.njk"
+      templateCaptor.getValue mustEqual transhipmentTypeTemplate
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -105,7 +107,7 @@ class TranshipmentTypeControllerSpec extends SpecBase with MockitoSugar with Nun
         "radios" -> TranshipmentType.radios(filledForm)
       )
 
-      templateCaptor.getValue mustEqual "transhipmentType.njk"
+      templateCaptor.getValue mustEqual transhipmentTypeTemplate
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -162,7 +164,7 @@ class TranshipmentTypeControllerSpec extends SpecBase with MockitoSugar with Nun
         "radios" -> TranshipmentType.radios(boundForm)
       )
 
-      templateCaptor.getValue mustEqual "transhipmentType.njk"
+      templateCaptor.getValue mustEqual transhipmentTypeTemplate
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()

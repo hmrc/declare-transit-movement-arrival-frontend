@@ -63,7 +63,7 @@ class TranshipmentTypeController @Inject()(
         "radios" -> TranshipmentType.radios(preparedForm)
       )
 
-      renderer.render("transhipmentType.njk", json).map(Ok(_))
+      renderer.render("events/transhipments/transhipmentType.njk", json).map(Ok(_))
   }
 
   def onSubmit(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
@@ -80,7 +80,7 @@ class TranshipmentTypeController @Inject()(
               "radios" -> TranshipmentType.radios(formWithErrors)
             )
 
-            renderer.render("transhipmentType.njk", json).map(BadRequest(_))
+            renderer.render("events/transhipments/transhipmentType.njk", json).map(BadRequest(_))
           },
           value =>
             for {

@@ -26,6 +26,7 @@ import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.events.transhipments.ContainerNumberPage
+import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -41,10 +42,11 @@ class ContainerNumberControllerSpec extends SpecBase with MockitoSugar with Nunj
 
   def onwardRoute = Call("GET", "/foo")
 
-  val formProvider = new ContainerNumberFormProvider()
-  val form         = formProvider()
+  private val formProvider       = new ContainerNumberFormProvider()
+  private val form: Form[String] = formProvider()
 
-  lazy val containerNumberRoute = routes.ContainerNumberController.onPageLoad(mrn, NormalMode).url
+  private lazy val containerNumberRoute: String = routes.ContainerNumberController.onPageLoad(mrn, NormalMode).url
+  private lazy val containerNumberTemplate      = "events/transhipments/containerNumber.njk"
 
   "ContainerNumber Controller" - {
 
@@ -70,7 +72,7 @@ class ContainerNumberControllerSpec extends SpecBase with MockitoSugar with Nunj
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "containerNumber.njk"
+      templateCaptor.getValue mustEqual containerNumberTemplate
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -101,7 +103,7 @@ class ContainerNumberControllerSpec extends SpecBase with MockitoSugar with Nunj
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "containerNumber.njk"
+      templateCaptor.getValue mustEqual containerNumberTemplate
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -156,7 +158,7 @@ class ContainerNumberControllerSpec extends SpecBase with MockitoSugar with Nunj
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "containerNumber.njk"
+      templateCaptor.getValue mustEqual containerNumberTemplate
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
