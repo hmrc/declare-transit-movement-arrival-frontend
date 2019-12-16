@@ -70,7 +70,7 @@ class ReferenceDataConnectorSpec extends SpecBase with WireMockServerHandler wit
         )
       }
 
-      connector.get.futureValue mustBe expectedResult
+      connector.getCustomsOffices.futureValue mustBe expectedResult
     }
 
     "return an exception when an error response is returned" in {
@@ -87,7 +87,7 @@ class ReferenceDataConnectorSpec extends SpecBase with WireMockServerHandler wit
               )
           )
 
-          val result = connector.get
+          val result = connector.getCustomsOffices
 
           whenReady(result.failed) {
             _ mustBe an[Exception]

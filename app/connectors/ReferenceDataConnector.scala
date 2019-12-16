@@ -25,7 +25,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class ReferenceDataConnector @Inject()(config: FrontendAppConfig, http: HttpClient) {
 
-  def get()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[CustomsOffice]] = {
+  def getCustomsOffices()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[CustomsOffice]] = {
     val serviceUrl = s"${config.referenceDataUrl}/customs-offices"
     http.GET[Seq[CustomsOffice]](serviceUrl)
   }
