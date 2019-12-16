@@ -57,7 +57,7 @@ class ReferenceDataConnectorSpec extends SpecBase with WireMockServerHandler wit
       |""".stripMargin
 
   "Reference Data" - {
-    "return a successful future response with a sequence of CustomsOffices" in {
+    "must return a successful future response with a sequence of CustomsOffices" in {
       server.stubFor(
         get(urlEqualTo(s"/$startUrl/customs-offices"))
           .willReturn(okJson(responseJson))
@@ -73,7 +73,7 @@ class ReferenceDataConnectorSpec extends SpecBase with WireMockServerHandler wit
       connector.getCustomsOffices.futureValue mustBe expectedResult
     }
 
-    "return an exception when an error response is returned" in {
+    "must return an exception when an error response is returned" in {
 
       val errorResponses: Gen[Int] = Gen.chooseNum(400, 599)
 
