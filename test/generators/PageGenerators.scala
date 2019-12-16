@@ -23,6 +23,9 @@ import pages.events.transhipments.{TranshipmentTypePage, TransportIdentityPage}
 
 trait PageGenerators {
 
+  implicit lazy val arbitraryAddContainerPage: Arbitrary[AddContainerPage.type] =
+    Arbitrary(AddContainerPage)
+
   implicit lazy val arbitraryContainerNumberPage: Arbitrary[ContainerNumberPage.type] =
     Arbitrary(ContainerNumberPage)
 

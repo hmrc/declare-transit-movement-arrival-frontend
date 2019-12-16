@@ -309,3 +309,8 @@ containerNumber.heading = containerNumber
 containerNumber.checkYourAnswersLabel = containerNumber
 containerNumber.error.required = Enter containerNumber
 containerNumber.error.length = ContainerNumber must be 100 characters or less
+
+addContainer.title = addContainer
+addContainer.heading = addContainer
+addContainer.checkYourAnswersLabel = addContainer
+addContainer.error.required = Select yes if addContainer

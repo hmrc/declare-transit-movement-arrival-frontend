@@ -35,6 +35,21 @@ import uk.gov.hmrc.viewmodels._
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers) {
 
+  def addContainer: Option[Row] = userAnswers.get(AddContainerPage) map {
+    answer =>
+      Row(
+        key   = Key(msg"addContainer.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value = Value(yesOrNo(answer)),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = routes.AddContainerController.onPageLoad(mrn, CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"addContainer.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
   def containerNumber: Option[Row] = userAnswers.get(ContainerNumberPage) map {
     answer =>
       Row(
