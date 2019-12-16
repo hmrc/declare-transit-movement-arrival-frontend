@@ -21,7 +21,7 @@ import java.time.LocalDateTime
 import derivable.Derivable
 import pages._
 import play.api.libs.json._
-import queries.Gettable
+import queries.{Gettable, Settable}
 
 import scala.util.{Failure, Success, Try}
 
@@ -33,13 +33,11 @@ final case class UserAnswers(id: MovementReferenceNumber, data: JsObject = Json.
   def get[A, B](derivable: Derivable[A, B])(implicit rds: Reads[A]): Option[B] =
     get(derivable: Gettable[A]).map(derivable.derive)
 
-  def set[A](page: QuestionPage[A], value: A)(implicit writes: Writes[A]): Try[UserAnswers] = {
+  def set[A](page: Settable[A], value: A)(implicit writes: Writes[A]): Try[UserAnswers] = {
 
     val updatedData = data.setObject(page.path, Json.toJson(value)) match {
-      case JsSuccess(jsValue, _) =>
-        Success(jsValue)
-      case JsError(errors) =>
-        Failure(JsResultException(errors))
+      case JsSuccess(jsValue, _) => Success(jsValue)
+      case JsError(errors)       => Failure(JsResultException(errors))
     }
 
     updatedData.flatMap {
@@ -49,7 +47,7 @@ final case class UserAnswers(id: MovementReferenceNumber, data: JsObject = Json.
     }
   }
 
-  def remove[A](page: QuestionPage[A]): Try[UserAnswers] = {
+  def remove[A](page: Settable[A]): Try[UserAnswers] = {
 
     val updatedData = data.removeObject(page.path) match {
       case JsSuccess(jsValue, _) =>

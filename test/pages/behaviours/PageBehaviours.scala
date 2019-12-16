@@ -28,7 +28,7 @@ import org.scalatest.OptionValues
 import org.scalatest.TryValues
 import pages.QuestionPage
 import play.api.libs.json._
-import queries.Gettable
+import queries.{Gettable, Settable}
 
 trait PageBehaviours extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with Generators with OptionValues with TryValues {
 
@@ -83,7 +83,7 @@ trait PageBehaviours extends FreeSpec with MustMatchers with ScalaCheckPropertyC
 
   class BeSettable[A] {
 
-    def apply[P <: QuestionPage[A]](genP: Gen[P])(implicit ev1: Arbitrary[A], ev2: Format[A]): Unit =
+    def apply[P <: Settable[A]](genP: Gen[P])(implicit ev1: Arbitrary[A], ev2: Format[A]): Unit =
       "must be able to be set on UserAnswers" in {
 
         val gen = for {
@@ -95,14 +95,19 @@ trait PageBehaviours extends FreeSpec with MustMatchers with ScalaCheckPropertyC
         forAll(gen) {
           case (page, newValue, userAnswers) =>
             val updatedAnswers = userAnswers.set(page, newValue).success.value
-            updatedAnswers.get(page).value mustEqual newValue
+
+            val gettableForSettable = new Gettable[A] {
+              override def path: JsPath = page.path
+            }
+
+            updatedAnswers.get(gettableForSettable).value mustEqual newValue
         }
       }
   }
 
   class BeRemovable[A] {
 
-    def apply[P <: QuestionPage[A]](genP: Gen[P])(implicit ev1: Arbitrary[A], ev2: Format[A]): Unit =
+    def apply[P <: Settable[A]](genP: Gen[P])(implicit ev1: Arbitrary[A], ev2: Format[A]): Unit =
       "must be able to be removed from UserAnswers" in {
 
         val gen = for {
@@ -114,7 +119,12 @@ trait PageBehaviours extends FreeSpec with MustMatchers with ScalaCheckPropertyC
         forAll(gen) {
           case (page, userAnswers) =>
             val updatedAnswers = userAnswers.remove(page).success.value
-            updatedAnswers.get(page) must be(empty)
+
+            val gettableForSettable = new Gettable[A] {
+              override def path: JsPath = page.path
+            }
+
+            updatedAnswers.get(gettableForSettable) must be(empty)
         }
       }
   }
