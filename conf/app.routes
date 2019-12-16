@@ -121,3 +121,8 @@ GET        /:mrn/transportNationality                        controllers.Transpo
 POST       /:mrn/transportNationality                        controllers.TransportNationalityController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
 GET        /:mrn/changeTransportNationality                  controllers.TransportNationalityController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
 POST       /:mrn/changeTransportNationality                  controllers.TransportNationalityController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
+
+GET        /:mrn/containerNumber                        controllers.ContainerNumberController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
+POST       /:mrn/containerNumber                        controllers.ContainerNumberController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
+GET        /:mrn/changeContainerNumber                  controllers.ContainerNumberController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
+POST       /:mrn/changeContainerNumber                  controllers.ContainerNumberController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)

@@ -303,3 +303,9 @@ transportNationality.heading = transportNationality
 transportNationality.checkYourAnswersLabel = transportNationality
 transportNationality.error.required = Enter transportNationality
 transportNationality.error.length = TransportNationality must be TransportNationality characters or less
+
+containerNumber.title = containerNumber
+containerNumber.heading = containerNumber
+containerNumber.checkYourAnswersLabel = containerNumber
+containerNumber.error.required = Enter containerNumber
+containerNumber.error.length = ContainerNumber must be 100 characters or less
