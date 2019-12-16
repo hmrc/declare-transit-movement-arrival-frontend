@@ -44,7 +44,7 @@ class TransportNationalityControllerSpec extends SpecBase with MockitoSugar with
   val formProvider = new TransportNationalityFormProvider()
   val form         = formProvider()
 
-  lazy val transportNationalityRoute       = routes.TransportNationalityController.onPageLoad(mrn, NormalMode).url
+  lazy val transportNationalityRoute       = routes.TransportNationalityController.onPageLoad(mrn, index, NormalMode).url
   private val transportNationalityTemplate = "events/transhipments/transportNationality.njk"
 
   "TransportNationality Controller" - {
@@ -82,7 +82,7 @@ class TransportNationalityControllerSpec extends SpecBase with MockitoSugar with
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers    = UserAnswers(mrn).set(TransportNationalityPage, "answer").success.value
+      val userAnswers    = UserAnswers(mrn).set(TransportNationalityPage(index), "answer").success.value
       val application    = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request        = FakeRequest(GET, transportNationalityRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])

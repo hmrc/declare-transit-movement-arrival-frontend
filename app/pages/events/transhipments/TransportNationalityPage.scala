@@ -17,11 +17,12 @@
 package pages.events.transhipments
 
 import pages.QuestionPage
+import pages.events.RepeatingSectionConstants
 import play.api.libs.json.JsPath
 
-case object TransportNationalityPage extends QuestionPage[String] {
+final case class TransportNationalityPage(eventIndex: Int) extends QuestionPage[String] {
 
-  override def path: JsPath = JsPath \ toString
+  override def path: JsPath = JsPath \ RepeatingSectionConstants.events \ eventIndex \ toString
 
   override def toString: String = "transportNationality"
 }

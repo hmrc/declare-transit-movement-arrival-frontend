@@ -35,7 +35,7 @@ import uk.gov.hmrc.viewmodels._
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers) {
 
-  def addContainer: Option[Row] = userAnswers.get(AddContainerPage) map {
+  def addContainer(eventIndex: Int): Option[Row] = userAnswers.get(AddContainerPage(eventIndex)) map {
     answer =>
       Row(
         key   = Key(msg"addContainer.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
@@ -43,14 +43,14 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = transhipmentRoutes.AddContainerController.onPageLoad(mrn, CheckMode).url,
+            href               = transhipmentRoutes.AddContainerController.onPageLoad(mrn, eventIndex, CheckMode).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"addContainer.checkYourAnswersLabel"))
           )
         )
       )
   }
 
-  def containerNumber: Option[Row] = userAnswers.get(ContainerNumberPage) map {
+  def containerNumber(eventIndex: Int): Option[Row] = userAnswers.get(ContainerNumberPage(eventIndex)) map {
     answer =>
       Row(
         key   = Key(msg"containerNumber.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
@@ -58,14 +58,14 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = transhipmentRoutes.ContainerNumberController.onPageLoad(mrn, CheckMode).url,
+            href               = transhipmentRoutes.ContainerNumberController.onPageLoad(mrn, eventIndex, CheckMode).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"containerNumber.checkYourAnswersLabel"))
           )
         )
       )
   }
 
-  def transportNationality: Option[Row] = userAnswers.get(TransportNationalityPage) map {
+  def transportNationality(eventIndex: Int): Option[Row] = userAnswers.get(TransportNationalityPage(eventIndex)) map {
     answer =>
       Row(
         key   = Key(msg"transportNationality.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
@@ -73,14 +73,14 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = transhipmentRoutes.TransportNationalityController.onPageLoad(mrn, CheckMode).url,
+            href               = transhipmentRoutes.TransportNationalityController.onPageLoad(mrn, eventIndex, CheckMode).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"transportNationality.checkYourAnswersLabel"))
           )
         )
       )
   }
 
-  def transportIdentity: Option[Row] = userAnswers.get(TransportIdentityPage) map {
+  def transportIdentity(eventIndex: Int): Option[Row] = userAnswers.get(TransportIdentityPage(eventIndex)) map {
     answer =>
       Row(
         key   = Key(msg"transportIdentity.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
@@ -88,14 +88,14 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = transhipmentRoutes.TransportIdentityController.onPageLoad(mrn, CheckMode).url,
+            href               = transhipmentRoutes.TransportIdentityController.onPageLoad(mrn, eventIndex, CheckMode).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"transportIdentity.checkYourAnswersLabel"))
           )
         )
       )
   }
 
-  def transhipmentType: Option[Row] = userAnswers.get(TranshipmentTypePage) map {
+  def transhipmentType(eventIndex: Int): Option[Row] = userAnswers.get(TranshipmentTypePage(eventIndex)) map {
     answer =>
       Row(
         key   = Key(msg"transhipmentType.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
@@ -103,7 +103,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = transhipmentRoutes.TranshipmentTypeController.onPageLoad(mrn, CheckMode).url,
+            href               = transhipmentRoutes.TranshipmentTypeController.onPageLoad(mrn, eventIndex, CheckMode).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"transhipmentType.checkYourAnswersLabel"))
           )
         )

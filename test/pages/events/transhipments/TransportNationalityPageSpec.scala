@@ -20,12 +20,14 @@ import pages.behaviours.PageBehaviours
 
 class TransportNationalityPageSpec extends PageBehaviours {
 
+  val index = 0
+
   "TransportNationalityPage" - {
 
-    beRetrievable[String](TransportNationalityPage)
+    beRetrievable[String](TransportNationalityPage(index))
 
-    beSettable[String](TransportNationalityPage)
+    beSettable[String](TransportNationalityPage(index))
 
-    beRemovable[String](TransportNationalityPage)
+    beRemovable[String](TransportNationalityPage(index))
   }
 }

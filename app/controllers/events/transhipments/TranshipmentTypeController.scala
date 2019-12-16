@@ -49,9 +49,9 @@ class TranshipmentTypeController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onPageLoad(mrn: MovementReferenceNumber, eventIndex: Int, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
-      val preparedForm = request.userAnswers.get(TranshipmentTypePage) match {
+      val preparedForm = request.userAnswers.get(TranshipmentTypePage(eventIndex)) match {
         case None        => form
         case Some(value) => form.fill(value)
       }
@@ -66,7 +66,7 @@ class TranshipmentTypeController @Inject()(
       renderer.render("events/transhipments/transhipmentType.njk", json).map(Ok(_))
   }
 
-  def onSubmit(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onSubmit(mrn: MovementReferenceNumber, eventIndex: Int, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
       form
         .bindFromRequest()
@@ -84,9 +84,9 @@ class TranshipmentTypeController @Inject()(
           },
           value =>
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(TranshipmentTypePage, value))
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(TranshipmentTypePage(eventIndex), value))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(TranshipmentTypePage, mode, updatedAnswers))
+            } yield Redirect(navigator.nextPage(TranshipmentTypePage(eventIndex), mode, updatedAnswers))
         )
   }
 }

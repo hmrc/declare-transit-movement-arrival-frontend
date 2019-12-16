@@ -49,9 +49,9 @@ class ContainerNumberController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onPageLoad(mrn: MovementReferenceNumber, eventIndex: Int, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
-      val preparedForm = request.userAnswers.get(ContainerNumberPage) match {
+      val preparedForm = request.userAnswers.get(ContainerNumberPage(eventIndex)) match {
         case None        => form
         case Some(value) => form.fill(value)
       }
@@ -65,7 +65,7 @@ class ContainerNumberController @Inject()(
       renderer.render("events/transhipments/containerNumber.njk", json).map(Ok(_))
   }
 
-  def onSubmit(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onSubmit(mrn: MovementReferenceNumber, eventIndex: Int, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
       form
         .bindFromRequest()
@@ -82,9 +82,9 @@ class ContainerNumberController @Inject()(
           },
           value =>
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(ContainerNumberPage, value))
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(ContainerNumberPage(eventIndex), value))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(ContainerNumberPage, mode, updatedAnswers))
+            } yield Redirect(navigator.nextPage(ContainerNumberPage(eventIndex), mode, updatedAnswers))
         )
   }
 }

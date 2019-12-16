@@ -43,7 +43,7 @@ class TranshipmentTypeControllerSpec extends SpecBase with MockitoSugar with Nun
 
   def onwardRoute: Call = Call("GET", "/foo")
 
-  lazy val transhipmentTypeRoute: String = transhipmentRoutes.TranshipmentTypeController.onPageLoad(mrn, NormalMode).url
+  lazy val transhipmentTypeRoute: String = transhipmentRoutes.TranshipmentTypeController.onPageLoad(mrn, index, NormalMode).url
 
   val formProvider                 = new TranshipmentTypeFormProvider()
   val form: Form[TranshipmentType] = formProvider()
@@ -86,7 +86,7 @@ class TranshipmentTypeControllerSpec extends SpecBase with MockitoSugar with Nun
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers    = UserAnswers(mrn).set(TranshipmentTypePage, TranshipmentType.values.head).success.value
+      val userAnswers    = UserAnswers(mrn).set(TranshipmentTypePage(index), TranshipmentType.values.head).success.value
       val application    = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request        = FakeRequest(GET, transhipmentTypeRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
