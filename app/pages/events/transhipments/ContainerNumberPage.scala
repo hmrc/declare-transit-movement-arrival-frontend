@@ -14,18 +14,14 @@
  * limitations under the License.
  */
 
-package pages
+package pages.events.transhipments
 
-import pages.behaviours.PageBehaviours
+import pages.QuestionPage
+import play.api.libs.json.JsPath
 
-class TransportNationalityPageSpec extends PageBehaviours {
+case object ContainerNumberPage extends QuestionPage[String] {
 
-  "TransportNationalityPage" - {
+  override def path: JsPath = JsPath \ toString
 
-    beRetrievable[String](TransportNationalityPage)
-
-    beSettable[String](TransportNationalityPage)
-
-    beRemovable[String](TransportNationalityPage)
-  }
+  override def toString: String = "containerNumber"
 }

@@ -14,17 +14,19 @@
  * limitations under the License.
  */
 
-package forms
+package pages.events.transhipments
 
-import javax.inject.Inject
+import models.TranshipmentType
+import pages.behaviours.PageBehaviours
 
-import forms.mappings.Mappings
-import play.api.data.Form
+class TranshipmentTypePageSpec extends PageBehaviours {
 
-class AddContainerFormProvider @Inject() extends Mappings {
+  "TranshipmentTypePage" - {
 
-  def apply(): Form[Boolean] =
-    Form(
-      "value" -> boolean("addContainer.error.required")
-    )
+    beRetrievable[TranshipmentType](TranshipmentTypePage)
+
+    beSettable[TranshipmentType](TranshipmentTypePage)
+
+    beRemovable[TranshipmentType](TranshipmentTypePage)
+  }
 }

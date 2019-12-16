@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package pages
+package pages.events.transhipments
 
+import pages.QuestionPage
 import play.api.libs.json.JsPath
 
 case object AddContainerPage extends QuestionPage[Boolean] {

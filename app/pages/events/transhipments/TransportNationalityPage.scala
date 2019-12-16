@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package pages
+package pages.events.transhipments
 
+import pages.QuestionPage
 import play.api.libs.json.JsPath
 
-case object ContainerNumberPage extends QuestionPage[String] {
+case object TransportNationalityPage extends QuestionPage[String] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "containerNumber"
+  override def toString: String = "transportNationality"
 }

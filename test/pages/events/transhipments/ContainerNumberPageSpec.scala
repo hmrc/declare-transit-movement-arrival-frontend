@@ -14,32 +14,18 @@
  * limitations under the License.
  */
 
-package forms
+package pages.events.transhipments
 
-import forms.behaviours.BooleanFieldBehaviours
-import play.api.data.FormError
+import pages.behaviours.PageBehaviours
 
-class AddContainerFormProviderSpec extends BooleanFieldBehaviours {
+class ContainerNumberPageSpec extends PageBehaviours {
 
-  val requiredKey = "addContainer.error.required"
-  val invalidKey  = "error.boolean"
+  "ContainerNumberPage" - {
 
-  val form = new AddContainerFormProvider()()
+    beRetrievable[String](ContainerNumberPage)
 
-  ".value" - {
+    beSettable[String](ContainerNumberPage)
 
-    val fieldName = "value"
-
-    behave like booleanField(
-      form,
-      fieldName,
-      invalidError = FormError(fieldName, invalidKey)
-    )
-
-    behave like mandatoryField(
-      form,
-      fieldName,
-      requiredError = FormError(fieldName, requiredKey)
-    )
+    beRemovable[String](ContainerNumberPage)
   }
 }

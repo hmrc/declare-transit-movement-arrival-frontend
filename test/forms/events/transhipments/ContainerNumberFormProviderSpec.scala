@@ -14,19 +14,18 @@
  * limitations under the License.
  */
 
-package forms
+package forms.events.transhipments
 
 import forms.behaviours.StringFieldBehaviours
-import forms.events.transhipments.TransportIdentityFormProvider
 import play.api.data.FormError
 
-class TransportIdentityFormProviderSpec extends StringFieldBehaviours {
+class ContainerNumberFormProviderSpec extends StringFieldBehaviours {
 
-  val requiredKey = "transportIdentity.error.required"
-  val lengthKey   = "transportIdentity.error.length"
-  val maxLength   = 35
+  val requiredKey = "containerNumber.error.required"
+  val lengthKey   = "containerNumber.error.length"
+  val maxLength   = 100
 
-  val form = new TransportIdentityFormProvider()()
+  val form = new ContainerNumberFormProvider()()
 
   ".value" - {
 

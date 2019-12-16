@@ -14,20 +14,18 @@
  * limitations under the License.
  */
 
-package pages
+package pages.events.transhipments
 
-import models.TranshipmentType
 import pages.behaviours.PageBehaviours
-import pages.events.transhipments.TranshipmentTypePage
 
-class TranshipmentTypePageSpec extends PageBehaviours {
+class AddContainerPageSpec extends PageBehaviours {
 
-  "TranshipmentTypePage" - {
+  "AddContainerPage" - {
 
-    beRetrievable[TranshipmentType](TranshipmentTypePage)
+    beRetrievable[Boolean](AddContainerPage)
 
-    beSettable[TranshipmentType](TranshipmentTypePage)
+    beSettable[Boolean](AddContainerPage)
 
-    beRemovable[TranshipmentType](TranshipmentTypePage)
+    beRemovable[Boolean](AddContainerPage)
   }
 }

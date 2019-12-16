@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package forms
+package forms.events.transhipments
 
 import forms.behaviours.OptionFieldBehaviours
-import forms.events.transhipments.TranshipmentTypeFormProvider
 import models.TranshipmentType
 import play.api.data.FormError
 

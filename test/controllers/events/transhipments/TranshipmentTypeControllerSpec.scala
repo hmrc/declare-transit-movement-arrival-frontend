@@ -14,20 +14,22 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.events.transhipments
 
 import base.SpecBase
-import forms.TransportNationalityFormProvider
+import controllers.events.transhipments.{routes => transhipmentRoutes}
+import forms.events.transhipments.TranshipmentTypeFormProvider
 import matchers.JsonMatchers
-import models.{NormalMode, UserAnswers}
+import models.{NormalMode, TranshipmentType, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.TransportNationalityPage
+import pages.events.transhipments.TranshipmentTypePage
+import play.api.data.Form
 import play.api.inject.bind
-import play.api.libs.json.{JsObject, JsString, Json}
+import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -37,16 +39,16 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class TransportNationalityControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class TranshipmentTypeControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
-  def onwardRoute = Call("GET", "/foo")
+  def onwardRoute: Call = Call("GET", "/foo")
 
-  val formProvider = new TransportNationalityFormProvider()
-  val form         = formProvider()
+  lazy val transhipmentTypeRoute: String = transhipmentRoutes.TranshipmentTypeController.onPageLoad(mrn, NormalMode).url
 
-  lazy val transportNationalityRoute = routes.TransportNationalityController.onPageLoad(mrn, NormalMode).url
+  val formProvider                 = new TranshipmentTypeFormProvider()
+  val form: Form[TranshipmentType] = formProvider()
 
-  "TransportNationality Controller" - {
+  "TranshipmentType Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
@@ -54,7 +56,7 @@ class TransportNationalityControllerSpec extends SpecBase with MockitoSugar with
         .thenReturn(Future.successful(Html("")))
 
       val application    = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request        = FakeRequest(GET, transportNationalityRoute)
+      val request        = FakeRequest(GET, transhipmentTypeRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -65,12 +67,13 @@ class TransportNationalityControllerSpec extends SpecBase with MockitoSugar with
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form" -> form,
-        "mrn"  -> mrn,
-        "mode" -> NormalMode
+        "form"   -> form,
+        "mode"   -> NormalMode,
+        "mrn"    -> mrn,
+        "radios" -> TranshipmentType.radios(form)
       )
 
-      templateCaptor.getValue mustEqual "transportNationality.njk"
+      templateCaptor.getValue mustEqual "transhipmentType.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -81,9 +84,9 @@ class TransportNationalityControllerSpec extends SpecBase with MockitoSugar with
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers    = UserAnswers(mrn).set(TransportNationalityPage, "answer").success.value
+      val userAnswers    = UserAnswers(mrn).set(TranshipmentTypePage, TranshipmentType.values.head).success.value
       val application    = applicationBuilder(userAnswers = Some(userAnswers)).build()
-      val request        = FakeRequest(GET, transportNationalityRoute)
+      val request        = FakeRequest(GET, transhipmentTypeRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -93,15 +96,16 @@ class TransportNationalityControllerSpec extends SpecBase with MockitoSugar with
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = form.bind(Map("value" -> "answer"))
+      val filledForm = form.bind(Map("value" -> TranshipmentType.values.head.toString))
 
       val expectedJson = Json.obj(
-        "form" -> filledForm,
-        "mrn"  -> mrn,
-        "mode" -> NormalMode
+        "form"   -> filledForm,
+        "mode"   -> NormalMode,
+        "mrn"    -> mrn,
+        "radios" -> TranshipmentType.radios(filledForm)
       )
 
-      templateCaptor.getValue mustEqual "transportNationality.njk"
+      templateCaptor.getValue mustEqual "transhipmentType.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -122,12 +126,13 @@ class TransportNationalityControllerSpec extends SpecBase with MockitoSugar with
           .build()
 
       val request =
-        FakeRequest(POST, transportNationalityRoute)
-          .withFormUrlEncodedBody(("value", "answer"))
+        FakeRequest(POST, transhipmentTypeRoute)
+          .withFormUrlEncodedBody(("value", TranshipmentType.values.head.toString))
 
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
+
       redirectLocation(result).value mustEqual onwardRoute.url
 
       application.stop()
@@ -139,8 +144,8 @@ class TransportNationalityControllerSpec extends SpecBase with MockitoSugar with
         .thenReturn(Future.successful(Html("")))
 
       val application    = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request        = FakeRequest(POST, transportNationalityRoute).withFormUrlEncodedBody(("value", ""))
-      val boundForm      = form.bind(Map("value" -> ""))
+      val request        = FakeRequest(POST, transhipmentTypeRoute).withFormUrlEncodedBody(("value", "invalid value"))
+      val boundForm      = form.bind(Map("value" -> "invalid value"))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -151,12 +156,13 @@ class TransportNationalityControllerSpec extends SpecBase with MockitoSugar with
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form" -> boundForm,
-        "mrn"  -> mrn,
-        "mode" -> NormalMode
+        "form"   -> boundForm,
+        "mode"   -> NormalMode,
+        "mrn"    -> mrn,
+        "radios" -> TranshipmentType.radios(boundForm)
       )
 
-      templateCaptor.getValue mustEqual "transportNationality.njk"
+      templateCaptor.getValue mustEqual "transhipmentType.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -166,13 +172,12 @@ class TransportNationalityControllerSpec extends SpecBase with MockitoSugar with
 
       val application = applicationBuilder(userAnswers = None).build()
 
-      val request = FakeRequest(GET, transportNationalityRoute)
+      val request = FakeRequest(GET, transhipmentTypeRoute)
 
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
-
-      redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
 
       application.stop()
     }
@@ -182,14 +187,14 @@ class TransportNationalityControllerSpec extends SpecBase with MockitoSugar with
       val application = applicationBuilder(userAnswers = None).build()
 
       val request =
-        FakeRequest(POST, transportNationalityRoute)
-          .withFormUrlEncodedBody(("value", "answer"))
+        FakeRequest(POST, transhipmentTypeRoute)
+          .withFormUrlEncodedBody(("value", TranshipmentType.values.head.toString))
 
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
 
       application.stop()
     }

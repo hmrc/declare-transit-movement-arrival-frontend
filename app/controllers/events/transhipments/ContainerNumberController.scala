@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.events.transhipments
 
 import controllers.actions._
-import forms.TransportNationalityFormProvider
+import forms.events.transhipments.ContainerNumberFormProvider
 import javax.inject.Inject
 import models.{Mode, MovementReferenceNumber}
 import navigation.Navigator
-import pages.TransportNationalityPage
+import pages.events.transhipments.ContainerNumberPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -32,14 +32,14 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class TransportNationalityController @Inject()(
+class ContainerNumberController @Inject()(
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
   navigator: Navigator,
   identify: IdentifierAction,
   getData: DataRetrievalActionProvider,
   requireData: DataRequiredAction,
-  formProvider: TransportNationalityFormProvider,
+  formProvider: ContainerNumberFormProvider,
   val controllerComponents: MessagesControllerComponents,
   renderer: Renderer
 )(implicit ec: ExecutionContext)
@@ -51,7 +51,7 @@ class TransportNationalityController @Inject()(
 
   def onPageLoad(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
-      val preparedForm = request.userAnswers.get(TransportNationalityPage) match {
+      val preparedForm = request.userAnswers.get(ContainerNumberPage) match {
         case None        => form
         case Some(value) => form.fill(value)
       }
@@ -62,7 +62,7 @@ class TransportNationalityController @Inject()(
         "mode" -> mode
       )
 
-      renderer.render("transportNationality.njk", json).map(Ok(_))
+      renderer.render("containerNumber.njk", json).map(Ok(_))
   }
 
   def onSubmit(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
@@ -78,13 +78,13 @@ class TransportNationalityController @Inject()(
               "mode" -> mode
             )
 
-            renderer.render("transportNationality.njk", json).map(BadRequest(_))
+            renderer.render("containerNumber.njk", json).map(BadRequest(_))
           },
           value =>
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(TransportNationalityPage, value))
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(ContainerNumberPage, value))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(TransportNationalityPage, mode, updatedAnswers))
+            } yield Redirect(navigator.nextPage(ContainerNumberPage, mode, updatedAnswers))
         )
   }
 }

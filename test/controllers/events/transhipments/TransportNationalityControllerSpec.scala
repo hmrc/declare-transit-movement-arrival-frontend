@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.events.transhipments
 
 import base.SpecBase
-import forms.AddContainerFormProvider
+import forms.events.transhipments.TransportNationalityFormProvider
 import matchers.JsonMatchers
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
@@ -25,7 +25,7 @@ import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.AddContainerPage
+import pages.events.transhipments.TransportNationalityPage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -33,20 +33,20 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import repositories.SessionRepository
-import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
+import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class AddContainerControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class TransportNationalityControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
   def onwardRoute = Call("GET", "/foo")
 
-  val formProvider = new AddContainerFormProvider()
+  val formProvider = new TransportNationalityFormProvider()
   val form         = formProvider()
 
-  lazy val addContainerRoute = routes.AddContainerController.onPageLoad(mrn, NormalMode).url
+  lazy val transportNationalityRoute = routes.TransportNationalityController.onPageLoad(mrn, NormalMode).url
 
-  "AddContainer Controller" - {
+  "TransportNationality Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
@@ -54,7 +54,7 @@ class AddContainerControllerSpec extends SpecBase with MockitoSugar with Nunjuck
         .thenReturn(Future.successful(Html("")))
 
       val application    = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request        = FakeRequest(GET, addContainerRoute)
+      val request        = FakeRequest(GET, transportNationalityRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -65,13 +65,12 @@ class AddContainerControllerSpec extends SpecBase with MockitoSugar with Nunjuck
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form"   -> form,
-        "mode"   -> NormalMode,
-        "mrn"    -> mrn,
-        "radios" -> Radios.yesNo(form("value"))
+        "form" -> form,
+        "mrn"  -> mrn,
+        "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "addContainer.njk"
+      templateCaptor.getValue mustEqual "transportNationality.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -82,9 +81,9 @@ class AddContainerControllerSpec extends SpecBase with MockitoSugar with Nunjuck
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers    = UserAnswers(mrn).set(AddContainerPage, true).success.value
+      val userAnswers    = UserAnswers(mrn).set(TransportNationalityPage, "answer").success.value
       val application    = applicationBuilder(userAnswers = Some(userAnswers)).build()
-      val request        = FakeRequest(GET, addContainerRoute)
+      val request        = FakeRequest(GET, transportNationalityRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -94,16 +93,15 @@ class AddContainerControllerSpec extends SpecBase with MockitoSugar with Nunjuck
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = form.bind(Map("value" -> "true"))
+      val filledForm = form.bind(Map("value" -> "answer"))
 
       val expectedJson = Json.obj(
-        "form"   -> filledForm,
-        "mode"   -> NormalMode,
-        "mrn"    -> mrn,
-        "radios" -> Radios.yesNo(filledForm("value"))
+        "form" -> filledForm,
+        "mrn"  -> mrn,
+        "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "addContainer.njk"
+      templateCaptor.getValue mustEqual "transportNationality.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -124,13 +122,12 @@ class AddContainerControllerSpec extends SpecBase with MockitoSugar with Nunjuck
           .build()
 
       val request =
-        FakeRequest(POST, addContainerRoute)
-          .withFormUrlEncodedBody(("value", "true"))
+        FakeRequest(POST, transportNationalityRoute)
+          .withFormUrlEncodedBody(("value", "answer"))
 
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
-
       redirectLocation(result).value mustEqual onwardRoute.url
 
       application.stop()
@@ -142,7 +139,7 @@ class AddContainerControllerSpec extends SpecBase with MockitoSugar with Nunjuck
         .thenReturn(Future.successful(Html("")))
 
       val application    = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request        = FakeRequest(POST, addContainerRoute).withFormUrlEncodedBody(("value", ""))
+      val request        = FakeRequest(POST, transportNationalityRoute).withFormUrlEncodedBody(("value", ""))
       val boundForm      = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
@@ -154,13 +151,12 @@ class AddContainerControllerSpec extends SpecBase with MockitoSugar with Nunjuck
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form"   -> boundForm,
-        "mode"   -> NormalMode,
-        "mrn"    -> mrn,
-        "radios" -> Radios.yesNo(boundForm("value"))
+        "form" -> boundForm,
+        "mrn"  -> mrn,
+        "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "addContainer.njk"
+      templateCaptor.getValue mustEqual "transportNationality.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -170,13 +166,13 @@ class AddContainerControllerSpec extends SpecBase with MockitoSugar with Nunjuck
 
       val application = applicationBuilder(userAnswers = None).build()
 
-      val request = FakeRequest(GET, addContainerRoute)
+      val request = FakeRequest(GET, transportNationalityRoute)
 
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
 
       application.stop()
     }
@@ -186,14 +182,14 @@ class AddContainerControllerSpec extends SpecBase with MockitoSugar with Nunjuck
       val application = applicationBuilder(userAnswers = None).build()
 
       val request =
-        FakeRequest(POST, addContainerRoute)
-          .withFormUrlEncodedBody(("value", "true"))
+        FakeRequest(POST, transportNationalityRoute)
+          .withFormUrlEncodedBody(("value", "answer"))
 
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
 
       application.stop()
     }

@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-package pages
+package forms.events.transhipments
 
-import pages.behaviours.PageBehaviours
+import forms.mappings.Mappings
+import javax.inject.Inject
+import play.api.data.Form
 
-class AddContainerPageSpec extends PageBehaviours {
+class TransportNationalityFormProvider @Inject() extends Mappings {
 
-  "AddContainerPage" - {
-
-    beRetrievable[Boolean](AddContainerPage)
-
-    beSettable[Boolean](AddContainerPage)
-
-    beRemovable[Boolean](AddContainerPage)
-  }
+  def apply(): Form[String] =
+    Form(
+      "value" -> text("transportNationality.error.required")
+        .verifying(maxLength(35, "transportNationality.error.length"))
+    )
 }

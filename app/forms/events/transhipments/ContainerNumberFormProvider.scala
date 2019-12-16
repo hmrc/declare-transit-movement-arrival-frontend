@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package forms
-
-import javax.inject.Inject
+package forms.events.transhipments
 
 import forms.mappings.Mappings
+import javax.inject.Inject
 import play.api.data.Form
 
 class ContainerNumberFormProvider @Inject() extends Mappings {

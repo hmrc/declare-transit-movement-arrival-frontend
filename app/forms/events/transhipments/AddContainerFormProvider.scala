@@ -14,13 +14,16 @@
  * limitations under the License.
  */
 
-package pages
+package forms.events.transhipments
 
-import play.api.libs.json.JsPath
+import forms.mappings.Mappings
+import javax.inject.Inject
+import play.api.data.Form
 
-case object TransportNationalityPage extends QuestionPage[String] {
+class AddContainerFormProvider @Inject() extends Mappings {
 
-  override def path: JsPath = JsPath \ toString
-
-  override def toString: String = "transportNationality"
+  def apply(): Form[Boolean] =
+    Form(
+      "value" -> boolean("addContainer.error.required")
+    )
 }

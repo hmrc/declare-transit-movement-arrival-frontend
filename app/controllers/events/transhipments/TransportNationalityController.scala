@@ -14,32 +14,32 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.events.transhipments
 
 import controllers.actions._
-import forms.AddContainerFormProvider
+import forms.events.transhipments.TransportNationalityFormProvider
 import javax.inject.Inject
 import models.{Mode, MovementReferenceNumber}
 import navigation.Navigator
-import pages.AddContainerPage
+import pages.events.transhipments.TransportNationalityPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
-import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
+import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class AddContainerController @Inject()(
+class TransportNationalityController @Inject()(
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
   navigator: Navigator,
   identify: IdentifierAction,
   getData: DataRetrievalActionProvider,
   requireData: DataRequiredAction,
-  formProvider: AddContainerFormProvider,
+  formProvider: TransportNationalityFormProvider,
   val controllerComponents: MessagesControllerComponents,
   renderer: Renderer
 )(implicit ec: ExecutionContext)
@@ -51,19 +51,18 @@ class AddContainerController @Inject()(
 
   def onPageLoad(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
-      val preparedForm = request.userAnswers.get(AddContainerPage) match {
+      val preparedForm = request.userAnswers.get(TransportNationalityPage) match {
         case None        => form
         case Some(value) => form.fill(value)
       }
 
       val json = Json.obj(
-        "form"   -> preparedForm,
-        "mode"   -> mode,
-        "mrn"    -> mrn,
-        "radios" -> Radios.yesNo(preparedForm("value"))
+        "form" -> preparedForm,
+        "mrn"  -> mrn,
+        "mode" -> mode
       )
 
-      renderer.render("addContainer.njk", json).map(Ok(_))
+      renderer.render("transportNationality.njk", json).map(Ok(_))
   }
 
   def onSubmit(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
@@ -74,19 +73,18 @@ class AddContainerController @Inject()(
           formWithErrors => {
 
             val json = Json.obj(
-              "form"   -> formWithErrors,
-              "mode"   -> mode,
-              "mrn"    -> mrn,
-              "radios" -> Radios.yesNo(formWithErrors("value"))
+              "form" -> formWithErrors,
+              "mrn"  -> mrn,
+              "mode" -> mode
             )
 
-            renderer.render("addContainer.njk", json).map(BadRequest(_))
+            renderer.render("transportNationality.njk", json).map(BadRequest(_))
           },
           value =>
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(AddContainerPage, value))
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(TransportNationalityPage, value))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(AddContainerPage, mode, updatedAnswers))
+            } yield Redirect(navigator.nextPage(TransportNationalityPage, mode, updatedAnswers))
         )
   }
 }

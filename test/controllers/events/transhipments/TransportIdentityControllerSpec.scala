@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.events.transhipments
 
 import base.SpecBase
-import forms.ContainerNumberFormProvider
+import controllers.events.transhipments.{routes => transhipmentRoutes}
+import forms.events.transhipments.TransportIdentityFormProvider
 import matchers.JsonMatchers
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
@@ -25,9 +26,10 @@ import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.ContainerNumberPage
+import pages.events.transhipments.TransportIdentityPage
+import play.api.data.Form
 import play.api.inject.bind
-import play.api.libs.json.{JsObject, JsString, Json}
+import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -37,16 +39,16 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class ContainerNumberControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class TransportIdentityControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
-  def onwardRoute = Call("GET", "/foo")
+  def onwardRoute: Call = Call("GET", "/foo")
 
-  val formProvider = new ContainerNumberFormProvider()
-  val form         = formProvider()
+  val formProvider       = new TransportIdentityFormProvider()
+  val form: Form[String] = formProvider()
 
-  lazy val containerNumberRoute = routes.ContainerNumberController.onPageLoad(mrn, NormalMode).url
+  lazy val transportIdentityRoute: String = transhipmentRoutes.TransportIdentityController.onPageLoad(mrn, NormalMode).url
 
-  "ContainerNumber Controller" - {
+  "TransportIdentity Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
@@ -54,7 +56,7 @@ class ContainerNumberControllerSpec extends SpecBase with MockitoSugar with Nunj
         .thenReturn(Future.successful(Html("")))
 
       val application    = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request        = FakeRequest(GET, containerNumberRoute)
+      val request        = FakeRequest(GET, transportIdentityRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -70,7 +72,7 @@ class ContainerNumberControllerSpec extends SpecBase with MockitoSugar with Nunj
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "containerNumber.njk"
+      templateCaptor.getValue mustEqual "transportIdentity.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -81,9 +83,9 @@ class ContainerNumberControllerSpec extends SpecBase with MockitoSugar with Nunj
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers    = UserAnswers(mrn).set(ContainerNumberPage, "answer").success.value
+      val userAnswers    = UserAnswers(mrn).set(TransportIdentityPage, "answer").success.value
       val application    = applicationBuilder(userAnswers = Some(userAnswers)).build()
-      val request        = FakeRequest(GET, containerNumberRoute)
+      val request        = FakeRequest(GET, transportIdentityRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -101,7 +103,7 @@ class ContainerNumberControllerSpec extends SpecBase with MockitoSugar with Nunj
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "containerNumber.njk"
+      templateCaptor.getValue mustEqual "transportIdentity.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -122,7 +124,7 @@ class ContainerNumberControllerSpec extends SpecBase with MockitoSugar with Nunj
           .build()
 
       val request =
-        FakeRequest(POST, containerNumberRoute)
+        FakeRequest(POST, transportIdentityRoute)
           .withFormUrlEncodedBody(("value", "answer"))
 
       val result = route(application, request).value
@@ -139,7 +141,7 @@ class ContainerNumberControllerSpec extends SpecBase with MockitoSugar with Nunj
         .thenReturn(Future.successful(Html("")))
 
       val application    = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request        = FakeRequest(POST, containerNumberRoute).withFormUrlEncodedBody(("value", ""))
+      val request        = FakeRequest(POST, transportIdentityRoute).withFormUrlEncodedBody(("value", ""))
       val boundForm      = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
@@ -156,7 +158,7 @@ class ContainerNumberControllerSpec extends SpecBase with MockitoSugar with Nunj
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "containerNumber.njk"
+      templateCaptor.getValue mustEqual "transportIdentity.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -166,13 +168,13 @@ class ContainerNumberControllerSpec extends SpecBase with MockitoSugar with Nunj
 
       val application = applicationBuilder(userAnswers = None).build()
 
-      val request = FakeRequest(GET, containerNumberRoute)
+      val request = FakeRequest(GET, transportIdentityRoute)
 
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
 
       application.stop()
     }
@@ -182,14 +184,14 @@ class ContainerNumberControllerSpec extends SpecBase with MockitoSugar with Nunj
       val application = applicationBuilder(userAnswers = None).build()
 
       val request =
-        FakeRequest(POST, containerNumberRoute)
+        FakeRequest(POST, transportIdentityRoute)
           .withFormUrlEncodedBody(("value", "answer"))
 
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
 
       application.stop()
     }

@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package forms
+package pages.events.transhipments
 
-import javax.inject.Inject
+import pages.behaviours.PageBehaviours
 
-import forms.mappings.Mappings
-import play.api.data.Form
+class TransportIdentityPageSpec extends PageBehaviours {
 
-class TransportNationalityFormProvider @Inject() extends Mappings {
+  "TransportIdentityPage" - {
 
-  def apply(): Form[String] =
-    Form(
-      "value" -> text("transportNationality.error.required")
-        .verifying(maxLength(35, "transportNationality.error.length"))
-    )
+    beRetrievable[String](TransportIdentityPage)
+
+    beSettable[String](TransportIdentityPage)
+
+    beRemovable[String](TransportIdentityPage)
+  }
 }

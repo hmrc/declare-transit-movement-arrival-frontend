@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package pages
+package pages.events.transhipments
 
 import pages.behaviours.PageBehaviours
 
-class ContainerNumberPageSpec extends PageBehaviours {
+class TransportNationalityPageSpec extends PageBehaviours {
 
-  "ContainerNumberPage" - {
+  "TransportNationalityPage" - {
 
-    beRetrievable[String](ContainerNumberPage)
+    beRetrievable[String](TransportNationalityPage)
 
-    beSettable[String](ContainerNumberPage)
+    beSettable[String](TransportNationalityPage)
 
-    beRemovable[String](ContainerNumberPage)
+    beRemovable[String](TransportNationalityPage)
   }
 }
