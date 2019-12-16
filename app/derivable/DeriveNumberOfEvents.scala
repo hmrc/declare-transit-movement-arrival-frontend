@@ -14,12 +14,15 @@
  * limitations under the License.
  */
 
-package computable
+package derivable
 
-import queries.Gettable
+import play.api.libs.json.{JsObject, JsPath}
+import queries.EventsQuery
 
-trait Derivable[A, B] extends Gettable[A] {
+case object DeriveNumberOfEvents extends Derivable[List[JsObject], Int] {
 
-  val derive: A => B
+  override val derive: List[JsObject] => Int = _.size
+
+  override def path: JsPath = EventsQuery.path
 
 }

@@ -27,7 +27,7 @@ trait PageGenerators {
     Arbitrary(AddContainerPage(0))
 
   implicit lazy val arbitraryContainerNumberPage: Arbitrary[ContainerNumberPage] =
-    Arbitrary(ContainerNumberPage(0))
+    Arbitrary(ContainerNumberPage(0, 0))
 
   implicit lazy val arbitraryTransportNationalityPage: Arbitrary[TransportNationalityPage] =
     Arbitrary(TransportNationalityPage(0))

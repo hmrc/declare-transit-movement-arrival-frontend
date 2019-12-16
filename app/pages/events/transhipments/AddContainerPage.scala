@@ -22,7 +22,7 @@ import play.api.libs.json.JsPath
 
 final case class AddContainerPage(eventIndex: Int) extends QuestionPage[Boolean] {
 
-  override def path: JsPath = JsPath \ RepeatingSectionConstants.events \ eventIndex \ toString
+  override def path: JsPath = JsPath \ toString
 
   override def toString: String = "addContainer"
 }

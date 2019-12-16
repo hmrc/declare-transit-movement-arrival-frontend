@@ -17,10 +17,12 @@
 package navigation
 
 import base.SpecBase
-import computable.DeriveNumberOfEvents
+import derivable.DeriveNumberOfEvents
 import controllers.routes
 import controllers.events.{routes => eventRoutes}
+import controllers.events.transhipments.{routes => transhipmentRoutes}
 import generators.{DomainModelGenerators, Generators}
+import models.TranshipmentType.{DifferentContainer, DifferentVehicle}
 import pages._
 import models._
 import models.domain.{EnRouteEvent, Incident}
@@ -33,6 +35,7 @@ import pages.events.EventPlacePage
 import pages.events.EventReportedPage
 import pages.events.IncidentInformationPage
 import pages.events.IsTranshipmentPage
+import pages.events.transhipments.{AddContainerPage, ContainerNumberPage, TranshipmentTypePage, TransportIdentityPage, TransportNationalityPage}
 import queries.EventsQuery
 
 class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generators with DomainModelGenerators {
@@ -279,39 +282,18 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           }
         }
 
-        "to events summary page when the event has been reported and Transhipment as 'Yes'" in {
+        "to transhipment type page when Transhipment is 'Yes'" in {
 
           forAll(arbitrary[UserAnswers]) {
             answers =>
               val updatedAnswers = answers
-                .set(EventReportedPage(index), true)
-                .success
-                .value
                 .set(IsTranshipmentPage(index), true)
                 .success
                 .value
 
               navigator
                 .nextPage(IsTranshipmentPage(index), NormalMode, updatedAnswers)
-                .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(updatedAnswers.id, index))
-          }
-        }
-
-        "to events summary page when the event has not been reported and Transhipment as 'Yes'" in {
-
-          forAll(arbitrary[UserAnswers]) {
-            answers =>
-              val updatedAnswers = answers
-                .set(EventReportedPage(index), false)
-                .success
-                .value
-                .set(IsTranshipmentPage(index), true)
-                .success
-                .value
-
-              navigator
-                .nextPage(IsTranshipmentPage(index), NormalMode, updatedAnswers)
-                .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(updatedAnswers.id, index))
+                .mustBe(transhipmentRoutes.TranshipmentTypeController.onPageLoad(updatedAnswers.id, index, NormalMode))
           }
         }
 
@@ -334,6 +316,55 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         }
       }
 
+      "must go from Transhipment type" - {
+
+        "to Transport Identity when option is 'a different vehicle' " in {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val updatedAnswers = answers
+                .set(TranshipmentTypePage(index), DifferentVehicle)
+                .success
+                .value
+
+              navigator
+                .nextPage(TranshipmentTypePage(index), NormalMode, updatedAnswers)
+                .mustBe(transhipmentRoutes.TransportIdentityController.onPageLoad(updatedAnswers.id, index, NormalMode))
+          }
+        }
+
+        "to Transport Identity when option is 'a different container' " in {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val updatedAnswers = answers
+                .set(TranshipmentTypePage(index), DifferentContainer)
+                .success
+                .value
+
+              navigator
+                .nextPage(TranshipmentTypePage(index), NormalMode, updatedAnswers)
+                .mustBe(transhipmentRoutes.ContainerNumberController.onPageLoad(updatedAnswers.id, index, 0, NormalMode))
+          }
+        }
+      }
+
+      "must go from transport identity to Transport Nationality page" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            navigator
+              .nextPage(TransportIdentityPage(index), NormalMode, answers)
+              .mustBe(transhipmentRoutes.TransportNationalityController.onPageLoad(answers.id, index, NormalMode))
+        }
+      }
+
+      "must go from transport nationality to check event answers page" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            navigator
+              .nextPage(TransportNationalityPage(index), NormalMode, answers)
+              .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(answers.id, index))
+        }
+      }
+
       "must go from Incident Information to event summary page" in {
 
         forAll(arbitrary[UserAnswers]) {
@@ -342,6 +373,71 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
               .nextPage(IncidentInformationPage(index), NormalMode, answers)
               .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(answers.id, index))
         }
+      }
+
+      "must go from container number page to 'Add another container'" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            navigator
+              .nextPage(ContainerNumberPage(index, 0), NormalMode, answers)
+              .mustBe(transhipmentRoutes.AddContainerController.onPageLoad(answers.id, index, NormalMode))
+        }
+      }
+
+      "must go from 'Add another container'" - {
+        "to 'check event answers' when the option is 'No'" in {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val updatedAnswers = answers
+                .set(AddContainerPage(index), false)
+                .success
+                .value
+
+              navigator
+                .nextPage(AddContainerPage(index), NormalMode, updatedAnswers)
+                .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(answers.id, index))
+          }
+        }
+
+        "to 'Container number' with index 0 when the option is 'Yes' and there are no previous containers" in {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val updatedAnswers = answers
+                .remove(EventsQuery)
+                .success
+                .value
+                .set(AddContainerPage(index), true)
+                .success
+                .value
+
+              navigator
+                .nextPage(AddContainerPage(index), NormalMode, updatedAnswers)
+                .mustBe(transhipmentRoutes.ContainerNumberController.onPageLoad(answers.id, index, 0, NormalMode))
+          }
+        }
+
+        "to 'Container number' with index 1 when the option is 'Yes' and there is 1 previous containers" in {
+          val containerIndex = 0
+
+          forAll(arbitrary[UserAnswers], stringsWithMaxLength(17)) {
+            case (answers, container) =>
+              val updatedAnswers = answers
+                .remove(EventsQuery)
+                .success
+                .value
+                .set(ContainerNumberPage(index, containerIndex), container)
+                .success
+                .value
+                .set(AddContainerPage(index), true)
+                .success
+                .value
+
+              navigator
+                .nextPage(AddContainerPage(index), NormalMode, updatedAnswers)
+                .mustBe(transhipmentRoutes.ContainerNumberController.onPageLoad(answers.id, index, containerIndex + 1, NormalMode))
+          }
+        }
+
       }
 
       "must go from Add Event Page" - {

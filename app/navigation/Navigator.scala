@@ -17,13 +17,16 @@
 package navigation
 
 import com.google.inject.{Inject, Singleton}
-import computable.DeriveNumberOfEvents
+import controllers.events.transhipments.{routes => transhipmentRoutes}
 import controllers.events.{routes => eventRoutes}
 import controllers.routes
+import derivable.{DeriveNumberOfContainers, DeriveNumberOfEvents}
 import models.GoodsLocation._
+import models.TranshipmentType.{DifferentContainer, DifferentVehicle}
 import models.{CheckMode, Mode, NormalMode, UserAnswers}
-import pages.events._
 import pages._
+import pages.events._
+import pages.events.transhipments._
 import play.api.mvc.Call
 
 @Singleton
@@ -47,8 +50,27 @@ class Navigator @Inject()() {
     case IsTranshipmentPage(index) => isTranshipmentRoute(index)
     case IncidentInformationPage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
     case AddEventPage => addEventRoute
+    case transhipments.TranshipmentTypePage(index) => transhipmentType(index)
+    case TransportIdentityPage(index) => ua => Some(transhipmentRoutes.TransportNationalityController.onPageLoad(ua.id, index, NormalMode))
+    case TransportNationalityPage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
+    case ContainerNumberPage(index, _) => ua => Some(transhipmentRoutes.AddContainerController.onPageLoad(ua.id, index, NormalMode))
+    case AddContainerPage(index) => addContainer(index)
   }
 
+  private def addContainer(index: Int)(ua: UserAnswers): Option[Call] =
+    (ua.get(AddContainerPage(index)), ua.get(DeriveNumberOfContainers(index))) match {
+      case (Some(true), None) => Some(transhipmentRoutes.ContainerNumberController.onPageLoad(ua.id, index, 0, NormalMode))
+      case (Some(true), Some(containerIndex)) => Some(transhipmentRoutes.ContainerNumberController.onPageLoad(ua.id, index, containerIndex, NormalMode))
+      case (Some(false), _) => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
+      case _ => None
+    }
+  
+  private def transhipmentType(index: Int)(ua: UserAnswers): Option[Call] =
+    ua.get(transhipments.TranshipmentTypePage(index)) map {
+      case DifferentContainer => transhipmentRoutes.ContainerNumberController.onPageLoad(ua.id, index, 0, NormalMode) //TODO fix hardcoded zero
+      case DifferentVehicle => transhipmentRoutes.TransportIdentityController.onPageLoad(ua.id, index, NormalMode)
+    }
+  
   private val checkRouteMap: PartialFunction[Page, UserAnswers => Option[Call]] = {
     case GoodsLocationPage         => goodsLocationCheckRoute
     case EventCountryPage(index)   => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
@@ -94,7 +116,7 @@ class Navigator @Inject()() {
 
   private def isTranshipmentRoute(index: Int)(ua: UserAnswers): Option[Call] =
     ua.get(IsTranshipmentPage(index)) map {
-      case true                                                      => eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index)
+      case true                                                      => transhipmentRoutes.TranshipmentTypeController.onPageLoad(ua.id, index, NormalMode)
       case false if ua.get(EventReportedPage(index)).contains(false) => eventRoutes.IncidentInformationController.onPageLoad(ua.id, index, NormalMode)
       case _                                                         => eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index)
     }

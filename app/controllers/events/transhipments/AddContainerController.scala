@@ -85,7 +85,6 @@ class AddContainerController @Inject()(
           value =>
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(AddContainerPage(eventIndex), value))
-              _              <- sessionRepository.set(updatedAnswers)
             } yield Redirect(navigator.nextPage(AddContainerPage(eventIndex), mode, updatedAnswers))
         )
   }

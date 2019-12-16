@@ -289,6 +289,7 @@ transhipmentType.title = What did the goods move to?
 transhipmentType.heading = What did the goods move to?
 transhipmentType.differentContainer = A different container
 transhipmentType.differentVehicle = A different vehicle
+transhipmentType.differentContainerAndVehicle = Both
 transhipmentType.checkYourAnswersLabel = What did the goods move to?
 transhipmentType.error.required = Select transhipmentType
 

@@ -20,9 +20,9 @@ import pages.QuestionPage
 import pages.events.RepeatingSectionConstants
 import play.api.libs.json.JsPath
 
-final case class ContainerNumberPage(eventIndex: Int) extends QuestionPage[String] {
+final case class ContainerNumberPage(eventIndex: Int, containerIndex: Int) extends QuestionPage[String] {
 
-  override def path: JsPath = JsPath \ RepeatingSectionConstants.events \ eventIndex \ toString
+  override def path: JsPath = JsPath \ RepeatingSectionConstants.events \ eventIndex \ RepeatingSectionConstants.containers \ containerIndex \ toString
 
   override def toString: String = "containerNumber"
 }

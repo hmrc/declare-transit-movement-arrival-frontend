@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-package computable
-
+package derivable
+import pages.events.RepeatingSectionConstants
 import play.api.libs.json.{JsObject, JsPath}
 import queries.EventsQuery
 
-case object DeriveNumberOfEvents extends Derivable[List[JsObject], Int] {
+final case class DeriveNumberOfContainers(eventIndex: Int) extends Derivable[List[JsObject], Int] {
 
   override val derive: List[JsObject] => Int = _.size
 
-  override def path: JsPath = EventsQuery.path
-
+  override def path: JsPath = JsPath \ RepeatingSectionConstants.events \ eventIndex \ RepeatingSectionConstants.containers
 }

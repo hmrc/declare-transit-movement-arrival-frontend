@@ -18,6 +18,7 @@ package pages.events
 
 object RepeatingSectionConstants {
 
-  val events = "events"
+  val events     = "events"
+  val containers = "containers"
 
 }

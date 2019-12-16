@@ -14,21 +14,12 @@
  * limitations under the License.
  */
 
-package pages.events.transhipments
+package derivable
 
-import pages.behaviours.PageBehaviours
+import queries.Gettable
 
-class ContainerNumberPageSpec extends PageBehaviours {
+trait Derivable[A, B] extends Gettable[A] {
 
-  val eventIndex     = 0
-  val containerIndex = 0
+  val derive: A => B
 
-  "ContainerNumberPage" - {
-
-    beRetrievable[String](ContainerNumberPage(eventIndex, containerIndex))
-
-    beSettable[String](ContainerNumberPage(eventIndex, containerIndex))
-
-    beRemovable[String](ContainerNumberPage(eventIndex, containerIndex))
-  }
 }

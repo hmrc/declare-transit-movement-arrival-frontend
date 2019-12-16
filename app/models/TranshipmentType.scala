@@ -41,7 +41,7 @@ object TranshipmentType extends Enumerable.Implicits {
     val items = Seq(
       Radios.Radio(msg"transhipmentType.differentContainer", DifferentContainer.toString),
       Radios.Radio(msg"transhipmentType.differentVehicle", DifferentVehicle.toString),
-      Radios.Radio(msg"transhipmentType.differentVehicle", DifferentContainerAndVehicle.toString)
+      Radios.Radio(msg"transhipmentType.differentContainerAndVehicle", DifferentContainerAndVehicle.toString)
     )
 
     Radios(field, items)

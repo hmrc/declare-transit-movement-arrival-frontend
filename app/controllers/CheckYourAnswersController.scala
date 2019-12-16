@@ -17,7 +17,7 @@
 package controllers
 
 import com.google.inject.Inject
-import computable.DeriveNumberOfEvents
+import derivable.DeriveNumberOfEvents
 import controllers.actions.{DataRequiredAction, DataRetrievalActionProvider, IdentifierAction}
 import handlers.ErrorHandler
 import models.{MovementReferenceNumber, UserAnswers}
