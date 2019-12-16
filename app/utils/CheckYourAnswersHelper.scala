@@ -35,6 +35,21 @@ import uk.gov.hmrc.viewmodels._
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers) {
 
+  def transportNationality: Option[Row] = userAnswers.get(TransportNationalityPage) map {
+    answer =>
+      Row(
+        key   = Key(msg"transportNationality.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value = Value(lit"$answer"),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = routes.TransportNationalityController.onPageLoad(mrn, CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"transportNationality.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
   def transportIdentity: Option[Row] = userAnswers.get(TransportIdentityPage) map {
     answer =>
       Row(

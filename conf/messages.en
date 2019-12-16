@@ -297,3 +297,9 @@ transportIdentity.heading = transportIdentity
 transportIdentity.checkYourAnswersLabel = transportIdentity
 transportIdentity.error.required = Enter transportIdentity
 transportIdentity.error.length = TransportIdentity must be TransportIdentity characters or less
+
+transportNationality.title = transportNationality
+transportNationality.heading = transportNationality
+transportNationality.checkYourAnswersLabel = transportNationality
+transportNationality.error.required = Enter transportNationality
+transportNationality.error.length = TransportNationality must be TransportNationality characters or less
