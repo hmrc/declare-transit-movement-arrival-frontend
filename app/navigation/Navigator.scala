@@ -43,7 +43,7 @@ class Navigator @Inject()() {
     case TraderEoriPage => ua => Some(routes.TraderAddressController.onPageLoad(ua.id, NormalMode))
     case IsTraderAddressPlaceOfNotificationPage => isTraderAddressPlaceOfNotificationRoute(NormalMode)
     case PlaceOfNotificationPage => ua => Some(routes.IncidentOnRouteController.onPageLoad(ua.id, NormalMode))
-    case IncidentOnRoutePage => incidentOnRouteRoute
+    case IncidentOnRoutePage => incidentOnRoute
     case EventCountryPage(index) => ua => Some(eventRoutes.EventPlaceController.onPageLoad(ua.id, index, NormalMode))
     case EventPlacePage(index) => ua => Some(eventRoutes.EventReportedController.onPageLoad(ua.id, index, NormalMode))
     case EventReportedPage(index) => ua => Some(eventRoutes.IsTranshipmentController.onPageLoad(ua.id, index, NormalMode))
@@ -108,10 +108,12 @@ class Navigator @Inject()() {
       case AuthorisedConsigneesLocation => routes.UseDifferentServiceController.onPageLoad(ua.id)
     }
 
-  private def incidentOnRouteRoute(ua: UserAnswers): Option[Call] =
-    ua.get(IncidentOnRoutePage) map {
-      case true  => eventRoutes.EventCountryController.onPageLoad(ua.id, 0, NormalMode) // TODO Remove hard coded 0 here and determine this from a query
-      case false => routes.CheckYourAnswersController.onPageLoad(ua.id)
+  private def incidentOnRoute(ua: UserAnswers): Option[Call] =
+    (ua.get(IncidentOnRoutePage), ua.get(DeriveNumberOfEvents)) match {
+      case (Some(true), None)    => Some(eventRoutes.EventCountryController.onPageLoad(ua.id, 0, NormalMode))
+      case (Some(true), Some(_)) => Some(eventRoutes.AddEventController.onPageLoad(ua.id, NormalMode))
+      case (Some(false), _)      => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
+      case _                     => None
     }
 
   private def isTranshipmentRoute(index: Int)(ua: UserAnswers): Option[Call] =

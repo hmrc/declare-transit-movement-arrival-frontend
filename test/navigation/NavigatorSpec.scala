@@ -189,11 +189,48 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           }
         }
 
-        "to Event Country when the user answers yes" in {
+        "must go to AddEvent if existing events" in {
 
           forAll(arbitrary[UserAnswers]) {
             answers =>
-              val updatedAnswers = answers.set(IncidentOnRoutePage, true).success.value
+              val updatedAnswers = {
+                answers
+                  .set(IncidentOnRoutePage, true)
+                  .success
+                  .value
+                  .set(EventCountryPage(0), "GB")
+                  .success
+                  .value
+                  .set(EventPlacePage(0), "TestPlace")
+                  .success
+                  .value
+                  .set(EventReportedPage(0), true)
+                  .success
+                  .value
+                  .set(IsTranshipmentPage(0), false)
+                  .success
+                  .value
+              }
+
+              navigator
+                .nextPage(IncidentOnRoutePage, NormalMode, updatedAnswers)
+                .mustBe(eventRoutes.AddEventController.onPageLoad(answers.id, NormalMode))
+          }
+        }
+
+        "must go to EventCountry if no events" in {
+
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val updatedAnswers = {
+                answers
+                  .set(IncidentOnRoutePage, true)
+                  .success
+                  .value
+                  .remove(EventsQuery)
+                  .success
+                  .value
+              }
 
               navigator
                 .nextPage(IncidentOnRoutePage, NormalMode, updatedAnswers)
