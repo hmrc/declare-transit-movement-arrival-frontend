@@ -22,7 +22,7 @@ import controllers.events.{routes => eventRoutes}
 import controllers.routes
 import derivable.{DeriveNumberOfContainers, DeriveNumberOfEvents}
 import models.GoodsLocation._
-import models.TranshipmentType.{DifferentContainer, DifferentVehicle}
+import models.TranshipmentType.{DifferentContainer, DifferentContainerAndVehicle, DifferentVehicle}
 import models.{CheckMode, Mode, NormalMode, UserAnswers}
 import pages._
 import pages.events._
@@ -61,13 +61,16 @@ class Navigator @Inject()() {
     (ua.get(AddContainerPage(index)), ua.get(DeriveNumberOfContainers(index))) match {
       case (Some(true), None) => Some(transhipmentRoutes.ContainerNumberController.onPageLoad(ua.id, index, 0, NormalMode))
       case (Some(true), Some(containerIndex)) => Some(transhipmentRoutes.ContainerNumberController.onPageLoad(ua.id, index, containerIndex, NormalMode))
-      case (Some(false), _) => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
-      case _ => None
+      case (Some(false), _) => ua.get(TranshipmentTypePage(index)) match {
+        case Some(DifferentContainerAndVehicle) => Some(transhipmentRoutes.TransportIdentityController.onPageLoad(ua.id, index, NormalMode))
+        case _ => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
+      }
     }
   
   private def transhipmentType(index: Int)(ua: UserAnswers): Option[Call] =
     ua.get(transhipments.TranshipmentTypePage(index)) map {
-      case DifferentContainer => transhipmentRoutes.ContainerNumberController.onPageLoad(ua.id, index, 0, NormalMode) //TODO fix hardcoded zero
+      case DifferentContainer | DifferentContainerAndVehicle =>
+        transhipmentRoutes.ContainerNumberController.onPageLoad(ua.id, index, 0, NormalMode) //TODO fix hardcoded zero
       case DifferentVehicle => transhipmentRoutes.TransportIdentityController.onPageLoad(ua.id, index, NormalMode)
     }
   

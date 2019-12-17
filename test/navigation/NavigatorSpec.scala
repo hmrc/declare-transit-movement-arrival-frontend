@@ -22,11 +22,12 @@ import controllers.routes
 import controllers.events.{routes => eventRoutes}
 import controllers.events.transhipments.{routes => transhipmentRoutes}
 import generators.{DomainModelGenerators, Generators}
-import models.TranshipmentType.{DifferentContainer, DifferentVehicle}
+import models.TranshipmentType.{DifferentContainer, DifferentContainerAndVehicle, DifferentVehicle}
 import pages._
 import models._
 import models.domain.{EnRouteEvent, Incident}
 import org.scalacheck.Arbitrary.arbitrary
+import org.scalacheck.Gen
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.events.AddEventPage
@@ -382,6 +383,20 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
                 .mustBe(transhipmentRoutes.ContainerNumberController.onPageLoad(updatedAnswers.id, index, 0, NormalMode))
           }
         }
+
+        "to Transport Identity when option is 'both' " in {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val updatedAnswers = answers
+                .set(TranshipmentTypePage(index), DifferentContainerAndVehicle)
+                .success
+                .value
+
+              navigator
+                .nextPage(TranshipmentTypePage(index), NormalMode, updatedAnswers)
+                .mustBe(transhipmentRoutes.ContainerNumberController.onPageLoad(updatedAnswers.id, index, 0, NormalMode))
+          }
+        }
       }
 
       "must go from transport identity to Transport Nationality page" in {
@@ -422,10 +437,33 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
       }
 
       "must go from 'Add another container'" - {
-        "to 'check event answers' when the option is 'No'" in {
+
+        "to 'transport identity' when the option is 'No' and transhipment type is both" in {
           forAll(arbitrary[UserAnswers]) {
             answers =>
               val updatedAnswers = answers
+                .set(TranshipmentTypePage(index), DifferentContainerAndVehicle)
+                .success
+                .value
+                .set(AddContainerPage(index), false)
+                .success
+                .value
+
+              navigator
+                .nextPage(AddContainerPage(index), NormalMode, updatedAnswers)
+                .mustBe(transhipmentRoutes.TransportIdentityController.onPageLoad(answers.id, index, NormalMode))
+          }
+        }
+
+        "to 'check event answers' when the option is 'No' and transhipment type is not both" in {
+
+          val transhipmentType: Gen[WithName with TranshipmentType] = Gen.oneOf(Seq(DifferentContainer, DifferentVehicle))
+          forAll(arbitrary[UserAnswers], transhipmentType) {
+            (answers, transhipment) =>
+              val updatedAnswers = answers
+                .set(TranshipmentTypePage(index), transhipment)
+                .success
+                .value
                 .set(AddContainerPage(index), false)
                 .success
                 .value
