@@ -305,13 +305,13 @@ transportNationality.checkYourAnswersLabel = transportNationality
 transportNationality.error.required = Enter transportNationality
 transportNationality.error.length = TransportNationality must be TransportNationality characters or less
 
-containerNumber.title = containerNumber
-containerNumber.heading = containerNumber
-containerNumber.checkYourAnswersLabel = containerNumber
-containerNumber.error.required = Enter containerNumber
-containerNumber.error.length = ContainerNumber must be 100 characters or less
+containerNumber.title = What is the new container number?
+containerNumber.heading = What is the new container number?
+containerNumber.checkYourAnswersLabel = What is the new container number?
+containerNumber.error.required = Enter the new container number
+containerNumber.error.length = New container number must be 100 characters or less
 
-addContainer.title = addContainer
-addContainer.heading = addContainer
-addContainer.checkYourAnswersLabel = addContainer
-addContainer.error.required = Select yes if addContainer
+addContainer.title = You have added {0} containers
+addContainer.heading = You have added {0} containers
+addContainer.checkYourAnswersLabel = You have added {0} containers
+addContainer.error.required = Select yes if you need to add another container

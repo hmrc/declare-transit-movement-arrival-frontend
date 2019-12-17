@@ -22,7 +22,7 @@
 
         {% if form.errors.length > 0 %}
           {{ govukErrorSummary({
-            "titleText": messages("error.summary.title"),
+            "titleText": messages("error.summary.title", containerCount),
             "errorList": form.errors
           }) }}
         {% endif %}
@@ -36,7 +36,7 @@
             name: 'value',
             fieldset: {
               legend: {
-                text: messages('addContainer.title'),
+                text: messages('addContainer.title', containerCount),
                 isPageHeading: true,
                 classes: "govuk-fieldset__legend--xl"
               }

@@ -579,8 +579,9 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
         "to 'Container number' with index 1 when the option is 'Yes' and there is 1 previous containers" in {
           val containerIndex = 0
+          val maxLength      = 17
 
-          forAll(arbitrary[UserAnswers], stringsWithMaxLength(17)) {
+          forAll(arbitrary[UserAnswers], stringsWithMaxLength(maxLength)) {
             case (answers, container) =>
               val updatedAnswers = answers
                 .remove(EventsQuery)
@@ -598,7 +599,6 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
                 .mustBe(transhipmentRoutes.ContainerNumberController.onPageLoad(answers.id, index, containerIndex + 1, NormalMode))
           }
         }
-
       }
 
       "must go from Add Event Page" - {

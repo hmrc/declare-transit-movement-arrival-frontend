@@ -57,34 +57,35 @@ class Navigator @Inject()() {
     case AddContainerPage(index) => addContainer(index)
   }
 
-  private def addContainer(index: Int)(ua: UserAnswers): Option[Call] =
-    (ua.get(AddContainerPage(index)), ua.get(DeriveNumberOfContainers(index))) match {
-      case (Some(true), None) => Some(transhipmentRoutes.ContainerNumberController.onPageLoad(ua.id, index, 0, NormalMode))
-      case (Some(true), Some(containerIndex)) => Some(transhipmentRoutes.ContainerNumberController.onPageLoad(ua.id, index, containerIndex, NormalMode))
-      case (Some(false), _) => ua.get(TranshipmentTypePage(index)) match {
-        case Some(DifferentContainerAndVehicle) => Some(transhipmentRoutes.TransportIdentityController.onPageLoad(ua.id, index, NormalMode))
-        case _ => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
-      }
-    }
-  
-  private def transhipmentType(index: Int)(ua: UserAnswers): Option[Call] =
-    ua.get(transhipments.TranshipmentTypePage(index)) map {
-      case DifferentContainer | DifferentContainerAndVehicle => ua.get(DeriveNumberOfContainers(index)) match {
-        case Some(_) => transhipmentRoutes.AddContainerController.onPageLoad(ua.id, index, NormalMode) //TODO fix hardcoded zero
-        case None => transhipmentRoutes.ContainerNumberController.onPageLoad(ua.id, index, 0, NormalMode) //TODO fix hardcoded zero
-      }
-      case DifferentVehicle => transhipmentRoutes.TransportIdentityController.onPageLoad(ua.id, index, NormalMode)
-    }
-  
   private val checkRouteMap: PartialFunction[Page, UserAnswers => Option[Call]] = {
-    case GoodsLocationPage         => goodsLocationCheckRoute
-    case EventCountryPage(index)   => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
+    case GoodsLocationPage => goodsLocationCheckRoute
+    case EventCountryPage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
     case EventPlacePage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
     case EventReportedPage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
     case IsTranshipmentPage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
     case IncidentInformationPage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
   }
   // format: on
+
+  private def addContainer(index: Int)(ua: UserAnswers): Option[Call] = ua.get(AddContainerPage(index)) map {
+    case true =>
+      val containerIndex = ua.get(DeriveNumberOfContainers(index)).getOrElse(0)
+      transhipmentRoutes.ContainerNumberController.onPageLoad(ua.id, index, containerIndex, NormalMode)
+    case false =>
+      ua.get(TranshipmentTypePage(index)) match {
+        case Some(DifferentContainerAndVehicle) => transhipmentRoutes.TransportIdentityController.onPageLoad(ua.id, index, NormalMode)
+        case _                                  => eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index)
+      }
+  }
+
+  private def transhipmentType(index: Int)(ua: UserAnswers): Option[Call] = ua.get(transhipments.TranshipmentTypePage(index)) map {
+    case DifferentContainer | DifferentContainerAndVehicle =>
+      ua.get(DeriveNumberOfContainers(index)) match {
+        case Some(_) => transhipmentRoutes.AddContainerController.onPageLoad(ua.id, index, NormalMode)
+        case None    => transhipmentRoutes.ContainerNumberController.onPageLoad(ua.id, index, 0, NormalMode)
+      }
+    case DifferentVehicle => transhipmentRoutes.TransportIdentityController.onPageLoad(ua.id, index, NormalMode)
+  }
 
   def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = mode match {
     case NormalMode =>

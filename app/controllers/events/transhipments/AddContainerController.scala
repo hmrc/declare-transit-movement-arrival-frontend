@@ -57,10 +57,11 @@ class AddContainerController @Inject()(
       }
 
       val json = Json.obj(
-        "form"   -> preparedForm,
-        "mode"   -> mode,
-        "mrn"    -> mrn,
-        "radios" -> Radios.yesNo(preparedForm("value"))
+        "form"           -> preparedForm,
+        "mode"           -> mode,
+        "mrn"            -> mrn,
+        "containerCount" -> "O",
+        "radios"         -> Radios.yesNo(preparedForm("value"))
       )
 
       renderer.render("events/transhipments/addContainer.njk", json).map(Ok(_))
