@@ -370,31 +370,117 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           }
         }
 
-        "to Transport Identity when option is 'a different container' " in {
+        "to ContainerNumber when option is 'a different container' and there are no containers" in {
           forAll(arbitrary[UserAnswers]) {
             answers =>
               val updatedAnswers = answers
+                .remove(EventsQuery)
+                .success
+                .value
+                .set(EventCountryPage(index), "GB")
+                .success
+                .value
+                .set(EventPlacePage(index), "place name")
+                .success
+                .value
+                .set(EventReportedPage(index), true)
+                .success
+                .value
+                .set(IsTranshipmentPage(index), true)
+                .success
+                .value
                 .set(TranshipmentTypePage(index), DifferentContainer)
                 .success
                 .value
-
               navigator
                 .nextPage(TranshipmentTypePage(index), NormalMode, updatedAnswers)
                 .mustBe(transhipmentRoutes.ContainerNumberController.onPageLoad(updatedAnswers.id, index, 0, NormalMode))
           }
         }
 
-        "to Transport Identity when option is 'both' " in {
+        "to Add Container when option is 'a different container' and there is one container" in {
           forAll(arbitrary[UserAnswers]) {
             answers =>
               val updatedAnswers = answers
+                .set(EventCountryPage(index), "GB")
+                .success
+                .value
+                .set(EventPlacePage(index), "place name")
+                .success
+                .value
+                .set(EventReportedPage(index), true)
+                .success
+                .value
+                .set(IsTranshipmentPage(index), true)
+                .success
+                .value
+                .set(TranshipmentTypePage(index), DifferentContainer)
+                .success
+                .value
+                .set(ContainerNumberPage(index, index), "1")
+                .success
+                .value
+              navigator
+                .nextPage(TranshipmentTypePage(index), NormalMode, updatedAnswers)
+                .mustBe(transhipmentRoutes.AddContainerController.onPageLoad(updatedAnswers.id, index, NormalMode))
+          }
+        }
+
+        "to ContainerNumber when option is 'both' and there is a no container " in {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val updatedAnswers = answers
+                .remove(EventsQuery)
+                .success
+                .value
+                .set(EventCountryPage(index), "GB")
+                .success
+                .value
+                .set(EventPlacePage(index), "place name")
+                .success
+                .value
+                .set(EventReportedPage(index), true)
+                .success
+                .value
+                .set(IsTranshipmentPage(index), true)
+                .success
+                .value
                 .set(TranshipmentTypePage(index), DifferentContainerAndVehicle)
                 .success
                 .value
 
               navigator
                 .nextPage(TranshipmentTypePage(index), NormalMode, updatedAnswers)
-                .mustBe(transhipmentRoutes.ContainerNumberController.onPageLoad(updatedAnswers.id, index, 0, NormalMode))
+                .mustBe(transhipmentRoutes.ContainerNumberController.onPageLoad(updatedAnswers.id, index, index, NormalMode))
+          }
+        }
+
+        "to Add Container when option is 'both' and there is a single container " in {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val updatedAnswers = answers
+                .set(EventCountryPage(index), "GB")
+                .success
+                .value
+                .set(EventPlacePage(index), "place name")
+                .success
+                .value
+                .set(EventReportedPage(index), true)
+                .success
+                .value
+                .set(IsTranshipmentPage(index), true)
+                .success
+                .value
+                .set(TranshipmentTypePage(index), DifferentContainerAndVehicle)
+                .success
+                .value
+                .set(ContainerNumberPage(index, index), "number1")
+                .success
+                .value
+
+              navigator
+                .nextPage(TranshipmentTypePage(index), NormalMode, updatedAnswers)
+                .mustBe(transhipmentRoutes.AddContainerController.onPageLoad(updatedAnswers.id, index, NormalMode))
           }
         }
       }

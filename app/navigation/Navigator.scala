@@ -69,8 +69,10 @@ class Navigator @Inject()() {
   
   private def transhipmentType(index: Int)(ua: UserAnswers): Option[Call] =
     ua.get(transhipments.TranshipmentTypePage(index)) map {
-      case DifferentContainer | DifferentContainerAndVehicle =>
-        transhipmentRoutes.ContainerNumberController.onPageLoad(ua.id, index, 0, NormalMode) //TODO fix hardcoded zero
+      case DifferentContainer | DifferentContainerAndVehicle => ua.get(DeriveNumberOfContainers(index)) match {
+        case Some(_) => transhipmentRoutes.AddContainerController.onPageLoad(ua.id, index, NormalMode) //TODO fix hardcoded zero
+        case None => transhipmentRoutes.ContainerNumberController.onPageLoad(ua.id, index, 0, NormalMode) //TODO fix hardcoded zero
+      }
       case DifferentVehicle => transhipmentRoutes.TransportIdentityController.onPageLoad(ua.id, index, NormalMode)
     }
   
