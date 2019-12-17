@@ -7,7 +7,7 @@
 {% from "macros/title.njk"                         import title %}
 
 {% block pageTitle %}
-  {{ title(messages("addContainer.title"), form.errors) }}
+  {{ title(messages(pageTitle), form.errors) }}
 {% endblock %}
 
 {% block mainContent %}
@@ -22,7 +22,7 @@
 
         {% if form.errors.length > 0 %}
           {{ govukErrorSummary({
-            "titleText": messages("error.summary.title", containerCount),
+            "titleText": messages("error.summary.title"),
             "errorList": form.errors
           }) }}
         {% endif %}
@@ -31,14 +31,17 @@
 
           {{ csrf() | safe }}
 
+        <h1 class="govuk-heading-xl">{{ pageTitle }}</h1>
+
+
           {{ govukRadios({
             classes: "govuk-radios--inline",
             name: 'value',
             fieldset: {
               legend: {
-                text: messages('addContainer.title', containerCount),
-                isPageHeading: true,
-                classes: "govuk-fieldset__legend--xl"
+                text: messages("addContainer.radio.label"),
+                isPageHeading: false,
+                classes: "govuk-fieldset__legend govuk-fieldset__legend--m"
               }
             },
             items: radios,
