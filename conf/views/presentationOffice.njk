@@ -1,7 +1,7 @@
 {% extends "includes/layout.njk" %}
 
 {% from "govuk/components/back-link/macro.njk"     import govukBackLink %}
-{% from "govuk/components/input/macro.njk"         import govukInput %}
+{% from "govuk/components/select/macro.njk"        import govukSelect %}
 {% from "govuk/components/button/macro.njk"        import govukButton %}
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 {% from "macros/title.njk"                         import title %}
@@ -31,8 +31,8 @@
 
           {{ csrf() | safe }}
 
-          {{ govukInput({
-            classes: "govuk-input--width-20",
+          {{ govukSelect({
+            classes: "govuk-input--width-20 autocomplete",
             label: {
               text: header,
               isPageHeading: true,
@@ -43,8 +43,25 @@
             hint: {
               text: messages('presentationOffice.hintText')
             },
-            value: form.value.value,
-            errorMessage: form.value.error
+            errorMessage: form.value.error,
+            items: [
+              {
+                value: "",
+                text: ""
+              },
+              {
+                value: "Dover",
+                text: "Dover (GB000060)"
+              },
+              {
+                value: "Hawich",
+                text: "Hawich (GB000061)"
+              },
+              {
+                value: "Southampton",
+                text: "Southampton (GB000062)"
+              }
+            ]
           }) }}
 
           {{ govukButton({
@@ -57,5 +74,5 @@
       </div>
     </div>
   </div>
-
+  <script src="{{ routes.controllers.Assets.versioned("javascripts/accessible-autocomplete.js").url }}"></script>
 {% endblock %}
