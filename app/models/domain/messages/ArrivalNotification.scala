@@ -63,6 +63,12 @@ final case class NormalNotification(movementReferenceNumber: String,
 
 object NormalNotification {
 
+  object Constants {
+    val customsSubPlaceLength    = 17
+    val notificationPlaceLength  = 35
+    val presentationOfficeLength = 8
+  }
+
   implicit lazy val reads: Reads[NormalNotification] = {
 
     import play.api.libs.functional.syntax._
@@ -121,6 +127,12 @@ final case class SimplifiedNotification(
 }
 
 object SimplifiedNotification {
+
+  object Constants {
+    val notificationPlaceLength  = 35
+    val approvedLocationLength   = 17
+    val presentationOfficeLength = 8
+  }
 
   implicit lazy val reads: Reads[SimplifiedNotification] = {
 

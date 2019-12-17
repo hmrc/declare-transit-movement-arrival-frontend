@@ -69,19 +69,20 @@ class ArrivalNotificationConversionService {
               country        <- userAnswers.get(EventCountryPage(index))
               isReported     <- userAnswers.get(EventReportedPage(index))
               isTranshipment <- userAnswers.get(IsTranshipmentPage(index))
+              incidentInformation = userAnswers.get(IncidentInformationPage(index))
             } yield {
               EnRouteEvent(
                 place         = place,
                 countryCode   = country,
                 alreadyInNcts = isReported,
-                eventDetails  = eventDetails(isTranshipment, userAnswers.get(IncidentInformationPage(index))),
-                None //TODO Seals:waiting for design decision
+                eventDetails  = eventDetails(isTranshipment, incidentInformation),
+                None
               )
             }
         }
     }
 
-  private def traderAddress(traderAddress: TraderAddress, traderEori: String, traderName: String): Trader =
+  private def traderAddress(traderAddress: TraderAddress, traderEori: String, traderName: String): TraderWithEori =
     TraderWithEori(
       eori            = traderEori,
       name            = Some(traderName),

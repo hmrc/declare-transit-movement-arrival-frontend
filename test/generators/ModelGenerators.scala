@@ -32,9 +32,9 @@ trait ModelGenerators {
   implicit lazy val arbitraryTraderAddress: Arbitrary[TraderAddress] =
     Arbitrary {
       for {
-        buildingAndStreet <- stringsWithMaxLength(35)
-        city              <- stringsWithMaxLength(35)
-        postcode          <- stringsWithMaxLength(9)
+        buildingAndStreet <- stringsWithMaxLength(TraderAddress.Constants.buildingAndStreetLength)
+        city              <- stringsWithMaxLength(TraderAddress.Constants.cityLength)
+        postcode          <- stringsWithMaxLength(TraderAddress.Constants.postcodeLength)
       } yield TraderAddress(buildingAndStreet, city, postcode)
     }
 

@@ -54,6 +54,15 @@ final case class TraderWithEori(eori: String,
 
 object TraderWithEori {
 
+  object Constants {
+    val eoriLength            = 17
+    val nameLength            = 35
+    val streetAndNumberLength = 35
+    val postCodeLength        = 9
+    val cityLength            = 35
+    val countryCodeLength     = 2
+  }
+
   implicit lazy val format: Format[TraderWithEori] =
     Json.format[TraderWithEori]
 }
@@ -61,6 +70,14 @@ object TraderWithEori {
 final case class TraderWithoutEori(name: String, streetAndNumber: String, postCode: String, city: String, countryCode: String) extends Trader
 
 object TraderWithoutEori {
+
+  object Constants {
+    val nameLength            = 35
+    val streetAndNumberLength = 35
+    val postCodeLength        = 9
+    val cityLength            = 35
+    val countryCodeLength     = 2
+  }
 
   implicit lazy val format: Format[TraderWithoutEori] =
     Json.format[TraderWithoutEori]
