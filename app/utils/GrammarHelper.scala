@@ -35,4 +35,7 @@ object ImplicitGrammarConversion extends NunjucksSupport {
 
   def singularOrPlural(key: String, condition: Boolean)(implicit g: GrammarHelper): Text.Message =
     if (condition) g.plural(key) else g.singular(key)
+
+  def singularOrPluralWithArgs(key: String, condition: Boolean, args: Any): Text.Message =
+    singularOrPlural(key, condition).withArgs(args)
 }

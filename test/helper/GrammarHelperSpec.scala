@@ -26,12 +26,28 @@ class GrammarHelperSpec extends SpecBase {
 
   "GrammarHelper" - {
 
-    "return plural message text if condition is true" in {
-      singularOrPlural(key = testKey, condition = true) mustBe Text.Message("test.key.plural")
+    "singularOrPlural" - {
+
+      "return plural message text if condition is true" in {
+        singularOrPlural(key = testKey, condition = true) mustBe Text.Message("test.key.plural")
+      }
+
+      "return singular message text if condition is false" in {
+        singularOrPlural(key = testKey, condition = false) mustBe Text.Message("test.key.singular")
+      }
     }
 
-    "return singular message text if condition is false" in {
-      singularOrPlural(key = testKey, condition = false) mustBe Text.Message("test.key.singular")
+    "singularOrPluralWithArgs" - {
+
+      val arguments = 1
+
+      "return plural message text if condition is true" in {
+        singularOrPluralWithArgs(key = testKey, condition = true, arguments) mustBe Text.Message("test.key.plural", 1)
+      }
+
+      "return singular message text if condition is false" in {
+        singularOrPluralWithArgs(key = testKey, condition = false, arguments) mustBe Text.Message("test.key.singular", 1)
+      }
     }
   }
 
