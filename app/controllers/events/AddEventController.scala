@@ -34,6 +34,7 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.SummaryList.Row
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 import utils.AddEventsHelper
+import utils.ImplicitGrammarConversion._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -82,28 +83,17 @@ class AddEventController @Inject()(override val messagesApi: MessagesApi,
 
     val numberOfEvents = request.userAnswers.get(DeriveNumberOfEvents).getOrElse(0)
 
-    val cyaHelper            = new AddEventsHelper(request.userAnswers)
-    val eventsRows: Seq[Row] = (0 to numberOfEvents).flatMap(cyaHelper.listOfEvent) // TODO: Test rendering of this!
-
-    val title =
-      if (numberOfEvents == 1)
-        msg"addEvent.title.singular".withArgs(numberOfEvents)
-      else
-        msg"addEvent.title.plural".withArgs(numberOfEvents)
-
-    val heading =
-      if (numberOfEvents == 1)
-        msg"addEvent.heading.singular".withArgs(numberOfEvents)
-      else
-        msg"addEvent.heading.plural".withArgs(numberOfEvents)
+    val cyaHelper                = new AddEventsHelper(request.userAnswers)
+    val eventsRows: Seq[Row]     = (0 to numberOfEvents).flatMap(cyaHelper.listOfEvent) // TODO: Test rendering of this!
+    val pluralCondition: Boolean = numberOfEvents == 1
 
     val json = Json.obj(
       "form"        -> form,
       "mode"        -> mode,
       "mrn"         -> mrn,
       "radios"      -> Radios.yesNo(form("value")),
-      "titleOfPage" -> title,
-      "heading"     -> heading,
+      "titleOfPage" -> singularOrPlural("addEvent.title", pluralCondition).withArgs(numberOfEvents),
+      "heading"     -> singularOrPlural("addEvent.heading", pluralCondition).withArgs(numberOfEvents),
       "events"      -> eventsRows
     )
 
