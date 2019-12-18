@@ -24,6 +24,8 @@ import models.domain.messages.{ArrivalNotification, NormalNotification}
 import models.{TraderAddress, UserAnswers}
 import pages._
 import pages.events._
+import pages.events.transhipments._
+import queries.ContainersQuery
 
 class ArrivalNotificationConversionService {
 
@@ -49,15 +51,29 @@ class ArrivalNotificationConversionService {
       )
     }
 
-  private def eventDetails(isTranshipment: Boolean, incidentInformation: Option[String]): EventDetails =
-    if (isTranshipment) {
-      ???
-    } else {
-      Incident(
-        information = incidentInformation,
-        endorsement = Endorsement(None, None, None, None) // TODO: Find out where this data comes from
-      )
+  private def eventDetails(
+    isTranshipment: Boolean,
+    incidentInformation: Option[String],
+    transportIdentity: Option[String],
+    transportCountry: Option[String],
+    containers: Option[Seq[Container]]
+  ): EventDetails = {
+
+    val endorsement = Endorsement(None, None, None, None) // TODO: Find out where this data comes from
+    (incidentInformation, transportIdentity, transportCountry, containers) match {
+      case (ii, None, None, _) =>
+        Incident(ii, endorsement)
+      case (None, Some(ti), Some(tc), _) =>
+        VehicularTranshipment(
+          transportIdentity = ti,
+          transportCountry  = tc,
+          endorsement       = endorsement,
+          containers        = containers.map(_.map(_.containerNumber))
+        )
+      case (None, None, None, Some(containers)) =>
+        ContainerTranshipment(endorsement, containers.map(_.containerNumber))
     }
+  }
 
   private def enRouteEvents(userAnswers: UserAnswers): Option[Seq[EnRouteEvent]] =
     userAnswers.get(DeriveNumberOfEvents).map {
@@ -69,12 +85,16 @@ class ArrivalNotificationConversionService {
               country        <- userAnswers.get(EventCountryPage(index))
               isReported     <- userAnswers.get(EventReportedPage(index))
               isTranshipment <- userAnswers.get(IsTranshipmentPage(index))
+              incidentInformation = userAnswers.get(IncidentInformationPage(index))
+              transportIdentity   = userAnswers.get(TransportIdentityPage(index))
+              transportCountry    = userAnswers.get(TransportNationalityPage(index))
+              containers          = userAnswers.get(ContainersQuery(index))
             } yield {
               EnRouteEvent(
                 place         = place,
                 countryCode   = country,
                 alreadyInNcts = isReported,
-                eventDetails  = eventDetails(isTranshipment, userAnswers.get(IncidentInformationPage(index))),
+                eventDetails  = eventDetails(isTranshipment, incidentInformation, transportIdentity, transportCountry, containers),
                 None //TODO Seals:waiting for design decision
               )
             }

@@ -79,8 +79,12 @@ object Transhipment {
   }
 }
 
-final case class VehicularTranshipment(transportIdentity: String, transportCountry: String, endorsement: Endorsement, containers: Option[Seq[String]])
-    extends Transhipment
+final case class VehicularTranshipment(
+  transportIdentity: String,
+  transportCountry: String,
+  endorsement: Endorsement,
+  containers: Option[Seq[String]]
+) extends Transhipment
 
 object VehicularTranshipment {
 

@@ -22,16 +22,18 @@ import base.SpecBase
 import generators.DomainModelGenerators
 import models.GoodsLocation.BorderForceOffice
 import models.domain.messages.NormalNotification
-import models.domain.{EnRouteEvent, Endorsement, Incident, TraderWithEori}
+import models.domain.{EnRouteEvent, Endorsement, Incident, TraderWithEori, VehicularTranshipment}
 import models.{TraderAddress, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages._
 import pages.events._
+import pages.events.transhipments.{TransportIdentityPage, TransportNationalityPage}
+import queries.EventsQuerySpec
 
 class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckPropertyChecks with DomainModelGenerators {
-
+  // format: off
   private val service = injector.instanceOf[ArrivalNotificationConversionService]
 
   private val normalNotificationWithTraderWithEoriWithSubplace: Gen[(NormalNotification, TraderWithEori)] =
@@ -54,6 +56,12 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
     enRouteEvent <- arbitrary[EnRouteEvent]
     incident     <- arbitrary[Incident]
   } yield (enRouteEvent.copy(eventDetails = incident), incident)
+
+
+  private val enRouteEventVehicularTranshipment: Gen[(EnRouteEvent, VehicularTranshipment)] = for {
+    enRouteEvent <- arbitrary[EnRouteEvent]
+    vehicularTranshipment     <- arbitrary[VehicularTranshipment]
+  } yield (enRouteEvent.copy(eventDetails = vehicularTranshipment), vehicularTranshipment)
 
   "ArrivalNotificationConversionService" - {
     "must return 'Normal Arrival Notification' message when there are no EventDetails on route" in {
@@ -83,7 +91,7 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
       }
     }
 
-    "must return 'Normal Arrival Notification' message when there is on incident on route" in {
+    "must return 'Normal Arrival Notification' message when there is one incident on route" in {
       forAll(normalNotificationWithTraderWithEoriWithSubplace, enRouteEventIncident) {
         case ((arbArrivalNotification, trader), (enRouteEvent, incident)) =>
           val routeEvent: EnRouteEvent = enRouteEvent
@@ -93,22 +101,75 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
           val arrivalNotification: NormalNotification = arbArrivalNotification.copy(enRouteEvents = Some(Seq(routeEvent)))
 
           val userAnswers: UserAnswers = createBasicUserAnswers(trader, arrivalNotification, isIncidentOnRoute = true)
-            .set(IsTranshipmentPage(index), false)
-            .success
-            .value
-            .set(EventPlacePage(index), routeEvent.place)
-            .success
-            .value
-            .set(EventCountryPage(index), routeEvent.countryCode)
-            .success
-            .value
-            .set(EventReportedPage(index), routeEvent.alreadyInNcts)
-            .success
-            .value
+            .set(IsTranshipmentPage(index), false).success.value
+            .set(EventPlacePage(index), routeEvent.place).success.value
+            .set(EventCountryPage(index), routeEvent.countryCode).success.value
+            .set(EventReportedPage(index), routeEvent.alreadyInNcts).success.value
 
           val updatedAnswers = incident.information.fold[UserAnswers](userAnswers) {
             _ =>
               userAnswers.set(IncidentInformationPage(index), incident.information.value).success.value
+          }
+
+          service.convertToArrivalNotification(updatedAnswers).value mustEqual arrivalNotification
+      }
+    }
+
+    "must return 'Normal Arrival Notification' message when there is one vehicle transhipment on route" in {
+      forAll(normalNotificationWithTraderWithEoriWithSubplace, enRouteEventVehicularTranshipment) {
+        case ((arbArrivalNotification, trader), (enRouteEvent, vehicularTranshipment)) =>
+          val routeEvent: EnRouteEvent = enRouteEvent
+            .copy(seals = None)
+            .copy(eventDetails = vehicularTranshipment.copy(endorsement = Endorsement(None, None, None, None)))
+
+          val arrivalNotification: NormalNotification = arbArrivalNotification.copy(enRouteEvents = Some(Seq(routeEvent)))
+
+          val userAnswers: UserAnswers = createBasicUserAnswers(trader, arrivalNotification, isIncidentOnRoute = true)
+            .set(IsTranshipmentPage(index), true).success.value
+            .set(EventPlacePage(index), routeEvent.place).success.value
+            .set(EventCountryPage(index), routeEvent.countryCode).success.value
+            .set(EventReportedPage(index), routeEvent.alreadyInNcts).success.value
+            .set(TransportIdentityPage(index), vehicularTranshipment.transportIdentity).success.value
+            .set(TransportNationalityPage(index), vehicularTranshipment.transportCountry).success.value
+
+          service.convertToArrivalNotification(userAnswers).value mustEqual arrivalNotification
+      }
+    }
+
+    "must return 'Normal Arrival Notification' message when there is one container transhipment on route" ignore {}
+
+
+    "must return 'Normal Arrival Notification' message when there multiple incidents on route" in {
+      forAll(normalNotificationWithTraderWithEoriWithSubplace, enRouteEventIncident, enRouteEventIncident) {
+        case ((arbArrivalNotification, trader), (enRouteEvent1, incident1), (enRouteEvent2, incident2)) =>
+          val routeEvent1: EnRouteEvent = enRouteEvent1
+            .copy(seals = None)
+            .copy(eventDetails = incident1.copy(endorsement = Endorsement(None, None, None, None)))
+
+          val routeEvent2: EnRouteEvent = enRouteEvent2
+            .copy(seals = None)
+            .copy(eventDetails = incident2.copy(endorsement = Endorsement(None, None, None, None)))
+
+          val arrivalNotification: NormalNotification = arbArrivalNotification.copy(enRouteEvents = Some(Seq(routeEvent1, routeEvent2)))
+
+          val userAnswers: UserAnswers = createBasicUserAnswers(trader, arrivalNotification, isIncidentOnRoute = true)
+            .set(IsTranshipmentPage(index), false).success.value
+            .set(EventPlacePage(index), routeEvent1.place).success.value
+            .set(EventCountryPage(index), routeEvent1.countryCode).success.value
+            .set(EventReportedPage(index), routeEvent1.alreadyInNcts).success.value
+            .set(IsTranshipmentPage(index + 1), false).success.value
+            .set(EventPlacePage(index + 1), routeEvent2.place).success.value
+            .set(EventCountryPage(index + 1), routeEvent2.countryCode).success.value
+            .set(EventReportedPage(index + 1), routeEvent2.alreadyInNcts).success.value
+
+          val updatedAnswers1 = incident1.information.fold[UserAnswers](userAnswers) {
+            _ =>
+              userAnswers.set(IncidentInformationPage(index), incident1.information.value).success.value
+          }
+
+          val updatedAnswers = incident2.information.fold[UserAnswers](updatedAnswers1) {
+            _ =>
+              updatedAnswers1.set(IncidentInformationPage(index + 1), incident2.information.value).success.value
           }
 
           service.convertToArrivalNotification(updatedAnswers).value mustEqual arrivalNotification
@@ -168,5 +229,5 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
       .set(PlaceOfNotificationPage, arrivalNotification.notificationPlace)
       .success
       .value
-
+  // format: on
 }
