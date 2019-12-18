@@ -52,14 +52,13 @@ class ArrivalNotificationConversionService {
     }
 
   private def eventDetails(
-    isTranshipment: Boolean,
     incidentInformation: Option[String],
     transportIdentity: Option[String],
     transportCountry: Option[String],
     containers: Option[Seq[Container]]
   ): EventDetails = {
-
     val endorsement = Endorsement(None, None, None, None) // TODO: Find out where this data comes from
+
     (incidentInformation, transportIdentity, transportCountry, containers) match {
       case (ii, None, None, _) =>
         Incident(ii, endorsement)
@@ -72,6 +71,7 @@ class ArrivalNotificationConversionService {
         )
       case (None, None, None, Some(containers)) =>
         ContainerTranshipment(endorsement, containers.map(_.containerNumber))
+      case _ => ???
     }
   }
 
@@ -81,10 +81,9 @@ class ArrivalNotificationConversionService {
         (0 to numberOfEvents).flatMap {
           index =>
             for {
-              place          <- userAnswers.get(EventPlacePage(index))
-              country        <- userAnswers.get(EventCountryPage(index))
-              isReported     <- userAnswers.get(EventReportedPage(index))
-              isTranshipment <- userAnswers.get(IsTranshipmentPage(index))
+              place      <- userAnswers.get(EventPlacePage(index))
+              country    <- userAnswers.get(EventCountryPage(index))
+              isReported <- userAnswers.get(EventReportedPage(index))
               incidentInformation = userAnswers.get(IncidentInformationPage(index))
               transportIdentity   = userAnswers.get(TransportIdentityPage(index))
               transportCountry    = userAnswers.get(TransportNationalityPage(index))
@@ -94,7 +93,7 @@ class ArrivalNotificationConversionService {
                 place         = place,
                 countryCode   = country,
                 alreadyInNcts = isReported,
-                eventDetails  = eventDetails(isTranshipment, incidentInformation, transportIdentity, transportCountry, containers),
+                eventDetails  = eventDetails(incidentInformation, transportIdentity, transportCountry, containers),
                 None //TODO Seals:waiting for design decision
               )
             }

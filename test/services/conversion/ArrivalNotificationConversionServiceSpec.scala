@@ -29,8 +29,8 @@ import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages._
 import pages.events._
-import pages.events.transhipments.{TransportIdentityPage, TransportNationalityPage}
-import queries.EventsQuerySpec
+import pages.events.transhipments._
+import queries.{ContainersQuery, EventsQuery}
 
 class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckPropertyChecks with DomainModelGenerators {
   // format: off
@@ -120,7 +120,10 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
         case ((arbArrivalNotification, trader), (enRouteEvent, vehicularTranshipment)) =>
           val routeEvent: EnRouteEvent = enRouteEvent
             .copy(seals = None)
-            .copy(eventDetails = vehicularTranshipment.copy(endorsement = Endorsement(None, None, None, None)))
+            .copy(eventDetails = vehicularTranshipment.copy(
+              endorsement = Endorsement(None, None, None, None),
+              containers = Some(Seq("container"))
+            ))
 
           val arrivalNotification: NormalNotification = arbArrivalNotification.copy(enRouteEvents = Some(Seq(routeEvent)))
 
@@ -131,6 +134,7 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
             .set(EventReportedPage(index), routeEvent.alreadyInNcts).success.value
             .set(TransportIdentityPage(index), vehicularTranshipment.transportIdentity).success.value
             .set(TransportNationalityPage(index), vehicularTranshipment.transportCountry).success.value
+            .set(ContainerNumberPage(index, 0), "container").success.value
 
           service.convertToArrivalNotification(userAnswers).value mustEqual arrivalNotification
       }
@@ -202,32 +206,14 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
 
   private def createBasicUserAnswers(trader: TraderWithEori, arrivalNotification: NormalNotification, isIncidentOnRoute: Boolean = false): UserAnswers =
     emptyUserAnswers
-      .set(MovementReferenceNumberPage, arrivalNotification.movementReferenceNumber)
-      .success
-      .value
-      .set(GoodsLocationPage, BorderForceOffice)
-      .success
-      .value
-      .set(PresentationOfficePage, arrivalNotification.presentationOffice)
-      .success
-      .value
-      .set(CustomsSubPlacePage, arrivalNotification.customsSubPlace.value)
-      .success
-      .value
-      .set(TraderNamePage, trader.name.value)
-      .success
-      .value
-      .set(TraderAddressPage, TraderAddress(buildingAndStreet = trader.streetAndNumber.value, city = trader.city.value, postcode = trader.postCode.value))
-      .success
-      .value
-      .set(TraderEoriPage, trader.eori)
-      .success
-      .value
-      .set(IncidentOnRoutePage, isIncidentOnRoute)
-      .success
-      .value
-      .set(PlaceOfNotificationPage, arrivalNotification.notificationPlace)
-      .success
-      .value
+      .set(MovementReferenceNumberPage, arrivalNotification.movementReferenceNumber).success.value
+      .set(GoodsLocationPage, BorderForceOffice).success.value
+      .set(PresentationOfficePage, arrivalNotification.presentationOffice).success.value
+      .set(CustomsSubPlacePage, arrivalNotification.customsSubPlace.value).success.value
+      .set(TraderNamePage, trader.name.value).success.value
+      .set(TraderAddressPage, TraderAddress(buildingAndStreet = trader.streetAndNumber.value, city = trader.city.value, postcode = trader.postCode.value)).success.value
+      .set(TraderEoriPage, trader.eori).success.value
+      .set(IncidentOnRoutePage, isIncidentOnRoute).success.value
+      .set(PlaceOfNotificationPage, arrivalNotification.notificationPlace).success.value
   // format: on
 }
