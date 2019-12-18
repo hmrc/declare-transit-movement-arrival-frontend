@@ -92,8 +92,8 @@ class AddEventController @Inject()(override val messagesApi: MessagesApi,
       "mode"        -> mode,
       "mrn"         -> mrn,
       "radios"      -> Radios.yesNo(form("value")),
-      "titleOfPage" -> singularOrPlural("addEvent.title", pluralCondition).withArgs(numberOfEvents),
-      "heading"     -> singularOrPlural("addEvent.heading", pluralCondition).withArgs(numberOfEvents),
+      "titleOfPage" -> singularOrPluralWithArgs("addEvent.title", pluralCondition, numberOfEvents),
+      "heading"     -> singularOrPluralWithArgs("addEvent.heading", pluralCondition, numberOfEvents),
       "events"      -> eventsRows
     )
 
