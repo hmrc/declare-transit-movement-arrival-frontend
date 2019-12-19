@@ -24,7 +24,7 @@ import scala.util.Try
 
 final case class IsTranshipmentPage(index: Int) extends QuestionPage[Boolean] {
 
-  override def path: JsPath = JsPath \ RepeatingSectionConstants.events \ index \ toString
+  override def path: JsPath = JsPath \ SectionConstants.events \ index \ toString
 
   override def toString: String = "isTranshipment"
 

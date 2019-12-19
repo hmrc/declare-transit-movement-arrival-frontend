@@ -101,14 +101,14 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
           val arrivalNotification: NormalNotification = arbArrivalNotification.copy(enRouteEvents = Some(Seq(routeEvent)))
 
           val userAnswers: UserAnswers = createBasicUserAnswers(trader, arrivalNotification, isIncidentOnRoute = true)
-            .set(IsTranshipmentPage(index), false).success.value
-            .set(EventPlacePage(index), routeEvent.place).success.value
-            .set(EventCountryPage(index), routeEvent.countryCode).success.value
-            .set(EventReportedPage(index), routeEvent.alreadyInNcts).success.value
+            .set(IsTranshipmentPage(eventIndex), false).success.value
+            .set(EventPlacePage(eventIndex), routeEvent.place).success.value
+            .set(EventCountryPage(eventIndex), routeEvent.countryCode).success.value
+            .set(EventReportedPage(eventIndex), routeEvent.alreadyInNcts).success.value
 
           val updatedAnswers = incident.information.fold[UserAnswers](userAnswers) {
             _ =>
-              userAnswers.set(IncidentInformationPage(index), incident.information.value).success.value
+              userAnswers.set(IncidentInformationPage(eventIndex), incident.information.value).success.value
           }
 
           service.convertToArrivalNotification(updatedAnswers).value mustEqual arrivalNotification
@@ -127,12 +127,12 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
 
           val arrivalNotification: NormalNotification = arbArrivalNotification.copy(enRouteEvents = Some(Seq(routeEvent)))
           val userAnswers: UserAnswers = createBasicUserAnswers(trader, arrivalNotification, isIncidentOnRoute = true)
-            .set(IsTranshipmentPage(index), true).success.value
-            .set(EventPlacePage(index), routeEvent.place).success.value
-            .set(EventCountryPage(index), routeEvent.countryCode).success.value
-            .set(EventReportedPage(index), routeEvent.alreadyInNcts).success.value
-            .set(TransportIdentityPage(index), vehicularTranshipment.transportIdentity).success.value
-            .set(TransportNationalityPage(index), vehicularTranshipment.transportCountry).success.value
+            .set(IsTranshipmentPage(eventIndex), true).success.value
+            .set(EventPlacePage(eventIndex), routeEvent.place).success.value
+            .set(EventCountryPage(eventIndex), routeEvent.countryCode).success.value
+            .set(EventReportedPage(eventIndex), routeEvent.alreadyInNcts).success.value
+            .set(TransportIdentityPage(eventIndex), vehicularTranshipment.transportIdentity).success.value
+            .set(TransportNationalityPage(eventIndex), vehicularTranshipment.transportCountry).success.value
 
           service.convertToArrivalNotification(userAnswers).value mustEqual arrivalNotification
       }
@@ -167,11 +167,11 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
             .set(TraderEoriPage, trader.eori).success.value
             .set(IncidentOnRoutePage, true).success.value
             .set(PlaceOfNotificationPage, expectedArrivalNotification.notificationPlace).success.value
-            .set(IsTranshipmentPage(index), true).success.value
-            .set(EventPlacePage(index), enRouteEvent.place).success.value
-            .set(EventCountryPage(index), enRouteEvent.countryCode).success.value
-            .set(EventReportedPage(index), enRouteEvent.alreadyInNcts).success.value
-            .set(ContainersQuery(index), containers).success.value
+            .set(IsTranshipmentPage(eventIndex), true).success.value
+            .set(EventPlacePage(eventIndex), enRouteEvent.place).success.value
+            .set(EventCountryPage(eventIndex), enRouteEvent.countryCode).success.value
+            .set(EventReportedPage(eventIndex), enRouteEvent.alreadyInNcts).success.value
+            .set(ContainersQuery(eventIndex), containers).success.value
 
           service.convertToArrivalNotification(userAnswers).value mustEqual expectedArrivalNotification
       }
@@ -191,23 +191,23 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
           val arrivalNotification: NormalNotification = arbArrivalNotification.copy(enRouteEvents = Some(Seq(routeEvent1, routeEvent2)))
 
           val userAnswers: UserAnswers = createBasicUserAnswers(trader, arrivalNotification, isIncidentOnRoute = true)
-            .set(IsTranshipmentPage(index), false).success.value
-            .set(EventPlacePage(index), routeEvent1.place).success.value
-            .set(EventCountryPage(index), routeEvent1.countryCode).success.value
-            .set(EventReportedPage(index), routeEvent1.alreadyInNcts).success.value
-            .set(IsTranshipmentPage(index + 1), false).success.value
-            .set(EventPlacePage(index + 1), routeEvent2.place).success.value
-            .set(EventCountryPage(index + 1), routeEvent2.countryCode).success.value
-            .set(EventReportedPage(index + 1), routeEvent2.alreadyInNcts).success.value
+            .set(IsTranshipmentPage(eventIndex), false).success.value
+            .set(EventPlacePage(eventIndex), routeEvent1.place).success.value
+            .set(EventCountryPage(eventIndex), routeEvent1.countryCode).success.value
+            .set(EventReportedPage(eventIndex), routeEvent1.alreadyInNcts).success.value
+            .set(IsTranshipmentPage(eventIndex + 1), false).success.value
+            .set(EventPlacePage(eventIndex + 1), routeEvent2.place).success.value
+            .set(EventCountryPage(eventIndex + 1), routeEvent2.countryCode).success.value
+            .set(EventReportedPage(eventIndex + 1), routeEvent2.alreadyInNcts).success.value
 
           val updatedAnswers1 = incident1.information.fold[UserAnswers](userAnswers) {
             _ =>
-              userAnswers.set(IncidentInformationPage(index), incident1.information.value).success.value
+              userAnswers.set(IncidentInformationPage(eventIndex), incident1.information.value).success.value
           }
 
           val updatedAnswers = incident2.information.fold[UserAnswers](updatedAnswers1) {
             _ =>
-              updatedAnswers1.set(IncidentInformationPage(index + 1), incident2.information.value).success.value
+              updatedAnswers1.set(IncidentInformationPage(eventIndex + 1), incident2.information.value).success.value
           }
 
           service.convertToArrivalNotification(updatedAnswers).value mustEqual arrivalNotification

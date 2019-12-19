@@ -302,7 +302,7 @@ transportIdentity.error.length = TransportIdentity must be TransportIdentity cha
 transportNationality.title = Which country is the vehicle registered in?
 transportNationality.heading = Which country is the vehicle registered in?
 transportNationality.checkYourAnswersLabel = Which country is the vehicle registered in?
-transportNationality.error.required = Enter the country the vehicle is registered in?
+transportNationality.error.required = Enter which country the vehicle is registered in?
 transportNationality.error.length = TransportNationality must be TransportNationality characters or less
 
 containerNumber.title = What is the new container number?

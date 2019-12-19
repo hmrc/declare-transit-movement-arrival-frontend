@@ -50,7 +50,7 @@ class Navigator @Inject()() {
     case IsTranshipmentPage(index) => isTranshipmentRoute(index)
     case IncidentInformationPage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
     case AddEventPage => addEventRoute
-    case transhipments.TranshipmentTypePage(index) => transhipmentType(index)
+    case TranshipmentTypePage(index) => transhipmentType(index)
     case TransportIdentityPage(index) => ua => Some(transhipmentRoutes.TransportNationalityController.onPageLoad(ua.id, index, NormalMode))
     case TransportNationalityPage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
     case ContainerNumberPage(index, _) => ua => Some(transhipmentRoutes.AddContainerController.onPageLoad(ua.id, index, NormalMode))
@@ -84,7 +84,7 @@ class Navigator @Inject()() {
       ua.get(DeriveNumberOfContainers(index)) match {
         case Some(_) => transhipmentRoutes.AddContainerController.onPageLoad(ua.id, index, NormalMode)
         // TODO: Need to consolidate with same logic for initialsation of index in addContainer
-        case None     => transhipmentRoutes.ContainerNumberController.onPageLoad(ua.id, index, 0, NormalMode)
+        case None => transhipmentRoutes.ContainerNumberController.onPageLoad(ua.id, index, 0, NormalMode)
       }
     case DifferentVehicle => transhipmentRoutes.TransportIdentityController.onPageLoad(ua.id, index, NormalMode)
   }

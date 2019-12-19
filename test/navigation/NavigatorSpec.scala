@@ -44,7 +44,13 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
   val navigator = app.injector.instanceOf[Navigator]
 
   private val cyaEventPages =
-    Seq(EventCountryPage(index), EventPlacePage(index), EventReportedPage(index), IsTranshipmentPage(index), IncidentInformationPage(index))
+    Seq(
+      EventCountryPage(eventIndex),
+      EventPlacePage(eventIndex),
+      EventReportedPage(eventIndex),
+      IsTranshipmentPage(eventIndex),
+      IncidentInformationPage(eventIndex)
+    )
 
   "Navigator" - {
 
@@ -235,7 +241,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
               navigator
                 .nextPage(IncidentOnRoutePage, NormalMode, updatedAnswers)
-                .mustBe(eventRoutes.EventCountryController.onPageLoad(answers.id, index, NormalMode))
+                .mustBe(eventRoutes.EventCountryController.onPageLoad(answers.id, eventIndex, NormalMode))
           }
         }
 
@@ -257,8 +263,8 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         forAll(arbitrary[UserAnswers]) {
           answers =>
             navigator
-              .nextPage(EventCountryPage(index), NormalMode, answers)
-              .mustBe(eventRoutes.EventPlaceController.onPageLoad(answers.id, index, NormalMode))
+              .nextPage(EventCountryPage(eventIndex), NormalMode, answers)
+              .mustBe(eventRoutes.EventPlaceController.onPageLoad(answers.id, eventIndex, NormalMode))
         }
       }
 
@@ -267,8 +273,8 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         forAll(arbitrary[UserAnswers]) {
           answers =>
             navigator
-              .nextPage(EventPlacePage(index), NormalMode, answers)
-              .mustBe(eventRoutes.EventReportedController.onPageLoad(answers.id, index, NormalMode))
+              .nextPage(EventPlacePage(eventIndex), NormalMode, answers)
+              .mustBe(eventRoutes.EventReportedController.onPageLoad(answers.id, eventIndex, NormalMode))
         }
       }
 
@@ -277,8 +283,8 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         forAll(arbitrary[UserAnswers]) {
           answers =>
             navigator
-              .nextPage(EventReportedPage(index), NormalMode, answers)
-              .mustBe(eventRoutes.IsTranshipmentController.onPageLoad(answers.id, index, NormalMode))
+              .nextPage(EventReportedPage(eventIndex), NormalMode, answers)
+              .mustBe(eventRoutes.IsTranshipmentController.onPageLoad(answers.id, eventIndex, NormalMode))
         }
       }
 
@@ -289,16 +295,16 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           forAll(arbitrary[UserAnswers]) {
             answers =>
               val updatedAnswers = answers
-                .set(EventReportedPage(index), false)
+                .set(EventReportedPage(eventIndex), false)
                 .success
                 .value
-                .set(IsTranshipmentPage(index), false)
+                .set(IsTranshipmentPage(eventIndex), false)
                 .success
                 .value
 
               navigator
-                .nextPage(IsTranshipmentPage(index), NormalMode, updatedAnswers)
-                .mustBe(eventRoutes.IncidentInformationController.onPageLoad(updatedAnswers.id, index, NormalMode))
+                .nextPage(IsTranshipmentPage(eventIndex), NormalMode, updatedAnswers)
+                .mustBe(eventRoutes.IncidentInformationController.onPageLoad(updatedAnswers.id, eventIndex, NormalMode))
           }
         }
 
@@ -307,16 +313,16 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           forAll(arbitrary[UserAnswers]) {
             answers =>
               val updatedAnswers = answers
-                .set(EventReportedPage(index), true)
+                .set(EventReportedPage(eventIndex), true)
                 .success
                 .value
-                .set(IsTranshipmentPage(index), false)
+                .set(IsTranshipmentPage(eventIndex), false)
                 .success
                 .value
 
               navigator
-                .nextPage(IsTranshipmentPage(index), NormalMode, updatedAnswers)
-                .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(updatedAnswers.id, index))
+                .nextPage(IsTranshipmentPage(eventIndex), NormalMode, updatedAnswers)
+                .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(updatedAnswers.id, eventIndex))
           }
         }
 
@@ -325,13 +331,13 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           forAll(arbitrary[UserAnswers]) {
             answers =>
               val updatedAnswers = answers
-                .set(IsTranshipmentPage(index), true)
+                .set(IsTranshipmentPage(eventIndex), true)
                 .success
                 .value
 
               navigator
-                .nextPage(IsTranshipmentPage(index), NormalMode, updatedAnswers)
-                .mustBe(transhipmentRoutes.TranshipmentTypeController.onPageLoad(updatedAnswers.id, index, NormalMode))
+                .nextPage(IsTranshipmentPage(eventIndex), NormalMode, updatedAnswers)
+                .mustBe(transhipmentRoutes.TranshipmentTypeController.onPageLoad(updatedAnswers.id, eventIndex, NormalMode))
           }
         }
 
@@ -340,15 +346,15 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           forAll(arbitrary[UserAnswers]) {
             answers =>
               val updatedAnswers = answers
-                .remove(EventReportedPage(index))
+                .remove(EventReportedPage(eventIndex))
                 .success
                 .value
-                .remove(IsTranshipmentPage(index))
+                .remove(IsTranshipmentPage(eventIndex))
                 .success
                 .value
 
               navigator
-                .nextPage(IsTranshipmentPage(index), NormalMode, updatedAnswers)
+                .nextPage(IsTranshipmentPage(eventIndex), NormalMode, updatedAnswers)
                 .mustBe(routes.SessionExpiredController.onPageLoad())
           }
         }
@@ -360,13 +366,13 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           forAll(arbitrary[UserAnswers]) {
             answers =>
               val updatedAnswers = answers
-                .set(TranshipmentTypePage(index), DifferentVehicle)
+                .set(TranshipmentTypePage(eventIndex), DifferentVehicle)
                 .success
                 .value
 
               navigator
-                .nextPage(TranshipmentTypePage(index), NormalMode, updatedAnswers)
-                .mustBe(transhipmentRoutes.TransportIdentityController.onPageLoad(updatedAnswers.id, index, NormalMode))
+                .nextPage(TranshipmentTypePage(eventIndex), NormalMode, updatedAnswers)
+                .mustBe(transhipmentRoutes.TransportIdentityController.onPageLoad(updatedAnswers.id, eventIndex, NormalMode))
           }
         }
 
@@ -377,24 +383,24 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
                 .remove(EventsQuery)
                 .success
                 .value
-                .set(EventCountryPage(index), "GB")
+                .set(EventCountryPage(eventIndex), "GB")
                 .success
                 .value
-                .set(EventPlacePage(index), "place name")
+                .set(EventPlacePage(eventIndex), "place name")
                 .success
                 .value
-                .set(EventReportedPage(index), true)
+                .set(EventReportedPage(eventIndex), true)
                 .success
                 .value
-                .set(IsTranshipmentPage(index), true)
+                .set(IsTranshipmentPage(eventIndex), true)
                 .success
                 .value
-                .set(TranshipmentTypePage(index), DifferentContainer)
+                .set(TranshipmentTypePage(eventIndex), DifferentContainer)
                 .success
                 .value
               navigator
-                .nextPage(TranshipmentTypePage(index), NormalMode, updatedAnswers)
-                .mustBe(transhipmentRoutes.ContainerNumberController.onPageLoad(updatedAnswers.id, index, 0, NormalMode))
+                .nextPage(TranshipmentTypePage(eventIndex), NormalMode, updatedAnswers)
+                .mustBe(transhipmentRoutes.ContainerNumberController.onPageLoad(updatedAnswers.id, eventIndex, 0, NormalMode))
           }
         }
 
@@ -402,27 +408,27 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           forAll(arbitrary[UserAnswers]) {
             answers =>
               val updatedAnswers = answers
-                .set(EventCountryPage(index), "GB")
+                .set(EventCountryPage(eventIndex), "GB")
                 .success
                 .value
-                .set(EventPlacePage(index), "place name")
+                .set(EventPlacePage(eventIndex), "place name")
                 .success
                 .value
-                .set(EventReportedPage(index), true)
+                .set(EventReportedPage(eventIndex), true)
                 .success
                 .value
-                .set(IsTranshipmentPage(index), true)
+                .set(IsTranshipmentPage(eventIndex), true)
                 .success
                 .value
-                .set(TranshipmentTypePage(index), DifferentContainer)
+                .set(TranshipmentTypePage(eventIndex), DifferentContainer)
                 .success
                 .value
-                .set(ContainerNumberPage(index, index), "1")
+                .set(ContainerNumberPage(eventIndex, eventIndex), "1")
                 .success
                 .value
               navigator
-                .nextPage(TranshipmentTypePage(index), NormalMode, updatedAnswers)
-                .mustBe(transhipmentRoutes.AddContainerController.onPageLoad(updatedAnswers.id, index, NormalMode))
+                .nextPage(TranshipmentTypePage(eventIndex), NormalMode, updatedAnswers)
+                .mustBe(transhipmentRoutes.AddContainerController.onPageLoad(updatedAnswers.id, eventIndex, NormalMode))
           }
         }
 
@@ -433,25 +439,25 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
                 .remove(EventsQuery)
                 .success
                 .value
-                .set(EventCountryPage(index), "GB")
+                .set(EventCountryPage(eventIndex), "GB")
                 .success
                 .value
-                .set(EventPlacePage(index), "place name")
+                .set(EventPlacePage(eventIndex), "place name")
                 .success
                 .value
-                .set(EventReportedPage(index), true)
+                .set(EventReportedPage(eventIndex), true)
                 .success
                 .value
-                .set(IsTranshipmentPage(index), true)
+                .set(IsTranshipmentPage(eventIndex), true)
                 .success
                 .value
-                .set(TranshipmentTypePage(index), DifferentContainerAndVehicle)
+                .set(TranshipmentTypePage(eventIndex), DifferentContainerAndVehicle)
                 .success
                 .value
 
               navigator
-                .nextPage(TranshipmentTypePage(index), NormalMode, updatedAnswers)
-                .mustBe(transhipmentRoutes.ContainerNumberController.onPageLoad(updatedAnswers.id, index, index, NormalMode))
+                .nextPage(TranshipmentTypePage(eventIndex), NormalMode, updatedAnswers)
+                .mustBe(transhipmentRoutes.ContainerNumberController.onPageLoad(updatedAnswers.id, eventIndex, eventIndex, NormalMode))
           }
         }
 
@@ -459,28 +465,28 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           forAll(arbitrary[UserAnswers]) {
             answers =>
               val updatedAnswers = answers
-                .set(EventCountryPage(index), "GB")
+                .set(EventCountryPage(eventIndex), "GB")
                 .success
                 .value
-                .set(EventPlacePage(index), "place name")
+                .set(EventPlacePage(eventIndex), "place name")
                 .success
                 .value
-                .set(EventReportedPage(index), true)
+                .set(EventReportedPage(eventIndex), true)
                 .success
                 .value
-                .set(IsTranshipmentPage(index), true)
+                .set(IsTranshipmentPage(eventIndex), true)
                 .success
                 .value
-                .set(TranshipmentTypePage(index), DifferentContainerAndVehicle)
+                .set(TranshipmentTypePage(eventIndex), DifferentContainerAndVehicle)
                 .success
                 .value
-                .set(ContainerNumberPage(index, index), "number1")
+                .set(ContainerNumberPage(eventIndex, eventIndex), "number1")
                 .success
                 .value
 
               navigator
-                .nextPage(TranshipmentTypePage(index), NormalMode, updatedAnswers)
-                .mustBe(transhipmentRoutes.AddContainerController.onPageLoad(updatedAnswers.id, index, NormalMode))
+                .nextPage(TranshipmentTypePage(eventIndex), NormalMode, updatedAnswers)
+                .mustBe(transhipmentRoutes.AddContainerController.onPageLoad(updatedAnswers.id, eventIndex, NormalMode))
           }
         }
       }
@@ -489,8 +495,8 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         forAll(arbitrary[UserAnswers]) {
           answers =>
             navigator
-              .nextPage(TransportIdentityPage(index), NormalMode, answers)
-              .mustBe(transhipmentRoutes.TransportNationalityController.onPageLoad(answers.id, index, NormalMode))
+              .nextPage(TransportIdentityPage(eventIndex), NormalMode, answers)
+              .mustBe(transhipmentRoutes.TransportNationalityController.onPageLoad(answers.id, eventIndex, NormalMode))
         }
       }
 
@@ -498,8 +504,8 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         forAll(arbitrary[UserAnswers]) {
           answers =>
             navigator
-              .nextPage(TransportNationalityPage(index), NormalMode, answers)
-              .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(answers.id, index))
+              .nextPage(TransportNationalityPage(eventIndex), NormalMode, answers)
+              .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(answers.id, eventIndex))
         }
       }
 
@@ -508,8 +514,8 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         forAll(arbitrary[UserAnswers]) {
           answers =>
             navigator
-              .nextPage(IncidentInformationPage(index), NormalMode, answers)
-              .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(answers.id, index))
+              .nextPage(IncidentInformationPage(eventIndex), NormalMode, answers)
+              .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(answers.id, eventIndex))
         }
       }
 
@@ -517,8 +523,8 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         forAll(arbitrary[UserAnswers]) {
           answers =>
             navigator
-              .nextPage(ContainerNumberPage(index, 0), NormalMode, answers)
-              .mustBe(transhipmentRoutes.AddContainerController.onPageLoad(answers.id, index, NormalMode))
+              .nextPage(ContainerNumberPage(eventIndex, 0), NormalMode, answers)
+              .mustBe(transhipmentRoutes.AddContainerController.onPageLoad(answers.id, eventIndex, NormalMode))
         }
       }
 
@@ -528,16 +534,16 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           forAll(arbitrary[UserAnswers]) {
             answers =>
               val updatedAnswers = answers
-                .set(TranshipmentTypePage(index), DifferentContainerAndVehicle)
+                .set(TranshipmentTypePage(eventIndex), DifferentContainerAndVehicle)
                 .success
                 .value
-                .set(AddContainerPage(index), false)
+                .set(AddContainerPage(eventIndex), false)
                 .success
                 .value
 
               navigator
-                .nextPage(AddContainerPage(index), NormalMode, updatedAnswers)
-                .mustBe(transhipmentRoutes.TransportIdentityController.onPageLoad(answers.id, index, NormalMode))
+                .nextPage(AddContainerPage(eventIndex), NormalMode, updatedAnswers)
+                .mustBe(transhipmentRoutes.TransportIdentityController.onPageLoad(answers.id, eventIndex, NormalMode))
           }
         }
 
@@ -547,16 +553,16 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           forAll(arbitrary[UserAnswers], transhipmentType) {
             (answers, transhipment) =>
               val updatedAnswers = answers
-                .set(TranshipmentTypePage(index), transhipment)
+                .set(TranshipmentTypePage(eventIndex), transhipment)
                 .success
                 .value
-                .set(AddContainerPage(index), false)
+                .set(AddContainerPage(eventIndex), false)
                 .success
                 .value
 
               navigator
-                .nextPage(AddContainerPage(index), NormalMode, updatedAnswers)
-                .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(answers.id, index))
+                .nextPage(AddContainerPage(eventIndex), NormalMode, updatedAnswers)
+                .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(answers.id, eventIndex))
           }
         }
 
@@ -567,13 +573,13 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
                 .remove(EventsQuery)
                 .success
                 .value
-                .set(AddContainerPage(index), true)
+                .set(AddContainerPage(eventIndex), true)
                 .success
                 .value
 
               navigator
-                .nextPage(AddContainerPage(index), NormalMode, updatedAnswers)
-                .mustBe(transhipmentRoutes.ContainerNumberController.onPageLoad(answers.id, index, 0, NormalMode))
+                .nextPage(AddContainerPage(eventIndex), NormalMode, updatedAnswers)
+                .mustBe(transhipmentRoutes.ContainerNumberController.onPageLoad(answers.id, eventIndex, 0, NormalMode))
           }
         }
 
@@ -587,16 +593,16 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
                 .remove(EventsQuery)
                 .success
                 .value
-                .set(ContainerNumberPage(index, containerIndex), container)
+                .set(ContainerNumberPage(eventIndex, containerIndex), container)
                 .success
                 .value
-                .set(AddContainerPage(index), true)
+                .set(AddContainerPage(eventIndex), true)
                 .success
                 .value
 
               navigator
-                .nextPage(AddContainerPage(index), NormalMode, updatedAnswers)
-                .mustBe(transhipmentRoutes.ContainerNumberController.onPageLoad(answers.id, index, containerIndex + 1, NormalMode))
+                .nextPage(AddContainerPage(eventIndex), NormalMode, updatedAnswers)
+                .mustBe(transhipmentRoutes.ContainerNumberController.onPageLoad(answers.id, eventIndex, containerIndex + 1, NormalMode))
           }
         }
       }
@@ -613,7 +619,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
                 navigator
                   .nextPage(AddEventPage, NormalMode, updatedAnswers)
-                  .mustBe(eventRoutes.EventCountryController.onPageLoad(answers.id, index, NormalMode))
+                  .mustBe(eventRoutes.EventCountryController.onPageLoad(answers.id, eventIndex, NormalMode))
             }
           }
 
@@ -624,19 +630,19 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
                   .set(IncidentOnRoutePage, true)
                   .success
                   .value
-                  .set(EventCountryPage(index), countryCode)
+                  .set(EventCountryPage(eventIndex), countryCode)
                   .success
                   .value
-                  .set(EventPlacePage(index), place)
+                  .set(EventPlacePage(eventIndex), place)
                   .success
                   .value
-                  .set(EventReportedPage(index), false)
+                  .set(EventReportedPage(eventIndex), false)
                   .success
                   .value
-                  .set(IsTranshipmentPage(index), false)
+                  .set(IsTranshipmentPage(eventIndex), false)
                   .success
                   .value
-                  .set(IncidentInformationPage(index), information)
+                  .set(IncidentInformationPage(eventIndex), information)
                   .success
                   .value
                   .set(AddEventPage, true)
@@ -747,7 +753,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
               answers =>
                 navigator
                   .nextPage(page, CheckMode, answers)
-                  .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(answers.id, index))
+                  .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(answers.id, eventIndex))
 
             }
           }

@@ -15,7 +15,7 @@
  */
 
 package derivable
-import pages.events.RepeatingSectionConstants
+import pages.events.SectionConstants
 import play.api.libs.json.{JsObject, JsPath}
 import queries.EventsQuery
 
@@ -23,5 +23,5 @@ final case class DeriveNumberOfContainers(eventIndex: Int) extends Derivable[Lis
 
   override val derive: List[JsObject] => Int = _.size
 
-  override def path: JsPath = JsPath \ RepeatingSectionConstants.events \ eventIndex \ RepeatingSectionConstants.containers
+  override def path: JsPath = JsPath \ SectionConstants.events \ eventIndex \ SectionConstants.containers
 }

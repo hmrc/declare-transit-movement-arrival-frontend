@@ -17,7 +17,7 @@
 package pages.events.transhipments
 
 import pages.QuestionPage
-import pages.events.RepeatingSectionConstants
+import pages.events.SectionConstants
 import play.api.libs.json.JsPath
 
 final case class AddContainerPage(eventIndex: Int) extends QuestionPage[Boolean] {

@@ -46,7 +46,7 @@ class TransportIdentityControllerSpec extends SpecBase with MockitoSugar with Nu
   val formProvider       = new TransportIdentityFormProvider()
   val form: Form[String] = formProvider()
 
-  lazy val transportIdentityRoute: String = transhipmentRoutes.TransportIdentityController.onPageLoad(mrn, index, NormalMode).url
+  lazy val transportIdentityRoute: String = transhipmentRoutes.TransportIdentityController.onPageLoad(mrn, eventIndex, NormalMode).url
   private val transportIdentityTemplate   = "events/transhipments/transportIdentity.njk"
 
   "TransportIdentity Controller" - {
@@ -84,7 +84,7 @@ class TransportIdentityControllerSpec extends SpecBase with MockitoSugar with Nu
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers    = UserAnswers(mrn).set(TransportIdentityPage(index), "answer").success.value
+      val userAnswers    = UserAnswers(mrn).set(TransportIdentityPage(eventIndex), "answer").success.value
       val application    = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request        = FakeRequest(GET, transportIdentityRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])

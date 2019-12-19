@@ -94,7 +94,7 @@ trait DomainModelGenerators extends Generators {
         transportIdentity                  <- stringsWithMaxLength(VehicularTranshipment.Constants.transportIdentityLength)
         transportCountry                   <- stringsWithMaxLength(VehicularTranshipment.Constants.transportCountryLength)
         endorsement                        <- arbitrary[Endorsement]
-        numberOfContainers                 <- Gen.choose[Int](1, 99)
+        numberOfContainers                 <- Gen.choose[Int](1, Transhipment.Constants.maxContainers)
         containers: Option[Seq[Container]] <- Gen.option(Gen.listOfN(numberOfContainers, arbitrary[Container]))
       } yield VehicularTranshipment(transportIdentity, transportCountry, endorsement, containers)
     }
@@ -111,7 +111,7 @@ trait DomainModelGenerators extends Generators {
 
       for {
         endorsement        <- arbitrary[Endorsement]
-        numberOfContainers <- Gen.choose[Int](1, 99)
+        numberOfContainers <- Gen.choose[Int](1, Transhipment.Constants.maxContainers)
         containers         <- Gen.listOfN(numberOfContainers, arbitrary[Container])
       } yield ContainerTranshipment(endorsement, containers)
     }
