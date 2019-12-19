@@ -19,12 +19,13 @@ package forms
 import forms.mappings.Mappings
 import javax.inject.Inject
 import play.api.data.Form
+import models.domain.TraderWithEori.Constants.eoriLength
 
 class TraderEoriFormProvider @Inject() extends Mappings {
 
   def apply(): Form[String] =
     Form(
       "value" -> text("traderEori.error.required")
-        .verifying(maxLength(17, "traderEori.error.length"))
+        .verifying(maxLength(eoriLength, "traderEori.error.length"))
     )
 }

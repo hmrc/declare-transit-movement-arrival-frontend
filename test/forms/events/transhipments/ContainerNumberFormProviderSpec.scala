@@ -17,13 +17,14 @@
 package forms.events.transhipments
 
 import forms.behaviours.StringFieldBehaviours
+import models.domain.Transhipment
 import play.api.data.FormError
 
 class ContainerNumberFormProviderSpec extends StringFieldBehaviours {
 
   val requiredKey = "containerNumber.error.required"
   val lengthKey   = "containerNumber.error.length"
-  val maxLength   = 100
+  val maxLength   = Transhipment.Constants.containerLength
 
   val form = new ContainerNumberFormProvider()()
 
