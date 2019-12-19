@@ -69,8 +69,9 @@ class Navigator @Inject()() {
 
   private def addContainer(index: Int)(ua: UserAnswers): Option[Call] = ua.get(AddContainerPage(index)) map {
     case true =>
-      val containerIndex = ua.get(DeriveNumberOfContainers(index)).getOrElse(0)
-      transhipmentRoutes.ContainerNumberController.onPageLoad(ua.id, index, containerIndex, NormalMode)
+      // TODO: Need to consolidate with same logic for initialsation of index in transhipmentType
+      val nextContainerIndex = ua.get(DeriveNumberOfContainers(index)).getOrElse(0)
+      transhipmentRoutes.ContainerNumberController.onPageLoad(ua.id, index, nextContainerIndex, NormalMode)
     case false =>
       ua.get(TranshipmentTypePage(index)) match {
         case Some(DifferentContainerAndVehicle) => transhipmentRoutes.TransportIdentityController.onPageLoad(ua.id, index, NormalMode)
@@ -82,7 +83,8 @@ class Navigator @Inject()() {
     case DifferentContainer | DifferentContainerAndVehicle =>
       ua.get(DeriveNumberOfContainers(index)) match {
         case Some(_) => transhipmentRoutes.AddContainerController.onPageLoad(ua.id, index, NormalMode)
-        case None    => transhipmentRoutes.ContainerNumberController.onPageLoad(ua.id, index, 0, NormalMode)
+        // TODO: Need to consolidate with same logic for initialsation of index in addContainer
+        case None     => transhipmentRoutes.ContainerNumberController.onPageLoad(ua.id, index, 0, NormalMode)
       }
     case DifferentVehicle => transhipmentRoutes.TransportIdentityController.onPageLoad(ua.id, index, NormalMode)
   }

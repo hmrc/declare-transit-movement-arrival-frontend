@@ -60,17 +60,17 @@ class ArrivalNotificationConversionService {
     val endorsement = Endorsement(None, None, None, None) // TODO: Find out where this data comes from
 
     (incidentInformation, transportIdentity, transportCountry, containers) match {
-      case (ii, None, None, _) =>
+      case (ii, None, None, None) =>
         Incident(ii, endorsement)
       case (None, Some(ti), Some(tc), _) =>
         VehicularTranshipment(
           transportIdentity = ti,
           transportCountry  = tc,
           endorsement       = endorsement,
-          containers        = containers.map(_.map(_.containerNumber))
+          containers        = containers
         )
       case (None, None, None, Some(containers)) =>
-        ContainerTranshipment(endorsement, containers.map(_.containerNumber))
+        ContainerTranshipment(endorsement, containers)
       case _ => ???
     }
   }
@@ -100,6 +100,7 @@ class ArrivalNotificationConversionService {
         }
     }
 
+  // TODO: Move this to the Trader model as a constructor?
   private def traderAddress(traderAddress: TraderAddress, traderEori: String, traderName: String): TraderWithEori =
     TraderWithEori(
       eori            = traderEori,

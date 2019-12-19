@@ -91,12 +91,19 @@ trait DomainModelGenerators extends Generators {
     Arbitrary {
 
       for {
-        transportIdentity  <- stringsWithMaxLength(VehicularTranshipment.Constants.transportIdentityLength)
-        transportCountry   <- stringsWithMaxLength(VehicularTranshipment.Constants.transportCountryLength)
-        endorsement        <- arbitrary[Endorsement]
-        numberOfContainers <- Gen.choose[Int](1, 99)
-        containers         <- Gen.option(Gen.listOfN(numberOfContainers, stringsWithMaxLength(Transhipment.Constants.containerLength)))
+        transportIdentity                  <- stringsWithMaxLength(VehicularTranshipment.Constants.transportIdentityLength)
+        transportCountry                   <- stringsWithMaxLength(VehicularTranshipment.Constants.transportCountryLength)
+        endorsement                        <- arbitrary[Endorsement]
+        numberOfContainers                 <- Gen.choose[Int](1, 99)
+        containers: Option[Seq[Container]] <- Gen.option(Gen.listOfN(numberOfContainers, arbitrary[Container]))
       } yield VehicularTranshipment(transportIdentity, transportCountry, endorsement, containers)
+    }
+
+  implicit lazy val arbitraryContainer: Arbitrary[Container] =
+    Arbitrary {
+      for {
+        container <- stringsWithMaxLength(Transhipment.Constants.containerLength).suchThat(_.length > 0)
+      } yield Container(container)
     }
 
   implicit lazy val arbitraryContainerTranshipment: Arbitrary[ContainerTranshipment] =
@@ -105,7 +112,7 @@ trait DomainModelGenerators extends Generators {
       for {
         endorsement        <- arbitrary[Endorsement]
         numberOfContainers <- Gen.choose[Int](1, 99)
-        containers         <- Gen.listOfN(numberOfContainers, stringsWithMaxLength(Transhipment.Constants.containerLength))
+        containers         <- Gen.listOfN(numberOfContainers, arbitrary[Container])
       } yield ContainerTranshipment(endorsement, containers)
     }
 

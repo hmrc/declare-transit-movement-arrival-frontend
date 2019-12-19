@@ -22,7 +22,7 @@ import base.SpecBase
 import generators.DomainModelGenerators
 import models.GoodsLocation.BorderForceOffice
 import models.domain.messages.NormalNotification
-import models.domain.{EnRouteEvent, Endorsement, Incident, TraderWithEori, VehicularTranshipment}
+import models.domain._
 import models.{TraderAddress, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
@@ -122,11 +122,10 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
             .copy(seals = None)
             .copy(eventDetails = vehicularTranshipment.copy(
               endorsement = Endorsement(None, None, None, None),
-              containers = Some(Seq("container"))
+              containers = None
             ))
 
           val arrivalNotification: NormalNotification = arbArrivalNotification.copy(enRouteEvents = Some(Seq(routeEvent)))
-
           val userAnswers: UserAnswers = createBasicUserAnswers(trader, arrivalNotification, isIncidentOnRoute = true)
             .set(IsTranshipmentPage(index), true).success.value
             .set(EventPlacePage(index), routeEvent.place).success.value
@@ -134,14 +133,49 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
             .set(EventReportedPage(index), routeEvent.alreadyInNcts).success.value
             .set(TransportIdentityPage(index), vehicularTranshipment.transportIdentity).success.value
             .set(TransportNationalityPage(index), vehicularTranshipment.transportCountry).success.value
-            .set(ContainerNumberPage(index, 0), "container").success.value
 
           service.convertToArrivalNotification(userAnswers).value mustEqual arrivalNotification
       }
     }
 
-    "must return 'Normal Arrival Notification' message when there is one container transhipment on route" ignore {}
+    val enRouteEventContainerTranshipment: Gen[(EnRouteEvent, ContainerTranshipment)] = for {
+      enRouteEvent <- arbitrary[EnRouteEvent]
+      ct <- arbitrary[ContainerTranshipment]
+    } yield {
+      val containerTranshipment: ContainerTranshipment = ct.copy(endorsement = Endorsement(None, None, None, None))
 
+      val frankie = enRouteEvent.copy(eventDetails = containerTranshipment, seals = None)
+
+      (frankie, containerTranshipment)
+    }
+
+    "must return 'Normal Arrival Notification' message when there is one container transhipment on route" in {
+      forAll(normalNotificationWithTraderWithEoriWithSubplace, enRouteEventContainerTranshipment) {
+        case ((arbArrivalNotification, trader), (enRouteEvent, containerTranshipment)) =>
+
+          val expectedArrivalNotification: NormalNotification = arbArrivalNotification.copy(enRouteEvents = Some(Seq(enRouteEvent)))
+
+          val containers: Seq[Container] = containerTranshipment.containers
+
+          val userAnswers: UserAnswers = emptyUserAnswers
+            .set(MovementReferenceNumberPage, expectedArrivalNotification.movementReferenceNumber).success.value
+            .set(GoodsLocationPage, BorderForceOffice).success.value
+            .set(PresentationOfficePage, expectedArrivalNotification.presentationOffice).success.value
+            .set(CustomsSubPlacePage, expectedArrivalNotification.customsSubPlace.value).success.value
+            .set(TraderNamePage, trader.name.value).success.value
+            .set(TraderAddressPage, TraderAddress(buildingAndStreet = trader.streetAndNumber.value, city = trader.city.value, postcode = trader.postCode.value)).success.value
+            .set(TraderEoriPage, trader.eori).success.value
+            .set(IncidentOnRoutePage, true).success.value
+            .set(PlaceOfNotificationPage, expectedArrivalNotification.notificationPlace).success.value
+            .set(IsTranshipmentPage(index), true).success.value
+            .set(EventPlacePage(index), enRouteEvent.place).success.value
+            .set(EventCountryPage(index), enRouteEvent.countryCode).success.value
+            .set(EventReportedPage(index), enRouteEvent.alreadyInNcts).success.value
+            .set(ContainersQuery(index), containers).success.value
+
+          service.convertToArrivalNotification(userAnswers).value mustEqual expectedArrivalNotification
+      }
+    }
 
     "must return 'Normal Arrival Notification' message when there multiple incidents on route" in {
       forAll(normalNotificationWithTraderWithEoriWithSubplace, enRouteEventIncident, enRouteEventIncident) {
