@@ -17,13 +17,14 @@
 package forms.events.transhipments
 
 import forms.behaviours.StringFieldBehaviours
+import models.domain.VehicularTranshipment
 import play.api.data.FormError
 
 class TransportIdentityFormProviderSpec extends StringFieldBehaviours {
 
   val requiredKey = "transportIdentity.error.required"
   val lengthKey   = "transportIdentity.error.length"
-  val maxLength   = 35
+  val maxLength   = VehicularTranshipment.Constants.transportIdentityLength
 
   val form = new TransportIdentityFormProvider()()
 

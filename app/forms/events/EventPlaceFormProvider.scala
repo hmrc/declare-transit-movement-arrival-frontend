@@ -19,12 +19,13 @@ package forms.events
 import forms.mappings.Mappings
 import javax.inject.Inject
 import play.api.data.Form
+import models.domain.EnRouteEvent.Constants.placeLength
 
 class EventPlaceFormProvider @Inject() extends Mappings {
 
   def apply(): Form[String] =
     Form(
       "value" -> text("eventPlace.error.required")
-        .verifying(maxLength(35, "eventPlace.error.length"))
+        .verifying(maxLength(placeLength, "eventPlace.error.length"))
     )
 }

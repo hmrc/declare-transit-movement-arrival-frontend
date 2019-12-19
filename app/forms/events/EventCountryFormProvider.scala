@@ -19,12 +19,13 @@ package forms.events
 import forms.mappings.Mappings
 import javax.inject.Inject
 import play.api.data.Form
+import models.domain.EnRouteEvent.Constants.countryCodeLength
 
 class EventCountryFormProvider @Inject() extends Mappings {
 
   def apply(): Form[String] =
     Form(
       "value" -> text("eventCountry.error.required")
-        .verifying(maxLength(2, "eventCountry.error.length"))
+        .verifying(maxLength(countryCodeLength, "eventCountry.error.length"))
     )
 }

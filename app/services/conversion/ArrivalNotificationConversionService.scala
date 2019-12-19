@@ -100,7 +100,7 @@ class ArrivalNotificationConversionService {
         }
     }
 
-  private def traderAddress(traderAddress: TraderAddress, traderEori: String, traderName: String): Trader =
+  private def traderAddress(traderAddress: TraderAddress, traderEori: String, traderName: String): TraderWithEori =
     TraderWithEori(
       eori            = traderEori,
       name            = Some(traderName),

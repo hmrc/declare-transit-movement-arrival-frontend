@@ -50,6 +50,10 @@ final case class Incident(information: Option[String], endorsement: Endorsement)
 
 object Incident {
 
+  object Constants {
+    val informationLength = 350
+  }
+
   implicit lazy val format: Format[Incident] =
     Json.format[Incident]
 }
@@ -57,6 +61,10 @@ object Incident {
 sealed trait Transhipment extends EventDetails
 
 object Transhipment {
+
+  object Constants {
+    val containerLength = 17
+  }
 
   implicit lazy val reads: Reads[Transhipment] = {
 
@@ -87,6 +95,13 @@ final case class VehicularTranshipment(
 ) extends Transhipment
 
 object VehicularTranshipment {
+
+  object Constants {
+
+    val transportIdentityLength = 27
+    val transportCountryLength  = 2
+
+  }
 
   implicit lazy val reads: Reads[VehicularTranshipment] = {
 
