@@ -17,8 +17,6 @@
 package models
 
 import play.api.data.Form
-import play.api.i18n.Messages
-import play.api.libs.json._
 import uk.gov.hmrc.viewmodels._
 
 sealed trait TranshipmentType
@@ -35,14 +33,13 @@ object TranshipmentType extends Enumerable.Implicits {
     DifferentContainerAndVehicle
   )
 
-  def radios(form: Form[_])(implicit messages: Messages): Seq[Radios.Item] = {
+  def radios(form: Form[_]): Seq[Radios.Item] = {
 
     val field = form("value")
-    val items = Seq(
-      Radios.Radio(msg"transhipmentType.differentContainer", DifferentContainer.toString),
-      Radios.Radio(msg"transhipmentType.differentVehicle", DifferentVehicle.toString),
-      Radios.Radio(msg"transhipmentType.differentContainerAndVehicle", DifferentContainerAndVehicle.toString)
-    )
+    val items = values
+      .map(_.toString)
+      .map(optionName => (msg"transhipmentType.$optionName", optionName))
+      .map(Radios.Radio.tupled)
 
     Radios(field, items)
   }
