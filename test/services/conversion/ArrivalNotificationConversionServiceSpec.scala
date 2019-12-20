@@ -139,14 +139,14 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
     }
 
     val enRouteEventContainerTranshipment: Gen[(EnRouteEvent, ContainerTranshipment)] = for {
-      enRouteEvent <- arbitrary[EnRouteEvent]
+      generatedEnRouteEvent <- arbitrary[EnRouteEvent]
       ct <- arbitrary[ContainerTranshipment]
     } yield {
-      val containerTranshipment: ContainerTranshipment = ct.copy(endorsement = Endorsement(None, None, None, None))
+      val containerTranshipment = ct.copy(endorsement = Endorsement(None, None, None, None))
 
-      val frankie = enRouteEvent.copy(eventDetails = containerTranshipment, seals = None)
+      val enRouteEvent = generatedEnRouteEvent.copy(eventDetails = containerTranshipment, seals = None)
 
-      (frankie, containerTranshipment)
+      (enRouteEvent, containerTranshipment)
     }
 
     "must return 'Normal Arrival Notification' message when there is one container transhipment on route" in {
