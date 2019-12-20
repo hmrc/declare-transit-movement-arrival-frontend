@@ -40,7 +40,7 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
     for {
       base     <- arbitrary[NormalNotification]
       trader   <- generatorTraderWithEoriAllValues
-      subPlace <- stringsWithMaxLength(17)
+      subPlace <- stringsWithMaxLength(NormalNotification.Constants.customsSubPlaceLength)
     } yield {
 
       val expected: NormalNotification = base
