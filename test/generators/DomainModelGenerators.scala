@@ -29,6 +29,8 @@ import org.scalacheck.Gen
 
 trait DomainModelGenerators extends Generators {
 
+  private val maxContainers = 99
+
   implicit lazy val arbitraryProcedureType: Arbitrary[ProcedureType] =
     Arbitrary {
       Gen.oneOf(ProcedureType.Normal, ProcedureType.Simplified)
@@ -94,7 +96,7 @@ trait DomainModelGenerators extends Generators {
         transportIdentity                  <- stringsWithMaxLength(VehicularTranshipment.Constants.transportIdentityLength)
         transportCountry                   <- stringsWithMaxLength(VehicularTranshipment.Constants.transportCountryLength)
         endorsement                        <- arbitrary[Endorsement]
-        numberOfContainers                 <- Gen.choose[Int](1, Transhipment.Constants.maxContainers)
+        numberOfContainers                 <- Gen.choose[Int](1, maxContainers)
         containers: Option[Seq[Container]] <- Gen.option(Gen.listOfN(numberOfContainers, arbitrary[Container]))
       } yield VehicularTranshipment(transportIdentity, transportCountry, endorsement, containers)
     }
@@ -111,7 +113,7 @@ trait DomainModelGenerators extends Generators {
 
       for {
         endorsement        <- arbitrary[Endorsement]
-        numberOfContainers <- Gen.choose[Int](1, Transhipment.Constants.maxContainers)
+        numberOfContainers <- Gen.choose[Int](1, maxContainers)
         containers         <- Gen.listOfN(numberOfContainers, arbitrary[Container])
       } yield ContainerTranshipment(endorsement, containers)
     }

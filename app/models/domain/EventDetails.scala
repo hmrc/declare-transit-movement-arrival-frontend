@@ -64,7 +64,6 @@ object Transhipment {
 
   object Constants {
     val containerLength = 17
-    val maxContainers   = 99
   }
 
   implicit lazy val reads: Reads[Transhipment] = {
