@@ -14,10 +14,15 @@
  * limitations under the License.
  */
 
-package pages.events
+package derivable
 
-object RepeatingSectionConstants {
+import play.api.libs.json.{JsObject, JsPath}
+import queries.EventsQuery
 
-  val events = "events"
+case object DeriveNumberOfEvents extends Derivable[List[JsObject], Int] {
+
+  override val derive: List[JsObject] => Int = _.size
+
+  override def path: JsPath = EventsQuery.path
 
 }

@@ -14,20 +14,12 @@
  * limitations under the License.
  */
 
-package pages.events.transhipments
+package models.domain
 
-import pages.behaviours.PageBehaviours
+import play.api.libs.json.{Json, OFormat}
 
-class TransportNationalityPageSpec extends PageBehaviours {
+case class Container(containerNumber: String)
 
-  val index = 0
-
-  "TransportNationalityPage" - {
-
-    beRetrievable[String](TransportNationalityPage(index))
-
-    beSettable[String](TransportNationalityPage(index))
-
-    beRemovable[String](TransportNationalityPage(index))
-  }
+object Container {
+  implicit val formats: OFormat[Container] = Json.format[Container]
 }

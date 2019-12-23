@@ -17,12 +17,13 @@
 package controllers.events.transhipments
 
 import controllers.actions._
+import derivable.DeriveNumberOfContainers
 import forms.events.transhipments.AddContainerFormProvider
 import javax.inject.Inject
 import models.{Mode, MovementReferenceNumber}
 import navigation.Navigator
 import pages.events.transhipments.AddContainerPage
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
@@ -49,24 +50,32 @@ class AddContainerController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  private def getPageTitle(containerCount: Int)(implicit messages: Messages): String =
+    if (containerCount == 1) {
+      messages("addContainer.title.singular", containerCount)
+    } else {
+      messages("addContainer.title.plural", containerCount)
+    }
+
+  def onPageLoad(mrn: MovementReferenceNumber, eventIndex: Int, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
-      val preparedForm = request.userAnswers.get(AddContainerPage) match {
+      val preparedForm = request.userAnswers.get(AddContainerPage(eventIndex)) match {
         case None        => form
         case Some(value) => form.fill(value)
       }
 
       val json = Json.obj(
-        "form"   -> preparedForm,
-        "mode"   -> mode,
-        "mrn"    -> mrn,
-        "radios" -> Radios.yesNo(preparedForm("value"))
+        "form"      -> preparedForm,
+        "mode"      -> mode,
+        "mrn"       -> mrn,
+        "pageTitle" -> getPageTitle(request.userAnswers.get(DeriveNumberOfContainers(eventIndex)).getOrElse(0)),
+        "radios"    -> Radios.yesNo(preparedForm("value"))
       )
 
       renderer.render("events/transhipments/addContainer.njk", json).map(Ok(_))
   }
 
-  def onSubmit(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onSubmit(mrn: MovementReferenceNumber, eventIndex: Int, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
       form
         .bindFromRequest()
@@ -74,19 +83,19 @@ class AddContainerController @Inject()(
           formWithErrors => {
 
             val json = Json.obj(
-              "form"   -> formWithErrors,
-              "mode"   -> mode,
-              "mrn"    -> mrn,
-              "radios" -> Radios.yesNo(formWithErrors("value"))
+              "form"      -> formWithErrors,
+              "mode"      -> mode,
+              "mrn"       -> mrn,
+              "pageTitle" -> getPageTitle(request.userAnswers.get(DeriveNumberOfContainers(eventIndex)).getOrElse(0)),
+              "radios"    -> Radios.yesNo(formWithErrors("value"))
             )
 
             renderer.render("events/transhipments/addContainer.njk", json).map(BadRequest(_))
           },
           value =>
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(AddContainerPage, value))
-              _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(AddContainerPage, mode, updatedAnswers))
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(AddContainerPage(eventIndex), value))
+            } yield Redirect(navigator.nextPage(AddContainerPage(eventIndex), mode, updatedAnswers))
         )
   }
 }

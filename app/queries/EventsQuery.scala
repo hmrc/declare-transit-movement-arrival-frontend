@@ -17,11 +17,11 @@
 package queries
 
 import pages.QuestionPage
-import pages.events.RepeatingSectionConstants
+import pages.events.SectionConstants
 import play.api.libs.json.{JsArray, JsObject, JsPath}
 
 case object EventsQuery extends QuestionPage[List[JsObject]] {
 
-  override def path: JsPath = JsPath \ RepeatingSectionConstants.events
+  override def path: JsPath = JsPath \ SectionConstants.events
 
 }

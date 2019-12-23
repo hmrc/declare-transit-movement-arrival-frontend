@@ -50,7 +50,7 @@ class EventPlaceControllerSpec extends SpecBase with MockitoSugar with NunjucksS
   val formProvider: EventPlaceFormProvider = new EventPlaceFormProvider()
   val form: Form[String]                   = formProvider()
 
-  lazy val eventPlaceRoute: String = controllers.events.routes.EventPlaceController.onPageLoad(mrn, index, NormalMode).url
+  lazy val eventPlaceRoute: String = controllers.events.routes.EventPlaceController.onPageLoad(mrn, eventIndex, NormalMode).url
 
   "EventPlace Controller" - {
 
@@ -87,7 +87,7 @@ class EventPlaceControllerSpec extends SpecBase with MockitoSugar with NunjucksS
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers    = UserAnswers(mrn).set(EventPlacePage(index), "answer").success.value
+      val userAnswers    = UserAnswers(mrn).set(EventPlacePage(eventIndex), "answer").success.value
       val application    = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request        = FakeRequest(GET, eventPlaceRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])

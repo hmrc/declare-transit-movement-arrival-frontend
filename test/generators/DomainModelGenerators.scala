@@ -29,6 +29,8 @@ import org.scalacheck.Gen
 
 trait DomainModelGenerators extends Generators {
 
+  private val maxNumberOfSeals = 99
+
   implicit lazy val arbitraryProcedureType: Arbitrary[ProcedureType] =
     Arbitrary {
       Gen.oneOf(ProcedureType.Normal, ProcedureType.Simplified)
@@ -91,21 +93,26 @@ trait DomainModelGenerators extends Generators {
     Arbitrary {
 
       for {
-        transportIdentity  <- stringsWithMaxLength(VehicularTranshipment.Constants.transportIdentityLength)
-        transportCountry   <- stringsWithMaxLength(VehicularTranshipment.Constants.transportCountryLength)
-        endorsement        <- arbitrary[Endorsement]
-        numberOfContainers <- Gen.choose[Int](1, 99)
-        containers         <- Gen.option(Gen.listOfN(numberOfContainers, stringsWithMaxLength(Transhipment.Constants.containerLength)))
+
+        transportIdentity <- stringsWithMaxLength(VehicularTranshipment.Constants.transportIdentityLength)
+        transportCountry  <- stringsWithMaxLength(VehicularTranshipment.Constants.transportCountryLength)
+        endorsement       <- arbitrary[Endorsement]
+        containers        <- Gen.option(listWithMaxLength[Container](Transhipment.Constants.maxContainers))
       } yield VehicularTranshipment(transportIdentity, transportCountry, endorsement, containers)
+    }
+
+  implicit lazy val arbitraryContainer: Arbitrary[Container] =
+    Arbitrary {
+      for {
+        container <- stringsWithMaxLength(Transhipment.Constants.containerLength).suchThat(_.length > 0)
+      } yield Container(container)
     }
 
   implicit lazy val arbitraryContainerTranshipment: Arbitrary[ContainerTranshipment] =
     Arbitrary {
-
       for {
-        endorsement        <- arbitrary[Endorsement]
-        numberOfContainers <- Gen.choose[Int](1, 99)
-        containers         <- Gen.listOfN(numberOfContainers, stringsWithMaxLength(Transhipment.Constants.containerLength))
+        endorsement <- arbitrary[Endorsement]
+        containers  <- listWithMaxLength[Container](Transhipment.Constants.maxContainers)
       } yield ContainerTranshipment(endorsement, containers)
     }
 
@@ -133,8 +140,7 @@ trait DomainModelGenerators extends Generators {
         countryCode   <- stringsWithMaxLength(EnRouteEvent.Constants.countryCodeLength)
         alreadyInNcts <- arbitrary[Boolean]
         eventDetails  <- arbitrary[EventDetails]
-        numberOfSeals <- Gen.choose[Int](0, 99)
-        seals         <- Gen.option(Gen.listOfN(numberOfSeals, stringsWithMaxLength(EnRouteEvent.Constants.sealsLength)))
+        seals         <- Gen.option(listWithMaxLength(maxNumberOfSeals)(Arbitrary(stringsWithMaxLength(EnRouteEvent.Constants.sealsLength))))
       } yield {
 
         val removeEmptySealsList = seals match {
@@ -156,7 +162,7 @@ trait DomainModelGenerators extends Generators {
         subPlace           <- Gen.option(stringsWithMaxLength(NormalNotification.Constants.customsSubPlaceLength))
         trader             <- arbitrary[Trader]
         presentationOffice <- stringsWithMaxLength(NormalNotification.Constants.presentationOfficeLength)
-        events             <- Gen.option(seqWithMaxLength[EnRouteEvent](9))
+        events             <- Gen.option(listWithMaxLength[EnRouteEvent](NormalNotification.Constants.maxNumberOfEnRouteEvents))
       } yield NormalNotification(mrn, place, date, subPlace, trader, presentationOffice, events)
     }
 
@@ -170,7 +176,7 @@ trait DomainModelGenerators extends Generators {
         approvedLocation   <- Gen.option(stringsWithMaxLength(SimplifiedNotification.Constants.approvedLocationLength))
         trader             <- arbitrary[Trader]
         presentationOffice <- stringsWithMaxLength(SimplifiedNotification.Constants.presentationOfficeLength)
-        events             <- Gen.option(seqWithMaxLength[EnRouteEvent](9))
+        events             <- Gen.option(listWithMaxLength[EnRouteEvent](NormalNotification.Constants.maxNumberOfEnRouteEvents))
       } yield SimplifiedNotification(mrn, place, date, approvedLocation, trader, presentationOffice, events)
     }
 

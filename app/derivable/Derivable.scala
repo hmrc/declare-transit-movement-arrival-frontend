@@ -14,20 +14,12 @@
  * limitations under the License.
  */
 
-package pages.events.transhipments
+package derivable
 
-import pages.behaviours.PageBehaviours
+import queries.Gettable
 
-class TransportNationalityPageSpec extends PageBehaviours {
+trait Derivable[A, B] extends Gettable[A] {
 
-  val index = 0
+  val derive: A => B
 
-  "TransportNationalityPage" - {
-
-    beRetrievable[String](TransportNationalityPage(index))
-
-    beSettable[String](TransportNationalityPage(index))
-
-    beRemovable[String](TransportNationalityPage(index))
-  }
 }

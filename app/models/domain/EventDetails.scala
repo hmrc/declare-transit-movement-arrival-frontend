@@ -64,6 +64,7 @@ object Transhipment {
 
   object Constants {
     val containerLength = 17
+    val maxContainers   = 99
   }
 
   implicit lazy val reads: Reads[Transhipment] = {
@@ -87,8 +88,12 @@ object Transhipment {
   }
 }
 
-final case class VehicularTranshipment(transportIdentity: String, transportCountry: String, endorsement: Endorsement, containers: Option[Seq[String]])
-    extends Transhipment
+final case class VehicularTranshipment(
+  transportIdentity: String,
+  transportCountry: String,
+  endorsement: Endorsement,
+  containers: Option[Seq[Container]]
+) extends Transhipment
 
 object VehicularTranshipment {
 
@@ -107,7 +112,7 @@ object VehicularTranshipment {
       (__ \ "transportIdentity").read[String] and
         (__ \ "transportCountry").read[String] and
         (__ \ "endorsement").read[Endorsement] and
-        (__ \ "containers").readNullable[Seq[String]]
+        (__ \ "containers").readNullable[Seq[Container]]
     )(VehicularTranshipment.apply _)
 
   }
@@ -125,7 +130,7 @@ object VehicularTranshipment {
     }
 }
 
-final case class ContainerTranshipment(endorsement: Endorsement, containers: Seq[String]) extends Transhipment {
+final case class ContainerTranshipment(endorsement: Endorsement, containers: Seq[Container]) extends Transhipment {
 
   require(containers.nonEmpty, "At least one container number must be provided")
 }

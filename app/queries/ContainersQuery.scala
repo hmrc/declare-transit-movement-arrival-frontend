@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package computable
+package queries
 
+import models.domain.Container
+import pages.QuestionPage
+import pages.events.SectionConstants
 import play.api.libs.json.{JsObject, JsPath}
-import queries.EventsQuery
 
-case object DeriveNumberOfEvents extends Derivable[List[JsObject], Int] {
+final case class ContainersQuery(eventIndex: Int) extends QuestionPage[Seq[Container]] {
 
-  override val derive: List[JsObject] => Int = _.size
-
-  override def path: JsPath = EventsQuery.path
+  override def path: JsPath = JsPath \ SectionConstants.events \ eventIndex \ SectionConstants.containers
 
 }

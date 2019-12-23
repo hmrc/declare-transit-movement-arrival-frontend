@@ -17,11 +17,12 @@
 package pages.events.transhipments
 
 import pages.QuestionPage
+import pages.events.SectionConstants
 import play.api.libs.json.JsPath
 
-case object ContainerNumberPage extends QuestionPage[String] {
+final case class ContainerNumberPage(eventIndex: Int, containerIndex: Int) extends QuestionPage[String] {
 
-  override def path: JsPath = JsPath \ toString
+  override def path: JsPath = JsPath \ SectionConstants.events \ eventIndex \ SectionConstants.containers \ containerIndex \ toString
 
   override def toString: String = "containerNumber"
 }

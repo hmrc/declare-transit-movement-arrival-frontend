@@ -20,12 +20,15 @@ import pages.behaviours.PageBehaviours
 
 class ContainerNumberPageSpec extends PageBehaviours {
 
+  val eventIndex     = 0
+  val containerIndex = 0
+
   "ContainerNumberPage" - {
 
-    beRetrievable[String](ContainerNumberPage)
+    beRetrievable[String](ContainerNumberPage(eventIndex, containerIndex))
 
-    beSettable[String](ContainerNumberPage)
+    beSettable[String](ContainerNumberPage(eventIndex, containerIndex))
 
-    beRemovable[String](ContainerNumberPage)
+    beRemovable[String](ContainerNumberPage(eventIndex, containerIndex))
   }
 }

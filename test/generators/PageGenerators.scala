@@ -23,20 +23,20 @@ import pages.events.transhipments.{AddContainerPage, ContainerNumberPage, Transh
 
 trait PageGenerators {
 
-  implicit lazy val arbitraryAddContainerPage: Arbitrary[AddContainerPage.type] =
-    Arbitrary(AddContainerPage)
+  implicit lazy val arbitraryAddContainerPage: Arbitrary[AddContainerPage] =
+    Arbitrary(AddContainerPage(0))
 
-  implicit lazy val arbitraryContainerNumberPage: Arbitrary[ContainerNumberPage.type] =
-    Arbitrary(ContainerNumberPage)
+  implicit lazy val arbitraryContainerNumberPage: Arbitrary[ContainerNumberPage] =
+    Arbitrary(ContainerNumberPage(0, 0))
 
-  implicit lazy val arbitraryTransportNationalityPage: Arbitrary[TransportNationalityPage.type] =
-    Arbitrary(TransportNationalityPage)
+  implicit lazy val arbitraryTransportNationalityPage: Arbitrary[TransportNationalityPage] =
+    Arbitrary(TransportNationalityPage(0))
 
-  implicit lazy val arbitraryTransportIdentityPage: Arbitrary[TransportIdentityPage.type] =
-    Arbitrary(TransportIdentityPage)
+  implicit lazy val arbitraryTransportIdentityPage: Arbitrary[TransportIdentityPage] =
+    Arbitrary(TransportIdentityPage(0))
 
-  implicit lazy val arbitraryTranshipmentTypePage: Arbitrary[TranshipmentTypePage.type] =
-    Arbitrary(TranshipmentTypePage)
+  implicit lazy val arbitraryTranshipmentTypePage: Arbitrary[TranshipmentTypePage] =
+    Arbitrary(TranshipmentTypePage(0))
 
   implicit lazy val arbitraryAddEventPage: Arbitrary[AddEventPage.type] =
     Arbitrary(AddEventPage)

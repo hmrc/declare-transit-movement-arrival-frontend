@@ -67,6 +67,7 @@ object NormalNotification {
     val customsSubPlaceLength    = 17
     val notificationPlaceLength  = 35
     val presentationOfficeLength = 8
+    val maxNumberOfEnRouteEvents = 9
   }
 
   implicit lazy val reads: Reads[NormalNotification] = {

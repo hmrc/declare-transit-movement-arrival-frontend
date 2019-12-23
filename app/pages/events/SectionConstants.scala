@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package computable
+package pages.events
 
-import queries.Gettable
+object SectionConstants {
 
-trait Derivable[A, B] extends Gettable[A] {
-
-  val derive: A => B
+  val events     = "events"
+  val containers = "containers"
 
 }

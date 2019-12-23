@@ -58,7 +58,7 @@ trait SpecBase
 
   val emptyUserAnswers = UserAnswers(mrn, Json.obj())
 
-  val index = 0
+  val eventIndex = 0
 
   val traderAddress = TraderAddress("", "", "NE99 1XN")
 

@@ -109,7 +109,7 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
       choose(0, vector.size - 1).flatMap(vector(_))
     }
 
-  def seqWithMaxLength[A](maxLength: Int)(implicit a: Arbitrary[A]): Gen[Seq[A]] =
+  def listWithMaxLength[A](maxLength: Int)(implicit a: Arbitrary[A]): Gen[List[A]] =
     for {
       length <- choose(1, maxLength)
       seq    <- listOfN(length, arbitrary[A])

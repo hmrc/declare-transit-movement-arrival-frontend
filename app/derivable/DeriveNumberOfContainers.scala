@@ -14,20 +14,14 @@
  * limitations under the License.
  */
 
-package pages.events.transhipments
+package derivable
+import pages.events.SectionConstants
+import play.api.libs.json.{JsObject, JsPath}
+import queries.EventsQuery
 
-import pages.behaviours.PageBehaviours
+final case class DeriveNumberOfContainers(eventIndex: Int) extends Derivable[List[JsObject], Int] {
 
-class TransportNationalityPageSpec extends PageBehaviours {
+  override val derive: List[JsObject] => Int = _.size
 
-  val index = 0
-
-  "TransportNationalityPage" - {
-
-    beRetrievable[String](TransportNationalityPage(index))
-
-    beSettable[String](TransportNationalityPage(index))
-
-    beRemovable[String](TransportNationalityPage(index))
-  }
+  override def path: JsPath = JsPath \ SectionConstants.events \ eventIndex \ SectionConstants.containers
 }

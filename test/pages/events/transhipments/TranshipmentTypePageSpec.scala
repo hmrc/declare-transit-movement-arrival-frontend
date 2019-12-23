@@ -21,12 +21,14 @@ import pages.behaviours.PageBehaviours
 
 class TranshipmentTypePageSpec extends PageBehaviours {
 
+  val index = 0
+
   "TranshipmentTypePage" - {
 
-    beRetrievable[TranshipmentType](TranshipmentTypePage)
+    beRetrievable[TranshipmentType](TranshipmentTypePage(index))
 
-    beSettable[TranshipmentType](TranshipmentTypePage)
+    beSettable[TranshipmentType](TranshipmentTypePage(index))
 
-    beRemovable[TranshipmentType](TranshipmentTypePage)
+    beRemovable[TranshipmentType](TranshipmentTypePage(index))
   }
 }
