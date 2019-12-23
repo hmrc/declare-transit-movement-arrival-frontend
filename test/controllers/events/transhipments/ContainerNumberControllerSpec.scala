@@ -45,7 +45,6 @@ class ContainerNumberControllerSpec extends SpecBase with MockitoSugar with Nunj
   private val formProvider       = new ContainerNumberFormProvider()
   private val form: Form[String] = formProvider()
 
-  private val containerIndex                    = 0
   private lazy val containerNumberRoute: String = routes.ContainerNumberController.onPageLoad(mrn, eventIndex, containerIndex, NormalMode).url
   private lazy val containerNumberTemplate      = "events/transhipments/containerNumber.njk"
 

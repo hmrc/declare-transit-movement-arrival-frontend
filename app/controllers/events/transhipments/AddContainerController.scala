@@ -24,13 +24,13 @@ import models.{Mode, MovementReferenceNumber}
 import navigation.Navigator
 import pages.events.transhipments.AddContainerPage
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
-import utils.AddContainerHelper
+import viewModels.AddContainerViewModel
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -65,22 +65,14 @@ class AddContainerController @Inject()(
         case Some(value) => form.fill(value)
       }
 
-      val containerCount     = request.userAnswers.get(DeriveNumberOfContainers(eventIndex)).getOrElse(0)
-      val addContainerHelper = AddContainerHelper(request.userAnswers)
-      val containers: Option[Section] = request.userAnswers
-        .get(DeriveNumberOfContainers(eventIndex))
-        .map(List.range(0, _))
-        .map(_.flatMap(addContainerHelper.containerRow(eventIndex, _)))
-        .map(Section.apply)
-
       val json = Json.obj(
-        "form"       -> preparedForm,
-        "mode"       -> mode,
-        "mrn"        -> mrn,
-        "radios"     -> Radios.yesNo(preparedForm("value")),
-        "pageTitle"  -> getPageTitle(containerCount),
-        "containers" -> containers
-      )
+        "form"   -> preparedForm,
+        "mode"   -> mode,
+        "mrn"    -> mrn,
+        "radios" -> Radios.yesNo(preparedForm("value"))
+      ) ++ Json.toJsObject {
+        AddContainerViewModel(eventIndex, request.userAnswers)
+      }
 
       renderer.render("events/transhipments/addContainer.njk", json).map(Ok(_))
   }
