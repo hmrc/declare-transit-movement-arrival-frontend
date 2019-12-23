@@ -29,8 +29,7 @@ import org.scalacheck.Gen
 
 trait DomainModelGenerators extends Generators {
 
-  private val maxNumberOfSeals         = 99
-  private val maxNumberOfEnRouteEvents = 9 // TODO: Move to model Contant
+  private val maxNumberOfSeals = 99
 
   implicit lazy val arbitraryProcedureType: Arbitrary[ProcedureType] =
     Arbitrary {
@@ -163,7 +162,7 @@ trait DomainModelGenerators extends Generators {
         subPlace           <- Gen.option(stringsWithMaxLength(NormalNotification.Constants.customsSubPlaceLength))
         trader             <- arbitrary[Trader]
         presentationOffice <- stringsWithMaxLength(NormalNotification.Constants.presentationOfficeLength)
-        events             <- Gen.option(listWithMaxLength[EnRouteEvent](maxNumberOfEnRouteEvents))
+        events             <- Gen.option(listWithMaxLength[EnRouteEvent](NormalNotification.Constants.maxNumberOfEnRouteEvents))
       } yield NormalNotification(mrn, place, date, subPlace, trader, presentationOffice, events)
     }
 
@@ -177,7 +176,7 @@ trait DomainModelGenerators extends Generators {
         approvedLocation   <- Gen.option(stringsWithMaxLength(SimplifiedNotification.Constants.approvedLocationLength))
         trader             <- arbitrary[Trader]
         presentationOffice <- stringsWithMaxLength(SimplifiedNotification.Constants.presentationOfficeLength)
-        events             <- Gen.option(listWithMaxLength[EnRouteEvent](maxNumberOfEnRouteEvents))
+        events             <- Gen.option(listWithMaxLength[EnRouteEvent](NormalNotification.Constants.maxNumberOfEnRouteEvents))
       } yield SimplifiedNotification(mrn, place, date, approvedLocation, trader, presentationOffice, events)
     }
 
