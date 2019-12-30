@@ -55,11 +55,11 @@ class CheckEventAnswersController @Inject()(override val messagesApi: MessagesAp
       Future.successful(Redirect(controllers.events.routes.AddEventController.onPageLoad(mrn, NormalMode)))
   }
 
-  private def completeSections(userAnswers: UserAnswers, index: Int)(implicit messages: Messages): Seq[Section] = {
+  private def completeSections(userAnswers: UserAnswers, index: Int): Seq[Section] = {
     val helper = new CheckYourAnswersHelper(userAnswers)
     Seq(
-      Section(messages("checkEventAnswers.section.events"), eventsSection(helper, index)),
-      Section(messages("checkEventAnswers.section.vehicleOrContainer"), isTranshipmentSection(helper, index))
+      Section(msg"checkEventAnswers.section.events", eventsSection(helper, index)),
+      Section(msg"checkEventAnswers.section.vehicleOrContainer", isTranshipmentSection(helper, index))
     )
   }
 

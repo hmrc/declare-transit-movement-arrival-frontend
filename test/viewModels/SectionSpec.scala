@@ -23,37 +23,46 @@ import uk.gov.hmrc.viewmodels.SummaryList.Action
 import uk.gov.hmrc.viewmodels.SummaryList.Key
 import uk.gov.hmrc.viewmodels.SummaryList.Row
 import uk.gov.hmrc.viewmodels.SummaryList.Value
-import uk.gov.hmrc.viewmodels.Text
+import uk.gov.hmrc.viewmodels.{NunjucksSupport, Text}
 
-class SectionSpec extends SpecBase {
+class SectionSpec extends SpecBase with NunjucksSupport {
 
   "Section" - {
     "must serialise to Json" in {
-      val key    = Key(Text.Literal("foo"))
-      val value  = Value(Text.Literal("bar"))
-      val action = Action(Text.Literal("baz"), "quux")
+      val key          = Key(lit"foo")
+      val value        = Value(lit"bar")
+      val action       = Action(lit"baz", "quux")
+      val sectionTitle = lit"Section title"
 
-      val row = Row(
-        key   = Key(Text.Literal("foo")),
-        value = Value(Text.Literal("bar")),
-        actions = List(
-          action
+      val expectedSection = Json.obj(
+        "sectionTitle" -> sectionTitle.resolve,
+        "rows" -> Json.arr(
+          Json.obj(
+            "key"   -> key,
+            "value" -> value,
+            "actions" -> Json.obj(
+              "items" -> Json.arr(
+                action
+              )
+            )
+          )
         )
       )
 
-      val rows = Json.arr(
-        Json.obj(
-          "key"   -> key,
-          "value" -> value,
-          "actions" -> Json.obj(
-            "items" -> Json.arr(
+      val section = Section(
+        sectionTitle = Some(sectionTitle),
+        rows = Seq(
+          Row(
+            key   = key,
+            value = value,
+            actions = List(
               action
             )
           )
-        ))
+        )
+      )
 
-      val section = Section(Some("Some title"), Seq(row))
-      Json.toJson(section) mustBe Json.obj("sectionTitle" -> "Some title", "rows" -> rows)
+      Json.toJson(section) mustBe expectedSection
     }
 
     "must serialise empty section" in {
