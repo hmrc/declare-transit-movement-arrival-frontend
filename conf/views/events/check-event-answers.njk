@@ -20,7 +20,10 @@
 
         {{ csrf() | safe }}
 
-        {% for section in sections %}
+
+        {{ sectionMacro(eventInfo.sectionTitle, eventInfo.rows) }}
+
+        {% for section in otherInfo %}
           {{ sectionMacro(section.sectionTitle, section.rows) }}
         {% endfor %}
 
