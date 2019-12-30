@@ -19,26 +19,41 @@ package views
 import base.SpecBase
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import org.scalatest.BeforeAndAfterAll
 import play.api.Configuration
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsObject, Json}
 import play.twirl.api.Html
 import renderer.Renderer
+import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-trait ViewSpecBase extends SpecBase {
-
-  private val renderer: Renderer = injector.instanceOf[Renderer]
+trait ViewSpecBase extends SpecBase with NunjucksSupport {
 
   private def asDocument(html: Html): Document = Jsoup.parse(html.toString())
 
   def renderDocument(template: String, json: JsObject = Json.obj()): Future[Document] = {
     implicit val fr = fakeRequest
 
-    renderer.render(template, json).map(asDocument)
+    val app = new GuiceApplicationBuilder()
+      .configure(Configuration("metrics.enabled" -> "false"))
+      .build()
+    val renderer: Renderer = app.injector.instanceOf[Renderer]
+
+    val x = renderer.render(template, json)
+
+    println("\n\n\n")
+    println(">" * 10)
+    println(s"In ViewSpecBase")
+    println(s"template $template")
+    println(s"json     $json")
+    println(s"html ${x.futureValue}")
+    println("<" * 10)
+    println("\n\n\n")
+
+//    app.stop()
+    x.map(asDocument)
   }
 
   def assertEqualsMessage(doc: Document, cssSelector: String, expectedMessageKey: String) =
