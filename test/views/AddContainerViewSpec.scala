@@ -16,36 +16,25 @@
 
 package views
 
-import generators.DomainModelGenerators
-import models.UserAnswers
-import models.domain.{Container, Transhipment}
+import generators.{DomainModelGenerators, ViewModelGenerators}
 import org.jsoup.nodes.Document
+import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import pages.events.transhipments.ContainerNumberPage
 import play.api.libs.json.Json
-import uk.gov.hmrc.viewmodels.SummaryList.Row
-import utils.AddContainerHelper
 import viewModels.Section
 
-class AddContainerViewSpec extends ViewSpecBase with DomainModelGenerators with ScalaCheckPropertyChecks {
+class AddContainerViewSpec extends ViewSpecBase with DomainModelGenerators with ViewModelGenerators with ScalaCheckPropertyChecks {
 
   "addContainer must display a rows for each " in {
-    forAll(listWithMaxLength[Container](Transhipment.Constants.maxContainers)) {
-      containers =>
-        val ua: UserAnswers = containers.zipWithIndex.foldLeft(emptyUserAnswers) {
-          case (userAnswers, (Container(number), index)) =>
-            userAnswers.set(ContainerNumberPage(eventIndex, index), number).success.value
-        }
-
-        // TODO: create an arbitrary Row to replace this logic. We don't need to generate
-        val rows: Seq[Row] = (0 to containers.length).flatMap(AddContainerHelper(ua).containerRow(eventIndex, _))
+    forAll(arbitrary[Section]) {
+      section =>
         val json = Json.obj(
-          "containers" -> Some(Section(rows))
+          "containers" -> Some(section)
         )
 
         val doc: Document = renderDocument("events/transhipments/addContainer.njk", json).futureValue
 
-        doc.getElementsByClass("govuk-summary-list__row").size() mustEqual containers.length
+        doc.getElementsByClass("govuk-summary-list__row").size() mustEqual section.rows.length
 
     }
   }

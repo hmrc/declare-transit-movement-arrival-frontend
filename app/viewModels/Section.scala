@@ -18,14 +18,14 @@ package viewModels
 
 import play.api.i18n.Messages
 import play.api.libs.json.{JsObject, Json, OWrites}
-import uk.gov.hmrc.viewmodels.SummaryList
+import uk.gov.hmrc.viewmodels.SummaryList.Row
 
-case class Section(sectionTitle: Option[String], rows: Seq[SummaryList.Row])
+case class Section(sectionTitle: Option[String], rows: Seq[Row])
 
 object Section {
-  def apply(sectionTitle: String, rows: Seq[SummaryList.Row]): Section = new Section(Some(sectionTitle), rows)
+  def apply(sectionTitle: String, rows: Seq[Row]): Section = new Section(Some(sectionTitle), rows)
 
-  def apply(rows: Seq[SummaryList.Row]): Section = new Section(None, rows)
+  def apply(rows: Seq[Row]): Section = new Section(None, rows)
 
   implicit def sectionWrites(implicit messages: Messages): OWrites[Section] = new OWrites[Section] {
     override def writes(o: Section): JsObject =
