@@ -16,45 +16,37 @@
 
 package views
 
-import forms.events.transhipments.AddContainerFormProvider
 import generators.DomainModelGenerators
-import models.{MovementReferenceNumber, NormalMode}
-import models.domain.Container
+import models.UserAnswers
+import models.domain.{Container, Transhipment}
 import org.jsoup.nodes.Document
-import org.scalacheck.Arbitrary.arbitrary
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.events.transhipments.ContainerNumberPage
-import play.api.data.Form
 import play.api.libs.json.Json
-import uk.gov.hmrc.viewmodels.Radios
+import uk.gov.hmrc.viewmodels.SummaryList.Row
 import utils.AddContainerHelper
 import viewModels.Section
 
-class AddContainerViewSpec extends ViewSpecBase with DomainModelGenerators {
+class AddContainerViewSpec extends ViewSpecBase with DomainModelGenerators with ScalaCheckPropertyChecks {
 
-  private val form = {
-    val fp = injector.instanceOf[AddContainerFormProvider]
-    fp()
-  }
+  "addContainer must display a rows for each " in {
+    forAll(listWithMaxLength[Container](Transhipment.Constants.maxContainers)) {
+      containers =>
+        val ua: UserAnswers = containers.zipWithIndex.foldLeft(emptyUserAnswers) {
+          case (userAnswers, (Container(number), index)) =>
+            userAnswers.set(ContainerNumberPage(eventIndex, index), number).success.value
+        }
 
-  "addContainer must have a section with rows" ignore {
-    val containterNumber = arbitrary[Container].sample.value.containerNumber
-    val mrn              = arbitrary[MovementReferenceNumber].sample.value
+        // TODO: create an arbitrary Row to replace this logic. We don't need to generate
+        val rows: Seq[Row] = (0 to containers.length).flatMap(AddContainerHelper(ua).containerRow(eventIndex, _))
+        val json = Json.obj(
+          "containers" -> Some(Section(rows))
+        )
 
-    val ua                                = emptyUserAnswers.set(ContainerNumberPage(eventIndex, containerIndex), containterNumber).success.value
-    val containerRow                      = AddContainerHelper(ua).containerRow(eventIndex, containerIndex).value
-    val containerSection: Option[Section] = Some(Section(Seq(containerRow)))
+        val doc: Document = renderDocument("events/transhipments/addContainer.njk", json).futureValue
 
-    val json = Json.obj(
-      "form"       -> form,
-      "mode"       -> NormalMode,
-      "mrn"        -> mrn,
-      "radios"     -> Radios.yesNo(form("value")),
-      "pageTitle"  -> "foo",
-      "containers" -> containerSection
-    )
+        doc.getElementsByClass("govuk-summary-list__row").size() mustEqual containers.length
 
-    val doc: Document = renderDocument("events/transhipments/addContainer.njk", json).futureValue
-
-    doc.getElementsByClass("govuk-summary-list__row").size() mustEqual 1
+    }
   }
 }

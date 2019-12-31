@@ -34,26 +34,14 @@ trait ViewSpecBase extends SpecBase with NunjucksSupport {
   private def asDocument(html: Html): Document = Jsoup.parse(html.toString())
 
   def renderDocument(template: String, json: JsObject = Json.obj()): Future[Document] = {
-    implicit val fr = fakeRequest
+    import play.api.test.CSRFTokenHelper._
 
-    val app = new GuiceApplicationBuilder()
-      .configure(Configuration("metrics.enabled" -> "false"))
-      .build()
-    val renderer: Renderer = app.injector.instanceOf[Renderer]
+    implicit val fr = fakeRequest.withCSRFToken
 
-    val x = renderer.render(template, json)
-
-    println("\n\n\n")
-    println(">" * 10)
-    println(s"In ViewSpecBase")
-    println(s"template $template")
-    println(s"json     $json")
-    println(s"html ${x.futureValue}")
-    println("<" * 10)
-    println("\n\n\n")
-
-//    app.stop()
-    x.map(asDocument)
+    injector
+      .instanceOf[Renderer]
+      .render(template, json)
+      .map(asDocument)
   }
 
   def assertEqualsMessage(doc: Document, cssSelector: String, expectedMessageKey: String) =
