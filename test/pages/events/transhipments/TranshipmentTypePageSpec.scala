@@ -16,8 +16,10 @@
 
 package pages.events.transhipments
 
-import models.TranshipmentType
+import models.{TranshipmentType, UserAnswers}
+import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
+import queries.ContainersQuery
 
 class TranshipmentTypePageSpec extends PageBehaviours {
 
@@ -30,5 +32,74 @@ class TranshipmentTypePageSpec extends PageBehaviours {
     beSettable[TranshipmentType](TranshipmentTypePage(index))
 
     beRemovable[TranshipmentType](TranshipmentTypePage(index))
+
+    "cleanup" - {
+      "must remove transport identity and nationality when there is an answer of Different Container" in {
+
+        forAll(arbitrary[UserAnswers], arbitrary[String]) {
+          (userAnswers, transportIdentity) =>
+            val result = userAnswers
+              .set(TransportIdentityPage(index), transportIdentity)
+              .success
+              .value
+              .set(TransportNationalityPage(index), transportIdentity)
+              .success
+              .value
+              .set(TranshipmentTypePage(index), TranshipmentType.DifferentContainer)
+              .success
+              .value
+
+            result.get(TransportIdentityPage(index)) must not be defined
+            result.get(TransportNationalityPage(index)) must not be defined
+        }
+      }
+
+      "must remove container numbers when there is an answer of Different Vehicle" in {
+
+        forAll(arbitrary[UserAnswers], arbitrary[String]) {
+          (userAnswers, containerNumber) =>
+            val result = userAnswers
+              .set(ContainerNumberPage(index, 0), containerNumber)
+              .success
+              .value
+              .set(ContainerNumberPage(index, 1), containerNumber)
+              .success
+              .value
+              .set(TranshipmentTypePage(index), TranshipmentType.DifferentVehicle)
+              .success
+              .value
+
+            result.get(ContainersQuery(index)) must not be defined
+        }
+      }
+
+      "must remove all transhipment data when there is no answer" in {
+
+        forAll(arbitrary[UserAnswers], arbitrary[String]) {
+          (userAnswers, stringAnswer) =>
+            val result = userAnswers
+              .set(TransportIdentityPage(index), stringAnswer)
+              .success
+              .value
+              .set(TransportNationalityPage(index), stringAnswer)
+              .success
+              .value
+              .set(ContainerNumberPage(index, 0), stringAnswer)
+              .success
+              .value
+              .set(ContainerNumberPage(index, 1), stringAnswer)
+              .success
+              .value
+              .remove(TranshipmentTypePage(index))
+              .success
+              .value
+
+            result.get(TransportIdentityPage(index)) must not be defined
+            result.get(TransportNationalityPage(index)) must not be defined
+            result.get(ContainerNumberPage(index, 0)) must not be defined
+            result.get(ContainerNumberPage(index, 1)) must not be defined
+        }
+      }
+    }
   }
 }
