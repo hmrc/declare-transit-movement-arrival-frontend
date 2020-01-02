@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package viewModels
 import base.SpecBase
 import generators.DomainModelGenerators
 import models.TranshipmentType
+import models.domain.Container
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.IncidentOnRoutePage
 import pages.events.transhipments.{ContainerNumberPage, TranshipmentTypePage, TransportIdentityPage, TransportNationalityPage}
@@ -147,13 +148,13 @@ class CheckEventAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChe
         .set(TranshipmentTypePage(eventIndex), TranshipmentType.DifferentContainer)
         .success
         .value
-        .set(ContainerNumberPage(eventIndex, 0), "value")
+        .set(ContainerNumberPage(eventIndex, 0), Container("value"))
         .success
         .value
-        .set(ContainerNumberPage(eventIndex, 1), "value")
+        .set(ContainerNumberPage(eventIndex, 1), Container("value"))
         .success
         .value
-        .set(ContainerNumberPage(eventIndex, 2), "value")
+        .set(ContainerNumberPage(eventIndex, 2), Container("value"))
         .success
         .value
 
@@ -192,13 +193,13 @@ class CheckEventAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChe
         .set(TranshipmentTypePage(eventIndex), TranshipmentType.DifferentContainerAndVehicle)
         .success
         .value
-        .set(ContainerNumberPage(eventIndex, 0), "value")
+        .set(ContainerNumberPage(eventIndex, 0), Container("value"))
         .success
         .value
-        .set(ContainerNumberPage(eventIndex, 1), "value")
+        .set(ContainerNumberPage(eventIndex, 1), Container("value"))
         .success
         .value
-        .set(ContainerNumberPage(eventIndex, 2), "value")
+        .set(ContainerNumberPage(eventIndex, 2), Container("value"))
         .success
         .value
         .set(TransportIdentityPage(eventIndex), "value")
