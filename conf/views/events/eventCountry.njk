@@ -1,7 +1,7 @@
 {% extends "includes/layout.njk" %}
 
 {% from "govuk/components/back-link/macro.njk"     import govukBackLink %}
-{% from "govuk/components/input/macro.njk"         import govukInput %}
+{% from "govuk/components/select/macro.njk"        import govukSelect %}
 {% from "govuk/components/button/macro.njk"        import govukButton %}
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 {% from "macros/title.njk"                         import title %}
@@ -31,8 +31,8 @@
 
           {{ csrf() | safe }}
 
-          {{ govukInput({
-            classes: "govuk-input--width-20",
+          {{ govukSelect({
+            classes: "govuk-input--width-20 autocomplete",
             label: {
               text: messages('eventCountry.title'),
               isPageHeading: true,
@@ -40,8 +40,26 @@
             },
             id: "value",
             name: "value",
-            value: form.value.value,
-            errorMessage: form.value.error
+            errorMessage: form.value.error,
+            items: [
+              {
+                value: "",
+                text: ""
+              },
+              {
+                value: "Fr",
+                text: "France",
+                selected: true
+              },
+              {
+                value: "De",
+                text: "Germany"
+              },
+              {
+                value: "It",
+                text: "Italy"
+              }
+            ]
           }) }}
 
           {{ govukButton({
@@ -54,5 +72,5 @@
       </div>
     </div>
   </div>
-
+  <script src="{{ routes.controllers.Assets.versioned("javascripts/accessible-autocomplete.js").url }}"></script>
 {% endblock %}
