@@ -16,19 +16,21 @@
 
 package pages.events.transhipments
 
+import generators.DomainModelGenerators
+import models.domain.Container
 import pages.behaviours.PageBehaviours
 
-class ContainerNumberPageSpec extends PageBehaviours {
+class ContainerNumberPageSpec extends PageBehaviours with DomainModelGenerators {
 
   val eventIndex     = 0
   val containerIndex = 0
 
   "ContainerNumberPage" - {
 
-    beRetrievable[String](ContainerNumberPage(eventIndex, containerIndex))
+    beRetrievable[Container](ContainerNumberPage(eventIndex, containerIndex))
 
-    beSettable[String](ContainerNumberPage(eventIndex, containerIndex))
+    beSettable[Container](ContainerNumberPage(eventIndex, containerIndex))
 
-    beRemovable[String](ContainerNumberPage(eventIndex, containerIndex))
+    beRemovable[Container](ContainerNumberPage(eventIndex, containerIndex))
   }
 }

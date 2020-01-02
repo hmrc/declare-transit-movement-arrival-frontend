@@ -16,14 +16,13 @@
 
 package pages.events.transhipments
 
-import gettables.ContainerGettable
+import models.domain.Container
 import pages.QuestionPage
 import pages.events.SectionConstants
 import play.api.libs.json.JsPath
 
-final case class ContainerNumberPage(eventIndex: Int, containerIndex: Int) extends QuestionPage[String] {
+final case class ContainerNumberPage(eventIndex: Int, containerIndex: Int) extends QuestionPage[Container] {
 
-  override def path: JsPath = ContainerGettable(eventIndex, containerIndex).path \ toString
+  override def path: JsPath = JsPath \ SectionConstants.events \ eventIndex \ SectionConstants.containers \ containerIndex
 
-  override def toString: String = "containerNumber"
 }

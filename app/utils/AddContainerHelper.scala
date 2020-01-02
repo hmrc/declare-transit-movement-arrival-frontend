@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,13 +23,12 @@ import pages.events.transhipments.ContainerNumberPage
 import uk.gov.hmrc.viewmodels.SummaryList.{Action, Key, Row, Value}
 import uk.gov.hmrc.viewmodels._
 import controllers.events.transhipments.routes.ContainerNumberController
-import gettables.ContainerGettable
 import models.domain.Container
 
 class AddContainerHelper(userAnswers: UserAnswers) {
 
   def containerRow(eventIndex: Int, containerIndex: Int): Option[Row] =
-    userAnswers.get(ContainerGettable(eventIndex, containerIndex)).map {
+    userAnswers.get(ContainerNumberPage(eventIndex, containerIndex)).map {
       case Container(answer) =>
         Row(
           key   = Key(msg"addContainer.containerList.label".withArgs(containerIndex + 1), classes = Seq("govuk-!-width-one-half")), // TODO: Move harded coded interpretation of index to an Index Model
@@ -37,7 +36,7 @@ class AddContainerHelper(userAnswers: UserAnswers) {
           actions = List(
             Action(
               content            = msg"site.edit",
-              href               = ContainerNumberController.onPageLoad(mrn, eventIndex, containerIndex, CheckMode).url,
+              href               = ContainerNumberController.onPageLoad(userAnswers.id, eventIndex, containerIndex, CheckMode).url,
               visuallyHiddenText = Some(msg"addContainer.containerList.change".withArgs(answer)) // TODO: Prefix in message file for is hard coded, should be the same as: site.edit.hidden
             ),
             Action(
@@ -48,8 +47,6 @@ class AddContainerHelper(userAnswers: UserAnswers) {
           )
         )
     }
-
-  private def mrn: MovementReferenceNumber = userAnswers.id
 }
 
 object AddContainerHelper {

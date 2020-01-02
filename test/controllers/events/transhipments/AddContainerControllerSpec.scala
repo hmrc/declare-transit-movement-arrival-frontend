@@ -60,7 +60,7 @@ class AddContainerControllerSpec extends SpecBase with MockitoSugar with Nunjuck
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val containterNumber = arbitrary[Container].sample.value.containerNumber
+      val containterNumber = arbitrary[Container].sample.value
       val ua               = emptyUserAnswers.set(ContainerNumberPage(eventIndex, containerIndex), containterNumber).success.value
 
       val application    = applicationBuilder(userAnswers = Some(ua)).build()

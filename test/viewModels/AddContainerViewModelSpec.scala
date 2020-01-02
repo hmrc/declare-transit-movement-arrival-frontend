@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ class AddContainerViewModelSpec extends SpecBase with ScalaCheckPropertyChecks w
       forAll(arbitrary[Seq[Container]]) {
         containers =>
           val userAnswers = containers.zipWithIndex.foldLeft(emptyUserAnswers) {
-            case (ua, (Container(container), containerIndex)) =>
+            case (ua, (container, containerIndex)) =>
               ua.set(ContainerNumberPage(eventIndex, containerIndex), container).success.value
           }
 
@@ -60,7 +60,7 @@ class AddContainerViewModelSpec extends SpecBase with ScalaCheckPropertyChecks w
       forAll(arbitrary[Seq[Container]]) {
         containers =>
           val userAnswers = containers.zipWithIndex.foldLeft(emptyUserAnswers) {
-            case (ua, (Container(container), containerIndex)) =>
+            case (ua, (container, containerIndex)) =>
               ua.set(ContainerNumberPage(eventIndex, containerIndex), container).success.value
           }
 
