@@ -30,6 +30,7 @@ import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
+import viewModels.AddContainerViewModel
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -65,12 +66,13 @@ class AddContainerController @Inject()(
       }
 
       val json = Json.obj(
-        "form"      -> preparedForm,
-        "mode"      -> mode,
-        "mrn"       -> mrn,
-        "pageTitle" -> getPageTitle(request.userAnswers.get(DeriveNumberOfContainers(eventIndex)).getOrElse(0)),
-        "radios"    -> Radios.yesNo(preparedForm("value"))
-      )
+        "form"   -> preparedForm,
+        "mode"   -> mode,
+        "mrn"    -> mrn,
+        "radios" -> Radios.yesNo(preparedForm("value"))
+      ) ++ Json.toJsObject {
+        AddContainerViewModel(eventIndex, request.userAnswers)
+      }
 
       renderer.render("events/transhipments/addContainer.njk", json).map(Ok(_))
   }

@@ -19,6 +19,7 @@ package controllers.events.transhipments
 import base.SpecBase
 import forms.events.transhipments.ContainerNumberFormProvider
 import matchers.JsonMatchers
+import models.domain.Container
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
@@ -45,7 +46,6 @@ class ContainerNumberControllerSpec extends SpecBase with MockitoSugar with Nunj
   private val formProvider       = new ContainerNumberFormProvider()
   private val form: Form[String] = formProvider()
 
-  private val containerIndex                    = 0
   private lazy val containerNumberRoute: String = routes.ContainerNumberController.onPageLoad(mrn, eventIndex, containerIndex, NormalMode).url
   private lazy val containerNumberTemplate      = "events/transhipments/containerNumber.njk"
 
@@ -84,7 +84,7 @@ class ContainerNumberControllerSpec extends SpecBase with MockitoSugar with Nunj
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers    = UserAnswers(mrn).set(ContainerNumberPage(eventIndex, containerIndex), "answer").success.value
+      val userAnswers    = UserAnswers(mrn).set(ContainerNumberPage(eventIndex, containerIndex), Container("answer")).success.value
       val application    = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request        = FakeRequest(GET, containerNumberRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
