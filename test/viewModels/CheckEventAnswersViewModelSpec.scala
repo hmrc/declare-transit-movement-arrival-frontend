@@ -27,6 +27,8 @@ import pages.events._
 import play.api.libs.json.{JsObject, Json}
 import uk.gov.hmrc.viewmodels.SummaryList.Row
 
+// format: off
+
 class CheckEventAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChecks with DomainModelGenerators {
   "must be able to deserialize to a JsObject" in {
     val vm = CheckEventAnswersViewModel(Section(Seq.empty[Row]), Seq(Section(Seq.empty[Row])))
@@ -37,24 +39,12 @@ class CheckEventAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChe
   "when event is an incident" - {
     "and hasn't been reported and did not move to different vehicle" in {
       val ua = emptyUserAnswers
-        .set(IncidentOnRoutePage, true)
-        .success
-        .value
-        .set(EventCountryPage(eventIndex), "value")
-        .success
-        .value
-        .set(EventPlacePage(eventIndex), "value")
-        .success
-        .value
-        .set(EventReportedPage(eventIndex), false)
-        .success
-        .value
-        .set(IsTranshipmentPage(eventIndex), false)
-        .success
-        .value
-        .set(IncidentInformationPage(eventIndex), "value")
-        .success
-        .value
+        .set(IncidentOnRoutePage, true).success.value
+        .set(EventCountryPage(eventIndex), "value").success.value
+        .set(EventPlacePage(eventIndex), "value").success.value
+        .set(EventReportedPage(eventIndex), false).success.value
+        .set(IsTranshipmentPage(eventIndex), false).success.value
+        .set(IncidentInformationPage(eventIndex), "value").success.value
 
       val vm = CheckEventAnswersViewModel(ua, eventIndex)
 
@@ -65,21 +55,11 @@ class CheckEventAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChe
 
     "and has been reported and did not move to different vehicle" in {
       val ua = emptyUserAnswers
-        .set(IncidentOnRoutePage, true)
-        .success
-        .value
-        .set(EventCountryPage(eventIndex), "value")
-        .success
-        .value
-        .set(EventPlacePage(eventIndex), "value")
-        .success
-        .value
-        .set(EventReportedPage(eventIndex), true)
-        .success
-        .value
-        .set(IsTranshipmentPage(eventIndex), false)
-        .success
-        .value
+        .set(IncidentOnRoutePage, true).success.value
+        .set(EventCountryPage(eventIndex), "value").success.value
+        .set(EventPlacePage(eventIndex), "value").success.value
+        .set(EventReportedPage(eventIndex), true).success.value
+        .set(IsTranshipmentPage(eventIndex), false).success.value
 
       val vm = CheckEventAnswersViewModel(ua, eventIndex)
 
@@ -92,33 +72,18 @@ class CheckEventAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChe
   "when event is a transhipment" - {
     "and the goods have moved to different vehicle" in {
       val ua = emptyUserAnswers
-        .set(IncidentOnRoutePage, true)
-        .success
-        .value
-        .set(EventCountryPage(eventIndex), "value")
-        .success
-        .value
-        .set(EventPlacePage(eventIndex), "value")
-        .success
-        .value
-        .set(EventReportedPage(eventIndex), false)
-        .success
-        .value
-        .set(IsTranshipmentPage(eventIndex), true)
-        .success
-        .value
-        .set(TranshipmentTypePage(eventIndex), TranshipmentType.DifferentVehicle)
-        .success
-        .value
-        .set(TransportIdentityPage(eventIndex), "value")
-        .success
-        .value
-        .set(TransportNationalityPage(eventIndex), "TT")
-        .success
-        .value
+        .set(IncidentOnRoutePage, true).success.value
+        .set(EventCountryPage(eventIndex), "value").success.value
+        .set(EventPlacePage(eventIndex), "value").success.value
+        .set(EventReportedPage(eventIndex), false).success.value
+        .set(IsTranshipmentPage(eventIndex), true).success.value
+        .set(TranshipmentTypePage(eventIndex), TranshipmentType.DifferentVehicle).success.value
+        .set(TransportIdentityPage(eventIndex), "value").success.value
+        .set(TransportNationalityPage(eventIndex), "TT").success.value
 
       val vm = CheckEventAnswersViewModel(ua, eventIndex)
 
+      println (s"\n\n${vm.eventInfo.rows}\n\n")
       vm.eventInfo.sectionTitle must not be defined
       vm.eventInfo.rows.length mustEqual 3
 
@@ -130,33 +95,15 @@ class CheckEventAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChe
 
     "and the goods have moved to different container" in {
       val ua = emptyUserAnswers
-        .set(IncidentOnRoutePage, true)
-        .success
-        .value
-        .set(EventCountryPage(eventIndex), "value")
-        .success
-        .value
-        .set(EventPlacePage(eventIndex), "value")
-        .success
-        .value
-        .set(EventReportedPage(eventIndex), false)
-        .success
-        .value
-        .set(IsTranshipmentPage(eventIndex), true)
-        .success
-        .value
-        .set(TranshipmentTypePage(eventIndex), TranshipmentType.DifferentContainer)
-        .success
-        .value
-        .set(ContainerNumberPage(eventIndex, 0), Container("value"))
-        .success
-        .value
-        .set(ContainerNumberPage(eventIndex, 1), Container("value"))
-        .success
-        .value
-        .set(ContainerNumberPage(eventIndex, 2), Container("value"))
-        .success
-        .value
+        .set(IncidentOnRoutePage, true).success.value
+        .set(EventCountryPage(eventIndex), "value").success.value
+        .set(EventPlacePage(eventIndex), "value").success.value
+        .set(EventReportedPage(eventIndex), false).success.value
+        .set(IsTranshipmentPage(eventIndex), true).success.value
+        .set(TranshipmentTypePage(eventIndex), TranshipmentType.DifferentContainer).success.value
+        .set(ContainerNumberPage(eventIndex, 0), Container("value")).success.value
+        .set(ContainerNumberPage(eventIndex, 1), Container("value")).success.value
+        .set(ContainerNumberPage(eventIndex, 2), Container("value")).success.value
 
       val vm = CheckEventAnswersViewModel(ua, eventIndex)
 
@@ -175,39 +122,17 @@ class CheckEventAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChe
 
     "and the goods have moved to both different containers and vehicles" in {
       val ua = emptyUserAnswers
-        .set(IncidentOnRoutePage, true)
-        .success
-        .value
-        .set(EventCountryPage(eventIndex), "value")
-        .success
-        .value
-        .set(EventPlacePage(eventIndex), "value")
-        .success
-        .value
-        .set(EventReportedPage(eventIndex), false)
-        .success
-        .value
-        .set(IsTranshipmentPage(eventIndex), true)
-        .success
-        .value
-        .set(TranshipmentTypePage(eventIndex), TranshipmentType.DifferentContainerAndVehicle)
-        .success
-        .value
-        .set(ContainerNumberPage(eventIndex, 0), Container("value"))
-        .success
-        .value
-        .set(ContainerNumberPage(eventIndex, 1), Container("value"))
-        .success
-        .value
-        .set(ContainerNumberPage(eventIndex, 2), Container("value"))
-        .success
-        .value
-        .set(TransportIdentityPage(eventIndex), "value")
-        .success
-        .value
-        .set(TransportNationalityPage(eventIndex), "TT")
-        .success
-        .value
+        .set(IncidentOnRoutePage, true).success.value
+        .set(EventCountryPage(eventIndex), "value").success.value
+        .set(EventPlacePage(eventIndex), "value").success.value
+        .set(EventReportedPage(eventIndex), false).success.value
+        .set(IsTranshipmentPage(eventIndex), true).success.value
+        .set(TranshipmentTypePage(eventIndex), TranshipmentType.DifferentContainerAndVehicle).success.value
+        .set(ContainerNumberPage(eventIndex, 0), Container("value")).success.value
+        .set(ContainerNumberPage(eventIndex, 1), Container("value")).success.value
+        .set(ContainerNumberPage(eventIndex, 2), Container("value")).success.value
+        .set(TransportIdentityPage(eventIndex), "value").success.value
+        .set(TransportNationalityPage(eventIndex), "TT").success.value
 
       val vm = CheckEventAnswersViewModel(ua, eventIndex)
 
@@ -229,3 +154,4 @@ class CheckEventAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChe
 
   }
 }
+// format: on
