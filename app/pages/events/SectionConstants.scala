@@ -14,32 +14,11 @@
  * limitations under the License.
  */
 
-package forms.events
+package pages.events
 
-import forms.behaviours.BooleanFieldBehaviours
-import play.api.data.FormError
+object SectionConstants {
 
-class AddEventFormProviderSpec extends BooleanFieldBehaviours {
+  val events     = "events"
+  val containers = "containers"
 
-  val requiredKey = "addEvent.error.required"
-  val invalidKey  = "error.boolean"
-
-  val form = new AddEventFormProvider()()
-
-  ".value" - {
-
-    val fieldName = "value"
-
-    behave like booleanField(
-      form,
-      fieldName,
-      invalidError = FormError(fieldName, invalidKey)
-    )
-
-    behave like mandatoryField(
-      form,
-      fieldName,
-      requiredError = FormError(fieldName, requiredKey)
-    )
-  }
 }

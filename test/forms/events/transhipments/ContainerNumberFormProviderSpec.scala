@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,13 +17,14 @@
 package forms.events.transhipments
 
 import forms.behaviours.StringFieldBehaviours
+import models.domain.Transhipment
 import play.api.data.FormError
 
 class ContainerNumberFormProviderSpec extends StringFieldBehaviours {
 
   val requiredKey = "containerNumber.error.required"
   val lengthKey   = "containerNumber.error.length"
-  val maxLength   = 100
+  val maxLength   = Transhipment.Constants.containerLength
 
   val form = new ContainerNumberFormProvider()()
 

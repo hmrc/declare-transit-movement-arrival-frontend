@@ -16,7 +16,7 @@
 
 package controllers.events
 
-import computable.DeriveNumberOfEvents
+import derivable.DeriveNumberOfEvents
 import controllers.actions._
 import forms.events.AddEventFormProvider
 import javax.inject.Inject

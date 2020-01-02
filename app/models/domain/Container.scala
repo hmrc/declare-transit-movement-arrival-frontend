@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package computable
+package models.domain
 
-import queries.Gettable
+import play.api.libs.json.{Json, OFormat}
 
-trait Derivable[A, B] extends Gettable[A] {
+case class Container(containerNumber: String)
 
-  val derive: A => B
-
+object Container {
+  implicit val formats: OFormat[Container] = Json.format[Container]
 }

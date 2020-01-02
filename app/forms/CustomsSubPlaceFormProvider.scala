@@ -19,12 +19,13 @@ package forms
 import forms.mappings.Mappings
 import javax.inject.Inject
 import play.api.data.Form
+import models.domain.messages.NormalNotification.Constants.customsSubPlaceLength
 
 class CustomsSubPlaceFormProvider @Inject() extends Mappings {
 
   def apply(): Form[String] =
     Form(
       "value" -> text("customsSubPlace.error.required")
-        .verifying(maxLength(17, "customsSubPlace.error.length"))
+        .verifying(maxLength(customsSubPlaceLength, "customsSubPlace.error.length"))
     )
 }

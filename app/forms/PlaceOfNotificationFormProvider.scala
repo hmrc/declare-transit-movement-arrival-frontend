@@ -19,12 +19,13 @@ package forms
 import forms.mappings.Mappings
 import javax.inject.Inject
 import play.api.data.Form
+import models.domain.messages.NormalNotification.Constants.notificationPlaceLength
 
 class PlaceOfNotificationFormProvider @Inject() extends Mappings {
 
   def apply(): Form[String] =
     Form(
       "value" -> text("placeOfNotification.error.required")
-        .verifying(maxLength(35, "placeOfNotification.error.length"))
+        .verifying(maxLength(notificationPlaceLength, "placeOfNotification.error.length"))
     )
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,12 +21,14 @@ import pages.behaviours.PageBehaviours
 
 class TranshipmentTypePageSpec extends PageBehaviours {
 
+  val index = 0
+
   "TranshipmentTypePage" - {
 
-    beRetrievable[TranshipmentType](TranshipmentTypePage)
+    beRetrievable[TranshipmentType](TranshipmentTypePage(index))
 
-    beSettable[TranshipmentType](TranshipmentTypePage)
+    beSettable[TranshipmentType](TranshipmentTypePage(index))
 
-    beRemovable[TranshipmentType](TranshipmentTypePage)
+    beRemovable[TranshipmentType](TranshipmentTypePage(index))
   }
 }

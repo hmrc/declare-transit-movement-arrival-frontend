@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,7 +45,8 @@ class ContainerNumberControllerSpec extends SpecBase with MockitoSugar with Nunj
   private val formProvider       = new ContainerNumberFormProvider()
   private val form: Form[String] = formProvider()
 
-  private lazy val containerNumberRoute: String = routes.ContainerNumberController.onPageLoad(mrn, NormalMode).url
+  private val containerIndex                    = 0
+  private lazy val containerNumberRoute: String = routes.ContainerNumberController.onPageLoad(mrn, eventIndex, containerIndex, NormalMode).url
   private lazy val containerNumberTemplate      = "events/transhipments/containerNumber.njk"
 
   "ContainerNumber Controller" - {
@@ -83,7 +84,7 @@ class ContainerNumberControllerSpec extends SpecBase with MockitoSugar with Nunj
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers    = UserAnswers(mrn).set(ContainerNumberPage, "answer").success.value
+      val userAnswers    = UserAnswers(mrn).set(ContainerNumberPage(eventIndex, containerIndex), "answer").success.value
       val application    = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request        = FakeRequest(GET, containerNumberRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])

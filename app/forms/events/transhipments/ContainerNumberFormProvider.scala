@@ -18,6 +18,7 @@ package forms.events.transhipments
 
 import forms.mappings.Mappings
 import javax.inject.Inject
+import models.domain.Transhipment
 import play.api.data.Form
 
 class ContainerNumberFormProvider @Inject() extends Mappings {
@@ -25,6 +26,6 @@ class ContainerNumberFormProvider @Inject() extends Mappings {
   def apply(): Form[String] =
     Form(
       "value" -> text("containerNumber.error.required")
-        .verifying(maxLength(100, "containerNumber.error.length"))
+        .verifying(maxLength(Transhipment.Constants.containerLength, "containerNumber.error.length"))
     )
 }

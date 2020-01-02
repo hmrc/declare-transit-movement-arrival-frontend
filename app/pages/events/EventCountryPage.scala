@@ -21,7 +21,7 @@ import play.api.libs.json.JsPath
 
 final case class EventCountryPage(index: Int) extends QuestionPage[String] {
 
-  override def path: JsPath = JsPath \ RepeatingSectionConstants.events \ index \ toString
+  override def path: JsPath = JsPath \ SectionConstants.events \ index \ toString
 
   override def toString: String = "eventCountry"
 }

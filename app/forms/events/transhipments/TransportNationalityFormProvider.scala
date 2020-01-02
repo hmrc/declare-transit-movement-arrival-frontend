@@ -18,6 +18,7 @@ package forms.events.transhipments
 
 import forms.mappings.Mappings
 import javax.inject.Inject
+import models.domain.VehicularTranshipment
 import play.api.data.Form
 
 class TransportNationalityFormProvider @Inject() extends Mappings {
@@ -25,6 +26,6 @@ class TransportNationalityFormProvider @Inject() extends Mappings {
   def apply(): Form[String] =
     Form(
       "value" -> text("transportNationality.error.required")
-        .verifying(maxLength(35, "transportNationality.error.length"))
+        .verifying(maxLength(VehicularTranshipment.Constants.transportCountryLength, "transportNationality.error.length"))
     )
 }

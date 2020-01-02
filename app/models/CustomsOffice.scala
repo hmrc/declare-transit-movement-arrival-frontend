@@ -18,7 +18,7 @@ package models
 
 import play.api.libs.json.{Json, OFormat}
 
-case class CustomsOffice(id: String, name: String, roles: Seq[String])
+case class CustomsOffice(id: String, name: String, roles: Seq[String]) // TODO: move to reference data package
 
 object CustomsOffice {
   implicit val format: OFormat[CustomsOffice] = Json.format[CustomsOffice]

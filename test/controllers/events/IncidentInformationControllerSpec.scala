@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,7 +49,7 @@ class IncidentInformationControllerSpec extends SpecBase with MockitoSugar with 
   val formProvider = new IncidentInformationFormProvider()
   val form         = formProvider()
 
-  lazy val incidentInformationRoute = routes.IncidentInformationController.onPageLoad(mrn, index, NormalMode).url
+  lazy val incidentInformationRoute = routes.IncidentInformationController.onPageLoad(mrn, eventIndex, NormalMode).url
 
   "IncidentInformation Controller" - {
 
@@ -86,7 +86,7 @@ class IncidentInformationControllerSpec extends SpecBase with MockitoSugar with 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers    = UserAnswers(mrn).set(IncidentInformationPage(index), "answer").success.value
+      val userAnswers    = UserAnswers(mrn).set(IncidentInformationPage(eventIndex), "answer").success.value
       val application    = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request        = FakeRequest(GET, incidentInformationRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])

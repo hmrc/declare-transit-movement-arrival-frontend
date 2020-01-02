@@ -14,10 +14,15 @@
  * limitations under the License.
  */
 
-package pages.events
+package queries
 
-object RepeatingSectionConstants {
+import models.domain.Container
+import pages.QuestionPage
+import pages.events.SectionConstants
+import play.api.libs.json.{JsObject, JsPath}
 
-  val events = "events"
+final case class ContainersQuery(eventIndex: Int) extends QuestionPage[Seq[Container]] {
+
+  override def path: JsPath = JsPath \ SectionConstants.events \ eventIndex \ SectionConstants.containers
 
 }

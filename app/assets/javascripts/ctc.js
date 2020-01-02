@@ -49,4 +49,14 @@ if (document.querySelector('.autocomplete') != null) {
     }, 2000)
 }
 
+// back link
+var backLink = document.querySelector('.govuk-back-link');
+if(backLink){
+    backLink.addEventListener('click', function(e){
+        e.preventDefault();
+        if (window.history && window.history.back && typeof window.history.back === 'function'){
+            window.history.back();
+        }
+    });
+}
 

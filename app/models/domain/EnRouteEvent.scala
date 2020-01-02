@@ -23,6 +23,12 @@ final case class EnRouteEvent(place: String, countryCode: String, alreadyInNcts:
 
 object EnRouteEvent {
 
+  object Constants {
+    val placeLength       = 35
+    val countryCodeLength = 2
+    val sealsLength       = 20
+  }
+
   implicit lazy val reads: Reads[EnRouteEvent] = {
 
     import play.api.libs.functional.syntax._

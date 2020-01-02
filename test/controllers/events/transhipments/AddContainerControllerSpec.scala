@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,7 +45,7 @@ class AddContainerControllerSpec extends SpecBase with MockitoSugar with Nunjuck
   private val formProvider        = new AddContainerFormProvider()
   private val form: Form[Boolean] = formProvider()
 
-  private lazy val addContainerRoute: String = routes.AddContainerController.onPageLoad(mrn, NormalMode).url
+  private lazy val addContainerRoute: String = routes.AddContainerController.onPageLoad(mrn, eventIndex, NormalMode).url
   private lazy val addContainerTemplate      = "events/transhipments/addContainer.njk"
 
   "AddContainer Controller" - {
@@ -84,7 +84,7 @@ class AddContainerControllerSpec extends SpecBase with MockitoSugar with Nunjuck
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers    = UserAnswers(mrn).set(AddContainerPage, true).success.value
+      val userAnswers    = UserAnswers(mrn).set(AddContainerPage(eventIndex), true).success.value
       val application    = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request        = FakeRequest(GET, addContainerRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])

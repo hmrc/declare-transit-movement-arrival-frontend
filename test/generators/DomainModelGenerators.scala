@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +29,8 @@ import org.scalacheck.Gen
 
 trait DomainModelGenerators extends Generators {
 
+  private val maxNumberOfSeals = 99
+
   implicit lazy val arbitraryProcedureType: Arbitrary[ProcedureType] =
     Arbitrary {
       Gen.oneOf(ProcedureType.Normal, ProcedureType.Simplified)
@@ -38,12 +40,12 @@ trait DomainModelGenerators extends Generators {
     Arbitrary {
 
       for {
-        eori            <- stringsWithMaxLength(17)
-        name            <- Gen.option(stringsWithMaxLength(35))
-        streetAndNumber <- Gen.option(stringsWithMaxLength(35))
-        postCode        <- Gen.option(stringsWithMaxLength(9))
-        city            <- Gen.option(stringsWithMaxLength(35))
-        countryCode     <- Gen.option(stringsWithMaxLength(2))
+        eori            <- stringsWithMaxLength(TraderWithEori.Constants.eoriLength)
+        name            <- Gen.option(stringsWithMaxLength(TraderWithEori.Constants.nameLength))
+        streetAndNumber <- Gen.option(stringsWithMaxLength(TraderWithEori.Constants.streetAndNumberLength))
+        postCode        <- Gen.option(stringsWithMaxLength(TraderWithEori.Constants.postCodeLength))
+        city            <- Gen.option(stringsWithMaxLength(TraderWithEori.Constants.cityLength))
+        countryCode     <- Gen.option(stringsWithMaxLength(TraderWithEori.Constants.countryCodeLength))
       } yield TraderWithEori(eori, name, streetAndNumber, postCode, city, countryCode)
     }
 
@@ -51,11 +53,11 @@ trait DomainModelGenerators extends Generators {
     Arbitrary {
 
       for {
-        name            <- stringsWithMaxLength(35)
-        streetAndNumber <- stringsWithMaxLength(35)
-        postCode        <- stringsWithMaxLength(9)
-        city            <- stringsWithMaxLength(35)
-        countryCode     <- stringsWithMaxLength(2)
+        name            <- stringsWithMaxLength(TraderWithoutEori.Constants.nameLength)
+        streetAndNumber <- stringsWithMaxLength(TraderWithoutEori.Constants.streetAndNumberLength)
+        postCode        <- stringsWithMaxLength(TraderWithoutEori.Constants.postCodeLength)
+        city            <- stringsWithMaxLength(TraderWithoutEori.Constants.cityLength)
+        countryCode     <- stringsWithMaxLength(TraderWithoutEori.Constants.countryCodeLength)
       } yield TraderWithoutEori(name, streetAndNumber, postCode, city, countryCode)
     }
 
@@ -64,14 +66,17 @@ trait DomainModelGenerators extends Generators {
       Gen.oneOf(arbitrary[TraderWithEori], arbitrary[TraderWithoutEori])
     }
 
+  private val localDateGen: Gen[LocalDate] =
+    datesBetween(LocalDate.of(1900, 1, 1), LocalDate.now)
+
   implicit lazy val arbitraryEndorsement: Arbitrary[Endorsement] =
     Arbitrary {
 
       for {
-        date      <- Gen.option(datesBetween(LocalDate.of(1900, 1, 1), LocalDate.now))
-        authority <- Gen.option(stringsWithMaxLength(35))
-        place     <- Gen.option(stringsWithMaxLength(35))
-        country   <- Gen.option(stringsWithMaxLength(2))
+        date      <- Gen.option(localDateGen)
+        authority <- Gen.option(stringsWithMaxLength(Endorsement.Constants.authorityLength))
+        place     <- Gen.option(stringsWithMaxLength(Endorsement.Constants.placeLength))
+        country   <- Gen.option(stringsWithMaxLength(Endorsement.Constants.countryLength))
       } yield Endorsement(date, authority, place, country)
     }
 
@@ -79,7 +84,7 @@ trait DomainModelGenerators extends Generators {
     Arbitrary {
 
       for {
-        information <- Gen.option(stringsWithMaxLength(350))
+        information <- Gen.option(stringsWithMaxLength(Incident.Constants.informationLength))
         endorsement <- arbitrary[Endorsement]
       } yield Incident(information, endorsement)
     }
@@ -88,21 +93,26 @@ trait DomainModelGenerators extends Generators {
     Arbitrary {
 
       for {
-        transportIdentity  <- stringsWithMaxLength(27)
-        transportCountry   <- stringsWithMaxLength(2)
-        endorsement        <- arbitrary[Endorsement]
-        numberOfContainers <- Gen.choose[Int](1, 99)
-        containers         <- Gen.option(Gen.listOfN(numberOfContainers, stringsWithMaxLength(17)))
+
+        transportIdentity <- stringsWithMaxLength(VehicularTranshipment.Constants.transportIdentityLength)
+        transportCountry  <- stringsWithMaxLength(VehicularTranshipment.Constants.transportCountryLength)
+        endorsement       <- arbitrary[Endorsement]
+        containers        <- Gen.option(listWithMaxLength[Container](Transhipment.Constants.maxContainers))
       } yield VehicularTranshipment(transportIdentity, transportCountry, endorsement, containers)
+    }
+
+  implicit lazy val arbitraryContainer: Arbitrary[Container] =
+    Arbitrary {
+      for {
+        container <- stringsWithMaxLength(Transhipment.Constants.containerLength).suchThat(_.length > 0)
+      } yield Container(container)
     }
 
   implicit lazy val arbitraryContainerTranshipment: Arbitrary[ContainerTranshipment] =
     Arbitrary {
-
       for {
-        endorsement        <- arbitrary[Endorsement]
-        numberOfContainers <- Gen.choose[Int](1, 99)
-        containers         <- Gen.listOfN(numberOfContainers, stringsWithMaxLength(17))
+        endorsement <- arbitrary[Endorsement]
+        containers  <- listWithMaxLength[Container](Transhipment.Constants.maxContainers)
       } yield ContainerTranshipment(endorsement, containers)
     }
 
@@ -126,12 +136,11 @@ trait DomainModelGenerators extends Generators {
     Arbitrary {
 
       for {
-        place         <- stringsWithMaxLength(35)
-        countryCode   <- stringsWithMaxLength(2)
+        place         <- stringsWithMaxLength(EnRouteEvent.Constants.placeLength)
+        countryCode   <- stringsWithMaxLength(EnRouteEvent.Constants.countryCodeLength)
         alreadyInNcts <- arbitrary[Boolean]
         eventDetails  <- arbitrary[EventDetails]
-        numberOfSeals <- Gen.choose[Int](0, 99)
-        seals         <- Gen.option(Gen.listOfN(numberOfSeals, stringsWithMaxLength(20)))
+        seals         <- Gen.option(listWithMaxLength(maxNumberOfSeals)(Arbitrary(stringsWithMaxLength(EnRouteEvent.Constants.sealsLength))))
       } yield {
 
         val removeEmptySealsList = seals match {
@@ -148,12 +157,12 @@ trait DomainModelGenerators extends Generators {
 
       for {
         mrn                <- arbitrary[MovementReferenceNumber].map(_.toString())
-        place              <- stringsWithMaxLength(35)
-        date               <- datesBetween(LocalDate.of(1900, 1, 1), LocalDate.now)
-        subPlace           <- Gen.option(stringsWithMaxLength(17))
+        place              <- stringsWithMaxLength(NormalNotification.Constants.notificationPlaceLength)
+        date               <- localDateGen
+        subPlace           <- Gen.option(stringsWithMaxLength(NormalNotification.Constants.customsSubPlaceLength))
         trader             <- arbitrary[Trader]
-        presentationOffice <- stringsWithMaxLength(8)
-        events             <- Gen.option(seqWithMaxLength[EnRouteEvent](9))
+        presentationOffice <- stringsWithMaxLength(NormalNotification.Constants.presentationOfficeLength)
+        events             <- Gen.option(listWithMaxLength[EnRouteEvent](NormalNotification.Constants.maxNumberOfEnRouteEvents))
       } yield NormalNotification(mrn, place, date, subPlace, trader, presentationOffice, events)
     }
 
@@ -162,12 +171,12 @@ trait DomainModelGenerators extends Generators {
 
       for {
         mrn                <- arbitrary[MovementReferenceNumber].map(_.toString)
-        place              <- stringsWithMaxLength(35)
-        date               <- datesBetween(LocalDate.of(1900, 1, 1), LocalDate.now)
-        approvedLocation   <- Gen.option(stringsWithMaxLength(17))
+        place              <- stringsWithMaxLength(SimplifiedNotification.Constants.notificationPlaceLength)
+        date               <- localDateGen
+        approvedLocation   <- Gen.option(stringsWithMaxLength(SimplifiedNotification.Constants.approvedLocationLength))
         trader             <- arbitrary[Trader]
-        presentationOffice <- stringsWithMaxLength(8)
-        events             <- Gen.option(seqWithMaxLength[EnRouteEvent](9))
+        presentationOffice <- stringsWithMaxLength(SimplifiedNotification.Constants.presentationOfficeLength)
+        events             <- Gen.option(listWithMaxLength[EnRouteEvent](NormalNotification.Constants.maxNumberOfEnRouteEvents))
       } yield SimplifiedNotification(mrn, place, date, approvedLocation, trader, presentationOffice, events)
     }
 
@@ -179,11 +188,11 @@ trait DomainModelGenerators extends Generators {
 
   lazy val generatorTraderWithEoriAllValues: Gen[TraderWithEori] =
     for {
-      eori            <- stringsWithMaxLength(17)
-      name            <- stringsWithMaxLength(35)
-      streetAndNumber <- stringsWithMaxLength(35)
-      postCode        <- stringsWithMaxLength(9)
-      city            <- stringsWithMaxLength(35)
+      eori            <- stringsWithMaxLength(TraderWithEori.Constants.eoriLength)
+      name            <- stringsWithMaxLength(TraderWithEori.Constants.nameLength)
+      streetAndNumber <- stringsWithMaxLength(TraderWithEori.Constants.streetAndNumberLength)
+      postCode        <- stringsWithMaxLength(TraderWithEori.Constants.postCodeLength)
+      city            <- stringsWithMaxLength(TraderWithEori.Constants.cityLength)
     } yield TraderWithEori(eori, Some(name), Some(streetAndNumber), Some(postCode), Some(city), Some("GB"))
 
 }

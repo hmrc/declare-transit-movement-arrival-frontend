@@ -18,15 +18,14 @@ package forms.events.transhipments
 
 import forms.mappings.Mappings
 import javax.inject.Inject
+import models.domain.VehicularTranshipment
 import play.api.data.Form
 
 class TransportIdentityFormProvider @Inject() extends Mappings {
 
-  val maxLength = 35
-
   def apply(): Form[String] =
     Form(
       "value" -> text("transportIdentity.error.required")
-        .verifying(maxLength(maxLength, "transportIdentity.error.length"))
+        .verifying(maxLength(VehicularTranshipment.Constants.transportIdentityLength, "transportIdentity.error.length"))
     )
 }

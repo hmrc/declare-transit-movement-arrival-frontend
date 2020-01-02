@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,12 +20,15 @@ import pages.behaviours.PageBehaviours
 
 class ContainerNumberPageSpec extends PageBehaviours {
 
+  val eventIndex     = 0
+  val containerIndex = 0
+
   "ContainerNumberPage" - {
 
-    beRetrievable[String](ContainerNumberPage)
+    beRetrievable[String](ContainerNumberPage(eventIndex, containerIndex))
 
-    beSettable[String](ContainerNumberPage)
+    beSettable[String](ContainerNumberPage(eventIndex, containerIndex))
 
-    beRemovable[String](ContainerNumberPage)
+    beRemovable[String](ContainerNumberPage(eventIndex, containerIndex))
   }
 }

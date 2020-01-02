@@ -14,32 +14,14 @@
  * limitations under the License.
  */
 
-package forms.events
+package derivable
+import pages.events.SectionConstants
+import play.api.libs.json.{JsObject, JsPath}
+import queries.EventsQuery
 
-import forms.behaviours.BooleanFieldBehaviours
-import play.api.data.FormError
+final case class DeriveNumberOfContainers(eventIndex: Int) extends Derivable[List[JsObject], Int] {
 
-class AddEventFormProviderSpec extends BooleanFieldBehaviours {
+  override val derive: List[JsObject] => Int = _.size
 
-  val requiredKey = "addEvent.error.required"
-  val invalidKey  = "error.boolean"
-
-  val form = new AddEventFormProvider()()
-
-  ".value" - {
-
-    val fieldName = "value"
-
-    behave like booleanField(
-      form,
-      fieldName,
-      invalidError = FormError(fieldName, invalidKey)
-    )
-
-    behave like mandatoryField(
-      form,
-      fieldName,
-      requiredError = FormError(fieldName, requiredKey)
-    )
-  }
+  override def path: JsPath = JsPath \ SectionConstants.events \ eventIndex \ SectionConstants.containers
 }

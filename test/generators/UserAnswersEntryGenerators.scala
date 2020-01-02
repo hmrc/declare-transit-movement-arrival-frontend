@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,42 +33,42 @@ import play.api.libs.json.Json
 trait UserAnswersEntryGenerators extends PageGenerators {
   self: Generators =>
 
-  implicit lazy val arbitraryAddContainerUserAnswersEntry: Arbitrary[(AddContainerPage.type, JsValue)] =
+  implicit lazy val arbitraryAddContainerUserAnswersEntry: Arbitrary[(AddContainerPage, JsValue)] =
     Arbitrary {
       for {
-        page  <- arbitrary[AddContainerPage.type]
+        page  <- arbitrary[AddContainerPage]
         value <- arbitrary[Boolean].map(Json.toJson(_))
       } yield (page, value)
     }
 
-  implicit lazy val arbitraryContainerNumberUserAnswersEntry: Arbitrary[(ContainerNumberPage.type, JsValue)] =
+  implicit lazy val arbitraryContainerNumberUserAnswersEntry: Arbitrary[(ContainerNumberPage, JsValue)] =
     Arbitrary {
       for {
-        page  <- arbitrary[ContainerNumberPage.type]
+        page  <- arbitrary[ContainerNumberPage]
         value <- arbitrary[String].suchThat(_.nonEmpty).map(Json.toJson(_))
       } yield (page, value)
     }
 
-  implicit lazy val arbitraryTransportNationalityUserAnswersEntry: Arbitrary[(TransportNationalityPage.type, JsValue)] =
+  implicit lazy val arbitraryTransportNationalityUserAnswersEntry: Arbitrary[(TransportNationalityPage, JsValue)] =
     Arbitrary {
       for {
-        page  <- arbitrary[TransportNationalityPage.type]
+        page  <- arbitrary[TransportNationalityPage]
         value <- arbitrary[String].suchThat(_.nonEmpty).map(Json.toJson(_))
       } yield (page, value)
     }
 
-  implicit lazy val arbitraryTransportIdentityUserAnswersEntry: Arbitrary[(TransportIdentityPage.type, JsValue)] =
+  implicit lazy val arbitraryTransportIdentityUserAnswersEntry: Arbitrary[(TransportIdentityPage, JsValue)] =
     Arbitrary {
       for {
-        page  <- arbitrary[TransportIdentityPage.type]
+        page  <- arbitrary[TransportIdentityPage]
         value <- arbitrary[String].suchThat(_.nonEmpty).map(Json.toJson(_))
       } yield (page, value)
     }
 
-  implicit lazy val arbitraryTranshipmentTypeUserAnswersEntry: Arbitrary[(TranshipmentTypePage.type, JsValue)] =
+  implicit lazy val arbitraryTranshipmentTypeUserAnswersEntry: Arbitrary[(TranshipmentTypePage, JsValue)] =
     Arbitrary {
       for {
-        page  <- arbitrary[TranshipmentTypePage.type]
+        page  <- arbitrary[TranshipmentTypePage]
         value <- arbitrary[TranshipmentType].map(Json.toJson(_))
       } yield (page, value)
     }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package computable
+package derivable
 
 import play.api.libs.json.{JsObject, JsPath}
 import queries.EventsQuery

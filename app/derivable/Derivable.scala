@@ -14,32 +14,12 @@
  * limitations under the License.
  */
 
-package forms.events
+package derivable
 
-import forms.behaviours.BooleanFieldBehaviours
-import play.api.data.FormError
+import queries.Gettable
 
-class AddEventFormProviderSpec extends BooleanFieldBehaviours {
+trait Derivable[A, B] extends Gettable[A] {
 
-  val requiredKey = "addEvent.error.required"
-  val invalidKey  = "error.boolean"
+  val derive: A => B
 
-  val form = new AddEventFormProvider()()
-
-  ".value" - {
-
-    val fieldName = "value"
-
-    behave like booleanField(
-      form,
-      fieldName,
-      invalidError = FormError(fieldName, invalidKey)
-    )
-
-    behave like mandatoryField(
-      form,
-      fieldName,
-      requiredError = FormError(fieldName, requiredKey)
-    )
-  }
 }
