@@ -29,7 +29,7 @@ import pages._
 class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generators with DomainModelGenerators {
 
   val navigator = app.injector.instanceOf[Navigator]
-
+//format: off
   "Navigator in Check mode" - {
     "must go from a page that doesn't exist in the edit route map  to Check Your Answers" in {
       case object UnknownPage extends Page
@@ -49,12 +49,8 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
             (answers, subPlace) =>
               val updatedAnswers =
                 answers
-                  .set(GoodsLocationPage, GoodsLocation.BorderForceOffice)
-                  .success
-                  .value
-                  .set(CustomsSubPlacePage, subPlace)
-                  .success
-                  .value
+                  .set(GoodsLocationPage, GoodsLocation.BorderForceOffice).success.value
+                  .set(CustomsSubPlacePage, subPlace).success.value
 
               navigator
                 .nextPage(GoodsLocationPage, CheckMode, updatedAnswers)
@@ -64,19 +60,13 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
       }
 
       "to Customs Sub Place" - {
-
         "when the user answers Border Force Office and had not answered Customs Sub Place" in {
-
           forAll(arbitrary[UserAnswers]) {
             answers =>
               val updatedAnswers =
                 answers
-                  .set(GoodsLocationPage, GoodsLocation.BorderForceOffice)
-                  .success
-                  .value
-                  .remove(CustomsSubPlacePage)
-                  .success
-                  .value
+                  .set(GoodsLocationPage, GoodsLocation.BorderForceOffice).success.value
+                  .remove(CustomsSubPlacePage).success.value
 
               navigator
                 .nextPage(GoodsLocationPage, CheckMode, updatedAnswers)
@@ -86,9 +76,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
       }
 
       "to Use Different Service" - {
-
         "when the user answers Authorised Consignee" in {
-
           forAll(arbitrary[UserAnswers]) {
             answers =>
               val updatedAnswers = answers.set(GoodsLocationPage, GoodsLocation.AuthorisedConsigneesLocation).success.value
@@ -119,7 +107,6 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
     "must go from EventReportedPage pages" - {
       "to check event answers when event reported is true" in {
-        // TODO: We need to force them down correct route since their answers may now be incomplete/inconsistent
         forAll(arbitrary[UserAnswers]) {
           answers =>
             val ua = answers.set(EventReportedPage(eventIndex), true).success.value
@@ -134,12 +121,8 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
         forAll(arbitrary[UserAnswers]) {
           answers =>
             val ua = answers
-              .set(EventReportedPage(eventIndex), false)
-              .success
-              .value
-              .set(IsTranshipmentPage(eventIndex), true)
-              .success
-              .value
+              .set(EventReportedPage(eventIndex), false).success.value
+              .set(IsTranshipmentPage(eventIndex), true).success.value
             navigator
               .nextPage(EventReportedPage(eventIndex), CheckMode, ua)
               .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, eventIndex))
@@ -151,27 +134,36 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
         forAll(arbitrary[UserAnswers]) {
           answers =>
             val ua = answers
-              .set(EventReportedPage(eventIndex), false)
-              .success
-              .value
-              .set(IsTranshipmentPage(eventIndex), false)
-              .success
-              .value
+              .set(EventReportedPage(eventIndex), false).success.value
+              .set(IsTranshipmentPage(eventIndex), false).success.value
             navigator
               .nextPage(EventReportedPage(eventIndex), CheckMode, ua)
               .mustBe(eventRoutes.IncidentInformationController.onPageLoad(ua.id, eventIndex, CheckMode))
         }
-
       }
     }
 
-    "must go from IsTranshipmentPage pages must go to check event answers" in {
-      // TODO: We need to force them down correct route since their answers may now be incomplete/inconsistent
-      forAll(arbitrary[UserAnswers]) {
-        answers =>
-          navigator
-            .nextPage(IsTranshipmentPage(eventIndex), CheckMode, answers)
-            .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(answers.id, eventIndex))
+    "must go from IsTranshipmentPage" - {
+      "to check event answers when false and EventReported is false" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            navigator
+              .nextPage(IsTranshipmentPage(eventIndex), CheckMode, answers)
+              .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(answers.id, eventIndex))
+        }
+      }
+
+      "to incident Information when false and ReportedEvent is false" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val ua = answers
+              .set(EventReportedPage(eventIndex), false).success.value
+              .set(IsTranshipmentPage(eventIndex), false).success.value
+
+            navigator
+              .nextPage(IsTranshipmentPage(eventIndex), CheckMode, ua)
+              .mustBe(eventRoutes.IncidentInformationController.onPageLoad(ua.id, eventIndex, CheckMode))
+        }
       }
     }
 
@@ -180,12 +172,8 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
         forAll(arbitrary[UserAnswers], arbitrary[String]) {
           (answers, placeOfNotification) =>
             val updatedUserAnswers = answers
-              .set(IsTraderAddressPlaceOfNotificationPage, false)
-              .success
-              .value
-              .set(PlaceOfNotificationPage, placeOfNotification)
-              .success
-              .value
+              .set(IsTraderAddressPlaceOfNotificationPage, false).success.value
+              .set(PlaceOfNotificationPage, placeOfNotification).success.value
 
             navigator
               .nextPage(IsTraderAddressPlaceOfNotificationPage, CheckMode, updatedUserAnswers)
@@ -219,3 +207,4 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
     }
   }
 }
+//format: on
