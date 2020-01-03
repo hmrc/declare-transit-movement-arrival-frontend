@@ -1,6 +1,6 @@
 // Language switcher
 .lang {
-  margin-top: -50px;
+  margin-top: -20px; // this should match the padding-top of .govuk-main-wrapper
 
   &::after {
     content: "";
@@ -9,7 +9,6 @@
   }
 
   ul {
-    display: inline-block;
     float: right;
     font-size: 0.8em;
     margin-top: 1em;
@@ -30,5 +29,10 @@
     [aria-current] {
       padding: 0.25em;
     }
+  }
+}
+@media (min-width: 40.0625em) {
+  .lang {
+    margin-top: -40px;
   }
 }
