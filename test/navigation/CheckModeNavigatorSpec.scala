@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,9 +31,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
   val navigator = app.injector.instanceOf[Navigator]
 
   "Navigator in Check mode" - {
-
     "must go from a page that doesn't exist in the edit route map  to Check Your Answers" in {
-
       case object UnknownPage extends Page
 
       forAll(arbitrary[UserAnswers]) {
@@ -45,11 +43,8 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
     }
 
     "must go from Goods Location" - {
-
       "to Check Your Answers" - {
-
         "when the user answers Border Force Office and they have already answered Customs Sub Place" in {
-
           forAll(arbitrary[UserAnswers], arbitrary[String]) {
             (answers, subPlace) =>
               val updatedAnswers =
@@ -122,13 +117,51 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
         }
     }
 
-    "must go from EventReportedPage pages must go to check event answers" in {
-      // TODO: We need to force them down correct route since their answers may now be incomplete/inconsistent
-      forAll(arbitrary[UserAnswers]) {
-        answers =>
-          navigator
-            .nextPage(EventReportedPage(eventIndex), CheckMode, answers)
-            .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(answers.id, eventIndex))
+    "must go from EventReportedPage pages" - {
+      "to check event answers when event reported is true" in {
+        // TODO: We need to force them down correct route since their answers may now be incomplete/inconsistent
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val ua = answers.set(EventReportedPage(eventIndex), true).success.value
+
+            navigator
+              .nextPage(EventReportedPage(eventIndex), CheckMode, ua)
+              .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, eventIndex))
+        }
+      }
+
+      "to check event answers when event reported is false and transhipment is true" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val ua = answers
+              .set(EventReportedPage(eventIndex), false)
+              .success
+              .value
+              .set(IsTranshipmentPage(eventIndex), true)
+              .success
+              .value
+            navigator
+              .nextPage(EventReportedPage(eventIndex), CheckMode, ua)
+              .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, eventIndex))
+        }
+
+      }
+
+      "to incident information when event reported is false and is not a transhipment" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val ua = answers
+              .set(EventReportedPage(eventIndex), false)
+              .success
+              .value
+              .set(IsTranshipmentPage(eventIndex), false)
+              .success
+              .value
+            navigator
+              .nextPage(EventReportedPage(eventIndex), CheckMode, ua)
+              .mustBe(eventRoutes.IncidentInformationController.onPageLoad(ua.id, eventIndex, CheckMode))
+        }
+
       }
     }
 
@@ -184,7 +217,5 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
             .mustBe(routes.CheckYourAnswersController.onPageLoad(updatedUserAnswers.id))
       }
     }
-
   }
-
 }

@@ -61,9 +61,30 @@ class Navigator @Inject()() {
     case GoodsLocationPage => goodsLocationCheckRoute
     case EventCountryPage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
     case EventPlacePage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
-    case EventReportedPage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
+    case EventReportedPage(index) => eventReportedCheckRoute(index)
     case IsTranshipmentPage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
     case IncidentInformationPage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
+  }
+
+  def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = mode match {
+    case NormalMode =>
+      normalRoutes.lift(page) match {
+        case None => routes.IndexController.onPageLoad()
+        case Some(call) =>
+          call(userAnswers) match {
+            case Some(onwardRoute) => onwardRoute
+            case None              => routes.SessionExpiredController.onPageLoad()
+          }
+      }
+    case CheckMode =>
+      checkRouteMap.lift(page) match {
+        case None => routes.CheckYourAnswersController.onPageLoad(userAnswers.id)
+        case Some(call) =>
+          call(userAnswers) match {
+            case Some(onwardRoute) => onwardRoute
+            case None              => routes.SessionExpiredController.onPageLoad()
+          }
+      }
   }
   // format: on
 
@@ -87,27 +108,6 @@ class Navigator @Inject()() {
         case None => transhipmentRoutes.ContainerNumberController.onPageLoad(ua.id, index, 0, NormalMode)
       }
     case DifferentVehicle => transhipmentRoutes.TransportIdentityController.onPageLoad(ua.id, index, NormalMode)
-  }
-
-  def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = mode match {
-    case NormalMode =>
-      normalRoutes.lift(page) match {
-        case None => routes.IndexController.onPageLoad()
-        case Some(call) =>
-          call(userAnswers) match {
-            case Some(onwardRoute) => onwardRoute
-            case None              => routes.SessionExpiredController.onPageLoad()
-          }
-      }
-    case CheckMode =>
-      checkRouteMap.lift(page) match {
-        case None => routes.CheckYourAnswersController.onPageLoad(userAnswers.id)
-        case Some(call) =>
-          call(userAnswers) match {
-            case Some(onwardRoute) => onwardRoute
-            case None              => routes.SessionExpiredController.onPageLoad()
-          }
-      }
   }
 
   private def goodsLocationPageRoutes(ua: UserAnswers): Option[Call] =
@@ -155,5 +155,11 @@ class Navigator @Inject()() {
       case (Some(true), None)        => Some(eventRoutes.EventCountryController.onPageLoad(ua.id, 0, NormalMode))
       case (Some(false), _)          => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
       case _                         => None
+    }
+
+  private def eventReportedCheckRoute(eventIndex: Int)(userAnswers: UserAnswers): Option[Call] =
+    (userAnswers.get(EventReportedPage(eventIndex)), userAnswers.get(IsTranshipmentPage(eventIndex))) match {
+      case (Some(false), Some(false)) => Some(eventRoutes.IncidentInformationController.onPageLoad(userAnswers.id, eventIndex, CheckMode))
+      case (_, _)                     => Some(eventRoutes.CheckEventAnswersController.onPageLoad(userAnswers.id, eventIndex))
     }
 }
