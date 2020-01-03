@@ -17,10 +17,10 @@
 package controllers
 
 import base.SpecBase
+import connectors.ReferenceDataConnector
 import forms.PresentationOfficeFormProvider
 import matchers.JsonMatchers
-import models.NormalMode
-import models.UserAnswers
+import models.{CustomsOffice, NormalMode, UserAnswers}
 import navigation.FakeNavigator
 import navigation.Navigator
 import org.mockito.ArgumentCaptor
@@ -46,7 +46,7 @@ import scala.concurrent.Future
 
 class PresentationOfficeControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
-  def onwardRoute = Call("GET", "/foo")
+  def onwardRoute: Call = Call("GET", "/foo")
 
   val formProvider       = new PresentationOfficeFormProvider()
   val form: Form[String] = formProvider("sub place")
@@ -109,7 +109,7 @@ class PresentationOfficeControllerSpec extends SpecBase with MockitoSugar with N
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers = UserAnswers(mrn)
-        .set(PresentationOfficePage, "answer")
+        .set(PresentationOfficePage, CustomsOffice("answer", "name", Seq.empty))
         .success
         .value
         .set(CustomsSubPlacePage, "subs placxe")
@@ -141,8 +141,11 @@ class PresentationOfficeControllerSpec extends SpecBase with MockitoSugar with N
     }
 
     "must redirect to the next page when valid data is submitted" in {
-
       val mockSessionRepository = mock[SessionRepository]
+      val mockRefDataConnector  = mock[ReferenceDataConnector]
+
+      when(mockRefDataConnector.getCustomsOffices()(any(), any()))
+        .thenReturn(Future.successful(Seq(CustomsOffice("id", "name", Seq.empty))))
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
@@ -151,13 +154,14 @@ class PresentationOfficeControllerSpec extends SpecBase with MockitoSugar with N
         applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[ReferenceDataConnector].toInstance(mockRefDataConnector)
           )
           .build()
 
       val request =
         FakeRequest(POST, presentationOfficeRoute)
-          .withFormUrlEncodedBody(("value", "answer"))
+          .withFormUrlEncodedBody(("value", "id"))
 
       val result = route(application, request).value
 
@@ -165,6 +169,35 @@ class PresentationOfficeControllerSpec extends SpecBase with MockitoSugar with N
       redirectLocation(result).value mustEqual onwardRoute.url
 
       application.stop()
+    }
+
+    "must return Bad Request and error when user entered data does not exist in reference data customs office list" in {
+
+      when(mockRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("")))
+
+      val mockRefDataConnector = mock[ReferenceDataConnector]
+
+      when(mockRefDataConnector.getCustomsOffices()(any(), any()))
+        .thenReturn(Future.successful(Seq(CustomsOffice("id", "name", Seq.empty))))
+
+      val userAnswers = emptyUserAnswers.set(CustomsSubPlacePage, "sub place").success.value
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[ReferenceDataConnector].toInstance(mockRefDataConnector)
+          )
+          .build()
+
+      val request =
+        FakeRequest(POST, presentationOfficeRoute)
+          .withFormUrlEncodedBody(("value", "abcd"))
+
+      val result = route(application, request).value
+
+      status(result) mustEqual BAD_REQUEST
+
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {

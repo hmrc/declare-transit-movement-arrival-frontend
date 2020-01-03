@@ -44,27 +44,7 @@
               text: messages('presentationOffice.hintText')
             },
             errorMessage: form.value.error,
-            items: [
-              {
-                value: "",
-                text: ""
-              },
-              {
-                value: "GB000060",
-                text: "Dover (GB000060)",
-                selected: false
-              },
-              {
-                value: "GB000061",
-                text: "Hawich (GB000061)",
-                selected: true
-              },
-              {
-                value: "GB000062",
-                text: "Southampton (GB000062)",
-                selected: false
-              }
-            ]
+            items: customsOffices
           }) }}
 
           {{ govukButton({
