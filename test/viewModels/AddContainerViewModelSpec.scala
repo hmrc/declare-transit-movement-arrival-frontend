@@ -22,11 +22,17 @@ import models.domain.Container
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.events.transhipments.ContainerNumberPage
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json}
 import uk.gov.hmrc.viewmodels.Text.Literal
 import uk.gov.hmrc.viewmodels._
 
 class AddContainerViewModelSpec extends SpecBase with ScalaCheckPropertyChecks with DomainModelGenerators {
+  "must be able to deserialize to a JsObject" in {
+    val vm = AddContainerViewModel(msg"Title", None)
+
+    Json.toJsObject(vm) mustBe a[JsObject]
+  }
+
   "pageTitle" - {
     "pageTitle defaults to 0 when there are no containers" in {
       val vm = AddContainerViewModel(eventIndex, emptyUserAnswers)

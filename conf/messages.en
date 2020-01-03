@@ -253,6 +253,12 @@ checkEventAnswers.title = Check event answers
 checkEventAnswers.heading = Check event answers
 checkEventAnswers.section.events = Events
 checkEventAnswers.section.vehicleOrContainer = Vehicle or container
+checkEventAnswers.section.title.differentContainer = Different container
+checkEventAnswers.section.title.differentVehicle = Different vehicle
+checkEventAnswers.section.title.differentContainerAndVehicle = Different container and vehicle
+checkEventAnswers.section.title.containerNumbers = Container numbers
+checkEventAnswers.section.title.vehicleInformation = Vehicle information
+
 
 isTraderAddressPlaceOfNotification.title = Is {0} the postcode of the place of notification?
 isTraderAddressPlaceOfNotification.heading = Is {0} the postcode of the place of notification?
