@@ -18,12 +18,12 @@ package viewModels
 
 import base.SpecBase
 import generators.DomainModelGenerators
-import models.TranshipmentType
+import models.TranshipmentType._
 import models.domain.Container
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.IncidentOnRoutePage
-import pages.events.transhipments.{ContainerNumberPage, TranshipmentTypePage, TransportIdentityPage, TransportNationalityPage}
 import pages.events._
+import pages.events.transhipments._
 import play.api.libs.json.{JsObject, Json}
 import uk.gov.hmrc.viewmodels.SummaryList.Row
 
@@ -70,20 +70,19 @@ class CheckEventAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChe
   }
 
   "when event is a transhipment" - {
-    "and the goods have moved to different vehicle" in {
+    "and the goods have moved to different vehicle and isTranshipment is true" in {
       val ua = emptyUserAnswers
         .set(IncidentOnRoutePage, true).success.value
         .set(EventCountryPage(eventIndex), "value").success.value
         .set(EventPlacePage(eventIndex), "value").success.value
         .set(EventReportedPage(eventIndex), false).success.value
         .set(IsTranshipmentPage(eventIndex), true).success.value
-        .set(TranshipmentTypePage(eventIndex), TranshipmentType.DifferentVehicle).success.value
+        .set(TranshipmentTypePage(eventIndex), DifferentVehicle).success.value
         .set(TransportIdentityPage(eventIndex), "value").success.value
         .set(TransportNationalityPage(eventIndex), "TT").success.value
 
       val vm = CheckEventAnswersViewModel(ua, eventIndex)
 
-      println (s"\n\n${vm.eventInfo.rows}\n\n")
       vm.eventInfo.sectionTitle must not be defined
       vm.eventInfo.rows.length mustEqual 3
 
@@ -100,7 +99,7 @@ class CheckEventAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChe
         .set(EventPlacePage(eventIndex), "value").success.value
         .set(EventReportedPage(eventIndex), false).success.value
         .set(IsTranshipmentPage(eventIndex), true).success.value
-        .set(TranshipmentTypePage(eventIndex), TranshipmentType.DifferentContainer).success.value
+        .set(TranshipmentTypePage(eventIndex), DifferentContainer).success.value
         .set(ContainerNumberPage(eventIndex, 0), Container("value")).success.value
         .set(ContainerNumberPage(eventIndex, 1), Container("value")).success.value
         .set(ContainerNumberPage(eventIndex, 2), Container("value")).success.value
@@ -117,7 +116,6 @@ class CheckEventAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChe
 
       vm.otherInfo(1).sectionTitle must be(defined)
       vm.otherInfo(1).rows.length mustEqual 3
-
     }
 
     "and the goods have moved to both different containers and vehicles" in {
@@ -127,7 +125,7 @@ class CheckEventAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChe
         .set(EventPlacePage(eventIndex), "value").success.value
         .set(EventReportedPage(eventIndex), false).success.value
         .set(IsTranshipmentPage(eventIndex), true).success.value
-        .set(TranshipmentTypePage(eventIndex), TranshipmentType.DifferentContainerAndVehicle).success.value
+        .set(TranshipmentTypePage(eventIndex), DifferentContainerAndVehicle).success.value
         .set(ContainerNumberPage(eventIndex, 0), Container("value")).success.value
         .set(ContainerNumberPage(eventIndex, 1), Container("value")).success.value
         .set(ContainerNumberPage(eventIndex, 2), Container("value")).success.value
@@ -149,9 +147,26 @@ class CheckEventAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChe
 
       vm.otherInfo(2).sectionTitle must be(defined)
       vm.otherInfo(2).rows.length mustEqual 2
+    }
+  }
+
+  "generate a view with no other info section" - {
+    "when TranshipmentTypePage is missing" in {
+      val ua = emptyUserAnswers
+        .set(IncidentOnRoutePage, true).success.value
+        .set(EventCountryPage(eventIndex), "value").success.value
+        .set(EventPlacePage(eventIndex), "value").success.value
+        .set(IsTranshipmentPage(eventIndex), true).success.value
+        .set(EventReportedPage(eventIndex), false).success.value
+
+      val vm = CheckEventAnswersViewModel(ua, eventIndex)
+
+      vm.eventInfo.sectionTitle must not be defined
+      vm.eventInfo.rows.length mustEqual 3
+
+      vm.otherInfo mustBe Seq.empty
 
     }
-
   }
 }
 // format: on

@@ -23,7 +23,7 @@ import pages.events.IsTranshipmentPage
 import pages.events.transhipments.TranshipmentTypePage
 import play.api.i18n.Messages
 import play.api.libs.json.{Json, OWrites}
-import uk.gov.hmrc.viewmodels.NunjucksSupport
+import uk.gov.hmrc.viewmodels.{NunjucksSupport, Text}
 import uk.gov.hmrc.viewmodels.SummaryList.Row
 import utils.{AddContainerHelper, CheckYourAnswersHelper}
 
@@ -31,31 +31,14 @@ case class CheckEventAnswersViewModel(eventInfo: Section, otherInfo: Seq[Section
 
 object CheckEventAnswersViewModel extends NunjucksSupport {
 
-  def eventInfo(helper: CheckYourAnswersHelper, hideTranshipment: Boolean, eventIndex: Int): Seq[Row] =
-    Seq(
-      helper.eventCountry(eventIndex),
-      helper.eventPlace(eventIndex),
-      helper.eventReported(eventIndex),
-      if (hideTranshipment) None else { helper.isTranshipment(eventIndex) },
-      helper.incidentInformation(eventIndex)
-    ).flatten
-
-  def differentVehicleSection(helper: CheckYourAnswersHelper, showTranshipment: Boolean, eventIndex: Int): Section = Section(
-    msg"checkEventAnswers.section.title.differentVehicle",
-    Seq(
-      if (showTranshipment) { helper.isTranshipment(eventIndex) } else None,
-      helper.transhipmentType(eventIndex),
-      helper.transportIdentity(eventIndex),
-      helper.transportNationality(eventIndex)
-    ).flatten
-  )
-
   def apply(userAnswers: UserAnswers, eventIndex: Int): CheckEventAnswersViewModel = {
     val helper = new CheckYourAnswersHelper(userAnswers)
 
-    def eventTypeSection(key: String): Seq[Section] =
+    val isTranshipment = userAnswers.get(IsTranshipmentPage(eventIndex)).getOrElse(false)
+
+    def eventTypeSection(sectionText: Text): Seq[Section] =
       Seq(
-        Some(Section(msg"$key", Seq(helper.isTranshipment(eventIndex), helper.transhipmentType(eventIndex)).flatten)),
+        Some(Section(sectionText, Seq(helper.isTranshipment(eventIndex), helper.transhipmentType(eventIndex)).flatten)),
         userAnswers
           .get(DeriveNumberOfContainers(eventIndex))
           .map(List.range(0, _))
@@ -63,32 +46,46 @@ object CheckEventAnswersViewModel extends NunjucksSupport {
           .map(Section.apply(msg"checkEventAnswers.section.title.containerNumbers", _))
       ).flatten
 
-    val showTranshipment = userAnswers.get(IsTranshipmentPage(eventIndex)).getOrElse(false)
+    val eventInfo: Seq[Row] =
+      Seq(
+        helper.eventCountry(eventIndex),
+        helper.eventPlace(eventIndex),
+        helper.eventReported(eventIndex),
+        if (isTranshipment) None else { helper.isTranshipment(eventIndex) },
+        helper.incidentInformation(eventIndex)
+      ).flatten
 
-    val otherInfoSections: Seq[Section] = if (userAnswers.get(IsTranshipmentPage(eventIndex)).contains(true)) {
+    val differentVehicleSection: Section = Section(
+      msg"checkEventAnswers.section.title.differentVehicle",
+      Seq(
+        if (isTranshipment) { helper.isTranshipment(eventIndex) } else None,
+        helper.transhipmentType(eventIndex),
+        helper.transportIdentity(eventIndex),
+        helper.transportNationality(eventIndex)
+      ).flatten
+    )
+
+    val otherInfoSections: Seq[Section] = {
       userAnswers
         .get(TranshipmentTypePage(eventIndex))
         .map {
-          case DifferentVehicle => Seq(differentVehicleSection(helper, showTranshipment, eventIndex))
-          case DifferentContainer => eventTypeSection("checkEventAnswers.section.title.differentContainer")
+          case DifferentVehicle   => Seq(differentVehicleSection)
+          case DifferentContainer => eventTypeSection(msg"checkEventAnswers.section.title.differentContainer")
           case DifferentContainerAndVehicle =>
-            eventTypeSection("checkEventAnswers.section.title.differentContainerAndVehicle") ++
-              Some(
-                Section(
-                  msg"checkEventAnswers.section.title.vehicleInformation",
-                  Seq(
-                    helper.transportIdentity(eventIndex),
-                    helper.transportNationality(eventIndex)
-                  ).flatten
-                ))
+            eventTypeSection(msg"checkEventAnswers.section.title.differentContainerAndVehicle") :+
+              Section(
+                msg"checkEventAnswers.section.title.vehicleInformation",
+                Seq(
+                  helper.transportIdentity(eventIndex),
+                  helper.transportNationality(eventIndex)
+                ).flatten
+              )
         }
         .getOrElse(Seq.empty)
-    } else {
-      Seq.empty
     }
 
     CheckEventAnswersViewModel(
-      Section(eventInfo(helper, showTranshipment, eventIndex)),
+      Section(eventInfo),
       otherInfoSections
     )
   }
