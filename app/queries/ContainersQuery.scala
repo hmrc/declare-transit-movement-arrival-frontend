@@ -21,7 +21,6 @@ import pages.QuestionPage
 import pages.events.SectionConstants
 import play.api.libs.json.{JsObject, JsPath}
 
-// TODO: This can be only a Gettable[Seq[Container]] with Settable[Seq[Container]]
 final case class ContainersQuery(eventIndex: Int) extends QuestionPage[Seq[Container]] {
 
   override def path: JsPath = JsPath \ SectionConstants.events \ eventIndex \ SectionConstants.containers
