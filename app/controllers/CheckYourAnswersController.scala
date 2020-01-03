@@ -70,16 +70,16 @@ class CheckYourAnswersController @Inject()(override val messagesApi: MessagesApi
         }
     }
 
-  private def createSections(userAnswers: UserAnswers)(implicit messages: Messages): Seq[Section] = {
+  private def createSections(userAnswers: UserAnswers): Seq[Section] = {
     val helper = new CheckYourAnswersHelper(userAnswers)
 
     val mrn = Section(Seq(helper.movementReferenceNumber))
     val goodsLocation =
-      Section(messages("checkYourAnswers.section.goodsLocation"), Seq(helper.goodsLocation, helper.authorisedLocation, helper.presentationOffice).flatten)
-    val traderDetails = Section(messages("checkYourAnswers.section.traderDetails"), Seq(helper.traderName, helper.traderAddress, helper.traderEori).flatten)
+      Section(msg"checkYourAnswers.section.goodsLocation", Seq(helper.goodsLocation, helper.authorisedLocation, helper.presentationOffice).flatten)
+    val traderDetails = Section(msg"checkYourAnswers.section.traderDetails", Seq(helper.traderName, helper.traderAddress, helper.traderEori).flatten)
     val notificationDetails =
-      Section(messages("checkYourAnswers.section.notificationDetails"), Seq(helper.isTraderAddressPlaceOfNotification, helper.placeOfNotification).flatten)
-    val events = Section(messages("checkYourAnswers.section.events"), eventList(userAnswers))
+      Section(msg"checkYourAnswers.section.notificationDetails", Seq(helper.isTraderAddressPlaceOfNotification, helper.placeOfNotification).flatten)
+    val events = Section(msg"checkYourAnswers.section.events", eventList(userAnswers))
 
     Seq(mrn, goodsLocation, traderDetails, notificationDetails, events)
   }
