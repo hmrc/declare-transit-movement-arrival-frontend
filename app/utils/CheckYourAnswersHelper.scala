@@ -313,7 +313,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
         answer =>
           Row(
             key   = Key(msg"presentationOffice.checkYourAnswersLabel".withArgs(subsPlace), classes = Seq("govuk-!-width-one-half")),
-            value = Value(lit"${answer.name}"),
+            value = Value(lit"${answer.name} (${answer.id})"),
             actions = List(
               Action(
                 content            = msg"site.edit",
