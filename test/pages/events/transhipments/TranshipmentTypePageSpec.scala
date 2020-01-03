@@ -16,12 +16,14 @@
 
 package pages.events.transhipments
 
+import generators.DomainModelGenerators
+import models.domain.Container
 import models.{TranshipmentType, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
 import queries.ContainersQuery
 
-class TranshipmentTypePageSpec extends PageBehaviours {
+class TranshipmentTypePageSpec extends PageBehaviours with DomainModelGenerators {
 
   val index = 0
 
@@ -56,7 +58,7 @@ class TranshipmentTypePageSpec extends PageBehaviours {
 
       "must remove container numbers when there is an answer of Different Vehicle" in {
 
-        forAll(arbitrary[UserAnswers], arbitrary[String]) {
+        forAll(arbitrary[UserAnswers], arbitrary[Container]) {
           (userAnswers, containerNumber) =>
             val result = userAnswers
               .set(ContainerNumberPage(index, 0), containerNumber)
@@ -75,8 +77,8 @@ class TranshipmentTypePageSpec extends PageBehaviours {
 
       "must remove all transhipment data when there is no answer" in {
 
-        forAll(arbitrary[UserAnswers], arbitrary[String]) {
-          (userAnswers, stringAnswer) =>
+        forAll(arbitrary[UserAnswers], arbitrary[String], arbitrary[Container]) {
+          (userAnswers, stringAnswer, container) =>
             val result = userAnswers
               .set(TransportIdentityPage(index), stringAnswer)
               .success
@@ -84,10 +86,10 @@ class TranshipmentTypePageSpec extends PageBehaviours {
               .set(TransportNationalityPage(index), stringAnswer)
               .success
               .value
-              .set(ContainerNumberPage(index, 0), stringAnswer)
+              .set(ContainerNumberPage(index, 0), container)
               .success
               .value
-              .set(ContainerNumberPage(index, 1), stringAnswer)
+              .set(ContainerNumberPage(index, 1), container)
               .success
               .value
               .remove(TranshipmentTypePage(index))
