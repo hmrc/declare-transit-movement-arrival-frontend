@@ -108,6 +108,9 @@ trait DomainModelGenerators extends Generators {
       } yield Container(container)
     }
 
+  implicit lazy val arbitraryContainers: Arbitrary[Seq[Container]] =
+    Arbitrary(listWithMaxLength[Container](Transhipment.Constants.maxContainers))
+
   implicit lazy val arbitraryContainerTranshipment: Arbitrary[ContainerTranshipment] =
     Arbitrary {
       for {

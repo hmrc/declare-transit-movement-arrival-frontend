@@ -25,7 +25,7 @@ import generators.{DomainModelGenerators, Generators}
 import models.TranshipmentType.{DifferentContainer, DifferentContainerAndVehicle, DifferentVehicle}
 import pages._
 import models._
-import models.domain.{EnRouteEvent, Incident}
+import models.domain.{Container, EnRouteEvent, Incident}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
@@ -423,7 +423,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
                 .set(TranshipmentTypePage(eventIndex), DifferentContainer)
                 .success
                 .value
-                .set(ContainerNumberPage(eventIndex, eventIndex), "1")
+                .set(ContainerNumberPage(eventIndex, eventIndex), Container("1"))
                 .success
                 .value
               navigator
@@ -480,7 +480,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
                 .set(TranshipmentTypePage(eventIndex), DifferentContainerAndVehicle)
                 .success
                 .value
-                .set(ContainerNumberPage(eventIndex, eventIndex), "number1")
+                .set(ContainerNumberPage(eventIndex, eventIndex), Container("number1"))
                 .success
                 .value
 
@@ -587,7 +587,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           val containerIndex = 0
           val maxLength      = 17
 
-          forAll(arbitrary[UserAnswers], stringsWithMaxLength(maxLength)) {
+          forAll(arbitrary[UserAnswers], arbitrary[Container]) {
             case (answers, container) =>
               val updatedAnswers = answers
                 .remove(EventsQuery)

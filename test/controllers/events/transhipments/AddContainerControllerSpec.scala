@@ -18,14 +18,17 @@ package controllers.events.transhipments
 
 import base.SpecBase
 import forms.events.transhipments.AddContainerFormProvider
+import generators.DomainModelGenerators
 import matchers.JsonMatchers
+import models.domain.Container
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
+import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.mockito.MockitoSugar
-import pages.events.transhipments.AddContainerPage
+import pages.events.transhipments.{AddContainerPage, ContainerNumberPage}
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
@@ -35,10 +38,12 @@ import play.api.test.Helpers._
 import play.twirl.api.Html
 import repositories.SessionRepository
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
+import utils.AddContainerHelper
+import viewModels.Section
 
 import scala.concurrent.Future
 
-class AddContainerControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class AddContainerControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers with DomainModelGenerators {
 
   def onwardRoute = Call("GET", "/foo")
 
@@ -55,7 +60,10 @@ class AddContainerControllerSpec extends SpecBase with MockitoSugar with Nunjuck
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application    = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val containterNumber = arbitrary[Container].sample.value
+      val ua               = emptyUserAnswers.set(ContainerNumberPage(eventIndex, containerIndex), containterNumber).success.value
+
+      val application    = applicationBuilder(userAnswers = Some(ua)).build()
       val request        = FakeRequest(GET, addContainerRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
@@ -67,10 +75,11 @@ class AddContainerControllerSpec extends SpecBase with MockitoSugar with Nunjuck
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form"   -> form,
-        "mode"   -> NormalMode,
-        "mrn"    -> mrn,
-        "radios" -> Radios.yesNo(form("value"))
+        "form"       -> form,
+        "mode"       -> NormalMode,
+        "mrn"        -> mrn,
+        "radios"     -> Radios.yesNo(form("value")),
+        "containers" -> Section(Seq(AddContainerHelper(ua).containerRow(eventIndex, containerIndex).value))
       )
 
       templateCaptor.getValue mustEqual addContainerTemplate

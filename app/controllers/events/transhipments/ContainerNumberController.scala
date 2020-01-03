@@ -19,6 +19,7 @@ package controllers.events.transhipments
 import controllers.actions._
 import forms.events.transhipments.ContainerNumberFormProvider
 import javax.inject.Inject
+import models.domain.Container
 import models.{Mode, MovementReferenceNumber}
 import navigation.Navigator
 import pages.events.transhipments.ContainerNumberPage
@@ -54,7 +55,7 @@ class ContainerNumberController @Inject()(
       implicit request =>
         val preparedForm = request.userAnswers.get(ContainerNumberPage(eventIndex, containerIndex)) match {
           case None        => form
-          case Some(value) => form.fill(value)
+          case Some(value) => form.fill(value.containerNumber)
         }
 
         val json = Json.obj(
@@ -84,7 +85,7 @@ class ContainerNumberController @Inject()(
             },
             value =>
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(ContainerNumberPage(eventIndex, containerIndex), value))
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(ContainerNumberPage(eventIndex, containerIndex), Container(value)))
                 _              <- sessionRepository.set(updatedAnswers)
               } yield Redirect(navigator.nextPage(ContainerNumberPage(eventIndex, containerIndex), mode, updatedAnswers))
           )
