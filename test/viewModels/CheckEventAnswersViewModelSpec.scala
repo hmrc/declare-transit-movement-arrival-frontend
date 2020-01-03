@@ -37,7 +37,7 @@ class CheckEventAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChe
   }
 
   "when event is an incident" - {
-    "and hasn't been reported and did not move to different vehicle" in {
+    "and hasn't been reported and did not move to different vehicle/container show the event info only" in {
       val ua = emptyUserAnswers
         .set(IncidentOnRoutePage, true).success.value
         .set(EventCountryPage(eventIndex), "value").success.value
@@ -53,7 +53,7 @@ class CheckEventAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChe
       vm.otherInfo must be(empty)
     }
 
-    "and has been reported and did not move to different vehicle" in {
+    "and has been reported and did not move to different vehicle/container show the event info only" in {
       val ua = emptyUserAnswers
         .set(IncidentOnRoutePage, true).success.value
         .set(EventCountryPage(eventIndex), "value").success.value
@@ -70,7 +70,7 @@ class CheckEventAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChe
   }
 
   "when event is a transhipment" - {
-    "and the goods have moved to different vehicle and isTranshipment is true" in {
+    "and the goods have moved to different vehicle display event info and vehicle info sections" in {
       val ua = emptyUserAnswers
         .set(IncidentOnRoutePage, true).success.value
         .set(EventCountryPage(eventIndex), "value").success.value
@@ -92,7 +92,7 @@ class CheckEventAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChe
       vm.otherInfo.head.rows.length mustEqual 4
     }
 
-    "and the goods have moved to different container" in {
+    "and the goods have moved to different container display event info and container info sections" in {
       val ua = emptyUserAnswers
         .set(IncidentOnRoutePage, true).success.value
         .set(EventCountryPage(eventIndex), "value").success.value
@@ -118,7 +118,7 @@ class CheckEventAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChe
       vm.otherInfo(1).rows.length mustEqual 3
     }
 
-    "and the goods have moved to both different containers and vehicles" in {
+    "and the goods have moved to both different containers and vehicles  display event info and vehicle and containers info sections" in {
       val ua = emptyUserAnswers
         .set(IncidentOnRoutePage, true).success.value
         .set(EventCountryPage(eventIndex), "value").success.value
