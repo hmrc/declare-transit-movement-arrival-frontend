@@ -1,4 +1,5 @@
 $govuk-assets-path: "/common-transit-convention-trader-arrival/assets/lib/govuk-frontend/govuk/assets/";
 
 @import "lib/govuk-frontend/govuk/all";
-@import "language-toggles.scss";
+@import "partials/language-toggles";
+@import "partials/shame";

@@ -25,7 +25,8 @@ GOVUKFrontend.initAll();
 
 if (document.querySelector('.autocomplete') != null) {
     accessibleAutocomplete.enhanceSelectElement({
-        selectElement: document.querySelector('.autocomplete')
+        selectElement: document.querySelector('.autocomplete'),
+        showAllValues: true
     });
 
     // =====================================================
@@ -34,12 +35,10 @@ if (document.querySelector('.autocomplete') != null) {
     // =====================================================
     setTimeout(function(){
         var originalSelect = document.querySelector('select.autocomplete');
-        if(originalSelect){
+        if(originalSelect && originalSelect.getAttribute('aria-describedby') > ""){
             var parentForm = upTo(originalSelect, 'form');
-            console.log(parentForm)
             if(parentForm){
                 var combo = parentForm.querySelector('[role="combobox"]');
-                console.log(combo)
                 if(combo){
                     combo.setAttribute('aria-describedby', originalSelect.getAttribute('aria-describedby') + ' ' + combo.getAttribute('aria-describedby'));
                 }
