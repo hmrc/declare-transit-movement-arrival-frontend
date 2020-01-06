@@ -82,18 +82,16 @@ class AddEventController @Inject()(override val messagesApi: MessagesApi,
     implicit request: DataRequest[AnyContent]): Future[Result] = {
 
     val numberOfEvents = request.userAnswers.get(DeriveNumberOfEvents).getOrElse(0)
-
-    val cyaHelper                = new AddEventsHelper(request.userAnswers)
-    val eventsRows: Seq[Row]     = (0 to numberOfEvents).flatMap(cyaHelper.listOfEvent) // TODO: Test rendering of this!
-    val pluralCondition: Boolean = numberOfEvents == 1
+    val cyaHelper            = new AddEventsHelper(request.userAnswers)
+    val eventsRows: Seq[Row] = (0 to numberOfEvents).flatMap(cyaHelper.listOfEvent) // TODO: Test rendering of this!
 
     val json = Json.obj(
       "form"        -> form,
       "mode"        -> mode,
       "mrn"         -> mrn,
       "radios"      -> Radios.yesNo(form("value")),
-      "titleOfPage" -> singularOrPluralWithArgs("addEvent.title", pluralCondition, numberOfEvents),
-      "heading"     -> singularOrPluralWithArgs("addEvent.heading", pluralCondition, numberOfEvents),
+      "titleOfPage" -> singularOrPluralWithArgs("addEvent.title", numberOfEvents, numberOfEvents),
+      "heading"     -> singularOrPluralWithArgs("addEvent.heading", numberOfEvents, numberOfEvents),
       "events"      -> eventsRows
     )
 

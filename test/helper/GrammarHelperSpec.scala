@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,12 +28,12 @@ class GrammarHelperSpec extends SpecBase {
 
     "singularOrPlural" - {
 
-      "return plural message text if condition is true" in {
-        singularOrPlural(key = testKey, condition = true) mustBe Text.Message("test.key.plural")
+      "return plural message text if condition is greater than 1" in {
+        singularOrPlural(key = testKey, condition = 2) mustBe Text.Message("test.key.plural")
       }
 
-      "return singular message text if condition is false" in {
-        singularOrPlural(key = testKey, condition = false) mustBe Text.Message("test.key.singular")
+      "return singular message text if condition is equal to 1" in {
+        singularOrPlural(key = testKey, condition = 1) mustBe Text.Message("test.key.singular")
       }
     }
 
@@ -41,12 +41,12 @@ class GrammarHelperSpec extends SpecBase {
 
       val arguments = 1
 
-      "return plural message text if condition is true" in {
-        singularOrPluralWithArgs(key = testKey, condition = true, arguments) mustBe Text.Message("test.key.plural", 1)
+      "return plural message text if condition is greater than 1" in {
+        singularOrPluralWithArgs(key = testKey, condition = 2, arguments) mustBe Text.Message("test.key.plural", 1)
       }
 
-      "return singular message text if condition is false" in {
-        singularOrPluralWithArgs(key = testKey, condition = false, arguments) mustBe Text.Message("test.key.singular", 1)
+      "return singular message text if condition is equal to 1" in {
+        singularOrPluralWithArgs(key = testKey, condition = 1, arguments) mustBe Text.Message("test.key.singular", 1)
       }
     }
   }

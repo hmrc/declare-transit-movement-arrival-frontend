@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,9 +33,9 @@ object ImplicitGrammarConversion extends NunjucksSupport {
       msg"$y.singular"
   }
 
-  def singularOrPlural(key: String, condition: Boolean)(implicit g: GrammarHelper): Text.Message =
-    if (condition) g.plural(key) else g.singular(key)
+  def singularOrPlural(key: String, condition: Int)(implicit g: GrammarHelper): Text.Message =
+    if (condition == 1) g.singular(key) else g.plural(key)
 
-  def singularOrPluralWithArgs(key: String, condition: Boolean, args: Any): Text.Message =
+  def singularOrPluralWithArgs(key: String, condition: Int, args: Any): Text.Message =
     singularOrPlural(key, condition).withArgs(args)
 }
