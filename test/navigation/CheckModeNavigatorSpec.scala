@@ -23,7 +23,7 @@ import controllers.routes
 import generators.{DomainModelGenerators, Generators}
 import models.TranshipmentType.{DifferentContainer, DifferentContainerAndVehicle, DifferentVehicle}
 import models.domain.Container
-import models.{CheckMode, GoodsLocation, TranshipmentType, UserAnswers}
+import models.{CheckMode, GoodsLocation, NormalMode, TranshipmentType, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.events._
@@ -33,7 +33,7 @@ import pages.events.transhipments.{AddContainerPage, ContainerNumberPage, Transh
 class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generators with DomainModelGenerators {
 
   val navigator: Navigator = app.injector.instanceOf[Navigator]
-//format: off
+
   "Navigator in Check mode" - {
     "must go from a page that doesn't exist in the edit route map  to Check Your Answers" in {
       case object UnknownPage extends Page
@@ -391,17 +391,59 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
     }
 
     "must go from AddContainerPage" - {
-      "to CheckEventAnswers when false" in {
+      "to CheckEventAnswers when false and the TranshipmentTypePage is 'A different container'" in {
 
         forAll(arbitrary[UserAnswers]) {
           answers =>
-            val updatedAnswers = answers.set(AddContainerPage(eventIndex), false).success.value
+            val updatedAnswers = answers
+              .set(TranshipmentTypePage(eventIndex), DifferentContainer)
+              .success
+              .value
+              .set(AddContainerPage(eventIndex), false)
+              .success
+              .value
 
             navigator
               .nextPage(AddContainerPage(eventIndex), CheckMode, updatedAnswers)
               .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(updatedAnswers.id, eventIndex))
         }
       }
+
+      "to CheckEventAnswers when false and the TranshipmentTypePage is 'Both'" in {
+
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers = answers
+              .set(TranshipmentTypePage(eventIndex), DifferentContainerAndVehicle)
+              .success
+              .value
+              .set(AddContainerPage(eventIndex), false)
+              .success
+              .value
+
+            navigator
+              .nextPage(AddContainerPage(eventIndex), CheckMode, updatedAnswers)
+              .mustBe(transhipmentRoutes.TransportIdentityController.onPageLoad(updatedAnswers.id, eventIndex, CheckMode))
+        }
+      }
+
+      "to ContainerNumber page in when true with the index increased" in {
+        forAll(arbitrary[UserAnswers], arbitrary[Container]) {
+          (answers, container) =>
+            val updatedAnswers = answers
+              .set(ContainerNumberPage(eventIndex, containerIndex), container)
+              .success
+              .value
+              .set(AddContainerPage(eventIndex), true)
+              .success
+              .value
+
+            navigator
+              .nextPage(AddContainerPage(eventIndex), CheckMode, updatedAnswers)
+              .mustBe(transhipmentRoutes.ContainerNumberController.onPageLoad(updatedAnswers.id, eventIndex, 1, CheckMode))
+        }
+      }
+
     }
 
     "must go from 'IsTraderAddressPlaceOfNotificationPage'" - {
@@ -448,4 +490,3 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
     }
   }
 }
-//format: on
