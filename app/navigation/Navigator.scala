@@ -62,7 +62,7 @@ class Navigator @Inject()() {
     case EventCountryPage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
     case EventPlacePage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
     case EventReportedPage(index) => eventReportedCheckRoute(index)
-    case IsTranshipmentPage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
+    case IsTranshipmentPage(index) => isTranshipmentCheckRoute(index)
     case IncidentInformationPage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
   }
 
@@ -125,10 +125,23 @@ class Navigator @Inject()() {
     }
 
   private def isTranshipmentRoute(index: Int)(ua: UserAnswers): Option[Call] =
-    ua.get(IsTranshipmentPage(index)) map {
-      case true                                                      => transhipmentRoutes.TranshipmentTypeController.onPageLoad(ua.id, index, NormalMode)
-      case false if ua.get(EventReportedPage(index)).contains(false) => eventRoutes.IncidentInformationController.onPageLoad(ua.id, index, NormalMode)
-      case _                                                         => eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index)
+    (ua.get(EventReportedPage(index)), ua.get(IsTranshipmentPage(index))) match {
+      case (_, Some(true))            => Some(transhipmentRoutes.TranshipmentTypeController.onPageLoad(ua.id, index, NormalMode))
+      case (Some(false), Some(false)) => Some(eventRoutes.IncidentInformationController.onPageLoad(ua.id, index, NormalMode))
+      case (Some(true), Some(false))  => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
+      case _                          => None
+    }
+
+  private def isTranshipmentCheckRoute(index: Int)(ua: UserAnswers): Option[Call] =
+    (
+      ua.get(EventReportedPage(index)),
+      ua.get(IsTranshipmentPage(index)),
+      ua.get(IncidentInformationPage(index)),
+      ua.get(TranshipmentTypePage(index))
+    ) match {
+      case (_, Some(true), _, None)            => Some(transhipmentRoutes.TranshipmentTypeController.onPageLoad(ua.id, index, CheckMode))
+      case (Some(false), Some(false), None, _) => Some(eventRoutes.IncidentInformationController.onPageLoad(ua.id, index, CheckMode))
+      case _                                   => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
     }
 
   private def goodsLocationCheckRoute(ua: UserAnswers): Option[Call] =
