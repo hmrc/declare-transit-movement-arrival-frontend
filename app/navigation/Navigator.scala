@@ -64,6 +64,7 @@ class Navigator @Inject()() {
     case EventReportedPage(index) => eventReportedCheckRoute(index)
     case IsTranshipmentPage(index) => isTranshipmentCheckRoute(index)
     case IncidentInformationPage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
+    case TranshipmentTypePage(index) => transhipmentTypeCheckRoute(index)
   }
 
   def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = mode match {
@@ -109,6 +110,14 @@ class Navigator @Inject()() {
       }
     case DifferentVehicle => transhipmentRoutes.TransportIdentityController.onPageLoad(ua.id, index, NormalMode)
   }
+
+  private def transhipmentTypeCheckRoute(index: Int)(ua: UserAnswers): Option[Call] =
+    (ua.get(TranshipmentTypePage(index)), ua.get(ContainerNumberPage(index, 0)), ua.get(TransportIdentityPage(index))) match {
+      case (Some(DifferentContainer), None, _)           => Some(transhipmentRoutes.ContainerNumberController.onPageLoad(ua.id, index, 0, CheckMode))
+      case (Some(DifferentVehicle), _, None)             => Some(transhipmentRoutes.TransportIdentityController.onPageLoad(ua.id, index, CheckMode))
+      case (Some(DifferentContainerAndVehicle), None, _) => Some(transhipmentRoutes.ContainerNumberController.onPageLoad(ua.id, index, 0, CheckMode))
+      case _                                             => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
+    }
 
   private def goodsLocationPageRoutes(ua: UserAnswers): Option[Call] =
     ua.get(GoodsLocationPage) map {

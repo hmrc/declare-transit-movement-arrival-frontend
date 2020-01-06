@@ -21,12 +21,14 @@ import controllers.events.{routes => eventRoutes}
 import controllers.events.transhipments.{routes => transhipmentRoutes}
 import controllers.routes
 import generators.{DomainModelGenerators, Generators}
+import models.TranshipmentType.{DifferentContainer, DifferentContainerAndVehicle, DifferentVehicle}
+import models.domain.Container
 import models.{CheckMode, GoodsLocation, TranshipmentType, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.events._
 import pages._
-import pages.events.transhipments.TranshipmentTypePage
+import pages.events.transhipments.{ContainerNumberPage, TranshipmentTypePage, TransportIdentityPage}
 
 class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generators with DomainModelGenerators {
 
@@ -164,11 +166,6 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
     }
 
     "must go from IsTranshipmentPage" - {
-      // EventReportedPage IsTranshipmentPage TansshipmentType Result
-      // true              false                               CEA
-      // false             false              na               IncidentInfo
-      // true              true               na               What did goods move to
-      // false             true               na               What did goods move to
 
       "to TranshipmentTypePage when true and they have not answered TranshipmentType" in {
         forAll(arbitrary[UserAnswers]) {
@@ -204,7 +201,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
         }
       }
 
-      "to incident Information when false and ReportedEvent is true" in {
+      "to Check Event Answers when false and ReportedEvent is true" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
             val ua = answers
@@ -260,6 +257,112 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
               .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, eventIndex))
         }
       }
+    }
+
+    "must go from TranshipmentTypePage" - {
+
+      "to ContainerNumberPage when 'A different container' is selected and ContainerNumber has not been answered" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedUserAnswers = answers
+              .set(TranshipmentTypePage(eventIndex), DifferentContainer)
+              .success
+              .value
+              .remove(ContainerNumberPage(eventIndex, containerIndex))
+              .success
+              .value
+
+            navigator
+              .nextPage(TranshipmentTypePage(eventIndex), CheckMode, updatedUserAnswers)
+              .mustBe(transhipmentRoutes.ContainerNumberController.onPageLoad(updatedUserAnswers.id, eventIndex, containerIndex, CheckMode))
+        }
+      }
+
+      "to CheckEvenAnswers when 'A different container' is selected and ContainerNumber has been answered" in {
+        forAll(arbitrary[UserAnswers], arbitrary[Container]) {
+          (answers, container) =>
+            val updatedUserAnswers = answers
+              .set(TranshipmentTypePage(eventIndex), DifferentContainer)
+              .success
+              .value
+              .set(ContainerNumberPage(eventIndex, containerIndex), container)
+              .success
+              .value
+
+            navigator
+              .nextPage(TranshipmentTypePage(eventIndex), CheckMode, updatedUserAnswers)
+              .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(updatedUserAnswers.id, eventIndex))
+        }
+      }
+
+      "to TransportIdentityPage when 'A different vehicle' is selected and TransportIdentity has not been answered" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedUserAnswers = answers
+              .set(TranshipmentTypePage(eventIndex), DifferentVehicle)
+              .success
+              .value
+              .remove(TransportIdentityPage(eventIndex))
+              .success
+              .value
+
+            navigator
+              .nextPage(TranshipmentTypePage(eventIndex), CheckMode, updatedUserAnswers)
+              .mustBe(transhipmentRoutes.TransportIdentityController.onPageLoad(updatedUserAnswers.id, eventIndex, CheckMode))
+        }
+      }
+
+      "to CheckEvenAnswers when 'A different vehicle' is selected and TransportIdentity has been answered" in {
+        forAll(arbitrary[UserAnswers], arbitrary[String]) {
+          (answers, transportIdentity) =>
+            val updatedUserAnswers = answers
+              .set(TranshipmentTypePage(eventIndex), DifferentVehicle)
+              .success
+              .value
+              .set(TransportIdentityPage(eventIndex), transportIdentity)
+              .success
+              .value
+
+            navigator
+              .nextPage(TranshipmentTypePage(eventIndex), CheckMode, updatedUserAnswers)
+              .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(updatedUserAnswers.id, eventIndex))
+        }
+      }
+
+      "to ContainerNumberPage when 'Both' is selected and ContainerNumber has not been answered" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedUserAnswers = answers
+              .set(TranshipmentTypePage(eventIndex), DifferentContainerAndVehicle)
+              .success
+              .value
+              .remove(ContainerNumberPage(eventIndex, containerIndex))
+              .success
+              .value
+
+            navigator
+              .nextPage(TranshipmentTypePage(eventIndex), CheckMode, updatedUserAnswers)
+              .mustBe(transhipmentRoutes.ContainerNumberController.onPageLoad(updatedUserAnswers.id, eventIndex, containerIndex, CheckMode))
+        }
+      }
+
+      "to CheckEvenAnswers when 'Both' is selected and ContainerNumber has been answered" in {
+        forAll(arbitrary[UserAnswers], arbitrary[Container]) {
+          (answers, container) =>
+            val updatedUserAnswers = answers
+              .set(TranshipmentTypePage(eventIndex), DifferentContainerAndVehicle)
+              .success
+              .value
+              .set(ContainerNumberPage(eventIndex, containerIndex), container)
+              .success
+              .value
+
+            navigator
+              .nextPage(TranshipmentTypePage(eventIndex), CheckMode, updatedUserAnswers)
+              .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(updatedUserAnswers.id, eventIndex))
+        }
+      }
+
     }
 
     "must go from 'IsTraderAddressPlaceOfNotificationPage'" - {
