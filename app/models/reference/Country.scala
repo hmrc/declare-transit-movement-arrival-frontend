@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package models
+package models.reference
 
 import play.api.libs.json.{Json, OFormat}
 
-case class CustomsOffice(id: String, name: String, roles: Seq[String]) // TODO: move to reference data package
+case class Country(state: String, code: String, description: String)
 
-object CustomsOffice {
-  implicit val format: OFormat[CustomsOffice] = Json.format[CustomsOffice]
+object Country {
+  implicit val format: OFormat[Country] = Json.format[Country]
 }

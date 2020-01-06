@@ -20,13 +20,15 @@ import base.SpecBase
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, okJson, urlEqualTo}
 import generators.DomainModelGenerators
 import helper.WireMockServerHandler
-import models.CustomsOffice
+import models.reference.{Country, CustomsOffice}
 import org.scalacheck.Gen
+import org.scalatest.Assertion
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 class ReferenceDataConnectorSpec extends SpecBase with WireMockServerHandler with DomainModelGenerators with ScalaCheckPropertyChecks {
 
@@ -40,7 +42,7 @@ class ReferenceDataConnectorSpec extends SpecBase with WireMockServerHandler wit
 
   private lazy val connector: ReferenceDataConnector = app.injector.instanceOf[ReferenceDataConnector]
 
-  private val responseJson: String =
+  private val customsOfficeResponseJson: String =
     """
       |[
       | {
@@ -56,11 +58,29 @@ class ReferenceDataConnectorSpec extends SpecBase with WireMockServerHandler wit
       |]
       |""".stripMargin
 
+  private val countryListResponseJson: String =
+    """
+      |[
+      | {
+      |   "code":"GB",
+      |   "state":"valid",
+      |   "description":"United Kingdom"
+      | },
+      | {
+      |   "code":"AD",
+      |   "state":"valid",
+      |   "description":"Andorra"
+      | }
+      |]
+      |""".stripMargin
+
+  val errorResponses: Gen[Int] = Gen.chooseNum(400, 599)
+
   "Reference Data" - {
     "must return a successful future response with a sequence of CustomsOffices" in {
       server.stubFor(
         get(urlEqualTo(s"/$startUrl/customs-offices"))
-          .willReturn(okJson(responseJson))
+          .willReturn(okJson(customsOfficeResponseJson))
       )
 
       val expectedResult = {
@@ -74,26 +94,42 @@ class ReferenceDataConnectorSpec extends SpecBase with WireMockServerHandler wit
     }
 
     "must return an exception when an error response is returned" in {
+      checkErrorResponse(s"/$startUrl/customs-offices", connector.getCustomsOffices)
+    }
 
-      val errorResponses: Gen[Int] = Gen.chooseNum(400, 599)
+    "must return 'Country List' successfully" in {
+      server.stubFor(
+        get(urlEqualTo(s"/$startUrl/country-code-full-list"))
+          .willReturn(okJson(countryListResponseJson))
+      )
 
-      forAll(errorResponses) {
-        errorResponse =>
-          server.stubFor(
-            get(urlEqualTo(s"/$startUrl/customs-offices"))
-              .willReturn(
-                aResponse()
-                  .withStatus(errorResponse)
-              )
-          )
+      val expectedResult = Seq(
+        Country("valid", "GB", "United Kingdom"),
+        Country("valid", "AD", "Andorra")
+      )
 
-          val result = connector.getCustomsOffices
+      connector.getCountryList.futureValue mustBe expectedResult
+    }
 
-          whenReady(result.failed) {
-            _ mustBe an[Exception]
-          }
-      }
+    "must return an exception when an error response is returned from getCountryList" in {
+
+      checkErrorResponse(s"/$startUrl/country-code-full-list", connector.getCountryList)
     }
   }
 
+  private def checkErrorResponse(url: String, result: Future[_]): Assertion =
+    forAll(errorResponses) {
+      errorResponse =>
+        server.stubFor(
+          get(urlEqualTo(url))
+            .willReturn(
+              aResponse()
+                .withStatus(errorResponse)
+            )
+        )
+
+        whenReady(result.failed) {
+          _ mustBe an[Exception]
+        }
+    }
 }
