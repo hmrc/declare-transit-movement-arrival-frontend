@@ -65,6 +65,8 @@ class Navigator @Inject()() {
     case IsTranshipmentPage(index) => isTranshipmentCheckRoute(index)
     case IncidentInformationPage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
     case TranshipmentTypePage(index) => transhipmentTypeCheckRoute(index)
+    case ContainerNumberPage(index, _) => ua => Some(transhipmentRoutes.AddContainerController.onPageLoad(ua.id, index, CheckMode))
+    case TransportIdentityPage(index) => ua => Some(transhipmentRoutes.TransportNationalityController.onPageLoad(ua.id, index, CheckMode))
   }
 
   def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = mode match {

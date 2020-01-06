@@ -28,7 +28,7 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.events._
 import pages._
-import pages.events.transhipments.{ContainerNumberPage, TranshipmentTypePage, TransportIdentityPage}
+import pages.events.transhipments.{AddContainerPage, ContainerNumberPage, TranshipmentTypePage, TransportIdentityPage}
 
 class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generators with DomainModelGenerators {
 
@@ -278,7 +278,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
         }
       }
 
-      "to CheckEvenAnswers when 'A different container' is selected and ContainerNumber has been answered" in {
+      "to CheckEventAnswers when 'A different container' is selected and ContainerNumber has been answered" in {
         forAll(arbitrary[UserAnswers], arbitrary[Container]) {
           (answers, container) =>
             val updatedUserAnswers = answers
@@ -312,7 +312,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
         }
       }
 
-      "to CheckEvenAnswers when 'A different vehicle' is selected and TransportIdentity has been answered" in {
+      "to CheckEventAnswers when 'A different vehicle' is selected and TransportIdentity has been answered" in {
         forAll(arbitrary[UserAnswers], arbitrary[String]) {
           (answers, transportIdentity) =>
             val updatedUserAnswers = answers
@@ -346,7 +346,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
         }
       }
 
-      "to CheckEvenAnswers when 'Both' is selected and ContainerNumber has been answered" in {
+      "to CheckEventAnswers when 'Both' is selected and ContainerNumber has been answered" in {
         forAll(arbitrary[UserAnswers], arbitrary[Container]) {
           (answers, container) =>
             val updatedUserAnswers = answers
@@ -363,6 +363,45 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
         }
       }
 
+    }
+
+    "must go from ContainerNumberPage" - {
+
+      "to AddContainer" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            navigator
+              .nextPage(ContainerNumberPage(eventIndex, containerIndex), CheckMode, answers)
+              .mustBe(transhipmentRoutes.AddContainerController.onPageLoad(answers.id, eventIndex, CheckMode))
+        }
+      }
+
+    }
+
+    "must go from TransportIdentityPage" - {
+
+      "to TransportNationalityPage" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            navigator
+              .nextPage(TransportIdentityPage(eventIndex), CheckMode, answers)
+              .mustBe(transhipmentRoutes.TransportNationalityController.onPageLoad(answers.id, eventIndex, CheckMode))
+        }
+      }
+    }
+
+    "must go from AddContainerPage" - {
+      "to CheckEventAnswers when false" in {
+
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers = answers.set(AddContainerPage(eventIndex), false).success.value
+
+            navigator
+              .nextPage(AddContainerPage(eventIndex), CheckMode, updatedAnswers)
+              .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(updatedAnswers.id, eventIndex))
+        }
+      }
     }
 
     "must go from 'IsTraderAddressPlaceOfNotificationPage'" - {
