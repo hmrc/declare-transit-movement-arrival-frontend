@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,16 +18,14 @@ package controllers.events
 
 import com.google.inject.Inject
 import controllers.actions.{DataRequiredAction, DataRetrievalActionProvider, IdentifierAction}
-import models.{MovementReferenceNumber, NormalMode, UserAnswers}
-import play.api.i18n.{I18nSupport, Messages, MessagesApi}
+import models.{MovementReferenceNumber, NormalMode}
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
-import uk.gov.hmrc.viewmodels.SummaryList.Row
-import utils.CheckYourAnswersHelper
-import viewModels.Section
+import viewModels.CheckEventAnswersViewModel
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -44,9 +42,11 @@ class CheckEventAnswersController @Inject()(override val messagesApi: MessagesAp
   def onPageLoad(mrn: MovementReferenceNumber, index: Int): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
       val json = Json.obj(
-        "sections" -> Json.toJson(completeSections(request.userAnswers, index)),
-        "mrn"      -> mrn
-      )
+        "mrn" -> mrn
+      ) ++ Json.toJsObject {
+        CheckEventAnswersViewModel(request.userAnswers, index)
+      }
+
       renderer.render("events/check-event-answers.njk", json).map(Ok(_))
   }
 
@@ -55,25 +55,4 @@ class CheckEventAnswersController @Inject()(override val messagesApi: MessagesAp
       Future.successful(Redirect(controllers.events.routes.AddEventController.onPageLoad(mrn, NormalMode)))
   }
 
-  private def completeSections(userAnswers: UserAnswers, index: Int)(implicit messages: Messages): Seq[Section] = {
-    val helper = new CheckYourAnswersHelper(userAnswers)
-    Seq(
-      Section(messages("checkEventAnswers.section.events"), eventsSection(helper, index)),
-      Section(messages("checkEventAnswers.section.vehicleOrContainer"), isTranshipmentSection(helper, index))
-    )
-  }
-
-  private def eventsSection(helper: CheckYourAnswersHelper, index: Int): Seq[Row] =
-    Seq(
-      helper.eventCountry(index),
-      helper.eventPlace(index),
-      helper.eventReported(index),
-      helper.isTranshipment(index),
-      helper.incidentInformation(index)
-    ).flatten
-
-  private def isTranshipmentSection(helper: CheckYourAnswersHelper, index: Int): Seq[Row] =
-    Seq(
-      helper.isTranshipment(index)
-    ).flatten
 }

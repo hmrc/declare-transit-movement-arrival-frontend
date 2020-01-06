@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,12 @@
 package pages.events.transhipments
 
 import pages.QuestionPage
+import pages.events.SectionConstants
 import play.api.libs.json.JsPath
 
-case object TransportIdentityPage extends QuestionPage[String] {
+final case class TransportIdentityPage(eventIndex: Int) extends QuestionPage[String] {
 
-  override def path: JsPath = JsPath \ toString
+  override def path: JsPath = JsPath \ SectionConstants.events \ eventIndex \ toString
 
   override def toString: String = "transportIdentity"
 }

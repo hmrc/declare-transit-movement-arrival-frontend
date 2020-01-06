@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,9 +49,9 @@ class TransportIdentityController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onPageLoad(mrn: MovementReferenceNumber, eventIndex: Int, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
-      val preparedForm = request.userAnswers.get(TransportIdentityPage) match {
+      val preparedForm = request.userAnswers.get(TransportIdentityPage(eventIndex)) match {
         case None        => form
         case Some(value) => form.fill(value)
       }
@@ -65,7 +65,7 @@ class TransportIdentityController @Inject()(
       renderer.render("events/transhipments/transportIdentity.njk", json).map(Ok(_))
   }
 
-  def onSubmit(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onSubmit(mrn: MovementReferenceNumber, eventIndex: Int, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
       form
         .bindFromRequest()
@@ -82,9 +82,9 @@ class TransportIdentityController @Inject()(
           },
           value =>
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(TransportIdentityPage, value))
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(TransportIdentityPage(eventIndex), value))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(TransportIdentityPage, mode, updatedAnswers))
+            } yield Redirect(navigator.nextPage(TransportIdentityPage(eventIndex), mode, updatedAnswers))
         )
   }
 }

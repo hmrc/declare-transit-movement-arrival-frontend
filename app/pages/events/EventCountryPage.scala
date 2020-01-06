@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import play.api.libs.json.JsPath
 
 final case class EventCountryPage(index: Int) extends QuestionPage[String] {
 
-  override def path: JsPath = JsPath \ RepeatingSectionConstants.events \ index \ toString
+  override def path: JsPath = JsPath \ SectionConstants.events \ index \ toString
 
   override def toString: String = "eventCountry"
 }

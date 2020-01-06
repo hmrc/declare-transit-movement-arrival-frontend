@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,10 @@
 
 package pages.events
 
-import models.UserAnswers
+import models.{TranshipmentType, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
+import pages.events.transhipments.TranshipmentTypePage
 
 class IsTranshipmentPageSpec extends PageBehaviours {
 
@@ -31,14 +32,59 @@ class IsTranshipmentPageSpec extends PageBehaviours {
 
     beRemovable[Boolean](IsTranshipmentPage(index))
 
-    "must remove incident pages data when user selects option 'Yes' on transhipment page" in {
+    "cleanup" - {
+      "must remove incident information data when there is a change of the answer to 'Yes'" in {
 
-      forAll(arbitrary[UserAnswers]) {
-        userAnswers =>
-          val result = userAnswers.set(IsTranshipmentPage(index), true).success.value
+        forAll(arbitrary[UserAnswers], arbitrary[String]) {
+          (userAnswers, incidentInfo) =>
+            val result = userAnswers
+              .set(IncidentInformationPage(index), incidentInfo)
+              .success
+              .value
+              .set(IsTranshipmentPage(index), true)
+              .success
+              .value
 
-          result.get(IncidentInformationPage(index)) must not be defined
+            result.get(IncidentInformationPage(index)) must not be defined
+        }
+      }
+
+      "must remove transhipment type data when is a change of the answer to 'No'" in {
+
+        forAll(arbitrary[UserAnswers], arbitrary[TranshipmentType]) {
+          (userAnswers, transhipmentType) =>
+            val result = userAnswers
+              .set(TranshipmentTypePage(index), transhipmentType)
+              .success
+              .value
+              .set(IsTranshipmentPage(index), false)
+              .success
+              .value
+
+            result.get(TranshipmentTypePage(index)) must not be defined
+        }
+      }
+
+      "must remove incident information data when there is no answer" in {
+
+        forAll(arbitrary[UserAnswers], arbitrary[String], arbitrary[TranshipmentType]) {
+          (userAnswers, incidentInfo, transhipmentType) =>
+            val result = userAnswers
+              .set(IncidentInformationPage(index), incidentInfo)
+              .success
+              .value
+              .set(TranshipmentTypePage(index), transhipmentType)
+              .success
+              .value
+              .remove(IsTranshipmentPage(index))
+              .success
+              .value
+
+            result.get(IncidentInformationPage(index)) must not be defined
+            result.get(TranshipmentTypePage(index)) must not be defined
+        }
       }
     }
+
   }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,16 +16,21 @@
 
 package pages.events.transhipments
 
+import generators.DomainModelGenerators
+import models.domain.Container
 import pages.behaviours.PageBehaviours
 
-class ContainerNumberPageSpec extends PageBehaviours {
+class ContainerNumberPageSpec extends PageBehaviours with DomainModelGenerators {
+
+  val eventIndex     = 0
+  val containerIndex = 0
 
   "ContainerNumberPage" - {
 
-    beRetrievable[String](ContainerNumberPage)
+    beRetrievable[Container](ContainerNumberPage(eventIndex, containerIndex))
 
-    beSettable[String](ContainerNumberPage)
+    beSettable[Container](ContainerNumberPage(eventIndex, containerIndex))
 
-    beRemovable[String](ContainerNumberPage)
+    beRemovable[Container](ContainerNumberPage(eventIndex, containerIndex))
   }
 }

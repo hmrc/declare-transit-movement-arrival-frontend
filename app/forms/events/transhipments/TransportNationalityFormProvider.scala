@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package forms.events.transhipments
 
 import forms.mappings.Mappings
 import javax.inject.Inject
+import models.domain.VehicularTranshipment
 import play.api.data.Form
 
 class TransportNationalityFormProvider @Inject() extends Mappings {
@@ -25,6 +26,6 @@ class TransportNationalityFormProvider @Inject() extends Mappings {
   def apply(): Form[String] =
     Form(
       "value" -> text("transportNationality.error.required")
-        .verifying(maxLength(35, "transportNationality.error.length"))
+        .verifying(maxLength(VehicularTranshipment.Constants.transportCountryLength, "transportNationality.error.length"))
     )
 }

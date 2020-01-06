@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,20 +18,25 @@ package pages.events
 
 import models.UserAnswers
 import pages.QuestionPage
+import pages.events.transhipments.TranshipmentTypePage
 import play.api.libs.json.JsPath
 
 import scala.util.Try
 
 final case class IsTranshipmentPage(index: Int) extends QuestionPage[Boolean] {
 
-  override def path: JsPath = JsPath \ RepeatingSectionConstants.events \ index \ toString
+  override def path: JsPath = JsPath \ SectionConstants.events \ index \ toString
 
   override def toString: String = "isTranshipment"
 
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
     value match {
-      case Some(true) => userAnswers.remove(IncidentInformationPage(index))
-      case _          => super.cleanup(value, userAnswers)
+      case Some(true)  => userAnswers.remove(IncidentInformationPage(index))
+      case Some(false) => userAnswers.remove(TranshipmentTypePage(index))
+      case None =>
+        userAnswers
+          .remove(IncidentInformationPage(index))
+          .flatMap(_.remove(TranshipmentTypePage(index)))
     }
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,21 +17,22 @@
 package viewModels
 
 import play.api.i18n.Messages
-import play.api.libs.json.{JsValue, Json, Writes}
-import uk.gov.hmrc.viewmodels.SummaryList
+import play.api.libs.functional.syntax._
+import play.api.libs.json.{__, OWrites}
+import uk.gov.hmrc.viewmodels.SummaryList.Row
+import uk.gov.hmrc.viewmodels.Text
 
-case class Section(sectionTitle: Option[String], rows: Seq[SummaryList.Row])
+case class Section(sectionTitle: Option[Text], rows: Seq[Row])
 
 object Section {
-  def apply(sectionTitle: String, rows: Seq[SummaryList.Row]): Section = new Section(Some(sectionTitle), rows)
+  def apply(sectionTitle: Text, rows: Seq[Row]): Section = new Section(Some(sectionTitle), rows)
 
-  def apply(rows: Seq[SummaryList.Row]): Section = new Section(None, rows)
+  def apply(rows: Seq[Row]): Section = new Section(None, rows)
 
-  implicit def sectionWrites(implicit messages: Messages): Writes[Section] = new Writes[Section] {
-    override def writes(o: Section): JsValue =
-      Json.obj(
-        "sectionTitle" -> o.sectionTitle,
-        "rows"         -> Json.toJson(o.rows)
-      )
-  }
+  implicit def sectionWrites(implicit messages: Messages): OWrites[Section] =
+    (
+      (__ \ "sectionTitle").write[Option[Text]] and
+        (__ \ "rows").write[Seq[Row]]
+    )(unlift(Section.unapply))
+
 }

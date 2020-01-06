@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,13 +17,14 @@
 package forms.events.transhipments
 
 import forms.behaviours.StringFieldBehaviours
+import models.domain.VehicularTranshipment
 import play.api.data.FormError
 
 class TransportIdentityFormProviderSpec extends StringFieldBehaviours {
 
   val requiredKey = "transportIdentity.error.required"
   val lengthKey   = "transportIdentity.error.length"
-  val maxLength   = 35
+  val maxLength   = VehicularTranshipment.Constants.transportIdentityLength
 
   val form = new TransportIdentityFormProvider()()
 

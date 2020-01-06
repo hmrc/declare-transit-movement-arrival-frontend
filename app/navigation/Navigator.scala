@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,13 +17,16 @@
 package navigation
 
 import com.google.inject.{Inject, Singleton}
-import computable.DeriveNumberOfEvents
+import controllers.events.transhipments.{routes => transhipmentRoutes}
 import controllers.events.{routes => eventRoutes}
 import controllers.routes
+import derivable.{DeriveNumberOfContainers, DeriveNumberOfEvents}
 import models.GoodsLocation._
+import models.TranshipmentType.{DifferentContainer, DifferentContainerAndVehicle, DifferentVehicle}
 import models.{CheckMode, Mode, NormalMode, UserAnswers}
-import pages.events._
 import pages._
+import pages.events._
+import pages.events.transhipments._
 import play.api.mvc.Call
 
 @Singleton
@@ -40,24 +43,51 @@ class Navigator @Inject()() {
     case TraderEoriPage => ua => Some(routes.TraderAddressController.onPageLoad(ua.id, NormalMode))
     case IsTraderAddressPlaceOfNotificationPage => isTraderAddressPlaceOfNotificationRoute(NormalMode)
     case PlaceOfNotificationPage => ua => Some(routes.IncidentOnRouteController.onPageLoad(ua.id, NormalMode))
-    case IncidentOnRoutePage => incidentOnRouteRoute
+    case IncidentOnRoutePage => incidentOnRoute
     case EventCountryPage(index) => ua => Some(eventRoutes.EventPlaceController.onPageLoad(ua.id, index, NormalMode))
     case EventPlacePage(index) => ua => Some(eventRoutes.EventReportedController.onPageLoad(ua.id, index, NormalMode))
     case EventReportedPage(index) => ua => Some(eventRoutes.IsTranshipmentController.onPageLoad(ua.id, index, NormalMode))
     case IsTranshipmentPage(index) => isTranshipmentRoute(index)
     case IncidentInformationPage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
     case AddEventPage => addEventRoute
+    case TranshipmentTypePage(index) => transhipmentType(index)
+    case TransportIdentityPage(index) => ua => Some(transhipmentRoutes.TransportNationalityController.onPageLoad(ua.id, index, NormalMode))
+    case TransportNationalityPage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
+    case ContainerNumberPage(index, _) => ua => Some(transhipmentRoutes.AddContainerController.onPageLoad(ua.id, index, NormalMode))
+    case AddContainerPage(index) => addContainer(index)
   }
 
   private val checkRouteMap: PartialFunction[Page, UserAnswers => Option[Call]] = {
-    case GoodsLocationPage         => goodsLocationCheckRoute
-    case EventCountryPage(index)   => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
+    case GoodsLocationPage => goodsLocationCheckRoute
+    case EventCountryPage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
     case EventPlacePage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
     case EventReportedPage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
     case IsTranshipmentPage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
     case IncidentInformationPage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
   }
   // format: on
+
+  private def addContainer(index: Int)(ua: UserAnswers): Option[Call] = ua.get(AddContainerPage(index)) map {
+    case true =>
+      // TODO: Need to consolidate with same logic for initialsation of index in transhipmentType
+      val nextContainerIndex = ua.get(DeriveNumberOfContainers(index)).getOrElse(0)
+      transhipmentRoutes.ContainerNumberController.onPageLoad(ua.id, index, nextContainerIndex, NormalMode)
+    case false =>
+      ua.get(TranshipmentTypePage(index)) match {
+        case Some(DifferentContainerAndVehicle) => transhipmentRoutes.TransportIdentityController.onPageLoad(ua.id, index, NormalMode)
+        case _                                  => eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index)
+      }
+  }
+
+  private def transhipmentType(index: Int)(ua: UserAnswers): Option[Call] = ua.get(transhipments.TranshipmentTypePage(index)) map {
+    case DifferentContainer | DifferentContainerAndVehicle =>
+      ua.get(DeriveNumberOfContainers(index)) match {
+        case Some(_) => transhipmentRoutes.AddContainerController.onPageLoad(ua.id, index, NormalMode)
+        // TODO: Need to consolidate with same logic for initialsation of index in addContainer
+        case None => transhipmentRoutes.ContainerNumberController.onPageLoad(ua.id, index, 0, NormalMode)
+      }
+    case DifferentVehicle => transhipmentRoutes.TransportIdentityController.onPageLoad(ua.id, index, NormalMode)
+  }
 
   def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = mode match {
     case NormalMode =>
@@ -86,15 +116,17 @@ class Navigator @Inject()() {
       case AuthorisedConsigneesLocation => routes.UseDifferentServiceController.onPageLoad(ua.id)
     }
 
-  private def incidentOnRouteRoute(ua: UserAnswers): Option[Call] =
-    ua.get(IncidentOnRoutePage) map {
-      case true  => eventRoutes.EventCountryController.onPageLoad(ua.id, 0, NormalMode) // TODO Remove hard coded 0 here and determine this from a query
-      case false => routes.CheckYourAnswersController.onPageLoad(ua.id)
+  private def incidentOnRoute(ua: UserAnswers): Option[Call] =
+    (ua.get(IncidentOnRoutePage), ua.get(DeriveNumberOfEvents)) match {
+      case (Some(true), None)    => Some(eventRoutes.EventCountryController.onPageLoad(ua.id, 0, NormalMode))
+      case (Some(true), Some(_)) => Some(eventRoutes.AddEventController.onPageLoad(ua.id, NormalMode))
+      case (Some(false), _)      => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
+      case _                     => None
     }
 
   private def isTranshipmentRoute(index: Int)(ua: UserAnswers): Option[Call] =
     ua.get(IsTranshipmentPage(index)) map {
-      case true                                                      => eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index)
+      case true                                                      => transhipmentRoutes.TranshipmentTypeController.onPageLoad(ua.id, index, NormalMode)
       case false if ua.get(EventReportedPage(index)).contains(false) => eventRoutes.IncidentInformationController.onPageLoad(ua.id, index, NormalMode)
       case _                                                         => eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index)
     }

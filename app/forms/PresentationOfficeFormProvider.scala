@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,12 +20,13 @@ import forms.mappings.Mappings
 import javax.inject.Inject
 import play.api.data.Form
 import play.api.i18n.Messages
+import models.domain.messages.NormalNotification.Constants.presentationOfficeLength
 
 class PresentationOfficeFormProvider @Inject() extends Mappings {
 
   def apply(subPlace: String)(implicit messages: Messages): Form[String] =
     Form(
       "value" -> text(messages("presentationOffice.error.required", subPlace))
-        .verifying(maxLength(8, "presentationOffice.error.length"))
+        .verifying(maxLength(presentationOfficeLength, "presentationOffice.error.length"))
     )
 }

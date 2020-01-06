@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,5 +21,12 @@ import play.api.libs.json._
 case class TraderAddress(buildingAndStreet: String, city: String, postcode: String)
 
 object TraderAddress {
+
+  object Constants {
+    val buildingAndStreetLength = 35
+    val cityLength              = 35
+    val postcodeLength          = 9
+  }
+
   implicit val format = Json.format[TraderAddress]
 }

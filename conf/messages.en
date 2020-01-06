@@ -253,6 +253,12 @@ checkEventAnswers.title = Check event answers
 checkEventAnswers.heading = Check event answers
 checkEventAnswers.section.events = Events
 checkEventAnswers.section.vehicleOrContainer = Vehicle or container
+checkEventAnswers.section.title.differentContainer = Different container
+checkEventAnswers.section.title.differentVehicle = Different vehicle
+checkEventAnswers.section.title.differentContainerAndVehicle = Different container and vehicle
+checkEventAnswers.section.title.containerNumbers = Container numbers
+checkEventAnswers.section.title.vehicleInformation = Vehicle information
+
 
 isTraderAddressPlaceOfNotification.title = Is {0} the postcode of the place of notification?
 isTraderAddressPlaceOfNotification.heading = Is {0} the postcode of the place of notification?
@@ -289,28 +295,34 @@ transhipmentType.title = What did the goods move to?
 transhipmentType.heading = What did the goods move to?
 transhipmentType.differentContainer = A different container
 transhipmentType.differentVehicle = A different vehicle
+transhipmentType.differentContainerAndVehicle = Both
 transhipmentType.checkYourAnswersLabel = What did the goods move to?
 transhipmentType.error.required = Select transhipmentType
 
-transportIdentity.title = transportIdentity
-transportIdentity.heading = transportIdentity
-transportIdentity.checkYourAnswersLabel = transportIdentity
-transportIdentity.error.required = Enter transportIdentity
+transportIdentity.title = What is the vehicle name, registration or reference?
+transportIdentity.heading = What is the vehicle name, registration or reference?
+transportIdentity.checkYourAnswersLabel = What is the vehicle name, registration or reference?
+transportIdentity.error.required = Enter the vehicle name, registration or reference
 transportIdentity.error.length = TransportIdentity must be TransportIdentity characters or less
 
-transportNationality.title = transportNationality
-transportNationality.heading = transportNationality
-transportNationality.checkYourAnswersLabel = transportNationality
-transportNationality.error.required = Enter transportNationality
+transportNationality.title = Which country is the vehicle registered in?
+transportNationality.heading = Which country is the vehicle registered in?
+transportNationality.checkYourAnswersLabel = Which country is the vehicle registered in?
+transportNationality.error.required = Enter which country the vehicle is registered in?
 transportNationality.error.length = TransportNationality must be TransportNationality characters or less
 
-containerNumber.title = containerNumber
-containerNumber.heading = containerNumber
-containerNumber.checkYourAnswersLabel = containerNumber
-containerNumber.error.required = Enter containerNumber
-containerNumber.error.length = ContainerNumber must be 100 characters or less
+containerNumber.title = What is the new container number?
+containerNumber.heading = What is the new container number?
+containerNumber.checkYourAnswersLabel = What is the new container number?
+containerNumber.error.required = Enter the new container number
+containerNumber.error.length = New container number must be 100 characters or less
 
-addContainer.title = addContainer
-addContainer.heading = addContainer
-addContainer.checkYourAnswersLabel = addContainer
-addContainer.error.required = Select yes if addContainer
+addContainer.title.singular = You have added {0} container
+addContainer.title.plural = You have added {0} containers
+addContainer.radio.label = Do you need to add another container?
+addContainer.checkYourAnswersLabel = You have added {0} containers
+addContainer.error.required = Select yes if you need to add another container
+addContainer.containerList.label = Container {0}
+addContainer.containerList.change = Change container number {0}?
+addContainer.containerList.delete = Remove container number {0}?
+

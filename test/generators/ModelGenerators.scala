@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,9 +32,9 @@ trait ModelGenerators {
   implicit lazy val arbitraryTraderAddress: Arbitrary[TraderAddress] =
     Arbitrary {
       for {
-        buildingAndStreet <- stringsWithMaxLength(35)
-        city              <- stringsWithMaxLength(35)
-        postcode          <- stringsWithMaxLength(9)
+        buildingAndStreet <- stringsWithMaxLength(TraderAddress.Constants.buildingAndStreetLength)
+        city              <- stringsWithMaxLength(TraderAddress.Constants.cityLength)
+        postcode          <- stringsWithMaxLength(TraderAddress.Constants.postcodeLength)
       } yield TraderAddress(buildingAndStreet, city, postcode)
     }
 

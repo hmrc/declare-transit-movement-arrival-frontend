@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,7 +44,7 @@ class TransportNationalityControllerSpec extends SpecBase with MockitoSugar with
   val formProvider = new TransportNationalityFormProvider()
   val form         = formProvider()
 
-  lazy val transportNationalityRoute       = routes.TransportNationalityController.onPageLoad(mrn, NormalMode).url
+  lazy val transportNationalityRoute       = routes.TransportNationalityController.onPageLoad(mrn, eventIndex, NormalMode).url
   private val transportNationalityTemplate = "events/transhipments/transportNationality.njk"
 
   "TransportNationality Controller" - {
@@ -82,7 +82,9 @@ class TransportNationalityControllerSpec extends SpecBase with MockitoSugar with
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers    = UserAnswers(mrn).set(TransportNationalityPage, "answer").success.value
+      val userAnsweredTransportNationality = "TT"
+
+      val userAnswers    = UserAnswers(mrn).set(TransportNationalityPage(eventIndex), userAnsweredTransportNationality).success.value
       val application    = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request        = FakeRequest(GET, transportNationalityRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -94,7 +96,7 @@ class TransportNationalityControllerSpec extends SpecBase with MockitoSugar with
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = form.bind(Map("value" -> "answer"))
+      val filledForm = form.bind(Map("value" -> userAnsweredTransportNationality))
 
       val expectedJson = Json.obj(
         "form" -> filledForm,
@@ -124,7 +126,7 @@ class TransportNationalityControllerSpec extends SpecBase with MockitoSugar with
 
       val request =
         FakeRequest(POST, transportNationalityRoute)
-          .withFormUrlEncodedBody(("value", "answer"))
+          .withFormUrlEncodedBody(("value", "TT"))
 
       val result = route(application, request).value
 

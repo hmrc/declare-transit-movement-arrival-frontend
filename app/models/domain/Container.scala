@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,12 @@
  * limitations under the License.
  */
 
-package computable
+package models.domain
 
-import play.api.libs.json.{JsObject, JsPath}
-import queries.EventsQuery
+import play.api.libs.json.{Json, OFormat}
 
-case object DeriveNumberOfEvents extends Derivable[List[JsObject], Int] {
+case class Container(containerNumber: String)
 
-  override val derive: List[JsObject] => Int = _.size
-
-  override def path: JsPath = EventsQuery.path
-
+object Container {
+  implicit val formats: OFormat[Container] = Json.format[Container]
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,7 +50,7 @@ class IsTranshipmentControllerSpec extends SpecBase with MockitoSugar with Nunju
   val formProvider = new IsTranshipmentFormProvider()
   val form         = formProvider()
 
-  lazy val isTranshipmentRoute = routes.IsTranshipmentController.onPageLoad(mrn, index, NormalMode).url
+  lazy val isTranshipmentRoute = routes.IsTranshipmentController.onPageLoad(mrn, eventIndex, NormalMode).url
 
   "IsTranshipment Controller" - {
 
@@ -87,7 +87,7 @@ class IsTranshipmentControllerSpec extends SpecBase with MockitoSugar with Nunju
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers    = UserAnswers(mrn).set(IsTranshipmentPage(index), true).success.value
+      val userAnswers    = UserAnswers(mrn).set(IsTranshipmentPage(eventIndex), true).success.value
       val application    = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request        = FakeRequest(GET, isTranshipmentRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])

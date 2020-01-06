@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,15 @@
  * limitations under the License.
  */
 
-package computable
+package queries
 
-import queries.Gettable
+import models.domain.Container
+import pages.QuestionPage
+import pages.events.SectionConstants
+import play.api.libs.json.{JsObject, JsPath}
 
-trait Derivable[A, B] extends Gettable[A] {
+final case class ContainersQuery(eventIndex: Int) extends QuestionPage[Seq[Container]] {
 
-  val derive: A => B
+  override def path: JsPath = JsPath \ SectionConstants.events \ eventIndex \ SectionConstants.containers
 
 }

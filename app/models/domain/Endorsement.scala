@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,12 @@ import play.api.libs.json.{Format, Json}
 final case class Endorsement(date: Option[LocalDate], authority: Option[String], place: Option[String], country: Option[String])
 
 object Endorsement {
+
+  object Constants {
+    val authorityLength = 35
+    val placeLength     = 35
+    val countryLength   = 2
+  }
 
   implicit lazy val format: Format[Endorsement] =
     Json.format[Endorsement]

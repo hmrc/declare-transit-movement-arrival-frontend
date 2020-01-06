@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,12 +18,14 @@ package services.conversion
 
 import java.time.LocalDate
 
-import computable.DeriveNumberOfEvents
+import derivable.DeriveNumberOfEvents
 import models.domain._
 import models.domain.messages.{ArrivalNotification, NormalNotification}
 import models.{TraderAddress, UserAnswers}
 import pages._
 import pages.events._
+import pages.events.transhipments._
+import queries.ContainersQuery
 
 class ArrivalNotificationConversionService {
 
@@ -49,15 +51,29 @@ class ArrivalNotificationConversionService {
       )
     }
 
-  private def eventDetails(isTranshipment: Boolean, incidentInformation: Option[String]): EventDetails =
-    if (isTranshipment) {
-      ???
-    } else {
-      Incident(
-        information = incidentInformation,
-        endorsement = Endorsement(None, None, None, None) // TODO: Find out where this data comes from
-      )
+  private def eventDetails(
+    incidentInformation: Option[String],
+    transportIdentity: Option[String],
+    transportCountry: Option[String],
+    containers: Option[Seq[Container]]
+  ): EventDetails = {
+    val endorsement = Endorsement(None, None, None, None) // TODO: Find out where this data comes from
+
+    (incidentInformation, transportIdentity, transportCountry, containers) match {
+      case (ii, None, None, None) =>
+        Incident(ii, endorsement)
+      case (None, Some(ti), Some(tc), _) =>
+        VehicularTranshipment(
+          transportIdentity = ti,
+          transportCountry  = tc,
+          endorsement       = endorsement,
+          containers        = containers
+        )
+      case (None, None, None, Some(containers)) =>
+        ContainerTranshipment(endorsement, containers)
+      case _ => ???
     }
+  }
 
   private def enRouteEvents(userAnswers: UserAnswers): Option[Seq[EnRouteEvent]] =
     userAnswers.get(DeriveNumberOfEvents).map {
@@ -65,23 +81,27 @@ class ArrivalNotificationConversionService {
         (0 to numberOfEvents).flatMap {
           index =>
             for {
-              place          <- userAnswers.get(EventPlacePage(index))
-              country        <- userAnswers.get(EventCountryPage(index))
-              isReported     <- userAnswers.get(EventReportedPage(index))
-              isTranshipment <- userAnswers.get(IsTranshipmentPage(index))
+              place      <- userAnswers.get(EventPlacePage(index))
+              country    <- userAnswers.get(EventCountryPage(index))
+              isReported <- userAnswers.get(EventReportedPage(index))
+              incidentInformation = userAnswers.get(IncidentInformationPage(index))
+              transportIdentity   = userAnswers.get(TransportIdentityPage(index))
+              transportCountry    = userAnswers.get(TransportNationalityPage(index))
+              containers          = userAnswers.get(ContainersQuery(index))
             } yield {
               EnRouteEvent(
                 place         = place,
                 countryCode   = country,
                 alreadyInNcts = isReported,
-                eventDetails  = eventDetails(isTranshipment, userAnswers.get(IncidentInformationPage(index))),
+                eventDetails  = eventDetails(incidentInformation, transportIdentity, transportCountry, containers),
                 None //TODO Seals:waiting for design decision
               )
             }
         }
     }
 
-  private def traderAddress(traderAddress: TraderAddress, traderEori: String, traderName: String): Trader =
+  // TODO: Move this to the Trader model as a constructor?
+  private def traderAddress(traderAddress: TraderAddress, traderEori: String, traderName: String): TraderWithEori =
     TraderWithEori(
       eori            = traderEori,
       name            = Some(traderName),

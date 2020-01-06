@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,17 +16,92 @@
 
 package pages.events.transhipments
 
-import models.TranshipmentType
+import generators.DomainModelGenerators
+import models.domain.Container
+import models.{TranshipmentType, UserAnswers}
+import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
+import queries.ContainersQuery
 
-class TranshipmentTypePageSpec extends PageBehaviours {
+class TranshipmentTypePageSpec extends PageBehaviours with DomainModelGenerators {
+
+  val index = 0
 
   "TranshipmentTypePage" - {
 
-    beRetrievable[TranshipmentType](TranshipmentTypePage)
+    beRetrievable[TranshipmentType](TranshipmentTypePage(index))
 
-    beSettable[TranshipmentType](TranshipmentTypePage)
+    beSettable[TranshipmentType](TranshipmentTypePage(index))
 
-    beRemovable[TranshipmentType](TranshipmentTypePage)
+    beRemovable[TranshipmentType](TranshipmentTypePage(index))
+
+    "cleanup" - {
+      "must remove transport identity and nationality when there is an answer of Different Container" in {
+
+        forAll(arbitrary[UserAnswers], arbitrary[String]) {
+          (userAnswers, transportIdentity) =>
+            val result = userAnswers
+              .set(TransportIdentityPage(index), transportIdentity)
+              .success
+              .value
+              .set(TransportNationalityPage(index), transportIdentity)
+              .success
+              .value
+              .set(TranshipmentTypePage(index), TranshipmentType.DifferentContainer)
+              .success
+              .value
+
+            result.get(TransportIdentityPage(index)) must not be defined
+            result.get(TransportNationalityPage(index)) must not be defined
+        }
+      }
+
+      "must remove container numbers when there is an answer of Different Vehicle" in {
+
+        forAll(arbitrary[UserAnswers], arbitrary[Container]) {
+          (userAnswers, containerNumber) =>
+            val result = userAnswers
+              .set(ContainerNumberPage(index, 0), containerNumber)
+              .success
+              .value
+              .set(ContainerNumberPage(index, 1), containerNumber)
+              .success
+              .value
+              .set(TranshipmentTypePage(index), TranshipmentType.DifferentVehicle)
+              .success
+              .value
+
+            result.get(ContainersQuery(index)) must not be defined
+        }
+      }
+
+      "must remove all transhipment data when there is no answer" in {
+
+        forAll(arbitrary[UserAnswers], arbitrary[String], arbitrary[Container]) {
+          (userAnswers, stringAnswer, container) =>
+            val result = userAnswers
+              .set(TransportIdentityPage(index), stringAnswer)
+              .success
+              .value
+              .set(TransportNationalityPage(index), stringAnswer)
+              .success
+              .value
+              .set(ContainerNumberPage(index, 0), container)
+              .success
+              .value
+              .set(ContainerNumberPage(index, 1), container)
+              .success
+              .value
+              .remove(TranshipmentTypePage(index))
+              .success
+              .value
+
+            result.get(TransportIdentityPage(index)) must not be defined
+            result.get(TransportNationalityPage(index)) must not be defined
+            result.get(ContainerNumberPage(index, 0)) must not be defined
+            result.get(ContainerNumberPage(index, 1)) must not be defined
+        }
+      }
+    }
   }
 }

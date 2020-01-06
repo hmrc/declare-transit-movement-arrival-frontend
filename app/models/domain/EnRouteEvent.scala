@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,12 @@ import play.api.libs.json._
 final case class EnRouteEvent(place: String, countryCode: String, alreadyInNcts: Boolean, eventDetails: EventDetails, seals: Option[Seq[String]])
 
 object EnRouteEvent {
+
+  object Constants {
+    val placeLength       = 35
+    val countryCodeLength = 2
+    val sealsLength       = 20
+  }
 
   implicit lazy val reads: Reads[EnRouteEvent] = {
 

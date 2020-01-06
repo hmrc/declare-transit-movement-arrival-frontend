@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,12 +20,14 @@ import pages.behaviours.PageBehaviours
 
 class AddContainerPageSpec extends PageBehaviours {
 
+  val index = 0
+
   "AddContainerPage" - {
 
-    beRetrievable[Boolean](AddContainerPage)
+    beRetrievable[Boolean](AddContainerPage(index))
 
-    beSettable[Boolean](AddContainerPage)
+    beSettable[Boolean](AddContainerPage(index))
 
-    beRemovable[Boolean](AddContainerPage)
+    beRemovable[Boolean](AddContainerPage(index))
   }
 }

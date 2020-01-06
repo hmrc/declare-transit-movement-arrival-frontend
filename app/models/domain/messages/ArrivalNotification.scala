@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -63,6 +63,13 @@ final case class NormalNotification(movementReferenceNumber: String,
 
 object NormalNotification {
 
+  object Constants {
+    val customsSubPlaceLength    = 17
+    val notificationPlaceLength  = 35
+    val presentationOfficeLength = 8
+    val maxNumberOfEnRouteEvents = 9
+  }
+
   implicit lazy val reads: Reads[NormalNotification] = {
 
     import play.api.libs.functional.syntax._
@@ -121,6 +128,12 @@ final case class SimplifiedNotification(
 }
 
 object SimplifiedNotification {
+
+  object Constants {
+    val notificationPlaceLength  = 35
+    val approvedLocationLength   = 17
+    val presentationOfficeLength = 8
+  }
 
   implicit lazy val reads: Reads[SimplifiedNotification] = {
 

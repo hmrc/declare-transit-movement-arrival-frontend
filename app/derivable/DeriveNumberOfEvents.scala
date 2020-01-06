@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,15 @@
  * limitations under the License.
  */
 
-package pages.events
+package derivable
 
-object RepeatingSectionConstants {
+import play.api.libs.json.{JsObject, JsPath}
+import queries.EventsQuery
 
-  val events = "events"
+case object DeriveNumberOfEvents extends Derivable[List[JsObject], Int] {
+
+  override val derive: List[JsObject] => Int = _.size
+
+  override def path: JsPath = EventsQuery.path
 
 }

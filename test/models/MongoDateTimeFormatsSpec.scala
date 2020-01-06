@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ class MongoDateTimeFormatsSpec extends FreeSpec with MustMatchers with OptionVal
 
   "a LocalDateTime" - {
 
-    val date = LocalDate.of(2018, 2, 1).atStartOfDay
+    val testDate = LocalDate.of(2018, 2, 1).atStartOfDay
 
     val dateMillis = 1517443200000L
 
@@ -37,18 +37,18 @@ class MongoDateTimeFormatsSpec extends FreeSpec with MustMatchers with OptionVal
     )
 
     "must serialise to json" in {
-      val result = Json.toJson(date)
+      val result = Json.toJson(testDate)
       result mustEqual json
     }
 
     "must deserialise from json" in {
       val result = json.as[LocalDateTime]
-      result mustEqual date
+      result mustEqual testDate
     }
 
     "must serialise/deserialise to the same value" in {
-      val result = Json.toJson(date).as[LocalDateTime]
-      result mustEqual date
+      val result = Json.toJson(testDate).as[LocalDateTime]
+      result mustEqual testDate
     }
   }
 }

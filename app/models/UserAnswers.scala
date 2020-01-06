@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package models
 
 import java.time.LocalDateTime
 
-import computable.Derivable
+import derivable.Derivable
 import pages._
 import play.api.libs.json._
 import queries.Gettable
@@ -51,7 +51,7 @@ final case class UserAnswers(id: MovementReferenceNumber, data: JsObject = Json.
 
   def remove[A](page: QuestionPage[A]): Try[UserAnswers] = {
 
-    val updatedData = data.setObject(page.path, JsNull) match {
+    val updatedData = data.removeObject(page.path) match {
       case JsSuccess(jsValue, _) =>
         Success(jsValue)
       case JsError(_) =>

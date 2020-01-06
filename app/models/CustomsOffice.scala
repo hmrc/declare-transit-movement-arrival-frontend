@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package models
 
 import play.api.libs.json.{Json, OFormat}
 
-case class CustomsOffice(id: String, name: String, roles: Seq[String])
+case class CustomsOffice(id: String, name: String, roles: Seq[String]) // TODO: move to reference data package
 
 object CustomsOffice {
   implicit val format: OFormat[CustomsOffice] = Json.format[CustomsOffice]

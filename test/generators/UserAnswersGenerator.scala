@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,11 +29,11 @@ trait UserAnswersGenerator extends TryValues {
   self: Generators =>
 
   val generators: Seq[Gen[(QuestionPage[_], JsValue)]] =
-    arbitrary[(AddContainerPage.type, JsValue)] ::
-      arbitrary[(ContainerNumberPage.type, JsValue)] ::
-      arbitrary[(TransportNationalityPage.type, JsValue)] ::
-      arbitrary[(TransportIdentityPage.type, JsValue)] ::
-      arbitrary[(TranshipmentTypePage.type, JsValue)] ::
+    arbitrary[(AddContainerPage, JsValue)] ::
+      arbitrary[(ContainerNumberPage, JsValue)] ::
+      arbitrary[(TransportNationalityPage, JsValue)] ::
+      arbitrary[(TransportIdentityPage, JsValue)] ::
+      arbitrary[(TranshipmentTypePage, JsValue)] ::
       arbitrary[(IsTranshipmentPage, JsValue)] ::
       arbitrary[(PlaceOfNotificationPage.type, JsValue)] ::
       arbitrary[(IsTraderAddressPlaceOfNotificationPage.type, JsValue)] ::

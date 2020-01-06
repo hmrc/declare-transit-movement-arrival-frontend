@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,7 +50,7 @@ class EventCountryControllerSpec extends SpecBase with MockitoSugar with Nunjuck
   val formProvider       = new EventCountryFormProvider()
   val form: Form[String] = formProvider()
 
-  lazy val eventCountryRoute: String = routes.EventCountryController.onPageLoad(mrn, index, NormalMode).url
+  lazy val eventCountryRoute: String = routes.EventCountryController.onPageLoad(mrn, eventIndex, NormalMode).url
 
   "EventCountry Controller" - {
 
@@ -87,7 +87,7 @@ class EventCountryControllerSpec extends SpecBase with MockitoSugar with Nunjuck
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers    = UserAnswers(mrn).set(EventCountryPage(index), "GB").success.value
+      val userAnswers    = UserAnswers(mrn).set(EventCountryPage(eventIndex), "GB").success.value
       val application    = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request        = FakeRequest(GET, eventCountryRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
