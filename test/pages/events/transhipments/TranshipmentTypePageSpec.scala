@@ -77,19 +77,19 @@ class TranshipmentTypePageSpec extends PageBehaviours with DomainModelGenerators
 
       "must remove all transhipment data when there is no answer" in {
 
-        forAll(arbitrary[UserAnswers], arbitrary[Container]) {
-          (userAnswers, stringAnswer) =>
+        forAll(arbitrary[UserAnswers], arbitrary[String], arbitrary[Container]) {
+          (userAnswers, stringAnswer, container) =>
             val result = userAnswers
-              .set(TransportIdentityPage(index), stringAnswer.containerNumber)
+              .set(TransportIdentityPage(index), stringAnswer)
               .success
               .value
-              .set(TransportNationalityPage(index), stringAnswer.containerNumber)
+              .set(TransportNationalityPage(index), stringAnswer)
               .success
               .value
-              .set(ContainerNumberPage(index, 0), stringAnswer)
+              .set(ContainerNumberPage(index, 0), container)
               .success
               .value
-              .set(ContainerNumberPage(index, 1), stringAnswer)
+              .set(ContainerNumberPage(index, 1), container)
               .success
               .value
               .remove(TranshipmentTypePage(index))

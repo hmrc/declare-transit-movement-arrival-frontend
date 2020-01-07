@@ -17,6 +17,7 @@
 package generators
 
 import models._
+import models.reference.CustomsOffice
 import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen

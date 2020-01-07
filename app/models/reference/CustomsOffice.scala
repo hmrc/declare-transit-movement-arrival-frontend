@@ -14,15 +14,12 @@
  * limitations under the License.
  */
 
-package queries
+package models.reference
 
-import models.domain.Container
-import pages.QuestionPage
-import pages.events.SectionConstants
-import play.api.libs.json.{JsObject, JsPath}
+import play.api.libs.json.{Json, OFormat}
 
-final case class ContainersQuery(eventIndex: Int) extends QuestionPage[Seq[Container]] {
+case class CustomsOffice(id: String, name: String, roles: Seq[String]) // TODO: move to reference data package
 
-  override def path: JsPath = JsPath \ SectionConstants.events \ eventIndex \ SectionConstants.containers
-
+object CustomsOffice {
+  implicit val format: OFormat[CustomsOffice] = Json.format[CustomsOffice]
 }
