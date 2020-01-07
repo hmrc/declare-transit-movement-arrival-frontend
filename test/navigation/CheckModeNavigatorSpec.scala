@@ -28,7 +28,7 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.events._
 import pages._
-import pages.events.transhipments.{AddContainerPage, ContainerNumberPage, TranshipmentTypePage, TransportIdentityPage}
+import pages.events.transhipments.{AddContainerPage, ContainerNumberPage, TranshipmentTypePage, TransportIdentityPage, TransportNationalityPage}
 
 class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generators with DomainModelGenerators {
 
@@ -386,6 +386,18 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
             navigator
               .nextPage(TransportIdentityPage(eventIndex), CheckMode, answers)
               .mustBe(transhipmentRoutes.TransportNationalityController.onPageLoad(answers.id, eventIndex, CheckMode))
+        }
+      }
+    }
+
+    "must go from TransportNationality" - {
+
+      "to CheckEventAnswers" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            navigator
+              .nextPage(TransportNationalityPage(eventIndex), CheckMode, answers)
+              .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(answers.id, eventIndex))
         }
       }
     }
