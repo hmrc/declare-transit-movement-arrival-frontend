@@ -16,19 +16,19 @@
 
 package controllers
 
-import connectors.ReferenceDataConnector
 import controllers.actions._
 import forms.PresentationOfficeFormProvider
 import javax.inject.Inject
-import models.{CustomsOffice, Mode, MovementReferenceNumber}
+import models.{Mode, MovementReferenceNumber}
 import navigation.Navigator
 import pages.{CustomsSubPlacePage, PresentationOfficePage}
 import play.api.data.{Form, FormError}
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.json.Json
 import play.api.mvc._
 import renderer.Renderer
 import repositories.SessionRepository
+import services.ReferenceDataService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
@@ -41,7 +41,7 @@ class PresentationOfficeController @Inject()(override val messagesApi: MessagesA
                                              getData: DataRetrievalActionProvider,
                                              requireData: DataRequiredAction,
                                              formProvider: PresentationOfficeFormProvider,
-                                             referenceDataConnector: ReferenceDataConnector,
+                                             referenceDataService: ReferenceDataService,
                                              val controllerComponents: MessagesControllerComponents,
                                              renderer: Renderer)(implicit ec: ExecutionContext)
     extends FrontendBaseController
@@ -66,28 +66,17 @@ class PresentationOfficeController @Inject()(override val messagesApi: MessagesA
 
   private def renderView(mrn: MovementReferenceNumber, mode: Mode, subsPlace: String, form: Form[String], status: Results.Status)(
     implicit request: Request[AnyContent]): Future[Result] =
-    referenceDataConnector.getCustomsOffices() flatMap {
-      offices =>
-        val customsOffices: Seq[JsObject] = offices.map {
-          office =>
-            Json.obj(
-              "value"    -> office.id,
-              "text"     -> s"${office.name} (${office.id})",
-              "selected" -> form.value.contains(office.id)
-            )
-        }
-
+    referenceDataService.getCustomsOfficesAsJson(form.value) flatMap {
+      customsOffices =>
         val json = Json.obj(
-          "form"    -> form,
-          "mrn"     -> mrn,
-          "mode"    -> mode,
-          "customsOffices" -> Seq(Json.obj("value" -> "", "text" -> "")).++(customsOffices),
-          "header"  -> Messages("presentationOffice.title", subsPlace)
+          "form"           -> form,
+          "mrn"            -> mrn,
+          "mode"           -> mode,
+          "customsOffices" -> customsOffices,
+          "header"         -> Messages("presentationOffice.title", subsPlace)
         )
         renderer.render("presentationOffice.njk", json).map(status(_))
     }
-
-  def getCustomsOffice(offices: Seq[CustomsOffice], value: String): CustomsOffice = offices.filter(_.id == value).head
 
   def onSubmit(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] =
     (identify andThen getData(mrn) andThen requireData).async {
@@ -102,24 +91,22 @@ class PresentationOfficeController @Inject()(override val messagesApi: MessagesA
                   renderView(mrn, mode, subsPlace, formWithErrors, Results.BadRequest)
                 },
                 value =>
-                  referenceDataConnector.getCustomsOffices() flatMap {
-                    office =>
-                      office.find(_.id == value) match {
-                        case Some(customsOffice) =>
-                          for {
-                            updatedAnswers <- Future.fromTry(request.userAnswers.set(PresentationOfficePage, customsOffice))
-                            _              <- sessionRepository.set(updatedAnswers)
-                          } yield Redirect(navigator.nextPage(PresentationOfficePage, mode, updatedAnswers))
-                        case _ =>
-                          renderView(mrn,
-                                     mode,
-                                     subsPlace,
-                                     form.copy(errors = Seq(FormError("value", Messages("presentationOffice.error.required", subsPlace)))),
-                                     Results.BadRequest)
-                      }
+                  referenceDataService.getCustomsOffice(value) flatMap {
+                    case Some(customsOffice) =>
+                      for {
+                        updatedAnswers <- Future.fromTry(request.userAnswers.set(PresentationOfficePage, customsOffice))
+                        _              <- sessionRepository.set(updatedAnswers)
+                      } yield Redirect(navigator.nextPage(PresentationOfficePage, mode, updatedAnswers))
+                    case _ =>
+                      renderView(mrn,
+                                 mode,
+                                 subsPlace,
+                                 form.copy(errors = Seq(FormError("value", Messages("presentationOffice.error.required", subsPlace)))),
+                                 Results.BadRequest)
                 }
               )
           case _ => Future.successful(Redirect(routes.SessionExpiredController.onPageLoad()))
         }
     }
+
 }
