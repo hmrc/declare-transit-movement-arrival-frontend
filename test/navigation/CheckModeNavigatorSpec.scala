@@ -453,7 +453,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
           answers =>
             navigator
               .nextPage(TransportIdentityPage(eventIndex), CheckMode, answers)
-              .mustBe(transhipmentRoutes.TransportNationalityController.onPageLoad(answers.id, eventIndex, CheckMode))
+              .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(answers.id, eventIndex))
         }
       }
     }
@@ -489,7 +489,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
         }
       }
 
-      "to CheckEventAnswers when false and the TranshipmentTypePage is 'Both'" in {
+      "to TransportIdentityPage when false, TranshipmentTypePage is 'Both' and TransportIdentity has not been answered" in {
 
         forAll(arbitrary[UserAnswers]) {
           answers =>
@@ -500,10 +500,34 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
               .set(AddContainerPage(eventIndex), false)
               .success
               .value
+              .remove(TransportIdentityPage(eventIndex))
+              .success
+              .value
 
             navigator
               .nextPage(AddContainerPage(eventIndex), CheckMode, updatedAnswers)
               .mustBe(transhipmentRoutes.TransportIdentityController.onPageLoad(updatedAnswers.id, eventIndex, CheckMode))
+        }
+      }
+
+      "to CheckEventAnswers when false, TranshipmentTypePage is 'Both' and TransportIdentity has been answered" in {
+
+        forAll(arbitrary[UserAnswers], arbitrary[String]) {
+          (answers, transportIdentity) =>
+            val updatedAnswers = answers
+              .set(TranshipmentTypePage(eventIndex), DifferentContainerAndVehicle)
+              .success
+              .value
+              .set(AddContainerPage(eventIndex), false)
+              .success
+              .value
+              .set(TransportIdentityPage(eventIndex), transportIdentity)
+              .success
+              .value
+
+            navigator
+              .nextPage(AddContainerPage(eventIndex), CheckMode, updatedAnswers)
+              .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(updatedAnswers.id, eventIndex))
         }
       }
 
