@@ -33,7 +33,6 @@ import pages.events.transhipments.{AddContainerPage, ContainerNumberPage, Transh
 class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generators with DomainModelGenerators {
 
   val navigator: Navigator = app.injector.instanceOf[Navigator]
-
   "Navigator in Check mode" - {
     "must go from a page that doesn't exist in the edit route map  to Check Your Answers" in {
       case object UnknownPage extends Page
@@ -346,7 +345,30 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
         }
       }
 
-      "to CheckEventAnswers when 'Both' is selected and ContainerNumber has been answered" in {
+      "to CheckEventAnswers when 'Both' is selected and ContainerNumber and vehicle identity and nationality questions have been answered" in {
+        forAll(arbitrary[UserAnswers], arbitrary[Container], arbitrary[String], arbitrary[String]) {
+          (answers, container, transportIdentity, transportNationality) =>
+            val updatedUserAnswers = answers
+              .set(TranshipmentTypePage(eventIndex), DifferentContainerAndVehicle)
+              .success
+              .value
+              .set(ContainerNumberPage(eventIndex, containerIndex), container)
+              .success
+              .value
+              .set(TransportIdentityPage(eventIndex), transportIdentity)
+              .success
+              .value
+              .set(TransportNationalityPage(eventIndex), transportNationality)
+              .success
+              .value
+
+            navigator
+              .nextPage(TranshipmentTypePage(eventIndex), CheckMode, updatedUserAnswers)
+              .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(updatedUserAnswers.id, eventIndex))
+        }
+      }
+
+      "to addContainerPage when 'Both' is selected and ContainerNumber has been answered but Transport Identity and Nationality has not been answered" in {
         forAll(arbitrary[UserAnswers], arbitrary[Container]) {
           (answers, container) =>
             val updatedUserAnswers = answers
@@ -356,10 +378,56 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
               .set(ContainerNumberPage(eventIndex, containerIndex), container)
               .success
               .value
+              .remove(TransportIdentityPage(eventIndex))
+              .success
+              .value
+              .remove(TransportNationalityPage(eventIndex))
+              .success
+              .value
 
             navigator
               .nextPage(TranshipmentTypePage(eventIndex), CheckMode, updatedUserAnswers)
-              .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(updatedUserAnswers.id, eventIndex))
+              .mustBe(transhipmentRoutes.AddContainerController.onPageLoad(updatedUserAnswers.id, eventIndex, CheckMode))
+        }
+      }
+
+      "to addContainerPage when 'Both' is selected and ContainerNumber has been answered but Transport Nationality has not been answered" in {
+        forAll(arbitrary[UserAnswers], arbitrary[Container]) {
+          (answers, container) =>
+            val updatedUserAnswers = answers
+              .set(TranshipmentTypePage(eventIndex), DifferentContainerAndVehicle)
+              .success
+              .value
+              .set(ContainerNumberPage(eventIndex, containerIndex), container)
+              .success
+              .value
+              .remove(TransportNationalityPage(eventIndex))
+              .success
+              .value
+
+            navigator
+              .nextPage(TranshipmentTypePage(eventIndex), CheckMode, updatedUserAnswers)
+              .mustBe(transhipmentRoutes.AddContainerController.onPageLoad(updatedUserAnswers.id, eventIndex, CheckMode))
+        }
+      }
+
+      "to addContainerPage when 'Both' is selected and ContainerNumber has been answered but Transport Identity has not been answered" in {
+        forAll(arbitrary[UserAnswers], arbitrary[Container]) {
+          (answers, container) =>
+            val updatedUserAnswers = answers
+              .set(TranshipmentTypePage(eventIndex), DifferentContainerAndVehicle)
+              .success
+              .value
+              .set(ContainerNumberPage(eventIndex, containerIndex), container)
+              .success
+              .value
+              .remove(TransportIdentityPage(eventIndex))
+              .success
+              .value
+
+            navigator
+              .nextPage(TranshipmentTypePage(eventIndex), CheckMode, updatedUserAnswers)
+              .mustBe(transhipmentRoutes.AddContainerController.onPageLoad(updatedUserAnswers.id, eventIndex, CheckMode))
         }
       }
 

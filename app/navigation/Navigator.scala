@@ -116,11 +116,29 @@ class Navigator @Inject()() {
   }
 
   private def transhipmentTypeCheckRoute(index: Int)(ua: UserAnswers): Option[Call] =
-    (ua.get(TranshipmentTypePage(index)), ua.get(ContainerNumberPage(index, 0)), ua.get(TransportIdentityPage(index))) match {
-      case (Some(DifferentContainer), None, _)           => Some(transhipmentRoutes.ContainerNumberController.onPageLoad(ua.id, index, 0, CheckMode))
-      case (Some(DifferentVehicle), _, None)             => Some(transhipmentRoutes.TransportIdentityController.onPageLoad(ua.id, index, CheckMode))
-      case (Some(DifferentContainerAndVehicle), None, _) => Some(transhipmentRoutes.ContainerNumberController.onPageLoad(ua.id, index, 0, CheckMode))
-      case _                                             => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
+    (
+      ua.get(TranshipmentTypePage(index)),
+      ua.get(ContainerNumberPage(index, 0)),
+      ua.get(TransportIdentityPage(index)),
+      ua.get(TransportNationalityPage(index))
+    ) match {
+      case (Some(DifferentContainer), None, _, _) =>
+        Some(transhipmentRoutes.ContainerNumberController.onPageLoad(ua.id, index, 0, CheckMode))
+
+      case (Some(DifferentVehicle), _, None, _) =>
+        Some(transhipmentRoutes.TransportIdentityController.onPageLoad(ua.id, index, CheckMode))
+
+      case (Some(DifferentContainerAndVehicle), None, _, _) =>
+        Some(transhipmentRoutes.ContainerNumberController.onPageLoad(ua.id, index, 0, CheckMode))
+
+      case (Some(DifferentContainerAndVehicle), Some(_), Some(_), Some(_)) =>
+        Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
+
+      case (Some(DifferentContainerAndVehicle), Some(_), _, _) =>
+        Some(transhipmentRoutes.AddContainerController.onPageLoad(ua.id, index, CheckMode))
+
+      case _ =>
+        Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
     }
 
   private def goodsLocationPageRoutes(ua: UserAnswers): Option[Call] =
