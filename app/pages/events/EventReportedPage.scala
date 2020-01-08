@@ -16,12 +16,21 @@
 
 package pages.events
 
+import models.UserAnswers
 import pages.QuestionPage
 import play.api.libs.json.JsPath
+
+import scala.util.Try
 
 final case class EventReportedPage(index: Int) extends QuestionPage[Boolean] {
 
   override def path: JsPath = JsPath \ SectionConstants.events \ index \ toString
 
   override def toString: String = "eventReported"
+
+  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
+    (value, userAnswers.get(IsTranshipmentPage(index))) match {
+      case (Some(false), Some(false)) => super.cleanup(value, userAnswers)
+      case _                          => userAnswers.remove(IncidentInformationPage(index))
+    }
 }

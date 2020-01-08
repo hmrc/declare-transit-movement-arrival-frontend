@@ -16,14 +16,36 @@
 
 package pages.events.transhipments
 
-import models.TranshipmentType
+import models.{TranshipmentType, UserAnswers}
 import pages.QuestionPage
 import pages.events.SectionConstants
 import play.api.libs.json.JsPath
+import queries.ContainersQuery
+
+import scala.util.Try
 
 final case class TranshipmentTypePage(index: Int) extends QuestionPage[TranshipmentType] {
 
   override def path: JsPath = JsPath \ SectionConstants.events \ index \ toString
 
   override def toString: String = "transhipmentType"
+
+  override def cleanup(value: Option[TranshipmentType], userAnswers: UserAnswers): Try[UserAnswers] = value match {
+    case Some(TranshipmentType.DifferentContainer) =>
+      userAnswers
+        .remove(TransportIdentityPage(index))
+        .flatMap(_.remove(TransportNationalityPage(index)))
+
+    case Some(TranshipmentType.DifferentVehicle) =>
+      userAnswers
+        .remove(ContainersQuery(index))
+
+    case None =>
+      userAnswers
+        .remove(TransportIdentityPage(index))
+        .flatMap(_.remove(TransportNationalityPage(index)))
+        .flatMap(_.remove(ContainersQuery(index)))
+
+    case _ => super.cleanup(value, userAnswers)
+  }
 }
