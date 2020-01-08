@@ -31,16 +31,8 @@ final case class TranshipmentTypePage(index: Int) extends QuestionPage[Transhipm
   override def toString: String = "transhipmentType"
 
   override def cleanup(value: Option[TranshipmentType], userAnswers: UserAnswers): Try[UserAnswers] = value match {
-    case Some(TranshipmentType.DifferentContainer) =>
-      userAnswers
-        .remove(TransportIdentityPage(index))
-        .flatMap(_.remove(TransportNationalityPage(index)))
 
-    case Some(TranshipmentType.DifferentVehicle) =>
-      userAnswers
-        .remove(ContainersQuery(index))
-
-    case None =>
+    case Some(_) | None =>
       userAnswers
         .remove(TransportIdentityPage(index))
         .flatMap(_.remove(TransportNationalityPage(index)))

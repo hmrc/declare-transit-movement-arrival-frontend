@@ -361,7 +361,6 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
               .set(TransportNationalityPage(eventIndex), transportNationality)
               .success
               .value
-
             navigator
               .nextPage(TranshipmentTypePage(eventIndex), CheckMode, updatedUserAnswers)
               .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(updatedUserAnswers.id, eventIndex))
