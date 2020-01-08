@@ -28,6 +28,6 @@ class PresentationOfficeFormProvider @Inject() extends Mappings {
     Form(
       "value" -> text(messages("presentationOffice.error.required", subPlace))
         .verifying(messages("presentationOffice.error.required", subPlace), value => customsOffices.exists(_.id == value))
-        .transform[CustomsOffice](value => customsOffices.filter(_.id == value).head, _.id)
+        .transform[CustomsOffice](value => customsOffices.find(_.id == value).get, _.id)
     )
 }
