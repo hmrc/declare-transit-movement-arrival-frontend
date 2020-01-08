@@ -135,14 +135,11 @@ class Navigator @Inject()() {
       ua.get(TransportIdentityPage(index)),
       ua.get(TransportNationalityPage(index))
     ) match {
-      case (Some(DifferentContainer), None, _, _) =>
+      case (Some(DifferentContainer) | Some(DifferentContainerAndVehicle), None, _, _) =>
         Some(transhipmentRoutes.ContainerNumberController.onPageLoad(ua.id, index, 0, CheckMode))
 
       case (Some(DifferentVehicle), _, None, _) =>
         Some(transhipmentRoutes.TransportIdentityController.onPageLoad(ua.id, index, CheckMode))
-
-      case (Some(DifferentContainerAndVehicle), None, _, _) =>
-        Some(transhipmentRoutes.ContainerNumberController.onPageLoad(ua.id, index, 0, CheckMode))
 
       case (Some(DifferentContainerAndVehicle), Some(_), Some(_), Some(_)) =>
         Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
