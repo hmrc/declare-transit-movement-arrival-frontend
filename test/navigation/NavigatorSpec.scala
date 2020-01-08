@@ -17,40 +17,25 @@
 package navigation
 
 import base.SpecBase
-import derivable.DeriveNumberOfEvents
-import controllers.routes
-import controllers.events.{routes => eventRoutes}
 import controllers.events.transhipments.{routes => transhipmentRoutes}
+import controllers.events.{routes => eventRoutes}
+import controllers.routes
 import generators.{DomainModelGenerators, Generators}
 import models.TranshipmentType.{DifferentContainer, DifferentContainerAndVehicle, DifferentVehicle}
-import pages._
 import models._
+import models.domain.EnRouteEvent
 import models.domain.{Container, EnRouteEvent, Incident}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
-import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import pages.events.AddEventPage
-import pages.events.EventCountryPage
-import pages.events.EventPlacePage
-import pages.events.EventReportedPage
-import pages.events.IncidentInformationPage
-import pages.events.IsTranshipmentPage
-import pages.events.transhipments.{AddContainerPage, ContainerNumberPage, TranshipmentTypePage, TransportIdentityPage, TransportNationalityPage}
+import pages._
+import pages.events._
+import pages.events.transhipments._
 import queries.EventsQuery
 
 class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generators with DomainModelGenerators {
 
   val navigator = app.injector.instanceOf[Navigator]
-
-  private val cyaEventPages =
-    Seq(
-      EventCountryPage(eventIndex),
-      EventPlacePage(eventIndex),
-      EventReportedPage(eventIndex),
-      IsTranshipmentPage(eventIndex),
-      IncidentInformationPage(eventIndex)
-    )
 
   "Navigator" - {
 
@@ -667,140 +652,6 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           }
         }
       }
-
-    }
-
-    "in Check mode" - {
-
-      "must go from a page that doesn't exist in the edit route map  to Check Your Answers" in {
-
-        case object UnknownPage extends Page
-
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-            navigator
-              .nextPage(UnknownPage, CheckMode, answers)
-              .mustBe(routes.CheckYourAnswersController.onPageLoad(answers.id))
-        }
-      }
-
-      "must go from Goods Location" - {
-
-        "to Check Your Answers" - {
-
-          "when the user answers Border Force Office and they have already answered Customs Sub Place" in {
-
-            forAll(arbitrary[UserAnswers], arbitrary[String]) {
-              (answers, subPlace) =>
-                val updatedAnswers =
-                  answers
-                    .set(GoodsLocationPage, GoodsLocation.BorderForceOffice)
-                    .success
-                    .value
-                    .set(CustomsSubPlacePage, subPlace)
-                    .success
-                    .value
-
-                navigator
-                  .nextPage(GoodsLocationPage, CheckMode, updatedAnswers)
-                  .mustBe(routes.CheckYourAnswersController.onPageLoad(answers.id))
-            }
-          }
-        }
-
-        "to Customs Sub Place" - {
-
-          "when the user answers Border Force Office and had not answered Customs Sub Place" in {
-
-            forAll(arbitrary[UserAnswers]) {
-              answers =>
-                val updatedAnswers =
-                  answers
-                    .set(GoodsLocationPage, GoodsLocation.BorderForceOffice)
-                    .success
-                    .value
-                    .remove(CustomsSubPlacePage)
-                    .success
-                    .value
-
-                navigator
-                  .nextPage(GoodsLocationPage, CheckMode, updatedAnswers)
-                  .mustBe(routes.CustomsSubPlaceController.onPageLoad(answers.id, CheckMode))
-            }
-          }
-        }
-
-        "to Use Different Service" - {
-
-          "when the user answers Authorised Consignee" in {
-
-            forAll(arbitrary[UserAnswers]) {
-              answers =>
-                val updatedAnswers = answers.set(GoodsLocationPage, GoodsLocation.AuthorisedConsigneesLocation).success.value
-
-                navigator
-                  .nextPage(GoodsLocationPage, CheckMode, updatedAnswers)
-                  .mustBe(routes.UseDifferentServiceController.onPageLoad(answers.id))
-            }
-          }
-        }
-      }
-
-      for (page <- cyaEventPages) {
-        s"from $page pages" - {
-          "must go to check event answers" in {
-            forAll(arbitrary[UserAnswers]) {
-              answers =>
-                navigator
-                  .nextPage(page, CheckMode, answers)
-                  .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(answers.id, eventIndex))
-
-            }
-          }
-        }
-      }
-
-      "must go from 'IsTraderAddressPlaceOfNotificationPage'" - {
-        "to 'Check Your Answers' when answer is 'No' and there is a 'Place of notification'" in {
-          forAll(arbitrary[UserAnswers], arbitrary[String]) {
-            (answers, placeOfNotification) =>
-              val updatedUserAnswers = answers
-                .set(IsTraderAddressPlaceOfNotificationPage, false)
-                .success
-                .value
-                .set(PlaceOfNotificationPage, placeOfNotification)
-                .success
-                .value
-
-              navigator
-                .nextPage(IsTraderAddressPlaceOfNotificationPage, CheckMode, updatedUserAnswers)
-                .mustBe(routes.CheckYourAnswersController.onPageLoad(updatedUserAnswers.id))
-          }
-        }
-
-        "to 'Check Your Answers' when answer is 'Yes'" in {
-          forAll(arbitrary[UserAnswers]) {
-            answers =>
-              val updatedUserAnswers = answers.set(IsTraderAddressPlaceOfNotificationPage, true).success.value
-
-              navigator
-                .nextPage(IsTraderAddressPlaceOfNotificationPage, CheckMode, updatedUserAnswers)
-                .mustBe(routes.CheckYourAnswersController.onPageLoad(updatedUserAnswers.id))
-          }
-        }
-      }
-
-      "go from 'Place of Notification' to CheckYourAnswer" in {
-        forAll(arbitrary[UserAnswers], stringsWithMaxLength(35)) {
-          case (answers, placeOfNotification) =>
-            val updatedUserAnswers = answers.set(PlaceOfNotificationPage, placeOfNotification).success.value
-
-            navigator
-              .nextPage(PlaceOfNotificationPage, CheckMode, updatedUserAnswers)
-              .mustBe(routes.CheckYourAnswersController.onPageLoad(updatedUserAnswers.id))
-        }
-      }
-
     }
   }
 }
