@@ -18,7 +18,7 @@ package services
 
 import base.SpecBase
 import connectors.ReferenceDataConnector
-import models.CustomsOffice
+import models.reference.CustomsOffice
 import org.mockito.Matchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
@@ -45,12 +45,12 @@ class ReferenceDataServiceSpec extends SpecBase with MockitoSugar {
     "getCustomsOffice" - {
 
       "must return valid customs office for the given 'custom office id'" in {
-        when(mockReferenceDataConnector.getCustomsOffices()(any(), any())).thenReturn(Future.successful((Seq(customsOffice, customsOffice1))))
+        when(mockReferenceDataConnector.getCustomsOffices()(any(), any())).thenReturn(Future.successful(Seq(customsOffice, customsOffice1)))
         referenceDataService.getCustomsOffice("id").futureValue mustBe Some(customsOffice)
       }
 
       "must return none if the given 'custom office id' is does not exists in the customsOffice data list" in {
-        when(mockReferenceDataConnector.getCustomsOffices()(any(), any())).thenReturn(Future.successful((Seq(customsOffice1))))
+        when(mockReferenceDataConnector.getCustomsOffices()(any(), any())).thenReturn(Future.successful(Seq(customsOffice1)))
         referenceDataService.getCustomsOffice("id").futureValue mustBe None
       }
     }
@@ -64,7 +64,7 @@ class ReferenceDataServiceSpec extends SpecBase with MockitoSugar {
           Json.obj("value" -> "someId", "text" -> "someName (someId)", "selected" -> false)
         )
 
-        when(mockReferenceDataConnector.getCustomsOffices()(any(), any())).thenReturn(Future.successful((Seq(customsOffice, customsOffice1))))
+        when(mockReferenceDataConnector.getCustomsOffices()(any(), any())).thenReturn(Future.successful(Seq(customsOffice, customsOffice1)))
         referenceDataService.getCustomsOfficesAsJson(Some("id")).futureValue mustBe expectedJson
       }
 
@@ -72,7 +72,7 @@ class ReferenceDataServiceSpec extends SpecBase with MockitoSugar {
 
         val expectedJson = Seq(Json.obj("value" -> "", "text" -> ""))
 
-        when(mockReferenceDataConnector.getCustomsOffices()(any(), any())).thenReturn(Future.successful((Seq.empty)))
+        when(mockReferenceDataConnector.getCustomsOffices()(any(), any())).thenReturn(Future.successful(Seq.empty))
         referenceDataService.getCustomsOfficesAsJson(Some("id")).futureValue mustBe expectedJson
       }
     }

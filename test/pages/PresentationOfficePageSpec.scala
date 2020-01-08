@@ -16,7 +16,7 @@
 
 package pages
 
-import models.CustomsOffice
+import models.reference.CustomsOffice
 import pages.behaviours.PageBehaviours
 
 class PresentationOfficePageSpec extends PageBehaviours {

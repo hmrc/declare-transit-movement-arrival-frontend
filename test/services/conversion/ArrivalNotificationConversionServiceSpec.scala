@@ -23,7 +23,8 @@ import generators.DomainModelGenerators
 import models.GoodsLocation.BorderForceOffice
 import models.domain.messages.NormalNotification
 import models.domain._
-import models.{CustomsOffice, TraderAddress, UserAnswers}
+import models.reference.CustomsOffice
+import models.{TraderAddress, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks

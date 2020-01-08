@@ -16,7 +16,7 @@
 
 package pages
 
-import models.CustomsOffice
+import models.reference.CustomsOffice
 import play.api.libs.json.JsPath
 
 case object PresentationOfficePage extends QuestionPage[CustomsOffice] {

@@ -19,7 +19,8 @@ package controllers
 import base.SpecBase
 import forms.PresentationOfficeFormProvider
 import matchers.JsonMatchers
-import models.{CustomsOffice, NormalMode, UserAnswers}
+import models.reference.CustomsOffice
+import models.{NormalMode, UserAnswers}
 import navigation.FakeNavigator
 import navigation.Navigator
 import org.mockito.ArgumentCaptor
@@ -52,7 +53,7 @@ class PresentationOfficeControllerSpec extends SpecBase with MockitoSugar with N
   val form: Form[String] = formProvider("sub place")
 
   lazy val presentationOfficeRoute: String = routes.PresentationOfficeController.onPageLoad(mrn, NormalMode).url
-  val mockRefDataService                   = mock[ReferenceDataService]
+  val mockRefDataService: ReferenceDataService = mock[ReferenceDataService]
 
   "PresentationOffice Controller" - {
 

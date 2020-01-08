@@ -18,7 +18,7 @@ package services
 
 import connectors.ReferenceDataConnector
 import javax.inject.Inject
-import models.CustomsOffice
+import models.reference.CustomsOffice
 import play.api.libs.json.{JsObject, Json}
 import uk.gov.hmrc.http.HeaderCarrier
 
