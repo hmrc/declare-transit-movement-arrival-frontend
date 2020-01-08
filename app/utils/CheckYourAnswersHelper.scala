@@ -136,10 +136,11 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
           Action(
             content            = msg"site.edit",
             href               = routes.IsTraderAddressPlaceOfNotificationController.onPageLoad(mrn, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"isTraderAddressPlaceOfNotification.checkYourAnswersLabel"))
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(message))
           )
         )
       )
+
   }
 
   def isTranshipment(index: Int): Option[Row] = userAnswers.get(IsTranshipmentPage(index)) map {
@@ -309,14 +310,17 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
 
   def presentationOffice: Option[Row] = userAnswers.get(PresentationOfficePage) map {
     answer =>
+      val customsSubPlace: String = userAnswers.get(CustomsSubPlacePage).getOrElse("this location")
+      val message                 = msg"presentationOffice.checkYourAnswersLabel".withArgs(customsSubPlace)
+
       Row(
-        key   = Key(msg"presentationOffice.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        key   = Key(message, classes = Seq("govuk-!-width-one-half")),
         value = Value(lit"$answer"),
         actions = List(
           Action(
             content            = msg"site.edit",
             href               = routes.PresentationOfficeController.onPageLoad(mrn, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"presentationOffice.checkYourAnswersLabel"))
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(message))
           )
         )
       )
