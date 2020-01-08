@@ -17,30 +17,25 @@
 package controllers
 
 import base.SpecBase
+import connectors.ReferenceDataConnector
 import forms.PresentationOfficeFormProvider
 import matchers.JsonMatchers
 import models.reference.CustomsOffice
 import models.{NormalMode, UserAnswers}
-import navigation.FakeNavigator
-import navigation.Navigator
+import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
-import org.mockito.Mockito.times
-import org.mockito.Mockito.verify
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.CustomsSubPlacePage
-import pages.PresentationOfficePage
+import pages.{CustomsSubPlacePage, PresentationOfficePage}
 import play.api.data.Form
 import play.api.inject.bind
-import play.api.libs.json.JsObject
-import play.api.libs.json.Json
-import play.api.mvc.Call
+import play.api.libs.json.{JsObject, Json}
+import play.api.mvc.{Call, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import repositories.SessionRepository
-import services.ReferenceDataService
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
@@ -49,22 +44,25 @@ class PresentationOfficeControllerSpec extends SpecBase with MockitoSugar with N
 
   def onwardRoute: Call = Call("GET", "/foo")
 
-  val formProvider       = new PresentationOfficeFormProvider()
-  val form: Form[String] = formProvider("sub place")
+  val formProvider              = new PresentationOfficeFormProvider()
+  val customsOffices            = Seq(CustomsOffice("id", "name", Seq.empty), CustomsOffice("officeId", "someName", Seq.empty))
+  val form: Form[CustomsOffice] = formProvider("sub place", customsOffices)
 
   lazy val presentationOfficeRoute: String = routes.PresentationOfficeController.onPageLoad(mrn, NormalMode).url
-  val mockRefDataService: ReferenceDataService = mock[ReferenceDataService]
+
+  val mockRefDataConnector: ReferenceDataConnector = mock[ReferenceDataConnector]
+  val templateCaptor: ArgumentCaptor[String]       = ArgumentCaptor.forClass(classOf[String])
+  val jsonCaptor: ArgumentCaptor[JsObject]         = ArgumentCaptor.forClass(classOf[JsObject])
 
   "PresentationOffice Controller" - {
 
     "must return OK and the correct view for a GET" in {
-      val expectedCustomsOfficeJson = Json.obj("value" -> "id", "text" -> "name (id)", "selected" -> false)
-      verifyOnLoadPage(emptyUserAnswers.set(CustomsSubPlacePage, "sub place").success.value, form, expectedCustomsOfficeJson)
+      verifyOnLoadPage(emptyUserAnswers.set(CustomsSubPlacePage, "sub place").success.value, form)
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
       val officeId   = "officeId"
-      val officeName = "officeId"
+      val officeName = "someName"
       val userAnswers = UserAnswers(mrn)
         .set(PresentationOfficePage, CustomsOffice(officeId, officeName, Seq.empty))
         .success
@@ -73,10 +71,9 @@ class PresentationOfficeControllerSpec extends SpecBase with MockitoSugar with N
         .success
         .value
 
-      val filledForm        = form.bind(Map("value" -> officeId))
-      val customsOfficeJson = Json.obj("value" -> officeId, "text" -> s"$officeName ($officeId)", "selected" -> true)
+      val filledForm = form.bind(Map("value" -> officeId))
 
-      verifyOnLoadPage(userAnswers, filledForm, customsOfficeJson)
+      verifyOnLoadPage(userAnswers, filledForm, preSelectOfficeId = true)
     }
 
     "must redirect to session expired page when user hasn't answered the customs sub place question" in {
@@ -99,9 +96,7 @@ class PresentationOfficeControllerSpec extends SpecBase with MockitoSugar with N
     "must redirect to the next page when valid data is submitted" in {
       val mockSessionRepository = mock[SessionRepository]
 
-      when(mockRefDataService.getCustomsOffice(any())(any()))
-        .thenReturn(Future.successful(Some(CustomsOffice("id", "name", Seq.empty))))
-
+      when(mockRefDataConnector.getCustomsOffices()(any(), any())).thenReturn(Future.successful(customsOffices))
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       val userAnswers = emptyUserAnswers.set(CustomsSubPlacePage, "sub place").success.value
@@ -110,7 +105,7 @@ class PresentationOfficeControllerSpec extends SpecBase with MockitoSugar with N
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[ReferenceDataService].toInstance(mockRefDataService)
+            bind[ReferenceDataConnector].toInstance(mockRefDataConnector)
           )
           .build()
 
@@ -127,65 +122,11 @@ class PresentationOfficeControllerSpec extends SpecBase with MockitoSugar with N
     }
 
     "must return Bad Request and error when user entered data does not exist in reference data customs office list" in {
-      val jsCustomsOffice = Json.obj("value" -> "id", "text" -> "name (id)", "selected" -> false)
-
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
-      when(mockRefDataService.getCustomsOffice(any())(any()))
-        .thenReturn(Future.successful(None))
-
-      when(mockRefDataService.getCustomsOfficesAsJson(any())(any()))
-        .thenReturn(Future.successful(Seq(jsCustomsOffice)))
-
-      val userAnswers = emptyUserAnswers.set(CustomsSubPlacePage, "sub place").success.value
-      val application =
-        applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[ReferenceDataService].toInstance(mockRefDataService)
-          )
-          .build()
-
-      val request =
-        FakeRequest(POST, presentationOfficeRoute)
-          .withFormUrlEncodedBody(("value", "abcd"))
-
-      val result = route(application, request).value
-
-      status(result) mustEqual BAD_REQUEST
-
-      application.stop()
-
+      verifyBadRequestOnSubmit("someOfficeId")
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
-
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-      val userAnswers    = emptyUserAnswers.set(CustomsSubPlacePage, "sub place").success.value
-      val application    = applicationBuilder(userAnswers = Some(userAnswers)).build()
-      val request        = FakeRequest(POST, presentationOfficeRoute).withFormUrlEncodedBody(("value", ""))
-      val boundForm      = form.bind(Map("value" -> ""))
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
-
-      val result = route(application, request).value
-
-      status(result) mustEqual BAD_REQUEST
-
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-
-      val expectedJson = Json.obj(
-        "form" -> boundForm,
-        "mrn"  -> mrn,
-        "mode" -> NormalMode
-      )
-
-      templateCaptor.getValue mustEqual "presentationOffice.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
+      verifyBadRequestOnSubmit("")
     }
 
     "must redirect to session expired page when invalid data is submitted and user hasn't answered the customs sub-place page question" in {
@@ -235,37 +176,74 @@ class PresentationOfficeControllerSpec extends SpecBase with MockitoSugar with N
     }
   }
 
-  private def verifyOnLoadPage(userAnswers: UserAnswers, form: Form[String], customsOfficeJson: JsObject): Future[_] = {
+  private def verifyBadRequestOnSubmit(formValue: String): Future[_] = {
+    val customsOfficeJson = Seq(
+      Json.obj("value" -> "", "text"         -> ""),
+      Json.obj("value" -> "id", "text"       -> "name (id)", "selected" -> false),
+      Json.obj("value" -> "officeId", "text" -> "someName (officeId)", "selected" -> false)
+    )
+
     when(mockRenderer.render(any(), any())(any()))
       .thenReturn(Future.successful(Html("")))
 
-    when(mockRefDataService.getCustomsOfficesAsJson(any())(any()))
-      .thenReturn(Future.successful(Seq(customsOfficeJson)))
+    when(mockRefDataConnector.getCustomsOffices()(any(), any())).thenReturn(Future.successful(customsOffices))
 
-    val application = applicationBuilder(userAnswers = Some(userAnswers))
-      .overrides {
-        bind[ReferenceDataService].toInstance(mockRefDataService)
-      }
-      .build()
-    val request        = FakeRequest(GET, presentationOfficeRoute)
-    val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-    val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+    val userAnswers = emptyUserAnswers.set(CustomsSubPlacePage, "sub place").success.value
+    val application =
+      applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(
+          bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+          bind[ReferenceDataConnector].toInstance(mockRefDataConnector)
+        )
+        .build()
+    val request   = FakeRequest(POST, presentationOfficeRoute).withFormUrlEncodedBody(("value", formValue))
+    val boundForm = form.bind(Map("value" -> formValue))
 
     val result = route(application, request).value
 
-    status(result) mustEqual OK
+    verifyStatusAndContent(customsOfficeJson, boundForm, result, BAD_REQUEST)
+
+    application.stop()
+  }
+
+  private def verifyStatusAndContent(customsOfficeJson: Seq[JsObject], boundForm: Form[CustomsOffice], result: Future[Result], expectedStatus: Int): Any = {
+    status(result) mustEqual expectedStatus
 
     verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
     val expectedJson = Json.obj(
-      "form"           -> form,
+      "form"           -> boundForm,
       "mrn"            -> mrn,
       "mode"           -> NormalMode,
-      "customsOffices" -> Json.arr(customsOfficeJson)
+      "customsOffices" -> customsOfficeJson
     )
 
     templateCaptor.getValue mustEqual "presentationOffice.njk"
     jsonCaptor.getValue must containJson(expectedJson)
+  }
+
+  private def verifyOnLoadPage(userAnswers: UserAnswers, form: Form[CustomsOffice], preSelectOfficeId: Boolean = false): Future[_] = {
+
+    val expectedCustomsOfficeJson = Seq(
+      Json.obj("value" -> "", "text"         -> ""),
+      Json.obj("value" -> "id", "text"       -> "name (id)", "selected" -> false),
+      Json.obj("value" -> "officeId", "text" -> "someName (officeId)", "selected" -> preSelectOfficeId)
+    )
+
+    when(mockRenderer.render(any(), any())(any()))
+      .thenReturn(Future.successful(Html("")))
+    when(mockRefDataConnector.getCustomsOffices()(any(), any())).thenReturn(Future.successful(customsOffices))
+
+    val application = applicationBuilder(userAnswers = Some(userAnswers))
+      .overrides {
+        bind[ReferenceDataConnector].toInstance(mockRefDataConnector)
+      }
+      .build()
+    val request = FakeRequest(GET, presentationOfficeRoute)
+
+    val result = route(application, request).value
+
+    verifyStatusAndContent(expectedCustomsOfficeJson, form, result, OK)
 
     application.stop()
   }
