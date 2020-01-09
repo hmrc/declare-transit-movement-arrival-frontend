@@ -74,6 +74,9 @@ class CheckYourAnswersController @Inject()(override val messagesApi: MessagesApi
     val helper = new CheckYourAnswersHelper(userAnswers)
 
     val mrn = Section(Seq(helper.movementReferenceNumber))
+    val goodsLocation =
+      Section(msg"checkYourAnswers.section.goodsLocation", Seq(helper.goodsLocation, helper.authorisedLocation, helper.presentationOffice).flatten)
+    val traderDetails = Section(msg"checkYourAnswers.section.traderDetails", Seq(helper.traderName, helper.traderAddress, helper.traderEori).flatten)
     val whereAreTheGoods =
       Section(
         msg"checkYourAnswers.section.goodsLocation",

@@ -27,7 +27,7 @@ trait ModelGenerators {
 
   implicit lazy val arbitraryTranshipmentType: Arbitrary[TranshipmentType] =
     Arbitrary {
-      Gen.oneOf(TranshipmentType.values.toSeq)
+      Gen.oneOf(TranshipmentType.values)
     }
 
   implicit lazy val arbitraryTraderAddress: Arbitrary[TraderAddress] =
@@ -41,7 +41,7 @@ trait ModelGenerators {
 
   implicit lazy val arbitraryGoodsLocation: Arbitrary[GoodsLocation] =
     Arbitrary {
-      Gen.oneOf(GoodsLocation.values.toSeq)
+      Gen.oneOf(GoodsLocation.values)
     }
 
   implicit lazy val arbitraryMovementReferenceNumber: Arbitrary[MovementReferenceNumber] =

@@ -20,13 +20,14 @@ import forms.mappings.Mappings
 import javax.inject.Inject
 import play.api.data.Form
 import play.api.i18n.Messages
-import models.domain.messages.NormalNotification.Constants.presentationOfficeLength
+import models.reference.CustomsOffice
 
 class PresentationOfficeFormProvider @Inject() extends Mappings {
 
-  def apply(subPlace: String)(implicit messages: Messages): Form[String] =
+  def apply(subPlace: String, customsOffices: Seq[CustomsOffice])(implicit messages: Messages): Form[CustomsOffice] =
     Form(
       "value" -> text(messages("presentationOffice.error.required", subPlace))
-        .verifying(maxLength(presentationOfficeLength, "presentationOffice.error.length"))
+        .verifying(messages("presentationOffice.error.required", subPlace), value => customsOffices.exists(_.id == value))
+        .transform[CustomsOffice](value => customsOffices.find(_.id == value).get, _.id)
     )
 }
