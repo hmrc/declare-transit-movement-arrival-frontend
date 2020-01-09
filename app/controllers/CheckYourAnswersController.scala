@@ -83,10 +83,10 @@ class CheckYourAnswersController @Inject()(override val messagesApi: MessagesApi
     val notificationDetails =
       Section(msg"checkYourAnswers.section.notificationDetails", Seq(helper.isTraderAddressPlaceOfNotification, helper.placeOfNotification).flatten)
 
-    val incidents = Section(Seq(eventList(userAnswers)).flatten)
-    val events    = Section(msg"checkYourAnswers.section.events", Seq(helper.incidentOnRoute).flatten)
+    val eventSeq = helper.incidentOnRoute.toSeq ++ eventList(userAnswers)
+    val events   = Section(msg"checkYourAnswers.section.events", eventSeq)
 
-    Seq(mrn, whereAreTheGoods, traderDetails, notificationDetails, events, incidents)
+    Seq(mrn, whereAreTheGoods, traderDetails, notificationDetails, events)
   }
 
   private def eventList(userAnswers: UserAnswers): Seq[SummaryList.Row] = {
