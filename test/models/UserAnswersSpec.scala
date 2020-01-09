@@ -24,73 +24,60 @@ import scala.util.Try
 
 class UserAnswersSpec extends SpecBase {
 
-  case object TestPage extends QuestionPage[String] {
-    override def path: JsPath = JsPath \ "testPath"
+  private val testPageAnswer = "1"
+  private val testPagePath   = "testPath"
+
+  private val testCleanupPagePath   = "testCleanupPagePath"
+  private val testCleanupPageAnswer = "testCleanupPageAnswer"
+
+  final case object TestPage extends QuestionPage[String] {
+    override def path: JsPath = JsPath \ testPagePath
     override def cleanup(value: Option[String], userAnswers: UserAnswers): Try[UserAnswers] =
       value match {
-        case Some("1") => userAnswers.remove(CleanupPage)
+        case Some("1") => userAnswers.remove(TestCleanupPage)
         case _         => super.cleanup(value, userAnswers)
       }
   }
 
-  case object CleanupPage extends QuestionPage[String] {
-    override def path: JsPath = JsPath \ "testCleanupPath"
+  final case object TestCleanupPage extends QuestionPage[String] {
+    override def path: JsPath = JsPath \ testCleanupPagePath
   }
 
   "UserAnswers" - {
 
-    "must update UserAnswers when set" in {
+    s"must run cleanup when given the answer of $testPageAnswer" in {
 
-      val userAnswers = UserAnswers(mrn)
-
+      val userAnswers = emptyUserAnswers.set(TestCleanupPage, testCleanupPageAnswer).success.value
+      val result      = userAnswers.set(TestPage, testPageAnswer).success.value
       val data = {
         Json.obj(
-          "testPath" -> "test"
+          testPagePath -> testPageAnswer
         )
       }
-
-      val result: UserAnswers = userAnswers.set(TestPage, "test").success.value
 
       result mustBe UserAnswers(mrn, data, result.lastUpdated)
     }
 
-    "must remove CleanupPath when testPage is set to 1" in {
+    s"must not run cleanup when given the answer of $testPageAnswer when the answer is the same in UserAnswers" in {
 
-      val userAnswers = UserAnswers(mrn).set(CleanupPage, "testCleanupResult").success.value
-
-      val data = {
-        Json.obj(
-          "testPath" -> "1"
-        )
-      }
-
-      val result: UserAnswers = userAnswers.set(TestPage, "1").success.value
-
-      result mustBe UserAnswers(mrn, data, result.lastUpdated)
-    }
-
-    "must not remove CleanupPath when testPage is the same answer as before" in {
-
-      val userAnswers = UserAnswers(mrn)
-        .set(TestPage, "1")
+      val userAnswers = emptyUserAnswers
+        .set(TestPage, testPageAnswer)
         .success
         .value
-        .set(CleanupPage, "testCleanupResult")
+        .set(TestCleanupPage, testCleanupPageAnswer)
         .success
         .value
 
+      val result = userAnswers.set(TestPage, testPageAnswer).success.value
       val data = {
         Json.obj(
-          "testPath"        -> "1",
-          "testCleanupPath" -> "testCleanupResult"
+          testPagePath        -> testPageAnswer,
+          testCleanupPagePath -> testCleanupPageAnswer
         )
       }
 
-      val result: UserAnswers = userAnswers.set(TestPage, "1").success.value
-
       result mustBe UserAnswers(mrn, data, result.lastUpdated)
     }
-
   }
 
 }
