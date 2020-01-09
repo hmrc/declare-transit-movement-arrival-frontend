@@ -23,6 +23,7 @@ import generators.DomainModelGenerators
 import models.GoodsLocation.BorderForceOffice
 import models.domain.messages.NormalNotification
 import models.domain._
+import models.reference.CustomsOffice
 import models.{TraderAddress, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
@@ -160,7 +161,7 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
           val userAnswers: UserAnswers = emptyUserAnswers
             .set(MovementReferenceNumberPage, expectedArrivalNotification.movementReferenceNumber).success.value
             .set(GoodsLocationPage, BorderForceOffice).success.value
-            .set(PresentationOfficePage, expectedArrivalNotification.presentationOffice).success.value
+            .set(PresentationOfficePage, CustomsOffice(id = expectedArrivalNotification.presentationOffice, name = "name", roles = Seq.empty)).success.value
             .set(CustomsSubPlacePage, expectedArrivalNotification.customsSubPlace.value).success.value
             .set(TraderNamePage, trader.name.value).success.value
             .set(TraderAddressPage, TraderAddress(buildingAndStreet = trader.streetAndNumber.value, city = trader.city.value, postcode = trader.postCode.value)).success.value
@@ -242,7 +243,7 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
     emptyUserAnswers
       .set(MovementReferenceNumberPage, arrivalNotification.movementReferenceNumber).success.value
       .set(GoodsLocationPage, BorderForceOffice).success.value
-      .set(PresentationOfficePage, arrivalNotification.presentationOffice).success.value
+      .set(PresentationOfficePage, CustomsOffice(id = arrivalNotification.presentationOffice, name = "name", roles = Seq.empty)).success.value
       .set(CustomsSubPlacePage, arrivalNotification.customsSubPlace.value).success.value
       .set(TraderNamePage, trader.name.value).success.value
       .set(TraderAddressPage, TraderAddress(buildingAndStreet = trader.streetAndNumber.value, city = trader.city.value, postcode = trader.postCode.value)).success.value

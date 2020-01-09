@@ -75,7 +75,7 @@ class CheckYourAnswersController @Inject()(override val messagesApi: MessagesApi
 
     val mrn = Section(Seq(helper.movementReferenceNumber))
     val goodsLocation =
-      Section(msg"checkYourAnswers.section.goodsLocation", Seq(helper.goodsLocation, helper.authorisedLocation).flatten)
+      Section(msg"checkYourAnswers.section.goodsLocation", Seq(helper.goodsLocation, helper.authorisedLocation, helper.presentationOffice).flatten)
     val traderDetails = Section(msg"checkYourAnswers.section.traderDetails", Seq(helper.traderName, helper.traderAddress, helper.traderEori).flatten)
     val notificationDetails =
       Section(msg"checkYourAnswers.section.notificationDetails", Seq(helper.isTraderAddressPlaceOfNotification, helper.placeOfNotification).flatten)

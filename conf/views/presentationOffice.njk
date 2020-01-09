@@ -1,13 +1,19 @@
 {% extends "includes/layout.njk" %}
 
 {% from "govuk/components/back-link/macro.njk"     import govukBackLink %}
-{% from "govuk/components/input/macro.njk"         import govukInput %}
+{% from "govuk/components/select/macro.njk"        import govukSelect %}
 {% from "govuk/components/button/macro.njk"        import govukButton %}
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 {% from "macros/title.njk"                         import title %}
 
 {% block pageTitle %}
   {{ title(messages("presentationOffice.title", subsPlace), form.errors) }}
+{% endblock %}
+
+{% block pageHead %}
+  <!--[if gt IE 8]><!-->
+  <link href="{{ routes.controllers.Assets.versioned("stylesheets/accessible-autocomplete.min.css").url }}" media="screen" rel="stylesheet" type="text/css" />
+  <!--<![endif]-->
 {% endblock %}
 
 {% block mainContent %}
@@ -31,8 +37,8 @@
 
           {{ csrf() | safe }}
 
-          {{ govukInput({
-            classes: "govuk-input--width-20",
+          {{ govukSelect({
+            classes: "govuk-input--width-20 autocomplete",
             label: {
               text: header,
               isPageHeading: true,
@@ -43,8 +49,8 @@
             hint: {
               text: messages('presentationOffice.hintText')
             },
-            value: form.value.value,
-            errorMessage: form.value.error
+            errorMessage: form.value.error,
+            items: customsOffices
           }) }}
 
           {{ govukButton({
@@ -57,5 +63,8 @@
       </div>
     </div>
   </div>
+{% endblock %}
 
+{% block pageScripts %}
+  <script src="{{ routes.controllers.Assets.versioned("javascripts/accessible-autocomplete.js").url }}"></script>
 {% endblock %}

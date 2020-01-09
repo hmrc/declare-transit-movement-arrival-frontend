@@ -46,7 +46,7 @@ class ArrivalNotificationConversionService {
         notificationDate        = LocalDate.now(),
         customsSubPlace         = Some(customsSubPlace),
         trader                  = traderAddress(tradersAddress, traderEori, traderName),
-        presentationOffice      = presentationOffice,
+        presentationOffice      = presentationOffice.id,
         enRouteEvents           = enRouteEvents(userAnswers)
       )
     }

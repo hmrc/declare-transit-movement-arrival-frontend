@@ -18,6 +18,7 @@ package forms
 
 import base.SpecBase
 import forms.behaviours.StringFieldBehaviours
+import models.reference.CustomsOffice
 import play.api.data.FormError
 
 class PresentationOfficeFormProviderSpec extends StringFieldBehaviours with SpecBase {
@@ -27,7 +28,8 @@ class PresentationOfficeFormProviderSpec extends StringFieldBehaviours with Spec
   val lengthKey           = "presentationOffice.error.length"
   val maxLength           = 8
 
-  val form = new PresentationOfficeFormProvider()(subPlace)
+  val customsOffices = Seq(CustomsOffice("id", "name", Seq.empty), CustomsOffice("GB000003", "someName", Seq.empty))
+  val form           = new PresentationOfficeFormProvider()(subPlace, customsOffices)
 
   ".value" - {
 
@@ -39,17 +41,24 @@ class PresentationOfficeFormProviderSpec extends StringFieldBehaviours with Spec
       stringsWithMaxLength(maxLength)
     )
 
-    behave like fieldWithMaxLength(
-      form,
-      fieldName,
-      maxLength   = maxLength,
-      lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
-    )
-
     behave like mandatoryField(
       form,
       fieldName,
       requiredError = FormError(fieldName, requiredKey)
     )
+
+    "not bind if customs office id does not exist in the customs office list" in {
+
+      val boundForm = form.bind(Map("value" -> "foobar"))
+      val field     = boundForm("value")
+      field.errors mustNot be(empty)
+    }
+
+    "bind a customs office id which is in the list" in {
+
+      val boundForm = form.bind(Map("value" -> "GB000003"))
+      val field     = boundForm("value")
+      field.errors must be(empty)
+    }
   }
 }

@@ -307,19 +307,22 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
       )
   }
 
-  def presentationOffice: Option[Row] = userAnswers.get(PresentationOfficePage) map {
-    answer =>
-      Row(
-        key   = Key(msg"presentationOffice.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value = Value(lit"$answer"),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = routes.PresentationOfficeController.onPageLoad(mrn, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"presentationOffice.checkYourAnswersLabel"))
+  def presentationOffice: Option[Row] = userAnswers.get(CustomsSubPlacePage) flatMap {
+    subsPlace =>
+      userAnswers.get(PresentationOfficePage) map {
+        answer =>
+          Row(
+            key   = Key(msg"presentationOffice.checkYourAnswersLabel".withArgs(subsPlace), classes = Seq("govuk-!-width-one-half")),
+            value = Value(lit"${answer.name} (${answer.id})"),
+            actions = List(
+              Action(
+                content            = msg"site.edit",
+                href               = routes.PresentationOfficeController.onPageLoad(mrn, CheckMode).url,
+                visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"presentationOffice.checkYourAnswersLabel"))
+              )
+            )
           )
-        )
-      )
+      }
   }
 
   def goodsLocation: Option[Row] = userAnswers.get(GoodsLocationPage) map {
