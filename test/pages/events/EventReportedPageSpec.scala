@@ -34,14 +34,17 @@ class EventReportedPageSpec extends PageBehaviours {
     beRemovable[Boolean](EventReportedPage(index))
 
     "cleanup" - {
-      "must remove incident information when IsTranshipmentPage is true" in {
+      "must remove incident information when IsTranshipmentPage is change to true" in {
         forAll(arbitrary[UserAnswers], arbitrary[Boolean], arbitrary[String]) {
           (userAnswers, eventReportedAnswer, incidentInformationAnswer) =>
             val ua = userAnswers
-              .set(IsTranshipmentPage(index), true)
+              .set(IsTranshipmentPage(index), false)
               .success
               .value
               .set(IncidentInformationPage(index), incidentInformationAnswer)
+              .success
+              .value
+              .set(IsTranshipmentPage(index), true)
               .success
               .value
 
@@ -55,18 +58,19 @@ class EventReportedPageSpec extends PageBehaviours {
         }
       }
 
-      "must remove incident information data when EventReportedPage is true, IsTranshipmentPage is false, and the user has answered information" in {
-        forAll(arbitrary[UserAnswers], arbitrary[Boolean], arbitrary[String]) {
-          (userAnswers, eventReportedAnswer, incidentInformation) =>
-            val ua = userAnswers
+      "must remove incident information data when EventReportedPage changes to true, IsTranshipmentPage is false, and the user has answered information" in {
+        forAll(arbitrary[UserAnswers], arbitrary[String]) {
+          (userAnswers, incidentInformation) =>
+            val result = userAnswers
+              .set(EventReportedPage(index), false)
+              .success
+              .value
               .set(IsTranshipmentPage(index), false)
               .success
               .value
               .set(IncidentInformationPage(index), incidentInformation)
               .success
               .value
-
-            val result = ua
               .set(EventReportedPage(index), true)
               .success
               .value
