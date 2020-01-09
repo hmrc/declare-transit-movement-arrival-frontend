@@ -26,12 +26,27 @@ import pages.events.EventPlacePage
 import pages.events.EventReportedPage
 import pages.events.IncidentInformationPage
 import pages.events.IsTranshipmentPage
-import pages.events.transhipments.{AddContainerPage, ContainerNumberPage, TranshipmentTypePage, TransportIdentityPage, TransportNationalityPage}
+import pages.events.transhipments.{
+  AddContainerPage,
+  ConfirmRemoveContainerPage,
+  ContainerNumberPage,
+  TranshipmentTypePage,
+  TransportIdentityPage,
+  TransportNationalityPage
+}
 import play.api.libs.json.JsValue
 import play.api.libs.json.Json
 
 trait UserAnswersEntryGenerators extends PageGenerators {
   self: Generators =>
+
+  implicit lazy val arbitraryConfirmRemoveContainerUserAnswersEntry: Arbitrary[(ConfirmRemoveContainerPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[ConfirmRemoveContainerPage.type]
+        value <- arbitrary[Boolean].map(Json.toJson(_))
+      } yield (page, value)
+    }
 
   implicit lazy val arbitraryAddContainerUserAnswersEntry: Arbitrary[(AddContainerPage, JsValue)] =
     Arbitrary {

@@ -326,3 +326,8 @@ addContainer.containerList.label = Container {0}
 addContainer.containerList.change = Change container number {0}?
 addContainer.containerList.delete = Remove container number {0}?
 
+
+confirmRemoveContainer.title = confirmRemoveContainer
+confirmRemoveContainer.heading = confirmRemoveContainer
+confirmRemoveContainer.checkYourAnswersLabel = confirmRemoveContainer
+confirmRemoveContainer.error.required = Select yes if confirmRemoveContainer

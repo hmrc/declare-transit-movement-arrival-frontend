@@ -28,12 +28,34 @@ import pages.events.EventPlacePage
 import pages.events.EventReportedPage
 import pages.events.IncidentInformationPage
 import pages.events.IsTranshipmentPage
-import pages.events.transhipments.{AddContainerPage, ContainerNumberPage, TranshipmentTypePage, TransportIdentityPage, TransportNationalityPage}
+import pages.events.transhipments.{
+  AddContainerPage,
+  ConfirmRemoveContainerPage,
+  ContainerNumberPage,
+  TranshipmentTypePage,
+  TransportIdentityPage,
+  TransportNationalityPage
+}
 import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels.SummaryList._
 import uk.gov.hmrc.viewmodels._
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers) {
+
+  def confirmRemoveContainer: Option[Row] = userAnswers.get(ConfirmRemoveContainerPage) map {
+    answer =>
+      Row(
+        key   = Key(msg"confirmRemoveContainer.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value = Value(yesOrNo(answer)),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = transhipmentRoutes.ConfirmRemoveContainerController.onPageLoad(mrn, CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"confirmRemoveContainer.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
 
   def addContainer(eventIndex: Int): Option[Row] = userAnswers.get(AddContainerPage(eventIndex)) map {
     answer =>
