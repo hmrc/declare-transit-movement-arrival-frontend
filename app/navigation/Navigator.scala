@@ -62,13 +62,9 @@ class Navigator @Inject()() {
     case EventCountryPage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
     case EventPlacePage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
     case IsTraderAddressPlaceOfNotificationPage => isTraderAddressPlaceOfNotificationRoute(CheckMode)
-    case PlaceOfNotificationPage => {
+    case PlaceOfNotificationPage => placeOfNotificationCheckRoute(CheckMode)
 
-      println("********************************")
-      println("PLACE OF NOTIFICAITON")
-
-      placeOfNotificationCheckRoute(CheckMode)
-    }
+    case PlaceOfNotificationPage => placeOfNotificationCheckRoute(CheckMode)
     case EventReportedPage(index) => eventReportedCheckRoute(index)
     case IsTranshipmentPage(index) => isTranshipmentCheckRoute(index)
     case IncidentInformationPage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
@@ -226,9 +222,8 @@ class Navigator @Inject()() {
       case (_, _)                     => Some(eventRoutes.CheckEventAnswersController.onPageLoad(userAnswers.id, eventIndex))
     }
 
-  //Some(routes.PlaceOfNotificationController.onPageLoad(ua.id, CheckMode))
   private def placeOfNotificationCheckRoute(mode: Mode)(userAnswers: UserAnswers): Option[Call] =
-    (userAnswers.get(PlaceOfNotificationPage)) match {
+    userAnswers.get(PlaceOfNotificationPage) match {
       case None    => Some(routes.PlaceOfNotificationController.onPageLoad(userAnswers.id, mode))
       case Some(_) => Some(routes.CheckYourAnswersController.onPageLoad(userAnswers.id))
     }
