@@ -92,7 +92,6 @@ class EventCountryController @Inject()(override val messagesApi: MessagesApi,
         }
     }
 
-
   private def renderPage(mrn: MovementReferenceNumber, mode: Mode, form: Form[Country], countries: Seq[Country], status: Results.Status)(
     implicit request: Request[AnyContent]): Future[Result] = {
     val json = Json.obj(
