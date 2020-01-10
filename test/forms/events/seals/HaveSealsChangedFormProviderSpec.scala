@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package forms
+package forms.events.seals
 
 import forms.behaviours.BooleanFieldBehaviours
-import forms.events.seals.HaveSealsChangedFormProvider
 import play.api.data.FormError
 
 class HaveSealsChangedFormProviderSpec extends BooleanFieldBehaviours {

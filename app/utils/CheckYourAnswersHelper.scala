@@ -25,12 +25,27 @@ import controllers.routes
 import models.{CheckMode, MovementReferenceNumber, TraderAddress, UserAnswers}
 import pages._
 import pages.events._
-import pages.events.seals.{AddSealPage, HaveSealsChangedPage, SealIdentityPage}
+import pages.events.seals.{AddSealPage, HaveSealsChangedPage, RemoveSealPage, SealIdentityPage}
 import pages.events.transhipments._
 import uk.gov.hmrc.viewmodels.SummaryList._
 import uk.gov.hmrc.viewmodels._
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers) {
+
+  def removeSeal: Option[Row] = userAnswers.get(RemoveSealPage) map {
+    answer =>
+      Row(
+        key   = Key(msg"removeSeal.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value = Value(yesOrNo(answer)),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = sealRoutes.RemoveSealController.onPageLoad(mrn, CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"removeSeal.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
 
   def haveSealsChanged: Option[Row] = userAnswers.get(HaveSealsChangedPage) map {
     answer =>

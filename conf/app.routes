@@ -146,3 +146,8 @@ GET        /:mrn/haveSealsChanged                                       controll
 POST       /:mrn/haveSealsChanged                                       controllers.events.seals.HaveSealsChangedController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
 GET        /:mrn/changeHaveSealsChanged                                 controllers.events.seals.HaveSealsChangedController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
 POST       /:mrn/changeHaveSealsChanged                                 controllers.events.seals.HaveSealsChangedController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
+
+GET        /:mrn/removeSeal                                             controllers.events.seals.RemoveSealController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
+POST       /:mrn/removeSeal                                             controllers.events.seals.RemoveSealController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
+GET        /:mrn/changeRemoveSeal                                       controllers.events.seals.RemoveSealController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
+POST       /:mrn/changeRemoveSeal                                       controllers.events.seals.RemoveSealController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)

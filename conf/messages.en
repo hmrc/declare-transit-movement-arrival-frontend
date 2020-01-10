@@ -342,3 +342,8 @@ haveSealsChanged.title = haveSealsChanged
 haveSealsChanged.heading = haveSealsChanged
 haveSealsChanged.checkYourAnswersLabel = haveSealsChanged
 haveSealsChanged.error.required = Select yes if haveSealsChanged
+
+removeSeal.title = removeSeal
+removeSeal.heading = removeSeal
+removeSeal.checkYourAnswersLabel = removeSeal
+removeSeal.error.required = Select yes if removeSeal

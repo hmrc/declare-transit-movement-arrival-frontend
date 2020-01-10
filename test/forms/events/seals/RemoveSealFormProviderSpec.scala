@@ -14,35 +14,26 @@
  * limitations under the License.
  */
 
-package forms
+package forms.events.seals
 
-import forms.behaviours.StringFieldBehaviours
-import forms.events.seals.SealIdentityFormProvider
+import forms.behaviours.BooleanFieldBehaviours
 import play.api.data.FormError
 
-class SealIdentityFormProviderSpec extends StringFieldBehaviours {
+class RemoveSealFormProviderSpec extends BooleanFieldBehaviours {
 
-  val requiredKey = "sealIdentity.error.required"
-  val lengthKey   = "sealIdentity.error.length"
-  val maxLength   = 20
+  val requiredKey = "removeSeal.error.required"
+  val invalidKey  = "error.boolean"
 
-  val form = new SealIdentityFormProvider()()
+  val form = new RemoveSealFormProvider()()
 
   ".value" - {
 
     val fieldName = "value"
 
-    behave like fieldThatBindsValidData(
+    behave like booleanField(
       form,
       fieldName,
-      stringsWithMaxLength(maxLength)
-    )
-
-    behave like fieldWithMaxLength(
-      form,
-      fieldName,
-      maxLength   = maxLength,
-      lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
+      invalidError = FormError(fieldName, invalidKey)
     )
 
     behave like mandatoryField(

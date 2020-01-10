@@ -22,7 +22,7 @@ import org.scalacheck.{Arbitrary, Gen}
 import org.scalatest.TryValues
 import pages._
 import pages.events._
-import pages.events.seals.{AddSealPage, HaveSealsChangedPage, SealIdentityPage}
+import pages.events.seals.{AddSealPage, HaveSealsChangedPage, RemoveSealPage, SealIdentityPage}
 import pages.events.transhipments.{AddContainerPage, ContainerNumberPage, TranshipmentTypePage, TransportIdentityPage, TransportNationalityPage}
 import play.api.libs.json.{JsValue, Json}
 
@@ -30,7 +30,8 @@ trait UserAnswersGenerator extends TryValues {
   self: Generators =>
 
   val generators: Seq[Gen[(QuestionPage[_], JsValue)]] =
-    arbitrary[(HaveSealsChangedPage.type, JsValue)] ::
+    arbitrary[(RemoveSealPage.type, JsValue)] ::
+      arbitrary[(HaveSealsChangedPage.type, JsValue)] ::
       arbitrary[(AddSealPage.type, JsValue)] ::
       arbitrary[(SealIdentityPage.type, JsValue)] ::
       arbitrary[(AddContainerPage, JsValue)] ::
