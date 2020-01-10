@@ -326,3 +326,9 @@ addContainer.containerList.label = Container {0}
 addContainer.containerList.change = Change container number {0}?
 addContainer.containerList.delete = Remove container number {0}?
 
+
+sealIdentity.title = sealIdentity
+sealIdentity.heading = sealIdentity
+sealIdentity.checkYourAnswersLabel = sealIdentity
+sealIdentity.error.required = Enter sealIdentity
+sealIdentity.error.length = SealIdentity must be 20 characters or less
