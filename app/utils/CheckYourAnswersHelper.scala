@@ -35,6 +35,21 @@ import uk.gov.hmrc.viewmodels._
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers) {
 
+  def haveSealsChanged: Option[Row] = userAnswers.get(HaveSealsChangedPage) map {
+    answer =>
+      Row(
+        key   = Key(msg"haveSealsChanged.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value = Value(yesOrNo(answer)),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = routes.HaveSealsChangedController.onPageLoad(mrn, CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"haveSealsChanged.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
   def addSeal: Option[Row] = userAnswers.get(AddSealPage) map {
     answer =>
       Row(

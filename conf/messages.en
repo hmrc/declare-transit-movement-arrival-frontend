@@ -337,3 +337,8 @@ addSeal.title = addSeal
 addSeal.heading = addSeal
 addSeal.checkYourAnswersLabel = addSeal
 addSeal.error.required = Select yes if addSeal
+
+haveSealsChanged.title = haveSealsChanged
+haveSealsChanged.heading = haveSealsChanged
+haveSealsChanged.checkYourAnswersLabel = haveSealsChanged
+haveSealsChanged.error.required = Select yes if haveSealsChanged
