@@ -33,21 +33,18 @@ final case class UserAnswers(id: MovementReferenceNumber, data: JsObject = Json.
   def get[A, B](derivable: Derivable[A, B])(implicit rds: Reads[A]): Option[B] =
     get(derivable: Gettable[A]).map(derivable.derive)
 
-  def set[A](page: QuestionPage[A], value: A)(implicit writes: Writes[A]): Try[UserAnswers] = {
-
-    val updatedData = data.setObject(page.path, Json.toJson(value)) match {
-      case JsSuccess(jsValue, _) =>
-        Success(jsValue)
+  def set[A](page: QuestionPage[A], value: A)(implicit writes: Writes[A]): Try[UserAnswers] =
+    data.setObject(page.path, Json.toJson(value)) match {
+      case JsSuccess(jsObject, _) =>
+        val updatedAnswers = copy(data = jsObject)
+        if (jsObject == data) {
+          Success(updatedAnswers)
+        } else {
+          page.cleanup(Some(value), updatedAnswers)
+        }
       case JsError(errors) =>
         Failure(JsResultException(errors))
     }
-
-    updatedData.flatMap {
-      d =>
-        val updatedAnswers = copy(data = d)
-        page.cleanup(Some(value), updatedAnswers)
-    }
-  }
 
   def remove[A](page: QuestionPage[A]): Try[UserAnswers] = {
 

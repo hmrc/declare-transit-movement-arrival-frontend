@@ -17,6 +17,7 @@
 package pages
 
 import models.GoodsLocation
+import models.GoodsLocation._
 import models.UserAnswers
 import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
@@ -31,21 +32,39 @@ class GoodsLocationPageSpec extends PageBehaviours {
 
     beRemovable[GoodsLocation](GoodsLocationPage)
 
-    "must remove Authorised Location Code when the user selected Border Force office" in {
+    "must remove Authorised Location Code when the user changes to Border Force office" in {
 
-      forAll(arbitrary[UserAnswers]) {
-        answers =>
-          val result = answers.set(GoodsLocationPage, GoodsLocation.BorderForceOffice).success.value
+      forAll(arbitrary[UserAnswers], arbitrary[String]) {
+        (answers, location) =>
+          val result = answers
+            .set(GoodsLocationPage, AuthorisedConsigneesLocation)
+            .success
+            .value
+            .set(AuthorisedLocationPage, location)
+            .success
+            .value
+            .set(GoodsLocationPage, BorderForceOffice)
+            .success
+            .value
 
           result.get(AuthorisedLocationPage) must not be defined
       }
     }
 
-    "must remove Customs Sub Place when the user selects Authorised Consignees Location" in {
+    "must remove Customs Sub Place when the user changes to Authorised Consignees Location" in {
 
-      forAll(arbitrary[UserAnswers]) {
-        answers =>
-          val result = answers.set(GoodsLocationPage, GoodsLocation.AuthorisedConsigneesLocation).success.value
+      forAll(arbitrary[UserAnswers], arbitrary[String]) {
+        (answers, location) =>
+          val result = answers
+            .set(GoodsLocationPage, BorderForceOffice)
+            .success
+            .value
+            .set(AuthorisedLocationPage, location)
+            .success
+            .value
+            .set(GoodsLocationPage, AuthorisedConsigneesLocation)
+            .success
+            .value
 
           result.get(CustomsSubPlacePage) must not be defined
       }

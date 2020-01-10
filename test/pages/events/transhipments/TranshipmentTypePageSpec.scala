@@ -19,6 +19,7 @@ package pages.events.transhipments
 import generators.DomainModelGenerators
 import models.domain.Container
 import models.{TranshipmentType, UserAnswers}
+import models.TranshipmentType._
 import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
 import queries.ContainersQuery
@@ -36,18 +37,21 @@ class TranshipmentTypePageSpec extends PageBehaviours with DomainModelGenerators
     beRemovable[TranshipmentType](TranshipmentTypePage(index))
 
     "cleanup" - {
-      "must remove transport identity and nationality when there is an answer of Different Container" in {
+      "must remove transport identity and nationality when the answer change to Different Container" in {
 
         forAll(arbitrary[UserAnswers], arbitrary[String]) {
           (userAnswers, transportIdentity) =>
             val result = userAnswers
+              .set(TranshipmentTypePage(index), DifferentVehicle)
+              .success
+              .value
               .set(TransportIdentityPage(index), transportIdentity)
               .success
               .value
               .set(TransportNationalityPage(index), transportIdentity)
               .success
               .value
-              .set(TranshipmentTypePage(index), TranshipmentType.DifferentContainer)
+              .set(TranshipmentTypePage(index), DifferentContainer)
               .success
               .value
 
@@ -56,11 +60,14 @@ class TranshipmentTypePageSpec extends PageBehaviours with DomainModelGenerators
         }
       }
 
-      "must remove container numbers when there is an answer of Different Vehicle" in {
+      "must remove container numbers when the answer changes to Different Vehicle" in {
 
         forAll(arbitrary[UserAnswers], arbitrary[Container]) {
           (userAnswers, containerNumber) =>
             val result = userAnswers
+              .set(TranshipmentTypePage(index), DifferentContainer)
+              .success
+              .value
               .set(ContainerNumberPage(index, 0), containerNumber)
               .success
               .value

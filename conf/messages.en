@@ -156,13 +156,13 @@ goodsLocation.error.required = Select where the goods are
 presentationOffice.title = Which Border Force office supervises {0}?
 presentationOffice.heading = Which Border Force office supervises {0}?
 presentationOffice.hintText = Give the office location or code. For example, Dover or GB000060.
-presentationOffice.checkYourAnswersLabel = Enter the Border Force office which supervises {0}?
+presentationOffice.checkYourAnswersLabel = Which border force supervises {0}?
 presentationOffice.error.required = Enter the Border Force office which supervises {0}
 presentationOffice.error.length = Border Force office must be 8 characters or less
 
 customsSubPlace.title = Which customs sub-place or approved location has the goods?
 customsSubPlace.heading = Which customs sub-place or approved location has the goods?
-customsSubPlace.checkYourAnswersLabel = Customs approved location
+customsSubPlace.checkYourAnswersLabel = Which customs sub place or approved location has the goods?
 customsSubPlace.error.required = Enter the customs sub-place or approved location that has the goods
 customsSubPlace.error.length = Customs sub-place or approved location must be 17 characters or less
 

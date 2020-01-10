@@ -38,6 +38,9 @@ class IsTranshipmentPageSpec extends PageBehaviours {
         forAll(arbitrary[UserAnswers], arbitrary[String]) {
           (userAnswers, incidentInfo) =>
             val result = userAnswers
+              .set(IsTranshipmentPage(index), false)
+              .success
+              .value
               .set(IncidentInformationPage(index), incidentInfo)
               .success
               .value
@@ -54,6 +57,9 @@ class IsTranshipmentPageSpec extends PageBehaviours {
         forAll(arbitrary[UserAnswers], arbitrary[TranshipmentType]) {
           (userAnswers, transhipmentType) =>
             val result = userAnswers
+              .set(IsTranshipmentPage(index), true)
+              .success
+              .value
               .set(TranshipmentTypePage(index), transhipmentType)
               .success
               .value
