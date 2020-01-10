@@ -93,7 +93,7 @@ class ArrivalNotificationConversionService {
                 place         = place,
                 countryCode   = country.code,
                 alreadyInNcts = isReported,
-                eventDetails  = eventDetails(incidentInformation, transportIdentity, transportCountry, containers),
+                eventDetails  = eventDetails(incidentInformation, transportIdentity, transportCountry.map(_.code), containers),
                 None //TODO Seals:waiting for design decision
               )
             }

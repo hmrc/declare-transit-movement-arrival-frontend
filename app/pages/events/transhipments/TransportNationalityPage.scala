@@ -16,11 +16,12 @@
 
 package pages.events.transhipments
 
+import models.reference.Country
 import pages.QuestionPage
 import pages.events.SectionConstants
 import play.api.libs.json.JsPath
 
-final case class TransportNationalityPage(eventIndex: Int) extends QuestionPage[String] {
+final case class TransportNationalityPage(eventIndex: Int) extends QuestionPage[Country] {
 
   override def path: JsPath = JsPath \ SectionConstants.events \ eventIndex \ toString
 

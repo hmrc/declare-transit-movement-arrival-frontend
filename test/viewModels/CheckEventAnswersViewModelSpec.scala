@@ -80,7 +80,7 @@ class CheckEventAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChe
         .set(IsTranshipmentPage(eventIndex), true).success.value
         .set(TranshipmentTypePage(eventIndex), DifferentVehicle).success.value
         .set(TransportIdentityPage(eventIndex), "value").success.value
-        .set(TransportNationalityPage(eventIndex), "TT").success.value
+        .set(TransportNationalityPage(eventIndex), Country("Valid","TT","Some country")).success.value
 
       val vm = CheckEventAnswersViewModel(ua, eventIndex)
 
@@ -131,7 +131,7 @@ class CheckEventAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChe
         .set(ContainerNumberPage(eventIndex, 1), Container("value")).success.value
         .set(ContainerNumberPage(eventIndex, 2), Container("value")).success.value
         .set(TransportIdentityPage(eventIndex), "value").success.value
-        .set(TransportNationalityPage(eventIndex), "TT").success.value
+        .set(TransportNationalityPage(eventIndex), Country("Valid","TT","Some country")).success.value
 
       val vm = CheckEventAnswersViewModel(ua, eventIndex)
 
