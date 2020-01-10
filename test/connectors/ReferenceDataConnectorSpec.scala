@@ -99,7 +99,7 @@ class ReferenceDataConnectorSpec extends SpecBase with WireMockServerHandler wit
 
     "must return 'Country List' successfully" in {
       server.stubFor(
-        get(urlEqualTo(s"/$startUrl/country-code-full-list"))
+        get(urlEqualTo(s"/$startUrl/countries-full-list"))
           .willReturn(okJson(countryListResponseJson))
       )
 
@@ -113,7 +113,7 @@ class ReferenceDataConnectorSpec extends SpecBase with WireMockServerHandler wit
 
     "must return an exception when an error response is returned from getCountryList" in {
 
-      checkErrorResponse(s"/$startUrl/country-code-full-list", connector.getCountryList)
+      checkErrorResponse(s"/$startUrl/countries-full-list", connector.getCountryList)
     }
   }
 

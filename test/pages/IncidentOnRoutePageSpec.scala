@@ -17,6 +17,7 @@
 package pages
 
 import models.UserAnswers
+import models.reference.Country
 import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
 import pages.events.{EventCountryPage, EventPlacePage, EventReportedPage}
@@ -34,7 +35,7 @@ class IncidentOnRoutePageSpec extends PageBehaviours {
     beRemovable[Boolean](IncidentOnRoutePage)
 
     "must remove incident on route pages when user selects option 'No' for incidents on route question" in {
-      forAll(arbitrary[UserAnswers], stringsWithMaxLength(2), stringsWithMaxLength(35), arbitrary[Boolean]) {
+      forAll(arbitrary[UserAnswers], arbitrary[Country], stringsWithMaxLength(35), arbitrary[Boolean]) {
         (answers, eventCountry, eventPlace, eventReported) =>
           val ua = answers
             .set(IncidentOnRoutePage, true)
@@ -57,7 +58,7 @@ class IncidentOnRoutePageSpec extends PageBehaviours {
     }
 
     "must not remove incident on route pages when user selects option 'Yes' for incidents on route question" in {
-      forAll(arbitrary[UserAnswers], stringsWithMaxLength(2), stringsWithMaxLength(35), arbitrary[Boolean]) {
+      forAll(arbitrary[UserAnswers], arbitrary[Country], stringsWithMaxLength(35), arbitrary[Boolean]) {
         (answers, eventCountry, eventPlace, eventReported) =>
           val ua = answers
             .set(IncidentOnRoutePage, true)
@@ -83,7 +84,7 @@ class IncidentOnRoutePageSpec extends PageBehaviours {
     }
 
     "must remove incident on route pages when incidents on route question is removed" in {
-      forAll(arbitrary[UserAnswers], stringsWithMaxLength(2), stringsWithMaxLength(35), arbitrary[Boolean]) {
+      forAll(arbitrary[UserAnswers], arbitrary[Country], stringsWithMaxLength(35), arbitrary[Boolean]) {
         (answers, eventCountry, eventPlace, eventReported) =>
           val ua = answers
             .set(IncidentOnRoutePage, true)

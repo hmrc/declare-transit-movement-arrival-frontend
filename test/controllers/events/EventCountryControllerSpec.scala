@@ -17,10 +17,12 @@
 package controllers.events
 
 import base.SpecBase
+import connectors.ReferenceDataConnector
 import forms.events.EventCountryFormProvider
 import matchers.JsonMatchers
 import models.NormalMode
 import models.UserAnswers
+import models.reference.Country
 import navigation.FakeNavigator
 import navigation.Navigator
 import org.mockito.ArgumentCaptor
@@ -45,72 +47,29 @@ import scala.concurrent.Future
 
 class EventCountryControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
-  def onwardRoute = Call("GET", "/foo")
+  def onwardRoute: Call = Call("GET", "/foo")
 
-  val formProvider       = new EventCountryFormProvider()
-  val form: Form[String] = formProvider()
+  val formProvider                                       = new EventCountryFormProvider()
+  private val country: Country                           = Country("valid", "GB", "United Kingdom")
+  val countries                                          = Seq(country)
+  val form: Form[Country]                                = formProvider(countries)
+  val mockReferenceDataConnector: ReferenceDataConnector = mock[ReferenceDataConnector]
+  lazy val eventCountryRoute: String                     = routes.EventCountryController.onPageLoad(mrn, eventIndex, NormalMode).url
 
-  lazy val eventCountryRoute: String = routes.EventCountryController.onPageLoad(mrn, eventIndex, NormalMode).url
+  private val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
+  private val jsonCaptor: ArgumentCaptor[JsObject]   = ArgumentCaptor.forClass(classOf[JsObject])
 
   "EventCountry Controller" - {
 
     "must return OK and the correct view for a GET" in {
-
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
-      val application    = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request        = FakeRequest(GET, eventCountryRoute)
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
-
-      val result = route(application, request).value
-
-      status(result) mustEqual OK
-
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-
-      val expectedJson = Json.obj(
-        "form" -> form,
-        "mrn"  -> mrn,
-        "mode" -> NormalMode
-      )
-
-      templateCaptor.getValue mustEqual "events/eventCountry.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
+      verifyOnPageLoad(Some(emptyUserAnswers), form, false)
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
+      val userAnswers = UserAnswers(mrn).set(EventCountryPage(eventIndex), country).success.value
+      val filledForm  = form.bind(Map("value" -> "GB"))
 
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
-      val userAnswers    = UserAnswers(mrn).set(EventCountryPage(eventIndex), "GB").success.value
-      val application    = applicationBuilder(userAnswers = Some(userAnswers)).build()
-      val request        = FakeRequest(GET, eventCountryRoute)
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
-
-      val result = route(application, request).value
-
-      status(result) mustEqual OK
-
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-
-      val filledForm = form.bind(Map("value" -> "GB"))
-
-      val expectedJson = Json.obj(
-        "form" -> filledForm,
-        "mrn"  -> mrn,
-        "mode" -> NormalMode
-      )
-
-      templateCaptor.getValue mustEqual "events/eventCountry.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
+      verifyOnPageLoad(Some(userAnswers), filledForm, true)
     }
 
     "must redirect to the next page when valid data is submitted" in {
@@ -118,12 +77,14 @@ class EventCountryControllerSpec extends SpecBase with MockitoSugar with Nunjuck
       val mockSessionRepository = mock[SessionRepository]
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockReferenceDataConnector.getCountryList()(any(), any())).thenReturn(Future.successful(countries))
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[ReferenceDataConnector].toInstance(mockReferenceDataConnector)
           )
           .build()
 
@@ -143,12 +104,20 @@ class EventCountryControllerSpec extends SpecBase with MockitoSugar with Nunjuck
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
+      when(mockReferenceDataConnector.getCountryList()(any(), any())).thenReturn(Future.successful(countries))
 
-      val application    = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request        = FakeRequest(POST, eventCountryRoute).withFormUrlEncodedBody(("value", ""))
-      val boundForm      = form.bind(Map("value" -> ""))
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+      val json = Seq(
+        Json.obj("text" -> "", "value"               -> ""),
+        Json.obj("text" -> "United Kingdom", "value" -> "GB", "selected" -> false)
+      )
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .overrides {
+          bind[ReferenceDataConnector].toInstance(mockReferenceDataConnector)
+        }
+        .build()
+      val request   = FakeRequest(POST, eventCountryRoute).withFormUrlEncodedBody(("value", ""))
+      val boundForm = form.bind(Map("value" -> ""))
 
       val result = route(application, request).value
 
@@ -157,9 +126,10 @@ class EventCountryControllerSpec extends SpecBase with MockitoSugar with Nunjuck
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form" -> boundForm,
-        "mrn"  -> mrn,
-        "mode" -> NormalMode
+        "form"      -> boundForm,
+        "mrn"       -> mrn,
+        "mode"      -> NormalMode,
+        "countries" -> json
       )
 
       templateCaptor.getValue mustEqual "events/eventCountry.njk"
@@ -199,5 +169,43 @@ class EventCountryControllerSpec extends SpecBase with MockitoSugar with Nunjuck
 
       application.stop()
     }
+  }
+
+  private def verifyOnPageLoad(userAnswers: Option[UserAnswers], form1: Form[Country], preSelected: Boolean): Future[_] = {
+    when(mockRenderer.render(any(), any())(any()))
+      .thenReturn(Future.successful(Html("")))
+
+    when(mockReferenceDataConnector.getCountryList()(any(), any())).thenReturn(Future.successful(countries))
+
+    val countriesJson = Seq(
+      Json.obj("text" -> "", "value"               -> ""),
+      Json.obj("text" -> "United Kingdom", "value" -> "GB", "selected" -> preSelected)
+    )
+
+    val application = applicationBuilder(userAnswers = userAnswers)
+      .overrides {
+        bind[ReferenceDataConnector].toInstance(mockReferenceDataConnector)
+      }
+      .build()
+
+    val request = FakeRequest(GET, eventCountryRoute)
+
+    val result = route(application, request).value
+
+    status(result) mustEqual OK
+
+    verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+
+    val expectedJson = Json.obj(
+      "form"      -> form1,
+      "mrn"       -> mrn,
+      "mode"      -> NormalMode,
+      "countries" -> countriesJson
+    )
+
+    templateCaptor.getValue mustEqual "events/eventCountry.njk"
+    jsonCaptor.getValue must containJson(expectedJson)
+
+    application.stop()
   }
 }

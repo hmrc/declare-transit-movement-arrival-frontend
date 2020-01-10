@@ -91,7 +91,7 @@ class ArrivalNotificationConversionService {
             } yield {
               EnRouteEvent(
                 place         = place,
-                countryCode   = country,
+                countryCode   = country.code,
                 alreadyInNcts = isReported,
                 eventDetails  = eventDetails(incidentInformation, transportIdentity, transportCountry, containers),
                 None //TODO Seals:waiting for design decision
