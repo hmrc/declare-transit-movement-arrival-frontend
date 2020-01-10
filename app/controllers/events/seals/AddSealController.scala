@@ -14,32 +14,32 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.events.seals
 
 import controllers.actions._
-import forms.SealIdentityFormProvider
+import forms.events.seals.AddSealFormProvider
 import javax.inject.Inject
 import models.{Mode, MovementReferenceNumber}
 import navigation.Navigator
-import pages.SealIdentityPage
+import pages.events.seals.AddSealPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
-import uk.gov.hmrc.viewmodels.NunjucksSupport
+import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class SealIdentityController @Inject()(
+class AddSealController @Inject()(
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
   navigator: Navigator,
   identify: IdentifierAction,
   getData: DataRetrievalActionProvider,
   requireData: DataRequiredAction,
-  formProvider: SealIdentityFormProvider,
+  formProvider: AddSealFormProvider,
   val controllerComponents: MessagesControllerComponents,
   renderer: Renderer
 )(implicit ec: ExecutionContext)
@@ -51,18 +51,19 @@ class SealIdentityController @Inject()(
 
   def onPageLoad(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
-      val preparedForm = request.userAnswers.get(SealIdentityPage) match {
+      val preparedForm = request.userAnswers.get(AddSealPage) match {
         case None        => form
         case Some(value) => form.fill(value)
       }
 
       val json = Json.obj(
-        "form" -> preparedForm,
-        "mrn"  -> mrn,
-        "mode" -> mode
+        "form"   -> preparedForm,
+        "mode"   -> mode,
+        "mrn"    -> mrn,
+        "radios" -> Radios.yesNo(preparedForm("value"))
       )
 
-      renderer.render("sealIdentity.njk", json).map(Ok(_))
+      renderer.render("addSeal.njk", json).map(Ok(_))
   }
 
   def onSubmit(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
@@ -73,18 +74,19 @@ class SealIdentityController @Inject()(
           formWithErrors => {
 
             val json = Json.obj(
-              "form" -> formWithErrors,
-              "mrn"  -> mrn,
-              "mode" -> mode
+              "form"   -> formWithErrors,
+              "mode"   -> mode,
+              "mrn"    -> mrn,
+              "radios" -> Radios.yesNo(formWithErrors("value"))
             )
 
-            renderer.render("sealIdentity.njk", json).map(BadRequest(_))
+            renderer.render("addSeal.njk", json).map(BadRequest(_))
           },
           value =>
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(SealIdentityPage, value))
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(AddSealPage, value))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(SealIdentityPage, mode, updatedAnswers))
+            } yield Redirect(navigator.nextPage(AddSealPage, mode, updatedAnswers))
         )
   }
 }

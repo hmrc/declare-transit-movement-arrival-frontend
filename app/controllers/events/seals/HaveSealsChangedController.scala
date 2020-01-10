@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.events.seals
 
 import controllers.actions._
-import forms.AddSealFormProvider
+import forms.events.seals.HaveSealsChangedFormProvider
 import javax.inject.Inject
 import models.{Mode, MovementReferenceNumber}
 import navigation.Navigator
-import pages.AddSealPage
+import pages.events.seals.HaveSealsChangedPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -32,14 +32,14 @@ import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class AddSealController @Inject()(
+class HaveSealsChangedController @Inject()(
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
   navigator: Navigator,
   identify: IdentifierAction,
   getData: DataRetrievalActionProvider,
   requireData: DataRequiredAction,
-  formProvider: AddSealFormProvider,
+  formProvider: HaveSealsChangedFormProvider,
   val controllerComponents: MessagesControllerComponents,
   renderer: Renderer
 )(implicit ec: ExecutionContext)
@@ -51,7 +51,7 @@ class AddSealController @Inject()(
 
   def onPageLoad(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
-      val preparedForm = request.userAnswers.get(AddSealPage) match {
+      val preparedForm = request.userAnswers.get(HaveSealsChangedPage) match {
         case None        => form
         case Some(value) => form.fill(value)
       }
@@ -63,7 +63,7 @@ class AddSealController @Inject()(
         "radios" -> Radios.yesNo(preparedForm("value"))
       )
 
-      renderer.render("addSeal.njk", json).map(Ok(_))
+      renderer.render("haveSealsChanged.njk", json).map(Ok(_))
   }
 
   def onSubmit(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
@@ -80,13 +80,13 @@ class AddSealController @Inject()(
               "radios" -> Radios.yesNo(formWithErrors("value"))
             )
 
-            renderer.render("addSeal.njk", json).map(BadRequest(_))
+            renderer.render("haveSealsChanged.njk", json).map(BadRequest(_))
           },
           value =>
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(AddSealPage, value))
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(HaveSealsChangedPage, value))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(AddSealPage, mode, updatedAnswers))
+            } yield Redirect(navigator.nextPage(HaveSealsChangedPage, mode, updatedAnswers))
         )
   }
 }

@@ -27,7 +27,7 @@
           }) }}
         {% endif %}
 
-        <form action="{{ routes.controllers.HaveSealsChangedController.onSubmit(mrn, mode).url }}" method="post">
+        <form action="{{ routes.controllers.events.seals.HaveSealsChangedController.onSubmit(mrn, mode).url }}" method="post">
 
           {{ csrf() | safe }}
 

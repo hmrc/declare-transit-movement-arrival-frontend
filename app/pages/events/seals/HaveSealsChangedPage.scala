@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package pages
+package pages.events.seals
 
+import pages.QuestionPage
 import play.api.libs.json.JsPath
 
 case object HaveSealsChangedPage extends QuestionPage[Boolean] {

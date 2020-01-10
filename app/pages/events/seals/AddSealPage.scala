@@ -14,18 +14,14 @@
  * limitations under the License.
  */
 
-package pages
+package pages.events.seals
 
-import pages.behaviours.PageBehaviours
+import pages.QuestionPage
+import play.api.libs.json.JsPath
 
-class SealIdentityPageSpec extends PageBehaviours {
+case object AddSealPage extends QuestionPage[Boolean] {
 
-  "SealIdentityPage" - {
+  override def path: JsPath = JsPath \ toString
 
-    beRetrievable[String](SealIdentityPage)
-
-    beSettable[String](SealIdentityPage)
-
-    beRemovable[String](SealIdentityPage)
-  }
+  override def toString: String = "addSeal"
 }

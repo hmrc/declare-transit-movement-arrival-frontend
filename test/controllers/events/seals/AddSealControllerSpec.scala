@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.events.seals
 
 import base.SpecBase
-import forms.HaveSealsChangedFormProvider
+import forms.events.seals.AddSealFormProvider
 import matchers.JsonMatchers
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
@@ -25,7 +25,8 @@ import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.HaveSealsChangedPage
+import pages.events.seals.AddSealPage
+import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -37,16 +38,16 @@ import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.Future
 
-class HaveSealsChangedControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class AddSealControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
-  def onwardRoute = Call("GET", "/foo")
+  def onwardRoute: Call = Call("GET", "/foo")
 
-  val formProvider = new HaveSealsChangedFormProvider()
-  val form         = formProvider()
+  val formProvider        = new AddSealFormProvider()
+  val form: Form[Boolean] = formProvider()
 
-  lazy val haveSealsChangedRoute = routes.HaveSealsChangedController.onPageLoad(mrn, NormalMode).url
+  lazy val addSealRoute: String = routes.AddSealController.onPageLoad(mrn, NormalMode).url
 
-  "HaveSealsChanged Controller" - {
+  "AddSeal Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
@@ -54,7 +55,7 @@ class HaveSealsChangedControllerSpec extends SpecBase with MockitoSugar with Nun
         .thenReturn(Future.successful(Html("")))
 
       val application    = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request        = FakeRequest(GET, haveSealsChangedRoute)
+      val request        = FakeRequest(GET, addSealRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -71,7 +72,7 @@ class HaveSealsChangedControllerSpec extends SpecBase with MockitoSugar with Nun
         "radios" -> Radios.yesNo(form("value"))
       )
 
-      templateCaptor.getValue mustEqual "haveSealsChanged.njk"
+      templateCaptor.getValue mustEqual "addSeal.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -82,9 +83,9 @@ class HaveSealsChangedControllerSpec extends SpecBase with MockitoSugar with Nun
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers    = UserAnswers(mrn).set(HaveSealsChangedPage, true).success.value
+      val userAnswers    = UserAnswers(mrn).set(AddSealPage, true).success.value
       val application    = applicationBuilder(userAnswers = Some(userAnswers)).build()
-      val request        = FakeRequest(GET, haveSealsChangedRoute)
+      val request        = FakeRequest(GET, addSealRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -103,7 +104,7 @@ class HaveSealsChangedControllerSpec extends SpecBase with MockitoSugar with Nun
         "radios" -> Radios.yesNo(filledForm("value"))
       )
 
-      templateCaptor.getValue mustEqual "haveSealsChanged.njk"
+      templateCaptor.getValue mustEqual "addSeal.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -124,7 +125,7 @@ class HaveSealsChangedControllerSpec extends SpecBase with MockitoSugar with Nun
           .build()
 
       val request =
-        FakeRequest(POST, haveSealsChangedRoute)
+        FakeRequest(POST, addSealRoute)
           .withFormUrlEncodedBody(("value", "true"))
 
       val result = route(application, request).value
@@ -142,7 +143,7 @@ class HaveSealsChangedControllerSpec extends SpecBase with MockitoSugar with Nun
         .thenReturn(Future.successful(Html("")))
 
       val application    = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request        = FakeRequest(POST, haveSealsChangedRoute).withFormUrlEncodedBody(("value", ""))
+      val request        = FakeRequest(POST, addSealRoute).withFormUrlEncodedBody(("value", ""))
       val boundForm      = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
@@ -160,7 +161,7 @@ class HaveSealsChangedControllerSpec extends SpecBase with MockitoSugar with Nun
         "radios" -> Radios.yesNo(boundForm("value"))
       )
 
-      templateCaptor.getValue mustEqual "haveSealsChanged.njk"
+      templateCaptor.getValue mustEqual "addSeal.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -170,13 +171,13 @@ class HaveSealsChangedControllerSpec extends SpecBase with MockitoSugar with Nun
 
       val application = applicationBuilder(userAnswers = None).build()
 
-      val request = FakeRequest(GET, haveSealsChangedRoute)
+      val request = FakeRequest(GET, addSealRoute)
 
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
 
       application.stop()
     }
@@ -186,14 +187,14 @@ class HaveSealsChangedControllerSpec extends SpecBase with MockitoSugar with Nun
       val application = applicationBuilder(userAnswers = None).build()
 
       val request =
-        FakeRequest(POST, haveSealsChangedRoute)
+        FakeRequest(POST, addSealRoute)
           .withFormUrlEncodedBody(("value", "true"))
 
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
 
       application.stop()
     }

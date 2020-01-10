@@ -14,18 +14,16 @@
  * limitations under the License.
  */
 
-package forms
-
-import javax.inject.Inject
+package forms.events.seals
 
 import forms.mappings.Mappings
+import javax.inject.Inject
 import play.api.data.Form
 
-class SealIdentityFormProvider @Inject() extends Mappings {
+class HaveSealsChangedFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[String] =
+  def apply(): Form[Boolean] =
     Form(
-      "value" -> text("sealIdentity.error.required")
-        .verifying(maxLength(20, "sealIdentity.error.length"))
+      "value" -> boolean("haveSealsChanged.error.required")
     )
 }

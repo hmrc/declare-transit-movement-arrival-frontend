@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package pages
+package pages.events.seals
 
+import pages.QuestionPage
 import play.api.libs.json.JsPath
 
-case object AddSealPage extends QuestionPage[Boolean] {
+case object SealIdentityPage extends QuestionPage[String] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "addSeal"
+  override def toString: String = "sealIdentity"
 }

@@ -14,32 +14,32 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.events.seals
 
 import controllers.actions._
-import forms.HaveSealsChangedFormProvider
+import forms.events.seals.SealIdentityFormProvider
 import javax.inject.Inject
 import models.{Mode, MovementReferenceNumber}
 import navigation.Navigator
-import pages.HaveSealsChangedPage
+import pages.events.seals.SealIdentityPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
-import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
+import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class HaveSealsChangedController @Inject()(
+class SealIdentityController @Inject()(
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
   navigator: Navigator,
   identify: IdentifierAction,
   getData: DataRetrievalActionProvider,
   requireData: DataRequiredAction,
-  formProvider: HaveSealsChangedFormProvider,
+  formProvider: SealIdentityFormProvider,
   val controllerComponents: MessagesControllerComponents,
   renderer: Renderer
 )(implicit ec: ExecutionContext)
@@ -51,19 +51,18 @@ class HaveSealsChangedController @Inject()(
 
   def onPageLoad(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
-      val preparedForm = request.userAnswers.get(HaveSealsChangedPage) match {
+      val preparedForm = request.userAnswers.get(SealIdentityPage) match {
         case None        => form
         case Some(value) => form.fill(value)
       }
 
       val json = Json.obj(
-        "form"   -> preparedForm,
-        "mode"   -> mode,
-        "mrn"    -> mrn,
-        "radios" -> Radios.yesNo(preparedForm("value"))
+        "form" -> preparedForm,
+        "mrn"  -> mrn,
+        "mode" -> mode
       )
 
-      renderer.render("haveSealsChanged.njk", json).map(Ok(_))
+      renderer.render("sealIdentity.njk", json).map(Ok(_))
   }
 
   def onSubmit(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
@@ -74,19 +73,18 @@ class HaveSealsChangedController @Inject()(
           formWithErrors => {
 
             val json = Json.obj(
-              "form"   -> formWithErrors,
-              "mode"   -> mode,
-              "mrn"    -> mrn,
-              "radios" -> Radios.yesNo(formWithErrors("value"))
+              "form" -> formWithErrors,
+              "mrn"  -> mrn,
+              "mode" -> mode
             )
 
-            renderer.render("haveSealsChanged.njk", json).map(BadRequest(_))
+            renderer.render("sealIdentity.njk", json).map(BadRequest(_))
           },
           value =>
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(HaveSealsChangedPage, value))
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(SealIdentityPage, value))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(HaveSealsChangedPage, mode, updatedAnswers))
+            } yield Redirect(navigator.nextPage(SealIdentityPage, mode, updatedAnswers))
         )
   }
 }

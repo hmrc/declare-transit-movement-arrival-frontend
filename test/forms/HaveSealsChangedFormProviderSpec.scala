@@ -17,6 +17,7 @@
 package forms
 
 import forms.behaviours.BooleanFieldBehaviours
+import forms.events.seals.HaveSealsChangedFormProvider
 import play.api.data.FormError
 
 class HaveSealsChangedFormProviderSpec extends BooleanFieldBehaviours {

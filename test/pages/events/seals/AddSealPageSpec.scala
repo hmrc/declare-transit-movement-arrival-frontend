@@ -14,17 +14,18 @@
  * limitations under the License.
  */
 
-package forms
+package pages.events.seals
 
-import javax.inject.Inject
+import pages.behaviours.PageBehaviours
 
-import forms.mappings.Mappings
-import play.api.data.Form
+class AddSealPageSpec extends PageBehaviours {
 
-class HaveSealsChangedFormProvider @Inject() extends Mappings {
+  "AddSealPage" - {
 
-  def apply(): Form[Boolean] =
-    Form(
-      "value" -> boolean("haveSealsChanged.error.required")
-    )
+    beRetrievable[Boolean](AddSealPage)
+
+    beSettable[Boolean](AddSealPage)
+
+    beRemovable[Boolean](AddSealPage)
+  }
 }

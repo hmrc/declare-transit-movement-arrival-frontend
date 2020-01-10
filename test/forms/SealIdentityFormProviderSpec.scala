@@ -17,6 +17,7 @@
 package forms
 
 import forms.behaviours.StringFieldBehaviours
+import forms.events.seals.SealIdentityFormProvider
 import play.api.data.FormError
 
 class SealIdentityFormProviderSpec extends StringFieldBehaviours {

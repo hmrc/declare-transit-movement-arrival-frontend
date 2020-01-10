@@ -18,18 +18,15 @@ package utils
 
 import java.time.format.DateTimeFormatter
 
-import controllers.routes
-import controllers.events.{routes => eventRoutes}
+import controllers.events.seals.{routes => sealRoutes}
 import controllers.events.transhipments.{routes => transhipmentRoutes}
+import controllers.events.{routes => eventRoutes}
+import controllers.routes
 import models.{CheckMode, MovementReferenceNumber, TraderAddress, UserAnswers}
 import pages._
-import pages.events.EventCountryPage
-import pages.events.EventPlacePage
-import pages.events.EventReportedPage
-import pages.events.IncidentInformationPage
-import pages.events.IsTranshipmentPage
-import pages.events.transhipments.{AddContainerPage, ContainerNumberPage, TranshipmentTypePage, TransportIdentityPage, TransportNationalityPage}
-import play.api.i18n.Messages
+import pages.events._
+import pages.events.seals.{AddSealPage, HaveSealsChangedPage, SealIdentityPage}
+import pages.events.transhipments._
 import uk.gov.hmrc.viewmodels.SummaryList._
 import uk.gov.hmrc.viewmodels._
 
@@ -43,7 +40,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = routes.HaveSealsChangedController.onPageLoad(mrn, CheckMode).url,
+            href               = sealRoutes.HaveSealsChangedController.onPageLoad(mrn, CheckMode).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"haveSealsChanged.checkYourAnswersLabel"))
           )
         )
@@ -58,7 +55,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = routes.AddSealController.onPageLoad(mrn, CheckMode).url,
+            href               = sealRoutes.AddSealController.onPageLoad(mrn, CheckMode).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"addSeal.checkYourAnswersLabel"))
           )
         )
@@ -73,7 +70,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = routes.SealIdentityController.onPageLoad(mrn, CheckMode).url,
+            href               = sealRoutes.SealIdentityController.onPageLoad(mrn, CheckMode).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"sealIdentity.checkYourAnswersLabel"))
           )
         )

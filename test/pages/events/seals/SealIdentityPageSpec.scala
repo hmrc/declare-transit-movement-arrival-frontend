@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package pages
+package pages.events.seals
 
 import pages.behaviours.PageBehaviours
 
-class HaveSealsChangedPageSpec extends PageBehaviours {
+class SealIdentityPageSpec extends PageBehaviours {
 
-  "HaveSealsChangedPage" - {
+  "SealIdentityPage" - {
 
-    beRetrievable[Boolean](HaveSealsChangedPage)
+    beRetrievable[String](SealIdentityPage)
 
-    beSettable[Boolean](HaveSealsChangedPage)
+    beSettable[String](SealIdentityPage)
 
-    beRemovable[Boolean](HaveSealsChangedPage)
+    beRemovable[String](SealIdentityPage)
   }
 }

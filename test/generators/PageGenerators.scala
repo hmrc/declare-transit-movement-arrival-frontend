@@ -19,6 +19,7 @@ package generators
 import org.scalacheck.Arbitrary
 import pages._
 import pages.events._
+import pages.events.seals.{AddSealPage, HaveSealsChangedPage, SealIdentityPage}
 import pages.events.transhipments.{AddContainerPage, ContainerNumberPage, TranshipmentTypePage, TransportIdentityPage, TransportNationalityPage}
 
 trait PageGenerators {

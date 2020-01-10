@@ -14,13 +14,16 @@
  * limitations under the License.
  */
 
-package pages
+package forms.events.seals
 
-import play.api.libs.json.JsPath
+import forms.mappings.Mappings
+import javax.inject.Inject
+import play.api.data.Form
 
-case object SealIdentityPage extends QuestionPage[String] {
+class AddSealFormProvider @Inject() extends Mappings {
 
-  override def path: JsPath = JsPath \ toString
-
-  override def toString: String = "sealIdentity"
+  def apply(): Form[Boolean] =
+    Form(
+      "value" -> boolean("addSeal.error.required")
+    )
 }
