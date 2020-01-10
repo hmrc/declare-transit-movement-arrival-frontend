@@ -332,3 +332,8 @@ sealIdentity.heading = sealIdentity
 sealIdentity.checkYourAnswersLabel = sealIdentity
 sealIdentity.error.required = Enter sealIdentity
 sealIdentity.error.length = SealIdentity must be 20 characters or less
+
+addSeal.title = addSeal
+addSeal.heading = addSeal
+addSeal.checkYourAnswersLabel = addSeal
+addSeal.error.required = Select yes if addSeal

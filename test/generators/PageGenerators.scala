@@ -23,6 +23,9 @@ import pages.events.transhipments.{AddContainerPage, ContainerNumberPage, Transh
 
 trait PageGenerators {
 
+  implicit lazy val arbitraryAddSealPage: Arbitrary[AddSealPage.type] =
+    Arbitrary(AddSealPage)
+
   implicit lazy val arbitrarySealIdentityPage: Arbitrary[SealIdentityPage.type] =
     Arbitrary(SealIdentityPage)
 
