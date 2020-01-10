@@ -568,6 +568,23 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
         }
       }
 
+      "to 'Place of notification' when answer is 'No' and there is no existing 'Place of notification'" in {
+        forAll(arbitrary[UserAnswers]) {
+          (answers) =>
+            val updatedUserAnswers = answers
+              .set(IsTraderAddressPlaceOfNotificationPage, false)
+              .success
+              .value
+              .remove(PlaceOfNotificationPage)
+              .success
+              .value
+
+            navigator
+              .nextPage(IsTraderAddressPlaceOfNotificationPage, CheckMode, updatedUserAnswers)
+              .mustBe(routes.PlaceOfNotificationController.onPageLoad(updatedUserAnswers.id, CheckMode))
+        }
+      }
+
       "to 'Check Your Answers' when answer is 'Yes'" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>

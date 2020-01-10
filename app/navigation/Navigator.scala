@@ -41,7 +41,7 @@ class Navigator @Inject()() {
     case TraderNamePage => ua => Some(routes.TraderEoriController.onPageLoad(ua.id, NormalMode))
     case TraderAddressPage => ua => Some(routes.IsTraderAddressPlaceOfNotificationController.onPageLoad(ua.id, NormalMode))
     case TraderEoriPage => ua => Some(routes.TraderAddressController.onPageLoad(ua.id, NormalMode))
-    case IsTraderAddressPlaceOfNotificationPage => isTraderAddressPlaceOfNotificationRoute(NormalMode)
+    case IsTraderAddressPlaceOfNotificationPage => isTraderAddressPlaceOfNotificationRoute
     case PlaceOfNotificationPage => ua => Some(routes.IncidentOnRouteController.onPageLoad(ua.id, NormalMode))
     case IncidentOnRoutePage => incidentOnRoute
     case EventCountryPage(index) => ua => Some(eventRoutes.EventPlaceController.onPageLoad(ua.id, index, NormalMode))
@@ -61,7 +61,7 @@ class Navigator @Inject()() {
     case GoodsLocationPage => goodsLocationCheckRoute
     case EventCountryPage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
     case EventPlacePage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
-    case EventReportedPage(index) => eventReportedCheckRoute(index)
+    case IsTraderAddressPlaceOfNotificationPage => isTraderAddressPlaceOfNotificationCheckRoute
     case IsTranshipmentPage(index) => isTranshipmentCheckRoute(index)
     case IncidentInformationPage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
     case TranshipmentTypePage(index) => transhipmentTypeCheckRoute(index)
@@ -69,6 +69,7 @@ class Navigator @Inject()() {
     case TransportIdentityPage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
     case TransportNationalityPage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
     case AddContainerPage(index) => addContainerCheckRoute(index)
+    case EventReportedPage(index) => eventReportedCheckRoute(index)
   }
 
   def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = mode match {
@@ -194,13 +195,18 @@ class Navigator @Inject()() {
         Some(routes.CheckYourAnswersController.onPageLoad(ua.id)) // TODO: This branch is ill defined and needs to be fixed
     }
 
-  private def isTraderAddressPlaceOfNotificationRoute(mode: Mode)(ua: UserAnswers): Option[Call] =
-    (ua.get(IsTraderAddressPlaceOfNotificationPage), ua.get(PlaceOfNotificationPage), mode) match {
-      case (Some(true), _, NormalMode)       => Some(routes.IncidentOnRouteController.onPageLoad(ua.id, mode))
-      case (Some(true), _, CheckMode)        => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
-      case (Some(false), _, NormalMode)      => Some(routes.PlaceOfNotificationController.onPageLoad(ua.id, mode))
-      case (Some(false), Some(_), CheckMode) => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
-      case _                                 => None
+  private def isTraderAddressPlaceOfNotificationRoute(ua: UserAnswers): Option[Call] =
+    ua.get(IsTraderAddressPlaceOfNotificationPage) match {
+      case Some(true)  => Some(routes.IncidentOnRouteController.onPageLoad(ua.id, NormalMode))
+      case Some(false) => Some(routes.PlaceOfNotificationController.onPageLoad(ua.id, NormalMode))
+      case _           => None
+    }
+
+  private def isTraderAddressPlaceOfNotificationCheckRoute(ua: UserAnswers): Option[Call] =
+    (ua.get(IsTraderAddressPlaceOfNotificationPage), ua.get(PlaceOfNotificationPage)) match {
+      case (Some(false), None) => Some(routes.PlaceOfNotificationController.onPageLoad(ua.id, CheckMode))
+      case (Some(_), _)        => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
+      case _                   => None
     }
 
   private def addEventRoute(ua: UserAnswers): Option[Call] =
@@ -214,6 +220,7 @@ class Navigator @Inject()() {
   private def eventReportedCheckRoute(eventIndex: Int)(userAnswers: UserAnswers): Option[Call] =
     (userAnswers.get(EventReportedPage(eventIndex)), userAnswers.get(IsTranshipmentPage(eventIndex))) match {
       case (Some(false), Some(false)) => Some(eventRoutes.IncidentInformationController.onPageLoad(userAnswers.id, eventIndex, CheckMode))
-      case (_, _)                     => Some(eventRoutes.CheckEventAnswersController.onPageLoad(userAnswers.id, eventIndex))
+      case (Some(_), _)               => Some(eventRoutes.CheckEventAnswersController.onPageLoad(userAnswers.id, eventIndex))
+      case _                          => None
     }
 }
