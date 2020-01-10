@@ -16,16 +16,18 @@
 
 package controllers.events
 
+import connectors.ReferenceDataConnector
 import controllers.actions._
 import forms.events.EventCountryFormProvider
 import javax.inject.Inject
+import models.reference.Country
 import models.{Mode, MovementReferenceNumber}
 import navigation.Navigator
 import pages.events.EventCountryPage
-import play.api.i18n.I18nSupport
-import play.api.i18n.MessagesApi
-import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.data.Form
+import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.json.{JsObject, Json}
+import play.api.mvc._
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
@@ -40,52 +42,66 @@ class EventCountryController @Inject()(override val messagesApi: MessagesApi,
                                        getData: DataRetrievalActionProvider,
                                        requireData: DataRequiredAction,
                                        formProvider: EventCountryFormProvider,
+                                       referenceDataConnector: ReferenceDataConnector,
                                        val controllerComponents: MessagesControllerComponents,
                                        renderer: Renderer)(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
     with NunjucksSupport {
 
-  private val form = formProvider()
-
   def onPageLoad(mrn: MovementReferenceNumber, index: Int, mode: Mode): Action[AnyContent] =
     (identify andThen getData(mrn) andThen requireData).async {
       implicit request =>
-        val preparedForm = request.userAnswers.get(EventCountryPage(index)) match {
-          case None        => form
-          case Some(value) => form.fill(value)
+        referenceDataConnector.getCountryList() flatMap {
+          countries =>
+            val form = formProvider(countries)
+            val preparedForm = request.userAnswers.get(EventCountryPage(index)) match {
+              case None        => form
+              case Some(value) => form.fill(value)
+            }
+            renderPage(mrn, mode, preparedForm, countries, Results.Ok)
         }
-
-        val json = Json.obj(
-          "form" -> preparedForm,
-          "mrn"  -> mrn,
-          "mode" -> mode
-        )
-
-        renderer.render("events/eventCountry.njk", json).map(Ok(_))
     }
+
+  private def countryJsonList(value: Option[Country], countries: Seq[Country]): Seq[JsObject] = {
+    val countryJsonList = countries.map {
+      country =>
+        Json.obj("text" -> country.description, "value" -> country.code, "selected" -> value.contains(country))
+    }
+
+    Json.obj("value" -> "", "text" -> "") +: countryJsonList
+  }
 
   def onSubmit(mrn: MovementReferenceNumber, index: Int, mode: Mode): Action[AnyContent] =
     (identify andThen getData(mrn) andThen requireData).async {
       implicit request =>
-        form
-          .bindFromRequest()
-          .fold(
-            formWithErrors => {
+        referenceDataConnector.getCountryList() flatMap {
+          countries =>
+            val form = formProvider(countries)
 
-              val json = Json.obj(
-                "form" -> formWithErrors,
-                "mrn"  -> mrn,
-                "mode" -> mode
+            form
+              .bindFromRequest()
+              .fold(
+                formWithErrors => renderPage(mrn, mode, formWithErrors, countries, Results.BadRequest),
+                value =>
+                  for {
+                    updatedAnswers <- Future.fromTry(request.userAnswers.set(EventCountryPage(index), value))
+                    _              <- sessionRepository.set(updatedAnswers)
+                  } yield Redirect(navigator.nextPage(EventCountryPage(index), mode, updatedAnswers))
               )
-
-              renderer.render("events/eventCountry.njk", json).map(BadRequest(_))
-            },
-            value =>
-              for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(EventCountryPage(index), value))
-                _              <- sessionRepository.set(updatedAnswers)
-              } yield Redirect(navigator.nextPage(EventCountryPage(index), mode, updatedAnswers))
-          )
+        }
     }
+
+
+  private def renderPage(mrn: MovementReferenceNumber, mode: Mode, form: Form[Country], countries: Seq[Country], status: Results.Status)(
+    implicit request: Request[AnyContent]): Future[Result] = {
+    val json = Json.obj(
+      "form"      -> form,
+      "mrn"       -> mrn,
+      "mode"      -> mode,
+      "countries" -> countryJsonList(form.value, countries)
+    )
+
+    renderer.render("events/eventCountry.njk", json).map(status(_))
+  }
 }

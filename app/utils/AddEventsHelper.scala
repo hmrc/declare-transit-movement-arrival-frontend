@@ -64,7 +64,7 @@ class AddEventsHelper(userAnswers: UserAnswers) {
   private def placeOfEvent(index: Int): Option[String] =
     userAnswers.get(EventPlacePage(index)) match {
       case Some(answer) => Some(answer)
-      case _            => userAnswers.get(EventCountryPage(index))
+      case _            => userAnswers.get(EventCountryPage(index)).map(_.code)
     }
 
   private def mrn: MovementReferenceNumber = userAnswers.id

@@ -31,7 +31,7 @@ class ReferenceDataConnector @Inject()(config: FrontendAppConfig, http: HttpClie
   }
 
   def getCountryList()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[Country]] = {
-    val serviceUrl = s"${config.referenceDataUrl}/country-code-full-list"
+    val serviceUrl = s"${config.referenceDataUrl}/countries-full-list"
     http.GET[Seq[Country]](serviceUrl)
   }
 }
