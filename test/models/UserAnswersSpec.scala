@@ -45,7 +45,7 @@ class UserAnswersSpec extends SpecBase {
 
   "UserAnswers" - {
 
-    s"must run cleanup when given the answer of $testPageAnswer" in {
+    s"must run cleanup when the new answer is not equal to the existing answer" in {
 
       val userAnswers = emptyUserAnswers.set(TestCleanupPage, testCleanupPageAnswer).success.value
       val result      = userAnswers.set(TestPage, testPageAnswer).success.value
@@ -58,7 +58,7 @@ class UserAnswersSpec extends SpecBase {
       result mustBe UserAnswers(mrn, data, result.lastUpdated)
     }
 
-    s"must not run cleanup when given the answer of $testPageAnswer when the answer is the same in UserAnswers" in {
+    s"must not run cleanup when the new answer is equal to the existing answer" in {
 
       val userAnswers = emptyUserAnswers
         .set(TestPage, testPageAnswer)
