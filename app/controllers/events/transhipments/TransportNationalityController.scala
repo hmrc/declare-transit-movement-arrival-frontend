@@ -17,7 +17,7 @@
 package controllers.events.transhipments
 
 import connectors.ReferenceDataConnector
-import controllers.actions._
+import controllers.actions.{DataRequiredAction, DataRetrievalActionProvider, IdentifierAction}
 import forms.events.transhipments.TransportNationalityFormProvider
 import javax.inject.Inject
 import models.reference.Country
@@ -27,7 +27,7 @@ import pages.events.transhipments.TransportNationalityPage
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request, Result, Results}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request, Result}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
@@ -59,7 +59,7 @@ class TransportNationalityController @Inject()(override val messagesApi: Message
             case Some(value) => form.fill(value)
           }
 
-          renderPage(mrn, mode, preparedForm, countries, Results.Ok)
+          renderPage(mrn, mode, preparedForm, countries, Ok)
       }
   }
 
@@ -72,7 +72,7 @@ class TransportNationalityController @Inject()(override val messagesApi: Message
           form
             .bindFromRequest()
             .fold(
-              formWithErrors => renderPage(mrn, mode, formWithErrors, countries, Results.BadRequest),
+              formWithErrors => renderPage(mrn, mode, formWithErrors, countries, BadRequest),
               value =>
                 for {
                   updatedAnswers <- Future.fromTry(request.userAnswers.set(TransportNationalityPage(eventIndex), value))
@@ -82,7 +82,7 @@ class TransportNationalityController @Inject()(override val messagesApi: Message
       }
   }
 
-  private def renderPage(mrn: MovementReferenceNumber, mode: Mode, form: Form[Country], countries: Seq[Country], status: Results.Status)(
+  private def renderPage(mrn: MovementReferenceNumber, mode: Mode, form: Form[Country], countries: Seq[Country], status: Status)(
     implicit request: Request[AnyContent]): Future[Result] = {
     val json = Json.obj(
       "form"      -> form,
