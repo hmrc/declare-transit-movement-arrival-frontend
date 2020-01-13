@@ -16,12 +16,6 @@
 
 package pages.events.transhipments
 
-import pages.QuestionPage
-import play.api.libs.json.JsPath
+import pages.Page
 
-case object ConfirmRemoveContainerPage extends QuestionPage[Boolean] {
-
-  override def path: JsPath = JsPath \ toString
-
-  override def toString: String = "confirmRemoveContainer"
-}
+final case class ConfirmRemoveContainerPage(eventIndex: Int) extends Page

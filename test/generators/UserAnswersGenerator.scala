@@ -35,7 +35,6 @@ trait UserAnswersGenerator extends TryValues {
       arbitrary[(AddSealPage.type, JsValue)] ::
       arbitrary[(SealIdentityPage.type, JsValue)] ::
       arbitrary[(AddContainerPage, JsValue)] ::
-      arbitrary[(ConfirmRemoveContainerPage.type, JsValue)] ::
       arbitrary[(AddContainerPage, JsValue)] ::
       arbitrary[(ContainerNumberPage, JsValue)] ::
       arbitrary[(TransportNationalityPage, JsValue)] ::
