@@ -197,7 +197,6 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
           )
         )
       )
-
   }
 
   def isTranshipment(index: Int): Option[Row] = userAnswers.get(IsTranshipmentPage(index)) map {

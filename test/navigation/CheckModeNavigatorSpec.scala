@@ -23,7 +23,7 @@ import controllers.routes
 import generators.{DomainModelGenerators, Generators}
 import models.TranshipmentType.{DifferentContainer, DifferentContainerAndVehicle, DifferentVehicle}
 import models.domain.Container
-import models.{CheckMode, GoodsLocation, NormalMode, TranshipmentType, UserAnswers}
+import models.{CheckMode, GoodsLocation, TranshipmentType, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.events._

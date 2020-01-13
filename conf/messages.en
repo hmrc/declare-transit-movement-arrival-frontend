@@ -326,6 +326,10 @@ addContainer.containerList.label = Container {0}
 addContainer.containerList.change = Change container number {0}?
 addContainer.containerList.delete = Remove container number {0}?
 
+confirmRemoveContainer.title = Are you sure you want to remove the container {0}?
+confirmRemoveContainer.heading = Are you sure you want to remove the container {0}?
+confirmRemoveContainer.error.required = Select yes if you are sure you want to remove the container {0}
+
 sealIdentity.title = What is the new seal number or mark?
 sealIdentity.heading = What is the new seal number or mark?
 sealIdentity.checkYourAnswersLabel = What is the new seal number or mark?
