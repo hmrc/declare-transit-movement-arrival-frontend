@@ -27,14 +27,14 @@ trait PageGenerators {
   implicit lazy val arbitraryRemoveSealPage: Arbitrary[RemoveSealPage.type] =
     Arbitrary(RemoveSealPage)
 
-  implicit lazy val arbitraryHaveSealsChangedPage: Arbitrary[HaveSealsChangedPage.type] =
-    Arbitrary(HaveSealsChangedPage)
+  implicit lazy val arbitraryHaveSealsChangedPage: Arbitrary[HaveSealsChangedPage] =
+    Arbitrary(HaveSealsChangedPage(0))
 
-  implicit lazy val arbitraryAddSealPage: Arbitrary[AddSealPage.type] =
-    Arbitrary(AddSealPage)
+  implicit lazy val arbitraryAddSealPage: Arbitrary[AddSealPage] =
+    Arbitrary(AddSealPage(0))
 
-  implicit lazy val arbitrarySealIdentityPage: Arbitrary[SealIdentityPage.type] =
-    Arbitrary(SealIdentityPage)
+  implicit lazy val arbitrarySealIdentityPage: Arbitrary[SealIdentityPage] =
+    Arbitrary(SealIdentityPage(0))
 
   implicit lazy val arbitraryAddContainerPage: Arbitrary[AddContainerPage] =
     Arbitrary(AddContainerPage(0))

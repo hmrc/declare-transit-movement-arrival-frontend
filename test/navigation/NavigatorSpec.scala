@@ -37,9 +37,9 @@ import queries.EventsQuery
 
 class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generators with DomainModelGenerators {
 
-  val navigator = app.injector.instanceOf[Navigator]
+  val navigator: Navigator = app.injector.instanceOf[Navigator]
 
-  val country = Country("Valid", "GB", "United Kingdom")
+  val country: Country = Country("Valid", "GB", "United Kingdom")
 
   "Navigator" - {
 
@@ -311,7 +311,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
               navigator
                 .nextPage(IsTranshipmentPage(eventIndex), NormalMode, updatedAnswers)
-                .mustBe(sealRoutes.HaveSealsChangedController.onPageLoad(updatedAnswers.id, NormalMode))
+                .mustBe(sealRoutes.HaveSealsChangedController.onPageLoad(updatedAnswers.id, eventIndex, NormalMode))
           }
         }
 
@@ -494,7 +494,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
             navigator
               .nextPage(TransportNationalityPage(eventIndex), NormalMode, answers)
-              .mustBe(sealRoutes.HaveSealsChangedController.onPageLoad(answers.id, NormalMode))
+              .mustBe(sealRoutes.HaveSealsChangedController.onPageLoad(answers.id, eventIndex, NormalMode))
         }
       }
 
@@ -504,7 +504,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
             navigator
               .nextPage(IncidentInformationPage(eventIndex), NormalMode, answers)
-              .mustBe(sealRoutes.HaveSealsChangedController.onPageLoad(answers.id, NormalMode))
+              .mustBe(sealRoutes.HaveSealsChangedController.onPageLoad(answers.id, eventIndex, NormalMode))
         }
       }
 
@@ -551,7 +551,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
               navigator
                 .nextPage(AddContainerPage(eventIndex), NormalMode, updatedAnswers)
-                .mustBe(sealRoutes.HaveSealsChangedController.onPageLoad(answers.id, NormalMode))
+                .mustBe(sealRoutes.HaveSealsChangedController.onPageLoad(answers.id, eventIndex, NormalMode))
           }
         }
 
@@ -662,10 +662,10 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         "to check event answers page when user selects No" in {
           forAll(arbitrary[UserAnswers]) {
             answers =>
-              val updatedAnswers = answers.set(HaveSealsChangedPage, false).success.value
+              val updatedAnswers = answers.set(HaveSealsChangedPage(eventIndex), false).success.value
 
               navigator
-                .nextPage(HaveSealsChangedPage, NormalMode, updatedAnswers)
+                .nextPage(HaveSealsChangedPage(eventIndex), NormalMode, updatedAnswers)
                 .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(answers.id, eventIndex))
           }
         }
@@ -673,11 +673,11 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         "to seal identity page when user selects Yes" in {
           forAll(arbitrary[UserAnswers]) {
             answers =>
-              val updatedAnswers = answers.set(HaveSealsChangedPage, true).success.value
+              val updatedAnswers = answers.set(HaveSealsChangedPage(eventIndex), true).success.value
 
               navigator
-                .nextPage(HaveSealsChangedPage, NormalMode, updatedAnswers)
-                .mustBe(sealRoutes.SealIdentityController.onPageLoad(answers.id, NormalMode))
+                .nextPage(HaveSealsChangedPage(eventIndex), NormalMode, updatedAnswers)
+                .mustBe(sealRoutes.SealIdentityController.onPageLoad(answers.id, eventIndex, NormalMode))
           }
         }
       }
@@ -687,11 +687,11 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         "to add seal page" in {
           forAll(arbitrary[UserAnswers], arbitrary[String]) {
             (answers, sealsIdentity) =>
-              val updatedAnswers = answers.set(SealIdentityPage, sealsIdentity).success.value
+              val updatedAnswers = answers.set(SealIdentityPage(eventIndex), sealsIdentity).success.value
 
               navigator
-                .nextPage(SealIdentityPage, NormalMode, updatedAnswers)
-                .mustBe(sealRoutes.AddSealController.onPageLoad(answers.id, NormalMode))
+                .nextPage(SealIdentityPage(eventIndex), NormalMode, updatedAnswers)
+                .mustBe(sealRoutes.AddSealController.onPageLoad(answers.id, eventIndex, NormalMode))
           }
         }
       }
@@ -701,10 +701,10 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         "to check event details page when answer is no" in {
           forAll(arbitrary[UserAnswers]) {
             answers =>
-              val updatedAnswers = answers.set(AddSealPage, false).success.value
+              val updatedAnswers = answers.set(AddSealPage(eventIndex), false).success.value
 
               navigator
-                .nextPage(AddSealPage, NormalMode, updatedAnswers)
+                .nextPage(AddSealPage(eventIndex), NormalMode, updatedAnswers)
                 .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(answers.id, eventIndex))
 
           }
@@ -713,11 +713,11 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         "to seal identity page when answer is Yes" in {
           forAll(arbitrary[UserAnswers]) {
             answers =>
-              val updatedAnswers = answers.set(AddSealPage, true).success.value
+              val updatedAnswers = answers.set(AddSealPage(eventIndex), true).success.value
 
               navigator
-                .nextPage(AddSealPage, NormalMode, updatedAnswers)
-                .mustBe(sealRoutes.SealIdentityController.onPageLoad(answers.id, NormalMode))
+                .nextPage(AddSealPage(eventIndex), NormalMode, updatedAnswers)
+                .mustBe(sealRoutes.SealIdentityController.onPageLoad(answers.id, eventIndex, NormalMode))
           }
         }
       }

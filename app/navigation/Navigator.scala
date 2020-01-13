@@ -50,16 +50,16 @@ class Navigator @Inject()() {
     case EventPlacePage(index) => ua => Some(eventRoutes.EventReportedController.onPageLoad(ua.id, index, NormalMode))
     case EventReportedPage(index) => ua => Some(eventRoutes.IsTranshipmentController.onPageLoad(ua.id, index, NormalMode))
     case IsTranshipmentPage(index) => isTranshipmentRoute(index)
-    case IncidentInformationPage(index) => ua => Some(sealRoutes.HaveSealsChangedController.onPageLoad(ua.id, NormalMode))
+    case IncidentInformationPage(index) => ua => Some(sealRoutes.HaveSealsChangedController.onPageLoad(ua.id, index, NormalMode))
     case AddEventPage => addEventRoute
     case TranshipmentTypePage(index) => transhipmentType(index)
     case TransportIdentityPage(index) => ua => Some(transhipmentRoutes.TransportNationalityController.onPageLoad(ua.id, index, NormalMode))
-    case TransportNationalityPage(index) => ua => Some(sealRoutes.HaveSealsChangedController.onPageLoad(ua.id, NormalMode))
+    case TransportNationalityPage(index) => ua => Some(sealRoutes.HaveSealsChangedController.onPageLoad(ua.id, index, NormalMode))
     case ContainerNumberPage(index, _) => ua => Some(transhipmentRoutes.AddContainerController.onPageLoad(ua.id, index, NormalMode))
     case AddContainerPage(index) => addContainer(index)
-    case HaveSealsChangedPage => haveSealsChanged
-    case SealIdentityPage => ua => Some(sealRoutes.AddSealController.onPageLoad(ua.id, NormalMode))
-    case AddSealPage => addSeal
+    case HaveSealsChangedPage(index) => haveSealsChanged(index)
+    case SealIdentityPage(index) => ua => Some(sealRoutes.AddSealController.onPageLoad(ua.id, index, NormalMode))
+    case AddSealPage(index) => addSeal(index)
   }
 
   private val checkRouteMap: PartialFunction[Page, UserAnswers => Option[Call]] = {
@@ -106,7 +106,7 @@ class Navigator @Inject()() {
     case false =>
       ua.get(TranshipmentTypePage(index)) match {
         case Some(DifferentContainerAndVehicle) => transhipmentRoutes.TransportIdentityController.onPageLoad(ua.id, index, NormalMode)
-        case _                                  => sealRoutes.HaveSealsChangedController.onPageLoad(ua.id, NormalMode)
+        case _                                  => sealRoutes.HaveSealsChangedController.onPageLoad(ua.id, index, NormalMode)
       }
   }
 
@@ -175,7 +175,7 @@ class Navigator @Inject()() {
     (ua.get(EventReportedPage(index)), ua.get(IsTranshipmentPage(index))) match {
       case (_, Some(true))            => Some(transhipmentRoutes.TranshipmentTypeController.onPageLoad(ua.id, index, NormalMode))
       case (Some(false), Some(false)) => Some(eventRoutes.IncidentInformationController.onPageLoad(ua.id, index, NormalMode))
-      case (Some(true), Some(false))  => Some(sealRoutes.HaveSealsChangedController.onPageLoad(ua.id, NormalMode))
+      case (Some(true), Some(false))  => Some(sealRoutes.HaveSealsChangedController.onPageLoad(ua.id, index, NormalMode))
       case _                          => None
     }
 
@@ -229,15 +229,15 @@ class Navigator @Inject()() {
       case _                          => None
     }
 
-  private def haveSealsChanged(userAnswers: UserAnswers): Option[Call] =
-    userAnswers.get(HaveSealsChangedPage).map {
-      case true  => sealRoutes.SealIdentityController.onPageLoad(userAnswers.id, NormalMode)
-      case false => eventRoutes.CheckEventAnswersController.onPageLoad(userAnswers.id, 0)
+  private def haveSealsChanged(index: Int)(userAnswers: UserAnswers): Option[Call] =
+    userAnswers.get(HaveSealsChangedPage(index)).map {
+      case true  => sealRoutes.SealIdentityController.onPageLoad(userAnswers.id, index, NormalMode)
+      case false => eventRoutes.CheckEventAnswersController.onPageLoad(userAnswers.id, index)
     }
 
-  private def addSeal(userAnswers: UserAnswers): Option[Call] =
-    userAnswers.get(AddSealPage).map {
-      case true  => sealRoutes.SealIdentityController.onPageLoad(userAnswers.id, NormalMode)
-      case false => eventRoutes.CheckEventAnswersController.onPageLoad(userAnswers.id, 0)
+  private def addSeal(index: Int)(userAnswers: UserAnswers): Option[Call] =
+    userAnswers.get(AddSealPage(index)).map {
+      case true  => sealRoutes.SealIdentityController.onPageLoad(userAnswers.id, index, NormalMode)
+      case false => eventRoutes.CheckEventAnswersController.onPageLoad(userAnswers.id, index)
     }
 }

@@ -49,9 +49,9 @@ class HaveSealsChangedController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onPageLoad(mrn: MovementReferenceNumber, eventIndex: Int, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
-      val preparedForm = request.userAnswers.get(HaveSealsChangedPage) match {
+      val preparedForm = request.userAnswers.get(HaveSealsChangedPage(eventIndex)) match {
         case None        => form
         case Some(value) => form.fill(value)
       }
@@ -66,7 +66,7 @@ class HaveSealsChangedController @Inject()(
       renderer.render("haveSealsChanged.njk", json).map(Ok(_))
   }
 
-  def onSubmit(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onSubmit(mrn: MovementReferenceNumber, eventIndex: Int, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
       form
         .bindFromRequest()
@@ -84,9 +84,9 @@ class HaveSealsChangedController @Inject()(
           },
           value =>
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(HaveSealsChangedPage, value))
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(HaveSealsChangedPage(eventIndex), value))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(HaveSealsChangedPage, mode, updatedAnswers))
+            } yield Redirect(navigator.nextPage(HaveSealsChangedPage(eventIndex), mode, updatedAnswers))
         )
   }
 }

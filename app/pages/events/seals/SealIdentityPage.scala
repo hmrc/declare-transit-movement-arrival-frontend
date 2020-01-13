@@ -17,11 +17,11 @@
 package pages.events.seals
 
 import pages.QuestionPage
+import pages.events.SectionConstants
 import play.api.libs.json.JsPath
 
-case object SealIdentityPage extends QuestionPage[String] {
+case class SealIdentityPage(index: Int) extends QuestionPage[String] {
 
-  override def path: JsPath = JsPath \ toString
+  override def path: JsPath = JsPath \ SectionConstants.events \ index \ SectionConstants.seals
 
-  override def toString: String = "sealIdentity"
 }
