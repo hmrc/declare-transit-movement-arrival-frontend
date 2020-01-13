@@ -111,11 +111,6 @@ class TransportNationalityControllerSpec extends SpecBase with MockitoSugar with
       val request   = FakeRequest(POST, transportNationalityRoute).withFormUrlEncodedBody(("value", ""))
       val boundForm = form.bind(Map("value" -> ""))
 
-      val countriesJson = Seq(
-        Json.obj("text" -> "", "value"               -> ""),
-        Json.obj("text" -> "United Kingdom", "value" -> "GB", "selected" -> false)
-      )
-
       val result = route(application, request).value
 
       status(result) mustEqual BAD_REQUEST
@@ -126,7 +121,7 @@ class TransportNationalityControllerSpec extends SpecBase with MockitoSugar with
         "form"      -> boundForm,
         "mrn"       -> mrn,
         "mode"      -> NormalMode,
-        "countries" -> countriesJson
+        "countries" -> countriesJson()
       )
 
       templateCaptor.getValue mustEqual transportNationalityTemplate
@@ -174,11 +169,6 @@ class TransportNationalityControllerSpec extends SpecBase with MockitoSugar with
     when(mockRenderer.render(any(), any())(any()))
       .thenReturn(Future.successful(Html("")))
 
-    val countriesJson = Seq(
-      Json.obj("text" -> "", "value"               -> ""),
-      Json.obj("text" -> "United Kingdom", "value" -> "GB", "selected" -> preSelect)
-    )
-
     val application = applicationBuilder(userAnswers = Some(userAnswers))
       .overrides {
         bind[ReferenceDataConnector].toInstance(mockReferenceDataConnector)
@@ -197,7 +187,7 @@ class TransportNationalityControllerSpec extends SpecBase with MockitoSugar with
       "form"      -> form,
       "mrn"       -> mrn,
       "mode"      -> NormalMode,
-      "countries" -> countriesJson
+      "countries" -> countriesJson(preSelect)
     )
 
     templateCaptor.getValue mustEqual transportNationalityTemplate
@@ -205,4 +195,10 @@ class TransportNationalityControllerSpec extends SpecBase with MockitoSugar with
 
     application.stop()
   }
+
+  private def countriesJson(preSelect: Boolean = false): Seq[JsObject] =
+    Seq(
+      Json.obj("text" -> "", "value"               -> ""),
+      Json.obj("text" -> "United Kingdom", "value" -> "GB", "selected" -> preSelect)
+    )
 }
