@@ -264,7 +264,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
     answer =>
       Row(
         key   = Key(msg"eventCountry.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value = Value(lit"$answer"),
+        value = Value(lit"${answer.description}"),
         actions = List(
           Action(
             content            = msg"site.edit",
@@ -372,7 +372,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
 
       Row(
         key   = Key(message, classes = Seq("govuk-!-width-one-half")),
-        value = Value(lit"$answer"),
+        value = Value(lit"${answer.name} (${answer.id})"),
         actions = List(
           Action(
             content            = msg"site.edit",
