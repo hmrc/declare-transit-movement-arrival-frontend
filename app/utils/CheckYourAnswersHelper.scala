@@ -47,7 +47,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
       )
   }
 
-  def haveSealsChanged: Option[Row] = userAnswers.get(HaveSealsChangedPage) map {
+  def haveSealsChanged(eventIndex: Int): Option[Row] = userAnswers.get(HaveSealsChangedPage(eventIndex)) map {
     answer =>
       Row(
         key   = Key(msg"haveSealsChanged.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
@@ -55,14 +55,14 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = sealRoutes.HaveSealsChangedController.onPageLoad(mrn, CheckMode).url,
+            href               = sealRoutes.HaveSealsChangedController.onPageLoad(mrn, eventIndex, CheckMode).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"haveSealsChanged.checkYourAnswersLabel"))
           )
         )
       )
   }
 
-  def addSeal: Option[Row] = userAnswers.get(AddSealPage) map {
+  def addSeal(eventIndex: Int): Option[Row] = userAnswers.get(AddSealPage(eventIndex)) map {
     answer =>
       Row(
         key   = Key(msg"addSeal.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
@@ -70,14 +70,14 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = sealRoutes.AddSealController.onPageLoad(mrn, CheckMode).url,
+            href               = sealRoutes.AddSealController.onPageLoad(mrn, eventIndex, CheckMode).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"addSeal.checkYourAnswersLabel"))
           )
         )
       )
   }
 
-  def sealIdentity: Option[Row] = userAnswers.get(SealIdentityPage) map {
+  def sealIdentity(eventIndex: Int): Option[Row] = userAnswers.get(SealIdentityPage(eventIndex)) map {
     answer =>
       Row(
         key   = Key(msg"sealIdentity.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
@@ -85,7 +85,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = sealRoutes.SealIdentityController.onPageLoad(mrn, CheckMode).url,
+            href               = sealRoutes.SealIdentityController.onPageLoad(mrn, eventIndex, CheckMode).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"sealIdentity.checkYourAnswersLabel"))
           )
         )
@@ -197,7 +197,6 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
           )
         )
       )
-
   }
 
   def isTranshipment(index: Int): Option[Row] = userAnswers.get(IsTranshipmentPage(index)) map {

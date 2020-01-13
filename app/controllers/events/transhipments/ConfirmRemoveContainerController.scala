@@ -14,32 +14,32 @@
  * limitations under the License.
  */
 
-package controllers.events.seals
+package controllers.events.transhipments
 
 import controllers.actions._
-import forms.events.seals.SealIdentityFormProvider
+import forms.events.transhipments.ConfirmRemoveContainerFormProvider
 import javax.inject.Inject
 import models.{Mode, MovementReferenceNumber}
 import navigation.Navigator
-import pages.events.seals.SealIdentityPage
+import pages.events.transhipments.ConfirmRemoveContainerPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
-import uk.gov.hmrc.viewmodels.NunjucksSupport
+import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class SealIdentityController @Inject()(
+class ConfirmRemoveContainerController @Inject()(
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
   navigator: Navigator,
   identify: IdentifierAction,
   getData: DataRetrievalActionProvider,
   requireData: DataRequiredAction,
-  formProvider: SealIdentityFormProvider,
+  formProvider: ConfirmRemoveContainerFormProvider,
   val controllerComponents: MessagesControllerComponents,
   renderer: Renderer
 )(implicit ec: ExecutionContext)
@@ -47,22 +47,19 @@ class SealIdentityController @Inject()(
     with I18nSupport
     with NunjucksSupport {
 
-  private val form = formProvider()
+  private val form                           = formProvider()
+  private val confirmRemoveContainerTemplate = "events/transhipments/confirmRemoveContainer.njk"
 
   def onPageLoad(mrn: MovementReferenceNumber, eventIndex: Int, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
-      val preparedForm = request.userAnswers.get(SealIdentityPage(eventIndex)) match {
-        case None        => form
-        case Some(value) => form.fill(value)
-      }
-
       val json = Json.obj(
-        "form" -> preparedForm,
-        "mrn"  -> mrn,
-        "mode" -> mode
+        "form"   -> form,
+        "mode"   -> mode,
+        "mrn"    -> mrn,
+        "radios" -> Radios.yesNo(form("value"))
       )
 
-      renderer.render("events/seals/sealIdentity.njk", json).map(Ok(_))
+      renderer.render(confirmRemoveContainerTemplate, json).map(Ok(_))
   }
 
   def onSubmit(mrn: MovementReferenceNumber, eventIndex: Int, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
@@ -73,18 +70,18 @@ class SealIdentityController @Inject()(
           formWithErrors => {
 
             val json = Json.obj(
-              "form" -> formWithErrors,
-              "mrn"  -> mrn,
-              "mode" -> mode
+              "form"   -> formWithErrors,
+              "mode"   -> mode,
+              "mrn"    -> mrn,
+              "radios" -> Radios.yesNo(formWithErrors("value"))
             )
 
-            renderer.render("events/seals/sealIdentity.njk", json).map(BadRequest(_))
+            renderer.render(confirmRemoveContainerTemplate, json).map(BadRequest(_))
           },
           value =>
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(SealIdentityPage(eventIndex), value))
-              _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(SealIdentityPage(eventIndex), mode, updatedAnswers))
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(ConfirmRemoveContainerPage, value))
+            } yield Redirect(navigator.nextPage(ConfirmRemoveContainerPage, mode, updatedAnswers))
         )
   }
 }

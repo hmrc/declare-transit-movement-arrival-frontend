@@ -63,7 +63,7 @@ class RemoveSealController @Inject()(
         "radios" -> Radios.yesNo(preparedForm("value"))
       )
 
-      renderer.render("removeSeal.njk", json).map(Ok(_))
+      renderer.render("events/seals/removeSeal.njk", json).map(Ok(_))
   }
 
   def onSubmit(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
@@ -80,7 +80,7 @@ class RemoveSealController @Inject()(
               "radios" -> Radios.yesNo(formWithErrors("value"))
             )
 
-            renderer.render("removeSeal.njk", json).map(BadRequest(_))
+            renderer.render("events/seals/removeSeal.njk", json).map(BadRequest(_))
           },
           value =>
             for {

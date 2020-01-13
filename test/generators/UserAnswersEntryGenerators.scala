@@ -20,19 +20,22 @@ import models._
 import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary.arbitrary
 import pages._
-import pages.events.AddEventPage
-import pages.events.EventCountryPage
-import pages.events.EventPlacePage
-import pages.events.EventReportedPage
-import pages.events.IncidentInformationPage
-import pages.events.IsTranshipmentPage
-import pages.events.seals.{AddSealPage, HaveSealsChangedPage, RemoveSealPage, SealIdentityPage}
-import pages.events.transhipments.{AddContainerPage, ContainerNumberPage, TranshipmentTypePage, TransportIdentityPage, TransportNationalityPage}
+import pages.events._
+import pages.events.transhipments._
+import pages.events.seals._
 import play.api.libs.json.JsValue
 import play.api.libs.json.Json
 
 trait UserAnswersEntryGenerators extends PageGenerators {
   self: Generators =>
+
+  implicit lazy val arbitraryConfirmRemoveContainerUserAnswersEntry: Arbitrary[(ConfirmRemoveContainerPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[ConfirmRemoveContainerPage.type]
+        value <- arbitrary[Boolean].map(Json.toJson(_))
+      } yield (page, value)
+    }
 
   implicit lazy val arbitraryRemoveSealUserAnswersEntry: Arbitrary[(RemoveSealPage.type, JsValue)] =
     Arbitrary {
@@ -42,26 +45,26 @@ trait UserAnswersEntryGenerators extends PageGenerators {
       } yield (page, value)
     }
 
-  implicit lazy val arbitraryHaveSealsChangedUserAnswersEntry: Arbitrary[(HaveSealsChangedPage.type, JsValue)] =
+  implicit lazy val arbitraryHaveSealsChangedUserAnswersEntry: Arbitrary[(HaveSealsChangedPage, JsValue)] =
     Arbitrary {
       for {
-        page  <- arbitrary[HaveSealsChangedPage.type]
+        page  <- arbitrary[HaveSealsChangedPage]
         value <- arbitrary[Boolean].map(Json.toJson(_))
       } yield (page, value)
     }
 
-  implicit lazy val arbitraryAddSealUserAnswersEntry: Arbitrary[(AddSealPage.type, JsValue)] =
+  implicit lazy val arbitraryAddSealUserAnswersEntry: Arbitrary[(AddSealPage, JsValue)] =
     Arbitrary {
       for {
-        page  <- arbitrary[AddSealPage.type]
+        page  <- arbitrary[AddSealPage]
         value <- arbitrary[Boolean].map(Json.toJson(_))
       } yield (page, value)
     }
 
-  implicit lazy val arbitrarySealIdentityUserAnswersEntry: Arbitrary[(SealIdentityPage.type, JsValue)] =
+  implicit lazy val arbitrarySealIdentityUserAnswersEntry: Arbitrary[(SealIdentityPage, JsValue)] =
     Arbitrary {
       for {
-        page  <- arbitrary[SealIdentityPage.type]
+        page  <- arbitrary[SealIdentityPage]
         value <- arbitrary[String].suchThat(_.nonEmpty).map(Json.toJson(_))
       } yield (page, value)
     }

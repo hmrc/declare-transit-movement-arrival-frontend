@@ -14,12 +14,16 @@
  * limitations under the License.
  */
 
-package pages.events
+package forms.events.transhipments
 
-object SectionConstants {
+import forms.mappings.Mappings
+import javax.inject.Inject
+import play.api.data.Form
 
-  val events     = "events"
-  val containers = "containers"
-  val seals      = "seals"
+class ConfirmRemoveContainerFormProvider @Inject() extends Mappings {
 
+  def apply(): Form[Boolean] =
+    Form(
+      "value" -> boolean("confirmRemoveContainer.error.required")
+    )
 }

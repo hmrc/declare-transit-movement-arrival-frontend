@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-package pages.events
+package pages.events.transhipments
 
-object SectionConstants {
+import pages.QuestionPage
+import play.api.libs.json.JsPath
 
-  val events     = "events"
-  val containers = "containers"
-  val seals      = "seals"
+case object ConfirmRemoveContainerPage extends QuestionPage[Boolean] {
 
+  override def path: JsPath = JsPath \ toString
+
+  override def toString: String = "confirmRemoveContainer"
 }

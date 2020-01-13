@@ -14,12 +14,19 @@
  * limitations under the License.
  */
 
-package pages.events
+package pages
 
-object SectionConstants {
+import pages.behaviours.PageBehaviours
+import pages.events.transhipments.ConfirmRemoveContainerPage
 
-  val events     = "events"
-  val containers = "containers"
-  val seals      = "seals"
+class ConfirmRemoveContainerPageSpec extends PageBehaviours {
 
+  "ConfirmRemoveContainerPage" - {
+
+    beRetrievable[Boolean](ConfirmRemoveContainerPage)
+
+    beSettable[Boolean](ConfirmRemoveContainerPage)
+
+    beRemovable[Boolean](ConfirmRemoveContainerPage)
+  }
 }
