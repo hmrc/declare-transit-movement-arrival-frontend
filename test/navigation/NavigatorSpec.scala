@@ -31,7 +31,7 @@ import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages._
 import pages.events._
-import pages.events.seals.HaveSealsChangedPage
+import pages.events.seals._
 import pages.events.transhipments._
 import queries.EventsQuery
 
@@ -659,7 +659,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
       "must go from Have seals changed page" - {
 
-        "check event answers page when user selects No" in {
+        "to check event answers page when user selects No" in {
           forAll(arbitrary[UserAnswers]) {
             answers =>
               val updatedAnswers = answers.set(HaveSealsChangedPage, false).success.value
@@ -670,7 +670,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           }
         }
 
-        "Seal identity page when user selects Yes" in {
+        "to seal identity page when user selects Yes" in {
           forAll(arbitrary[UserAnswers]) {
             answers =>
               val updatedAnswers = answers.set(HaveSealsChangedPage, true).success.value
@@ -681,6 +681,21 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           }
         }
       }
+
+      "must go from seals identity page" - {
+
+        "to add seal page" in {
+          forAll(arbitrary[UserAnswers], arbitrary[String]) {
+            (answers, sealsIdentity) =>
+              val updatedAnswers = answers.set(SealIdentityPage, sealsIdentity).success.value
+
+              navigator
+                .nextPage(SealIdentityPage, NormalMode, updatedAnswers)
+                .mustBe(sealRoutes.AddSealController.onPageLoad(answers.id, NormalMode))
+          }
+        }
+      }
     }
   }
+
 }
