@@ -17,14 +17,14 @@
 package navigation
 
 import base.SpecBase
+import controllers.events.seals.{routes => sealRoutes}
 import controllers.events.transhipments.{routes => transhipmentRoutes}
 import controllers.events.{routes => eventRoutes}
 import controllers.routes
 import generators.{DomainModelGenerators, Generators}
 import models.TranshipmentType.{DifferentContainer, DifferentContainerAndVehicle, DifferentVehicle}
 import models._
-import models.domain.EnRouteEvent
-import models.domain.{Container, EnRouteEvent, Incident}
+import models.domain.{Container, EnRouteEvent}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -293,7 +293,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           }
         }
 
-        "to events summary page when the event has been reported and Transhipment as 'No'" in {
+        "to have seals changed Page when the event has been reported and Transhipment as 'No'" in {
 
           forAll(arbitrary[UserAnswers]) {
             answers =>
@@ -307,7 +307,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
               navigator
                 .nextPage(IsTranshipmentPage(eventIndex), NormalMode, updatedAnswers)
-                .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(updatedAnswers.id, eventIndex))
+                .mustBe(sealRoutes.HaveSealsChangedController.onPageLoad(updatedAnswers.id, NormalMode))
           }
         }
 
@@ -485,22 +485,22 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         }
       }
 
-      "must go from transport nationality to check event answers page" in {
+      "must go from transport nationality to have seals changed page" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
             navigator
               .nextPage(TransportNationalityPage(eventIndex), NormalMode, answers)
-              .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(answers.id, eventIndex))
+              .mustBe(sealRoutes.HaveSealsChangedController.onPageLoad(answers.id, NormalMode))
         }
       }
 
-      "must go from Incident Information to event summary page" in {
+      "must go from Incident Information to have seals changed page" in {
 
         forAll(arbitrary[UserAnswers]) {
           answers =>
             navigator
               .nextPage(IncidentInformationPage(eventIndex), NormalMode, answers)
-              .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(answers.id, eventIndex))
+              .mustBe(sealRoutes.HaveSealsChangedController.onPageLoad(answers.id, NormalMode))
         }
       }
 
@@ -532,7 +532,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           }
         }
 
-        "to 'check event answers' when the option is 'No' and transhipment type is not both" in {
+        "to have seals changed page when the option is 'No' and transhipment type is not both" in {
 
           val transhipmentType: Gen[WithName with TranshipmentType] = Gen.oneOf(Seq(DifferentContainer, DifferentVehicle))
           forAll(arbitrary[UserAnswers], transhipmentType) {
@@ -547,7 +547,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
               navigator
                 .nextPage(AddContainerPage(eventIndex), NormalMode, updatedAnswers)
-                .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(answers.id, eventIndex))
+                .mustBe(sealRoutes.HaveSealsChangedController.onPageLoad(answers.id, NormalMode))
           }
         }
 

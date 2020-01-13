@@ -19,6 +19,7 @@ package navigation
 import com.google.inject.{Inject, Singleton}
 import controllers.events.transhipments.{routes => transhipmentRoutes}
 import controllers.events.{routes => eventRoutes}
+import controllers.events.seals.{routes => sealRoutes}
 import controllers.routes
 import derivable.{DeriveNumberOfContainers, DeriveNumberOfEvents}
 import models.GoodsLocation._
@@ -48,11 +49,11 @@ class Navigator @Inject()() {
     case EventPlacePage(index) => ua => Some(eventRoutes.EventReportedController.onPageLoad(ua.id, index, NormalMode))
     case EventReportedPage(index) => ua => Some(eventRoutes.IsTranshipmentController.onPageLoad(ua.id, index, NormalMode))
     case IsTranshipmentPage(index) => isTranshipmentRoute(index)
-    case IncidentInformationPage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
+    case IncidentInformationPage(index) => ua => Some(sealRoutes.HaveSealsChangedController.onPageLoad(ua.id, NormalMode))
     case AddEventPage => addEventRoute
     case TranshipmentTypePage(index) => transhipmentType(index)
     case TransportIdentityPage(index) => ua => Some(transhipmentRoutes.TransportNationalityController.onPageLoad(ua.id, index, NormalMode))
-    case TransportNationalityPage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
+    case TransportNationalityPage(index) => ua => Some(sealRoutes.HaveSealsChangedController.onPageLoad(ua.id, NormalMode))
     case ContainerNumberPage(index, _) => ua => Some(transhipmentRoutes.AddContainerController.onPageLoad(ua.id, index, NormalMode))
     case AddContainerPage(index) => addContainer(index)
   }
@@ -101,7 +102,7 @@ class Navigator @Inject()() {
     case false =>
       ua.get(TranshipmentTypePage(index)) match {
         case Some(DifferentContainerAndVehicle) => transhipmentRoutes.TransportIdentityController.onPageLoad(ua.id, index, NormalMode)
-        case _                                  => eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index)
+        case _                                  => sealRoutes.HaveSealsChangedController.onPageLoad(ua.id, NormalMode)
       }
   }
 
@@ -170,7 +171,7 @@ class Navigator @Inject()() {
     (ua.get(EventReportedPage(index)), ua.get(IsTranshipmentPage(index))) match {
       case (_, Some(true))            => Some(transhipmentRoutes.TranshipmentTypeController.onPageLoad(ua.id, index, NormalMode))
       case (Some(false), Some(false)) => Some(eventRoutes.IncidentInformationController.onPageLoad(ua.id, index, NormalMode))
-      case (Some(true), Some(false))  => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
+      case (Some(true), Some(false))  => Some(sealRoutes.HaveSealsChangedController.onPageLoad(ua.id, NormalMode))
       case _                          => None
     }
 
