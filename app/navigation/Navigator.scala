@@ -27,7 +27,7 @@ import models.TranshipmentType.{DifferentContainer, DifferentContainerAndVehicle
 import models.{CheckMode, Mode, NormalMode, UserAnswers}
 import pages._
 import pages.events._
-import pages.events.seals.{HaveSealsChangedPage, SealIdentityPage}
+import pages.events.seals.{AddSealPage, HaveSealsChangedPage, SealIdentityPage}
 import pages.events.transhipments._
 import play.api.mvc.Call
 
@@ -59,6 +59,7 @@ class Navigator @Inject()() {
     case AddContainerPage(index) => addContainer(index)
     case HaveSealsChangedPage => haveSealsChanged
     case SealIdentityPage => ua => Some(sealRoutes.AddSealController.onPageLoad(ua.id, NormalMode))
+    case AddSealPage => addSeal
   }
 
   private val checkRouteMap: PartialFunction[Page, UserAnswers => Option[Call]] = {
@@ -230,6 +231,12 @@ class Navigator @Inject()() {
 
   private def haveSealsChanged(userAnswers: UserAnswers): Option[Call] =
     userAnswers.get(HaveSealsChangedPage).map {
+      case true  => sealRoutes.SealIdentityController.onPageLoad(userAnswers.id, NormalMode)
+      case false => eventRoutes.CheckEventAnswersController.onPageLoad(userAnswers.id, 0)
+    }
+
+  private def addSeal(userAnswers: UserAnswers): Option[Call] =
+    userAnswers.get(AddSealPage).map {
       case true  => sealRoutes.SealIdentityController.onPageLoad(userAnswers.id, NormalMode)
       case false => eventRoutes.CheckEventAnswersController.onPageLoad(userAnswers.id, 0)
     }

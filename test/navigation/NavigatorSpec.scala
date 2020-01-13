@@ -695,6 +695,32 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           }
         }
       }
+
+      "must go from add another page" - {
+
+        "to check event details page when answer is no" in {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val updatedAnswers = answers.set(AddSealPage, false).success.value
+
+              navigator
+                .nextPage(AddSealPage, NormalMode, updatedAnswers)
+                .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(answers.id, eventIndex))
+
+          }
+        }
+
+        "to seal identity page when answer is Yes" in {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val updatedAnswers = answers.set(AddSealPage, true).success.value
+
+              navigator
+                .nextPage(AddSealPage, NormalMode, updatedAnswers)
+                .mustBe(sealRoutes.SealIdentityController.onPageLoad(answers.id, NormalMode))
+          }
+        }
+      }
     }
   }
 
