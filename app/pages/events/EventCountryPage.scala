@@ -16,10 +16,11 @@
 
 package pages.events
 
+import models.reference.Country
 import pages.QuestionPage
 import play.api.libs.json.JsPath
 
-final case class EventCountryPage(index: Int) extends QuestionPage[String] {
+final case class EventCountryPage(index: Int) extends QuestionPage[Country] {
 
   override def path: JsPath = JsPath \ SectionConstants.events \ index \ toString
 

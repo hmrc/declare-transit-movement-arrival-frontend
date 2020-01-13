@@ -30,34 +30,40 @@ class IsTraderAddressPlaceOfNotificationPageSpec extends PageBehaviours {
 
     beRemovable[Boolean](IsTraderAddressPlaceOfNotificationPage)
 
-    "must clean down 'PlaceOfNotificationPage' when 'true'" in {
-      forAll(arbitrary[UserAnswers], stringsWithMaxLength(35)) {
-        (answers, placeOfNotification) =>
-          val ua = answers
-            .set(PlaceOfNotificationPage, placeOfNotification)
-            .success
-            .value
+    "must clean down 'PlaceOfNotificationPage'" - {
+      "when changes to 'true'" in {
+        forAll(arbitrary[UserAnswers], stringsWithMaxLength(35)) {
+          (answers, placeOfNotification) =>
+            val ua = answers
+              .set(IsTraderAddressPlaceOfNotificationPage, false)
+              .success
+              .value
+              .set(PlaceOfNotificationPage, placeOfNotification)
+              .success
+              .value
 
-          val result = ua.set(IsTraderAddressPlaceOfNotificationPage, true).success.value
+            val result = ua.set(IsTraderAddressPlaceOfNotificationPage, true).success.value
 
-          result.get(PlaceOfNotificationPage) must not be defined
+            result.get(PlaceOfNotificationPage) must not be defined
+        }
       }
-    }
 
-    "must clean down 'PlaceOfNotificationPage' when remove is called" in {
-      forAll(arbitrary[UserAnswers], stringsWithMaxLength(35)) {
-        (answers, placeOfNotification) =>
-          val ua = answers
-            .set(IsTraderAddressPlaceOfNotificationPage, false)
-            .success
-            .value
-            .set(PlaceOfNotificationPage, placeOfNotification)
-            .success
-            .value
+      "when remove is called" in {
+        forAll(arbitrary[UserAnswers], stringsWithMaxLength(35)) {
+          (answers, placeOfNotification) =>
+            val ua = answers
+              .set(IsTraderAddressPlaceOfNotificationPage, false)
+              .success
+              .value
+              .set(PlaceOfNotificationPage, placeOfNotification)
+              .success
+              .value
 
-          val result = ua.remove(IsTraderAddressPlaceOfNotificationPage).success.value
+            val result = ua.remove(IsTraderAddressPlaceOfNotificationPage).success.value
 
-          result.get(PlaceOfNotificationPage) must not be defined
+            result.get(PlaceOfNotificationPage) must not be defined
+        }
+
       }
     }
 

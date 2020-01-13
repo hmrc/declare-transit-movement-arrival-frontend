@@ -23,7 +23,7 @@ import controllers.routes
 import generators.{DomainModelGenerators, Generators}
 import models.TranshipmentType.{DifferentContainer, DifferentContainerAndVehicle, DifferentVehicle}
 import models.domain.Container
-import models.{CheckMode, GoodsLocation, NormalMode, TranshipmentType, UserAnswers}
+import models.{CheckMode, GoodsLocation, TranshipmentType, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.events._
@@ -361,7 +361,6 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
               .set(TransportNationalityPage(eventIndex), transportNationality)
               .success
               .value
-
             navigator
               .nextPage(TranshipmentTypePage(eventIndex), CheckMode, updatedUserAnswers)
               .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(updatedUserAnswers.id, eventIndex))
@@ -565,6 +564,23 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
             navigator
               .nextPage(IsTraderAddressPlaceOfNotificationPage, CheckMode, updatedUserAnswers)
               .mustBe(routes.CheckYourAnswersController.onPageLoad(updatedUserAnswers.id))
+        }
+      }
+
+      "to 'Place of notification' when answer is 'No' and there is no existing 'Place of notification'" in {
+        forAll(arbitrary[UserAnswers]) {
+          (answers) =>
+            val updatedUserAnswers = answers
+              .set(IsTraderAddressPlaceOfNotificationPage, false)
+              .success
+              .value
+              .remove(PlaceOfNotificationPage)
+              .success
+              .value
+
+            navigator
+              .nextPage(IsTraderAddressPlaceOfNotificationPage, CheckMode, updatedUserAnswers)
+              .mustBe(routes.PlaceOfNotificationController.onPageLoad(updatedUserAnswers.id, CheckMode))
         }
       }
 

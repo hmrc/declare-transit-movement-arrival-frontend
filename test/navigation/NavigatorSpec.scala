@@ -23,8 +23,8 @@ import controllers.routes
 import generators.{DomainModelGenerators, Generators}
 import models.TranshipmentType.{DifferentContainer, DifferentContainerAndVehicle, DifferentVehicle}
 import models._
-import models.domain.EnRouteEvent
-import models.domain.{Container, EnRouteEvent, Incident}
+import models.domain.{Container, EnRouteEvent}
+import models.reference.Country
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -36,6 +36,8 @@ import queries.EventsQuery
 class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generators with DomainModelGenerators {
 
   val navigator = app.injector.instanceOf[Navigator]
+
+  val country = Country("Valid", "GB", "United Kingdom")
 
   "Navigator" - {
 
@@ -190,7 +192,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
                   .set(IncidentOnRoutePage, true)
                   .success
                   .value
-                  .set(EventCountryPage(0), "GB")
+                  .set(EventCountryPage(0), country)
                   .success
                   .value
                   .set(EventPlacePage(0), "TestPlace")
@@ -368,7 +370,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
                 .remove(EventsQuery)
                 .success
                 .value
-                .set(EventCountryPage(eventIndex), "GB")
+                .set(EventCountryPage(eventIndex), country)
                 .success
                 .value
                 .set(EventPlacePage(eventIndex), "place name")
@@ -393,7 +395,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           forAll(arbitrary[UserAnswers]) {
             answers =>
               val updatedAnswers = answers
-                .set(EventCountryPage(eventIndex), "GB")
+                .set(EventCountryPage(eventIndex), country)
                 .success
                 .value
                 .set(EventPlacePage(eventIndex), "place name")
@@ -424,7 +426,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
                 .remove(EventsQuery)
                 .success
                 .value
-                .set(EventCountryPage(eventIndex), "GB")
+                .set(EventCountryPage(eventIndex), country)
                 .success
                 .value
                 .set(EventPlacePage(eventIndex), "place name")
@@ -450,7 +452,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           forAll(arbitrary[UserAnswers]) {
             answers =>
               val updatedAnswers = answers
-                .set(EventCountryPage(eventIndex), "GB")
+                .set(EventCountryPage(eventIndex), country)
                 .success
                 .value
                 .set(EventPlacePage(eventIndex), "place name")
@@ -615,7 +617,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
                   .set(IncidentOnRoutePage, true)
                   .success
                   .value
-                  .set(EventCountryPage(eventIndex), countryCode)
+                  .set(EventCountryPage(eventIndex), Country("Valid", countryCode, "Some country"))
                   .success
                   .value
                   .set(EventPlacePage(eventIndex), place)

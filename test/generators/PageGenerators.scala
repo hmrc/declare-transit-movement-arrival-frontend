@@ -19,16 +19,22 @@ package generators
 import org.scalacheck.Arbitrary
 import pages._
 import pages.events._
-import pages.events.transhipments.{
-  AddContainerPage,
-  ConfirmRemoveContainerPage,
-  ContainerNumberPage,
-  TranshipmentTypePage,
-  TransportIdentityPage,
-  TransportNationalityPage
-}
+import pages.events.seals._
+import pages.events.transhipments._
 
 trait PageGenerators {
+
+  implicit lazy val arbitraryRemoveSealPage: Arbitrary[RemoveSealPage.type] =
+    Arbitrary(RemoveSealPage)
+
+  implicit lazy val arbitraryHaveSealsChangedPage: Arbitrary[HaveSealsChangedPage.type] =
+    Arbitrary(HaveSealsChangedPage)
+
+  implicit lazy val arbitraryAddSealPage: Arbitrary[AddSealPage.type] =
+    Arbitrary(AddSealPage)
+
+  implicit lazy val arbitrarySealIdentityPage: Arbitrary[SealIdentityPage.type] =
+    Arbitrary(SealIdentityPage)
 
   implicit lazy val arbitraryConfirmRemoveContainerPage: Arbitrary[ConfirmRemoveContainerPage.type] =
     Arbitrary(ConfirmRemoveContainerPage)

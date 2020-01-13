@@ -20,6 +20,7 @@ import base.SpecBase
 import generators.DomainModelGenerators
 import models.TranshipmentType._
 import models.domain.Container
+import models.reference.Country
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.IncidentOnRoutePage
 import pages.events._
@@ -40,7 +41,7 @@ class CheckEventAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChe
     "and hasn't been reported and did not move to different vehicle/container show the event info only" in {
       val ua = emptyUserAnswers
         .set(IncidentOnRoutePage, true).success.value
-        .set(EventCountryPage(eventIndex), "value").success.value
+        .set(EventCountryPage(eventIndex), Country("Valid", "value", "Country Name")).success.value
         .set(EventPlacePage(eventIndex), "value").success.value
         .set(EventReportedPage(eventIndex), false).success.value
         .set(IsTranshipmentPage(eventIndex), false).success.value
@@ -56,7 +57,7 @@ class CheckEventAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChe
     "and has been reported and did not move to different vehicle/container show the event info only" in {
       val ua = emptyUserAnswers
         .set(IncidentOnRoutePage, true).success.value
-        .set(EventCountryPage(eventIndex), "value").success.value
+        .set(EventCountryPage(eventIndex), Country("Valid", "value", "Country Name")).success.value
         .set(EventPlacePage(eventIndex), "value").success.value
         .set(EventReportedPage(eventIndex), true).success.value
         .set(IsTranshipmentPage(eventIndex), false).success.value
@@ -73,7 +74,7 @@ class CheckEventAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChe
     "and the goods have moved to different vehicle display event info and vehicle info sections" in {
       val ua = emptyUserAnswers
         .set(IncidentOnRoutePage, true).success.value
-        .set(EventCountryPage(eventIndex), "value").success.value
+        .set(EventCountryPage(eventIndex), Country("Valid", "value", "Country Name")).success.value
         .set(EventPlacePage(eventIndex), "value").success.value
         .set(EventReportedPage(eventIndex), false).success.value
         .set(IsTranshipmentPage(eventIndex), true).success.value
@@ -95,7 +96,7 @@ class CheckEventAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChe
     "and the goods have moved to different container display event info and container info sections" in {
       val ua = emptyUserAnswers
         .set(IncidentOnRoutePage, true).success.value
-        .set(EventCountryPage(eventIndex), "value").success.value
+        .set(EventCountryPage(eventIndex), Country("Valid", "value", "Country Name")).success.value
         .set(EventPlacePage(eventIndex), "value").success.value
         .set(EventReportedPage(eventIndex), false).success.value
         .set(IsTranshipmentPage(eventIndex), true).success.value
@@ -121,7 +122,7 @@ class CheckEventAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChe
     "and the goods have moved to both different containers and vehicles  display event info and vehicle and containers info sections" in {
       val ua = emptyUserAnswers
         .set(IncidentOnRoutePage, true).success.value
-        .set(EventCountryPage(eventIndex), "value").success.value
+        .set(EventCountryPage(eventIndex), Country("Valid", "value", "Country Name")).success.value
         .set(EventPlacePage(eventIndex), "value").success.value
         .set(EventReportedPage(eventIndex), false).success.value
         .set(IsTranshipmentPage(eventIndex), true).success.value
@@ -154,7 +155,7 @@ class CheckEventAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChe
     "when TranshipmentTypePage is missing" in {
       val ua = emptyUserAnswers
         .set(IncidentOnRoutePage, true).success.value
-        .set(EventCountryPage(eventIndex), "value").success.value
+        .set(EventCountryPage(eventIndex), Country("Valid", "value", "Country Name")).success.value
         .set(EventPlacePage(eventIndex), "value").success.value
         .set(IsTranshipmentPage(eventIndex), true).success.value
         .set(EventReportedPage(eventIndex), false).success.value

@@ -18,40 +18,75 @@ package utils
 
 import java.time.format.DateTimeFormatter
 
-import controllers.routes
-import controllers.events.{routes => eventRoutes}
+import controllers.events.seals.{routes => sealRoutes}
 import controllers.events.transhipments.{routes => transhipmentRoutes}
+import controllers.events.{routes => eventRoutes}
+import controllers.routes
 import models.{CheckMode, MovementReferenceNumber, TraderAddress, UserAnswers}
 import pages._
-import pages.events.EventCountryPage
-import pages.events.EventPlacePage
-import pages.events.EventReportedPage
-import pages.events.IncidentInformationPage
-import pages.events.IsTranshipmentPage
-import pages.events.transhipments.{
-  AddContainerPage,
-  ConfirmRemoveContainerPage,
-  ContainerNumberPage,
-  TranshipmentTypePage,
-  TransportIdentityPage,
-  TransportNationalityPage
-}
-import play.api.i18n.Messages
+import pages.events._
+import pages.events.seals.{AddSealPage, HaveSealsChangedPage, RemoveSealPage, SealIdentityPage}
+import pages.events.transhipments._
 import uk.gov.hmrc.viewmodels.SummaryList._
 import uk.gov.hmrc.viewmodels._
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers) {
 
-  def confirmRemoveContainer: Option[Row] = userAnswers.get(ConfirmRemoveContainerPage) map {
+  def removeSeal: Option[Row] = userAnswers.get(RemoveSealPage) map {
     answer =>
       Row(
-        key   = Key(msg"confirmRemoveContainer.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        key   = Key(msg"removeSeal.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
         value = Value(yesOrNo(answer)),
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = transhipmentRoutes.ConfirmRemoveContainerController.onPageLoad(mrn, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"confirmRemoveContainer.checkYourAnswersLabel"))
+            href               = sealRoutes.RemoveSealController.onPageLoad(mrn, CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"removeSeal.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
+  def haveSealsChanged: Option[Row] = userAnswers.get(HaveSealsChangedPage) map {
+    answer =>
+      Row(
+        key   = Key(msg"haveSealsChanged.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value = Value(yesOrNo(answer)),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = sealRoutes.HaveSealsChangedController.onPageLoad(mrn, CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"haveSealsChanged.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
+  def addSeal: Option[Row] = userAnswers.get(AddSealPage) map {
+    answer =>
+      Row(
+        key   = Key(msg"addSeal.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value = Value(yesOrNo(answer)),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = sealRoutes.AddSealController.onPageLoad(mrn, CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"addSeal.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
+  def sealIdentity: Option[Row] = userAnswers.get(SealIdentityPage) map {
+    answer =>
+      Row(
+        key   = Key(msg"sealIdentity.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value = Value(lit"$answer"),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = sealRoutes.SealIdentityController.onPageLoad(mrn, CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"sealIdentity.checkYourAnswersLabel"))
           )
         )
       )
@@ -158,7 +193,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
           Action(
             content            = msg"site.edit",
             href               = routes.IsTraderAddressPlaceOfNotificationController.onPageLoad(mrn, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"isTraderAddressPlaceOfNotification.checkYourAnswersLabel"))
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(message))
           )
         )
       )
@@ -228,7 +263,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
     answer =>
       Row(
         key   = Key(msg"eventCountry.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value = Value(lit"$answer"),
+        value = Value(lit"${answer.description}"),
         actions = List(
           Action(
             content            = msg"site.edit",
@@ -329,22 +364,22 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
       )
   }
 
-  def presentationOffice: Option[Row] = userAnswers.get(CustomsSubPlacePage) flatMap {
-    subsPlace =>
-      userAnswers.get(PresentationOfficePage) map {
-        answer =>
-          Row(
-            key   = Key(msg"presentationOffice.checkYourAnswersLabel".withArgs(subsPlace), classes = Seq("govuk-!-width-one-half")),
-            value = Value(lit"${answer.name} (${answer.id})"),
-            actions = List(
-              Action(
-                content            = msg"site.edit",
-                href               = routes.PresentationOfficeController.onPageLoad(mrn, CheckMode).url,
-                visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"presentationOffice.checkYourAnswersLabel"))
-              )
-            )
+  def presentationOffice: Option[Row] = userAnswers.get(PresentationOfficePage) map {
+    answer =>
+      val customsSubPlace: String = userAnswers.get(CustomsSubPlacePage).getOrElse("this location")
+      val message                 = msg"presentationOffice.checkYourAnswersLabel".withArgs(customsSubPlace)
+
+      Row(
+        key   = Key(message, classes = Seq("govuk-!-width-one-half")),
+        value = Value(lit"${answer.name} (${answer.id})"),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = routes.PresentationOfficeController.onPageLoad(mrn, CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(message))
           )
-      }
+        )
+      )
   }
 
   def goodsLocation: Option[Row] = userAnswers.get(GoodsLocationPage) map {

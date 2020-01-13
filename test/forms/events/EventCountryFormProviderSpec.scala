@@ -17,6 +17,7 @@
 package forms.events
 
 import forms.behaviours.StringFieldBehaviours
+import models.reference.Country
 import play.api.data.FormError
 
 class EventCountryFormProviderSpec extends StringFieldBehaviours {
@@ -25,7 +26,8 @@ class EventCountryFormProviderSpec extends StringFieldBehaviours {
   val lengthKey   = "eventCountry.error.length"
   val maxLength   = 2
 
-  val form = new EventCountryFormProvider()()
+  val countries = Seq(Country("valid", "AD", "Andorra"))
+  val form      = new EventCountryFormProvider()(countries)
 
   ".value" - {
 
@@ -37,17 +39,24 @@ class EventCountryFormProviderSpec extends StringFieldBehaviours {
       stringsWithMaxLength(maxLength)
     )
 
-    behave like fieldWithMaxLength(
-      form,
-      fieldName,
-      maxLength   = maxLength,
-      lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
-    )
-
     behave like mandatoryField(
       form,
       fieldName,
       requiredError = FormError(fieldName, requiredKey)
     )
+
+    "not bind if country code does not exist in the country list" in {
+
+      val boundForm = form.bind(Map("value" -> "foobar"))
+      val field     = boundForm("value")
+      field.errors mustNot be(empty)
+    }
+
+    "bind a country code which is in the list" in {
+
+      val boundForm = form.bind(Map("value" -> "AD"))
+      val field     = boundForm("value")
+      field.errors must be(empty)
+    }
   }
 }
