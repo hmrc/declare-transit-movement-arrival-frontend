@@ -44,7 +44,7 @@ class ConfirmRemoveContainerControllerSpec extends SpecBase with MockitoSugar wi
   private val formProvider = new ConfirmRemoveContainerFormProvider()
   private val form         = formProvider()
 
-  private lazy val confirmRemoveContainerRoute    = routes.ConfirmRemoveContainerController.onPageLoad(mrn, eventIndex, NormalMode).url
+  private lazy val confirmRemoveContainerRoute    = routes.ConfirmRemoveContainerController.onPageLoad(mrn, eventIndex, containerIndex, NormalMode).url
   private lazy val confirmRemoveContainerTemplate = "events/transhipments/confirmRemoveContainer.njk"
 
   "ConfirmRemoveContainer Controller" - {

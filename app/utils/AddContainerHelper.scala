@@ -16,14 +16,13 @@
 
 package utils
 
-import controllers.events.{routes => eventRoutes}
-import models.{CheckMode, MovementReferenceNumber, UserAnswers}
-import pages.events._
+import controllers.events.transhipments.routes.ContainerNumberController
+import controllers.events.transhipments.routes.ConfirmRemoveContainerController
+import models.domain.Container
+import models.{CheckMode, UserAnswers}
 import pages.events.transhipments.ContainerNumberPage
 import uk.gov.hmrc.viewmodels.SummaryList.{Action, Key, Row, Value}
 import uk.gov.hmrc.viewmodels._
-import controllers.events.transhipments.routes.ContainerNumberController
-import models.domain.Container
 
 class AddContainerHelper(userAnswers: UserAnswers) {
 
@@ -41,7 +40,7 @@ class AddContainerHelper(userAnswers: UserAnswers) {
             ),
             Action(
               content            = msg"site.delete",
-              href               = "#",
+              href               = ConfirmRemoveContainerController.onPageLoad(userAnswers.id, eventIndex, containerIndex, CheckMode).url,
               visuallyHiddenText = Some(msg"addContainer.containerList.delete".withArgs(answer)) // TODO: Prefix in message file for is hard coded, should be the same as: site.delete.hidden
             )
           )
