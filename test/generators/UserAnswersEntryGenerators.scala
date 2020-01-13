@@ -26,12 +26,45 @@ import pages.events.EventPlacePage
 import pages.events.EventReportedPage
 import pages.events.IncidentInformationPage
 import pages.events.IsTranshipmentPage
+import pages.events.seals.{AddSealPage, HaveSealsChangedPage, RemoveSealPage, SealIdentityPage}
 import pages.events.transhipments.{AddContainerPage, ContainerNumberPage, TranshipmentTypePage, TransportIdentityPage, TransportNationalityPage}
 import play.api.libs.json.JsValue
 import play.api.libs.json.Json
 
 trait UserAnswersEntryGenerators extends PageGenerators {
   self: Generators =>
+
+  implicit lazy val arbitraryRemoveSealUserAnswersEntry: Arbitrary[(RemoveSealPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[RemoveSealPage.type]
+        value <- arbitrary[Boolean].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryHaveSealsChangedUserAnswersEntry: Arbitrary[(HaveSealsChangedPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[HaveSealsChangedPage.type]
+        value <- arbitrary[Boolean].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryAddSealUserAnswersEntry: Arbitrary[(AddSealPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[AddSealPage.type]
+        value <- arbitrary[Boolean].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitrarySealIdentityUserAnswersEntry: Arbitrary[(SealIdentityPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[SealIdentityPage.type]
+        value <- arbitrary[String].suchThat(_.nonEmpty).map(Json.toJson(_))
+      } yield (page, value)
+    }
 
   implicit lazy val arbitraryAddContainerUserAnswersEntry: Arbitrary[(AddContainerPage, JsValue)] =
     Arbitrary {
