@@ -50,19 +50,22 @@ class ConfirmRemoveContainerController @Inject()(
   private val form                           = formProvider()
   private val confirmRemoveContainerTemplate = "events/transhipments/confirmRemoveContainer.njk"
 
-  def onPageLoad(mrn: MovementReferenceNumber, eventIndex: Int, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onPageLoad(mrn: MovementReferenceNumber, eventIndex: Int, containerIndex: Int, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
+
+
       val json = Json.obj(
-        "form"   -> form,
-        "mode"   -> mode,
-        "mrn"    -> mrn,
-        "radios" -> Radios.yesNo(form("value"))
+        "form"            -> form,
+        "mode"            -> mode,
+        "mrn"             -> mrn,
+        "containerNumber" -> "frank",
+        "radios"          -> Radios.yesNo(form("value"))
       )
 
       renderer.render(confirmRemoveContainerTemplate, json).map(Ok(_))
   }
 
-  def onSubmit(mrn: MovementReferenceNumber, eventIndex: Int, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onSubmit(mrn: MovementReferenceNumber, eventIndex: Int, containerIndex: Int, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
       form
         .bindFromRequest()
@@ -70,10 +73,11 @@ class ConfirmRemoveContainerController @Inject()(
           formWithErrors => {
 
             val json = Json.obj(
-              "form"   -> formWithErrors,
-              "mode"   -> mode,
-              "mrn"    -> mrn,
-              "radios" -> Radios.yesNo(formWithErrors("value"))
+              "form"            -> formWithErrors,
+              "mode"            -> mode,
+              "mrn"             -> mrn,
+              "containerNumber" -> "frank",
+              "radios"          -> Radios.yesNo(formWithErrors("value"))
             )
 
             renderer.render(confirmRemoveContainerTemplate, json).map(BadRequest(_))
