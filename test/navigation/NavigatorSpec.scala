@@ -30,6 +30,7 @@ import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages._
 import pages.events._
+import pages.events.seals.HaveSealsChangedPage
 import pages.events.transhipments._
 import queries.EventsQuery
 
@@ -649,6 +650,31 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
               navigator
                 .nextPage(AddEventPage, NormalMode, updatedAnswers)
                 .mustBe(routes.CheckYourAnswersController.onPageLoad(answers.id))
+          }
+        }
+      }
+
+      "must go from Have seals changed page" - {
+
+        "check event answers page when user selects No" in {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val updatedAnswers = answers.set(HaveSealsChangedPage, false).success.value
+
+              navigator
+                .nextPage(HaveSealsChangedPage, NormalMode, updatedAnswers)
+                .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(answers.id, eventIndex))
+          }
+        }
+
+        "Seal identity page when user selects Yes" in {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val updatedAnswers = answers.set(HaveSealsChangedPage, true).success.value
+
+              navigator
+                .nextPage(HaveSealsChangedPage, NormalMode, updatedAnswers)
+                .mustBe(sealRoutes.SealIdentityController.onPageLoad(answers.id, NormalMode))
           }
         }
       }
