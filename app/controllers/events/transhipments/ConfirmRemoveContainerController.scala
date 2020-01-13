@@ -50,24 +50,19 @@ class ConfirmRemoveContainerController @Inject()(
   private val form                           = formProvider()
   private val confirmRemoveContainerTemplate = "events/transhipments/confirmRemoveContainer.njk"
 
-  def onPageLoad(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onPageLoad(mrn: MovementReferenceNumber, eventIndex: Int, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
-      val preparedForm = request.userAnswers.get(ConfirmRemoveContainerPage) match {
-        case None        => form
-        case Some(value) => form.fill(value)
-      }
-
       val json = Json.obj(
-        "form"   -> preparedForm,
+        "form"   -> form,
         "mode"   -> mode,
         "mrn"    -> mrn,
-        "radios" -> Radios.yesNo(preparedForm("value"))
+        "radios" -> Radios.yesNo(form("value"))
       )
 
       renderer.render(confirmRemoveContainerTemplate, json).map(Ok(_))
   }
 
-  def onSubmit(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onSubmit(mrn: MovementReferenceNumber, eventIndex: Int, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
       form
         .bindFromRequest()
@@ -86,7 +81,6 @@ class ConfirmRemoveContainerController @Inject()(
           value =>
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(ConfirmRemoveContainerPage, value))
-              _              <- sessionRepository.set(updatedAnswers)
             } yield Redirect(navigator.nextPage(ConfirmRemoveContainerPage, mode, updatedAnswers))
         )
   }

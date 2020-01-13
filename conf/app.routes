@@ -132,10 +132,10 @@ POST       /:mrn/event/:eventIndex/addContainer                         controll
 GET        /:mrn/event/:eventIndex/changeAddContainer                   controllers.events.transhipments.AddContainerController.onPageLoad(mrn: MovementReferenceNumber, eventIndex: Int, mode: Mode = CheckMode)
 POST       /:mrn/event/:eventIndex/changeAddContainer                   controllers.events.transhipments.AddContainerController.onSubmit(mrn: MovementReferenceNumber, eventIndex: Int, mode: Mode = CheckMode)
 
-GET        /:mrn/confirmRemoveContainer                                                             controllers.events.transhipments.ConfirmRemoveContainerController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
-POST       /:mrn/confirmRemoveContainer                                                             controllers.events.transhipments.ConfirmRemoveContainerController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
-GET        /:mrn/changeConfirmRemoveContainer                                                             controllers.events.transhipments.ConfirmRemoveContainerController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = ChangeMode)
-POST       /:mrn/changeConfirmRemoveContainer                                                             controllers.events.transhipments.ConfirmRemoveContainerController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = ChangeMode)
+GET        /:mrn/event/:eventIndex/confirmRemoveContainer                                           controllers.events.transhipments.ConfirmRemoveContainerController.onPageLoad(mrn: MovementReferenceNumber, eventIndex: Int, mode: Mode = NormalMode)
+POST       /:mrn/event/:eventIndex/confirmRemoveContainer                                           controllers.events.transhipments.ConfirmRemoveContainerController.onSubmit(mrn: MovementReferenceNumber, eventIndex: Int, mode: Mode = NormalMode)
+GET        /:mrn/event/:eventIndex/changeConfirmRemoveContainer                                     controllers.events.transhipments.ConfirmRemoveContainerController.onPageLoad(mrn: MovementReferenceNumber, eventIndex: Int, mode: Mode = CheckMode)
+POST       /:mrn/event/:eventIndex/changeConfirmRemoveContainer                                     controllers.events.transhipments.ConfirmRemoveContainerController.onSubmit(mrn: MovementReferenceNumber, eventIndex: Int, mode: Mode = CheckMode)
 
 GET        /:mrn/sealIdentity                                           controllers.events.seals.SealIdentityController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
 POST       /:mrn/sealIdentity                                           controllers.events.seals.SealIdentityController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
