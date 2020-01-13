@@ -58,8 +58,9 @@ class Navigator @Inject()() {
     case ContainerNumberPage(index, _) => ua => Some(transhipmentRoutes.AddContainerController.onPageLoad(ua.id, index, NormalMode))
     case AddContainerPage(index) => addContainer(index)
     case HaveSealsChangedPage(index) => haveSealsChanged(index)
-    case SealIdentityPage(index) => ua => Some(sealRoutes.AddSealController.onPageLoad(ua.id, index, NormalMode))
-    case AddSealPage(index) => addSeal(index)
+      //TODO Navigation from seal identity page should go to AddSealController when seal indexing is complete
+    case SealIdentityPage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
+    //case AddSealPage(index) => addSeal(index)
   }
 
   private val checkRouteMap: PartialFunction[Page, UserAnswers => Option[Call]] = {
@@ -235,9 +236,9 @@ class Navigator @Inject()() {
       case false => eventRoutes.CheckEventAnswersController.onPageLoad(userAnswers.id, index)
     }
 
-  private def addSeal(index: Int)(userAnswers: UserAnswers): Option[Call] =
-    userAnswers.get(AddSealPage(index)).map {
-      case true  => sealRoutes.SealIdentityController.onPageLoad(userAnswers.id, index, NormalMode)
-      case false => eventRoutes.CheckEventAnswersController.onPageLoad(userAnswers.id, index)
-    }
+//  private def addSeal(index: Int)(userAnswers: UserAnswers): Option[Call] =
+//    userAnswers.get(AddSealPage(index)).map {
+//      case true  => sealRoutes.SealIdentityController.onPageLoad(userAnswers.id, index, NormalMode)
+//      case false => eventRoutes.CheckEventAnswersController.onPageLoad(userAnswers.id, index)
+//    }
 }

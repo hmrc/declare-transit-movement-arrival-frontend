@@ -71,7 +71,7 @@ class SealIdentityControllerSpec extends SpecBase with MockitoSugar with Nunjuck
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "sealIdentity.njk"
+      templateCaptor.getValue mustEqual "events/seals/sealIdentity.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -102,7 +102,7 @@ class SealIdentityControllerSpec extends SpecBase with MockitoSugar with Nunjuck
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "sealIdentity.njk"
+      templateCaptor.getValue mustEqual "events/seals/sealIdentity.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -157,7 +157,7 @@ class SealIdentityControllerSpec extends SpecBase with MockitoSugar with Nunjuck
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "sealIdentity.njk"
+      templateCaptor.getValue mustEqual "events/seals/sealIdentity.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()

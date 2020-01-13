@@ -326,22 +326,24 @@ addContainer.containerList.label = Container {0}
 addContainer.containerList.change = Change container number {0}?
 addContainer.containerList.delete = Remove container number {0}?
 
+sealIdentity.title = What is the new seal number or mark?
+sealIdentity.heading = What is the new seal number or mark?
+sealIdentity.checkYourAnswersLabel = What is the new seal number or mark?
+sealIdentity.error.required = Enter the new seal number or mark
+sealIdentity.error.length = Seal number or mark must be 20 characters or less
 
-sealIdentity.title = sealIdentity
-sealIdentity.heading = sealIdentity
-sealIdentity.checkYourAnswersLabel = sealIdentity
-sealIdentity.error.required = Enter sealIdentity
-sealIdentity.error.length = SealIdentity must be 20 characters or less
+addSeal.title.singular = You have added {0} seal
+addSeal.title.plural = You have added {0} seals
+addSeal.title = You have added {0} container
+addSeal.heading = You have added {0} container
+addSeal.radio.label = Do you need to add another seal?
+addSeal.checkYourAnswersLabel = You have added {0} seals
+addSeal.error.required = Select yes if you need to add another seal
 
-addSeal.title = addSeal
-addSeal.heading = addSeal
-addSeal.checkYourAnswersLabel = addSeal
-addSeal.error.required = Select yes if addSeal
-
-haveSealsChanged.title = haveSealsChanged
-haveSealsChanged.heading = haveSealsChanged
-haveSealsChanged.checkYourAnswersLabel = haveSealsChanged
-haveSealsChanged.error.required = Select yes if haveSealsChanged
+haveSealsChanged.title = Have any of the seals changed?
+haveSealsChanged.heading = Have any of the seals changed?
+haveSealsChanged.checkYourAnswersLabel = Have any of the seals changed?
+haveSealsChanged.error.required = Select yes if any seals have changed
 
 removeSeal.title = removeSeal
 removeSeal.heading = removeSeal

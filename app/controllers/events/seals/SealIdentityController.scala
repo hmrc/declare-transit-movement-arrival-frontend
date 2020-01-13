@@ -62,7 +62,7 @@ class SealIdentityController @Inject()(
         "mode" -> mode
       )
 
-      renderer.render("sealIdentity.njk", json).map(Ok(_))
+      renderer.render("events/seals/sealIdentity.njk", json).map(Ok(_))
   }
 
   def onSubmit(mrn: MovementReferenceNumber, eventIndex: Int, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
@@ -78,7 +78,7 @@ class SealIdentityController @Inject()(
               "mode" -> mode
             )
 
-            renderer.render("sealIdentity.njk", json).map(BadRequest(_))
+            renderer.render("events/seals/sealIdentity.njk", json).map(BadRequest(_))
           },
           value =>
             for {
