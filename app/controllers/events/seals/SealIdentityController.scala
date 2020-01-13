@@ -49,9 +49,9 @@ class SealIdentityController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onPageLoad(mrn: MovementReferenceNumber, eventIndex: Int, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
-      val preparedForm = request.userAnswers.get(SealIdentityPage) match {
+      val preparedForm = request.userAnswers.get(SealIdentityPage(eventIndex)) match {
         case None        => form
         case Some(value) => form.fill(value)
       }
@@ -62,10 +62,10 @@ class SealIdentityController @Inject()(
         "mode" -> mode
       )
 
-      renderer.render("sealIdentity.njk", json).map(Ok(_))
+      renderer.render("events/seals/sealIdentity.njk", json).map(Ok(_))
   }
 
-  def onSubmit(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onSubmit(mrn: MovementReferenceNumber, eventIndex: Int, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
       form
         .bindFromRequest()
@@ -78,13 +78,13 @@ class SealIdentityController @Inject()(
               "mode" -> mode
             )
 
-            renderer.render("sealIdentity.njk", json).map(BadRequest(_))
+            renderer.render("events/seals/sealIdentity.njk", json).map(BadRequest(_))
           },
           value =>
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(SealIdentityPage, value))
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(SealIdentityPage(eventIndex), value))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(SealIdentityPage, mode, updatedAnswers))
+            } yield Redirect(navigator.nextPage(SealIdentityPage(eventIndex), mode, updatedAnswers))
         )
   }
 }

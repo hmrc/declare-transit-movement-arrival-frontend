@@ -45,7 +45,7 @@ class HaveSealsChangedControllerSpec extends SpecBase with MockitoSugar with Nun
   val formProvider        = new HaveSealsChangedFormProvider()
   val form: Form[Boolean] = formProvider()
 
-  lazy val haveSealsChangedRoute: String = routes.HaveSealsChangedController.onPageLoad(mrn, NormalMode).url
+  lazy val haveSealsChangedRoute: String = routes.HaveSealsChangedController.onPageLoad(mrn, eventIndex, NormalMode).url
 
   "HaveSealsChanged Controller" - {
 
@@ -72,7 +72,7 @@ class HaveSealsChangedControllerSpec extends SpecBase with MockitoSugar with Nun
         "radios" -> Radios.yesNo(form("value"))
       )
 
-      templateCaptor.getValue mustEqual "haveSealsChanged.njk"
+      templateCaptor.getValue mustEqual "events/seals/haveSealsChanged.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -83,7 +83,7 @@ class HaveSealsChangedControllerSpec extends SpecBase with MockitoSugar with Nun
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers    = UserAnswers(mrn).set(HaveSealsChangedPage, true).success.value
+      val userAnswers    = UserAnswers(mrn).set(HaveSealsChangedPage(eventIndex), true).success.value
       val application    = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request        = FakeRequest(GET, haveSealsChangedRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -104,7 +104,7 @@ class HaveSealsChangedControllerSpec extends SpecBase with MockitoSugar with Nun
         "radios" -> Radios.yesNo(filledForm("value"))
       )
 
-      templateCaptor.getValue mustEqual "haveSealsChanged.njk"
+      templateCaptor.getValue mustEqual "events/seals/haveSealsChanged.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -161,7 +161,7 @@ class HaveSealsChangedControllerSpec extends SpecBase with MockitoSugar with Nun
         "radios" -> Radios.yesNo(boundForm("value"))
       )
 
-      templateCaptor.getValue mustEqual "haveSealsChanged.njk"
+      templateCaptor.getValue mustEqual "events/seals/haveSealsChanged.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()

@@ -19,12 +19,13 @@ package viewModels
 import derivable.DeriveNumberOfContainers
 import models.TranshipmentType._
 import models.UserAnswers
-import pages.events.IsTranshipmentPage
+import pages.events._
+import pages.events.seals.HaveSealsChangedPage
 import pages.events.transhipments.TranshipmentTypePage
 import play.api.i18n.Messages
 import play.api.libs.json.{Json, OWrites}
-import uk.gov.hmrc.viewmodels.{NunjucksSupport, Text}
 import uk.gov.hmrc.viewmodels.SummaryList.Row
+import uk.gov.hmrc.viewmodels.{NunjucksSupport, Text}
 import utils.{AddContainerHelper, CheckYourAnswersHelper}
 
 case class CheckEventAnswersViewModel(eventInfo: Section, otherInfo: Seq[Section])
@@ -65,6 +66,21 @@ object CheckEventAnswersViewModel extends NunjucksSupport {
       ).flatten
     )
 
+    val sealSection: Option[Section] = {
+
+      userAnswers
+        .get(HaveSealsChangedPage(eventIndex))
+        .map {
+          haveSealsChanged =>
+            Section(
+              Seq(
+                helper.haveSealsChanged(eventIndex),
+                if (haveSealsChanged) helper.sealIdentity(eventIndex) else None
+              ).flatten
+            )
+        }
+    }
+
     val otherInfoSections: Seq[Section] = {
       userAnswers
         .get(TranshipmentTypePage(eventIndex))
@@ -86,7 +102,7 @@ object CheckEventAnswersViewModel extends NunjucksSupport {
 
     CheckEventAnswersViewModel(
       Section(eventInfo),
-      otherInfoSections
+      otherInfoSections ++ sealSection.toSeq
     )
   }
 

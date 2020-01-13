@@ -19,7 +19,7 @@ package pages.events.seals
 import pages.QuestionPage
 import play.api.libs.json.JsPath
 
-case object AddSealPage extends QuestionPage[Boolean] {
+case class AddSealPage(index: Int) extends QuestionPage[Boolean] {
 
   override def path: JsPath = JsPath \ toString
 
