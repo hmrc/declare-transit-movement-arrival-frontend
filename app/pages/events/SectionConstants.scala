@@ -20,5 +20,6 @@ object SectionConstants {
 
   val events     = "events"
   val containers = "containers"
+  val seals      = "seals"
 
 }

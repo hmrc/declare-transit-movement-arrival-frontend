@@ -45,7 +45,7 @@ class SealIdentityControllerSpec extends SpecBase with MockitoSugar with Nunjuck
   val formProvider       = new SealIdentityFormProvider()
   val form: Form[String] = formProvider()
 
-  lazy val sealIdentityRoute: String = routes.SealIdentityController.onPageLoad(mrn, NormalMode).url
+  lazy val sealIdentityRoute: String = routes.SealIdentityController.onPageLoad(mrn, eventIndex, NormalMode).url
 
   "SealIdentity Controller" - {
 
@@ -71,7 +71,7 @@ class SealIdentityControllerSpec extends SpecBase with MockitoSugar with Nunjuck
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "sealIdentity.njk"
+      templateCaptor.getValue mustEqual "events/seals/sealIdentity.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -82,7 +82,7 @@ class SealIdentityControllerSpec extends SpecBase with MockitoSugar with Nunjuck
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers    = UserAnswers(mrn).set(SealIdentityPage, "answer").success.value
+      val userAnswers    = UserAnswers(mrn).set(SealIdentityPage(eventIndex), "answer").success.value
       val application    = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request        = FakeRequest(GET, sealIdentityRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -102,7 +102,7 @@ class SealIdentityControllerSpec extends SpecBase with MockitoSugar with Nunjuck
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "sealIdentity.njk"
+      templateCaptor.getValue mustEqual "events/seals/sealIdentity.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -157,7 +157,7 @@ class SealIdentityControllerSpec extends SpecBase with MockitoSugar with Nunjuck
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "sealIdentity.njk"
+      templateCaptor.getValue mustEqual "events/seals/sealIdentity.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()

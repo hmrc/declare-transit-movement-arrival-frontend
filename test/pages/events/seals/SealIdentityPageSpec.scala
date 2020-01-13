@@ -20,12 +20,14 @@ import pages.behaviours.PageBehaviours
 
 class SealIdentityPageSpec extends PageBehaviours {
 
+  val eventIndex = 0
+
   "SealIdentityPage" - {
 
-    beRetrievable[String](SealIdentityPage)
+    beRetrievable[String](SealIdentityPage(eventIndex))
 
-    beSettable[String](SealIdentityPage)
+    beSettable[String](SealIdentityPage(eventIndex))
 
-    beRemovable[String](SealIdentityPage)
+    beRemovable[String](SealIdentityPage(eventIndex))
   }
 }

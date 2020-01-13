@@ -49,9 +49,9 @@ class AddSealController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onPageLoad(mrn: MovementReferenceNumber, eventIndex: Int, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
-      val preparedForm = request.userAnswers.get(AddSealPage) match {
+      val preparedForm = request.userAnswers.get(AddSealPage(eventIndex)) match {
         case None        => form
         case Some(value) => form.fill(value)
       }
@@ -63,10 +63,10 @@ class AddSealController @Inject()(
         "radios" -> Radios.yesNo(preparedForm("value"))
       )
 
-      renderer.render("addSeal.njk", json).map(Ok(_))
+      renderer.render("events/seals/addSeal.njk", json).map(Ok(_))
   }
 
-  def onSubmit(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onSubmit(mrn: MovementReferenceNumber, eventIndex: Int, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
       form
         .bindFromRequest()
@@ -80,13 +80,12 @@ class AddSealController @Inject()(
               "radios" -> Radios.yesNo(formWithErrors("value"))
             )
 
-            renderer.render("addSeal.njk", json).map(BadRequest(_))
+            renderer.render("events/seals/addSeal.njk", json).map(BadRequest(_))
           },
           value =>
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(AddSealPage, value))
-              _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(AddSealPage, mode, updatedAnswers))
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(AddSealPage(eventIndex), value))
+            } yield Redirect(navigator.nextPage(AddSealPage(eventIndex), mode, updatedAnswers))
         )
   }
 }

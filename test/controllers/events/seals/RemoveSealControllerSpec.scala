@@ -72,7 +72,7 @@ class RemoveSealControllerSpec extends SpecBase with MockitoSugar with NunjucksS
         "radios" -> Radios.yesNo(form("value"))
       )
 
-      templateCaptor.getValue mustEqual "removeSeal.njk"
+      templateCaptor.getValue mustEqual "events/seals/removeSeal.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -104,7 +104,7 @@ class RemoveSealControllerSpec extends SpecBase with MockitoSugar with NunjucksS
         "radios" -> Radios.yesNo(filledForm("value"))
       )
 
-      templateCaptor.getValue mustEqual "removeSeal.njk"
+      templateCaptor.getValue mustEqual "events/seals/removeSeal.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -161,7 +161,7 @@ class RemoveSealControllerSpec extends SpecBase with MockitoSugar with NunjucksS
         "radios" -> Radios.yesNo(boundForm("value"))
       )
 
-      templateCaptor.getValue mustEqual "removeSeal.njk"
+      templateCaptor.getValue mustEqual "events/seals/removeSeal.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
