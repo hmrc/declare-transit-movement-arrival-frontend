@@ -16,7 +16,7 @@
 
 package viewModels
 
-import derivable.DeriveNumberOfContainers
+import derivable.{DeriveNumberOfContainers, DeriveNumberOfSeals}
 import models.TranshipmentType._
 import models.UserAnswers
 import pages.events._
@@ -30,6 +30,7 @@ import utils.{AddContainerHelper, CheckYourAnswersHelper}
 
 case class CheckEventAnswersViewModel(eventInfo: Section, otherInfo: Seq[Section])
 
+//noinspection ScalaStyle
 object CheckEventAnswersViewModel extends NunjucksSupport {
 
   def apply(userAnswers: UserAnswers, eventIndex: Int): CheckEventAnswersViewModel = {
@@ -67,17 +68,20 @@ object CheckEventAnswersViewModel extends NunjucksSupport {
     )
 
     val sealSection: Option[Section] = {
-
       userAnswers
         .get(HaveSealsChangedPage(eventIndex))
         .map {
           haveSealsChanged =>
-            Section(
               Seq(
                 helper.haveSealsChanged(eventIndex),
-                if (haveSealsChanged) helper.sealIdentity(eventIndex) else None
+                if (haveSealsChanged) {
+                  userAnswers.get(DeriveNumberOfSeals(eventIndex)).map { size =>
+                    List.range(0, size).map {
+                      helper.sealIdentity(eventIndex, _)
+                    }
+                  }
+                } else None
               ).flatten
-            )
         }
     }
 

@@ -343,6 +343,9 @@ addSeal.heading = You have added {0} container
 addSeal.radio.label = Do you need to add another seal?
 addSeal.checkYourAnswersLabel = You have added {0} seals
 addSeal.error.required = Select yes if you need to add another seal
+addSeal.sealList.label = Seal {0}
+addSeal.sealList.change = Change seal identity {0}?
+addSeal.sealList.delete = Remove seal identity {0}?
 
 haveSealsChanged.title = Have any of the seals changed?
 haveSealsChanged.heading = Have any of the seals changed?

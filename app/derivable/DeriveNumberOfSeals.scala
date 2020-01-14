@@ -14,21 +14,14 @@
  * limitations under the License.
  */
 
-package pages.events.seals
+package derivable
 
-import pages.behaviours.PageBehaviours
+import pages.events.SectionConstants
+import play.api.libs.json.{JsObject, JsPath}
 
-class SealIdentityPageSpec extends PageBehaviours {
+final case class DeriveNumberOfSeals(eventIndex: Int) extends Derivable[List[JsObject], Int] {
 
-  val eventIndex = 0
-  val sealIndex = 0
+  override val derive: List[JsObject] => Int = _.size
 
-  "SealIdentityPage" - {
-
-    beRetrievable[String](SealIdentityPage(eventIndex, sealIndex))
-
-    beSettable[String](SealIdentityPage(eventIndex, sealIndex))
-
-    beRemovable[String](SealIdentityPage(eventIndex, sealIndex))
-  }
+  override def path: JsPath = JsPath \ SectionConstants.events \ eventIndex \ SectionConstants.seals
 }

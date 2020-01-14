@@ -55,11 +55,12 @@ class Navigator @Inject()() {
     case TranshipmentTypePage(index) => transhipmentType(index)
     case TransportIdentityPage(index) => ua => Some(transhipmentRoutes.TransportNationalityController.onPageLoad(ua.id, index, NormalMode))
     case TransportNationalityPage(index) => ua => Some(sealRoutes.HaveSealsChangedController.onPageLoad(ua.id, index, NormalMode))
+
     case ContainerNumberPage(index, _) => ua => Some(transhipmentRoutes.AddContainerController.onPageLoad(ua.id, index, NormalMode))
     case AddContainerPage(index) => addContainer(index)
     case HaveSealsChangedPage(index) => haveSealsChanged(index)
       //TODO Navigation from seal identity page should go to AddSealController when seal indexing is complete
-    case SealIdentityPage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
+    case SealIdentityPage(index, _) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
     //case AddSealPage(index) => addSeal(index)
   }
 
@@ -232,7 +233,7 @@ class Navigator @Inject()() {
 
   private def haveSealsChanged(index: Int)(userAnswers: UserAnswers): Option[Call] =
     userAnswers.get(HaveSealsChangedPage(index)).map {
-      case true  => sealRoutes.SealIdentityController.onPageLoad(userAnswers.id, index, NormalMode)
+      case true  => sealRoutes.SealIdentityController.onPageLoad(userAnswers.id, index, 0, NormalMode) //TODO
       case false => eventRoutes.CheckEventAnswersController.onPageLoad(userAnswers.id, index)
     }
 

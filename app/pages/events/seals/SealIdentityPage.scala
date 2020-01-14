@@ -20,8 +20,8 @@ import pages.QuestionPage
 import pages.events.SectionConstants
 import play.api.libs.json.JsPath
 
-case class SealIdentityPage(index: Int) extends QuestionPage[String] {
+case class SealIdentityPage(eventIndex: Int, sealIndex: Int) extends QuestionPage[String] {
 
-  override def path: JsPath = JsPath \ SectionConstants.events \ index \ SectionConstants.seals
+  override def path: JsPath = JsPath \ SectionConstants.events \ eventIndex \ SectionConstants.seals \ sealIndex
 
 }

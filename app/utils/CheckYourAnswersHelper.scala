@@ -32,21 +32,6 @@ import uk.gov.hmrc.viewmodels._
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers) {
 
-  def removeSeal: Option[Row] = userAnswers.get(RemoveSealPage) map {
-    answer =>
-      Row(
-        key   = Key(msg"removeSeal.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value = Value(yesOrNo(answer)),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = sealRoutes.RemoveSealController.onPageLoad(mrn, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"removeSeal.checkYourAnswersLabel"))
-          )
-        )
-      )
-  }
-
   def haveSealsChanged(eventIndex: Int): Option[Row] = userAnswers.get(HaveSealsChangedPage(eventIndex)) map {
     answer =>
       Row(
@@ -62,22 +47,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
       )
   }
 
-  def addSeal(eventIndex: Int): Option[Row] = userAnswers.get(AddSealPage(eventIndex)) map {
-    answer =>
-      Row(
-        key   = Key(msg"addSeal.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value = Value(yesOrNo(answer)),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = sealRoutes.AddSealController.onPageLoad(mrn, eventIndex, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"addSeal.checkYourAnswersLabel"))
-          )
-        )
-      )
-  }
-
-  def sealIdentity(eventIndex: Int): Option[Row] = userAnswers.get(SealIdentityPage(eventIndex)) map {
+  def sealIdentity(eventIndex: Int, sealIndex: Int): Option[Row] = userAnswers.get(SealIdentityPage(eventIndex, sealIndex)) map {
     answer =>
       Row(
         key   = Key(msg"sealIdentity.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
@@ -85,7 +55,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = sealRoutes.SealIdentityController.onPageLoad(mrn, eventIndex, CheckMode).url,
+            href               = sealRoutes.SealIdentityController.onPageLoad(mrn, eventIndex, sealIndex, CheckMode).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"sealIdentity.checkYourAnswersLabel"))
           )
         )

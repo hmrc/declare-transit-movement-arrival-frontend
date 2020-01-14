@@ -137,10 +137,10 @@ POST       /:mrn/event/:eventIndex/confirmRemoveContainer                       
 GET        /:mrn/event/:eventIndex/changeConfirmRemoveContainer                                     controllers.events.transhipments.ConfirmRemoveContainerController.onPageLoad(mrn: MovementReferenceNumber, eventIndex: Int, mode: Mode = CheckMode)
 POST       /:mrn/event/:eventIndex/changeConfirmRemoveContainer                                     controllers.events.transhipments.ConfirmRemoveContainerController.onSubmit(mrn: MovementReferenceNumber, eventIndex: Int, mode: Mode = CheckMode)
 
-GET        /:mrn/event/:eventIndex/sealIdentity                                           controllers.events.seals.SealIdentityController.onPageLoad(mrn: MovementReferenceNumber, eventIndex: Int, mode: Mode = NormalMode)
-POST       /:mrn/event/:eventIndex/sealIdentity                                           controllers.events.seals.SealIdentityController.onSubmit(mrn: MovementReferenceNumber, eventIndex: Int, mode: Mode = NormalMode)
-GET        /:mrn/event/:eventIndex/changeSealIdentity                                     controllers.events.seals.SealIdentityController.onPageLoad(mrn: MovementReferenceNumber, eventIndex: Int, mode: Mode = CheckMode)
-POST       /:mrn/event/:eventIndex/changeSealIdentity                                     controllers.events.seals.SealIdentityController.onSubmit(mrn: MovementReferenceNumber, eventIndex: Int, mode: Mode = CheckMode)
+GET        /:mrn/event/:eventIndex/sealIdentity                                           controllers.events.seals.SealIdentityController.onPageLoad(mrn: MovementReferenceNumber, eventIndex: Int, sealIndex: Int, mode: Mode = NormalMode)
+POST       /:mrn/event/:eventIndex/sealIdentity                                           controllers.events.seals.SealIdentityController.onSubmit(mrn: MovementReferenceNumber, eventIndex: Int, sealIndex: Int, mode: Mode = NormalMode)
+GET        /:mrn/event/:eventIndex/changeSealIdentity                                     controllers.events.seals.SealIdentityController.onPageLoad(mrn: MovementReferenceNumber, eventIndex: Int, sealIndex: Int, mode: Mode = CheckMode)
+POST       /:mrn/event/:eventIndex/changeSealIdentity                                     controllers.events.seals.SealIdentityController.onSubmit(mrn: MovementReferenceNumber, eventIndex: Int, sealIndex: Int, mode: Mode = CheckMode)
 
 GET        /:mrn/event/:eventIndex/addSeal                                                controllers.events.seals.AddSealController.onPageLoad(mrn: MovementReferenceNumber, eventIndex: Int, mode: Mode = NormalMode)
 POST       /:mrn/event/:eventIndex/addSeal                                                controllers.events.seals.AddSealController.onSubmit(mrn: MovementReferenceNumber, eventIndex: Int, mode: Mode = NormalMode)
