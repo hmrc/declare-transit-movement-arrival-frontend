@@ -88,16 +88,14 @@ class ConfirmRemoveContainerController @Inject()(
                   )
 
                   renderer.render(confirmRemoveContainerTemplate, json).map(BadRequest(_))
-                },
-                value =>
-                  value match {
-                    case true =>
-                      for {
-                        updatedAnswers <- Future.fromTry(request.userAnswers.remove(ContainerNumberPage(eventIndex, containerIndex)))
-                        _              <- sessionRepository.set(updatedAnswers)
-                      } yield Redirect(navigator.nextPage(ConfirmRemoveContainerPage(eventIndex), mode, updatedAnswers))
-                    case false =>
-                      Future.successful(Redirect(navigator.nextPage(ConfirmRemoveContainerPage(eventIndex), mode, request.userAnswers)))
+                }, {
+                  case true =>
+                    for {
+                      updatedAnswers <- Future.fromTry(request.userAnswers.remove(ContainerNumberPage(eventIndex, containerIndex)))
+                      _              <- sessionRepository.set(updatedAnswers)
+                    } yield Redirect(navigator.nextPage(ConfirmRemoveContainerPage(eventIndex), mode, updatedAnswers))
+                  case false =>
+                    Future.successful(Redirect(navigator.nextPage(ConfirmRemoveContainerPage(eventIndex), mode, request.userAnswers)))
                 }
               )
           }

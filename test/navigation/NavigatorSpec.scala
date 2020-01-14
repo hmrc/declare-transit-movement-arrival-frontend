@@ -349,6 +349,68 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         }
       }
 
+      "must go from Confirm remove container page" - {
+
+        "to Add container page when multiple containers exist and a single container is removed " in {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val updatedAnswers = answers
+                .set(EventCountryPage(eventIndex), country)
+                .success
+                .value
+                .set(EventPlacePage(eventIndex), "place name")
+                .success
+                .value
+                .set(EventReportedPage(eventIndex), true)
+                .success
+                .value
+                .set(IsTranshipmentPage(eventIndex), true)
+                .success
+                .value
+                .set(TranshipmentTypePage(eventIndex), DifferentContainer)
+                .success
+                .value
+                .set(ContainerNumberPage(eventIndex, eventIndex), Container("1"))
+                .success
+                .value
+                .set(ContainerNumberPage(eventIndex, eventIndex + 1), Container("2"))
+                .success
+                .value
+              navigator
+                .nextPage(ConfirmRemoveContainerPage(eventIndex), NormalMode, updatedAnswers)
+                .mustBe(transhipmentRoutes.AddContainerController.onPageLoad(updatedAnswers.id, eventIndex, NormalMode))
+          }
+        }
+
+        "to ??? page when single container exists and is removed " ignore {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val updatedAnswers = answers
+                .set(EventCountryPage(eventIndex), country)
+                .success
+                .value
+                .set(EventPlacePage(eventIndex), "place name")
+                .success
+                .value
+                .set(EventReportedPage(eventIndex), true)
+                .success
+                .value
+                .set(IsTranshipmentPage(eventIndex), true)
+                .success
+                .value
+                .set(TranshipmentTypePage(eventIndex), DifferentContainer)
+                .success
+                .value
+                .set(ContainerNumberPage(eventIndex, eventIndex), Container("1"))
+                .success
+                .value
+              navigator
+                .nextPage(ConfirmRemoveContainerPage(eventIndex), NormalMode, updatedAnswers)
+                .mustBe(transhipmentRoutes.AddContainerController.onPageLoad(updatedAnswers.id, eventIndex, NormalMode))
+          }
+        }
+      }
+
       "must go from Transhipment type" - {
 
         "to Transport Identity when option is 'a different vehicle' " in {
