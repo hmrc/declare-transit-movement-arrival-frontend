@@ -351,10 +351,13 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
       "must go from Confirm remove container page" - {
 
-        "to Add container page when multiple containers exist and a single container is removed " in {
+        "to Add container page when multiple containers exist" in {
           forAll(arbitrary[UserAnswers]) {
             answers =>
               val updatedAnswers = answers
+                .remove(EventsQuery)
+                .success
+                .value
                 .set(EventCountryPage(eventIndex), country)
                 .success
                 .value
@@ -382,10 +385,13 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           }
         }
 
-        "to ??? page when single container exists and is removed " ignore {
+        "to isTranshipment page when no containers exist" in {
           forAll(arbitrary[UserAnswers]) {
             answers =>
               val updatedAnswers = answers
+                .remove(EventsQuery)
+                .success
+                .value
                 .set(EventCountryPage(eventIndex), country)
                 .success
                 .value
@@ -401,12 +407,9 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
                 .set(TranshipmentTypePage(eventIndex), DifferentContainer)
                 .success
                 .value
-                .set(ContainerNumberPage(eventIndex, eventIndex), Container("1"))
-                .success
-                .value
               navigator
                 .nextPage(ConfirmRemoveContainerPage(eventIndex), NormalMode, updatedAnswers)
-                .mustBe(transhipmentRoutes.AddContainerController.onPageLoad(updatedAnswers.id, eventIndex, NormalMode))
+                .mustBe(eventRoutes.IsTranshipmentController.onPageLoad(updatedAnswers.id, eventIndex, NormalMode))
           }
         }
       }

@@ -61,7 +61,7 @@ class Navigator @Inject()() {
       //TODO Navigation from seal identity page should go to AddSealController when seal indexing is complete
     case SealIdentityPage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
     //case AddSealPage(index) => addSeal(index)
-    case ConfirmRemoveContainerPage(index) => ua => Some(transhipmentRoutes.AddContainerController.onPageLoad(ua.id, index, NormalMode))
+    case ConfirmRemoveContainerPage(index) => confirmRemoveContainerRoute(index)
   }
 
   private val checkRouteMap: PartialFunction[Page, UserAnswers => Option[Call]] = {
@@ -101,6 +101,11 @@ class Navigator @Inject()() {
   }
 
   // format: on
+  def confirmRemoveContainerRoute(index: Int)(ua: UserAnswers): Option[Call] = ua.get(DeriveNumberOfContainers(index)) match {
+    case Some(0) | None => Some(eventRoutes.IsTranshipmentController.onPageLoad(ua.id, index, NormalMode))
+    case _              => Some(transhipmentRoutes.AddContainerController.onPageLoad(ua.id, index, NormalMode))
+  }
+
   private def addContainer(index: Int)(ua: UserAnswers): Option[Call] = ua.get(AddContainerPage(index)) map {
     case true =>
       // TODO: Need to consolidate with same logic for initialsation of index in transhipmentType
@@ -130,9 +135,8 @@ class Navigator @Inject()() {
   private def transhipmentType(index: Int)(ua: UserAnswers): Option[Call] = ua.get(transhipments.TranshipmentTypePage(index)) map {
     case DifferentContainer | DifferentContainerAndVehicle =>
       ua.get(DeriveNumberOfContainers(index)) match {
-        case Some(_) => transhipmentRoutes.AddContainerController.onPageLoad(ua.id, index, NormalMode)
-        // TODO: Need to consolidate with same logic for initialsation of index in addContainer
-        case None => transhipmentRoutes.ContainerNumberController.onPageLoad(ua.id, index, 0, NormalMode)
+        case Some(0) | None => transhipmentRoutes.ContainerNumberController.onPageLoad(ua.id, index, 0, NormalMode)
+        case Some(_)        => transhipmentRoutes.AddContainerController.onPageLoad(ua.id, index, NormalMode)
       }
     case DifferentVehicle => transhipmentRoutes.TransportIdentityController.onPageLoad(ua.id, index, NormalMode)
   }
