@@ -30,7 +30,8 @@ trait UserAnswersGenerator extends TryValues {
   self: Generators =>
 
   val generators: Seq[Gen[(QuestionPage[_], JsValue)]] =
-    arbitrary[(RemoveSealPage.type, JsValue)] ::
+    arbitrary[(ConfirmRemoveEventPage.type, JsValue)] ::
+      arbitrary[(RemoveSealPage.type, JsValue)] ::
       arbitrary[(HaveSealsChangedPage, JsValue)] ::
       arbitrary[(AddSealPage, JsValue)] ::
       arbitrary[(SealIdentityPage, JsValue)] ::

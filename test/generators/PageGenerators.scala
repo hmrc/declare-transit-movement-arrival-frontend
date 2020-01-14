@@ -24,6 +24,9 @@ import pages.events.transhipments._
 
 trait PageGenerators {
 
+  implicit lazy val arbitraryConfirmRemoveEventPage: Arbitrary[ConfirmRemoveEventPage.type] =
+    Arbitrary(ConfirmRemoveEventPage)
+
   implicit lazy val arbitraryRemoveSealPage: Arbitrary[RemoveSealPage.type] =
     Arbitrary(RemoveSealPage)
 

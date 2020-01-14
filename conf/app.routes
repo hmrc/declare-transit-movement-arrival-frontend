@@ -156,3 +156,8 @@ GET        /:mrn/removeSeal                                             controll
 POST       /:mrn/removeSeal                                             controllers.events.seals.RemoveSealController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
 GET        /:mrn/changeRemoveSeal                                       controllers.events.seals.RemoveSealController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
 POST       /:mrn/changeRemoveSeal                                       controllers.events.seals.RemoveSealController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
+
+GET        /:mrn/event/:eventIndex/confirmRemoveEvent                                     controllers.events.ConfirmRemoveEventController.onPageLoad(mrn: MovementReferenceNumber,eventIndex: Int, mode: Mode = NormalMode)
+POST       /:mrn/event/:eventIndex/confirmRemoveEvent                                     controllers.events.ConfirmRemoveEventController.onSubmit(mrn: MovementReferenceNumber,eventIndex: Int, mode: Mode = NormalMode)
+GET        /:mrn/event/:eventIndex/changeConfirmRemoveEvent                               controllers.events.ConfirmRemoveEventController.onPageLoad(mrn: MovementReferenceNumber,eventIndex: Int, mode: Mode = CheckMode)
+POST       /:mrn/event/:eventIndex/changeConfirmRemoveEvent                               controllers.events.ConfirmRemoveEventController.onSubmit(mrn: MovementReferenceNumber,eventIndex: Int, mode: Mode = CheckMode)
