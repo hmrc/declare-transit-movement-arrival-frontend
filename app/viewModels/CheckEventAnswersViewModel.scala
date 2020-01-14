@@ -72,16 +72,14 @@ object CheckEventAnswersViewModel extends NunjucksSupport {
         .get(HaveSealsChangedPage(eventIndex))
         .map {
           haveSealsChanged =>
-              Seq(
-                helper.haveSealsChanged(eventIndex),
-                if (haveSealsChanged) {
-                  userAnswers.get(DeriveNumberOfSeals(eventIndex)).map { size =>
-                    List.range(0, size).map {
-                      helper.sealIdentity(eventIndex, _)
-                    }
-                  }
-                } else None
-              ).flatten
+
+            val seals: Seq[Row] = if (haveSealsChanged) {
+              println("---range ----"+userAnswers)
+              Seq.range(0, userAnswers.get(DeriveNumberOfSeals(eventIndex)).getOrElse(0))
+                .flatMap(helper.sealIdentity(eventIndex, _))
+            } else Seq.empty
+
+          Section(msg"addSeal.sealList.heading", (helper.haveSealsChanged(eventIndex) ++ seals).toSeq)
         }
     }
 
@@ -106,7 +104,7 @@ object CheckEventAnswersViewModel extends NunjucksSupport {
 
     CheckEventAnswersViewModel(
       Section(eventInfo),
-      otherInfoSections ++ sealSection.toSeq
+      otherInfoSections ++ sealSection
     )
   }
 

@@ -24,6 +24,7 @@ import models.reference.Country
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.IncidentOnRoutePage
 import pages.events._
+import pages.events.seals.{HaveSealsChangedPage, SealIdentityPage}
 import pages.events.transhipments._
 import play.api.libs.json.{JsObject, Json}
 import uk.gov.hmrc.viewmodels.SummaryList.Row
@@ -38,7 +39,7 @@ class CheckEventAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChe
   }
 
   "when event is an incident" - {
-    "and hasn't been reported and did not move to different vehicle/container show the event info only" in {
+    "and hasn't been reported and did not move to different vehicle/container and no seals changed" in {
       val ua = emptyUserAnswers
         .set(IncidentOnRoutePage, true).success.value
         .set(EventCountryPage(eventIndex), Country("Valid", "value", "Country Name")).success.value
@@ -46,12 +47,49 @@ class CheckEventAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChe
         .set(EventReportedPage(eventIndex), false).success.value
         .set(IsTranshipmentPage(eventIndex), false).success.value
         .set(IncidentInformationPage(eventIndex), "value").success.value
+        .set(HaveSealsChangedPage(eventIndex), false).success.value
 
       val vm = CheckEventAnswersViewModel(ua, eventIndex)
 
       vm.eventInfo.sectionTitle must not be defined
       vm.eventInfo.rows.length mustEqual 5
-      vm.otherInfo must be(empty)
+      vm.otherInfo.size mustEqual 1
+    }
+
+    "and has been reported, did not move to different vehicle/container and no seals changed" in {
+      val ua = emptyUserAnswers
+        .set(IncidentOnRoutePage, true).success.value
+        .set(EventCountryPage(eventIndex), Country("Valid", "value", "Country Name")).success.value
+        .set(EventPlacePage(eventIndex), "value").success.value
+        .set(EventReportedPage(eventIndex), false).success.value
+        .set(IsTranshipmentPage(eventIndex), false).success.value
+        .set(IncidentInformationPage(eventIndex), "value").success.value
+        .set(HaveSealsChangedPage(eventIndex), false).success.value
+
+      val vm = CheckEventAnswersViewModel(ua, eventIndex)
+
+      vm.eventInfo.sectionTitle must not be defined
+      vm.eventInfo.rows.length mustEqual 5
+      vm.otherInfo.size mustEqual 1
+    }
+
+    "and has been reported, did not move to different vehicle/container and seals changed" in {
+      val ua = emptyUserAnswers
+        .set(IncidentOnRoutePage, true).success.value
+        .set(EventCountryPage(eventIndex), Country("Valid", "value", "Country Name")).success.value
+        .set(EventPlacePage(eventIndex), "value").success.value
+        .set(EventReportedPage(eventIndex), false).success.value
+        .set(IsTranshipmentPage(eventIndex), false).success.value
+        .set(IncidentInformationPage(eventIndex), "value").success.value
+        .set(HaveSealsChangedPage(eventIndex), true).success.value
+        .set(SealIdentityPage(eventIndex, 0), "seal1").success.value
+        .set(SealIdentityPage(eventIndex, 1), "seal2").success.value
+
+      val vm = CheckEventAnswersViewModel(ua, eventIndex)
+
+      vm.eventInfo.sectionTitle must not be defined
+      vm.eventInfo.rows.length mustEqual 5
+      vm.otherInfo.head.rows.size mustEqual 3
     }
 
     "and has been reported and did not move to different vehicle/container show the event info only" in {

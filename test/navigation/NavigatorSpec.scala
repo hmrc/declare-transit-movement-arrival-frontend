@@ -677,7 +677,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
               navigator
                 .nextPage(HaveSealsChangedPage(eventIndex), NormalMode, updatedAnswers)
-                .mustBe(sealRoutes.SealIdentityController.onPageLoad(answers.id, eventIndex, NormalMode))
+                .mustBe(sealRoutes.SealIdentityController.onPageLoad(answers.id, eventIndex, sealIndex, NormalMode))
           }
         }
       }
@@ -687,10 +687,10 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         "to check event answers page" in {
           forAll(arbitrary[UserAnswers], arbitrary[String]) {
             (answers, sealsIdentity) =>
-              val updatedAnswers = answers.set(SealIdentityPage(eventIndex), sealsIdentity).success.value
+              val updatedAnswers = answers.set(SealIdentityPage(eventIndex, sealIndex), sealsIdentity).success.value
 
               navigator
-                .nextPage(SealIdentityPage(eventIndex), NormalMode, updatedAnswers)
+                .nextPage(SealIdentityPage(eventIndex, sealIndex), NormalMode, updatedAnswers)
                 .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(answers.id, eventIndex))
           }
         }
