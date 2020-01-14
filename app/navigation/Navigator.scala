@@ -21,7 +21,7 @@ import controllers.events.transhipments.{routes => transhipmentRoutes}
 import controllers.events.{routes => eventRoutes}
 import controllers.events.seals.{routes => sealRoutes}
 import controllers.routes
-import derivable.{DeriveNumberOfContainers, DeriveNumberOfEvents}
+import derivable.{DeriveNumberOfContainers, DeriveNumberOfEvents, DeriveNumberOfSeals}
 import models.GoodsLocation._
 import models.TranshipmentType.{DifferentContainer, DifferentContainerAndVehicle, DifferentVehicle}
 import models.{CheckMode, Mode, NormalMode, UserAnswers}
@@ -59,9 +59,8 @@ class Navigator @Inject()() {
     case ContainerNumberPage(index, _) => ua => Some(transhipmentRoutes.AddContainerController.onPageLoad(ua.id, index, NormalMode))
     case AddContainerPage(index) => addContainer(index)
     case HaveSealsChangedPage(index) => haveSealsChanged(index)
-      //TODO Navigation from seal identity page should go to AddSealController when seal indexing is complete
-    case SealIdentityPage(index, _) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
-    //case AddSealPage(index) => addSeal(index)
+    case SealIdentityPage(index, _) => ua => Some(sealRoutes.AddSealController.onPageLoad(ua.id, index, NormalMode))
+    case AddSealPage(index) => addSeal(index)
   }
 
   private val checkRouteMap: PartialFunction[Page, UserAnswers => Option[Call]] = {
@@ -75,6 +74,7 @@ class Navigator @Inject()() {
     case ContainerNumberPage(index, _) => ua => Some(transhipmentRoutes.AddContainerController.onPageLoad(ua.id, index, CheckMode))
     case TransportIdentityPage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
     case TransportNationalityPage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
+    case SealIdentityPage(index, _) => ua => Some(sealRoutes.AddSealController.onPageLoad(ua.id, index, CheckMode))
     case AddContainerPage(index) => addContainerCheckRoute(index)
     case EventReportedPage(index) => eventReportedCheckRoute(index)
   }
@@ -237,9 +237,9 @@ class Navigator @Inject()() {
       case false => eventRoutes.CheckEventAnswersController.onPageLoad(userAnswers.id, index)
     }
 
-//  private def addSeal(index: Int)(userAnswers: UserAnswers): Option[Call] =
-//    userAnswers.get(AddSealPage(index)).map {
-//      case true  => sealRoutes.SealIdentityController.onPageLoad(userAnswers.id, index, NormalMode)
-//      case false => eventRoutes.CheckEventAnswersController.onPageLoad(userAnswers.id, index)
-//    }
+  private def addSeal(index: Int)(userAnswers: UserAnswers): Option[Call] =
+    userAnswers.get(AddSealPage(index)).map {
+      case true  => sealRoutes.SealIdentityController.onPageLoad(userAnswers.id, index, userAnswers.get(DeriveNumberOfSeals(index)).getOrElse(0), NormalMode)
+      case false => eventRoutes.CheckEventAnswersController.onPageLoad(userAnswers.id, index)
+    }
 }

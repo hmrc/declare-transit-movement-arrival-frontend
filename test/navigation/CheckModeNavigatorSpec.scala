@@ -18,6 +18,7 @@ package navigation
 
 import base.SpecBase
 import controllers.events.{routes => eventRoutes}
+import controllers.events.seals.{routes => sealRoutes}
 import controllers.events.transhipments.{routes => transhipmentRoutes}
 import controllers.routes
 import generators.{DomainModelGenerators, Generators}
@@ -28,6 +29,7 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.events._
 import pages._
+import pages.events.seals.SealIdentityPage
 import pages.events.transhipments.{AddContainerPage, ContainerNumberPage, TranshipmentTypePage, TransportIdentityPage, TransportNationalityPage}
 
 class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generators with DomainModelGenerators {
@@ -547,6 +549,20 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
         }
       }
 
+    }
+
+    "must go from seals identity page" - {
+
+      "to check event answers page" in {
+        forAll(arbitrary[UserAnswers], arbitrary[String]) {
+          (answers, sealsIdentity) =>
+            val updatedAnswers = answers.set(SealIdentityPage(eventIndex, sealIndex), sealsIdentity).success.value
+
+            navigator
+              .nextPage(SealIdentityPage(eventIndex, sealIndex), CheckMode, updatedAnswers)
+              .mustBe(sealRoutes.AddSealController.onPageLoad(answers.id, eventIndex, CheckMode))
+        }
+      }
     }
 
     "must go from 'IsTraderAddressPlaceOfNotificationPage'" - {

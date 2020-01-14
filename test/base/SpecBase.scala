@@ -60,7 +60,7 @@ trait SpecBase
 
   val eventIndex     = 0
   val containerIndex = 0
-  val sealIndex = 0
+  val sealIndex      = 0
 
   val traderAddress = TraderAddress("", "", "NE99 1XN")
 

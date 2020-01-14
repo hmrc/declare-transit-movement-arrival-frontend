@@ -49,5 +49,3 @@ class AddSealHelper(userAnswers: UserAnswers) {
 object AddSealHelper {
   def apply(userAnswers: UserAnswers): AddSealHelper = new AddSealHelper(userAnswers)
 }
-
-

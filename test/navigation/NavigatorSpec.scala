@@ -691,36 +691,39 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
               navigator
                 .nextPage(SealIdentityPage(eventIndex, sealIndex), NormalMode, updatedAnswers)
-                .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(answers.id, eventIndex))
+                .mustBe(sealRoutes.AddSealController.onPageLoad(answers.id, eventIndex, NormalMode))
           }
         }
       }
 
-//      "must go from add seal page" - {
-//
-//        "to check event details page when answer is no" in {
-//          forAll(arbitrary[UserAnswers]) {
-//            answers =>
-//              val updatedAnswers = answers.set(AddSealPage(eventIndex), false).success.value
-//
-//              navigator
-//                .nextPage(AddSealPage(eventIndex), NormalMode, updatedAnswers)
-//                .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(answers.id, eventIndex))
-//
-//          }
-//        }
-//
-//        "to seal identity page when answer is Yes" in {
-//          forAll(arbitrary[UserAnswers]) {
-//            answers =>
-//              val updatedAnswers = answers.set(AddSealPage(eventIndex), true).success.value
-//
-//              navigator
-//                .nextPage(AddSealPage(eventIndex), NormalMode, updatedAnswers)
-//                .mustBe(sealRoutes.SealIdentityController.onPageLoad(answers.id, eventIndex, NormalMode))
-//          }
-//        }
-//      }
+      "must go from add seal page" - {
+
+        "to check event details page when answer is no" in {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val updatedAnswers = answers.set(AddSealPage(eventIndex), false).success.value
+
+              navigator
+                .nextPage(AddSealPage(eventIndex), NormalMode, updatedAnswers)
+                .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(answers.id, eventIndex))
+
+          }
+        }
+
+        "to seal identity page when answer is Yes" in {
+          val updatedAnswers = emptyUserAnswers
+            .set(AddSealPage(eventIndex), true)
+            .success
+            .value
+            .set(SealIdentityPage(eventIndex, sealIndex), "seal1")
+            .success
+            .value
+
+          navigator
+            .nextPage(AddSealPage(eventIndex), NormalMode, updatedAnswers)
+            .mustBe(sealRoutes.SealIdentityController.onPageLoad(updatedAnswers.id, eventIndex, 1, NormalMode))
+        }
+      }
     }
   }
 
