@@ -78,6 +78,8 @@ class Navigator @Inject()() {
     case AddContainerPage(index) => addContainerCheckRoute(index)
     case EventReportedPage(index) => eventReportedCheckRoute(index)
     case ConfirmRemoveContainerPage(index) => confirmRemoveContainerRoute(index, CheckMode)
+    case IncidentOnRoutePage => incidentOnRoute
+
 
   }
 

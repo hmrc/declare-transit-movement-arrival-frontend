@@ -24,7 +24,7 @@ import generators.{DomainModelGenerators, Generators}
 import models.TranshipmentType.{DifferentContainer, DifferentContainerAndVehicle, DifferentVehicle}
 import models.domain.Container
 import models.reference.Country
-import models.{CheckMode, GoodsLocation, TranshipmentType, UserAnswers}
+import models.{CheckMode, GoodsLocation, NormalMode, TranshipmentType, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -725,6 +725,28 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
               .mustBe(eventRoutes.IsTranshipmentController.onPageLoad(updatedAnswers.id, eventIndex, CheckMode))
         }
       }
+
+      "must go from incident on route page" - {
+
+        "to event country page when user selects yes" in {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val updatedAnswers = answers
+                .remove(IncidentOnRoutePage)
+                .success
+                .value
+                .set(IncidentOnRoutePage, true)
+                .success
+                .value
+              navigator
+                .nextPage(IncidentOnRoutePage, CheckMode, updatedAnswers)
+                .mustBe(eventRoutes.EventCountryController.onPageLoad(answers.id, eventIndex, NormalMode))
+
+          }
+
+        }
+      }
+
     }
   }
 }
