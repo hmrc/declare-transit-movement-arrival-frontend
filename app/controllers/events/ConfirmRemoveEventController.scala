@@ -25,6 +25,7 @@ import pages.events.{ConfirmRemoveEventPage, EventCountryPage, EventPlacePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import queries.EventQuery
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
@@ -87,11 +88,16 @@ class ConfirmRemoveEventController @Inject()(
 
                 renderer.render(confirmRemoveEventTemplate, json).map(BadRequest(_))
               },
-              value =>
-                for {
-                  updatedAnswers <- Future.fromTry(request.userAnswers.set(ConfirmRemoveEventPage, value))
-                  _              <- sessionRepository.set(updatedAnswers)
-                } yield Redirect(navigator.nextPage(ConfirmRemoveEventPage, mode, updatedAnswers))
+              userAnswer =>
+                userAnswer match {
+                  case true =>
+                    for {
+                      updatedAnswers <- Future.fromTry(request.userAnswers.remove(EventQuery(eventIndex)))
+                      _              <- sessionRepository.set(updatedAnswers)
+                    } yield Redirect(navigator.nextPage(ConfirmRemoveEventPage, mode, updatedAnswers))
+                  case false => Future.successful(Redirect(navigator.nextPage(ConfirmRemoveEventPage, mode, request.userAnswers)))
+
+              }
             )
         }
         case _ => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
