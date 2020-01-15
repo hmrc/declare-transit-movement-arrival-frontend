@@ -16,15 +16,18 @@
 
 package controllers.events.transhipments
 
-import controllers.actions._
+import connectors.ReferenceDataConnector
+import controllers.actions.{DataRequiredAction, DataRetrievalActionProvider, IdentifierAction}
 import forms.events.transhipments.TransportNationalityFormProvider
 import javax.inject.Inject
+import models.reference.Country
 import models.{Mode, MovementReferenceNumber}
 import navigation.Navigator
 import pages.events.transhipments.TransportNationalityPage
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.libs.json.{JsObject, Json}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request, Result}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
@@ -32,59 +35,71 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class TransportNationalityController @Inject()(
-  override val messagesApi: MessagesApi,
-  sessionRepository: SessionRepository,
-  navigator: Navigator,
-  identify: IdentifierAction,
-  getData: DataRetrievalActionProvider,
-  requireData: DataRequiredAction,
-  formProvider: TransportNationalityFormProvider,
-  val controllerComponents: MessagesControllerComponents,
-  renderer: Renderer
-)(implicit ec: ExecutionContext)
+class TransportNationalityController @Inject()(override val messagesApi: MessagesApi,
+                                               sessionRepository: SessionRepository,
+                                               navigator: Navigator,
+                                               identify: IdentifierAction,
+                                               getData: DataRetrievalActionProvider,
+                                               requireData: DataRequiredAction,
+                                               formProvider: TransportNationalityFormProvider,
+                                               referenceDataConnector: ReferenceDataConnector,
+                                               val controllerComponents: MessagesControllerComponents,
+                                               renderer: Renderer)(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
     with NunjucksSupport {
 
-  private val form = formProvider()
-
   def onPageLoad(mrn: MovementReferenceNumber, eventIndex: Int, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
-      val preparedForm = request.userAnswers.get(TransportNationalityPage(eventIndex)) match {
-        case None        => form
-        case Some(value) => form.fill(value)
+      referenceDataConnector.getCountryList() flatMap {
+        countries =>
+          val form = formProvider(Seq.empty)
+          val preparedForm = request.userAnswers.get(TransportNationalityPage(eventIndex)) match {
+            case None        => form
+            case Some(value) => form.fill(value)
+          }
+
+          renderPage(mrn, mode, preparedForm, countries, Ok)
       }
-
-      val json = Json.obj(
-        "form" -> preparedForm,
-        "mrn"  -> mrn,
-        "mode" -> mode
-      )
-
-      renderer.render("events/transhipments/transportNationality.njk", json).map(Ok(_))
   }
 
   def onSubmit(mrn: MovementReferenceNumber, eventIndex: Int, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
-      form
-        .bindFromRequest()
-        .fold(
-          formWithErrors => {
+      referenceDataConnector.getCountryList() flatMap {
+        countries =>
+          val form = formProvider(countries)
 
-            val json = Json.obj(
-              "form" -> formWithErrors,
-              "mrn"  -> mrn,
-              "mode" -> mode
+          form
+            .bindFromRequest()
+            .fold(
+              formWithErrors => renderPage(mrn, mode, formWithErrors, countries, BadRequest),
+              value =>
+                for {
+                  updatedAnswers <- Future.fromTry(request.userAnswers.set(TransportNationalityPage(eventIndex), value))
+                  _              <- sessionRepository.set(updatedAnswers)
+                } yield Redirect(navigator.nextPage(TransportNationalityPage(eventIndex), mode, updatedAnswers))
             )
+      }
+  }
 
-            renderer.render("events/transhipments/transportNationality.njk", json).map(BadRequest(_))
-          },
-          value =>
-            for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(TransportNationalityPage(eventIndex), value))
-              _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(TransportNationalityPage(eventIndex), mode, updatedAnswers))
-        )
+  private def renderPage(mrn: MovementReferenceNumber, mode: Mode, form: Form[Country], countries: Seq[Country], status: Status)(
+    implicit request: Request[AnyContent]): Future[Result] = {
+    val json = Json.obj(
+      "form"      -> form,
+      "mrn"       -> mrn,
+      "mode"      -> mode,
+      "countries" -> countryJsonList(form.value, countries)
+    )
+
+    renderer.render("events/transhipments/transportNationality.njk", json).map(status(_))
+  }
+
+  private def countryJsonList(value: Option[Country], countries: Seq[Country]): Seq[JsObject] = {
+    val countryJsonList = countries.map {
+      country =>
+        Json.obj("text" -> country.description, "value" -> country.code, "selected" -> value.contains(country))
+    }
+
+    Json.obj("value" -> "", "text" -> "") +: countryJsonList
   }
 }

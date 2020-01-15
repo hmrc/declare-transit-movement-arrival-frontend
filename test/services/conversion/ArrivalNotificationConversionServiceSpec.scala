@@ -132,7 +132,7 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
             .set(EventCountryPage(eventIndex), Country("Valid", routeEvent.countryCode, "country name")).success.value
             .set(EventReportedPage(eventIndex), routeEvent.alreadyInNcts).success.value
             .set(TransportIdentityPage(eventIndex), vehicularTranshipment.transportIdentity).success.value
-            .set(TransportNationalityPage(eventIndex), vehicularTranshipment.transportCountry).success.value
+            .set(TransportNationalityPage(eventIndex), Country("Valid",vehicularTranshipment.transportCountry, "country name")).success.value
 
           service.convertToArrivalNotification(userAnswers).value mustEqual arrivalNotification
       }
