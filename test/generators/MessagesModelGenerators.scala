@@ -17,17 +17,12 @@
 package generators
 
 import java.time.LocalDate
-
 import models.MovementReferenceNumber
-import models.domain._
-import models.domain.messages.ArrivalNotification
-import models.domain.messages.NormalNotification
-import models.domain.messages.SimplifiedNotification
+import models.messages._
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalacheck.Arbitrary
-import org.scalacheck.Gen
+import org.scalacheck.{Arbitrary, Gen}
 
-trait DomainModelGenerators extends Generators {
+trait MessagesModelGenerators extends Generators {
 
   private val maxNumberOfSeals = 99
 

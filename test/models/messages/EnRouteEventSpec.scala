@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package models.domain
+package models.messages
 
-import generators.DomainModelGenerators
-import models.domain.behaviours.JsonBehaviours
+import generators.MessagesModelGenerators
+import models.messages.behaviours.JsonBehaviours
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.FreeSpec
 import org.scalatest.MustMatchers
@@ -26,7 +26,7 @@ import play.api.libs.json.JsObject
 import play.api.libs.json.JsSuccess
 import play.api.libs.json.Json
 
-class EnRouteEventSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with DomainModelGenerators with JsonBehaviours {
+class EnRouteEventSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with MessagesModelGenerators with JsonBehaviours {
 
   "must deserialise" in {
 

@@ -19,7 +19,7 @@ package controllers.events.transhipments
 import base.SpecBase
 import forms.events.transhipments.ConfirmRemoveContainerFormProvider
 import matchers.JsonMatchers
-import models.domain.Container
+import models.messages.Container
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor

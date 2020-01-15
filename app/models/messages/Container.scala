@@ -14,22 +14,12 @@
  * limitations under the License.
  */
 
-package models.domain
+package models.messages
 
-import java.time.LocalDate
+import play.api.libs.json.{Json, OFormat}
 
-import play.api.libs.json.{Format, Json}
+case class Container(containerNumber: String)
 
-final case class Endorsement(date: Option[LocalDate], authority: Option[String], place: Option[String], country: Option[String])
-
-object Endorsement {
-
-  object Constants {
-    val authorityLength = 35
-    val placeLength     = 35
-    val countryLength   = 2
-  }
-
-  implicit lazy val format: Format[Endorsement] =
-    Json.format[Endorsement]
+object Container {
+  implicit val formats: OFormat[Container] = Json.format[Container]
 }

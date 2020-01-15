@@ -19,8 +19,7 @@ package services.conversion
 import java.time.LocalDate
 
 import derivable.DeriveNumberOfEvents
-import models.domain._
-import models.domain.messages.{ArrivalNotification, NormalNotification}
+import models.messages._
 import models.{TraderAddress, UserAnswers}
 import pages._
 import pages.events._

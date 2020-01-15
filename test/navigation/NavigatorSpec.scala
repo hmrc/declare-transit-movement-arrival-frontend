@@ -21,10 +21,10 @@ import controllers.events.seals.{routes => sealRoutes}
 import controllers.events.transhipments.{routes => transhipmentRoutes}
 import controllers.events.{routes => eventRoutes}
 import controllers.routes
-import generators.{DomainModelGenerators, Generators}
+import generators.{Generators, MessagesModelGenerators}
 import models.TranshipmentType.{DifferentContainer, DifferentContainerAndVehicle, DifferentVehicle}
 import models._
-import models.domain.{Container, EnRouteEvent}
+import models.messages.{Container, EnRouteEvent}
 import models.reference.Country
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
@@ -35,7 +35,7 @@ import pages.events.seals._
 import pages.events.transhipments._
 import queries.EventsQuery
 
-class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generators with DomainModelGenerators {
+class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generators with MessagesModelGenerators {
 
   val navigator: Navigator = app.injector.instanceOf[Navigator]
 

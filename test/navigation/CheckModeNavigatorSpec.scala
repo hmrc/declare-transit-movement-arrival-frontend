@@ -20,9 +20,9 @@ import base.SpecBase
 import controllers.events.{routes => eventRoutes}
 import controllers.events.transhipments.{routes => transhipmentRoutes}
 import controllers.routes
-import generators.{DomainModelGenerators, Generators}
+import generators.{Generators, MessagesModelGenerators}
 import models.TranshipmentType.{DifferentContainer, DifferentContainerAndVehicle, DifferentVehicle}
-import models.domain.Container
+import models.messages.Container
 import models.reference.Country
 import models.{CheckMode, GoodsLocation, NormalMode, TranshipmentType, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
@@ -40,7 +40,7 @@ import pages.events.transhipments.{
 }
 import queries.{ContainersQuery, EventsQuery}
 
-class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generators with DomainModelGenerators {
+class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generators with MessagesModelGenerators {
 
   private val navigator: Navigator = app.injector.instanceOf[Navigator]
 
@@ -650,7 +650,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
     }
 
     "go from 'Place of Notification' to CheckYourAnswer" in {
-      import models.domain.messages.NormalNotification.Constants.notificationPlaceLength
+      import models.messages.NormalNotification.Constants.notificationPlaceLength
 
       forAll(arbitrary[UserAnswers], stringsWithMaxLength(notificationPlaceLength)) {
         case (answers, placeOfNotification) =>

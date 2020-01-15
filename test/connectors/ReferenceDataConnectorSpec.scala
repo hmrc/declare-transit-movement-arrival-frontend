@@ -18,7 +18,7 @@ package connectors
 
 import base.SpecBase
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, okJson, urlEqualTo}
-import generators.DomainModelGenerators
+import generators.MessagesModelGenerators
 import helper.WireMockServerHandler
 import models.reference.{Country, CustomsOffice}
 import org.scalacheck.Gen
@@ -30,7 +30,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class ReferenceDataConnectorSpec extends SpecBase with WireMockServerHandler with DomainModelGenerators with ScalaCheckPropertyChecks {
+class ReferenceDataConnectorSpec extends SpecBase with WireMockServerHandler with MessagesModelGenerators with ScalaCheckPropertyChecks {
 
   private val startUrl = "transit-movements-trader-reference-data"
 

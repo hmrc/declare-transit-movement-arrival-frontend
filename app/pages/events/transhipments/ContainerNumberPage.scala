@@ -16,7 +16,7 @@
 
 package pages.events.transhipments
 
-import models.domain.Container
+import models.messages.Container
 import pages.QuestionPage
 import pages.events.SectionConstants
 import play.api.libs.json.JsPath

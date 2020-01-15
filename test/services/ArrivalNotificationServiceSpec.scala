@@ -20,8 +20,7 @@ import java.time.LocalDate
 
 import base.SpecBase
 import connectors.DestinationConnector
-import models.domain.TraderWithoutEori
-import models.domain.messages.NormalNotification
+import models.messages.{NormalNotification, TraderWithoutEori}
 import org.mockito.Matchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar

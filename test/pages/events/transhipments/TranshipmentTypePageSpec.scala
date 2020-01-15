@@ -16,15 +16,15 @@
 
 package pages.events.transhipments
 
-import generators.DomainModelGenerators
-import models.domain.Container
+import generators.MessagesModelGenerators
+import models.messages.Container
 import models.{TranshipmentType, UserAnswers}
 import models.TranshipmentType._
 import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
 import queries.ContainersQuery
 
-class TranshipmentTypePageSpec extends PageBehaviours with DomainModelGenerators {
+class TranshipmentTypePageSpec extends PageBehaviours with MessagesModelGenerators {
 
   val index = 0
 

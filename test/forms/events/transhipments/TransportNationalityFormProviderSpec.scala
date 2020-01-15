@@ -17,7 +17,7 @@
 package forms.events.transhipments
 
 import forms.behaviours.StringFieldBehaviours
-import models.domain.VehicularTranshipment
+import models.messages.VehicularTranshipment
 import play.api.data.FormError
 
 class TransportNationalityFormProviderSpec extends StringFieldBehaviours {

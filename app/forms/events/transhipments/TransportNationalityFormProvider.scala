@@ -18,7 +18,7 @@ package forms.events.transhipments
 
 import forms.mappings.Mappings
 import javax.inject.Inject
-import models.domain.VehicularTranshipment
+import models.messages.VehicularTranshipment
 import play.api.data.Form
 
 class TransportNationalityFormProvider @Inject() extends Mappings {
