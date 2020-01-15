@@ -21,7 +21,7 @@ import javax.inject.Inject
 import models.TraderAddress
 import play.api.data.Form
 import play.api.data.Forms._
-import models.domain.TraderWithEori.Constants.{cityLength, postCodeLength, streetAndNumberLength}
+import models.messages.TraderWithEori.Constants.{cityLength, postCodeLength, streetAndNumberLength}
 
 class TraderAddressFormProvider @Inject() extends Mappings {
 

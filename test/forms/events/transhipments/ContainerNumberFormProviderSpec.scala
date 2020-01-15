@@ -17,7 +17,7 @@
 package forms.events.transhipments
 
 import forms.behaviours.StringFieldBehaviours
-import models.domain.Transhipment
+import models.messages.Transhipment
 import play.api.data.FormError
 
 class ContainerNumberFormProviderSpec extends StringFieldBehaviours {

@@ -19,7 +19,7 @@ package forms
 import forms.mappings.Mappings
 import javax.inject.Inject
 import play.api.data.Form
-import models.domain.TraderWithEori.Constants.eoriLength
+import models.messages.TraderWithEori.Constants.eoriLength
 
 class TraderEoriFormProvider @Inject() extends Mappings {
 

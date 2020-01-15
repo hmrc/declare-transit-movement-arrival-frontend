@@ -17,10 +17,10 @@
 package viewModels
 
 import base.SpecBase
-import generators.DomainModelGenerators
+import generators.MessagesModelGenerators
 import models.CheckMode
 import models.TranshipmentType._
-import models.domain.Container
+import models.messages.Container
 import models.reference.Country
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.IncidentOnRoutePage
@@ -31,7 +31,7 @@ import uk.gov.hmrc.viewmodels.SummaryList.Row
 
 // format: off
 
-class CheckEventAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChecks with DomainModelGenerators {
+class CheckEventAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChecks with MessagesModelGenerators {
   "must be able to deserialize to a JsObject" in {
     val vm = CheckEventAnswersViewModel(Section(Seq.empty[Row]), Seq(Section(Seq.empty[Row])))
 

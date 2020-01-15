@@ -18,7 +18,7 @@ package forms.events.transhipments
 
 import forms.mappings.Mappings
 import javax.inject.Inject
-import models.domain.Transhipment
+import models.messages.Transhipment
 import play.api.data.Form
 
 class ContainerNumberFormProvider @Inject() extends Mappings {

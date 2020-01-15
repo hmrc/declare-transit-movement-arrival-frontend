@@ -19,7 +19,7 @@ package forms
 import forms.mappings.Mappings
 import javax.inject.Inject
 import play.api.data.Form
-import models.domain.messages.NormalNotification.Constants.notificationPlaceLength
+import models.messages.NormalNotification.Constants.notificationPlaceLength
 
 class PlaceOfNotificationFormProvider @Inject() extends Mappings {
 

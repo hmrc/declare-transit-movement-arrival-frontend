@@ -18,7 +18,7 @@ package forms
 
 import forms.mappings.Mappings
 import javax.inject.Inject
-import models.domain.messages.SimplifiedNotification
+import models.messages.SimplifiedNotification
 import play.api.data.Form
 
 class AuthorisedLocationFormProvider @Inject() extends Mappings {

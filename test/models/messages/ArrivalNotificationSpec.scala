@@ -14,21 +14,16 @@
  * limitations under the License.
  */
 
-package models.domain.messages
+package models.messages
 
-import generators.DomainModelGenerators
-import models.domain.ProcedureType
-import models.domain.behaviours.JsonBehaviours
+import generators.MessagesModelGenerators
+import models.messages.behaviours.JsonBehaviours
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalatest.FreeSpec
-import org.scalatest.MustMatchers
+import org.scalatest.{FreeSpec, MustMatchers}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.libs.json.JsError
-import play.api.libs.json.JsObject
-import play.api.libs.json.JsSuccess
-import play.api.libs.json.Json
+import play.api.libs.json.{JsError, JsObject, JsSuccess, Json}
 
-class ArrivalNotificationSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with DomainModelGenerators with JsonBehaviours {
+class ArrivalNotificationSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with MessagesModelGenerators with JsonBehaviours {
 
   "Normal notification" - {
 

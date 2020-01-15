@@ -19,10 +19,9 @@ package services.conversion
 import java.time.LocalDate
 
 import base.SpecBase
-import generators.DomainModelGenerators
+import generators.MessagesModelGenerators
 import models.GoodsLocation.BorderForceOffice
-import models.domain.messages.NormalNotification
-import models.domain._
+import models.messages.{NormalNotification, _}
 import models.reference.{Country, CustomsOffice}
 import models.{TraderAddress, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
@@ -33,7 +32,7 @@ import pages.events._
 import pages.events.transhipments._
 import queries.{ContainersQuery, EventsQuery}
 
-class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckPropertyChecks with DomainModelGenerators {
+class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckPropertyChecks with MessagesModelGenerators {
   // format: off
   private val service = injector.instanceOf[ArrivalNotificationConversionService]
 

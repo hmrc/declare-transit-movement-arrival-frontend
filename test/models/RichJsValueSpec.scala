@@ -16,7 +16,7 @@
 
 package models
 
-import generators.DomainModelGenerators
+import generators.MessagesModelGenerators
 import org.scalacheck.Gen
 import org.scalacheck.Shrink
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -25,7 +25,7 @@ import org.scalatest.MustMatchers
 import org.scalatest.OptionValues
 import play.api.libs.json._
 
-class RichJsValueSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with OptionValues with DomainModelGenerators {
+class RichJsValueSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with OptionValues with MessagesModelGenerators {
 
   val min                           = 2
   val max                           = 10

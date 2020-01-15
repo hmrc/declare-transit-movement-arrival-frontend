@@ -19,7 +19,7 @@ package forms.events
 import forms.mappings.Mappings
 import javax.inject.Inject
 import play.api.data.Form
-import models.domain.EnRouteEvent.Constants.placeLength
+import models.messages.EnRouteEvent.Constants.placeLength
 
 class EventPlaceFormProvider @Inject() extends Mappings {
 
