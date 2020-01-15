@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package forms
+package forms.events.transhipments
 
 import forms.behaviours.BooleanFieldBehaviours
-import forms.events.transhipments.ConfirmRemoveContainerFormProvider
 import play.api.data.FormError
 
 class ConfirmRemoveContainerFormProviderSpec extends BooleanFieldBehaviours {
