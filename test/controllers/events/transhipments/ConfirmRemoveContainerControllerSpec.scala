@@ -19,13 +19,14 @@ package controllers.events.transhipments
 import base.SpecBase
 import forms.events.transhipments.ConfirmRemoveContainerFormProvider
 import matchers.JsonMatchers
+import models.messages.Container
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.events.transhipments.ConfirmRemoveContainerPage
+import pages.events.transhipments.ContainerNumberPage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -44,8 +45,12 @@ class ConfirmRemoveContainerControllerSpec extends SpecBase with MockitoSugar wi
   private val formProvider = new ConfirmRemoveContainerFormProvider()
   private val form         = formProvider()
 
-  private lazy val confirmRemoveContainerRoute    = routes.ConfirmRemoveContainerController.onPageLoad(mrn, eventIndex, NormalMode).url
+  private lazy val confirmRemoveContainerRoute    = routes.ConfirmRemoveContainerController.onPageLoad(mrn, eventIndex, containerIndex, NormalMode).url
   private lazy val confirmRemoveContainerTemplate = "events/transhipments/confirmRemoveContainer.njk"
+
+  private val containerNumber = "test"
+  private val presetUserAnswers =
+    emptyUserAnswers.set(ContainerNumberPage(eventIndex, containerIndex), Container(containerNumber)).success.value
 
   "ConfirmRemoveContainer Controller" - {
 
@@ -54,7 +59,7 @@ class ConfirmRemoveContainerControllerSpec extends SpecBase with MockitoSugar wi
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application    = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application    = applicationBuilder(userAnswers = Some(presetUserAnswers)).build()
       val request        = FakeRequest(GET, confirmRemoveContainerRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
@@ -66,10 +71,11 @@ class ConfirmRemoveContainerControllerSpec extends SpecBase with MockitoSugar wi
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form"   -> form,
-        "mode"   -> NormalMode,
-        "mrn"    -> mrn,
-        "radios" -> Radios.yesNo(form("value"))
+        "form"            -> form,
+        "mode"            -> NormalMode,
+        "mrn"             -> mrn,
+        "containerNumber" -> containerNumber,
+        "radios"          -> Radios.yesNo(form("value"))
       )
 
       templateCaptor.getValue mustEqual confirmRemoveContainerTemplate
@@ -78,14 +84,14 @@ class ConfirmRemoveContainerControllerSpec extends SpecBase with MockitoSugar wi
       application.stop()
     }
 
-    "must redirect to the next page when valid data is submitted" in {
+    "must redirect to the next page when valid data is submitted and call to remove data when true" in {
 
       val mockSessionRepository = mock[SessionRepository]
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        applicationBuilder(userAnswers = Some(presetUserAnswers))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
@@ -98,9 +104,52 @@ class ConfirmRemoveContainerControllerSpec extends SpecBase with MockitoSugar wi
 
       val result = route(application, request).value
 
+      val updateAnswers = UserAnswers(
+        id          = presetUserAnswers.id,
+        data        = presetUserAnswers.remove(ContainerNumberPage(eventIndex, containerIndex)).success.value.data,
+        lastUpdated = presetUserAnswers.lastUpdated
+      )
+
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual onwardRoute.url
+
+      verify(mockSessionRepository, times(1)).set(updateAnswers)
+
+      application.stop()
+    }
+
+    "must redirect to the next page when valid data is submitted and not call to remove data when false" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(presetUserAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      val request =
+        FakeRequest(POST, confirmRemoveContainerRoute)
+          .withFormUrlEncodedBody(("value", "false"))
+
+      val result = route(application, request).value
+
+      val updateAnswers = UserAnswers(
+        id          = presetUserAnswers.id,
+        data        = presetUserAnswers.remove(ContainerNumberPage(eventIndex, containerIndex)).success.value.data,
+        lastUpdated = presetUserAnswers.lastUpdated
+      )
+
+      status(result) mustEqual SEE_OTHER
+
+      redirectLocation(result).value mustEqual onwardRoute.url
+
+      verify(mockSessionRepository, times(0)).set(updateAnswers)
 
       application.stop()
     }
@@ -110,7 +159,7 @@ class ConfirmRemoveContainerControllerSpec extends SpecBase with MockitoSugar wi
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application    = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application    = applicationBuilder(userAnswers = Some(presetUserAnswers)).build()
       val request        = FakeRequest(POST, confirmRemoveContainerRoute).withFormUrlEncodedBody(("value", ""))
       val boundForm      = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])

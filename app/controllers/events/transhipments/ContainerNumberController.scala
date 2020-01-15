@@ -19,7 +19,7 @@ package controllers.events.transhipments
 import controllers.actions._
 import forms.events.transhipments.ContainerNumberFormProvider
 import javax.inject.Inject
-import models.domain.Container
+import models.messages.Container
 import models.{Mode, MovementReferenceNumber}
 import navigation.Navigator
 import pages.events.transhipments.ContainerNumberPage

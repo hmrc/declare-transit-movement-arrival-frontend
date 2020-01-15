@@ -21,20 +21,33 @@ import controllers.events.{routes => eventRoutes}
 import controllers.events.seals.{routes => sealRoutes}
 import controllers.events.transhipments.{routes => transhipmentRoutes}
 import controllers.routes
-import generators.{DomainModelGenerators, Generators}
+import generators.{Generators, MessagesModelGenerators}
 import models.TranshipmentType.{DifferentContainer, DifferentContainerAndVehicle, DifferentVehicle}
-import models.domain.Container
-import models.{CheckMode, GoodsLocation, TranshipmentType, UserAnswers}
+import models.messages.Container
+import models.reference.Country
+import models.{CheckMode, GoodsLocation, NormalMode, TranshipmentType, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
+import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.events._
 import pages._
 import pages.events.seals.{HaveSealsChangedPage, SealIdentityPage}
-import pages.events.transhipments.{AddContainerPage, ContainerNumberPage, TranshipmentTypePage, TransportIdentityPage, TransportNationalityPage}
+import pages.events.transhipments.{
+  AddContainerPage,
+  ConfirmRemoveContainerPage,
+  ContainerNumberPage,
+  TranshipmentTypePage,
+  TransportIdentityPage,
+  TransportNationalityPage
+}
+import queries.{ContainersQuery, EventsQuery}
 
-class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generators with DomainModelGenerators {
+class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generators with MessagesModelGenerators {
 
-  val navigator: Navigator = app.injector.instanceOf[Navigator]
+  private val navigator: Navigator = app.injector.instanceOf[Navigator]
+
+  private val country: Country = Country("Valid", "GB", "United Kingdom")
+
   "Navigator in Check mode" - {
     "must go from a page that doesn't exist in the edit route map  to Check Your Answers" in {
       case object UnknownPage extends Page
@@ -185,8 +198,45 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
         }
       }
 
-      "to Check Event Answers when true and they have answered TranshipmentType" in {
-        forAll(arbitrary[UserAnswers], arbitrary[TranshipmentType]) {
+      "to Check Event Answers when true and they have answered TranshipmentType and is Vehicle type" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val ua = answers
+              .set(IsTranshipmentPage(eventIndex), true)
+              .success
+              .value
+              .set(TranshipmentTypePage(eventIndex), DifferentVehicle)
+              .success
+              .value
+
+            navigator
+              .nextPage(IsTranshipmentPage(eventIndex), CheckMode, ua)
+              .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, eventIndex))
+        }
+      }
+
+      "to Check Event Answers when true and they have answered TranshipmentType and is Container or Both type and has a container" in {
+        forAll(arbitrary[UserAnswers], Gen.oneOf(DifferentContainer, DifferentContainerAndVehicle), arbitrary[Container]) {
+          (answers, transhipmentType, container) =>
+            val ua = answers
+              .set(IsTranshipmentPage(eventIndex), true)
+              .success
+              .value
+              .set(TranshipmentTypePage(eventIndex), transhipmentType)
+              .success
+              .value
+              .set(ContainerNumberPage(eventIndex, containerIndex), container)
+              .success
+              .value
+
+            navigator
+              .nextPage(IsTranshipmentPage(eventIndex), CheckMode, ua)
+              .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, eventIndex))
+        }
+      }
+
+      "to TranshipmentType when true and they have answered TranshipmentType and is Container or Both type there are no containers" in {
+        forAll(arbitrary[UserAnswers], Gen.oneOf(DifferentContainer, DifferentContainerAndVehicle)) {
           (answers, transhipmentType) =>
             val ua = answers
               .set(IsTranshipmentPage(eventIndex), true)
@@ -195,10 +245,13 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
               .set(TranshipmentTypePage(eventIndex), transhipmentType)
               .success
               .value
+              .remove(ContainersQuery(eventIndex))
+              .success
+              .value
 
             navigator
               .nextPage(IsTranshipmentPage(eventIndex), CheckMode, ua)
-              .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, eventIndex))
+              .mustBe(transhipmentRoutes.TranshipmentTypeController.onPageLoad(ua.id, eventIndex, CheckMode))
         }
       }
 
@@ -348,7 +401,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
       }
 
       "to CheckEventAnswers when 'Both' is selected and ContainerNumber and vehicle identity and nationality questions have been answered" in {
-        forAll(arbitrary[UserAnswers], arbitrary[Container], arbitrary[String], arbitrary[String]) {
+        forAll(arbitrary[UserAnswers], arbitrary[Container], arbitrary[String], arbitrary[Country]) {
           (answers, container, transportIdentity, transportNationality) =>
             val updatedUserAnswers = answers
               .set(TranshipmentTypePage(eventIndex), DifferentContainerAndVehicle)
@@ -635,7 +688,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
     }
 
     "go from 'Place of Notification' to CheckYourAnswer" in {
-      import models.domain.messages.NormalNotification.Constants.notificationPlaceLength
+      import models.messages.NormalNotification.Constants.notificationPlaceLength
 
       forAll(arbitrary[UserAnswers], stringsWithMaxLength(notificationPlaceLength)) {
         case (answers, placeOfNotification) =>
@@ -645,6 +698,93 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
             .nextPage(PlaceOfNotificationPage, CheckMode, updatedUserAnswers)
             .mustBe(routes.CheckYourAnswersController.onPageLoad(updatedUserAnswers.id))
       }
+    }
+
+    "must go from Confirm remove container page" - {
+
+      "to Add container page when multiple containers exist" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers = answers
+              .remove(EventsQuery)
+              .success
+              .value
+              .set(EventCountryPage(eventIndex), country)
+              .success
+              .value
+              .set(EventPlacePage(eventIndex), "place name")
+              .success
+              .value
+              .set(EventReportedPage(eventIndex), true)
+              .success
+              .value
+              .set(IsTranshipmentPage(eventIndex), true)
+              .success
+              .value
+              .set(TranshipmentTypePage(eventIndex), DifferentContainer)
+              .success
+              .value
+              .set(ContainerNumberPage(eventIndex, eventIndex), Container("1"))
+              .success
+              .value
+              .set(ContainerNumberPage(eventIndex, eventIndex + 1), Container("2"))
+              .success
+              .value
+            navigator
+              .nextPage(ConfirmRemoveContainerPage(eventIndex), CheckMode, updatedAnswers)
+              .mustBe(transhipmentRoutes.AddContainerController.onPageLoad(updatedAnswers.id, eventIndex, CheckMode))
+        }
+      }
+
+      "to isTranshipment page when no containers exist" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers = answers
+              .remove(EventsQuery)
+              .success
+              .value
+              .set(EventCountryPage(eventIndex), country)
+              .success
+              .value
+              .set(EventPlacePage(eventIndex), "place name")
+              .success
+              .value
+              .set(EventReportedPage(eventIndex), true)
+              .success
+              .value
+              .set(IsTranshipmentPage(eventIndex), true)
+              .success
+              .value
+              .set(TranshipmentTypePage(eventIndex), DifferentContainer)
+              .success
+              .value
+            navigator
+              .nextPage(ConfirmRemoveContainerPage(eventIndex), CheckMode, updatedAnswers)
+              .mustBe(eventRoutes.IsTranshipmentController.onPageLoad(updatedAnswers.id, eventIndex, CheckMode))
+        }
+      }
+
+      "must go from incident on route page" - {
+
+        "to event country page when user selects yes" in {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val updatedAnswers = answers
+                .remove(IncidentOnRoutePage)
+                .success
+                .value
+                .set(IncidentOnRoutePage, true)
+                .success
+                .value
+              navigator
+                .nextPage(IncidentOnRoutePage, CheckMode, updatedAnswers)
+                .mustBe(eventRoutes.EventCountryController.onPageLoad(answers.id, eventIndex, NormalMode))
+
+          }
+
+        }
+      }
+
     }
   }
 }

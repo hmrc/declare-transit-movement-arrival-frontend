@@ -17,16 +17,16 @@
 package forms.events.transhipments
 
 import forms.behaviours.StringFieldBehaviours
-import models.domain.VehicularTranshipment
+import models.messages.VehicularTranshipment
 import play.api.data.FormError
+import models.reference._
 
 class TransportNationalityFormProviderSpec extends StringFieldBehaviours {
 
-  val requiredKey = "transportNationality.error.required"
-  val lengthKey   = "transportNationality.error.length"
-  val maxLength   = VehicularTranshipment.Constants.transportCountryLength
-
-  val form = new TransportNationalityFormProvider()()
+  val requiredKey    = "transportNationality.error.required"
+  val lengthKey      = "transportNationality.error.length"
+  val maxLength: Int = VehicularTranshipment.Constants.transportCountryLength
+  val form           = new TransportNationalityFormProvider()(Seq(Country("valid", "AD", "Andorra")))
 
   ".value" - {
 
@@ -38,17 +38,25 @@ class TransportNationalityFormProviderSpec extends StringFieldBehaviours {
       stringsWithMaxLength(maxLength)
     )
 
-    behave like fieldWithMaxLength(
-      form,
-      fieldName,
-      maxLength   = maxLength,
-      lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
-    )
-
     behave like mandatoryField(
       form,
       fieldName,
       requiredError = FormError(fieldName, requiredKey)
     )
+
+    "not bind if country code does not exist in the country list" in {
+
+      val boundForm = form.bind(Map("value" -> "foobar"))
+      val field     = boundForm("value")
+      field.errors mustNot be(empty)
+    }
+
+    "bind a country code which is in the list" in {
+
+      val boundForm = form.bind(Map("value" -> "AD"))
+      val field     = boundForm("value")
+      field.errors must be(empty)
+    }
+
   }
 }

@@ -21,10 +21,10 @@ import controllers.events.seals.{routes => sealRoutes}
 import controllers.events.transhipments.{routes => transhipmentRoutes}
 import controllers.events.{routes => eventRoutes}
 import controllers.routes
-import generators.{DomainModelGenerators, Generators}
+import generators.{Generators, MessagesModelGenerators}
 import models.TranshipmentType.{DifferentContainer, DifferentContainerAndVehicle, DifferentVehicle}
 import models._
-import models.domain.{Container, EnRouteEvent}
+import models.messages.{Container, EnRouteEvent}
 import models.reference.Country
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
@@ -35,7 +35,7 @@ import pages.events.seals._
 import pages.events.transhipments._
 import queries.EventsQuery
 
-class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generators with DomainModelGenerators {
+class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generators with MessagesModelGenerators {
 
   val navigator: Navigator = app.injector.instanceOf[Navigator]
 
@@ -345,6 +345,71 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
               navigator
                 .nextPage(IsTranshipmentPage(eventIndex), NormalMode, updatedAnswers)
                 .mustBe(routes.SessionExpiredController.onPageLoad())
+          }
+        }
+      }
+
+      "must go from Confirm remove container page" - {
+
+        "to Add container page when multiple containers exist" in {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val updatedAnswers = answers
+                .remove(EventsQuery)
+                .success
+                .value
+                .set(EventCountryPage(eventIndex), country)
+                .success
+                .value
+                .set(EventPlacePage(eventIndex), "place name")
+                .success
+                .value
+                .set(EventReportedPage(eventIndex), true)
+                .success
+                .value
+                .set(IsTranshipmentPage(eventIndex), true)
+                .success
+                .value
+                .set(TranshipmentTypePage(eventIndex), DifferentContainer)
+                .success
+                .value
+                .set(ContainerNumberPage(eventIndex, eventIndex), Container("1"))
+                .success
+                .value
+                .set(ContainerNumberPage(eventIndex, eventIndex + 1), Container("2"))
+                .success
+                .value
+              navigator
+                .nextPage(ConfirmRemoveContainerPage(eventIndex), NormalMode, updatedAnswers)
+                .mustBe(transhipmentRoutes.AddContainerController.onPageLoad(updatedAnswers.id, eventIndex, NormalMode))
+          }
+        }
+
+        "to isTranshipment page when no containers exist" in {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val updatedAnswers = answers
+                .remove(EventsQuery)
+                .success
+                .value
+                .set(EventCountryPage(eventIndex), country)
+                .success
+                .value
+                .set(EventPlacePage(eventIndex), "place name")
+                .success
+                .value
+                .set(EventReportedPage(eventIndex), true)
+                .success
+                .value
+                .set(IsTranshipmentPage(eventIndex), true)
+                .success
+                .value
+                .set(TranshipmentTypePage(eventIndex), DifferentContainer)
+                .success
+                .value
+              navigator
+                .nextPage(ConfirmRemoveContainerPage(eventIndex), NormalMode, updatedAnswers)
+                .mustBe(eventRoutes.IsTranshipmentController.onPageLoad(updatedAnswers.id, eventIndex, NormalMode))
           }
         }
       }

@@ -17,9 +17,10 @@
 package viewModels
 
 import base.SpecBase
-import generators.DomainModelGenerators
+import generators.MessagesModelGenerators
+import models.CheckMode
 import models.TranshipmentType._
-import models.domain.Container
+import models.messages.Container
 import models.reference.Country
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.IncidentOnRoutePage
@@ -31,7 +32,7 @@ import uk.gov.hmrc.viewmodels.SummaryList.Row
 
 // format: off
 
-class CheckEventAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChecks with DomainModelGenerators {
+class CheckEventAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChecks with MessagesModelGenerators {
   "must be able to deserialize to a JsObject" in {
     val vm = CheckEventAnswersViewModel(Section(Seq.empty[Row]), Seq(Section(Seq.empty[Row])))
 
@@ -49,7 +50,7 @@ class CheckEventAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChe
         .set(IncidentInformationPage(eventIndex), "value").success.value
         .set(HaveSealsChangedPage(eventIndex), false).success.value
 
-      val vm = CheckEventAnswersViewModel(ua, eventIndex)
+      val vm = CheckEventAnswersViewModel(ua, eventIndex, CheckMode)
 
       vm.eventInfo.sectionTitle must not be defined
       vm.eventInfo.rows.length mustEqual 5
@@ -100,7 +101,7 @@ class CheckEventAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChe
         .set(EventReportedPage(eventIndex), true).success.value
         .set(IsTranshipmentPage(eventIndex), false).success.value
 
-      val vm = CheckEventAnswersViewModel(ua, eventIndex)
+      val vm = CheckEventAnswersViewModel(ua, eventIndex, CheckMode)
 
       vm.eventInfo.sectionTitle must not be defined
       vm.eventInfo.rows.length mustEqual 4
@@ -118,9 +119,9 @@ class CheckEventAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChe
         .set(IsTranshipmentPage(eventIndex), true).success.value
         .set(TranshipmentTypePage(eventIndex), DifferentVehicle).success.value
         .set(TransportIdentityPage(eventIndex), "value").success.value
-        .set(TransportNationalityPage(eventIndex), "TT").success.value
+        .set(TransportNationalityPage(eventIndex), Country("Valid","TT","Some country")).success.value
 
-      val vm = CheckEventAnswersViewModel(ua, eventIndex)
+      val vm = CheckEventAnswersViewModel(ua, eventIndex, CheckMode)
 
       vm.eventInfo.sectionTitle must not be defined
       vm.eventInfo.rows.length mustEqual 3
@@ -143,7 +144,7 @@ class CheckEventAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChe
         .set(ContainerNumberPage(eventIndex, 1), Container("value")).success.value
         .set(ContainerNumberPage(eventIndex, 2), Container("value")).success.value
 
-      val vm = CheckEventAnswersViewModel(ua, eventIndex)
+      val vm = CheckEventAnswersViewModel(ua, eventIndex, CheckMode)
 
       vm.eventInfo.sectionTitle must not be defined
       vm.eventInfo.rows.length mustEqual 3
@@ -169,9 +170,9 @@ class CheckEventAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChe
         .set(ContainerNumberPage(eventIndex, 1), Container("value")).success.value
         .set(ContainerNumberPage(eventIndex, 2), Container("value")).success.value
         .set(TransportIdentityPage(eventIndex), "value").success.value
-        .set(TransportNationalityPage(eventIndex), "TT").success.value
+        .set(TransportNationalityPage(eventIndex), Country("Valid","TT","Some country")).success.value
 
-      val vm = CheckEventAnswersViewModel(ua, eventIndex)
+      val vm = CheckEventAnswersViewModel(ua, eventIndex, CheckMode)
 
       vm.eventInfo.sectionTitle must not be defined
       vm.eventInfo.rows.length mustEqual 3
@@ -198,7 +199,7 @@ class CheckEventAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChe
         .set(IsTranshipmentPage(eventIndex), true).success.value
         .set(EventReportedPage(eventIndex), false).success.value
 
-      val vm = CheckEventAnswersViewModel(ua, eventIndex)
+      val vm = CheckEventAnswersViewModel(ua, eventIndex, CheckMode)
 
       vm.eventInfo.sectionTitle must not be defined
       vm.eventInfo.rows.length mustEqual 3

@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package models.domain
+package models.messages
 
-import generators.DomainModelGenerators
-import models.domain.behaviours.JsonBehaviours
+import generators.MessagesModelGenerators
+import models.messages.behaviours.JsonBehaviours
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.{FreeSpec, MustMatchers}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.{JsObject, JsSuccess, Json}
 
-class EventDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with DomainModelGenerators with JsonBehaviours {
+class EventDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with MessagesModelGenerators with JsonBehaviours {
 
   "Incident" - {
 

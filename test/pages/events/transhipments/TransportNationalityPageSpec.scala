@@ -16,6 +16,7 @@
 
 package pages.events.transhipments
 
+import models.reference.Country
 import pages.behaviours.PageBehaviours
 
 class TransportNationalityPageSpec extends PageBehaviours {
@@ -24,10 +25,10 @@ class TransportNationalityPageSpec extends PageBehaviours {
 
   "TransportNationalityPage" - {
 
-    beRetrievable[String](TransportNationalityPage(index))
+    beRetrievable[Country](TransportNationalityPage(index))
 
-    beSettable[String](TransportNationalityPage(index))
+    beSettable[Country](TransportNationalityPage(index))
 
-    beRemovable[String](TransportNationalityPage(index))
+    beRemovable[Country](TransportNationalityPage(index))
   }
 }

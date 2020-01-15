@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package models.domain
+package models.messages
 
 import java.time.LocalDate
 
-import generators.DomainModelGenerators
-import models.domain.behaviours.JsonBehaviours
+import generators.MessagesModelGenerators
+import models.messages.behaviours.JsonBehaviours
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.FreeSpec
 import org.scalatest.MustMatchers
@@ -27,7 +27,7 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.JsSuccess
 import play.api.libs.json.Json
 
-class EndorsementSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with DomainModelGenerators with JsonBehaviours {
+class EndorsementSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with MessagesModelGenerators with JsonBehaviours {
 
   mustHaveDualReadsAndWrites(arbitrary[Endorsement])
 

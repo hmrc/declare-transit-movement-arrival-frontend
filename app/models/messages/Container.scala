@@ -14,19 +14,12 @@
  * limitations under the License.
  */
 
-package pages
+package models.messages
 
-import pages.behaviours.PageBehaviours
-import pages.events.transhipments.ConfirmRemoveContainerPage
+import play.api.libs.json.{Json, OFormat}
 
-class ConfirmRemoveContainerPageSpec extends PageBehaviours {
+case class Container(containerNumber: String)
 
-  "ConfirmRemoveContainerPage" - {
-
-    beRetrievable[Boolean](ConfirmRemoveContainerPage)
-
-    beSettable[Boolean](ConfirmRemoveContainerPage)
-
-    beRemovable[Boolean](ConfirmRemoveContainerPage)
-  }
+object Container {
+  implicit val formats: OFormat[Container] = Json.format[Container]
 }
