@@ -26,20 +26,20 @@ class AddSealHelper(userAnswers: UserAnswers) {
 
   def sealRow(eventIndex: Int, sealIndex: Int): Option[Row] =
     userAnswers.get(SealIdentityPage(eventIndex, sealIndex)).map {
-       answer =>
+      answer =>
         Row(
-          key   = Key(msg"addContainer.sealList.label".withArgs(sealIndex + 1), classes = Seq("govuk-!-width-one-half")), // TODO: Move harded coded interpretation of index to an Index Model
+          key   = Key(msg"addSeal.sealList.label".withArgs(sealIndex + 1), classes = Seq("govuk-!-width-one-half")), // TODO: Move harded coded interpretation of index to an Index Model
           value = Value(lit"$answer"),
           actions = List(
             Action(
               content            = msg"site.edit",
               href               = SealIdentityController.onPageLoad(userAnswers.id, eventIndex, sealIndex, CheckMode).url,
-              visuallyHiddenText = Some(msg"addContainer.sealList.change".withArgs(answer)) // TODO: Prefix in message file for is hard coded, should be the same as: site.edit.hidden
+              visuallyHiddenText = Some(msg"addSeal.sealList.change".withArgs(answer)) // TODO: Prefix in message file for is hard coded, should be the same as: site.edit.hidden
             ),
             Action(
               content            = msg"site.delete",
               href               = "#",
-              visuallyHiddenText = Some(msg"addContainer.sealList.delete".withArgs(answer)) // TODO: Prefix in message file for is hard coded, should be the same as: site.delete.hidden
+              visuallyHiddenText = Some(msg"addSeal.sealList.delete".withArgs(answer)) // TODO: Prefix in message file for is hard coded, should be the same as: site.delete.hidden
             )
           )
         )

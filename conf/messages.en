@@ -338,8 +338,8 @@ sealIdentity.error.length = Seal number or mark must be 20 characters or less
 
 addSeal.title.singular = You have added {0} seal
 addSeal.title.plural = You have added {0} seals
-addSeal.title = You have added {0} container
-addSeal.heading = You have added {0} container
+addSeal.title = You have added {0} seal
+addSeal.heading = You have added {0} seal
 addSeal.radio.label = Do you need to add another seal?
 addSeal.checkYourAnswersLabel = You have added {0} seals
 addSeal.error.required = Select yes if you need to add another seal
