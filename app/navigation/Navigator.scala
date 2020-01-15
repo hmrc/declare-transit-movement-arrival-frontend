@@ -27,7 +27,7 @@ import models.TranshipmentType.{DifferentContainer, DifferentContainerAndVehicle
 import models.{CheckMode, Mode, NormalMode, UserAnswers}
 import pages._
 import pages.events._
-import pages.events.seals.{AddSealPage, HaveSealsChangedPage, SealIdentityPage}
+import pages.events.seals._
 import pages.events.transhipments._
 import play.api.mvc.Call
 
@@ -61,6 +61,7 @@ class Navigator @Inject()() {
       //TODO Navigation from seal identity page should go to AddSealController when seal indexing is complete
     case SealIdentityPage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
     //case AddSealPage(index) => addSeal(index)
+    case ConfirmRemoveContainerPage(index) => confirmRemoveContainerRoute(index, NormalMode)
   }
 
   private val checkRouteMap: PartialFunction[Page, UserAnswers => Option[Call]] = {
@@ -76,6 +77,10 @@ class Navigator @Inject()() {
     case TransportNationalityPage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
     case AddContainerPage(index) => addContainerCheckRoute(index)
     case EventReportedPage(index) => eventReportedCheckRoute(index)
+    case ConfirmRemoveContainerPage(index) => confirmRemoveContainerRoute(index, CheckMode)
+    case IncidentOnRoutePage => incidentOnRoute
+
+
   }
 
   def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = mode match {
@@ -98,7 +103,13 @@ class Navigator @Inject()() {
           }
       }
   }
+
   // format: on
+  def confirmRemoveContainerRoute(index: Int, mode: Mode)(ua: UserAnswers): Option[Call] = ua.get(DeriveNumberOfContainers(index)) match {
+    case Some(0) | None => Some(eventRoutes.IsTranshipmentController.onPageLoad(ua.id, index, mode))
+    case _              => Some(transhipmentRoutes.AddContainerController.onPageLoad(ua.id, index, mode))
+  }
+
   private def addContainer(index: Int)(ua: UserAnswers): Option[Call] = ua.get(AddContainerPage(index)) map {
     case true =>
       // TODO: Need to consolidate with same logic for initialsation of index in transhipmentType
@@ -128,9 +139,8 @@ class Navigator @Inject()() {
   private def transhipmentType(index: Int)(ua: UserAnswers): Option[Call] = ua.get(transhipments.TranshipmentTypePage(index)) map {
     case DifferentContainer | DifferentContainerAndVehicle =>
       ua.get(DeriveNumberOfContainers(index)) match {
-        case Some(_) => transhipmentRoutes.AddContainerController.onPageLoad(ua.id, index, NormalMode)
-        // TODO: Need to consolidate with same logic for initialsation of index in addContainer
-        case None => transhipmentRoutes.ContainerNumberController.onPageLoad(ua.id, index, 0, NormalMode)
+        case Some(0) | None => transhipmentRoutes.ContainerNumberController.onPageLoad(ua.id, index, 0, NormalMode)
+        case Some(_)        => transhipmentRoutes.AddContainerController.onPageLoad(ua.id, index, NormalMode)
       }
     case DifferentVehicle => transhipmentRoutes.TransportIdentityController.onPageLoad(ua.id, index, NormalMode)
   }
@@ -185,11 +195,14 @@ class Navigator @Inject()() {
       ua.get(EventReportedPage(index)),
       ua.get(IsTranshipmentPage(index)),
       ua.get(IncidentInformationPage(index)),
-      ua.get(TranshipmentTypePage(index))
+      ua.get(TranshipmentTypePage(index)),
+      ua.get(DeriveNumberOfContainers(index))
     ) match {
-      case (Some(false), Some(false), None, _) => Some(eventRoutes.IncidentInformationController.onPageLoad(ua.id, index, CheckMode))
-      case (_, Some(true), _, None)            => Some(transhipmentRoutes.TranshipmentTypeController.onPageLoad(ua.id, index, CheckMode))
-      case _                                   => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
+      case (Some(false), Some(false), None, _, _) => Some(eventRoutes.IncidentInformationController.onPageLoad(ua.id, index, CheckMode))
+      case (_, Some(true), _, None, _)            => Some(transhipmentRoutes.TranshipmentTypeController.onPageLoad(ua.id, index, CheckMode))
+      case (_, Some(true), _, Some(DifferentContainer) | Some(DifferentContainerAndVehicle), Some(0) | None) =>
+        Some(transhipmentRoutes.TranshipmentTypeController.onPageLoad(ua.id, index, CheckMode))
+      case _ => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
     }
 
   private def goodsLocationCheckRoute(ua: UserAnswers): Option[Call] =

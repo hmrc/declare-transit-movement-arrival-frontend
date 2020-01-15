@@ -79,7 +79,7 @@ class AddContainerControllerSpec extends SpecBase with MockitoSugar with Nunjuck
         "mode"       -> NormalMode,
         "mrn"        -> mrn,
         "radios"     -> Radios.yesNo(form("value")),
-        "containers" -> Section(Seq(AddContainerHelper(ua).containerRow(eventIndex, containerIndex).value))
+        "containers" -> Section(Seq(AddContainerHelper(ua).containerRow(eventIndex, containerIndex, NormalMode).value))
       )
 
       templateCaptor.getValue mustEqual addContainerTemplate

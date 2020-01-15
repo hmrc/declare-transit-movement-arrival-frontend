@@ -18,6 +18,7 @@ package viewModels
 
 import base.SpecBase
 import generators.DomainModelGenerators
+import models.NormalMode
 import models.domain.Container
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -35,7 +36,7 @@ class AddContainerViewModelSpec extends SpecBase with ScalaCheckPropertyChecks w
 
   "pageTitle" - {
     "pageTitle defaults to 0 when there are no containers" in {
-      val vm = AddContainerViewModel(eventIndex, emptyUserAnswers)
+      val vm = AddContainerViewModel(eventIndex, emptyUserAnswers, NormalMode)
 
       assert(vm.pageTitle.resolve.contains("0"))
     }
@@ -48,7 +49,7 @@ class AddContainerViewModelSpec extends SpecBase with ScalaCheckPropertyChecks w
               ua.set(ContainerNumberPage(eventIndex, containerIndex), container).success.value
           }
 
-          val vm = AddContainerViewModel(eventIndex, userAnswers)
+          val vm = AddContainerViewModel(eventIndex, userAnswers, NormalMode)
 
           assert(vm.pageTitle.resolve.contains(containers.length.toString))
       }
@@ -57,7 +58,7 @@ class AddContainerViewModelSpec extends SpecBase with ScalaCheckPropertyChecks w
 
   "containers" - {
     "is empty when there are no containers is UserAnswer" in {
-      val vm = AddContainerViewModel(eventIndex, emptyUserAnswers)
+      val vm = AddContainerViewModel(eventIndex, emptyUserAnswers, NormalMode)
 
       vm.containers must not be (defined)
     }
@@ -70,7 +71,7 @@ class AddContainerViewModelSpec extends SpecBase with ScalaCheckPropertyChecks w
               ua.set(ContainerNumberPage(eventIndex, containerIndex), container).success.value
           }
 
-          val vm = AddContainerViewModel(eventIndex, userAnswers)
+          val vm = AddContainerViewModel(eventIndex, userAnswers, NormalMode)
 
           vm.containers must be(defined)
 

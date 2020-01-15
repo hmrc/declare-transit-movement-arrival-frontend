@@ -18,6 +18,7 @@ package viewModels
 
 import base.SpecBase
 import generators.DomainModelGenerators
+import models.CheckMode
 import models.TranshipmentType._
 import models.domain.Container
 import models.reference.Country
@@ -47,7 +48,7 @@ class CheckEventAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChe
         .set(IsTranshipmentPage(eventIndex), false).success.value
         .set(IncidentInformationPage(eventIndex), "value").success.value
 
-      val vm = CheckEventAnswersViewModel(ua, eventIndex)
+      val vm = CheckEventAnswersViewModel(ua, eventIndex, CheckMode)
 
       vm.eventInfo.sectionTitle must not be defined
       vm.eventInfo.rows.length mustEqual 5
@@ -62,7 +63,7 @@ class CheckEventAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChe
         .set(EventReportedPage(eventIndex), true).success.value
         .set(IsTranshipmentPage(eventIndex), false).success.value
 
-      val vm = CheckEventAnswersViewModel(ua, eventIndex)
+      val vm = CheckEventAnswersViewModel(ua, eventIndex, CheckMode)
 
       vm.eventInfo.sectionTitle must not be defined
       vm.eventInfo.rows.length mustEqual 4
@@ -82,7 +83,7 @@ class CheckEventAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChe
         .set(TransportIdentityPage(eventIndex), "value").success.value
         .set(TransportNationalityPage(eventIndex), "TT").success.value
 
-      val vm = CheckEventAnswersViewModel(ua, eventIndex)
+      val vm = CheckEventAnswersViewModel(ua, eventIndex, CheckMode)
 
       vm.eventInfo.sectionTitle must not be defined
       vm.eventInfo.rows.length mustEqual 3
@@ -105,7 +106,7 @@ class CheckEventAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChe
         .set(ContainerNumberPage(eventIndex, 1), Container("value")).success.value
         .set(ContainerNumberPage(eventIndex, 2), Container("value")).success.value
 
-      val vm = CheckEventAnswersViewModel(ua, eventIndex)
+      val vm = CheckEventAnswersViewModel(ua, eventIndex, CheckMode)
 
       vm.eventInfo.sectionTitle must not be defined
       vm.eventInfo.rows.length mustEqual 3
@@ -133,7 +134,7 @@ class CheckEventAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChe
         .set(TransportIdentityPage(eventIndex), "value").success.value
         .set(TransportNationalityPage(eventIndex), "TT").success.value
 
-      val vm = CheckEventAnswersViewModel(ua, eventIndex)
+      val vm = CheckEventAnswersViewModel(ua, eventIndex, CheckMode)
 
       vm.eventInfo.sectionTitle must not be defined
       vm.eventInfo.rows.length mustEqual 3
@@ -160,7 +161,7 @@ class CheckEventAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChe
         .set(IsTranshipmentPage(eventIndex), true).success.value
         .set(EventReportedPage(eventIndex), false).success.value
 
-      val vm = CheckEventAnswersViewModel(ua, eventIndex)
+      val vm = CheckEventAnswersViewModel(ua, eventIndex, CheckMode)
 
       vm.eventInfo.sectionTitle must not be defined
       vm.eventInfo.rows.length mustEqual 3

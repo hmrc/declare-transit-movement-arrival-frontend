@@ -18,7 +18,7 @@ package controllers.events
 
 import com.google.inject.Inject
 import controllers.actions.{DataRequiredAction, DataRetrievalActionProvider, IdentifierAction}
-import models.{MovementReferenceNumber, NormalMode}
+import models.{CheckMode, MovementReferenceNumber, NormalMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -44,7 +44,7 @@ class CheckEventAnswersController @Inject()(override val messagesApi: MessagesAp
       val json = Json.obj(
         "mrn" -> mrn
       ) ++ Json.toJsObject {
-        CheckEventAnswersViewModel(request.userAnswers, index)
+        CheckEventAnswersViewModel(request.userAnswers, index, CheckMode)
       }
 
       renderer.render("events/check-event-answers.njk", json).map(Ok(_))
