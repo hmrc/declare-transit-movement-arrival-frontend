@@ -399,7 +399,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
       }
 
       "to CheckEventAnswers when 'Both' is selected and ContainerNumber and vehicle identity and nationality questions have been answered" in {
-        forAll(arbitrary[UserAnswers], arbitrary[Container], arbitrary[String], arbitrary[String]) {
+        forAll(arbitrary[UserAnswers], arbitrary[Container], arbitrary[String], arbitrary[Country]) {
           (answers, container, transportIdentity, transportNationality) =>
             val updatedUserAnswers = answers
               .set(TranshipmentTypePage(eventIndex), DifferentContainerAndVehicle)

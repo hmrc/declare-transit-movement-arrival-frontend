@@ -63,15 +63,6 @@ class EventCountryController @Inject()(override val messagesApi: MessagesApi,
         }
     }
 
-  private def countryJsonList(value: Option[Country], countries: Seq[Country]): Seq[JsObject] = {
-    val countryJsonList = countries.map {
-      country =>
-        Json.obj("text" -> country.description, "value" -> country.code, "selected" -> value.contains(country))
-    }
-
-    Json.obj("value" -> "", "text" -> "") +: countryJsonList
-  }
-
   def onSubmit(mrn: MovementReferenceNumber, index: Int, mode: Mode): Action[AnyContent] =
     (identify andThen getData(mrn) andThen requireData).async {
       implicit request =>
@@ -102,5 +93,14 @@ class EventCountryController @Inject()(override val messagesApi: MessagesApi,
     )
 
     renderer.render("events/eventCountry.njk", json).map(status(_))
+  }
+
+  private def countryJsonList(value: Option[Country], countries: Seq[Country]): Seq[JsObject] = {
+    val countryJsonList = countries.map {
+      country =>
+        Json.obj("text" -> country.description, "value" -> country.code, "selected" -> value.contains(country))
+    }
+
+    Json.obj("value" -> "", "text" -> "") +: countryJsonList
   }
 }
