@@ -29,7 +29,7 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.events._
 import pages._
-import pages.events.seals.SealIdentityPage
+import pages.events.seals.{HaveSealsChangedPage, SealIdentityPage}
 import pages.events.transhipments.{AddContainerPage, ContainerNumberPage, TranshipmentTypePage, TransportIdentityPage, TransportNationalityPage}
 
 class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generators with DomainModelGenerators {
@@ -551,9 +551,9 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
     }
 
-    "must go from seals identity page" - {
+    "seals page" - {
 
-      "to check event answers page" in {
+      "must go from seals identity page to add seals page" in {
         forAll(arbitrary[UserAnswers], arbitrary[String]) {
           (answers, sealsIdentity) =>
             val updatedAnswers = answers.set(SealIdentityPage(eventIndex, sealIndex), sealsIdentity).success.value
@@ -561,6 +561,28 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
             navigator
               .nextPage(SealIdentityPage(eventIndex, sealIndex), CheckMode, updatedAnswers)
               .mustBe(sealRoutes.AddSealController.onPageLoad(answers.id, eventIndex, CheckMode))
+        }
+      }
+
+      "must go from have seals changed page to check event answers page when the answer is 'No'" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers = answers.set(HaveSealsChangedPage(eventIndex), false).success.value
+
+            navigator
+              .nextPage(HaveSealsChangedPage(eventIndex), CheckMode, updatedAnswers)
+              .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(answers.id, eventIndex))
+        }
+      }
+
+      "must go from have seals changed page to seal identity page page when the answer is 'Yes'" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers = answers.set(HaveSealsChangedPage(eventIndex), true).success.value
+
+            navigator
+              .nextPage(HaveSealsChangedPage(eventIndex), CheckMode, updatedAnswers)
+              .mustBe(sealRoutes.SealIdentityController.onPageLoad(answers.id, eventIndex, sealIndex, CheckMode))
         }
       }
     }

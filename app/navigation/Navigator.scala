@@ -55,10 +55,9 @@ class Navigator @Inject()() {
     case TranshipmentTypePage(index) => transhipmentType(index)
     case TransportIdentityPage(index) => ua => Some(transhipmentRoutes.TransportNationalityController.onPageLoad(ua.id, index, NormalMode))
     case TransportNationalityPage(index) => ua => Some(sealRoutes.HaveSealsChangedController.onPageLoad(ua.id, index, NormalMode))
-
     case ContainerNumberPage(index, _) => ua => Some(transhipmentRoutes.AddContainerController.onPageLoad(ua.id, index, NormalMode))
     case AddContainerPage(index) => addContainer(index)
-    case HaveSealsChangedPage(index) => haveSealsChanged(index)
+    case HaveSealsChangedPage(index) => haveSealsChanged(index, NormalMode)
     case SealIdentityPage(index, _) => ua => Some(sealRoutes.AddSealController.onPageLoad(ua.id, index, NormalMode))
     case AddSealPage(index) => addSeal(index)
   }
@@ -77,6 +76,7 @@ class Navigator @Inject()() {
     case SealIdentityPage(index, _) => ua => Some(sealRoutes.AddSealController.onPageLoad(ua.id, index, CheckMode))
     case AddContainerPage(index) => addContainerCheckRoute(index)
     case EventReportedPage(index) => eventReportedCheckRoute(index)
+    case HaveSealsChangedPage(index) => haveSealsChanged(index, CheckMode)
   }
 
   def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = mode match {
@@ -231,9 +231,9 @@ class Navigator @Inject()() {
       case _                          => None
     }
 
-  private def haveSealsChanged(index: Int)(userAnswers: UserAnswers): Option[Call] =
+  private def haveSealsChanged(index: Int, mode: Mode)(userAnswers: UserAnswers): Option[Call] =
     userAnswers.get(HaveSealsChangedPage(index)).map {
-      case true  => sealRoutes.SealIdentityController.onPageLoad(userAnswers.id, index, 0, NormalMode) //TODO
+      case true  => sealRoutes.SealIdentityController.onPageLoad(userAnswers.id, index, 0, mode)
       case false => eventRoutes.CheckEventAnswersController.onPageLoad(userAnswers.id, index)
     }
 
