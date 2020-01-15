@@ -94,8 +94,8 @@ class ConfirmRemoveEventController @Inject()(
                     for {
                       updatedAnswers <- Future.fromTry(request.userAnswers.remove(EventQuery(eventIndex)))
                       _              <- sessionRepository.set(updatedAnswers)
-                    } yield Redirect(navigator.nextPage(ConfirmRemoveEventPage, mode, updatedAnswers))
-                  case false => Future.successful(Redirect(navigator.nextPage(ConfirmRemoveEventPage, mode, request.userAnswers)))
+                    } yield Redirect(navigator.nextPage(ConfirmRemoveEventPage(eventIndex), mode, updatedAnswers))
+                  case false => Future.successful(Redirect(navigator.nextPage(ConfirmRemoveEventPage(eventIndex), mode, request.userAnswers)))
 
               }
             )

@@ -661,6 +661,53 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         }
       }
 
+      "must go from Confirm Remove Event Page" - {
+        "to Add Event Page when user selects 'No' and event exists" in {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val updatedAnswers = {
+                answers
+                  .set(IncidentOnRoutePage, true)
+                  .success
+                  .value
+                  .set(EventCountryPage(0), country)
+                  .success
+                  .value
+                  .set(EventPlacePage(0), "TestPlace")
+                  .success
+                  .value
+                  .set(EventReportedPage(0), true)
+                  .success
+                  .value
+                  .set(IsTranshipmentPage(0), false)
+                  .success
+                  .value
+              }
+              navigator
+                .nextPage(ConfirmRemoveEventPage(0), NormalMode, updatedAnswers)
+                .mustBe(eventRoutes.AddEventController.onPageLoad(answers.id, NormalMode))
+          }
+        }
+
+        "to Check Your Answers when user selects 'No' and no event exists" in {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val updatedAnswers = {
+                answers
+                  .set(IncidentOnRoutePage, true)
+                  .success
+                  .value
+                  .remove(EventsQuery)
+                  .success
+                  .value
+              }
+              navigator
+                .nextPage(ConfirmRemoveEventPage(0), NormalMode, updatedAnswers)
+                .mustBe(routes.CheckYourAnswersController.onPageLoad(answers.id))
+          }
+        }
+      }
+
       "must go from Add Event Page" - {
         "when user selects 'Yes' to" - {
 

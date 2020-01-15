@@ -17,16 +17,16 @@
 package navigation
 
 import com.google.inject.{Inject, Singleton}
+import controllers.events.seals.{routes => sealRoutes}
 import controllers.events.transhipments.{routes => transhipmentRoutes}
 import controllers.events.{routes => eventRoutes}
-import controllers.events.seals.{routes => sealRoutes}
 import controllers.routes
 import derivable.{DeriveNumberOfContainers, DeriveNumberOfEvents}
 import models.GoodsLocation._
 import models.TranshipmentType.{DifferentContainer, DifferentContainerAndVehicle, DifferentVehicle}
 import models.{CheckMode, Mode, NormalMode, UserAnswers}
 import pages._
-import pages.events._
+import pages.events.{ConfirmRemoveEventPage, _}
 import pages.events.seals._
 import pages.events.transhipments._
 import play.api.mvc.Call
@@ -62,6 +62,7 @@ class Navigator @Inject()() {
     case SealIdentityPage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
     //case AddSealPage(index) => addSeal(index)
     case ConfirmRemoveContainerPage(index) => confirmRemoveContainerRoute(index, NormalMode)
+    case ConfirmRemoveEventPage(index)=> confirmRemoveEventPageRoute(index, NormalMode)
   }
 
   private val checkRouteMap: PartialFunction[Page, UserAnswers => Option[Call]] = {
@@ -108,6 +109,12 @@ class Navigator @Inject()() {
   def confirmRemoveContainerRoute(index: Int, mode: Mode)(ua: UserAnswers): Option[Call] = ua.get(DeriveNumberOfContainers(index)) match {
     case Some(0) | None => Some(eventRoutes.IsTranshipmentController.onPageLoad(ua.id, index, mode))
     case _              => Some(transhipmentRoutes.AddContainerController.onPageLoad(ua.id, index, mode))
+  }
+
+  def confirmRemoveEventPageRoute(index: Int, mode: Mode)(ua: UserAnswers) = ua.get(DeriveNumberOfEvents) match {
+    case Some(0) | None => Some(routes.IncidentOnRouteController.onPageLoad(ua.id, mode))
+    case _              => Some(eventRoutes.AddEventController.onPageLoad(ua.id, mode))
+
   }
 
   private def addContainer(index: Int)(ua: UserAnswers): Option[Call] = ua.get(AddContainerPage(index)) map {
