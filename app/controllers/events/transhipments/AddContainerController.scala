@@ -71,7 +71,7 @@ class AddContainerController @Inject()(
         "mrn"    -> mrn,
         "radios" -> Radios.yesNo(preparedForm("value"))
       ) ++ Json.toJsObject {
-        AddContainerViewModel(eventIndex, request.userAnswers)
+        AddContainerViewModel(eventIndex, request.userAnswers, mode)
       }
 
       renderer.render("events/transhipments/addContainer.njk", json).map(Ok(_))

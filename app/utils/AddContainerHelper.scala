@@ -16,18 +16,17 @@
 
 package utils
 
-import controllers.events.{routes => eventRoutes}
-import models.{CheckMode, MovementReferenceNumber, UserAnswers}
-import pages.events._
+import controllers.events.transhipments.routes.ContainerNumberController
+import controllers.events.transhipments.routes.ConfirmRemoveContainerController
+import models.domain.Container
+import models.{Mode, UserAnswers}
 import pages.events.transhipments.ContainerNumberPage
 import uk.gov.hmrc.viewmodels.SummaryList.{Action, Key, Row, Value}
 import uk.gov.hmrc.viewmodels._
-import controllers.events.transhipments.routes.ContainerNumberController
-import models.domain.Container
 
 class AddContainerHelper(userAnswers: UserAnswers) {
 
-  def containerRow(eventIndex: Int, containerIndex: Int): Option[Row] =
+  def containerRow(eventIndex: Int, containerIndex: Int, mode: Mode): Option[Row] =
     userAnswers.get(ContainerNumberPage(eventIndex, containerIndex)).map {
       case Container(answer) =>
         Row(
@@ -36,12 +35,12 @@ class AddContainerHelper(userAnswers: UserAnswers) {
           actions = List(
             Action(
               content            = msg"site.edit",
-              href               = ContainerNumberController.onPageLoad(userAnswers.id, eventIndex, containerIndex, CheckMode).url,
+              href               = ContainerNumberController.onPageLoad(userAnswers.id, eventIndex, containerIndex, mode).url,
               visuallyHiddenText = Some(msg"addContainer.containerList.change".withArgs(answer)) // TODO: Prefix in message file for is hard coded, should be the same as: site.edit.hidden
             ),
             Action(
               content            = msg"site.delete",
-              href               = "#",
+              href               = ConfirmRemoveContainerController.onPageLoad(userAnswers.id, eventIndex, containerIndex, mode).url,
               visuallyHiddenText = Some(msg"addContainer.containerList.delete".withArgs(answer)) // TODO: Prefix in message file for is hard coded, should be the same as: site.delete.hidden
             )
           )

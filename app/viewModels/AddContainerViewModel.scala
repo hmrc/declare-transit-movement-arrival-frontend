@@ -17,7 +17,7 @@
 package viewModels
 
 import derivable.DeriveNumberOfContainers
-import models.UserAnswers
+import models.{Mode, UserAnswers}
 import play.api.i18n.Messages
 import play.api.libs.json.{Json, OWrites}
 import uk.gov.hmrc.viewmodels.Text.Message
@@ -31,7 +31,7 @@ case class AddContainerViewModel private (
 
 object AddContainerViewModel {
 
-  def apply(eventIndex: Int, userAnswers: UserAnswers): AddContainerViewModel = {
+  def apply(eventIndex: Int, userAnswers: UserAnswers, mode: Mode): AddContainerViewModel = {
     val containerCount = userAnswers.get(DeriveNumberOfContainers(eventIndex)).getOrElse(0)
 
     val pageTitle: Message = if (containerCount == 1) {
@@ -44,7 +44,7 @@ object AddContainerViewModel {
     val containers: Option[Section] = userAnswers
       .get(DeriveNumberOfContainers(eventIndex))
       .map(List.range(0, _))
-      .map(_.flatMap(addContainerHelper.containerRow(eventIndex, _)))
+      .map(_.flatMap(addContainerHelper.containerRow(eventIndex, _, mode)))
       .map(Section.apply)
 
     new AddContainerViewModel(pageTitle, containers)
