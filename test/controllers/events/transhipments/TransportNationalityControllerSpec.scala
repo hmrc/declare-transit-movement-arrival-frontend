@@ -70,6 +70,7 @@ class TransportNationalityControllerSpec extends SpecBase with MockitoSugar with
 
     "must redirect to the next page when valid data is submitted" in {
 
+      when(mockReferenceDataConnector.getCountryList()(any(), any())).thenReturn(Future.successful(countries))
       val mockSessionRepository = mock[SessionRepository]
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
@@ -78,7 +79,8 @@ class TransportNationalityControllerSpec extends SpecBase with MockitoSugar with
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[ReferenceDataConnector].toInstance(mockReferenceDataConnector)
           )
           .build()
 
