@@ -53,9 +53,6 @@ class TransportNationalityControllerSpec extends SpecBase with MockitoSugar with
   lazy val transportNationalityRoute: String             = routes.TransportNationalityController.onPageLoad(mrn, eventIndex, NormalMode).url
   private val transportNationalityTemplate               = "events/transhipments/transportNationality.njk"
 
-  private val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
-  private val jsonCaptor: ArgumentCaptor[JsObject]   = ArgumentCaptor.forClass(classOf[JsObject])
-
   "TransportNationality Controller" - {
 
     "must return OK and the correct view for a GET" in {
@@ -108,8 +105,10 @@ class TransportNationalityControllerSpec extends SpecBase with MockitoSugar with
           bind[ReferenceDataConnector].toInstance(mockReferenceDataConnector)
         }
         .build()
-      val request   = FakeRequest(POST, transportNationalityRoute).withFormUrlEncodedBody(("value", ""))
-      val boundForm = form.bind(Map("value" -> ""))
+      val request                                = FakeRequest(POST, transportNationalityRoute).withFormUrlEncodedBody(("value", ""))
+      val boundForm                              = form.bind(Map("value" -> ""))
+      val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor: ArgumentCaptor[JsObject]   = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(application, request).value
 
@@ -174,6 +173,8 @@ class TransportNationalityControllerSpec extends SpecBase with MockitoSugar with
         bind[ReferenceDataConnector].toInstance(mockReferenceDataConnector)
       }
       .build()
+    val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
+    val jsonCaptor: ArgumentCaptor[JsObject]   = ArgumentCaptor.forClass(classOf[JsObject])
 
     val request = FakeRequest(GET, transportNationalityRoute)
 
