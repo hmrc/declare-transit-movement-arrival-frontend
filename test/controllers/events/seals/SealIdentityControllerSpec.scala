@@ -45,7 +45,7 @@ class SealIdentityControllerSpec extends SpecBase with MockitoSugar with Nunjuck
   val formProvider       = new SealIdentityFormProvider()
   val form: Form[String] = formProvider()
 
-  lazy val sealIdentityRoute: String = routes.SealIdentityController.onPageLoad(mrn, eventIndex, NormalMode).url
+  lazy val sealIdentityRoute: String = routes.SealIdentityController.onPageLoad(mrn, eventIndex, sealIndex, NormalMode).url
 
   "SealIdentity Controller" - {
 
@@ -82,7 +82,7 @@ class SealIdentityControllerSpec extends SpecBase with MockitoSugar with Nunjuck
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers    = UserAnswers(mrn).set(SealIdentityPage(eventIndex), "answer").success.value
+      val userAnswers    = UserAnswers(mrn).set(SealIdentityPage(eventIndex, sealIndex), "answer").success.value
       val application    = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request        = FakeRequest(GET, sealIdentityRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])

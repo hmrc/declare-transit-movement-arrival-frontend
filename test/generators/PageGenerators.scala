@@ -34,7 +34,7 @@ trait PageGenerators {
     Arbitrary(AddSealPage(0))
 
   implicit lazy val arbitrarySealIdentityPage: Arbitrary[SealIdentityPage] =
-    Arbitrary(SealIdentityPage(0))
+    Arbitrary(SealIdentityPage(0, 0))
 
   implicit lazy val arbitraryConfirmRemoveContainerPage: Arbitrary[ConfirmRemoveContainerPage.type] =
     Arbitrary(ConfirmRemoveContainerPage)
