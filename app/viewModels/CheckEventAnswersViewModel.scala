@@ -30,7 +30,6 @@ import utils.{AddContainerHelper, CheckYourAnswersHelper}
 
 case class CheckEventAnswersViewModel(eventInfo: Section, otherInfo: Seq[Section])
 
-//noinspection ScalaStyle
 object CheckEventAnswersViewModel extends NunjucksSupport {
 
   def apply(userAnswers: UserAnswers, eventIndex: Int, mode: Mode): CheckEventAnswersViewModel = {
@@ -67,19 +66,12 @@ object CheckEventAnswersViewModel extends NunjucksSupport {
       ).flatten
     )
 
-    val sealSection: Option[Section] = {
-      userAnswers
-        .get(HaveSealsChangedPage(eventIndex))
-        .map {
-          haveSealsChanged =>
-            val seals: Seq[Row] = if (haveSealsChanged) {
-              Seq
-                .range(0, userAnswers.get(DeriveNumberOfSeals(eventIndex)).getOrElse(0))
-                .flatMap(helper.sealIdentity(eventIndex, _))
-            } else Seq.empty
+    val sealSection: Section = {
+      val seals: Seq[Row] = Seq
+        .range(0, userAnswers.get(DeriveNumberOfSeals(eventIndex)).getOrElse(0))
+        .flatMap(helper.sealIdentity(eventIndex, _))
 
-            Section(msg"addSeal.sealList.heading", (helper.haveSealsChanged(eventIndex) ++ seals).toSeq)
-        }
+      Section(msg"addSeal.sealList.heading", (helper.haveSealsChanged(eventIndex) ++ seals).toSeq)
     }
 
     val otherInfoSections: Seq[Section] = {
@@ -103,7 +95,7 @@ object CheckEventAnswersViewModel extends NunjucksSupport {
 
     CheckEventAnswersViewModel(
       Section(eventInfo),
-      otherInfoSections ++ sealSection
+      otherInfoSections :+ sealSection
     )
   }
 

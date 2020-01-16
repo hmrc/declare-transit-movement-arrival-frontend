@@ -27,7 +27,8 @@ import pages.events.seals.AddSealPage
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.twirl.api.Html
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
@@ -54,7 +55,8 @@ class AddSealController @Inject()(override val messagesApi: MessagesApi,
 
   def onPageLoad(mrn: MovementReferenceNumber, eventIndex: Int, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
-      renderPage(mrn, eventIndex, mode, form, Ok)
+      renderPage(mrn, eventIndex, mode, form)
+        .map(_ => Ok)
   }
 
   def onSubmit(mrn: MovementReferenceNumber, eventIndex: Int, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
@@ -62,7 +64,9 @@ class AddSealController @Inject()(override val messagesApi: MessagesApi,
       form
         .bindFromRequest()
         .fold(
-          formWithErrors => renderPage(mrn, eventIndex, mode, formWithErrors, BadRequest),
+          formWithErrors =>
+            renderPage(mrn, eventIndex, mode, formWithErrors)
+              .map(_ => BadRequest),
           value =>
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(AddSealPage(eventIndex), value))
@@ -70,8 +74,8 @@ class AddSealController @Inject()(override val messagesApi: MessagesApi,
         )
   }
 
-  private def renderPage(mrn: MovementReferenceNumber, eventIndex: Int, mode: Mode, form: Form[Boolean], status: Status)(
-    implicit request: DataRequest[AnyContent]): Future[Result] = {
+  private def renderPage(mrn: MovementReferenceNumber, eventIndex: Int, mode: Mode, form: Form[Boolean])(
+    implicit request: DataRequest[AnyContent]): Future[Html] = {
 
     val numberOfSeals       = request.userAnswers.get(DeriveNumberOfSeals(eventIndex)).getOrElse(0)
     val sealsRows: Seq[Row] = (0 to numberOfSeals).flatMap(AddSealHelper.apply(request.userAnswers).sealRow(eventIndex, _))
@@ -83,11 +87,11 @@ class AddSealController @Inject()(override val messagesApi: MessagesApi,
       "mode"      -> mode,
       "mrn"       -> mrn,
       "pageTitle" -> msg"addSeal.title.$singularOrPlural".withArgs(numberOfSeals),
-      "heading"   -> msg"addSeal.title.$singularOrPlural".withArgs(numberOfSeals),
+      "heading"   -> msg"addSeal.heading.$singularOrPlural".withArgs(numberOfSeals),
       "seals"     -> sealsRows,
       "radios"    -> Radios.yesNo(form("value"))
     )
 
-    renderer.render("events/seals/addSeal.njk", json).map(status(_))
+    renderer.render("events/seals/addSeal.njk", json)
   }
 }
