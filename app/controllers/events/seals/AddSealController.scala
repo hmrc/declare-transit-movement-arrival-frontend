@@ -56,7 +56,7 @@ class AddSealController @Inject()(override val messagesApi: MessagesApi,
   def onPageLoad(mrn: MovementReferenceNumber, eventIndex: Int, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
       renderPage(mrn, eventIndex, mode, form)
-        .map(_ => Ok)
+        .map(Ok(_))
   }
 
   def onSubmit(mrn: MovementReferenceNumber, eventIndex: Int, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
@@ -66,7 +66,7 @@ class AddSealController @Inject()(override val messagesApi: MessagesApi,
         .fold(
           formWithErrors =>
             renderPage(mrn, eventIndex, mode, formWithErrors)
-              .map(_ => BadRequest),
+              .map(BadRequest(_)),
           value =>
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(AddSealPage(eventIndex), value))
