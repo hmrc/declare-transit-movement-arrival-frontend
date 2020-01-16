@@ -62,7 +62,7 @@ class Navigator @Inject()() {
     case SealIdentityPage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
     //case AddSealPage(index) => addSeal(index)
     case ConfirmRemoveContainerPage(index) => confirmRemoveContainerRoute(index, NormalMode)
-    case ConfirmRemoveEventPage(index)=> confirmRemoveEventPageRoute(index, NormalMode)
+    case ConfirmRemoveEventPage(index)=> confirmRemoveEventRoute(index, NormalMode)
   }
 
   private val checkRouteMap: PartialFunction[Page, UserAnswers => Option[Call]] = {
@@ -79,6 +79,7 @@ class Navigator @Inject()() {
     case AddContainerPage(index) => addContainerCheckRoute(index)
     case EventReportedPage(index) => eventReportedCheckRoute(index)
     case ConfirmRemoveContainerPage(index) => confirmRemoveContainerRoute(index, CheckMode)
+    case ConfirmRemoveEventPage(index)=> confirmRemoveEventRoute(index, CheckMode)
     case IncidentOnRoutePage => incidentOnRoute
 
 
@@ -111,7 +112,7 @@ class Navigator @Inject()() {
     case _              => Some(transhipmentRoutes.AddContainerController.onPageLoad(ua.id, index, mode))
   }
 
-  def confirmRemoveEventPageRoute(index: Int, mode: Mode)(ua: UserAnswers) = ua.get(DeriveNumberOfEvents) match {
+  def confirmRemoveEventRoute(index: Int, mode: Mode)(ua: UserAnswers) = ua.get(DeriveNumberOfEvents) match {
     case Some(0) | None => Some(routes.IncidentOnRouteController.onPageLoad(ua.id, mode))
     case _              => Some(eventRoutes.AddEventController.onPageLoad(ua.id, mode))
 
@@ -183,10 +184,10 @@ class Navigator @Inject()() {
 
   private def incidentOnRoute(ua: UserAnswers): Option[Call] =
     (ua.get(IncidentOnRoutePage), ua.get(DeriveNumberOfEvents)) match {
-      case (Some(true), None)    => Some(eventRoutes.EventCountryController.onPageLoad(ua.id, 0, NormalMode))
-      case (Some(true), Some(_)) => Some(eventRoutes.AddEventController.onPageLoad(ua.id, NormalMode))
-      case (Some(false), _)      => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
-      case _                     => None
+      case (Some(true), None | Some(0)) => Some(eventRoutes.EventCountryController.onPageLoad(ua.id, 0, NormalMode))
+      case (Some(true), Some(_))        => Some(eventRoutes.AddEventController.onPageLoad(ua.id, NormalMode))
+      case (Some(false), _)             => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
+      case _                            => None
     }
 
   private def isTranshipmentRoute(index: Int)(ua: UserAnswers): Option[Call] =

@@ -662,7 +662,8 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
       }
 
       "must go from Confirm Remove Event Page" - {
-        "to Add Event Page when user selects 'No' and event exists" in {
+
+        "to Add Event Page when user selects 'No'" in {
           forAll(arbitrary[UserAnswers]) {
             answers =>
               val updatedAnswers = {
@@ -689,7 +690,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           }
         }
 
-        "to Check Your Answers when user selects 'No' and no event exists" in {
+        "to Add Event Page when user selects 'Yes' and events still exist" in {
           forAll(arbitrary[UserAnswers]) {
             answers =>
               val updatedAnswers = {
@@ -697,13 +698,32 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
                   .set(IncidentOnRoutePage, true)
                   .success
                   .value
-                  .remove(EventsQuery)
+                  .set(EventCountryPage(0), country)
+                  .success
+                  .value
+                  .set(EventPlacePage(0), "TestPlace")
+                  .success
+                  .value
+                  .set(EventReportedPage(0), true)
+                  .success
+                  .value
+                  .set(IsTranshipmentPage(0), false)
                   .success
                   .value
               }
               navigator
                 .nextPage(ConfirmRemoveEventPage(0), NormalMode, updatedAnswers)
-                .mustBe(routes.CheckYourAnswersController.onPageLoad(answers.id))
+                .mustBe(eventRoutes.AddEventController.onPageLoad(answers.id, NormalMode))
+          }
+        }
+
+        "to Incident on Route Page when user selects 'Yes' and no event exists" in {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val withoutEvents = answers.remove(EventsQuery).success.value
+              navigator
+                .nextPage(ConfirmRemoveEventPage(0), NormalMode, withoutEvents)
+                .mustBe(routes.IncidentOnRouteController.onPageLoad(answers.id, NormalMode))
           }
         }
       }
