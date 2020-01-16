@@ -244,7 +244,12 @@ class Navigator @Inject()() {
 
   private def haveSealsChanged(index: Int, mode: Mode)(userAnswers: UserAnswers): Option[Call] =
     userAnswers.get(HaveSealsChangedPage(index)).map {
-      case true  => sealRoutes.SealIdentityController.onPageLoad(userAnswers.id, index, 0, mode)
+      case true =>
+        if (userAnswers.get(SealIdentityPage(index, 0)).isDefined) {
+          sealRoutes.AddSealController.onPageLoad(userAnswers.id, index, mode)
+        } else {
+          sealRoutes.SealIdentityController.onPageLoad(userAnswers.id, index, userAnswers.get(DeriveNumberOfSeals(index)).getOrElse(0), mode)
+        }
       case false => eventRoutes.CheckEventAnswersController.onPageLoad(userAnswers.id, index)
     }
 

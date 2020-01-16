@@ -631,7 +631,13 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
       "must go from have seals changed page to seal identity page page when the answer is 'Yes'" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
-            val updatedAnswers = answers.set(HaveSealsChangedPage(eventIndex), true).success.value
+            val updatedAnswers = answers
+              .set(HaveSealsChangedPage(eventIndex), true)
+              .success
+              .value
+              .remove(SealIdentityPage(eventIndex, sealIndex))
+              .success
+              .value
 
             navigator
               .nextPage(HaveSealsChangedPage(eventIndex), CheckMode, updatedAnswers)
@@ -660,7 +666,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
       "to 'Place of notification' when answer is 'No' and there is no existing 'Place of notification'" in {
         forAll(arbitrary[UserAnswers]) {
-          (answers) =>
+          answers =>
             val updatedUserAnswers = answers
               .set(IsTraderAddressPlaceOfNotificationPage, false)
               .success

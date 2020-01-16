@@ -50,7 +50,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
   def sealIdentity(eventIndex: Int, sealIndex: Int): Option[Row] = userAnswers.get(SealIdentityPage(eventIndex, sealIndex)) map {
     answer =>
       Row(
-        key   = Key(msg"addSeal.sealList.label".withArgs(sealIndex), classes = Seq("govuk-!-width-one-half")),
+        key   = Key(msg"addSeal.sealList.label".withArgs(sealIndex + 1), classes = Seq("govuk-!-width-one-half")),
         value = Value(lit"$answer"),
         actions = List(
           Action(

@@ -738,11 +738,34 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         "to seal identity page when user selects Yes" in {
           forAll(arbitrary[UserAnswers]) {
             answers =>
-              val updatedAnswers = answers.set(HaveSealsChangedPage(eventIndex), true).success.value
+              val updatedAnswers = answers
+                .set(HaveSealsChangedPage(eventIndex), true)
+                .success
+                .value
+                .remove(SealIdentityPage(eventIndex, sealIndex))
+                .success
+                .value
 
               navigator
                 .nextPage(HaveSealsChangedPage(eventIndex), NormalMode, updatedAnswers)
                 .mustBe(sealRoutes.SealIdentityController.onPageLoad(answers.id, eventIndex, sealIndex, NormalMode))
+          }
+        }
+
+        "to 'add seal page'" in {
+          forAll(arbitrary[UserAnswers], arbitrary[String]) {
+            (answers, sealsIdentity) =>
+              val updatedAnswers = answers
+                .set(SealIdentityPage(eventIndex, sealIndex), sealsIdentity)
+                .success
+                .value
+                .set(HaveSealsChangedPage(eventIndex), true)
+                .success
+                .value
+
+              navigator
+                .nextPage(HaveSealsChangedPage(eventIndex), NormalMode, updatedAnswers)
+                .mustBe(sealRoutes.AddSealController.onPageLoad(answers.id, eventIndex, NormalMode))
           }
         }
       }
