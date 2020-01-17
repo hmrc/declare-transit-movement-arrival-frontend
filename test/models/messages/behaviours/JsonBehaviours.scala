@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package models.domain.behaviours
+package models.messages.behaviours
 
-import generators.DomainModelGenerators
+import generators.MessagesModelGenerators
 import org.scalacheck.Gen
 import org.scalatest.FreeSpec
 import org.scalatest.MustMatchers
@@ -26,7 +26,7 @@ import play.api.libs.json.Json
 import play.api.libs.json.Reads
 import play.api.libs.json.Writes
 
-trait JsonBehaviours extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with DomainModelGenerators {
+trait JsonBehaviours extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with MessagesModelGenerators {
 
   class DualReadsAndWrites[A] {
 

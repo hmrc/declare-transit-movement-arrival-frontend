@@ -16,7 +16,7 @@
 
 package queries
 
-import models.domain.EnRouteEvent
+import models.messages.EnRouteEvent
 import pages.QuestionPage
 import pages.events.SectionConstants
 import play.api.libs.json.JsPath

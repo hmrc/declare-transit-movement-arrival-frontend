@@ -19,13 +19,13 @@ package controllers.events.seals
 import base.SpecBase
 import forms.events.seals.AddSealFormProvider
 import matchers.JsonMatchers
-import models.{NormalMode, UserAnswers}
+import models.NormalMode
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.events.seals.AddSealPage
+import pages.events.seals.SealIdentityPage
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
@@ -35,6 +35,7 @@ import play.api.test.Helpers._
 import play.twirl.api.Html
 import repositories.SessionRepository
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
+import utils.AddSealHelper
 
 import scala.concurrent.Future
 
@@ -54,7 +55,9 @@ class AddSealControllerSpec extends SpecBase with MockitoSugar with NunjucksSupp
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application    = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val ua = emptyUserAnswers.set(SealIdentityPage(eventIndex, sealIndex), "seal").success.value
+
+      val application    = applicationBuilder(userAnswers = Some(ua)).build()
       val request        = FakeRequest(GET, addSealRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
@@ -66,42 +69,13 @@ class AddSealControllerSpec extends SpecBase with MockitoSugar with NunjucksSupp
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form"   -> form,
-        "mode"   -> NormalMode,
-        "mrn"    -> mrn,
-        "radios" -> Radios.yesNo(form("value"))
-      )
-
-      templateCaptor.getValue mustEqual "events/seals/addSeal.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
-    }
-
-    "must populate the view correctly on a GET when the question has previously been answered" in {
-
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
-      val userAnswers    = UserAnswers(mrn).set(AddSealPage(eventIndex), true).success.value
-      val application    = applicationBuilder(userAnswers = Some(userAnswers)).build()
-      val request        = FakeRequest(GET, addSealRoute)
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
-
-      val result = route(application, request).value
-
-      status(result) mustEqual OK
-
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-
-      val filledForm = form.bind(Map("value" -> "true"))
-
-      val expectedJson = Json.obj(
-        "form"   -> filledForm,
-        "mode"   -> NormalMode,
-        "mrn"    -> mrn,
-        "radios" -> Radios.yesNo(filledForm("value"))
+        "form"      -> form,
+        "mode"      -> NormalMode,
+        "mrn"       -> mrn,
+        "pageTitle" -> "You have added 1 seal",
+        "heading"   -> "You have added 1 seal",
+        "seals"     -> Json.toJson(Seq(AddSealHelper.apply(ua).sealRow(eventIndex, sealIndex).value)),
+        "radios"    -> Radios.yesNo(form("value"))
       )
 
       templateCaptor.getValue mustEqual "events/seals/addSeal.njk"
@@ -141,8 +115,9 @@ class AddSealControllerSpec extends SpecBase with MockitoSugar with NunjucksSupp
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
+      val ua = emptyUserAnswers.set(SealIdentityPage(eventIndex, sealIndex), "seal").success.value
 
-      val application    = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application    = applicationBuilder(userAnswers = Some(ua)).build()
       val request        = FakeRequest(POST, addSealRoute).withFormUrlEncodedBody(("value", ""))
       val boundForm      = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -155,10 +130,13 @@ class AddSealControllerSpec extends SpecBase with MockitoSugar with NunjucksSupp
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form"   -> boundForm,
-        "mode"   -> NormalMode,
-        "mrn"    -> mrn,
-        "radios" -> Radios.yesNo(boundForm("value"))
+        "form"      -> boundForm,
+        "mode"      -> NormalMode,
+        "mrn"       -> mrn,
+        "pageTitle" -> "You have added 1 seal",
+        "heading"   -> "You have added 1 seal",
+        "seals"     -> Json.toJson(Seq(AddSealHelper.apply(ua).sealRow(eventIndex, sealIndex).value)),
+        "radios"    -> Radios.yesNo(boundForm("value"))
       )
 
       templateCaptor.getValue mustEqual "events/seals/addSeal.njk"

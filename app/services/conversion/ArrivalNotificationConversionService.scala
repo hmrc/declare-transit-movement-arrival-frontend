@@ -19,8 +19,7 @@ package services.conversion
 import java.time.LocalDate
 
 import derivable.DeriveNumberOfEvents
-import models.domain._
-import models.domain.messages.{ArrivalNotification, NormalNotification}
+import models.messages._
 import models.{TraderAddress, UserAnswers}
 import pages._
 import pages.events._
@@ -93,7 +92,7 @@ class ArrivalNotificationConversionService {
                 place         = place,
                 countryCode   = country.code,
                 alreadyInNcts = isReported,
-                eventDetails  = eventDetails(incidentInformation, transportIdentity, transportCountry, containers),
+                eventDetails  = eventDetails(incidentInformation, transportIdentity, transportCountry.map(_.code), containers),
                 None //TODO Seals:waiting for design decision
               )
             }

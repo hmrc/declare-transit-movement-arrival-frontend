@@ -18,11 +18,12 @@ package navigation
 
 import base.SpecBase
 import controllers.events.{routes => eventRoutes}
+import controllers.events.seals.{routes => sealRoutes}
 import controllers.events.transhipments.{routes => transhipmentRoutes}
 import controllers.routes
-import generators.{DomainModelGenerators, Generators}
+import generators.{Generators, MessagesModelGenerators}
 import models.TranshipmentType.{DifferentContainer, DifferentContainerAndVehicle, DifferentVehicle}
-import models.domain.Container
+import models.messages.Container
 import models.reference.Country
 import models.{CheckMode, GoodsLocation, NormalMode, TranshipmentType, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
@@ -30,6 +31,7 @@ import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.events._
 import pages._
+import pages.events.seals.{HaveSealsChangedPage, SealIdentityPage}
 import pages.events.transhipments.{
   AddContainerPage,
   ConfirmRemoveContainerPage,
@@ -40,7 +42,7 @@ import pages.events.transhipments.{
 }
 import queries.{ContainersQuery, EventsQuery}
 
-class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generators with DomainModelGenerators {
+class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generators with MessagesModelGenerators {
 
   private val navigator: Navigator = app.injector.instanceOf[Navigator]
 
@@ -399,7 +401,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
       }
 
       "to CheckEventAnswers when 'Both' is selected and ContainerNumber and vehicle identity and nationality questions have been answered" in {
-        forAll(arbitrary[UserAnswers], arbitrary[Container], arbitrary[String], arbitrary[String]) {
+        forAll(arbitrary[UserAnswers], arbitrary[Container], arbitrary[String], arbitrary[Country]) {
           (answers, container, transportIdentity, transportNationality) =>
             val updatedUserAnswers = answers
               .set(TranshipmentTypePage(eventIndex), DifferentContainerAndVehicle)
@@ -602,6 +604,48 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
     }
 
+    "seals page" - {
+
+      "must go from seals identity page to add seals page" in {
+        forAll(arbitrary[UserAnswers], arbitrary[String]) {
+          (answers, sealsIdentity) =>
+            val updatedAnswers = answers.set(SealIdentityPage(eventIndex, sealIndex), sealsIdentity).success.value
+
+            navigator
+              .nextPage(SealIdentityPage(eventIndex, sealIndex), CheckMode, updatedAnswers)
+              .mustBe(sealRoutes.AddSealController.onPageLoad(answers.id, eventIndex, CheckMode))
+        }
+      }
+
+      "must go from have seals changed page to check event answers page when the answer is 'No'" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers = answers.set(HaveSealsChangedPage(eventIndex), false).success.value
+
+            navigator
+              .nextPage(HaveSealsChangedPage(eventIndex), CheckMode, updatedAnswers)
+              .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(answers.id, eventIndex))
+        }
+      }
+
+      "must go from have seals changed page to seal identity page page when the answer is 'Yes'" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers = answers
+              .set(HaveSealsChangedPage(eventIndex), true)
+              .success
+              .value
+              .remove(SealIdentityPage(eventIndex, sealIndex))
+              .success
+              .value
+
+            navigator
+              .nextPage(HaveSealsChangedPage(eventIndex), CheckMode, updatedAnswers)
+              .mustBe(sealRoutes.SealIdentityController.onPageLoad(answers.id, eventIndex, sealIndex, CheckMode))
+        }
+      }
+    }
+
     "must go from 'IsTraderAddressPlaceOfNotificationPage'" - {
       "to 'Check Your Answers' when answer is 'No' and there is a 'Place of notification'" in {
         forAll(arbitrary[UserAnswers], arbitrary[String]) {
@@ -622,7 +666,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
       "to 'Place of notification' when answer is 'No' and there is no existing 'Place of notification'" in {
         forAll(arbitrary[UserAnswers]) {
-          (answers) =>
+          answers =>
             val updatedUserAnswers = answers
               .set(IsTraderAddressPlaceOfNotificationPage, false)
               .success
@@ -650,7 +694,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
     }
 
     "go from 'Place of Notification' to CheckYourAnswer" in {
-      import models.domain.messages.NormalNotification.Constants.notificationPlaceLength
+      import models.messages.NormalNotification.Constants.notificationPlaceLength
 
       forAll(arbitrary[UserAnswers], stringsWithMaxLength(notificationPlaceLength)) {
         case (answers, placeOfNotification) =>

@@ -17,9 +17,9 @@
 package viewModels
 
 import base.SpecBase
-import generators.DomainModelGenerators
+import generators.MessagesModelGenerators
 import models.NormalMode
-import models.domain.Container
+import models.messages.Container
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.events.transhipments.ContainerNumberPage
@@ -27,7 +27,7 @@ import play.api.libs.json.{JsObject, Json}
 import uk.gov.hmrc.viewmodels.Text.Literal
 import uk.gov.hmrc.viewmodels._
 
-class AddContainerViewModelSpec extends SpecBase with ScalaCheckPropertyChecks with DomainModelGenerators {
+class AddContainerViewModelSpec extends SpecBase with ScalaCheckPropertyChecks with MessagesModelGenerators {
   "must be able to deserialize to a JsObject" in {
     val vm = AddContainerViewModel(msg"Title", None)
 

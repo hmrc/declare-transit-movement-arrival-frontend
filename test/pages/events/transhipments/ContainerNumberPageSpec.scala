@@ -16,11 +16,11 @@
 
 package pages.events.transhipments
 
-import generators.DomainModelGenerators
-import models.domain.Container
+import generators.MessagesModelGenerators
+import models.messages.Container
 import pages.behaviours.PageBehaviours
 
-class ContainerNumberPageSpec extends PageBehaviours with DomainModelGenerators {
+class ContainerNumberPageSpec extends PageBehaviours with MessagesModelGenerators {
 
   val eventIndex     = 0
   val containerIndex = 0

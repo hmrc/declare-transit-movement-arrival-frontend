@@ -14,22 +14,14 @@
  * limitations under the License.
  */
 
-package models.domain
+package derivable
 
-import java.time.LocalDate
+import pages.events.SectionConstants
+import play.api.libs.json.{JsPath, JsString}
 
-import play.api.libs.json.{Format, Json}
+final case class DeriveNumberOfSeals(eventIndex: Int) extends Derivable[List[JsString], Int] {
 
-final case class Endorsement(date: Option[LocalDate], authority: Option[String], place: Option[String], country: Option[String])
+  override val derive: List[JsString] => Int = _.size
 
-object Endorsement {
-
-  object Constants {
-    val authorityLength = 35
-    val placeLength     = 35
-    val countryLength   = 2
-  }
-
-  implicit lazy val format: Format[Endorsement] =
-    Json.format[Endorsement]
+  override def path: JsPath = JsPath \ SectionConstants.events \ eventIndex \ SectionConstants.seals
 }

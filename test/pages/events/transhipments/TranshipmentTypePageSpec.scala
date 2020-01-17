@@ -16,15 +16,16 @@
 
 package pages.events.transhipments
 
-import generators.DomainModelGenerators
-import models.domain.Container
+import generators.MessagesModelGenerators
+import models.messages.Container
 import models.{TranshipmentType, UserAnswers}
 import models.TranshipmentType._
+import models.reference.Country
 import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
 import queries.ContainersQuery
 
-class TranshipmentTypePageSpec extends PageBehaviours with DomainModelGenerators {
+class TranshipmentTypePageSpec extends PageBehaviours with MessagesModelGenerators {
 
   val index = 0
 
@@ -39,8 +40,8 @@ class TranshipmentTypePageSpec extends PageBehaviours with DomainModelGenerators
     "cleanup" - {
       "must remove transport identity and nationality when the answer change to Different Container" in {
 
-        forAll(arbitrary[UserAnswers], arbitrary[String]) {
-          (userAnswers, transportIdentity) =>
+        forAll(arbitrary[UserAnswers], arbitrary[String], arbitrary[Country]) {
+          (userAnswers, transportIdentity, transportNationality) =>
             val result = userAnswers
               .set(TranshipmentTypePage(index), DifferentVehicle)
               .success
@@ -48,7 +49,7 @@ class TranshipmentTypePageSpec extends PageBehaviours with DomainModelGenerators
               .set(TransportIdentityPage(index), transportIdentity)
               .success
               .value
-              .set(TransportNationalityPage(index), transportIdentity)
+              .set(TransportNationalityPage(index), transportNationality)
               .success
               .value
               .set(TranshipmentTypePage(index), DifferentContainer)
@@ -84,13 +85,13 @@ class TranshipmentTypePageSpec extends PageBehaviours with DomainModelGenerators
 
       "must remove all transhipment data when there is no answer" in {
 
-        forAll(arbitrary[UserAnswers], arbitrary[String], arbitrary[Container]) {
-          (userAnswers, stringAnswer, container) =>
+        forAll(arbitrary[UserAnswers], arbitrary[String], arbitrary[Container], arbitrary[Country]) {
+          (userAnswers, stringAnswer, container, country) =>
             val result = userAnswers
               .set(TransportIdentityPage(index), stringAnswer)
               .success
               .value
-              .set(TransportNationalityPage(index), stringAnswer)
+              .set(TransportNationalityPage(index), country)
               .success
               .value
               .set(ContainerNumberPage(index, 0), container)

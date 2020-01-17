@@ -14,21 +14,22 @@
  * limitations under the License.
  */
 
-package pages.events.transhipments
+package models.messages
 
-import models.reference.Country
-import pages.behaviours.PageBehaviours
+import java.time.LocalDate
 
-class TransportNationalityPageSpec extends PageBehaviours {
+import play.api.libs.json.{Format, Json}
 
-  val index = 0
+final case class Endorsement(date: Option[LocalDate], authority: Option[String], place: Option[String], country: Option[String])
 
-  "TransportNationalityPage" - {
+object Endorsement {
 
-    beRetrievable[Country](TransportNationalityPage(index))
-
-    beSettable[Country](TransportNationalityPage(index))
-
-    beRemovable[Country](TransportNationalityPage(index))
+  object Constants {
+    val authorityLength = 35
+    val placeLength     = 35
+    val countryLength   = 2
   }
+
+  implicit lazy val format: Format[Endorsement] =
+    Json.format[Endorsement]
 }

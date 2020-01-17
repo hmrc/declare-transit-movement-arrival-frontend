@@ -16,7 +16,7 @@
 
 package viewModels
 
-import derivable.DeriveNumberOfContainers
+import derivable.{DeriveNumberOfContainers, DeriveNumberOfSeals}
 import models.TranshipmentType._
 import models.{Mode, UserAnswers}
 import pages.events._
@@ -66,19 +66,12 @@ object CheckEventAnswersViewModel extends NunjucksSupport {
       ).flatten
     )
 
-    val sealSection: Option[Section] = {
+    val sealSection: Section = {
+      val seals: Seq[Row] = Seq
+        .range(0, userAnswers.get(DeriveNumberOfSeals(eventIndex)).getOrElse(0))
+        .flatMap(helper.sealIdentity(eventIndex, _))
 
-      userAnswers
-        .get(HaveSealsChangedPage(eventIndex))
-        .map {
-          haveSealsChanged =>
-            Section(
-              Seq(
-                helper.haveSealsChanged(eventIndex),
-                if (haveSealsChanged) helper.sealIdentity(eventIndex) else None
-              ).flatten
-            )
-        }
+      Section(msg"addSeal.sealList.heading", (helper.haveSealsChanged(eventIndex) ++ seals).toSeq)
     }
 
     val otherInfoSections: Seq[Section] = {
@@ -102,7 +95,7 @@ object CheckEventAnswersViewModel extends NunjucksSupport {
 
     CheckEventAnswersViewModel(
       Section(eventInfo),
-      otherInfoSections ++ sealSection.toSeq
+      otherInfoSections :+ sealSection
     )
   }
 

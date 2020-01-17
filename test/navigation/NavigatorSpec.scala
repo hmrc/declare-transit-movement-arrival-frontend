@@ -21,10 +21,10 @@ import controllers.events.seals.{routes => sealRoutes}
 import controllers.events.transhipments.{routes => transhipmentRoutes}
 import controllers.events.{routes => eventRoutes}
 import controllers.routes
-import generators.{DomainModelGenerators, Generators}
+import generators.{Generators, MessagesModelGenerators}
 import models.TranshipmentType.{DifferentContainer, DifferentContainerAndVehicle, DifferentVehicle}
 import models._
-import models.domain.{Container, EnRouteEvent}
+import models.messages.{Container, EnRouteEvent}
 import models.reference.Country
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
@@ -35,7 +35,7 @@ import pages.events.seals._
 import pages.events.transhipments._
 import queries.EventsQuery
 
-class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generators with DomainModelGenerators {
+class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generators with MessagesModelGenerators {
 
   val navigator: Navigator = app.injector.instanceOf[Navigator]
 
@@ -805,11 +805,34 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         "to seal identity page when user selects Yes" in {
           forAll(arbitrary[UserAnswers]) {
             answers =>
-              val updatedAnswers = answers.set(HaveSealsChangedPage(eventIndex), true).success.value
+              val updatedAnswers = answers
+                .set(HaveSealsChangedPage(eventIndex), true)
+                .success
+                .value
+                .remove(SealIdentityPage(eventIndex, sealIndex))
+                .success
+                .value
 
               navigator
                 .nextPage(HaveSealsChangedPage(eventIndex), NormalMode, updatedAnswers)
-                .mustBe(sealRoutes.SealIdentityController.onPageLoad(answers.id, eventIndex, NormalMode))
+                .mustBe(sealRoutes.SealIdentityController.onPageLoad(answers.id, eventIndex, sealIndex, NormalMode))
+          }
+        }
+
+        "to 'add seal page'" in {
+          forAll(arbitrary[UserAnswers], arbitrary[String]) {
+            (answers, sealsIdentity) =>
+              val updatedAnswers = answers
+                .set(SealIdentityPage(eventIndex, sealIndex), sealsIdentity)
+                .success
+                .value
+                .set(HaveSealsChangedPage(eventIndex), true)
+                .success
+                .value
+
+              navigator
+                .nextPage(HaveSealsChangedPage(eventIndex), NormalMode, updatedAnswers)
+                .mustBe(sealRoutes.AddSealController.onPageLoad(answers.id, eventIndex, NormalMode))
           }
         }
       }
@@ -819,40 +842,43 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         "to check event answers page" in {
           forAll(arbitrary[UserAnswers], arbitrary[String]) {
             (answers, sealsIdentity) =>
-              val updatedAnswers = answers.set(SealIdentityPage(eventIndex), sealsIdentity).success.value
+              val updatedAnswers = answers.set(SealIdentityPage(eventIndex, sealIndex), sealsIdentity).success.value
 
               navigator
-                .nextPage(SealIdentityPage(eventIndex), NormalMode, updatedAnswers)
-                .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(answers.id, eventIndex))
+                .nextPage(SealIdentityPage(eventIndex, sealIndex), NormalMode, updatedAnswers)
+                .mustBe(sealRoutes.AddSealController.onPageLoad(answers.id, eventIndex, NormalMode))
           }
         }
       }
 
-//      "must go from add seal page" - {
-//
-//        "to check event details page when answer is no" in {
-//          forAll(arbitrary[UserAnswers]) {
-//            answers =>
-//              val updatedAnswers = answers.set(AddSealPage(eventIndex), false).success.value
-//
-//              navigator
-//                .nextPage(AddSealPage(eventIndex), NormalMode, updatedAnswers)
-//                .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(answers.id, eventIndex))
-//
-//          }
-//        }
-//
-//        "to seal identity page when answer is Yes" in {
-//          forAll(arbitrary[UserAnswers]) {
-//            answers =>
-//              val updatedAnswers = answers.set(AddSealPage(eventIndex), true).success.value
-//
-//              navigator
-//                .nextPage(AddSealPage(eventIndex), NormalMode, updatedAnswers)
-//                .mustBe(sealRoutes.SealIdentityController.onPageLoad(answers.id, eventIndex, NormalMode))
-//          }
-//        }
-//      }
+      "must go from add seal page" - {
+
+        "to check event details page when answer is no" in {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val updatedAnswers = answers.set(AddSealPage(eventIndex), false).success.value
+
+              navigator
+                .nextPage(AddSealPage(eventIndex), NormalMode, updatedAnswers)
+                .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(answers.id, eventIndex))
+
+          }
+        }
+
+        "to seal identity page when answer is Yes" in {
+          val updatedAnswers = emptyUserAnswers
+            .set(AddSealPage(eventIndex), true)
+            .success
+            .value
+            .set(SealIdentityPage(eventIndex, sealIndex), "seal1")
+            .success
+            .value
+
+          navigator
+            .nextPage(AddSealPage(eventIndex), NormalMode, updatedAnswers)
+            .mustBe(sealRoutes.SealIdentityController.onPageLoad(updatedAnswers.id, eventIndex, 1, NormalMode))
+        }
+      }
     }
   }
 

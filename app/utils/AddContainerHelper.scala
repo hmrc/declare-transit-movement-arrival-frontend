@@ -18,7 +18,7 @@ package utils
 
 import controllers.events.transhipments.routes.ContainerNumberController
 import controllers.events.transhipments.routes.ConfirmRemoveContainerController
-import models.domain.Container
+import models.messages.Container
 import models.{Mode, UserAnswers}
 import pages.events.transhipments.ContainerNumberPage
 import uk.gov.hmrc.viewmodels.SummaryList.{Action, Key, Row, Value}

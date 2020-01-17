@@ -49,42 +49,44 @@ class SealIdentityController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mrn: MovementReferenceNumber, eventIndex: Int, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
-    implicit request =>
-      val preparedForm = request.userAnswers.get(SealIdentityPage(eventIndex)) match {
-        case None        => form
-        case Some(value) => form.fill(value)
-      }
+  def onPageLoad(mrn: MovementReferenceNumber, eventIndex: Int, sealIndex: Int, mode: Mode): Action[AnyContent] =
+    (identify andThen getData(mrn) andThen requireData).async {
+      implicit request =>
+        val preparedForm = request.userAnswers.get(SealIdentityPage(eventIndex, sealIndex)) match {
+          case None        => form
+          case Some(value) => form.fill(value)
+        }
 
-      val json = Json.obj(
-        "form" -> preparedForm,
-        "mrn"  -> mrn,
-        "mode" -> mode
-      )
-
-      renderer.render("events/seals/sealIdentity.njk", json).map(Ok(_))
-  }
-
-  def onSubmit(mrn: MovementReferenceNumber, eventIndex: Int, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
-    implicit request =>
-      form
-        .bindFromRequest()
-        .fold(
-          formWithErrors => {
-
-            val json = Json.obj(
-              "form" -> formWithErrors,
-              "mrn"  -> mrn,
-              "mode" -> mode
-            )
-
-            renderer.render("events/seals/sealIdentity.njk", json).map(BadRequest(_))
-          },
-          value =>
-            for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(SealIdentityPage(eventIndex), value))
-              _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(SealIdentityPage(eventIndex), mode, updatedAnswers))
+        val json = Json.obj(
+          "form" -> preparedForm,
+          "mrn"  -> mrn,
+          "mode" -> mode
         )
-  }
+
+        renderer.render("events/seals/sealIdentity.njk", json).map(Ok(_))
+    }
+
+  def onSubmit(mrn: MovementReferenceNumber, eventIndex: Int, sealIndex: Int, mode: Mode): Action[AnyContent] =
+    (identify andThen getData(mrn) andThen requireData).async {
+      implicit request =>
+        form
+          .bindFromRequest()
+          .fold(
+            formWithErrors => {
+
+              val json = Json.obj(
+                "form" -> formWithErrors,
+                "mrn"  -> mrn,
+                "mode" -> mode
+              )
+
+              renderer.render("events/seals/sealIdentity.njk", json).map(BadRequest(_))
+            },
+            value =>
+              for {
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(SealIdentityPage(eventIndex, sealIndex), value))
+                _              <- sessionRepository.set(updatedAnswers)
+              } yield Redirect(navigator.nextPage(SealIdentityPage(eventIndex, sealIndex), mode, updatedAnswers))
+          )
+    }
 }

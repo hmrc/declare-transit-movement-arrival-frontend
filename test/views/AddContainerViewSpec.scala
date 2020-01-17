@@ -16,14 +16,14 @@
 
 package views
 
-import generators.{DomainModelGenerators, ViewModelGenerators}
+import generators.{MessagesModelGenerators, ViewModelGenerators}
 import org.jsoup.nodes.Document
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.Json
 import viewModels.Section
 
-class AddContainerViewSpec extends ViewSpecBase with DomainModelGenerators with ViewModelGenerators with ScalaCheckPropertyChecks {
+class AddContainerViewSpec extends ViewSpecBase with MessagesModelGenerators with ViewModelGenerators with ScalaCheckPropertyChecks {
 
   "addContainer must display a rows for each " in {
     forAll(arbitrary[Section]) {
