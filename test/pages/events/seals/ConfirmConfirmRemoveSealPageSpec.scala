@@ -18,14 +18,14 @@ package pages.events.seals
 
 import pages.behaviours.PageBehaviours
 
-class RemoveSealPageSpec extends PageBehaviours {
+class ConfirmConfirmRemoveSealPageSpec extends PageBehaviours {
 
   "RemoveSealPage" - {
 
-    beRetrievable[Boolean](RemoveSealPage)
+    beRetrievable[Boolean](ConfirmRemoveSealPage)
 
-    beSettable[Boolean](RemoveSealPage)
+    beSettable[Boolean](ConfirmRemoveSealPage)
 
-    beRemovable[Boolean](RemoveSealPage)
+    beRemovable[Boolean](ConfirmRemoveSealPage)
   }
 }

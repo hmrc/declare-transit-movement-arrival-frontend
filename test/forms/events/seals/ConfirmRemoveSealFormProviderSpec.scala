@@ -16,14 +16,30 @@
 
 package forms.events.seals
 
-import forms.mappings.Mappings
-import javax.inject.Inject
-import play.api.data.Form
+import forms.behaviours.BooleanFieldBehaviours
+import play.api.data.FormError
 
-class RemoveSealFormProvider @Inject() extends Mappings {
+class ConfirmRemoveSealFormProviderSpec extends BooleanFieldBehaviours {
 
-  def apply(): Form[Boolean] =
-    Form(
-      "value" -> boolean("removeSeal.error.required")
+  val requiredKey = "removeSeal.error.required"
+  val invalidKey  = "error.boolean"
+
+  val form = new ConfirmRemoveSealFormProvider()()
+
+  ".value" - {
+
+    val fieldName = "value"
+
+    behave like booleanField(
+      form,
+      fieldName,
+      invalidError = FormError(fieldName, invalidKey)
     )
+
+    behave like mandatoryField(
+      form,
+      fieldName,
+      requiredError = FormError(fieldName, requiredKey)
+    )
+  }
 }

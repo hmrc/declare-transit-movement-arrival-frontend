@@ -152,7 +152,7 @@ POST       /:mrn/event/:eventIndex/haveSealsChanged                             
 GET        /:mrn/event/:eventIndex/changeHaveSealsChanged                                 controllers.events.seals.HaveSealsChangedController.onPageLoad(mrn: MovementReferenceNumber, eventIndex: Int, mode: Mode = CheckMode)
 POST       /:mrn/event/:eventIndex/changeHaveSealsChanged                                 controllers.events.seals.HaveSealsChangedController.onSubmit(mrn: MovementReferenceNumber, eventIndex: Int, mode: Mode = CheckMode)
 
-GET        /:mrn/removeSeal                                             controllers.events.seals.RemoveSealController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
-POST       /:mrn/removeSeal                                             controllers.events.seals.RemoveSealController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
-GET        /:mrn/changeRemoveSeal                                       controllers.events.seals.RemoveSealController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
-POST       /:mrn/changeRemoveSeal                                       controllers.events.seals.RemoveSealController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
+GET        /:mrn/event/:eventIndex/seal/:sealIndex/removeSeal                                      controllers.events.seals.ConfirmRemoveSealController.onPageLoad(mrn: MovementReferenceNumber, eventIndex: Int, sealIndex: Int, mode: Mode = NormalMode)
+POST       /:mrn/event/:eventIndex/seal/:sealIndex/removeSeal                                      controllers.events.seals.ConfirmRemoveSealController.onSubmit(mrn: MovementReferenceNumber, eventIndex: Int, sealIndex: Int, mode: Mode = NormalMode)
+GET        /:mrn/event/:eventIndex/seal/:sealIndex/changeRemoveSeal                                controllers.events.seals.ConfirmRemoveSealController.onPageLoad(mrn: MovementReferenceNumber, eventIndex: Int, sealIndex: Int, mode: Mode = CheckMode)
+POST       /:mrn/event/:eventIndex/seal/:sealIndex/changeRemoveSeal                                controllers.events.seals.ConfirmRemoveSealController.onSubmit(mrn: MovementReferenceNumber, eventIndex: Int, sealIndex: Int, mode: Mode = CheckMode)

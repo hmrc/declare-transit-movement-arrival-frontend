@@ -353,7 +353,6 @@ haveSealsChanged.heading = Have any of the seals changed?
 haveSealsChanged.checkYourAnswersLabel = Have any of the seals changed?
 haveSealsChanged.error.required = Select yes if any seals have changed
 
-removeSeal.title = removeSeal
-removeSeal.heading = removeSeal
-removeSeal.checkYourAnswersLabel = removeSeal
-removeSeal.error.required = Select yes if removeSeal
+confirmRemoveSeal.title = Are you sure you want to remove the seal {0}?
+confirmRemoveSeal.heading = Are you sure you want to remove the seal {0}?
+confirmRemoveSeal.error.required = Select yes if you are sure you want to remove the seal {0}
