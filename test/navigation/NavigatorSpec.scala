@@ -661,6 +661,73 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         }
       }
 
+      "must go from Confirm Remove Event Page" - {
+
+        "to Add Event Page when user selects 'No'" in {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val updatedAnswers = {
+                answers
+                  .set(IncidentOnRoutePage, true)
+                  .success
+                  .value
+                  .set(EventCountryPage(0), country)
+                  .success
+                  .value
+                  .set(EventPlacePage(0), "TestPlace")
+                  .success
+                  .value
+                  .set(EventReportedPage(0), true)
+                  .success
+                  .value
+                  .set(IsTranshipmentPage(0), false)
+                  .success
+                  .value
+              }
+              navigator
+                .nextPage(ConfirmRemoveEventPage(0), NormalMode, updatedAnswers)
+                .mustBe(eventRoutes.AddEventController.onPageLoad(answers.id, NormalMode))
+          }
+        }
+
+        "to Add Event Page when user selects 'Yes' and events still exist" in {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val updatedAnswers = {
+                answers
+                  .set(IncidentOnRoutePage, true)
+                  .success
+                  .value
+                  .set(EventCountryPage(0), country)
+                  .success
+                  .value
+                  .set(EventPlacePage(0), "TestPlace")
+                  .success
+                  .value
+                  .set(EventReportedPage(0), true)
+                  .success
+                  .value
+                  .set(IsTranshipmentPage(0), false)
+                  .success
+                  .value
+              }
+              navigator
+                .nextPage(ConfirmRemoveEventPage(0), NormalMode, updatedAnswers)
+                .mustBe(eventRoutes.AddEventController.onPageLoad(answers.id, NormalMode))
+          }
+        }
+
+        "to Incident on Route Page when user selects 'Yes' and no event exists" in {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val withoutEvents = answers.remove(EventsQuery).success.value
+              navigator
+                .nextPage(ConfirmRemoveEventPage(0), NormalMode, withoutEvents)
+                .mustBe(routes.IncidentOnRouteController.onPageLoad(answers.id, NormalMode))
+          }
+        }
+      }
+
       "must go from Add Event Page" - {
         "when user selects 'Yes' to" - {
 

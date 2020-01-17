@@ -17,16 +17,16 @@
 package navigation
 
 import com.google.inject.{Inject, Singleton}
+import controllers.events.seals.{routes => sealRoutes}
 import controllers.events.transhipments.{routes => transhipmentRoutes}
 import controllers.events.{routes => eventRoutes}
-import controllers.events.seals.{routes => sealRoutes}
 import controllers.routes
 import derivable.{DeriveNumberOfContainers, DeriveNumberOfEvents, DeriveNumberOfSeals}
 import models.GoodsLocation._
 import models.TranshipmentType.{DifferentContainer, DifferentContainerAndVehicle, DifferentVehicle}
 import models.{CheckMode, Mode, NormalMode, UserAnswers}
 import pages._
-import pages.events._
+import pages.events.{ConfirmRemoveEventPage, _}
 import pages.events.seals._
 import pages.events.transhipments._
 import play.api.mvc.Call
@@ -58,6 +58,7 @@ class Navigator @Inject()() {
     case ContainerNumberPage(index, _) => ua => Some(transhipmentRoutes.AddContainerController.onPageLoad(ua.id, index, NormalMode))
     case AddContainerPage(index) => addContainer(index)
     case ConfirmRemoveContainerPage(index) => confirmRemoveContainerRoute(index, NormalMode)
+    case ConfirmRemoveEventPage(index)=> confirmRemoveEventRoute(index, NormalMode)
     case HaveSealsChangedPage(index) => haveSealsChanged(index, NormalMode)
     case SealIdentityPage(index, _) => ua => Some(sealRoutes.AddSealController.onPageLoad(ua.id, index, NormalMode))
     case AddSealPage(index) => addSeal(index)
@@ -77,6 +78,7 @@ class Navigator @Inject()() {
     case AddContainerPage(index) => addContainerCheckRoute(index)
     case EventReportedPage(index) => eventReportedCheckRoute(index)
     case ConfirmRemoveContainerPage(index) => confirmRemoveContainerRoute(index, CheckMode)
+    case ConfirmRemoveEventPage(index)=> confirmRemoveEventRoute(index, CheckMode)
     case IncidentOnRoutePage => incidentOnRoute
     case SealIdentityPage(index, _) => ua => Some(sealRoutes.AddSealController.onPageLoad(ua.id, index, CheckMode))
     case HaveSealsChangedPage(index) => haveSealsChanged(index, CheckMode)
@@ -107,6 +109,12 @@ class Navigator @Inject()() {
   def confirmRemoveContainerRoute(index: Int, mode: Mode)(ua: UserAnswers): Option[Call] = ua.get(DeriveNumberOfContainers(index)) match {
     case Some(0) | None => Some(eventRoutes.IsTranshipmentController.onPageLoad(ua.id, index, mode))
     case _              => Some(transhipmentRoutes.AddContainerController.onPageLoad(ua.id, index, mode))
+  }
+
+  def confirmRemoveEventRoute(index: Int, mode: Mode)(ua: UserAnswers) = ua.get(DeriveNumberOfEvents) match {
+    case Some(0) | None => Some(routes.IncidentOnRouteController.onPageLoad(ua.id, mode))
+    case _              => Some(eventRoutes.AddEventController.onPageLoad(ua.id, mode))
+
   }
 
   private def addContainer(index: Int)(ua: UserAnswers): Option[Call] = ua.get(AddContainerPage(index)) map {
@@ -175,10 +183,10 @@ class Navigator @Inject()() {
 
   private def incidentOnRoute(ua: UserAnswers): Option[Call] =
     (ua.get(IncidentOnRoutePage), ua.get(DeriveNumberOfEvents)) match {
-      case (Some(true), None)    => Some(eventRoutes.EventCountryController.onPageLoad(ua.id, 0, NormalMode))
-      case (Some(true), Some(_)) => Some(eventRoutes.AddEventController.onPageLoad(ua.id, NormalMode))
-      case (Some(false), _)      => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
-      case _                     => None
+      case (Some(true), None | Some(0)) => Some(eventRoutes.EventCountryController.onPageLoad(ua.id, 0, NormalMode))
+      case (Some(true), Some(_))        => Some(eventRoutes.AddEventController.onPageLoad(ua.id, NormalMode))
+      case (Some(false), _)             => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
+      case _                            => None
     }
 
   private def isTranshipmentRoute(index: Int)(ua: UserAnswers): Option[Call] =

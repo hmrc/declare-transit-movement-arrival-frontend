@@ -17,7 +17,7 @@
 package utils
 
 import controllers.events.{routes => eventRoutes}
-import models.{MovementReferenceNumber, UserAnswers}
+import models.{MovementReferenceNumber, NormalMode, UserAnswers}
 import pages.events._
 import uk.gov.hmrc.viewmodels.SummaryList.{Action, Key, Row, Value}
 import uk.gov.hmrc.viewmodels._
@@ -38,7 +38,7 @@ class AddEventsHelper(userAnswers: UserAnswers) {
             ),
             Action(
               content            = msg"site.delete",
-              href               = "#",
+              href               = eventRoutes.ConfirmRemoveEventController.onPageLoad(mrn, index, NormalMode).url,
               visuallyHiddenText = Some(msg"addEvent.checkYourAnswersLabel.delete".withArgs(index, answer)) // TODO: Prefix in message file for is hard coded, should be the same as: site.delete.hidden
             )
           )
