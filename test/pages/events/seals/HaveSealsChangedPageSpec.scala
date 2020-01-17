@@ -16,7 +16,10 @@
 
 package pages.events.seals
 
+import models.UserAnswers
+import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
+import queries.SealsQuery
 
 class HaveSealsChangedPageSpec extends PageBehaviours {
 
@@ -29,5 +32,53 @@ class HaveSealsChangedPageSpec extends PageBehaviours {
     beSettable[Boolean](HaveSealsChangedPage(eventIndex))
 
     beRemovable[Boolean](HaveSealsChangedPage(eventIndex))
+
+    "clean up" - {
+      "must remove seals when user answer changes from 'Yes' to 'No' " in {
+
+        forAll(arbitrary[UserAnswers]) {
+          userAnswers =>
+            val result = userAnswers
+              .set(HaveSealsChangedPage(eventIndex), true)
+              .success
+              .value
+              .set(SealIdentityPage(eventIndex, 0), "seal")
+              .success
+              .value
+              .set(SealIdentityPage(eventIndex, 1), "seal")
+              .success
+              .value
+              .set(HaveSealsChangedPage(eventIndex), false)
+              .success
+              .value
+
+            result.get(SealIdentityPage(eventIndex, 0)) must not be defined
+            result.get(SealsQuery(eventIndex)) must not be defined
+        }
+      }
+
+      "must remove seals when user answer changes from 'No' to 'Yes' " in {
+
+        forAll(arbitrary[UserAnswers]) {
+          userAnswers =>
+            val result = userAnswers
+              .set(HaveSealsChangedPage(eventIndex), false)
+              .success
+              .value
+              .set(SealIdentityPage(eventIndex, 0), "seal")
+              .success
+              .value
+              .set(SealIdentityPage(eventIndex, 1), "seal")
+              .success
+              .value
+              .set(HaveSealsChangedPage(eventIndex), true)
+              .success
+              .value
+
+            result.get(SealIdentityPage(eventIndex, 0)) mustBe defined
+            result.get(SealsQuery(eventIndex)) mustBe defined
+        }
+      }
+    }
   }
 }

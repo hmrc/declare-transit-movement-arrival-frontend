@@ -14,25 +14,15 @@
  * limitations under the License.
  */
 
-package pages.events.seals
+package queries
 
-import models.UserAnswers
+import models.messages.EnRouteEvent
 import pages.QuestionPage
 import pages.events.SectionConstants
 import play.api.libs.json.JsPath
-import queries.SealsQuery
 
-import scala.util.Try
+final case class EventQuery(eventIndex: Int) extends QuestionPage[List[EnRouteEvent]] {
 
-case class HaveSealsChangedPage(index: Int) extends QuestionPage[Boolean] {
+  override def path: JsPath = JsPath \ SectionConstants.events \ eventIndex
 
-  override def path: JsPath = JsPath \ SectionConstants.events \ index \ toString
-
-  override def toString: String = "haveSealsChanged"
-
-  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
-    value match {
-      case Some(false) => userAnswers.remove(SealsQuery(index))
-      case _           => super.cleanup(value, userAnswers)
-    }
 }
