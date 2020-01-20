@@ -260,11 +260,10 @@ checkEventAnswers.section.title.containerNumbers = Container numbers
 checkEventAnswers.section.title.vehicleInformation = Vehicle information
 
 
-isTraderAddressPlaceOfNotification.title = Is {0} the postcode of the place of notification?
-isTraderAddressPlaceOfNotification.heading = Is {0} the postcode of the place of notification?
-isTraderAddressPlaceOfNotification.hintText = Tell us if you are completing the arrival notification at the trader’s address.
-isTraderAddressPlaceOfNotification.checkYourAnswersLabel = Is {0} the postcode of the place of notification
-isTraderAddressPlaceOfNotification.error.required = Select yes if {0} is the postcode of the place of notification
+isTraderAddressPlaceOfNotification.title = Are you completing this arrival notification at the trader’s address?
+isTraderAddressPlaceOfNotification.heading = Are you completing this arrival notification at the trader’s address?
+isTraderAddressPlaceOfNotification.checkYourAnswersLabel = Are you completing this arrival notification at the trader’s address?
+isTraderAddressPlaceOfNotification.error.required = Select yes if you are completing this arrival notification at the trader’s address
 
 placeOfNotification.title = Where is the place of notification?
 placeOfNotification.heading = Where is the place of notification?

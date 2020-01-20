@@ -45,13 +45,16 @@ class IsTraderAddressPlaceOfNotificationController @Inject()(override val messag
     with I18nSupport
     with uk.gov.hmrc.nunjucks.NunjucksSupport {
 
+  private val form = formProvider()
+
   def onPageLoad(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] =
     (identify andThen getData(mrn) andThen requireData).async {
       implicit request =>
         request.userAnswers.get(TraderAddressPage) match {
           case Some(traderAddress) => {
-            val postcode = traderAddress.postcode
-            val form     = formProvider(postcode)
+            val addressLine1    = traderAddress.buildingAndStreet
+            val addressTown     = traderAddress.city
+            val addressPostcode = traderAddress.postcode
 
             val preparedForm = request.userAnswers.get(IsTraderAddressPlaceOfNotificationPage) match {
               case None        => form
@@ -62,7 +65,9 @@ class IsTraderAddressPlaceOfNotificationController @Inject()(override val messag
               "form"           -> preparedForm,
               "mode"           -> mode,
               "mrn"            -> mrn,
-              "traderPostcode" -> postcode,
+              "traderLine1"    -> addressLine1,
+              "traderTown"     -> addressTown,
+              "traderPostcode" -> addressPostcode,
               "radios"         -> Radios.yesNo(preparedForm("value"))
             )
 
@@ -79,7 +84,6 @@ class IsTraderAddressPlaceOfNotificationController @Inject()(override val messag
         request.userAnswers.get(TraderAddressPage) match {
           case Some(traderAddress) => {
             val postcode = traderAddress.postcode
-            val form     = formProvider(postcode)
 
             form
               .bindFromRequest()
