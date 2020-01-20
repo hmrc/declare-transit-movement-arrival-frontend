@@ -502,11 +502,36 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
     "must go from TransportIdentityPage" - {
 
-      "to TransportNationalityPage" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
+      "to TransportNationalityPage when TransportNationality has not been answered" in {
+        forAll(arbitrary[UserAnswers], arbitrary[String]) {
+          (answers, transportIdentity) =>
+            val updatedUserAnswers = answers
+              .set(TransportIdentityPage(eventIndex), transportIdentity)
+              .success
+              .value
+              .remove(TransportNationalityPage(eventIndex))
+              .success
+              .value
+
             navigator
-              .nextPage(TransportIdentityPage(eventIndex), CheckMode, answers)
+              .nextPage(TransportIdentityPage(eventIndex), CheckMode, updatedUserAnswers)
+              .mustBe(transhipmentRoutes.TransportNationalityController.onPageLoad(answers.id, eventIndex, CheckMode))
+        }
+      }
+
+      "to CheckEventAnswersPage when TransportNationality has been answered" in {
+        forAll(arbitrary[UserAnswers], arbitrary[String], arbitrary[Country]) {
+          (answers, transportIdentity, transportNationality) =>
+            val updatedUserAnswers = answers
+              .set(TransportIdentityPage(eventIndex), transportIdentity)
+              .success
+              .value
+              .set(TransportNationalityPage(eventIndex), transportNationality)
+              .success
+              .value
+
+            navigator
+              .nextPage(TransportIdentityPage(eventIndex), CheckMode, updatedUserAnswers)
               .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(answers.id, eventIndex))
         }
       }

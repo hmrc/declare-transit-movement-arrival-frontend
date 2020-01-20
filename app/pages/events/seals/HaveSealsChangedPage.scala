@@ -30,10 +30,9 @@ case class HaveSealsChangedPage(index: Int) extends QuestionPage[Boolean] {
 
   override def toString: String = "haveSealsChanged"
 
-  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] = {
+  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
     value match {
       case Some(false) => userAnswers.remove(SealsQuery(index))
       case _           => super.cleanup(value, userAnswers)
     }
-  }
 }
