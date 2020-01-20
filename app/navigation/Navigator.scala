@@ -26,7 +26,7 @@ import models.GoodsLocation._
 import models.TranshipmentType.{DifferentContainer, DifferentContainerAndVehicle, DifferentVehicle}
 import models.{CheckMode, Mode, NormalMode, UserAnswers}
 import pages._
-import pages.events.{ConfirmRemoveEventPage, _}
+import pages.events._
 import pages.events.seals._
 import pages.events.transhipments._
 import play.api.mvc.Call
@@ -62,6 +62,7 @@ class Navigator @Inject()() {
     case HaveSealsChangedPage(index) => haveSealsChanged(index, NormalMode)
     case SealIdentityPage(index, _) => ua => Some(sealRoutes.AddSealController.onPageLoad(ua.id, index, NormalMode))
     case AddSealPage(index) => addSeal(index)
+    case ConfirmRemoveSealPage(eventIndex) => removeSeal(eventIndex, NormalMode)
   }
 
   private val checkRouteMap: PartialFunction[Page, UserAnswers => Option[Call]] = {
@@ -82,6 +83,7 @@ class Navigator @Inject()() {
     case IncidentOnRoutePage => incidentOnRoute
     case SealIdentityPage(index, _) => ua => Some(sealRoutes.AddSealController.onPageLoad(ua.id, index, CheckMode))
     case HaveSealsChangedPage(index) => haveSealsChanged(index, CheckMode)
+    case ConfirmRemoveSealPage(eventIndex) => removeSeal(eventIndex, CheckMode)
   }
 
   def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = mode match {
@@ -106,6 +108,12 @@ class Navigator @Inject()() {
   }
 
   // format: on
+  private def removeSeal(eventIndex: Int, mode: Mode)(ua: UserAnswers) =
+    ua.get(DeriveNumberOfSeals(eventIndex)) match {
+      case None | Some(0) => Some(sealRoutes.HaveSealsChangedController.onPageLoad(ua.id, eventIndex, mode))
+      case _              => Some(sealRoutes.AddSealController.onPageLoad(ua.id, eventIndex, mode))
+    }
+
   def confirmRemoveContainerRoute(index: Int, mode: Mode)(ua: UserAnswers): Option[Call] = ua.get(DeriveNumberOfContainers(index)) match {
     case Some(0) | None => Some(eventRoutes.IsTranshipmentController.onPageLoad(ua.id, index, mode))
     case _              => Some(transhipmentRoutes.AddContainerController.onPageLoad(ua.id, index, mode))

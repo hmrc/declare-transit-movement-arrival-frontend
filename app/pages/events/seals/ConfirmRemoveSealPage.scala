@@ -16,12 +16,6 @@
 
 package pages.events.seals
 
-import pages.QuestionPage
-import play.api.libs.json.JsPath
+import pages.Page
 
-case object ConfirmRemoveSealPage extends QuestionPage[Boolean] {
-
-  override def path: JsPath = JsPath \ toString
-
-  override def toString: String = "removeSeal"
-}
+final case class ConfirmRemoveSealPage(eventIndex: Int) extends Page
