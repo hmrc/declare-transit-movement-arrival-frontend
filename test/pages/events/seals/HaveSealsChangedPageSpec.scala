@@ -38,7 +38,6 @@ class HaveSealsChangedPageSpec extends PageBehaviours {
 
         forAll(arbitrary[UserAnswers]) {
           userAnswers =>
-
             val result = userAnswers
               .set(HaveSealsChangedPage(eventIndex), true)
               .success
@@ -62,7 +61,6 @@ class HaveSealsChangedPageSpec extends PageBehaviours {
 
         forAll(arbitrary[UserAnswers]) {
           userAnswers =>
-
             val result = userAnswers
               .set(HaveSealsChangedPage(eventIndex), false)
               .success

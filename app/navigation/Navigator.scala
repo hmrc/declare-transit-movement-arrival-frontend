@@ -73,7 +73,7 @@ class Navigator @Inject()() {
     case IncidentInformationPage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
     case TranshipmentTypePage(index) => transhipmentTypeCheckRoute(index)
     case ContainerNumberPage(index, _) => ua => Some(transhipmentRoutes.AddContainerController.onPageLoad(ua.id, index, CheckMode))
-    case TransportIdentityPage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
+    case TransportIdentityPage(index) => transportIdentity(index)
     case TransportNationalityPage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
     case AddContainerPage(index) => addContainerCheckRoute(index)
     case EventReportedPage(index) => eventReportedCheckRoute(index)
@@ -106,12 +106,20 @@ class Navigator @Inject()() {
   }
 
   // format: on
-  def confirmRemoveContainerRoute(index: Int, mode: Mode)(ua: UserAnswers): Option[Call] = ua.get(DeriveNumberOfContainers(index)) match {
+
+  private def transportIdentity(index: Int)(ua: UserAnswers): Option[Call] =
+    (ua.get(TransportIdentityPage(index)), ua.get(TransportNationalityPage(index))) match {
+      case (Some(_), Some(_)) => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
+      case (Some(_), None)    => Some(transhipmentRoutes.TransportNationalityController.onPageLoad(ua.id, index, CheckMode))
+      case _                  => None
+    }
+
+  private def confirmRemoveContainerRoute(index: Int, mode: Mode)(ua: UserAnswers): Option[Call] = ua.get(DeriveNumberOfContainers(index)) match {
     case Some(0) | None => Some(eventRoutes.IsTranshipmentController.onPageLoad(ua.id, index, mode))
     case _              => Some(transhipmentRoutes.AddContainerController.onPageLoad(ua.id, index, mode))
   }
 
-  def confirmRemoveEventRoute(index: Int, mode: Mode)(ua: UserAnswers) = ua.get(DeriveNumberOfEvents) match {
+  private def confirmRemoveEventRoute(index: Int, mode: Mode)(ua: UserAnswers) = ua.get(DeriveNumberOfEvents) match {
     case Some(0) | None => Some(routes.IncidentOnRouteController.onPageLoad(ua.id, mode))
     case _              => Some(eventRoutes.AddEventController.onPageLoad(ua.id, mode))
 
