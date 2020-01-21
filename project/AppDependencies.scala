@@ -3,6 +3,7 @@ import sbt._
 object AppDependencies {
   import play.core.PlayVersion
 
+
   val compile = Seq(
     play.sbt.PlayImport.ws,
     "org.reactivemongo" %% "play2-reactivemongo"           % "0.20.1-play26",
@@ -13,7 +14,8 @@ object AppDependencies {
     "uk.gov.hmrc"       %% "play-whitelist-filter"         % "2.0.0",
     "uk.gov.hmrc"       %% "play-nunjucks"                 % "0.17.0-play-26",
     "uk.gov.hmrc"       %% "play-nunjucks-viewmodel"       % "0.4.0",
-    "org.webjars.npm"   % "govuk-frontend"                 % "3.3.0"
+    "org.webjars.npm"   % "govuk-frontend"                 % "3.3.0",
+    "commons-codec"     % "commons-codec"                  % "1.10"
   )
 
   val test = Seq(
