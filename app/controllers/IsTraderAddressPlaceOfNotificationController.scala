@@ -20,11 +20,14 @@ import controllers.actions._
 import forms.IsTraderAddressPlaceOfNotificationFormProvider
 import javax.inject.Inject
 import models._
+import models.requests.DataRequest
 import navigation.Navigator
 import pages.{IsTraderAddressPlaceOfNotificationPage, TraderAddressPage}
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.twirl.api.Html
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
@@ -52,26 +55,14 @@ class IsTraderAddressPlaceOfNotificationController @Inject()(override val messag
       implicit request =>
         request.userAnswers.get(TraderAddressPage) match {
           case Some(traderAddress) => {
-            val addressLine1    = traderAddress.buildingAndStreet
-            val addressTown     = traderAddress.city
-            val addressPostcode = traderAddress.postcode
 
             val preparedForm = request.userAnswers.get(IsTraderAddressPlaceOfNotificationPage) match {
               case None        => form
               case Some(value) => form.fill(value)
             }
 
-            val json = Json.obj(
-              "form"           -> preparedForm,
-              "mode"           -> mode,
-              "mrn"            -> mrn,
-              "traderLine1"    -> addressLine1,
-              "traderTown"     -> addressTown,
-              "traderPostcode" -> addressPostcode,
-              "radios"         -> Radios.yesNo(preparedForm("value"))
-            )
-
-            renderer.render("isTraderAddressPlaceOfNotification.njk", json).map(Ok(_))
+            renderPage(preparedForm, traderAddress, mode)
+              .map(Ok(_))
           }
           case _ => Future.successful(Redirect(routes.SessionExpiredController.onPageLoad()))
         }
@@ -83,26 +74,14 @@ class IsTraderAddressPlaceOfNotificationController @Inject()(override val messag
       implicit request =>
         request.userAnswers.get(TraderAddressPage) match {
           case Some(traderAddress) => {
-            val addressLine1    = traderAddress.buildingAndStreet
-            val addressTown     = traderAddress.city
-            val addressPostcode = traderAddress.postcode
 
             form
               .bindFromRequest()
               .fold(
                 formWithErrors => {
 
-                  val json = Json.obj(
-                    "form"           -> formWithErrors,
-                    "mode"           -> mode,
-                    "mrn"            -> mrn,
-                    "traderLine1"    -> addressLine1,
-                    "traderTown"     -> addressTown,
-                    "traderPostcode" -> addressPostcode,
-                    "radios"         -> Radios.yesNo(formWithErrors("value"))
-                  )
-
-                  renderer.render("isTraderAddressPlaceOfNotification.njk", json).map(BadRequest(_))
+                  renderPage(formWithErrors, traderAddress, mode)
+                    .map(BadRequest(_))
                 },
                 value =>
                   for {
@@ -114,4 +93,22 @@ class IsTraderAddressPlaceOfNotificationController @Inject()(override val messag
           case _ => Future.successful(Redirect(routes.SessionExpiredController.onPageLoad()))
         }
     }
+
+  private def renderPage(form: Form[Boolean], traderAddress: TraderAddress, mode: Mode)(implicit request: DataRequest[AnyContent]): Future[Html] = {
+    val addressLine1    = traderAddress.buildingAndStreet
+    val addressTown     = traderAddress.city
+    val addressPostcode = traderAddress.postcode
+
+    val json = Json.obj(
+      "form"           -> form,
+      "mode"           -> mode,
+      "mrn"            -> request.userAnswers.id,
+      "traderLine1"    -> addressLine1,
+      "traderTown"     -> addressTown,
+      "traderPostcode" -> addressPostcode,
+      "radios"         -> Radios.yesNo(form("value"))
+    )
+
+    renderer.render("isTraderAddressPlaceOfNotification.njk", json)
+  }
 }
