@@ -24,7 +24,7 @@ import models.{TraderAddress, UserAnswers}
 import pages._
 import pages.events._
 import pages.events.transhipments._
-import queries.ContainersQuery
+import queries.{ContainersQuery, SealsQuery}
 
 class ArrivalNotificationConversionService {
 
@@ -93,7 +93,7 @@ class ArrivalNotificationConversionService {
                 countryCode   = country.code,
                 alreadyInNcts = isReported,
                 eventDetails  = eventDetails(incidentInformation, transportIdentity, transportCountry.map(_.code), containers),
-                None //TODO Seals:waiting for design decision
+                seals         = userAnswers.get(SealsQuery(index)).map(seals => seals.map(Seal(_)))
               )
             }
         }
