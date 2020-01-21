@@ -29,8 +29,9 @@ import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages._
 import pages.events._
+import pages.events.seals.SealIdentityPage
 import pages.events.transhipments._
-import queries.{ContainersQuery, EventsQuery}
+import queries.ContainersQuery
 
 class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckPropertyChecks with MessagesModelGenerators {
   // format: off
@@ -119,7 +120,7 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
       forAll(normalNotificationWithTraderWithEoriWithSubplace, enRouteEventVehicularTranshipment) {
         case ((arbArrivalNotification, trader), (enRouteEvent, vehicularTranshipment)) =>
           val routeEvent: EnRouteEvent = enRouteEvent
-            .copy(seals = None)
+            .copy(seals = Some(Seq(Seal("seal 1"), Seal("seal 2"))))
             .copy(eventDetails = vehicularTranshipment.copy(
               endorsement = Endorsement(None, None, None, None),
               containers = None
@@ -133,6 +134,8 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
             .set(EventReportedPage(eventIndex), routeEvent.alreadyInNcts).success.value
             .set(TransportIdentityPage(eventIndex), vehicularTranshipment.transportIdentity).success.value
             .set(TransportNationalityPage(eventIndex), Country("Valid",vehicularTranshipment.transportCountry, "country name")).success.value
+            .set(SealIdentityPage(eventIndex, 0), "seal 1").success.value
+            .set(SealIdentityPage(eventIndex, 1), "seal 2").success.value
 
           service.convertToArrivalNotification(userAnswers).value mustEqual arrivalNotification
       }
