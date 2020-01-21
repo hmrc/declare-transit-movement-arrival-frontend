@@ -16,15 +16,15 @@
 
 package utils
 
-import controllers.events.seals.routes.SealIdentityController
-import models.{CheckMode, UserAnswers}
-import pages.events.seals.SealIdentityPage
+import controllers.events.seals.routes._
+import models.{CheckMode, Mode, UserAnswers}
+import pages.events.seals._
 import uk.gov.hmrc.viewmodels.SummaryList.{Action, Key, Row, Value}
 import uk.gov.hmrc.viewmodels._
 
 class AddSealHelper(userAnswers: UserAnswers) {
 
-  def sealRow(eventIndex: Int, sealIndex: Int): Option[Row] =
+  def sealRow(eventIndex: Int, sealIndex: Int, mode: Mode): Option[Row] =
     userAnswers.get(SealIdentityPage(eventIndex, sealIndex)).map {
       answer =>
         Row(
@@ -33,12 +33,12 @@ class AddSealHelper(userAnswers: UserAnswers) {
           actions = List(
             Action(
               content            = msg"site.edit",
-              href               = SealIdentityController.onPageLoad(userAnswers.id, eventIndex, sealIndex, CheckMode).url,
+              href               = SealIdentityController.onPageLoad(userAnswers.id, eventIndex, sealIndex, mode).url,
               visuallyHiddenText = Some(msg"addSeal.sealList.change".withArgs(answer)) // TODO: Prefix in message file for is hard coded, should be the same as: site.edit.hidden
             ),
             Action(
               content            = msg"site.delete",
-              href               = "#",
+              href               = ConfirmRemoveSealController.onPageLoad(userAnswers.id, eventIndex, sealIndex, mode).url,
               visuallyHiddenText = Some(msg"addSeal.sealList.delete".withArgs(answer)) // TODO: Prefix in message file for is hard coded, should be the same as: site.delete.hidden
             )
           )

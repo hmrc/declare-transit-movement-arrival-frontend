@@ -6,7 +6,7 @@ object AppDependencies {
 
   val compile = Seq(
     play.sbt.PlayImport.ws,
-    "org.reactivemongo" %% "play2-reactivemongo"           % "0.20.1-play26",
+    "org.reactivemongo" %% "play2-reactivemongo"           % "0.19.7-play26",
     "uk.gov.hmrc"       %% "logback-json-logger"           % "3.1.0",
     "uk.gov.hmrc"       %% "play-health"                   % "3.14.0-play-26",
     "uk.gov.hmrc"       %% "play-conditional-form-mapping" % "0.2.0",
@@ -14,8 +14,7 @@ object AppDependencies {
     "uk.gov.hmrc"       %% "play-whitelist-filter"         % "2.0.0",
     "uk.gov.hmrc"       %% "play-nunjucks"                 % "0.17.0-play-26",
     "uk.gov.hmrc"       %% "play-nunjucks-viewmodel"       % "0.4.0",
-    "org.webjars.npm"   % "govuk-frontend"                 % "3.3.0",
-    "commons-codec"     % "commons-codec"                  % "1.10"
+    "org.webjars.npm"   % "govuk-frontend"                 % "3.3.0"
   )
 
   val test = Seq(

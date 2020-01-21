@@ -25,7 +25,7 @@ import controllers.routes
 import models.{CheckMode, MovementReferenceNumber, TraderAddress, UserAnswers}
 import pages._
 import pages.events._
-import pages.events.seals.{AddSealPage, HaveSealsChangedPage, RemoveSealPage, SealIdentityPage}
+import pages.events.seals._
 import pages.events.transhipments._
 import uk.gov.hmrc.viewmodels.SummaryList._
 import uk.gov.hmrc.viewmodels._

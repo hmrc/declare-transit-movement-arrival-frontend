@@ -14,14 +14,16 @@
  * limitations under the License.
  */
 
-package pages.events.seals
+package forms.events.seals
 
-import pages.QuestionPage
-import play.api.libs.json.JsPath
+import forms.mappings.Mappings
+import javax.inject.Inject
+import play.api.data.Form
 
-case object RemoveSealPage extends QuestionPage[Boolean] {
+class ConfirmRemoveSealFormProvider @Inject() extends Mappings {
 
-  override def path: JsPath = JsPath \ toString
-
-  override def toString: String = "removeSeal"
+  def apply(): Form[Boolean] =
+    Form(
+      "value" -> boolean("removeSeal.error.required")
+    )
 }

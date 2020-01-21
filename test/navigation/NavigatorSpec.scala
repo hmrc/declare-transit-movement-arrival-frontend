@@ -879,7 +879,40 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
             .mustBe(sealRoutes.SealIdentityController.onPageLoad(updatedAnswers.id, eventIndex, 1, NormalMode))
         }
       }
+
+      "go from remove seals page" - {
+        "add seals page when 'Yes' is selected and there are still seals" in {
+          forAll(arbitrary[UserAnswers], stringsWithMaxLength(EnRouteEvent.Constants.sealsLength)) {
+            case (userAnswers, sealId) =>
+              val updatedAnswers = userAnswers
+                .set(SealIdentityPage(eventIndex, sealIndex), sealId)
+                .success
+                .value
+
+              navigator
+                .nextPage(ConfirmRemoveSealPage(eventIndex), NormalMode, updatedAnswers)
+                .mustBe(sealRoutes.AddSealController.onPageLoad(updatedAnswers.id, eventIndex, NormalMode))
+          }
+
+        }
+
+        "have seals changed page when 'Yes' is selected and all seals are removed" in {
+          forAll(arbitrary[UserAnswers]) {
+            case (userAnswers) =>
+              val updatedAnswers = userAnswers
+                .remove(EventsQuery)
+                .success
+                .value
+
+              navigator
+                .nextPage(ConfirmRemoveSealPage(eventIndex), NormalMode, updatedAnswers)
+                .mustBe(sealRoutes.HaveSealsChangedController.onPageLoad(updatedAnswers.id, eventIndex, NormalMode))
+          }
+
+        }
+      }
     }
+
   }
 
 }

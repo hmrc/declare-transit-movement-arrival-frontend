@@ -14,32 +14,8 @@
  * limitations under the License.
  */
 
-package forms.events.seals
+package pages.events.seals
 
-import forms.behaviours.BooleanFieldBehaviours
-import play.api.data.FormError
+import pages.Page
 
-class RemoveSealFormProviderSpec extends BooleanFieldBehaviours {
-
-  val requiredKey = "removeSeal.error.required"
-  val invalidKey  = "error.boolean"
-
-  val form = new RemoveSealFormProvider()()
-
-  ".value" - {
-
-    val fieldName = "value"
-
-    behave like booleanField(
-      form,
-      fieldName,
-      invalidError = FormError(fieldName, invalidKey)
-    )
-
-    behave like mandatoryField(
-      form,
-      fieldName,
-      requiredError = FormError(fieldName, requiredKey)
-    )
-  }
-}
+final case class ConfirmRemoveSealPage(eventIndex: Int) extends Page

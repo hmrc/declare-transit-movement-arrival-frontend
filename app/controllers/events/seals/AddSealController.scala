@@ -78,7 +78,7 @@ class AddSealController @Inject()(override val messagesApi: MessagesApi,
     implicit request: DataRequest[AnyContent]): Future[Html] = {
 
     val numberOfSeals       = request.userAnswers.get(DeriveNumberOfSeals(eventIndex)).getOrElse(0)
-    val sealsRows: Seq[Row] = (0 to numberOfSeals).flatMap(AddSealHelper.apply(request.userAnswers).sealRow(eventIndex, _))
+    val sealsRows: Seq[Row] = (0 to numberOfSeals).flatMap(AddSealHelper.apply(request.userAnswers).sealRow(eventIndex, _, mode))
 
     val singularOrPlural = if (numberOfSeals == 1) "singular" else "plural"
 

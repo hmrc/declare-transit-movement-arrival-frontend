@@ -74,7 +74,7 @@ class AddSealControllerSpec extends SpecBase with MockitoSugar with NunjucksSupp
         "mrn"       -> mrn,
         "pageTitle" -> "You have added 1 seal",
         "heading"   -> "You have added 1 seal",
-        "seals"     -> Json.toJson(Seq(AddSealHelper.apply(ua).sealRow(eventIndex, sealIndex).value)),
+        "seals"     -> Json.toJson(Seq(AddSealHelper.apply(ua).sealRow(eventIndex, sealIndex, NormalMode).value)),
         "radios"    -> Radios.yesNo(form("value"))
       )
 
@@ -135,7 +135,7 @@ class AddSealControllerSpec extends SpecBase with MockitoSugar with NunjucksSupp
         "mrn"       -> mrn,
         "pageTitle" -> "You have added 1 seal",
         "heading"   -> "You have added 1 seal",
-        "seals"     -> Json.toJson(Seq(AddSealHelper.apply(ua).sealRow(eventIndex, sealIndex).value)),
+        "seals"     -> Json.toJson(Seq(AddSealHelper.apply(ua).sealRow(eventIndex, sealIndex, NormalMode).value)),
         "radios"    -> Radios.yesNo(boundForm("value"))
       )
 

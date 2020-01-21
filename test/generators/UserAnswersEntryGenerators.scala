@@ -29,30 +29,6 @@ import play.api.libs.json.Json
 trait UserAnswersEntryGenerators extends PageGenerators {
   self: Generators =>
 
-  implicit lazy val arbitraryConfirmRemoveEventUserAnswersEntry: Arbitrary[(ConfirmRemoveEventPage.type, JsValue)] =
-    Arbitrary {
-      for {
-        page  <- arbitrary[ConfirmRemoveEventPage.type]
-        value <- arbitrary[Boolean].map(Json.toJson(_))
-      } yield (page, value)
-    }
-
-  implicit lazy val arbitraryConfirmRemoveContainerUserAnswersEntry: Arbitrary[(ConfirmRemoveContainerPage.type, JsValue)] =
-    Arbitrary {
-      for {
-        page  <- arbitrary[ConfirmRemoveContainerPage.type]
-        value <- arbitrary[Boolean].map(Json.toJson(_))
-      } yield (page, value)
-    }
-
-  implicit lazy val arbitraryRemoveSealUserAnswersEntry: Arbitrary[(RemoveSealPage.type, JsValue)] =
-    Arbitrary {
-      for {
-        page  <- arbitrary[RemoveSealPage.type]
-        value <- arbitrary[Boolean].map(Json.toJson(_))
-      } yield (page, value)
-    }
-
   implicit lazy val arbitraryHaveSealsChangedUserAnswersEntry: Arbitrary[(HaveSealsChangedPage, JsValue)] =
     Arbitrary {
       for {

@@ -17,15 +17,17 @@
 package controllers.events.seals
 
 import base.SpecBase
-import forms.events.seals.RemoveSealFormProvider
+import forms.events.seals.ConfirmRemoveSealFormProvider
 import matchers.JsonMatchers
+import models.messages.Container
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.events.seals.RemoveSealPage
+import pages.events.seals.{ConfirmRemoveSealPage, SealIdentityPage}
+import pages.events.transhipments.ContainerNumberPage
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
@@ -38,14 +40,15 @@ import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.Future
 
-class RemoveSealControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class ConfirmRemoveSealControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
   def onwardRoute: Call = Call("GET", "/foo")
 
-  val formProvider        = new RemoveSealFormProvider()
+  val formProvider        = new ConfirmRemoveSealFormProvider()
   val form: Form[Boolean] = formProvider()
 
-  lazy val removeSealRoute: String = routes.RemoveSealController.onPageLoad(mrn, NormalMode).url
+  lazy val removeSealRoute: String = routes.ConfirmRemoveSealController.onPageLoad(mrn, eventIndex, sealIndex, NormalMode).url
+  private val userAnswersWithSeal  = emptyUserAnswers.set(SealIdentityPage(eventIndex, sealIndex), "1").success.value
 
   "RemoveSeal Controller" - {
 
@@ -53,8 +56,7 @@ class RemoveSealControllerSpec extends SpecBase with MockitoSugar with NunjucksS
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
-
-      val application    = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application    = applicationBuilder(userAnswers = Some(userAnswersWithSeal)).build()
       val request        = FakeRequest(GET, removeSealRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
@@ -66,58 +68,27 @@ class RemoveSealControllerSpec extends SpecBase with MockitoSugar with NunjucksS
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form"   -> form,
-        "mode"   -> NormalMode,
-        "mrn"    -> mrn,
-        "radios" -> Radios.yesNo(form("value"))
+        "form"       -> form,
+        "mode"       -> NormalMode,
+        "mrn"        -> mrn,
+        "sealNumber" -> "1",
+        "radios"     -> Radios.yesNo(form("value"))
       )
 
-      templateCaptor.getValue mustEqual "events/seals/removeSeal.njk"
+      templateCaptor.getValue mustEqual "events/seals/confirmRemoveSeal.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
     }
 
-    "must populate the view correctly on a GET when the question has previously been answered" in {
-
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
-      val userAnswers    = UserAnswers(mrn).set(RemoveSealPage, true).success.value
-      val application    = applicationBuilder(userAnswers = Some(userAnswers)).build()
-      val request        = FakeRequest(GET, removeSealRoute)
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
-
-      val result = route(application, request).value
-
-      status(result) mustEqual OK
-
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-
-      val filledForm = form.bind(Map("value" -> "true"))
-
-      val expectedJson = Json.obj(
-        "form"   -> filledForm,
-        "mode"   -> NormalMode,
-        "mrn"    -> mrn,
-        "radios" -> Radios.yesNo(filledForm("value"))
-      )
-
-      templateCaptor.getValue mustEqual "events/seals/removeSeal.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
-    }
-
-    "must redirect to the next page when valid data is submitted" in {
+    "must redirect to the next page when valid data is submitted and seal is removed" in {
 
       val mockSessionRepository = mock[SessionRepository]
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        applicationBuilder(userAnswers = Some(userAnswersWithSeal))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
@@ -134,6 +105,14 @@ class RemoveSealControllerSpec extends SpecBase with MockitoSugar with NunjucksS
 
       redirectLocation(result).value mustEqual onwardRoute.url
 
+      val newUserAnswers = UserAnswers(
+        id = userAnswersWithSeal.id,
+        userAnswersWithSeal.remove(SealIdentityPage(eventIndex, sealIndex)).success.value.data,
+        userAnswersWithSeal.lastUpdated
+      )
+
+      verify(mockSessionRepository, times(1)).set(newUserAnswers)
+
       application.stop()
     }
 
@@ -142,7 +121,7 @@ class RemoveSealControllerSpec extends SpecBase with MockitoSugar with NunjucksS
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application    = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application    = applicationBuilder(userAnswers = Some(userAnswersWithSeal)).build()
       val request        = FakeRequest(POST, removeSealRoute).withFormUrlEncodedBody(("value", ""))
       val boundForm      = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -155,13 +134,14 @@ class RemoveSealControllerSpec extends SpecBase with MockitoSugar with NunjucksS
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form"   -> boundForm,
-        "mode"   -> NormalMode,
-        "mrn"    -> mrn,
-        "radios" -> Radios.yesNo(boundForm("value"))
+        "form"       -> boundForm,
+        "mode"       -> NormalMode,
+        "mrn"        -> mrn,
+        "sealNumber" -> "1",
+        "radios"     -> Radios.yesNo(boundForm("value"))
       )
 
-      templateCaptor.getValue mustEqual "events/seals/removeSeal.njk"
+      templateCaptor.getValue mustEqual "events/seals/confirmRemoveSeal.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -198,5 +178,6 @@ class RemoveSealControllerSpec extends SpecBase with MockitoSugar with NunjucksS
 
       application.stop()
     }
+
   }
 }
