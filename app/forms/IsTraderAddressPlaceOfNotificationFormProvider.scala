@@ -23,8 +23,8 @@ import play.api.i18n.Messages
 
 class IsTraderAddressPlaceOfNotificationFormProvider @Inject() extends Mappings {
 
-  def apply(traderPostcode: String)(implicit messages: Messages): Form[Boolean] =
+  def apply(): Form[Boolean] =
     Form(
-      "value" -> boolean(messages("isTraderAddressPlaceOfNotification.error.required", traderPostcode))
+      "value" -> boolean("isTraderAddressPlaceOfNotification.error.required")
     )
 }
