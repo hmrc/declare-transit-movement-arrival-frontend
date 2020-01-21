@@ -83,7 +83,9 @@ class IsTraderAddressPlaceOfNotificationController @Inject()(override val messag
       implicit request =>
         request.userAnswers.get(TraderAddressPage) match {
           case Some(traderAddress) => {
-            val postcode = traderAddress.postcode
+            val addressLine1    = traderAddress.buildingAndStreet
+            val addressTown     = traderAddress.city
+            val addressPostcode = traderAddress.postcode
 
             form
               .bindFromRequest()
@@ -94,7 +96,9 @@ class IsTraderAddressPlaceOfNotificationController @Inject()(override val messag
                     "form"           -> formWithErrors,
                     "mode"           -> mode,
                     "mrn"            -> mrn,
-                    "traderPostcode" -> postcode,
+                    "traderLine1"    -> addressLine1,
+                    "traderTown"     -> addressTown,
+                    "traderPostcode" -> addressPostcode,
                     "radios"         -> Radios.yesNo(formWithErrors("value"))
                   )
 
