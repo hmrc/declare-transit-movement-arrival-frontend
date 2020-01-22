@@ -18,12 +18,14 @@ package controllers
 
 import base.SpecBase
 import matchers.JsonMatchers
+import models.reference.CustomsOffice
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
+import pages.PresentationOfficePage
 import play.api.libs.json.JsObject
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -44,22 +46,22 @@ class ConfirmationControllerSpec extends SpecBase with MockitoSugar with JsonMat
         .thenReturn(Future.successful(Html("")))
 
       val mockSessionRepository = mock[SessionRepository]
-
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+      val customsOffice         = CustomsOffice("id", "name", Seq.empty)
+      val userAnswers           = emptyUserAnswers.set(PresentationOfficePage, customsOffice).success.value
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
         .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
       val request        = FakeRequest(GET, routes.ConfirmationController.onPageLoad(mrn).url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
-
-      val result = route(application, request).value
+      val result         = route(application, request).value
 
       status(result) mustEqual OK
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
       verify(mockSessionRepository, times(1)).remove(mrn.toString)
 
-      val expectedJson = Json.obj("mrn" -> mrn)
+      val expectedJson = Json.obj("mrn" -> mrn, "presentationOffice" -> customsOffice.name)
 
       templateCaptor.getValue mustEqual "arrivalComplete.njk"
       jsonCaptor.getValue must containJson(expectedJson)

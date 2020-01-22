@@ -18,20 +18,22 @@
           </h1>
 
           <div class="govuk-panel__body">
-            Your reference number<br><strong>HDJ2123F</strong>
+           {{ messages("arrivalComplete.yourReferenceNumber", mrn)}}
           </div>
-
         </div>
 
-         <p class="govuk-body"> {{ messages("arrivalComplete.confirmationEmail") }}</p>
 
-         {{ govukButton({
-                   text: messages("site.acceptAndSend"),
-                   preventDoubleClick: true,
-                   attributes: {id:"submit"}
-          }) }}
+         <h2 bold"> {{ messages("arrivalComplete.subHeading") }}</h2>
 
-      </div>
+         <p> {{messages("arrivalComplete.para1")}}</p>
+
+          <ul">
+                             <li>{{ messages("arrivalComplete.BulletPoint1") }}</li>
+                             <li>{{ messages("arrivalComplete.BulletPoint2") }}</li>
+                             </ul><br>
+
+             <p"> {{ messages("arrivalComplete.para2", presentationOffice, presentationOfficeTelNumber) }}</p>
+     </div>
     </div>
   </div>
 
