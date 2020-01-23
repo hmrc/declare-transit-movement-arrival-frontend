@@ -46,7 +46,9 @@ class ConfirmationController @Inject()(override val messagesApi: MessagesApi,
         case Some(presentationOffice) =>
           val contactUsMessage = if (presentationOffice.phoneNumber.isDefined) {
             msg"arrivalComplete.para2.withPhoneNumber".withArgs(presentationOffice.name, presentationOffice.phoneNumber)
-          } else msg"arrivalComplete.para2".withArgs(presentationOffice.name)
+          } else {
+            msg"arrivalComplete.para2".withArgs(presentationOffice.name)
+          }
 
           val json = Json.obj(
             "mrn"       -> mrn,

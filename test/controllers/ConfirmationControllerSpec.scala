@@ -33,7 +33,7 @@ import play.api.test.Helpers._
 import play.twirl.api.Html
 import repositories.SessionRepository
 import play.api.inject.bind
-import uk.gov.hmrc.viewmodels.NunjucksSupport
+import uk.gov.hmrc.viewmodels.{NunjucksSupport, Text}
 
 import scala.concurrent.Future
 
@@ -41,7 +41,8 @@ class ConfirmationControllerSpec extends SpecBase with MockitoSugar with JsonMat
 
   "Confirmation Controller" - {
 
-    "return OK and the correct view for a GET then remove data" in {
+        "return OK and the correct view when there is no phone number for a GET then remove data" in {
+
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
@@ -57,9 +58,7 @@ class ConfirmationControllerSpec extends SpecBase with MockitoSugar with JsonMat
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
       val result         = route(application, request).value
 
-      val contactUsMessage = if (presentationOffice.phoneNumber.isDefined) {
-        msg"arrivalComplete.para2.withPhoneNumber".withArgs(presentationOffice.name, presentationOffice.phoneNumber)
-      } else msg"arrivalComplete.para2".withArgs(presentationOffice.name)
+      val contactUsMessage: Text.Message = msg"arrivalComplete.para2".withArgs(presentationOffice.name)
 
       status(result) mustEqual OK
 
@@ -73,5 +72,38 @@ class ConfirmationControllerSpec extends SpecBase with MockitoSugar with JsonMat
 
       application.stop()
     }
+
+    "return OK and the correct view when there is phone number for a GET the data" in {
+
+      when(mockRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("")))
+
+      val mockSessionRepository = mock[SessionRepository]
+      val presentationOffice    = CustomsOffice("id", "name", Seq.empty, Some("phoneNumber"))
+      val userAnswers           = emptyUserAnswers.set(PresentationOfficePage, presentationOffice).success.value
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+        .build()
+      val request        = FakeRequest(GET, routes.ConfirmationController.onPageLoad(mrn).url)
+      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+      val result         = route(application, request).value
+
+      val contactUsMessage: Text.Message = msg"arrivalComplete.para2.withPhoneNumber".withArgs(presentationOffice.name, presentationOffice.phoneNumber)
+
+      status(result) mustEqual OK
+
+      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+      verify(mockSessionRepository, times(1)).remove(mrn.toString)
+
+      val expectedJson = Json.obj("mrn" -> mrn, "contactUs" -> contactUsMessage)
+
+      templateCaptor.getValue mustEqual "arrivalComplete.njk"
+      jsonCaptor.getValue must containJson(expectedJson)
+
+      application.stop()
+    }
+    
   }
+
 }
