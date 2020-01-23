@@ -33,10 +33,11 @@ import play.api.test.Helpers._
 import play.twirl.api.Html
 import repositories.SessionRepository
 import play.api.inject.bind
+import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class ConfirmationControllerSpec extends SpecBase with MockitoSugar with JsonMatchers {
+class ConfirmationControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with NunjucksSupport {
 
   "Confirmation Controller" - {
 
@@ -46,8 +47,8 @@ class ConfirmationControllerSpec extends SpecBase with MockitoSugar with JsonMat
         .thenReturn(Future.successful(Html("")))
 
       val mockSessionRepository = mock[SessionRepository]
-      val customsOffice         = CustomsOffice("id", "name", Seq.empty, None)
-      val userAnswers           = emptyUserAnswers.set(PresentationOfficePage, customsOffice).success.value
+      val presentationOffice    = CustomsOffice("id", "name", Seq.empty, None)
+      val userAnswers           = emptyUserAnswers.set(PresentationOfficePage, presentationOffice).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers))
         .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
@@ -56,12 +57,16 @@ class ConfirmationControllerSpec extends SpecBase with MockitoSugar with JsonMat
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
       val result         = route(application, request).value
 
+      val contactUsMessage = if (presentationOffice.phoneNumber.isDefined) {
+        msg"arrivalComplete.para2.withPhoneNumber".withArgs(presentationOffice.name, presentationOffice.phoneNumber)
+      } else msg"arrivalComplete.para2".withArgs(presentationOffice.name)
+
       status(result) mustEqual OK
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
       verify(mockSessionRepository, times(1)).remove(mrn.toString)
 
-      val expectedJson = Json.obj("mrn" -> mrn, "presentationOffice" -> customsOffice.name)
+      val expectedJson = Json.obj("mrn" -> mrn, "contactUs" -> contactUsMessage)
 
       templateCaptor.getValue mustEqual "arrivalComplete.njk"
       jsonCaptor.getValue must containJson(expectedJson)

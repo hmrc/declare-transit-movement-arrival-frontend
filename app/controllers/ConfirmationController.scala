@@ -26,8 +26,8 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
-
 import scala.concurrent.{ExecutionContext, Future}
+import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 class ConfirmationController @Inject()(override val messagesApi: MessagesApi,
                                        sessionRepository: SessionRepository,
@@ -37,18 +37,24 @@ class ConfirmationController @Inject()(override val messagesApi: MessagesApi,
                                        val controllerComponents: MessagesControllerComponents,
                                        renderer: Renderer)(implicit ec: ExecutionContext)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with NunjucksSupport {
 
   def onPageLoad(mrn: MovementReferenceNumber): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
       request.userAnswers.get(PresentationOfficePage) match {
         case Some(presentationOffice) =>
-          sessionRepository.remove(mrn.toString)
+          val contactUsMessage = if (presentationOffice.phoneNumber.isDefined) {
+            msg"arrivalComplete.para2.withPhoneNumber".withArgs(presentationOffice.name, presentationOffice.phoneNumber)
+          } else msg"arrivalComplete.para2".withArgs(presentationOffice.name)
+
           val json = Json.obj(
-            "mrn"                -> mrn,
-            "presentationOffice" -> presentationOffice.name
+            "mrn"       -> mrn,
+            "contactUs" -> contactUsMessage
           )
+          sessionRepository.remove(mrn.toString)
           renderer.render("arrivalComplete.njk", json).map(Ok(_))
+
         case _ => Future.successful(Redirect(routes.SessionExpiredController.onPageLoad()))
 
       }
