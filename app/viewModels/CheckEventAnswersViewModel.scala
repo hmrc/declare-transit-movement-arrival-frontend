@@ -18,7 +18,7 @@ package viewModels
 
 import derivable.{DeriveNumberOfContainers, DeriveNumberOfSeals}
 import models.TranshipmentType._
-import models.{Mode, UserAnswers}
+import models.{Index, Mode, UserAnswers}
 import pages.events._
 import pages.events.seals.HaveSealsChangedPage
 import pages.events.transhipments.TranshipmentTypePage

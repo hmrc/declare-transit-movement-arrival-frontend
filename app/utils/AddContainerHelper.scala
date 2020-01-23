@@ -19,23 +19,25 @@ package utils
 import controllers.events.transhipments.routes.ContainerNumberController
 import controllers.events.transhipments.routes.ConfirmRemoveContainerController
 import models.messages.Container
-import models.{Mode, UserAnswers}
+import models.{Index, Mode, UserAnswers}
 import pages.events.transhipments.ContainerNumberPage
 import uk.gov.hmrc.viewmodels.SummaryList.{Action, Key, Row, Value}
 import uk.gov.hmrc.viewmodels._
 
 class AddContainerHelper(userAnswers: UserAnswers) {
 
-  def containerRow(eventIndex: Int, containerIndex: Int, mode: Mode): Option[Row] =
-    userAnswers.get(ContainerNumberPage(eventIndex, containerIndex)).map {
+  def containerRow(eventIndex: Int, containerIndex: Index, mode: Mode): Option[Row] =
+    userAnswers.get(ContainerNumberPage(eventIndex, containerIndex.position)).map {
       case Container(answer) =>
+        //val containerIndex = Index(containerIndex)
+
         Row(
-          key   = Key(msg"addContainer.containerList.label".withArgs(containerIndex + 1), classes = Seq("govuk-!-width-one-half")), // TODO: Move harded coded interpretation of index to an Index Model
+          key   = Key(msg"addContainer.containerList.label".withArgs(containerIndex.display), classes = Seq("govuk-!-width-one-half")), // TODO: Move harded coded interpretation of index to an Index Model
           value = Value(lit"$answer"),
           actions = List(
             Action(
               content            = msg"site.edit",
-              href               = ContainerNumberController.onPageLoad(userAnswers.id, eventIndex, containerIndex, mode).url,
+              href               = ContainerNumberController.onPageLoad(userAnswers.id, eventIndex, containerIndex.position, mode).url,
               visuallyHiddenText = Some(msg"addContainer.containerList.change".withArgs(answer)) // TODO: Prefix in message file for is hard coded, should be the same as: site.edit.hidden
             ),
             Action(

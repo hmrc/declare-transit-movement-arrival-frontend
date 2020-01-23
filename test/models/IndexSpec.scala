@@ -20,6 +20,12 @@ import org.scalatest.{FreeSpecLike, MustMatchers, OptionValues}
 
 class IndexSpec extends FreeSpecLike with MustMatchers with OptionValues {
 
+  "asdf " in {
+    val x = Index(0)
+
+    x.display mustEqual 1
+  }
+
   "indexPathBindable" - {
     val binder = Index.indexPathBindable
     val key    = "index"
@@ -34,18 +40,6 @@ class IndexSpec extends FreeSpecLike with MustMatchers with OptionValues {
 
     "unbind an index" in {
       binder.unbind(key, Index(0)) mustEqual "1"
-    }
-  }
-
-  "implicit conversion" - {
-    "must from int return correct index" in {
-      val x: Index = 0
-      x mustEqual Index(0)
-    }
-
-    "must from index return correct index" in {
-      val x: Int = Index(0)
-      x mustEqual 0
     }
   }
 }

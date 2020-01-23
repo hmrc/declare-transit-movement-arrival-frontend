@@ -19,7 +19,7 @@ package controllers.events.transhipments
 import controllers.actions._
 import forms.events.transhipments.ConfirmRemoveContainerFormProvider
 import javax.inject.Inject
-import models.{Mode, MovementReferenceNumber}
+import models.{Index, Mode, MovementReferenceNumber}
 import navigation.Navigator
 import pages.events.transhipments.{ConfirmRemoveContainerPage, ContainerNumberPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -50,10 +50,10 @@ class ConfirmRemoveContainerController @Inject()(
   private val form                           = formProvider()
   private val confirmRemoveContainerTemplate = "events/transhipments/confirmRemoveContainer.njk"
 
-  def onPageLoad(mrn: MovementReferenceNumber, eventIndex: Int, containerIndex: Int, mode: Mode): Action[AnyContent] =
+  def onPageLoad(mrn: MovementReferenceNumber, eventIndex: Int, containerIndex: Index, mode: Mode): Action[AnyContent] =
     (identify andThen getData(mrn) andThen requireData).async {
       implicit request =>
-        request.userAnswers.get(ContainerNumberPage(eventIndex, containerIndex)) match {
+        request.userAnswers.get(ContainerNumberPage(eventIndex, containerIndex.position)) match {
           case Some(container) => {
             val json = Json.obj(
               "form"            -> form,
@@ -69,10 +69,10 @@ class ConfirmRemoveContainerController @Inject()(
         }
     }
 
-  def onSubmit(mrn: MovementReferenceNumber, eventIndex: Int, containerIndex: Int, mode: Mode): Action[AnyContent] =
+  def onSubmit(mrn: MovementReferenceNumber, eventIndex: Int, containerIndex: Index, mode: Mode): Action[AnyContent] =
     (identify andThen getData(mrn) andThen requireData).async {
       implicit request =>
-        request.userAnswers.get(ContainerNumberPage(eventIndex, containerIndex)) match {
+        request.userAnswers.get(ContainerNumberPage(eventIndex, containerIndex.position)) match {
           case Some(container) => {
             form
               .bindFromRequest()
@@ -91,7 +91,7 @@ class ConfirmRemoveContainerController @Inject()(
                 }, {
                   case true =>
                     for {
-                      updatedAnswers <- Future.fromTry(request.userAnswers.remove(ContainerNumberPage(eventIndex, containerIndex)))
+                      updatedAnswers <- Future.fromTry(request.userAnswers.remove(ContainerNumberPage(eventIndex, containerIndex.position)))
                       _              <- sessionRepository.set(updatedAnswers)
                     } yield Redirect(navigator.nextPage(ConfirmRemoveContainerPage(eventIndex), mode, updatedAnswers))
                   case false =>
