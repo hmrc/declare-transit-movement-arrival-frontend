@@ -43,7 +43,7 @@ object CheckEventAnswersViewModel extends NunjucksSupport {
         userAnswers
           .get(DeriveNumberOfContainers(eventIndex))
           .map(List.range(0, _))
-          .map(_.flatMap(AddContainerHelper(userAnswers).containerRow(eventIndex, _, mode)))
+          .map(_.flatMap(helper.containerNumber(eventIndex, _)))
           .map(Section.apply(msg"checkEventAnswers.section.title.containerNumbers", _))
       ).flatten
 

@@ -62,26 +62,11 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
       )
   }
 
-  def addContainer(eventIndex: Int): Option[Row] = userAnswers.get(AddContainerPage(eventIndex)) map {
-    answer =>
-      Row(
-        key   = Key(msg"addContainer.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value = Value(yesOrNo(answer)),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = transhipmentRoutes.AddContainerController.onPageLoad(mrn, eventIndex, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"addContainer.checkYourAnswersLabel"))
-          )
-        )
-      )
-  }
-
   def containerNumber(eventIndex: Int, containerIndex: Int): Option[Row] = userAnswers.get(ContainerNumberPage(eventIndex, containerIndex)) map {
     answer =>
       Row(
-        key   = Key(msg"containerNumber.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value = Value(lit"$answer"),
+        key   = Key(msg"addContainer.containerList.label".withArgs(containerIndex + 1), classes = Seq("govuk-!-width-one-half")),
+        value = Value(lit"${answer.containerNumber}"),
         actions = List(
           Action(
             content            = msg"site.edit",
