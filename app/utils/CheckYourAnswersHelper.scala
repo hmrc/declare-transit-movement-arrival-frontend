@@ -22,7 +22,7 @@ import controllers.events.seals.{routes => sealRoutes}
 import controllers.events.transhipments.{routes => transhipmentRoutes}
 import controllers.events.{routes => eventRoutes}
 import controllers.routes
-import models.{CheckMode, MovementReferenceNumber, TraderAddress, UserAnswers}
+import models.{CheckMode, Index, MovementReferenceNumber, TraderAddress, UserAnswers}
 import pages._
 import pages.events._
 import pages.events.seals._
@@ -62,10 +62,10 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
       )
   }
 
-  def containerNumber(eventIndex: Int, containerIndex: Int): Option[Row] = userAnswers.get(ContainerNumberPage(eventIndex, containerIndex)) map {
+  def containerNumber(eventIndex: Int, containerIndex: Index): Option[Row] = userAnswers.get(ContainerNumberPage(eventIndex, containerIndex)) map {
     answer =>
       Row(
-        key   = Key(msg"addContainer.containerList.label".withArgs(containerIndex + 1), classes = Seq("govuk-!-width-one-half")),
+        key   = Key(msg"addContainer.containerList.label".withArgs(containerIndex.display), classes = Seq("govuk-!-width-one-half")),
         value = Value(lit"${answer.containerNumber}"),
         actions = List(
           Action(

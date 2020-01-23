@@ -20,10 +20,8 @@ import org.scalatest.{FreeSpecLike, MustMatchers, OptionValues}
 
 class IndexSpec extends FreeSpecLike with MustMatchers with OptionValues {
 
-  "asdf " in {
-    val x = Index(0)
-
-    x.display mustEqual 1
+  "Index display must return correct Int" in {
+    Index(0).display mustEqual 1
   }
 
   "indexPathBindable" - {

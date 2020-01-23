@@ -53,7 +53,7 @@ class ConfirmRemoveContainerController @Inject()(
   def onPageLoad(mrn: MovementReferenceNumber, eventIndex: Int, containerIndex: Index, mode: Mode): Action[AnyContent] =
     (identify andThen getData(mrn) andThen requireData).async {
       implicit request =>
-        request.userAnswers.get(ContainerNumberPage(eventIndex, containerIndex.position)) match {
+        request.userAnswers.get(ContainerNumberPage(eventIndex, containerIndex)) match {
           case Some(container) => {
             val json = Json.obj(
               "form"            -> form,
@@ -72,7 +72,7 @@ class ConfirmRemoveContainerController @Inject()(
   def onSubmit(mrn: MovementReferenceNumber, eventIndex: Int, containerIndex: Index, mode: Mode): Action[AnyContent] =
     (identify andThen getData(mrn) andThen requireData).async {
       implicit request =>
-        request.userAnswers.get(ContainerNumberPage(eventIndex, containerIndex.position)) match {
+        request.userAnswers.get(ContainerNumberPage(eventIndex, containerIndex)) match {
           case Some(container) => {
             form
               .bindFromRequest()
@@ -91,7 +91,7 @@ class ConfirmRemoveContainerController @Inject()(
                 }, {
                   case true =>
                     for {
-                      updatedAnswers <- Future.fromTry(request.userAnswers.remove(ContainerNumberPage(eventIndex, containerIndex.position)))
+                      updatedAnswers <- Future.fromTry(request.userAnswers.remove(ContainerNumberPage(eventIndex, containerIndex)))
                       _              <- sessionRepository.set(updatedAnswers)
                     } yield Redirect(navigator.nextPage(ConfirmRemoveContainerPage(eventIndex), mode, updatedAnswers))
                   case false =>

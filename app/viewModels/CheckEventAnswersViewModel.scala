@@ -42,9 +42,16 @@ object CheckEventAnswersViewModel extends NunjucksSupport {
         Some(Section(sectionText, Seq(helper.isTranshipment(eventIndex), helper.transhipmentType(eventIndex)).flatten)),
         userAnswers
           .get(DeriveNumberOfContainers(eventIndex))
-          .map(List.range(0, _))
-          .map(_.flatMap(helper.containerNumber(eventIndex, _)))
-          .map(Section.apply(msg"checkEventAnswers.section.title.containerNumbers", _))
+          .map {
+            containerCount =>
+              val listOfContainerIndexes = List.range(0, containerCount).map(Index(_))
+              val rows = listOfContainerIndexes.flatMap {
+                index =>
+                  helper.containerNumber(eventIndex, index)
+
+              }
+              Section(msg"checkEventAnswers.section.title.containerNumbers", rows)
+          }
       ).flatten
 
     val eventInfo: Seq[Row] =

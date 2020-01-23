@@ -17,7 +17,6 @@
 package derivable
 import pages.events.SectionConstants
 import play.api.libs.json.{JsObject, JsPath}
-import queries.EventsQuery
 
 final case class DeriveNumberOfContainers(eventIndex: Int) extends Derivable[List[JsObject], Int] {
 

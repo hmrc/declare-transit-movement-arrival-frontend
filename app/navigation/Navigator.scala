@@ -24,7 +24,7 @@ import controllers.routes
 import derivable.{DeriveNumberOfContainers, DeriveNumberOfEvents, DeriveNumberOfSeals}
 import models.GoodsLocation._
 import models.TranshipmentType.{DifferentContainer, DifferentContainerAndVehicle, DifferentVehicle}
-import models.{CheckMode, Mode, NormalMode, UserAnswers}
+import models.{CheckMode, Index, Mode, NormalMode, UserAnswers}
 import pages._
 import pages.events._
 import pages.events.seals._
@@ -136,7 +136,8 @@ class Navigator @Inject()() {
   private def addContainer(index: Int)(ua: UserAnswers): Option[Call] = ua.get(AddContainerPage(index)) map {
     case true =>
       // TODO: Need to consolidate with same logic for initialsation of index in transhipmentType
-      val nextContainerIndex = ua.get(DeriveNumberOfContainers(index)).getOrElse(0)
+      val nextContainerCount = ua.get(DeriveNumberOfContainers(index)).getOrElse(0)
+      val nextContainerIndex = Index(nextContainerCount)
       transhipmentRoutes.ContainerNumberController.onPageLoad(ua.id, index, nextContainerIndex, NormalMode)
     case false =>
       ua.get(TranshipmentTypePage(index)) match {
@@ -147,7 +148,8 @@ class Navigator @Inject()() {
 
   private def addContainerCheckRoute(index: Int)(ua: UserAnswers): Option[Call] = ua.get(AddContainerPage(index)) map {
     case true =>
-      val nextContainerIndex = ua.get(DeriveNumberOfContainers(index)).getOrElse(0)
+      val nextContainerCount = ua.get(DeriveNumberOfContainers(index)).getOrElse(0)
+      val nextContainerIndex = Index(nextContainerCount)
       transhipmentRoutes.ContainerNumberController.onPageLoad(ua.id, index, nextContainerIndex, CheckMode)
     case false =>
       (
@@ -162,7 +164,7 @@ class Navigator @Inject()() {
   private def transhipmentType(index: Int)(ua: UserAnswers): Option[Call] = ua.get(transhipments.TranshipmentTypePage(index)) map {
     case DifferentContainer | DifferentContainerAndVehicle =>
       ua.get(DeriveNumberOfContainers(index)) match {
-        case Some(0) | None => transhipmentRoutes.ContainerNumberController.onPageLoad(ua.id, index, 0, NormalMode)
+        case Some(0) | None => transhipmentRoutes.ContainerNumberController.onPageLoad(ua.id, index, Index(0), NormalMode)
         case Some(_)        => transhipmentRoutes.AddContainerController.onPageLoad(ua.id, index, NormalMode)
       }
     case DifferentVehicle => transhipmentRoutes.TransportIdentityController.onPageLoad(ua.id, index, NormalMode)
@@ -171,12 +173,12 @@ class Navigator @Inject()() {
   private def transhipmentTypeCheckRoute(index: Int)(ua: UserAnswers): Option[Call] =
     (
       ua.get(TranshipmentTypePage(index)),
-      ua.get(ContainerNumberPage(index, 0)),
+      ua.get(ContainerNumberPage(index, Index(0))), //todo: confirm the logic here and hard coded 0's
       ua.get(TransportIdentityPage(index)),
       ua.get(TransportNationalityPage(index))
     ) match {
       case (Some(DifferentContainer) | Some(DifferentContainerAndVehicle), None, _, _) =>
-        Some(transhipmentRoutes.ContainerNumberController.onPageLoad(ua.id, index, 0, CheckMode))
+        Some(transhipmentRoutes.ContainerNumberController.onPageLoad(ua.id, index, Index(0), CheckMode))
 
       case (Some(DifferentVehicle), _, None, _) =>
         Some(transhipmentRoutes.TransportIdentityController.onPageLoad(ua.id, index, CheckMode))
