@@ -62,17 +62,6 @@ class HaveSealsChangedController @Inject()(
       renderView(mrn, mode, preparedForm).map(Ok(_))
   }
 
-  private def renderView(mrn: MovementReferenceNumber, mode: Mode, preparedForm: Form[Boolean])(implicit request: DataRequest[AnyContent]): Future[Html] = {
-    val json = Json.obj(
-      "form"   -> preparedForm,
-      "mode"   -> mode,
-      "mrn"    -> mrn,
-      "radios" -> Radios.yesNo(preparedForm("value"))
-    )
-
-    renderer.render("events/seals/haveSealsChanged.njk", json)
-  }
-
   def onSubmit(mrn: MovementReferenceNumber, eventIndex: Int, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
       form
@@ -85,5 +74,15 @@ class HaveSealsChangedController @Inject()(
               _              <- sessionRepository.set(updatedAnswers)
             } yield Redirect(navigator.nextPage(HaveSealsChangedPage(eventIndex), mode, updatedAnswers))
         )
+  }
+
+  private def renderView(mrn: MovementReferenceNumber, mode: Mode, preparedForm: Form[Boolean])(implicit request: DataRequest[AnyContent]): Future[Html] = {
+    val json = Json.obj(
+      "form"   -> preparedForm,
+      "mode"   -> mode,
+      "mrn"    -> mrn,
+      "radios" -> Radios.yesNo(preparedForm("value"))
+    )
+    renderer.render("events/seals/haveSealsChanged.njk", json)
   }
 }
