@@ -19,12 +19,15 @@ package controllers.events.seals
 import controllers.actions._
 import forms.events.seals.HaveSealsChangedFormProvider
 import javax.inject.Inject
+import models.requests.DataRequest
 import models.{Mode, MovementReferenceNumber}
 import navigation.Navigator
 import pages.events.seals.HaveSealsChangedPage
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.twirl.api.Html
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
@@ -56,14 +59,18 @@ class HaveSealsChangedController @Inject()(
         case Some(value) => form.fill(value)
       }
 
-      val json = Json.obj(
-        "form"   -> preparedForm,
-        "mode"   -> mode,
-        "mrn"    -> mrn,
-        "radios" -> Radios.yesNo(preparedForm("value"))
-      )
+      renderView(mrn, mode, preparedForm).map(Ok(_))
+  }
 
-      renderer.render("events/seals/haveSealsChanged.njk", json).map(Ok(_))
+  private def renderView(mrn: MovementReferenceNumber, mode: Mode, preparedForm: Form[Boolean])(implicit request: DataRequest[AnyContent]): Future[Html] = {
+    val json = Json.obj(
+      "form"   -> preparedForm,
+      "mode"   -> mode,
+      "mrn"    -> mrn,
+      "radios" -> Radios.yesNo(preparedForm("value"))
+    )
+
+    renderer.render("events/seals/haveSealsChanged.njk", json)
   }
 
   def onSubmit(mrn: MovementReferenceNumber, eventIndex: Int, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
@@ -71,17 +78,7 @@ class HaveSealsChangedController @Inject()(
       form
         .bindFromRequest()
         .fold(
-          formWithErrors => {
-
-            val json = Json.obj(
-              "form"   -> formWithErrors,
-              "mode"   -> mode,
-              "mrn"    -> mrn,
-              "radios" -> Radios.yesNo(formWithErrors("value"))
-            )
-
-            renderer.render("events/seals/haveSealsChanged.njk", json).map(BadRequest(_))
-          },
+          formWithErrors => renderView(mrn, mode, formWithErrors).map(BadRequest(_)),
           value =>
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(HaveSealsChangedPage(eventIndex), value))
