@@ -7,7 +7,7 @@
 {% from "macros/title.njk"                         import title %}
 
 {% block pageTitle %}
-  {{ title(messages("isTraderAddressPlaceOfNotification.title", traderPostcode), form.errors) }}
+  {{ title(messages("isTraderAddressPlaceOfNotification.title"), form.errors) }}
 {% endblock %}
 
 {% block mainContent %}
@@ -31,18 +31,22 @@
 
           {{ csrf() | safe }}
 
+          <h1 class="govuk-heading-xl">{{ messages('isTraderAddressPlaceOfNotification.title') }}</h1>
+
+          <p class="govuk-body-l">
+            {{ traderLine1 }} <br>
+            {{ traderTown }} <br>
+            {{ traderPostcode }}
+          </p>
+
           {{ govukRadios({
             classes: "govuk-radios--inline",
             name: 'value',
             fieldset: {
               legend: {
-                text: messages('isTraderAddressPlaceOfNotification.title', traderPostcode),
-                isPageHeading: true,
+                isPageHeading: false,
                 classes: "govuk-fieldset__legend--xl"
               }
-            },
-            hint: {
-              text: messages('isTraderAddressPlaceOfNotification.hintText')
             },
             items: radios,
             errorMessage: form.value.error
