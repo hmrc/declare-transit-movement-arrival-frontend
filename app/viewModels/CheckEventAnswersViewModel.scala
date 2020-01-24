@@ -18,7 +18,7 @@ package viewModels
 
 import derivable.{DeriveNumberOfContainers, DeriveNumberOfSeals}
 import models.TranshipmentType._
-import models.{Mode, UserAnswers}
+import models.{Index, Mode, UserAnswers}
 import pages.events._
 import pages.events.seals.HaveSealsChangedPage
 import pages.events.transhipments.TranshipmentTypePage
@@ -42,9 +42,16 @@ object CheckEventAnswersViewModel extends NunjucksSupport {
         Some(Section(sectionText, Seq(helper.isTranshipment(eventIndex), helper.transhipmentType(eventIndex)).flatten)),
         userAnswers
           .get(DeriveNumberOfContainers(eventIndex))
-          .map(List.range(0, _))
-          .map(_.flatMap(helper.containerNumber(eventIndex, _)))
-          .map(Section.apply(msg"checkEventAnswers.section.title.containerNumbers", _))
+          .map {
+            containerCount =>
+              val listOfContainerIndexes = List.range(0, containerCount).map(Index(_))
+              val rows = listOfContainerIndexes.flatMap {
+                index =>
+                  helper.containerNumber(eventIndex, index)
+
+              }
+              Section(msg"checkEventAnswers.section.title.containerNumbers", rows)
+          }
       ).flatten
 
     val eventInfo: Seq[Row] =
