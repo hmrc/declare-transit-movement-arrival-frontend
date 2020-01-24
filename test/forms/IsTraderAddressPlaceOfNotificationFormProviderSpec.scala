@@ -22,12 +22,11 @@ import play.api.data.FormError
 
 class IsTraderAddressPlaceOfNotificationFormProviderSpec extends BooleanFieldBehaviours with SpecBase {
 
-  private val postcode    = "NE99 1AX"
-  private val requiredKey = messages("isTraderAddressPlaceOfNotification.error.required", postcode)
+  private val requiredKey = "isTraderAddressPlaceOfNotification.error.required"
   private val invalidKey  = "error.boolean"
 
   private val formProvider = new IsTraderAddressPlaceOfNotificationFormProvider()
-  private val form         = formProvider(postcode)
+  private val form         = formProvider()
 
   ".value" - {
 

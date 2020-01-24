@@ -19,18 +19,18 @@ package utils
 import controllers.events.transhipments.routes.ContainerNumberController
 import controllers.events.transhipments.routes.ConfirmRemoveContainerController
 import models.messages.Container
-import models.{Mode, UserAnswers}
+import models.{Index, Mode, UserAnswers}
 import pages.events.transhipments.ContainerNumberPage
 import uk.gov.hmrc.viewmodels.SummaryList.{Action, Key, Row, Value}
 import uk.gov.hmrc.viewmodels._
 
 class AddContainerHelper(userAnswers: UserAnswers) {
 
-  def containerRow(eventIndex: Int, containerIndex: Int, mode: Mode): Option[Row] =
+  def containerRow(eventIndex: Int, containerIndex: Index, mode: Mode): Option[Row] =
     userAnswers.get(ContainerNumberPage(eventIndex, containerIndex)).map {
       case Container(answer) =>
         Row(
-          key   = Key(msg"addContainer.containerList.label".withArgs(containerIndex + 1), classes = Seq("govuk-!-width-one-half")), // TODO: Move harded coded interpretation of index to an Index Model
+          key   = Key(msg"addContainer.containerList.label".withArgs(containerIndex.display), classes = Seq("govuk-!-width-one-half")),
           value = Value(lit"$answer"),
           actions = List(
             Action(

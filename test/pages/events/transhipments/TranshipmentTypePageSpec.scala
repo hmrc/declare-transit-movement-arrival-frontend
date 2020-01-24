@@ -18,7 +18,7 @@ package pages.events.transhipments
 
 import generators.MessagesModelGenerators
 import models.messages.Container
-import models.{TranshipmentType, UserAnswers}
+import models.{Index, TranshipmentType, UserAnswers}
 import models.TranshipmentType._
 import models.reference.Country
 import org.scalacheck.Arbitrary.arbitrary
@@ -69,10 +69,10 @@ class TranshipmentTypePageSpec extends PageBehaviours with MessagesModelGenerato
               .set(TranshipmentTypePage(index), DifferentContainer)
               .success
               .value
-              .set(ContainerNumberPage(index, 0), containerNumber)
+              .set(ContainerNumberPage(index, Index(0)), containerNumber)
               .success
               .value
-              .set(ContainerNumberPage(index, 1), containerNumber)
+              .set(ContainerNumberPage(index, Index(1)), containerNumber)
               .success
               .value
               .set(TranshipmentTypePage(index), TranshipmentType.DifferentVehicle)
@@ -94,10 +94,10 @@ class TranshipmentTypePageSpec extends PageBehaviours with MessagesModelGenerato
               .set(TransportNationalityPage(index), country)
               .success
               .value
-              .set(ContainerNumberPage(index, 0), container)
+              .set(ContainerNumberPage(index, Index(0)), container)
               .success
               .value
-              .set(ContainerNumberPage(index, 1), container)
+              .set(ContainerNumberPage(index, Index(1)), container)
               .success
               .value
               .remove(TranshipmentTypePage(index))
@@ -106,8 +106,8 @@ class TranshipmentTypePageSpec extends PageBehaviours with MessagesModelGenerato
 
             result.get(TransportIdentityPage(index)) must not be defined
             result.get(TransportNationalityPage(index)) must not be defined
-            result.get(ContainerNumberPage(index, 0)) must not be defined
-            result.get(ContainerNumberPage(index, 1)) must not be defined
+            result.get(ContainerNumberPage(index, Index(0))) must not be defined
+            result.get(ContainerNumberPage(index, Index(1))) must not be defined
         }
       }
     }

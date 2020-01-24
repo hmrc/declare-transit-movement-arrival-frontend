@@ -16,12 +16,13 @@
 
 package pages.events.seals
 
+import models.Index
 import pages.behaviours.PageBehaviours
 
 class SealIdentityPageSpec extends PageBehaviours {
 
   val eventIndex = 0
-  val sealIndex  = 0
+  val sealIndex  = Index(0)
 
   "SealIdentityPage" - {
 

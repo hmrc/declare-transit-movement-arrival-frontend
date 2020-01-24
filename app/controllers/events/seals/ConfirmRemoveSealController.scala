@@ -19,15 +19,12 @@ package controllers.events.seals
 import controllers.actions._
 import forms.events.seals.ConfirmRemoveSealFormProvider
 import javax.inject.Inject
-import models.requests.DataRequest
-import models.{Mode, MovementReferenceNumber}
+import models.{Index, Mode, MovementReferenceNumber}
 import navigation.Navigator
 import pages.events.seals.{ConfirmRemoveSealPage, SealIdentityPage}
-import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import play.twirl.api.Html
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
@@ -52,29 +49,24 @@ class ConfirmRemoveSealController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mrn: MovementReferenceNumber, eventIndex: Int, sealIndex: Int, mode: Mode): Action[AnyContent] =
+  def onPageLoad(mrn: MovementReferenceNumber, eventIndex: Int, sealIndex: Index, mode: Mode): Action[AnyContent] =
     (identify andThen getData(mrn) andThen requireData).async {
       implicit request =>
         request.userAnswers.get(SealIdentityPage(eventIndex, sealIndex)) match {
           case Some(sealNumber) =>
-            renderView(mrn, mode, sealNumber, form).map(Ok(_))
+            val json = Json.obj(
+              "form"       -> form,
+              "mode"       -> mode,
+              "mrn"        -> mrn,
+              "sealNumber" -> sealNumber,
+              "radios"     -> Radios.yesNo(form("value"))
+            )
+            renderer.render("events/seals/confirmRemoveSeal.njk", json).map(Ok(_))
           case _ => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
         }
     }
 
-  private def renderView(mrn: MovementReferenceNumber, mode: Mode, sealNumber: String, form: Form[Boolean])(
-    implicit request: DataRequest[AnyContent]): Future[Html] = {
-    val json = Json.obj(
-      "form"       -> form,
-      "mode"       -> mode,
-      "mrn"        -> mrn,
-      "sealNumber" -> sealNumber,
-      "radios"     -> Radios.yesNo(form("value"))
-    )
-    renderer.render("events/seals/confirmRemoveSeal.njk", json)
-  }
-
-  def onSubmit(mrn: MovementReferenceNumber, eventIndex: Int, sealIndex: Int, mode: Mode): Action[AnyContent] =
+  def onSubmit(mrn: MovementReferenceNumber, eventIndex: Int, sealIndex: Index, mode: Mode): Action[AnyContent] =
     (identify andThen getData(mrn) andThen requireData).async {
       implicit request =>
         form
@@ -83,7 +75,15 @@ class ConfirmRemoveSealController @Inject()(
             formWithErrors => {
               request.userAnswers.get(SealIdentityPage(eventIndex, sealIndex)) match {
                 case Some(sealNumber) =>
-                  renderView(mrn, mode, sealNumber, formWithErrors).map(BadRequest(_))
+                  val json = Json.obj(
+                    "form"       -> formWithErrors,
+                    "mode"       -> mode,
+                    "mrn"        -> mrn,
+                    "sealNumber" -> sealNumber,
+                    "radios"     -> Radios.yesNo(formWithErrors("value"))
+                  )
+
+                  renderer.render("events/seals/confirmRemoveSeal.njk", json).map(BadRequest(_))
                 case _ => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
               }
             },
@@ -95,7 +95,7 @@ class ConfirmRemoveSealController @Inject()(
                     _              <- sessionRepository.set(updatedAnswers)
                   } yield Redirect(navigator.nextPage(ConfirmRemoveSealPage(eventIndex), mode, updatedAnswers))
 
-                case false => Future.successful(Redirect(navigator.nextPage(ConfirmRemoveSealPage(eventIndex), mode, request.userAnswers)))
+                case _ => Future.successful(Redirect(navigator.nextPage(ConfirmRemoveSealPage(eventIndex), mode, request.userAnswers)))
             }
           )
     }

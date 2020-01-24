@@ -18,7 +18,7 @@ package viewModels
 
 import base.SpecBase
 import generators.MessagesModelGenerators
-import models.NormalMode
+import models.{Index, NormalMode}
 import models.messages.Container
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -46,7 +46,7 @@ class AddContainerViewModelSpec extends SpecBase with ScalaCheckPropertyChecks w
         containers =>
           val userAnswers = containers.zipWithIndex.foldLeft(emptyUserAnswers) {
             case (ua, (container, containerIndex)) =>
-              ua.set(ContainerNumberPage(eventIndex, containerIndex), container).success.value
+              ua.set(ContainerNumberPage(eventIndex, Index(containerIndex)), container).success.value
           }
 
           val vm = AddContainerViewModel(eventIndex, userAnswers, NormalMode)
@@ -68,7 +68,7 @@ class AddContainerViewModelSpec extends SpecBase with ScalaCheckPropertyChecks w
         containers =>
           val userAnswers = containers.zipWithIndex.foldLeft(emptyUserAnswers) {
             case (ua, (container, containerIndex)) =>
-              ua.set(ContainerNumberPage(eventIndex, containerIndex), container).success.value
+              ua.set(ContainerNumberPage(eventIndex, Index(containerIndex)), container).success.value
           }
 
           val vm = AddContainerViewModel(eventIndex, userAnswers, NormalMode)
