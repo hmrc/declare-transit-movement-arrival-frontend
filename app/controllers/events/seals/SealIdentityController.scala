@@ -19,9 +19,11 @@ package controllers.events.seals
 import controllers.actions._
 import forms.events.seals.SealIdentityFormProvider
 import javax.inject.Inject
+import models.requests.DataRequest
 import models.{Index, Mode, MovementReferenceNumber}
 import navigation.Navigator
 import pages.events.seals.SealIdentityPage
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -57,13 +59,7 @@ class SealIdentityController @Inject()(
           case Some(value) => form.fill(value)
         }
 
-        val json = Json.obj(
-          "form" -> preparedForm,
-          "mrn"  -> mrn,
-          "mode" -> mode
-        )
-
-        renderer.render("events/seals/sealIdentity.njk", json).map(Ok(_))
+        renderView(mrn, mode, preparedForm).map(Ok(_))
     }
 
   def onSubmit(mrn: MovementReferenceNumber, eventIndex: Int, sealIndex: Index, mode: Mode): Action[AnyContent] =
@@ -72,16 +68,7 @@ class SealIdentityController @Inject()(
         form
           .bindFromRequest()
           .fold(
-            formWithErrors => {
-
-              val json = Json.obj(
-                "form" -> formWithErrors,
-                "mrn"  -> mrn,
-                "mode" -> mode
-              )
-
-              renderer.render("events/seals/sealIdentity.njk", json).map(BadRequest(_))
-            },
+            formWithErrors => renderView(mrn, mode, formWithErrors).map(BadRequest(_)),
             value =>
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(SealIdentityPage(eventIndex, sealIndex), value))
@@ -89,4 +76,14 @@ class SealIdentityController @Inject()(
               } yield Redirect(navigator.nextPage(SealIdentityPage(eventIndex, sealIndex), mode, updatedAnswers))
           )
     }
+
+  private def renderView(mrn: MovementReferenceNumber, mode: Mode, preparedForm: Form[String])(implicit request: DataRequest[AnyContent]) = {
+    val json = Json.obj(
+      "form" -> preparedForm,
+      "mrn"  -> mrn,
+      "mode" -> mode
+    )
+
+    renderer.render("events/seals/sealIdentity.njk", json)
+  }
 }
