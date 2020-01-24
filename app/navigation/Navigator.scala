@@ -271,17 +271,23 @@ class Navigator @Inject()() {
   private def haveSealsChanged(index: Int, mode: Mode)(userAnswers: UserAnswers): Option[Call] =
     userAnswers.get(HaveSealsChangedPage(index)).map {
       case true =>
-        if (userAnswers.get(SealIdentityPage(index, 0)).isDefined) {
+        if (userAnswers.get(SealIdentityPage(index, Index(0))).isDefined) { //todo: hardcoded 0?
           sealRoutes.AddSealController.onPageLoad(userAnswers.id, index, mode)
         } else {
-          sealRoutes.SealIdentityController.onPageLoad(userAnswers.id, index, userAnswers.get(DeriveNumberOfSeals(index)).getOrElse(0), mode)
+          val sealCount = userAnswers.get(DeriveNumberOfSeals(index)).getOrElse(0)
+          val sealIndex = Index(sealCount)
+          sealRoutes.SealIdentityController.onPageLoad(userAnswers.id, index, sealIndex, mode)
         }
       case false => eventRoutes.CheckEventAnswersController.onPageLoad(userAnswers.id, index)
     }
 
   private def addSeal(index: Int)(userAnswers: UserAnswers): Option[Call] =
     userAnswers.get(AddSealPage(index)).map {
-      case true  => sealRoutes.SealIdentityController.onPageLoad(userAnswers.id, index, userAnswers.get(DeriveNumberOfSeals(index)).getOrElse(0), NormalMode)
-      case false => eventRoutes.CheckEventAnswersController.onPageLoad(userAnswers.id, index)
+      case true =>
+        val sealCount = userAnswers.get(DeriveNumberOfSeals(index)).getOrElse(0)
+        val sealIndex = Index(sealCount)
+        sealRoutes.SealIdentityController.onPageLoad(userAnswers.id, index, sealIndex, NormalMode)
+      case false =>
+        eventRoutes.CheckEventAnswersController.onPageLoad(userAnswers.id, index)
     }
 }

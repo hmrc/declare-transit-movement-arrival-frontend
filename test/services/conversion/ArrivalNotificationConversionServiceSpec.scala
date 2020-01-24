@@ -23,7 +23,7 @@ import generators.MessagesModelGenerators
 import models.GoodsLocation.BorderForceOffice
 import models.messages.{NormalNotification, _}
 import models.reference.{Country, CustomsOffice}
-import models.{TraderAddress, UserAnswers}
+import models.{Index, TraderAddress, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -134,8 +134,8 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
             .set(EventReportedPage(eventIndex), routeEvent.alreadyInNcts).success.value
             .set(TransportIdentityPage(eventIndex), vehicularTranshipment.transportIdentity).success.value
             .set(TransportNationalityPage(eventIndex), Country("Valid",vehicularTranshipment.transportCountry, "country name")).success.value
-            .set(SealIdentityPage(eventIndex, 0), "seal 1").success.value
-            .set(SealIdentityPage(eventIndex, 1), "seal 2").success.value
+            .set(SealIdentityPage(eventIndex, Index(0)), "seal 1").success.value
+            .set(SealIdentityPage(eventIndex, Index(1)), "seal 2").success.value
 
           service.convertToArrivalNotification(userAnswers).value mustEqual arrivalNotification
       }

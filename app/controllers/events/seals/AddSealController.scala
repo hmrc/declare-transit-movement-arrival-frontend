@@ -21,7 +21,7 @@ import derivable.DeriveNumberOfSeals
 import forms.events.seals.AddSealFormProvider
 import javax.inject.Inject
 import models.requests.DataRequest
-import models.{Mode, MovementReferenceNumber}
+import models.{Index, Mode, MovementReferenceNumber}
 import navigation.Navigator
 import pages.events.seals.AddSealPage
 import play.api.data.Form
@@ -32,7 +32,6 @@ import play.twirl.api.Html
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
-import uk.gov.hmrc.viewmodels.SummaryList.Row
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 import utils.AddSealHelper
 
@@ -77,8 +76,13 @@ class AddSealController @Inject()(override val messagesApi: MessagesApi,
   private def renderPage(mrn: MovementReferenceNumber, eventIndex: Int, mode: Mode, form: Form[Boolean])(
     implicit request: DataRequest[AnyContent]): Future[Html] = {
 
-    val numberOfSeals       = request.userAnswers.get(DeriveNumberOfSeals(eventIndex)).getOrElse(0)
-    val sealsRows: Seq[Row] = (0 to numberOfSeals).flatMap(AddSealHelper.apply(request.userAnswers).sealRow(eventIndex, _, mode))
+    val numberOfSeals    = request.userAnswers.get(DeriveNumberOfSeals(eventIndex)).getOrElse(0)
+    val listOfSealsIndex = List.range(0, numberOfSeals).map(Index(_))
+    val sealsRows = listOfSealsIndex.flatMap {
+      index =>
+        AddSealHelper.apply(request.userAnswers).sealRow(eventIndex, index, mode)
+
+    }
 
     val singularOrPlural = if (numberOfSeals == 1) "singular" else "plural"
 
