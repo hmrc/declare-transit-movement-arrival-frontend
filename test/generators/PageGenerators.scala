@@ -16,6 +16,7 @@
 
 package generators
 
+import models.Index
 import org.scalacheck.Arbitrary
 import pages._
 import pages.events._
@@ -31,7 +32,7 @@ trait PageGenerators {
     Arbitrary(AddSealPage(0))
 
   implicit lazy val arbitrarySealIdentityPage: Arbitrary[SealIdentityPage] =
-    Arbitrary(SealIdentityPage(0, 0))
+    Arbitrary(SealIdentityPage(0, Index(0)))
 
   implicit lazy val arbitraryConfirmRemoveContainerPage: Arbitrary[ConfirmRemoveContainerPage.type] =
     Arbitrary(ConfirmRemoveContainerPage)
@@ -40,7 +41,7 @@ trait PageGenerators {
     Arbitrary(AddContainerPage(0))
 
   implicit lazy val arbitraryContainerNumberPage: Arbitrary[ContainerNumberPage] =
-    Arbitrary(ContainerNumberPage(0, 0))
+    Arbitrary(ContainerNumberPage(0, Index(0)))
 
   implicit lazy val arbitraryTransportNationalityPage: Arbitrary[TransportNationalityPage] =
     Arbitrary(TransportNationalityPage(0))

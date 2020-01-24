@@ -265,18 +265,17 @@ checkEventAnswers.section.title.containerNumbers = Container numbers
 checkEventAnswers.section.title.vehicleInformation = Vehicle information
 
 
-isTraderAddressPlaceOfNotification.title = Is {0} the postcode of the place of notification?
-isTraderAddressPlaceOfNotification.heading = Is {0} the postcode of the place of notification?
-isTraderAddressPlaceOfNotification.hintText = Tell us if you are completing the arrival notification at the trader’s address.
-isTraderAddressPlaceOfNotification.checkYourAnswersLabel = Is {0} the postcode of the place of notification
-isTraderAddressPlaceOfNotification.error.required = Select yes if {0} is the postcode of the place of notification
+isTraderAddressPlaceOfNotification.title = Are you completing this arrival notification at the trader’s address?
+isTraderAddressPlaceOfNotification.heading = Are you completing this arrival notification at the trader’s address?
+isTraderAddressPlaceOfNotification.checkYourAnswersLabel = Are you completing this arrival notification at the trader’s address?
+isTraderAddressPlaceOfNotification.error.required = Select yes if you are completing this arrival notification at the trader’s address
 
-placeOfNotification.title = Where is the place of notification?
-placeOfNotification.heading = Where is the place of notification?
-placeOfNotification.checkYourAnswersLabel = Where is the place of notification?
-placeOfNotification.hintText = Tell us where you are completing this arrival notification.
-placeOfNotification.error.required = Enter the place of notification
-placeOfNotification.error.length = Place of notification must be 35 characters or less
+placeOfNotification.title = Where are you completing this arrival notification?
+placeOfNotification.heading = Where are you completing this arrival notification?
+placeOfNotification.checkYourAnswersLabel = Where are you completing this arrival notification?
+placeOfNotification.hintText = This is also known as the place of notification. Give the postcode.
+placeOfNotification.error.required = Where are you completing this arrival notification?
+placeOfNotification.error.length = Where are you completing this arrival notification must be 35 characters or less
 
 addEvent.title.singular = You have added {0} event
 addEvent.title.plural = You have added {0} events

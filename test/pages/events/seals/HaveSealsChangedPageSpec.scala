@@ -16,14 +16,15 @@
 
 package pages.events.seals
 
-import models.UserAnswers
+import models.{Index, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
 import queries.SealsQuery
 
 class HaveSealsChangedPageSpec extends PageBehaviours {
 
-  val eventIndex = 0
+  private val eventIndex = 0
+  private val sealIndex  = Index(0)
 
   "HaveSealsChangedPage" - {
 
@@ -42,22 +43,19 @@ class HaveSealsChangedPageSpec extends PageBehaviours {
               .set(HaveSealsChangedPage(eventIndex), true)
               .success
               .value
-              .set(SealIdentityPage(eventIndex, 0), "seal")
-              .success
-              .value
-              .set(SealIdentityPage(eventIndex, 1), "seal")
+              .set(SealIdentityPage(eventIndex, sealIndex), "seal")
               .success
               .value
               .set(HaveSealsChangedPage(eventIndex), false)
               .success
               .value
 
-            result.get(SealIdentityPage(eventIndex, 0)) must not be defined
+            result.get(SealIdentityPage(eventIndex, sealIndex)) must not be defined
             result.get(SealsQuery(eventIndex)) must not be defined
         }
       }
 
-      "must remove seals when user answer changes from 'No' to 'Yes' " in {
+      "must not remove seals when user answer changes from 'No' to 'Yes' " in {
 
         forAll(arbitrary[UserAnswers]) {
           userAnswers =>
@@ -65,17 +63,14 @@ class HaveSealsChangedPageSpec extends PageBehaviours {
               .set(HaveSealsChangedPage(eventIndex), false)
               .success
               .value
-              .set(SealIdentityPage(eventIndex, 0), "seal")
-              .success
-              .value
-              .set(SealIdentityPage(eventIndex, 1), "seal")
+              .set(SealIdentityPage(eventIndex, sealIndex), "seal")
               .success
               .value
               .set(HaveSealsChangedPage(eventIndex), true)
               .success
               .value
 
-            result.get(SealIdentityPage(eventIndex, 0)) mustBe defined
+            result.get(SealIdentityPage(eventIndex, sealIndex)) mustBe defined
             result.get(SealsQuery(eventIndex)) mustBe defined
         }
       }

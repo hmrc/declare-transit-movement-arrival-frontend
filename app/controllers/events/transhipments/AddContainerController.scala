@@ -20,7 +20,7 @@ import controllers.actions._
 import derivable.DeriveNumberOfContainers
 import forms.events.transhipments.AddContainerFormProvider
 import javax.inject.Inject
-import models.{Mode, MovementReferenceNumber}
+import models.{Index, Mode, MovementReferenceNumber}
 import navigation.Navigator
 import pages.events.transhipments.AddContainerPage
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
