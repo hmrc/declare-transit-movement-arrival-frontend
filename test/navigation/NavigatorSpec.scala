@@ -862,6 +862,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         }
 
         "to seal identity page when answer is Yes" in {
+          val nextIndex = Index(sealIndex.position + 1)
           val updatedAnswers = emptyUserAnswers
             .set(AddSealPage(eventIndex), true)
             .success
@@ -872,7 +873,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
           navigator
             .nextPage(AddSealPage(eventIndex), NormalMode, updatedAnswers)
-            .mustBe(sealRoutes.SealIdentityController.onPageLoad(updatedAnswers.id, eventIndex, 1, NormalMode))
+            .mustBe(sealRoutes.SealIdentityController.onPageLoad(updatedAnswers.id, eventIndex, nextIndex, NormalMode))
         }
       }
 

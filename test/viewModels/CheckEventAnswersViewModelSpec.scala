@@ -83,8 +83,8 @@ class CheckEventAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChe
         .set(IsTranshipmentPage(eventIndex), false).success.value
         .set(IncidentInformationPage(eventIndex), "value").success.value
         .set(HaveSealsChangedPage(eventIndex), true).success.value
-        .set(SealIdentityPage(eventIndex, 0), "seal1").success.value
-        .set(SealIdentityPage(eventIndex, 1), "seal2").success.value
+        .set(SealIdentityPage(eventIndex, Index(0)), "seal1").success.value
+        .set(SealIdentityPage(eventIndex, Index(1)), "seal2").success.value
 
       val vm = CheckEventAnswersViewModel(ua, eventIndex, CheckMode)
 
