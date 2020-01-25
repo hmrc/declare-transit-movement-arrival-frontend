@@ -16,11 +16,11 @@
 
 package pages.events.transhipments
 
+import models.Index
 import pages.QuestionPage
-import pages.events.SectionConstants
 import play.api.libs.json.JsPath
 
-final case class AddContainerPage(eventIndex: Int) extends QuestionPage[Boolean] {
+final case class AddContainerPage(eventIndex: Index) extends QuestionPage[Boolean] {
 
   override def path: JsPath = JsPath \ toString
 

@@ -20,7 +20,7 @@ import controllers.actions._
 import forms.events.seals.HaveSealsChangedFormProvider
 import javax.inject.Inject
 import models.requests.DataRequest
-import models.{Mode, MovementReferenceNumber}
+import models.{Index, Mode, MovementReferenceNumber}
 import navigation.Navigator
 import pages.events.seals.HaveSealsChangedPage
 import play.api.data.Form
@@ -52,7 +52,7 @@ class HaveSealsChangedController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mrn: MovementReferenceNumber, eventIndex: Int, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onPageLoad(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
       val preparedForm = request.userAnswers.get(HaveSealsChangedPage(eventIndex)) match {
         case None        => form
@@ -62,7 +62,7 @@ class HaveSealsChangedController @Inject()(
       renderView(mrn, mode, preparedForm).map(Ok(_))
   }
 
-  def onSubmit(mrn: MovementReferenceNumber, eventIndex: Int, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onSubmit(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
       form
         .bindFromRequest()

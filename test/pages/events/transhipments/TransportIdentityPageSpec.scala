@@ -16,18 +16,19 @@
 
 package pages.events.transhipments
 
+import models.Index
 import pages.behaviours.PageBehaviours
 
 class TransportIdentityPageSpec extends PageBehaviours {
 
-  val index = 0
+  val eventIndex = Index(0)
 
   "TransportIdentityPage" - {
 
-    beRetrievable[String](TransportIdentityPage(index))
+    beRetrievable[String](TransportIdentityPage(eventIndex))
 
-    beSettable[String](TransportIdentityPage(index))
+    beSettable[String](TransportIdentityPage(eventIndex))
 
-    beRemovable[String](TransportIdentityPage(index))
+    beRemovable[String](TransportIdentityPage(eventIndex))
   }
 }

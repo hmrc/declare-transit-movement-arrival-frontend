@@ -19,7 +19,7 @@ package controllers.events
 import controllers.actions._
 import forms.events.EventPlaceFormProvider
 import javax.inject.Inject
-import models.{Mode, MovementReferenceNumber}
+import models.{Index, Mode, MovementReferenceNumber}
 import navigation.Navigator
 import pages.events.EventPlacePage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -47,10 +47,10 @@ class EventPlaceController @Inject()(override val messagesApi: MessagesApi,
 
   private val form = formProvider()
 
-  def onPageLoad(mrn: MovementReferenceNumber, index: Int, mode: Mode): Action[AnyContent] =
+  def onPageLoad(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode): Action[AnyContent] =
     (identify andThen getData(mrn) andThen requireData).async {
       implicit request =>
-        val preparedForm = request.userAnswers.get(EventPlacePage(index)) match {
+        val preparedForm = request.userAnswers.get(EventPlacePage(eventIndex)) match {
           case None        => form
           case Some(value) => form.fill(value)
         }
@@ -64,7 +64,7 @@ class EventPlaceController @Inject()(override val messagesApi: MessagesApi,
         renderer.render("events/eventPlace.njk", json).map(Ok(_))
     }
 
-  def onSubmit(mrn: MovementReferenceNumber, index: Int, mode: Mode): Action[AnyContent] =
+  def onSubmit(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode): Action[AnyContent] =
     (identify andThen getData(mrn) andThen requireData).async {
       implicit request =>
         form
@@ -82,9 +82,9 @@ class EventPlaceController @Inject()(override val messagesApi: MessagesApi,
             },
             value =>
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(EventPlacePage(index), value))
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(EventPlacePage(eventIndex), value))
                 _              <- sessionRepository.set(updatedAnswers)
-              } yield Redirect(navigator.nextPage(EventPlacePage(index), mode, updatedAnswers))
+              } yield Redirect(navigator.nextPage(EventPlacePage(eventIndex), mode, updatedAnswers))
           )
     }
 }

@@ -50,7 +50,7 @@ class ConfirmRemoveContainerController @Inject()(
   private val form                           = formProvider()
   private val confirmRemoveContainerTemplate = "events/transhipments/confirmRemoveContainer.njk"
 
-  def onPageLoad(mrn: MovementReferenceNumber, eventIndex: Int, containerIndex: Index, mode: Mode): Action[AnyContent] =
+  def onPageLoad(mrn: MovementReferenceNumber, eventIndex: Index, containerIndex: Index, mode: Mode): Action[AnyContent] =
     (identify andThen getData(mrn) andThen requireData).async {
       implicit request =>
         request.userAnswers.get(ContainerNumberPage(eventIndex, containerIndex)) match {
@@ -69,7 +69,7 @@ class ConfirmRemoveContainerController @Inject()(
         }
     }
 
-  def onSubmit(mrn: MovementReferenceNumber, eventIndex: Int, containerIndex: Index, mode: Mode): Action[AnyContent] =
+  def onSubmit(mrn: MovementReferenceNumber, eventIndex: Index, containerIndex: Index, mode: Mode): Action[AnyContent] =
     (identify andThen getData(mrn) andThen requireData).async {
       implicit request =>
         request.userAnswers.get(ContainerNumberPage(eventIndex, containerIndex)) match {
