@@ -41,8 +41,7 @@ class ConfirmationControllerSpec extends SpecBase with MockitoSugar with JsonMat
 
   "Confirmation Controller" - {
 
-        "return OK and the correct view when there is no phone number for a GET then remove data" in {
-
+    "return OK and the correct view when there is no phone number for a GET then remove data" in {
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
@@ -89,7 +88,7 @@ class ConfirmationControllerSpec extends SpecBase with MockitoSugar with JsonMat
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
       val result         = route(application, request).value
 
-      val contactUsMessage: Text.Message = msg"arrivalComplete.para2.withPhoneNumber".withArgs(presentationOffice.name, presentationOffice.phoneNumber)
+      val contactUsMessage: Text.Message = msg"arrivalComplete.para2.withPhoneNumber".withArgs(presentationOffice.name, presentationOffice.phoneNumber.get)
 
       status(result) mustEqual OK
 
@@ -103,7 +102,7 @@ class ConfirmationControllerSpec extends SpecBase with MockitoSugar with JsonMat
 
       application.stop()
     }
-    
+
   }
 
 }

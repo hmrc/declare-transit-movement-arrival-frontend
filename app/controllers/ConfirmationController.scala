@@ -44,10 +44,9 @@ class ConfirmationController @Inject()(override val messagesApi: MessagesApi,
     implicit request =>
       request.userAnswers.get(PresentationOfficePage) match {
         case Some(presentationOffice) =>
-          val contactUsMessage = if (presentationOffice.phoneNumber.isDefined) {
-            msg"arrivalComplete.para2.withPhoneNumber".withArgs(presentationOffice.name, presentationOffice.phoneNumber)
-          } else {
-            msg"arrivalComplete.para2".withArgs(presentationOffice.name)
+          val contactUsMessage = presentationOffice.phoneNumber match {
+            case Some(telephone) => msg"arrivalComplete.para2.withPhoneNumber".withArgs(presentationOffice.name, telephone)
+            case None            => msg"arrivalComplete.para2".withArgs(presentationOffice.name)
           }
 
           val json = Json.obj(
