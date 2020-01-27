@@ -58,7 +58,7 @@ class AddContainerController @Inject()(
       messages("addContainer.title.plural", containerCount)
     }
 
-  def onPageLoad(mrn: MovementReferenceNumber, eventIndex: Int, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onPageLoad(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
       val preparedForm = request.userAnswers.get(AddContainerPage(eventIndex)) match {
         case None        => form
@@ -77,7 +77,7 @@ class AddContainerController @Inject()(
       renderer.render("events/transhipments/addContainer.njk", json).map(Ok(_))
   }
 
-  def onSubmit(mrn: MovementReferenceNumber, eventIndex: Int, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onSubmit(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
       form
         .bindFromRequest()

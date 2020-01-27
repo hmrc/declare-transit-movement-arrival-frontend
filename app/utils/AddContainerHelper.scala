@@ -26,7 +26,7 @@ import uk.gov.hmrc.viewmodels._
 
 class AddContainerHelper(userAnswers: UserAnswers) {
 
-  def containerRow(eventIndex: Int, containerIndex: Index, mode: Mode): Option[Row] =
+  def containerRow(eventIndex: Index, containerIndex: Index, mode: Mode): Option[Row] =
     userAnswers.get(ContainerNumberPage(eventIndex, containerIndex)).map {
       case Container(answer) =>
         Row(

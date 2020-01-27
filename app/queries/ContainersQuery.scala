@@ -16,13 +16,14 @@
 
 package queries
 
+import models.Index
 import models.messages.Container
 import pages.QuestionPage
 import pages.events.SectionConstants
-import play.api.libs.json.{JsObject, JsPath}
+import play.api.libs.json.JsPath
 
-final case class ContainersQuery(eventIndex: Int) extends QuestionPage[Seq[Container]] {
+final case class ContainersQuery(eventIndex: Index) extends QuestionPage[Seq[Container]] {
 
-  override def path: JsPath = JsPath \ SectionConstants.events \ eventIndex \ SectionConstants.containers
+  override def path: JsPath = JsPath \ SectionConstants.events \ eventIndex.position \ SectionConstants.containers
 
 }

@@ -51,13 +51,13 @@ class ConfirmRemoveSealController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mrn: MovementReferenceNumber, eventIndex: Int, sealIndex: Index, mode: Mode): Action[AnyContent] =
+  def onPageLoad(mrn: MovementReferenceNumber, eventIndex: Index, sealIndex: Index, mode: Mode): Action[AnyContent] =
     (identify andThen getData(mrn) andThen requireData).async {
       implicit request =>
         renderView(mrn, eventIndex, sealIndex, mode, form, Ok)
     }
 
-  def onSubmit(mrn: MovementReferenceNumber, eventIndex: Int, sealIndex: Index, mode: Mode): Action[AnyContent] =
+  def onSubmit(mrn: MovementReferenceNumber, eventIndex: Index, sealIndex: Index, mode: Mode): Action[AnyContent] =
     (identify andThen getData(mrn) andThen requireData).async {
       implicit request =>
         form
@@ -76,7 +76,7 @@ class ConfirmRemoveSealController @Inject()(
           )
     }
 
-  private def renderView(mrn: MovementReferenceNumber, eventIndex: Int, sealIndex: Index, mode: Mode, form: Form[Boolean], status: Status)(
+  private def renderView(mrn: MovementReferenceNumber, eventIndex: Index, sealIndex: Index, mode: Mode, form: Form[Boolean], status: Status)(
     implicit request: DataRequest[AnyContent]): Future[Result] =
     request.userAnswers.get(SealIdentityPage(eventIndex, sealIndex)) match {
       case Some(sealNumber) =>

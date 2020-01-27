@@ -23,7 +23,7 @@ import queries.SealsQuery
 
 class HaveSealsChangedPageSpec extends PageBehaviours {
 
-  private val eventIndex = 0
+  private val eventIndex = Index(0)
   private val sealIndex  = Index(0)
 
   "HaveSealsChangedPage" - {

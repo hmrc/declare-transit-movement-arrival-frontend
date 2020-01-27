@@ -32,7 +32,7 @@ case class CheckEventAnswersViewModel(eventInfo: Section, otherInfo: Seq[Section
 
 object CheckEventAnswersViewModel extends NunjucksSupport {
 
-  def apply(userAnswers: UserAnswers, eventIndex: Int, mode: Mode): CheckEventAnswersViewModel = {
+  def apply(userAnswers: UserAnswers, eventIndex: Index, mode: Mode): CheckEventAnswersViewModel = {
     val helper = new CheckYourAnswersHelper(userAnswers)
 
     val isTranshipment = userAnswers.get(IsTranshipmentPage(eventIndex)).getOrElse(false)

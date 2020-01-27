@@ -16,6 +16,7 @@
 
 package pages.events.transhipments
 
+import models.Index
 import pages.Page
 
-final case class ConfirmRemoveContainerPage(eventIndex: Int) extends Page
+final case class ConfirmRemoveContainerPage(eventIndex: Index) extends Page

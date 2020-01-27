@@ -26,31 +26,31 @@ import pages.events.transhipments._
 trait PageGenerators {
 
   implicit lazy val arbitraryHaveSealsChangedPage: Arbitrary[HaveSealsChangedPage] =
-    Arbitrary(HaveSealsChangedPage(0))
+    Arbitrary(HaveSealsChangedPage(Index(0)))
 
   implicit lazy val arbitraryAddSealPage: Arbitrary[AddSealPage] =
-    Arbitrary(AddSealPage(0))
+    Arbitrary(AddSealPage(Index(0)))
 
   implicit lazy val arbitrarySealIdentityPage: Arbitrary[SealIdentityPage] =
-    Arbitrary(SealIdentityPage(0, Index(0)))
+    Arbitrary(SealIdentityPage(Index(0), Index(0)))
 
   implicit lazy val arbitraryConfirmRemoveContainerPage: Arbitrary[ConfirmRemoveContainerPage.type] =
     Arbitrary(ConfirmRemoveContainerPage)
 
   implicit lazy val arbitraryAddContainerPage: Arbitrary[AddContainerPage] =
-    Arbitrary(AddContainerPage(0))
+    Arbitrary(AddContainerPage(Index(0)))
 
   implicit lazy val arbitraryContainerNumberPage: Arbitrary[ContainerNumberPage] =
-    Arbitrary(ContainerNumberPage(0, Index(0)))
+    Arbitrary(ContainerNumberPage(Index(0), Index(0)))
 
   implicit lazy val arbitraryTransportNationalityPage: Arbitrary[TransportNationalityPage] =
-    Arbitrary(TransportNationalityPage(0))
+    Arbitrary(TransportNationalityPage(Index(0)))
 
   implicit lazy val arbitraryTransportIdentityPage: Arbitrary[TransportIdentityPage] =
-    Arbitrary(TransportIdentityPage(0))
+    Arbitrary(TransportIdentityPage(Index(0)))
 
   implicit lazy val arbitraryTranshipmentTypePage: Arbitrary[TranshipmentTypePage] =
-    Arbitrary(TranshipmentTypePage(0))
+    Arbitrary(TranshipmentTypePage(Index(0)))
 
   implicit lazy val arbitraryAddEventPage: Arbitrary[AddEventPage.type] =
     Arbitrary(AddEventPage)
@@ -62,19 +62,19 @@ trait PageGenerators {
     Arbitrary(IsTraderAddressPlaceOfNotificationPage)
 
   implicit lazy val arbitraryIsTranshipmentPage: Arbitrary[IsTranshipmentPage] =
-    Arbitrary(IsTranshipmentPage(0))
+    Arbitrary(IsTranshipmentPage(Index(0)))
 
   implicit lazy val arbitraryIncidentInformationPage: Arbitrary[IncidentInformationPage] =
-    Arbitrary(IncidentInformationPage(0))
+    Arbitrary(IncidentInformationPage(Index(0)))
 
   implicit lazy val arbitraryEventReportedPage: Arbitrary[EventReportedPage] =
-    Arbitrary(EventReportedPage(0))
+    Arbitrary(EventReportedPage(Index(0)))
 
   implicit lazy val arbitraryEventPlacePage: Arbitrary[EventPlacePage] =
-    Arbitrary(EventPlacePage(0))
+    Arbitrary(EventPlacePage(Index(0)))
 
   implicit lazy val arbitraryEventCountryPage: Arbitrary[EventCountryPage] =
-    Arbitrary(EventCountryPage(0))
+    Arbitrary(EventCountryPage(Index(0)))
 
   implicit lazy val arbitraryIncidentOnRoutePage: Arbitrary[IncidentOnRoutePage.type] =
     Arbitrary(IncidentOnRoutePage)

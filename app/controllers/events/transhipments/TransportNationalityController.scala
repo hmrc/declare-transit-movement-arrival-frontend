@@ -21,7 +21,7 @@ import controllers.actions.{DataRequiredAction, DataRetrievalActionProvider, Ide
 import forms.events.transhipments.TransportNationalityFormProvider
 import javax.inject.Inject
 import models.reference.Country
-import models.{Mode, MovementReferenceNumber}
+import models.{Index, Mode, MovementReferenceNumber}
 import navigation.Navigator
 import pages.events.transhipments.TransportNationalityPage
 import play.api.data.Form
@@ -49,7 +49,7 @@ class TransportNationalityController @Inject()(override val messagesApi: Message
     with I18nSupport
     with NunjucksSupport {
 
-  def onPageLoad(mrn: MovementReferenceNumber, eventIndex: Int, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onPageLoad(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
       referenceDataConnector.getCountryList() flatMap {
         countries =>
@@ -63,7 +63,7 @@ class TransportNationalityController @Inject()(override val messagesApi: Message
       }
   }
 
-  def onSubmit(mrn: MovementReferenceNumber, eventIndex: Int, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onSubmit(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
       referenceDataConnector.getCountryList() flatMap {
         countries =>

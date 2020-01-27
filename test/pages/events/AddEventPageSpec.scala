@@ -20,8 +20,6 @@ import pages.behaviours.PageBehaviours
 
 class AddEventPageSpec extends PageBehaviours {
 
-  val index = 0
-
   "AddEventPage" - {
 
     beRetrievable[Boolean](AddEventPage)

@@ -16,12 +16,13 @@
 
 package queries
 
+import models.Index
 import pages.QuestionPage
 import pages.events.SectionConstants
 import play.api.libs.json.JsPath
 
-final case class SealsQuery(eventIndex: Int) extends QuestionPage[Seq[String]] {
+final case class SealsQuery(eventIndex: Index) extends QuestionPage[Seq[String]] {
 
-  override def path: JsPath = JsPath \ SectionConstants.events \ eventIndex \ SectionConstants.seals
+  override def path: JsPath = JsPath \ SectionConstants.events \ eventIndex.position \ SectionConstants.seals
 
 }

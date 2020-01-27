@@ -52,13 +52,13 @@ class AddSealController @Inject()(override val messagesApi: MessagesApi,
 
   private val form = formProvider()
 
-  def onPageLoad(mrn: MovementReferenceNumber, eventIndex: Int, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onPageLoad(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
       renderPage(mrn, eventIndex, mode, form)
         .map(Ok(_))
   }
 
-  def onSubmit(mrn: MovementReferenceNumber, eventIndex: Int, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onSubmit(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
       form
         .bindFromRequest()
@@ -73,7 +73,7 @@ class AddSealController @Inject()(override val messagesApi: MessagesApi,
         )
   }
 
-  private def renderPage(mrn: MovementReferenceNumber, eventIndex: Int, mode: Mode, form: Form[Boolean])(
+  private def renderPage(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode, form: Form[Boolean])(
     implicit request: DataRequest[AnyContent]): Future[Html] = {
 
     val numberOfSeals    = request.userAnswers.get(DeriveNumberOfSeals(eventIndex)).getOrElse(0)

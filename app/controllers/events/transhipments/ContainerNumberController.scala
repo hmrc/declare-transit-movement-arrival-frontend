@@ -50,7 +50,7 @@ class ContainerNumberController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mrn: MovementReferenceNumber, eventIndex: Int, containerIndex: Index, mode: Mode): Action[AnyContent] =
+  def onPageLoad(mrn: MovementReferenceNumber, eventIndex: Index, containerIndex: Index, mode: Mode): Action[AnyContent] =
     (identify andThen getData(mrn) andThen requireData).async {
       implicit request =>
         val preparedForm = request.userAnswers.get(ContainerNumberPage(eventIndex, containerIndex)) match {
@@ -67,7 +67,7 @@ class ContainerNumberController @Inject()(
         renderer.render("events/transhipments/containerNumber.njk", json).map(Ok(_))
     }
 
-  def onSubmit(mrn: MovementReferenceNumber, eventIndex: Int, containerIndex: Index, mode: Mode): Action[AnyContent] =
+  def onSubmit(mrn: MovementReferenceNumber, eventIndex: Index, containerIndex: Index, mode: Mode): Action[AnyContent] =
     (identify andThen getData(mrn) andThen requireData).async {
       implicit request =>
         form
