@@ -37,16 +37,6 @@ object CheckEventAnswersViewModel extends NunjucksSupport {
 
     val isTranshipment = userAnswers.get(IsTranshipmentPage(eventIndex)).getOrElse(false)
 
-    def eventTypeSection(sectionText: Text): Seq[Section] =
-      Seq(
-        Some(Section(sectionText, Seq(helper.isTranshipment(eventIndex), helper.transhipmentType(eventIndex)).flatten)),
-        userAnswers
-          .get(DeriveNumberOfContainers(eventIndex))
-          .map(List.range(0, _))
-          .map(_.flatMap(helper.containerNumber(eventIndex, _)))
-          .map(Section.apply(msg"checkEventAnswers.section.title.containerNumbers", _))
-      ).flatten
-
     val eventInfo: Seq[Row] =
       Seq(
         helper.eventCountry(eventIndex),
@@ -55,6 +45,25 @@ object CheckEventAnswersViewModel extends NunjucksSupport {
         if (isTranshipment) None else { helper.isTranshipment(eventIndex) },
         helper.incidentInformation(eventIndex)
       ).flatten
+
+    val sealSection: Section = {
+      val seals: Seq[Row] = Seq
+        .range(0, userAnswers.get(DeriveNumberOfSeals(eventIndex)).getOrElse(0))
+        .flatMap(helper.sealIdentity(eventIndex, _))
+
+      Section(msg"addSeal.sealList.heading", (helper.haveSealsChanged(eventIndex) ++ seals).toSeq)
+    }
+
+    //TODO: Can we just pass in multiple sections
+    CheckEventAnswersViewModel(
+      Section(eventInfo),
+      otherInfoSections(userAnswers, eventIndex, helper) :+ sealSection
+    )
+  }
+
+  private def otherInfoSections(userAnswers: UserAnswers, eventIndex: Int, helper: CheckYourAnswersHelper): Seq[Section] = {
+
+    val isTranshipment = userAnswers.get(IsTranshipmentPage(eventIndex)).getOrElse(false)
 
     val differentVehicleSection: Section = Section(
       msg"checkEventAnswers.section.title.differentVehicle",
@@ -66,37 +75,32 @@ object CheckEventAnswersViewModel extends NunjucksSupport {
       ).flatten
     )
 
-    val sealSection: Section = {
-      val seals: Seq[Row] = Seq
-        .range(0, userAnswers.get(DeriveNumberOfSeals(eventIndex)).getOrElse(0))
-        .flatMap(helper.sealIdentity(eventIndex, _))
+    def eventTypeSection(sectionText: Text): Seq[Section] =
+      Seq(
+        Some(Section(sectionText, Seq(helper.isTranshipment(eventIndex), helper.transhipmentType(eventIndex)).flatten)),
+        userAnswers
+          .get(DeriveNumberOfContainers(eventIndex))
+          .map(List.range(0, _))
+          .map(_.flatMap(helper.containerNumber(eventIndex, _)))
+          .map(Section.apply(msg"checkEventAnswers.section.title.containerNumbers", _))
+      ).flatten
 
-      Section(msg"addSeal.sealList.heading", (helper.haveSealsChanged(eventIndex) ++ seals).toSeq)
-    }
-
-    val otherInfoSections: Seq[Section] = {
-      userAnswers
-        .get(TranshipmentTypePage(eventIndex))
-        .map {
-          case DifferentVehicle   => Seq(differentVehicleSection)
-          case DifferentContainer => eventTypeSection(msg"checkEventAnswers.section.title.differentContainer")
-          case DifferentContainerAndVehicle =>
-            eventTypeSection(msg"checkEventAnswers.section.title.differentContainerAndVehicle") :+
-              Section(
-                msg"checkEventAnswers.section.title.vehicleInformation",
-                Seq(
-                  helper.transportIdentity(eventIndex),
-                  helper.transportNationality(eventIndex)
-                ).flatten
-              )
-        }
-        .getOrElse(Seq.empty)
-    }
-
-    CheckEventAnswersViewModel(
-      Section(eventInfo),
-      otherInfoSections :+ sealSection
-    )
+    userAnswers
+      .get(TranshipmentTypePage(eventIndex))
+      .map {
+        case DifferentVehicle   => Seq(differentVehicleSection)
+        case DifferentContainer => eventTypeSection(msg"checkEventAnswers.section.title.differentContainer")
+        case DifferentContainerAndVehicle =>
+          eventTypeSection(msg"checkEventAnswers.section.title.differentContainerAndVehicle") :+
+            Section(
+              msg"checkEventAnswers.section.title.vehicleInformation",
+              Seq(
+                helper.transportIdentity(eventIndex),
+                helper.transportNationality(eventIndex)
+              ).flatten
+            )
+      }
+      .getOrElse(Seq.empty)
   }
 
   implicit def writes(implicit messages: Messages): OWrites[CheckEventAnswersViewModel] = Json.writes[CheckEventAnswersViewModel]
