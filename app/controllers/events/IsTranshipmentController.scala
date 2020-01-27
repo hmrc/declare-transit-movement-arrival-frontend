@@ -19,7 +19,7 @@ package controllers.events
 import controllers.actions._
 import forms.events.IsTranshipmentFormProvider
 import javax.inject.Inject
-import models.{Mode, MovementReferenceNumber}
+import models.{Index, Mode, MovementReferenceNumber}
 import navigation.Navigator
 import pages.events.IsTranshipmentPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -47,10 +47,10 @@ class IsTranshipmentController @Inject()(override val messagesApi: MessagesApi,
 
   private val form = formProvider()
 
-  def onPageLoad(mrn: MovementReferenceNumber, index: Int, mode: Mode): Action[AnyContent] =
+  def onPageLoad(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode): Action[AnyContent] =
     (identify andThen getData(mrn) andThen requireData).async {
       implicit request =>
-        val preparedForm = request.userAnswers.get(IsTranshipmentPage(index)) match {
+        val preparedForm = request.userAnswers.get(IsTranshipmentPage(eventIndex)) match {
           case None        => form
           case Some(value) => form.fill(value)
         }
@@ -65,7 +65,7 @@ class IsTranshipmentController @Inject()(override val messagesApi: MessagesApi,
         renderer.render("events/isTranshipment.njk", json).map(Ok(_))
     }
 
-  def onSubmit(mrn: MovementReferenceNumber, index: Int, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onSubmit(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
       form
         .bindFromRequest()
@@ -83,9 +83,9 @@ class IsTranshipmentController @Inject()(override val messagesApi: MessagesApi,
           },
           value =>
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(IsTranshipmentPage(index), value))
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(IsTranshipmentPage(eventIndex), value))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(IsTranshipmentPage(index), mode, updatedAnswers))
+            } yield Redirect(navigator.nextPage(IsTranshipmentPage(eventIndex), mode, updatedAnswers))
         )
   }
 }

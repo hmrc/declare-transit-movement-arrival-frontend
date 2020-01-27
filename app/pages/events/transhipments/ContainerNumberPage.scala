@@ -22,8 +22,8 @@ import pages.QuestionPage
 import pages.events.SectionConstants
 import play.api.libs.json.JsPath
 
-final case class ContainerNumberPage(eventIndex: Int, containerIndex: Index) extends QuestionPage[Container] {
+final case class ContainerNumberPage(eventIndex: Index, containerIndex: Index) extends QuestionPage[Container] {
 
-  override def path: JsPath = JsPath \ SectionConstants.events \ eventIndex \ SectionConstants.containers \ containerIndex.position
+  override def path: JsPath = JsPath \ SectionConstants.events \ eventIndex.position \ SectionConstants.containers \ containerIndex.position
 
 }

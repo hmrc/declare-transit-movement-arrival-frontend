@@ -16,10 +16,11 @@
 
 package pages.events.seals
 
+import models.Index
 import pages.QuestionPage
 import play.api.libs.json.JsPath
 
-case class AddSealPage(index: Int) extends QuestionPage[Boolean] {
+case class AddSealPage(eventIndex: Index) extends QuestionPage[Boolean] {
 
   override def path: JsPath = JsPath \ toString
 

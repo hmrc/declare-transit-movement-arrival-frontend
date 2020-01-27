@@ -20,7 +20,7 @@ import com.google.inject.Inject
 import derivable.DeriveNumberOfEvents
 import controllers.actions.{DataRequiredAction, DataRetrievalActionProvider, IdentifierAction}
 import handlers.ErrorHandler
-import models.{MovementReferenceNumber, UserAnswers}
+import models.{Index, MovementReferenceNumber, UserAnswers}
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -91,7 +91,7 @@ class CheckYourAnswersController @Inject()(override val messagesApi: MessagesApi
   private def eventList(userAnswers: UserAnswers): Seq[SummaryList.Row] = {
     val numberOfEvents = userAnswers.get(DeriveNumberOfEvents).getOrElse(0)
     val cyaHelper      = new AddEventsHelper(userAnswers)
-
-    (0 to numberOfEvents).flatMap(cyaHelper.cyaListOfEvent)
+    val listOfEvents   = List.range(0, numberOfEvents).map(Index(_))
+    listOfEvents.flatMap(cyaHelper.cyaListOfEvent)
   }
 }

@@ -23,7 +23,7 @@ import pages.behaviours.PageBehaviours
 
 class ContainerNumberPageSpec extends PageBehaviours with MessagesModelGenerators {
 
-  val eventIndex     = 0
+  val eventIndex     = Index(0)
   val containerIndex = Index(0)
 
   "ContainerNumberPage" - {

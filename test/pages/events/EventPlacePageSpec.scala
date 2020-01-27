@@ -16,17 +16,18 @@
 
 package pages.events
 
+import models.Index
 import pages.behaviours.PageBehaviours
 
 class EventPlacePageSpec extends PageBehaviours {
 
-  var index = 0
+  var eventIndex = Index(0)
   "EventPlacePage" - {
 
-    beRetrievable[String](EventPlacePage(index))
+    beRetrievable[String](EventPlacePage(eventIndex))
 
-    beSettable[String](EventPlacePage(index))
+    beSettable[String](EventPlacePage(eventIndex))
 
-    beRemovable[String](EventPlacePage(index))
+    beRemovable[String](EventPlacePage(eventIndex))
   }
 }

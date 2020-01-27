@@ -16,27 +16,27 @@
 
 package pages.events
 
-import models.UserAnswers
+import models.{Index, UserAnswers}
 import pages.QuestionPage
 import pages.events.transhipments.TranshipmentTypePage
 import play.api.libs.json.JsPath
 
 import scala.util.Try
 
-final case class IsTranshipmentPage(index: Int) extends QuestionPage[Boolean] {
+final case class IsTranshipmentPage(eventIndex: Index) extends QuestionPage[Boolean] {
 
-  override def path: JsPath = JsPath \ SectionConstants.events \ index \ toString
+  override def path: JsPath = JsPath \ SectionConstants.events \ eventIndex.position \ toString
 
   override def toString: String = "isTranshipment"
 
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
     value match {
-      case Some(true)  => userAnswers.remove(IncidentInformationPage(index))
-      case Some(false) => userAnswers.remove(TranshipmentTypePage(index))
+      case Some(true)  => userAnswers.remove(IncidentInformationPage(eventIndex))
+      case Some(false) => userAnswers.remove(TranshipmentTypePage(eventIndex))
       case None =>
         userAnswers
-          .remove(IncidentInformationPage(index))
-          .flatMap(_.remove(TranshipmentTypePage(index)))
+          .remove(IncidentInformationPage(eventIndex))
+          .flatMap(_.remove(TranshipmentTypePage(eventIndex)))
     }
 
 }

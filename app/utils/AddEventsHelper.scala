@@ -17,54 +17,54 @@
 package utils
 
 import controllers.events.{routes => eventRoutes}
-import models.{MovementReferenceNumber, NormalMode, UserAnswers}
+import models.{Index, MovementReferenceNumber, NormalMode, UserAnswers}
 import pages.events._
 import uk.gov.hmrc.viewmodels.SummaryList.{Action, Key, Row, Value}
 import uk.gov.hmrc.viewmodels._
 
 class AddEventsHelper(userAnswers: UserAnswers) {
 
-  def listOfEvent(index: Int): Option[Row] =
-    placeOfEvent(index).map {
+  def listOfEvent(eventIndex: Index): Option[Row] =
+    placeOfEvent(eventIndex).map {
       answer =>
         Row(
-          key   = Key(msg"addEvent.event.label".withArgs(index + 1), classes = Seq("govuk-!-width-one-half")), // TODO: Move harded coded interpretation of index to an Index Model
+          key   = Key(msg"addEvent.event.label".withArgs(eventIndex.display), classes = Seq("govuk-!-width-one-half")), // TODO: Move harded coded interpretation of eventIndex to an Index Model
           value = Value(lit"$answer"),
           actions = List(
             Action(
               content            = msg"site.edit",
-              href               = eventRoutes.CheckEventAnswersController.onPageLoad(mrn, index).url,
-              visuallyHiddenText = Some(msg"addEvent.checkYourAnswersLabel.change".withArgs(index, answer)) // TODO: Prefix in message file for is hard coded, should be the same as: site.edit.hidden
+              href               = eventRoutes.CheckEventAnswersController.onPageLoad(mrn, eventIndex).url,
+              visuallyHiddenText = Some(msg"addEvent.checkYourAnswersLabel.change".withArgs(eventIndex, answer)) // TODO: Prefix in message file for is hard coded, should be the same as: site.edit.hidden
             ),
             Action(
               content            = msg"site.delete",
-              href               = eventRoutes.ConfirmRemoveEventController.onPageLoad(mrn, index, NormalMode).url,
-              visuallyHiddenText = Some(msg"addEvent.checkYourAnswersLabel.delete".withArgs(index, answer)) // TODO: Prefix in message file for is hard coded, should be the same as: site.delete.hidden
+              href               = eventRoutes.ConfirmRemoveEventController.onPageLoad(mrn, eventIndex, NormalMode).url,
+              visuallyHiddenText = Some(msg"addEvent.checkYourAnswersLabel.delete".withArgs(eventIndex, answer)) // TODO: Prefix in message file for is hard coded, should be the same as: site.delete.hidden
             )
           )
         )
     }
 
-  def cyaListOfEvent(index: Int): Option[Row] =
-    placeOfEvent(index).map {
+  def cyaListOfEvent(eventIndex: Index): Option[Row] =
+    placeOfEvent(eventIndex).map {
       answer =>
         Row(
-          key   = Key(msg"addEvent.event.label".withArgs(index + 1), classes = Seq("govuk-!-width-one-half")), // TODO: Move harded coded interpretation of index to an Index Model
+          key   = Key(msg"addEvent.event.label".withArgs(eventIndex.display), classes = Seq("govuk-!-width-one-half")), // TODO: Move harded coded interpretation of eventIndex to an Index Model
           value = Value(lit"$answer"),
           actions = List(
             Action(
               content            = msg"site.edit",
-              href               = eventRoutes.CheckEventAnswersController.onPageLoad(mrn, index).url,
-              visuallyHiddenText = Some(msg"addEvent.checkYourAnswersLabel.change".withArgs(index, answer)) // TODO: Prefix in message file for is hard coded, should be the same as: site.edit.hidden
+              href               = eventRoutes.CheckEventAnswersController.onPageLoad(mrn, eventIndex).url,
+              visuallyHiddenText = Some(msg"addEvent.checkYourAnswersLabel.change".withArgs(eventIndex, answer)) // TODO: Prefix in message file for is hard coded, should be the same as: site.edit.hidden
             )
           )
         )
     }
 
-  private def placeOfEvent(index: Int): Option[String] =
-    userAnswers.get(EventPlacePage(index)) match {
+  private def placeOfEvent(eventIndex: Index): Option[String] =
+    userAnswers.get(EventPlacePage(eventIndex)) match {
       case Some(answer) => Some(answer)
-      case _            => userAnswers.get(EventCountryPage(index)).map(_.code)
+      case _            => userAnswers.get(EventCountryPage(eventIndex)).map(_.code)
     }
 
   private def mrn: MovementReferenceNumber = userAnswers.id
