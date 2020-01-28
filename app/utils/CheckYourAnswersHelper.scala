@@ -22,6 +22,7 @@ import controllers.events.seals.{routes => sealRoutes}
 import controllers.events.transhipments.{routes => transhipmentRoutes}
 import controllers.events.{routes => eventRoutes}
 import controllers.routes
+import derivable.DeriveNumberOfSeals
 import models.{CheckMode, MovementReferenceNumber, TraderAddress, UserAnswers}
 import pages._
 import pages.events._
@@ -61,6 +62,11 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
         )
       )
   }
+
+  def seals(eventIndex: Int): Seq[Row] =
+    Seq
+      .range(0, userAnswers.get(DeriveNumberOfSeals(eventIndex)).getOrElse(0))
+      .flatMap(this.sealIdentity(eventIndex, _))
 
   def containerNumber(eventIndex: Int, containerIndex: Int): Option[Row] = userAnswers.get(ContainerNumberPage(eventIndex, containerIndex)) map {
     answer =>

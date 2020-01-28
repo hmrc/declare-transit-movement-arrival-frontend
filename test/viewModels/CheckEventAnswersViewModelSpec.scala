@@ -34,12 +34,13 @@ import uk.gov.hmrc.viewmodels.SummaryList.Row
 
 class CheckEventAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChecks with MessagesModelGenerators {
   "must be able to deserialize to a JsObject" in {
-    val vm = CheckEventAnswersViewModel(Section(Seq.empty[Row]), Seq(Section(Seq.empty[Row])))
+    val vm = CheckEventAnswersViewModel(Seq(Section(Seq.empty[Row])))
 
     Json.toJsObject(vm) mustBe a[JsObject]
   }
 
   "when event is an incident" - {
+
     "and hasn't been reported and did not move to different vehicle/container and no seals changed" in {
       val ua = emptyUserAnswers
         .set(IncidentOnRoutePage, true).success.value
@@ -52,9 +53,9 @@ class CheckEventAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChe
 
       val vm = CheckEventAnswersViewModel(ua, eventIndex, CheckMode)
 
-      vm.eventInfo.sectionTitle must not be defined
-      vm.eventInfo.rows.length mustEqual 5
-      vm.otherInfo.head.rows.length mustEqual 1
+      vm.sections.head.sectionTitle must not be defined
+      vm.sections.length mustEqual 2
+      vm.sections.head.rows.length mustEqual 5
     }
 
     "and has been reported, did not move to different vehicle/container and no seals changed" in {
@@ -69,9 +70,8 @@ class CheckEventAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChe
 
       val vm = CheckEventAnswersViewModel(ua, eventIndex, CheckMode)
 
-      vm.eventInfo.sectionTitle must not be defined
-      vm.eventInfo.rows.length mustEqual 5
-      vm.otherInfo.head.rows.length mustEqual 1
+      vm.sections.head.sectionTitle must not be defined
+      vm.sections.head.rows.length mustEqual 5
     }
 
     "and has been reported, did not move to different vehicle/container and seals changed" in {
@@ -88,9 +88,8 @@ class CheckEventAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChe
 
       val vm = CheckEventAnswersViewModel(ua, eventIndex, CheckMode)
 
-      vm.eventInfo.sectionTitle must not be defined
-      vm.eventInfo.rows.length mustEqual 5
-      vm.otherInfo.head.rows.size mustEqual 3
+      vm.sections.head.sectionTitle must not be defined
+      vm.sections.head.rows.length mustEqual 5
     }
 
     "and has been reported and did not move to different vehicle/container show the event info only" in {
@@ -104,9 +103,8 @@ class CheckEventAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChe
 
       val vm = CheckEventAnswersViewModel(ua, eventIndex, CheckMode)
 
-      vm.eventInfo.sectionTitle must not be defined
-      vm.eventInfo.rows.length mustEqual 4
-      vm.otherInfo.head.rows.length mustEqual 1
+      vm.sections.head.sectionTitle must not be defined
+      vm.sections.head.rows.length mustEqual 4
     }
   }
 
@@ -125,13 +123,10 @@ class CheckEventAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChe
 
       val vm = CheckEventAnswersViewModel(ua, eventIndex, CheckMode)
 
-      vm.eventInfo.sectionTitle must not be defined
-      vm.eventInfo.rows.length mustEqual 3
-
-      vm.otherInfo.length mustEqual 2
-      vm.otherInfo.head.sectionTitle must be(defined)
-
-      vm.otherInfo.head.rows.length mustEqual 4
+      vm.sections.head.sectionTitle must not be defined
+      vm.sections.head.rows.length mustEqual 3
+      vm.sections(1).sectionTitle must be(defined)
+      vm.sections(1).rows.length mustEqual 4
     }
 
     "and the goods have moved to different container display event info and container info sections" in {
@@ -148,17 +143,10 @@ class CheckEventAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChe
         .set(HaveSealsChangedPage(eventIndex), false).success.value
 
       val vm = CheckEventAnswersViewModel(ua, eventIndex, CheckMode)
-
-      vm.eventInfo.sectionTitle must not be defined
-      vm.eventInfo.rows.length mustEqual 3
-
-      vm.otherInfo.length mustEqual 3
-
-      vm.otherInfo.head.sectionTitle must be(defined)
-      vm.otherInfo.head.rows.length mustEqual 2
-
-      vm.otherInfo(1).sectionTitle must be(defined)
-      vm.otherInfo(1).rows.length mustEqual 3
+      vm.sections.head.sectionTitle must not be defined
+      vm.sections.head.rows.length mustEqual 3
+      vm.sections(1).sectionTitle must be(defined)
+      vm.sections(1).rows.length mustEqual 2
     }
 
     "and the goods have moved to both different containers and vehicles  display event info and vehicle and containers info sections" in {
@@ -178,39 +166,16 @@ class CheckEventAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChe
 
       val vm = CheckEventAnswersViewModel(ua, eventIndex, CheckMode)
 
-      vm.eventInfo.sectionTitle must not be defined
-      vm.eventInfo.rows.length mustEqual 3
-
-      vm.otherInfo.length mustEqual 4
-
-      vm.otherInfo.head.sectionTitle must be(defined)
-      vm.otherInfo.head.rows.length mustEqual 2
-
-      vm.otherInfo(1).sectionTitle must be(defined)
-      vm.otherInfo(1).rows.length mustEqual 3
-
-      vm.otherInfo(2).sectionTitle must be(defined)
-      vm.otherInfo(2).rows.length mustEqual 2
-    }
-  }
-
-  "generate a view with no other info section" - {
-    "when TranshipmentTypePage is missing" in {
-      val ua = emptyUserAnswers
-        .set(IncidentOnRoutePage, true).success.value
-        .set(EventCountryPage(eventIndex), Country("Valid", "value", "Country Name")).success.value
-        .set(EventPlacePage(eventIndex), "value").success.value
-        .set(IsTranshipmentPage(eventIndex), true).success.value
-        .set(EventReportedPage(eventIndex), false).success.value
-
-      val vm = CheckEventAnswersViewModel(ua, eventIndex, CheckMode)
-
-      vm.eventInfo.sectionTitle must not be defined
-      vm.eventInfo.rows.length mustEqual 3
-
-      vm.otherInfo.head.rows mustBe Seq.empty
+      vm.sections.length mustEqual 5
+      vm.sections.head.sectionTitle must not be defined
+      vm.sections(1).sectionTitle must be(defined)
+      vm.sections(1).rows.length mustEqual 2
+      vm.sections(2).sectionTitle must be(defined)
+      vm.sections(2).rows.length mustEqual 3
 
     }
+
   }
+
 }
 // format: on
