@@ -334,8 +334,8 @@ addContainer.radio.label = Do you need to add another container?
 addContainer.checkYourAnswersLabel = You have added {0} containers
 addContainer.error.required = Select yes if you need to add another container
 addContainer.containerList.label = Container {0}
-addContainer.containerList.change = Change container number {0}?
-addContainer.containerList.delete = Remove container number {0}?
+addContainer.containerList.change.hidden = container {0}
+addContainer.containerList.delete.hidden = container {0}
 
 confirmRemoveContainer.title = Are you sure you want to remove the container {0}?
 confirmRemoveContainer.heading = Are you sure you want to remove the container {0}?
@@ -356,8 +356,8 @@ addSeal.checkYourAnswersLabel = You have added {0} seals
 addSeal.error.required = Select yes if you need to add another seal
 addSeal.sealList.heading = Seals
 addSeal.sealList.label = Seal {0}
-addSeal.sealList.change = Change seal identity {0}?
-addSeal.sealList.delete = Remove seal identity {0}?
+addSeal.sealList.change.hidden = seal {0}
+addSeal.sealList.delete.hidden = seal {0}
 
 haveSealsChanged.title = Have any of the seals changed?
 haveSealsChanged.heading = Have any of the seals changed?

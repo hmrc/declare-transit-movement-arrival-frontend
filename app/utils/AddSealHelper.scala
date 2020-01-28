@@ -34,12 +34,12 @@ class AddSealHelper(userAnswers: UserAnswers) {
             Action(
               content            = msg"site.edit",
               href               = SealIdentityController.onPageLoad(userAnswers.id, eventIndex, sealIndex, mode).url,
-              visuallyHiddenText = Some(msg"addSeal.sealList.change".withArgs(answer)) // TODO: Prefix in message file for is hard coded, should be the same as: site.edit.hidden
+              visuallyHiddenText = Some(msg"addSeal.sealList.change.hidden".withArgs(answer))
             ),
             Action(
               content            = msg"site.delete",
               href               = ConfirmRemoveSealController.onPageLoad(userAnswers.id, eventIndex, sealIndex, mode).url,
-              visuallyHiddenText = Some(msg"addSeal.sealList.delete".withArgs(answer)) // TODO: Prefix in message file for is hard coded, should be the same as: site.delete.hidden
+              visuallyHiddenText = Some(msg"addSeal.sealList.delete.hidden".withArgs(answer))
             )
           )
         )
