@@ -83,7 +83,7 @@ class ConfirmRemoveEventControllerSpec extends SpecBase with MockitoSugar with N
       application.stop()
     }
 
-    "must return error page when the event is removed for a GET" in {
+    "must return error page when user tries to remove an event that does not exists" in {
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
@@ -112,7 +112,7 @@ class ConfirmRemoveEventControllerSpec extends SpecBase with MockitoSugar with N
       application.stop()
     }
 
-    "must return error page when there are multiple events and the last event is removed for a GET" in {
+    "must return error page when there are multiple events and user tries to remove the last event that is already removed" in {
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
