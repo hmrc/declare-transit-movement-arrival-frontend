@@ -31,7 +31,7 @@ import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.events._
 import pages._
-import pages.events.seals.{HaveSealsChangedPage, SealIdentityPage}
+import pages.events.seals.{AddSealPage, HaveSealsChangedPage, SealIdentityPage}
 import pages.events.transhipments.{
   AddContainerPage,
   ConfirmRemoveContainerPage,
@@ -668,6 +668,37 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
             navigator
               .nextPage(HaveSealsChangedPage(eventIndex), CheckMode, updatedAnswers)
               .mustBe(sealRoutes.SealIdentityController.onPageLoad(answers.id, eventIndex, sealIndex, CheckMode))
+        }
+      }
+
+      "go from addSealPage to sealIdentity when Yes is selected" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers = answers
+              .remove(SealIdentityPage(eventIndex, sealIndex))
+              .success
+              .value
+              .set(AddSealPage(eventIndex), true)
+              .success
+              .value
+
+            navigator
+              .nextPage(AddSealPage(eventIndex), CheckMode, updatedAnswers)
+              .mustBe(sealRoutes.SealIdentityController.onPageLoad(answers.id, eventIndex, sealIndex, CheckMode))
+        }
+      }
+
+      "go from addSealPage to checkEventAnswers when No is selected" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers = answers
+              .set(AddSealPage(eventIndex), false)
+              .success
+              .value
+
+            navigator
+              .nextPage(AddSealPage(eventIndex), CheckMode, updatedAnswers)
+              .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(answers.id, eventIndex))
         }
       }
     }
