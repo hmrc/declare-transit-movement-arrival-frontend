@@ -31,6 +31,19 @@
 
           {{ csrf() | safe }}
 
+              {% macro radioBtnHintText() %}
+                   {{ messages("incidentOnRoute.hintText.tad") }}
+                    <p class="govuk-hint">{{ messages("incidentOnRoute.hintText.tellUs") }}</p>
+                      <ul class="govuk-list govuk-list--bullet govuk-hint">
+                      <li>{{ messages("incidentOnRoute.hintText.bullet.1") }}</li>
+                      <li>{{ messages("incidentOnRoute.hintText.bullet.2") }} </li>
+                      <li>{{ messages("incidentOnRoute.hintText.bullet.3") }}</li>
+                      <li>{{ messages("incidentOnRoute.hintText.bullet.4") }}</li>
+                      <li>{{ messages("incidentOnRoute.hintText.bullet.5") }} </li>
+                      <li>{{ messages("incidentOnRoute.hintText.bullet.6") }} </li>
+                      </ul>
+              {% endmacro %}
+
           {{ govukRadios({
             classes: "govuk-radios--inline",
             name: 'value',
@@ -41,9 +54,9 @@
                 classes: "govuk-fieldset__legend--xl"
               }
             },
-            hint: {
-              text: messages('incidentOnRoute.hintText')
-            },
+             hint: {
+              html: radioBtnHintText()
+             },
             items: radios,
             errorMessage: form.value.error
           }) }}

@@ -51,25 +51,13 @@ class AddContainerController @Inject()(
 
   private val form = formProvider()
 
-  private def getPageTitle(containerCount: Int)(implicit messages: Messages): String =
-    if (containerCount == 1) {
-      messages("addContainer.title.singular", containerCount)
-    } else {
-      messages("addContainer.title.plural", containerCount)
-    }
-
   def onPageLoad(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
-      val preparedForm = request.userAnswers.get(AddContainerPage(eventIndex)) match {
-        case None        => form
-        case Some(value) => form.fill(value)
-      }
-
       val json = Json.obj(
-        "form"   -> preparedForm,
+        "form"   -> form,
         "mode"   -> mode,
         "mrn"    -> mrn,
-        "radios" -> Radios.yesNo(preparedForm("value"))
+        "radios" -> Radios.yesNo(form("value"))
       ) ++ Json.toJsObject {
         AddContainerViewModel(eventIndex, request.userAnswers, mode)
       }
@@ -85,12 +73,13 @@ class AddContainerController @Inject()(
           formWithErrors => {
 
             val json = Json.obj(
-              "form"      -> formWithErrors,
-              "mode"      -> mode,
-              "mrn"       -> mrn,
-              "pageTitle" -> getPageTitle(request.userAnswers.get(DeriveNumberOfContainers(eventIndex)).getOrElse(0)),
-              "radios"    -> Radios.yesNo(formWithErrors("value"))
-            )
+              "form"   -> formWithErrors,
+              "mode"   -> mode,
+              "mrn"    -> mrn,
+              "radios" -> Radios.yesNo(formWithErrors("value"))
+            ) ++ Json.toJsObject {
+              AddContainerViewModel(eventIndex, request.userAnswers, mode)
+            }
 
             renderer.render("events/transhipments/addContainer.njk", json).map(BadRequest(_))
           },
