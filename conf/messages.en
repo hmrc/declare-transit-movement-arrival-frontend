@@ -206,7 +206,7 @@ useDifferentService.guidance.3 = We are improving this service. You will be able
 
 arrivalComplete.title = Application Complete
 arrivalComplete.heading = Sent arrival notification
-arrivalComplete.yourReferenceNumber = for movement reference number {0}
+arrivalComplete.yourReferenceNumber = for movement reference number
 arrivalComplete.subHeading = What happens next
 arrivalComplete.para1 = Send an email to the office where the goods will be presented(also known as the office of destination). Make sure you:
 arrivalComplete.BulletPoint1 = tell them that you are waiting for goods to be released
