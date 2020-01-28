@@ -49,7 +49,4 @@ trait Mappings extends Formatters with Constraints {
   protected def mrn(requiredKey: String, invalidKey: String): FieldMapping[MovementReferenceNumber] =
     of(mrnFormatter(requiredKey, invalidKey))
 
-  protected def doesNotExistIn[A](errorKey: String, values: Seq[A], fromString: String => A)(implicit show: Show[A],
-                                                                                             formEqualityCheck: StringEquivalence[A]): FieldMapping[A] =
-    of(uniqueDataFormatter(errorKey, values, fromString))
 }

@@ -196,35 +196,4 @@ class MappingsSpec extends FreeSpec with MustMatchers with OptionValues with Map
       }
     }
   }
-
-  "unique" - {
-
-    case class TestObject(value: String)
-
-    val previousValues = Seq(TestObject("duplicateValue"))
-
-    implicit val testObjectShow: Show[TestObject] = new Show[TestObject] {
-      override def show(t: TestObject): String = t.value
-    }
-
-    implicit val testObjectFormEqCheck: StringEquivalence[TestObject] =
-      new StringEquivalence[TestObject] {
-        override def equivalentToString(lhs: TestObject, formValue: String): Boolean = lhs.value == formValue
-      }
-
-    val testForm: Form[TestObject] = Form(
-      "value" -> doesNotExistIn("error.duplicate", previousValues, TestObject)
-    )
-
-    "must bind for a unique input" in {
-      val result = testForm.bind(Map("value" -> "foobar"))
-      result.get mustEqual TestObject("foobar")
-    }
-
-    "must not bind for a duplicate input" in {
-      val result = testForm.bind(Map("value" -> "duplicateValue"))
-      result.errors must contain(FormError("value", "error.duplicate"))
-    }
-
-  }
 }
