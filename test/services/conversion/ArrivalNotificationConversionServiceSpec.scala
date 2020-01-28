@@ -193,15 +193,17 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
 
           val arrivalNotification: NormalNotification = arbArrivalNotification.copy(enRouteEvents = Some(Seq(routeEvent1, routeEvent2)))
 
+          val eventIndex2 = Index(1)
+
           val userAnswers: UserAnswers = createBasicUserAnswers(trader, arrivalNotification, isIncidentOnRoute = true)
             .set(IsTranshipmentPage(eventIndex), false).success.value
             .set(EventPlacePage(eventIndex), routeEvent1.place).success.value
             .set(EventCountryPage(eventIndex), Country("Valid", routeEvent1.countryCode, "country name")).success.value
             .set(EventReportedPage(eventIndex), routeEvent1.alreadyInNcts).success.value
-            .set(IsTranshipmentPage(eventIndex + 1), false).success.value
-            .set(EventPlacePage(eventIndex + 1), routeEvent2.place).success.value
-            .set(EventCountryPage(eventIndex + 1), Country("Valid", routeEvent2.countryCode, "country name")).success.value
-            .set(EventReportedPage(eventIndex + 1), routeEvent2.alreadyInNcts).success.value
+            .set(IsTranshipmentPage(eventIndex2), false).success.value
+            .set(EventPlacePage(eventIndex2), routeEvent2.place).success.value
+            .set(EventCountryPage(eventIndex2), Country("Valid", routeEvent2.countryCode, "country name")).success.value
+            .set(EventReportedPage(eventIndex2), routeEvent2.alreadyInNcts).success.value
 
           val updatedAnswers1 = incident1.information.fold[UserAnswers](userAnswers) {
             _ =>
@@ -210,7 +212,7 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
 
           val updatedAnswers = incident2.information.fold[UserAnswers](updatedAnswers1) {
             _ =>
-              updatedAnswers1.set(IncidentInformationPage(eventIndex + 1), incident2.information.value).success.value
+              updatedAnswers1.set(IncidentInformationPage(eventIndex2), incident2.information.value).success.value
           }
 
           service.convertToArrivalNotification(updatedAnswers).value mustEqual arrivalNotification

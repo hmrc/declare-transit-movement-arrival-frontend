@@ -16,18 +16,19 @@
 
 package pages.events.transhipments
 
+import models.Index
 import pages.behaviours.PageBehaviours
 
 class AddContainerPageSpec extends PageBehaviours {
 
-  val index = 0
+  val eventIndex = Index(0)
 
   "AddContainerPage" - {
 
-    beRetrievable[Boolean](AddContainerPage(index))
+    beRetrievable[Boolean](AddContainerPage(eventIndex))
 
-    beSettable[Boolean](AddContainerPage(index))
+    beSettable[Boolean](AddContainerPage(eventIndex))
 
-    beRemovable[Boolean](AddContainerPage(index))
+    beRemovable[Boolean](AddContainerPage(eventIndex))
   }
 }

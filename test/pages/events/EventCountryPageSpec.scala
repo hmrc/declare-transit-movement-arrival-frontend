@@ -16,18 +16,19 @@
 
 package pages.events
 
+import models.Index
 import models.reference.Country
 import pages.behaviours.PageBehaviours
 
 class EventCountryPageSpec extends PageBehaviours {
 
-  var index = 0
+  var eventIndex = Index(0)
   "EventCountryPage" - {
 
-    beRetrievable[Country](EventCountryPage(index))
+    beRetrievable[Country](EventCountryPage(eventIndex))
 
-    beSettable[Country](EventCountryPage(index))
+    beSettable[Country](EventCountryPage(eventIndex))
 
-    beRemovable[Country](EventCountryPage(index))
+    beRemovable[Country](EventCountryPage(eventIndex))
   }
 }

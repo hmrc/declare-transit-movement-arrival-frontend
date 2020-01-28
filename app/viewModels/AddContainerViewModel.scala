@@ -31,7 +31,7 @@ case class AddContainerViewModel private (
 
 object AddContainerViewModel {
 
-  def apply(eventIndex: Int, userAnswers: UserAnswers, mode: Mode): AddContainerViewModel = {
+  def apply(eventIndex: Index, userAnswers: UserAnswers, mode: Mode): AddContainerViewModel = {
     val containerCount = userAnswers.get(DeriveNumberOfContainers(eventIndex)).getOrElse(0)
 
     val pageTitle: Message = if (containerCount == 1) {
