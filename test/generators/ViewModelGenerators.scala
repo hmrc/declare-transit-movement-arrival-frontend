@@ -21,7 +21,7 @@ import org.scalacheck.{Arbitrary, Gen}
 import uk.gov.hmrc.viewmodels.SummaryList.{Action, Key, Row, Value}
 import uk.gov.hmrc.viewmodels.Text.{Literal, Message}
 import uk.gov.hmrc.viewmodels.{Content, Text}
-import viewModels.Section
+import viewModels.sections.Section
 
 // TODO: Upstream to uk.gov.hmrc.viewmodels
 trait ViewModelGenerators {

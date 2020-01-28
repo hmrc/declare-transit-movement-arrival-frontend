@@ -21,7 +21,7 @@ import org.jsoup.nodes.Document
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.Json
-import viewModels.Section
+import viewModels.sections.Section
 
 class AddContainerViewSpec extends ViewSpecBase with MessagesModelGenerators with ViewModelGenerators with ScalaCheckPropertyChecks {
 
