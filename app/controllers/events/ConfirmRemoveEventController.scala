@@ -106,7 +106,7 @@ class ConfirmRemoveEventController @Inject()(
           "linkText"     -> msg"concurrent.remove.error.$message.link.text",
           "redirectLink" -> navigator.nextPage(ConfirmRemoveEventPage(eventIndex), mode, request.userAnswers).url
         )
-        renderer.render("concurrentRemoveError.njk", json).map(status(_))
+        renderer.render("concurrentRemoveError.njk", json).map(NotFound(_))
     }
 
 }
