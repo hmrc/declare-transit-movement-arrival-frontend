@@ -18,109 +18,13 @@ package utils
 
 import java.time.format.DateTimeFormatter
 
-import controllers.events.seals.{routes => sealRoutes}
-import controllers.events.transhipments.{routes => transhipmentRoutes}
-import controllers.events.{routes => eventRoutes}
 import controllers.routes
-import models.{CheckMode, Index, MovementReferenceNumber, TraderAddress, UserAnswers}
+import models.{CheckMode, UserAnswers}
 import pages._
-import pages.events._
-import pages.events.seals._
-import pages.events.transhipments._
 import uk.gov.hmrc.viewmodels.SummaryList._
 import uk.gov.hmrc.viewmodels._
 
-class CheckYourAnswersHelper(userAnswers: UserAnswers) {
-
-  def haveSealsChanged(eventIndex: Index): Option[Row] = userAnswers.get(HaveSealsChangedPage(eventIndex)) map {
-    answer =>
-      Row(
-        key   = Key(msg"haveSealsChanged.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value = Value(yesOrNo(answer)),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = sealRoutes.HaveSealsChangedController.onPageLoad(mrn, eventIndex, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"haveSealsChanged.checkYourAnswersLabel"))
-          )
-        )
-      )
-  }
-
-  def sealIdentity(eventIndex: Index, sealIndex: Index): Option[Row] = userAnswers.get(SealIdentityPage(eventIndex, sealIndex)) map {
-    answer =>
-      Row(
-        key   = Key(msg"addSeal.sealList.label".withArgs(sealIndex.display), classes = Seq("govuk-!-width-one-half")),
-        value = Value(lit"$answer"),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = sealRoutes.SealIdentityController.onPageLoad(mrn, eventIndex, sealIndex, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"sealIdentity.checkYourAnswersLabel"))
-          )
-        )
-      )
-  }
-
-  def containerNumber(eventIndex: Index, containerIndex: Index): Option[Row] = userAnswers.get(ContainerNumberPage(eventIndex, containerIndex)) map {
-    answer =>
-      Row(
-        key   = Key(msg"addContainer.containerList.label".withArgs(containerIndex.display), classes = Seq("govuk-!-width-one-half")),
-        value = Value(lit"${answer.containerNumber}"),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = transhipmentRoutes.ContainerNumberController.onPageLoad(mrn, eventIndex, containerIndex, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"containerNumber.checkYourAnswersLabel"))
-          )
-        )
-      )
-  }
-
-  def transportNationality(eventIndex: Index): Option[Row] = userAnswers.get(TransportNationalityPage(eventIndex)) map {
-    answer =>
-      Row(
-        key   = Key(msg"transportNationality.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value = Value(lit"${answer.description}"),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = transhipmentRoutes.TransportNationalityController.onPageLoad(mrn, eventIndex, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"transportNationality.checkYourAnswersLabel"))
-          )
-        )
-      )
-  }
-
-  def transportIdentity(eventIndex: Index): Option[Row] = userAnswers.get(TransportIdentityPage(eventIndex)) map {
-    answer =>
-      Row(
-        key   = Key(msg"transportIdentity.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value = Value(lit"$answer"),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = transhipmentRoutes.TransportIdentityController.onPageLoad(mrn, eventIndex, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"transportIdentity.checkYourAnswersLabel"))
-          )
-        )
-      )
-  }
-
-  def transhipmentType(eventIndex: Index): Option[Row] = userAnswers.get(TranshipmentTypePage(eventIndex)) map {
-    answer =>
-      Row(
-        key   = Key(msg"transhipmentType.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value = Value(msg"transhipmentType.$answer"),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = transhipmentRoutes.TranshipmentTypeController.onPageLoad(mrn, eventIndex, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"transhipmentType.checkYourAnswersLabel"))
-          )
-        )
-      )
-  }
+class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswersHelper(userAnswers) {
 
   def placeOfNotification: Option[Row] = userAnswers.get(PlaceOfNotificationPage) map {
     answer =>
@@ -149,81 +53,6 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
             content            = msg"site.edit",
             href               = routes.IsTraderAddressPlaceOfNotificationController.onPageLoad(mrn, CheckMode).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(message))
-          )
-        )
-      )
-  }
-
-  def isTranshipment(eventIndex: Index): Option[Row] = userAnswers.get(IsTranshipmentPage(eventIndex)) map {
-    answer =>
-      Row(
-        key   = Key(msg"isTranshipment.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value = Value(yesOrNo(answer)),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = eventRoutes.IsTranshipmentController.onPageLoad(mrn, eventIndex, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"isTranshipment.checkYourAnswersLabel"))
-          )
-        )
-      )
-  }
-
-  def incidentInformation(eventIndex: Index): Option[Row] = userAnswers.get(IncidentInformationPage(eventIndex)) map {
-    answer =>
-      Row(
-        key   = Key(msg"incidentInformation.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value = Value(lit"$answer"),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = eventRoutes.IncidentInformationController.onPageLoad(mrn, eventIndex, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"incidentInformation.checkYourAnswersLabel"))
-          )
-        )
-      )
-  }
-
-  def eventReported(eventIndex: Index): Option[Row] = userAnswers.get(EventReportedPage(eventIndex)) map {
-    answer =>
-      Row(
-        key   = Key(msg"eventReported.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value = Value(yesOrNo(answer)),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = eventRoutes.EventReportedController.onPageLoad(mrn, eventIndex, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"eventReported.checkYourAnswersLabel"))
-          )
-        )
-      )
-  }
-
-  def eventPlace(eventIndex: Index): Option[Row] = userAnswers.get(EventPlacePage(eventIndex)) map {
-    answer =>
-      Row(
-        key   = Key(msg"eventPlace.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value = Value(lit"$answer"),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = eventRoutes.EventPlaceController.onPageLoad(mrn, eventIndex, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"eventPlace.checkYourAnswersLabel"))
-          )
-        )
-      )
-  }
-
-  def eventCountry(eventIndex: Index): Option[Row] = userAnswers.get(EventCountryPage(eventIndex)) map {
-    answer =>
-      Row(
-        key   = Key(msg"eventCountry.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value = Value(lit"${answer.description}"),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = eventRoutes.EventCountryController.onPageLoad(mrn, eventIndex, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"eventCountry.checkYourAnswersLabel"))
           )
         )
       )
@@ -351,25 +180,6 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
         )
       )
   }
-
-  def movementReferenceNumber: Row = Row(
-    key   = Key(msg"movementReferenceNumber.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-    value = Value(lit"${mrn.toString}")
-  )
-
-  private def yesOrNo(answer: Boolean): Content =
-    if (answer) {
-      msg"site.yes"
-    } else {
-      msg"site.no"
-    }
-
-  private def mrn: MovementReferenceNumber = userAnswers.id
-
-  private def addressHtml(address: TraderAddress): Html = Html(
-    Seq(address.buildingAndStreet, address.city, address.postcode)
-      .mkString("<br>")
-  )
 }
 
 object CheckYourAnswersHelper {

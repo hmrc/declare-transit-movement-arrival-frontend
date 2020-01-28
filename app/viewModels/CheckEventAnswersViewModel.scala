@@ -20,20 +20,19 @@ import derivable.{DeriveNumberOfContainers, DeriveNumberOfSeals}
 import models.TranshipmentType._
 import models.{Index, Mode, UserAnswers}
 import pages.events._
-import pages.events.seals.HaveSealsChangedPage
 import pages.events.transhipments.TranshipmentTypePage
 import play.api.i18n.Messages
 import play.api.libs.json.{Json, OWrites}
 import uk.gov.hmrc.viewmodels.SummaryList.Row
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, Text}
-import utils.{AddContainerHelper, CheckYourAnswersHelper}
+import utils.CheckEventAnswersHelper
 
 case class CheckEventAnswersViewModel(eventInfo: Section, otherInfo: Seq[Section])
 
 object CheckEventAnswersViewModel extends NunjucksSupport {
 
   def apply(userAnswers: UserAnswers, eventIndex: Index, mode: Mode): CheckEventAnswersViewModel = {
-    val helper = new CheckYourAnswersHelper(userAnswers)
+    val helper = new CheckEventAnswersHelper(userAnswers)
 
     val isTranshipment = userAnswers.get(IsTranshipmentPage(eventIndex)).getOrElse(false)
 
