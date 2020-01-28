@@ -36,6 +36,35 @@ trait Formatters {
       Map(key -> value)
   }
 
+  import cats._
+  import cats.implicits._
+
+  private[mappings] def uniqueDataFormatter[A](
+    errorKey: String,
+    values: Seq[A],
+    fromString: String => A
+  )(implicit show: Show[A], formEqualityCheck: FormEqualityCheck[A]): Formatter[A] =
+    new Formatter[A] {
+      import FormEqualityCheck._
+
+      override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], A] =
+        data
+          .get(key)
+          .map(
+            formValue =>
+              if (values.exists(_.equalsString(formValue))) {
+                Left(Seq(FormError(key, errorKey)))
+              } else {
+                Right(fromString(formValue))
+            }
+          )
+          .getOrElse(Left(Seq(FormError(key, errorKey))))
+
+      override def unbind(key: String, value: A): Map[String, String] =
+        Map(key -> value.show)
+
+    }
+
   private[mappings] def booleanFormatter(requiredKey: String, invalidKey: String): Formatter[Boolean] =
     new Formatter[Boolean] {
 

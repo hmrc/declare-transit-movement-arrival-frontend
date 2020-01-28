@@ -18,6 +18,7 @@ package forms.mappings
 
 import java.time.LocalDate
 
+import cats.Show
 import models.{Enumerable, MovementReferenceNumber}
 import play.api.data.FieldMapping
 import play.api.data.Forms.of
@@ -47,4 +48,8 @@ trait Mappings extends Formatters with Constraints {
 
   protected def mrn(requiredKey: String, invalidKey: String): FieldMapping[MovementReferenceNumber] =
     of(mrnFormatter(requiredKey, invalidKey))
+
+  protected def doesNotExistIn[A](errorKey: String, values: Seq[A], fromString: String => A)(implicit show: Show[A],
+                                                                                             formEqualityCheck: FormEqualityCheck[A]): FieldMapping[A] =
+    of(uniqueDataFormatter(errorKey, values, fromString))
 }

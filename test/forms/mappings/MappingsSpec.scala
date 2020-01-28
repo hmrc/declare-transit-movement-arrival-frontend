@@ -16,6 +16,7 @@
 
 package forms.mappings
 
+import cats.Show
 import generators.Generators
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.FreeSpec
@@ -194,5 +195,36 @@ class MappingsSpec extends FreeSpec with MustMatchers with OptionValues with Map
           }
       }
     }
+  }
+
+  "unique" - {
+
+    case class TestObject(value: String)
+
+    val previousValues = Seq(TestObject("duplicateValue"))
+
+    implicit val testObjectShow: Show[TestObject] = new Show[TestObject] {
+      override def show(t: TestObject): String = t.value
+    }
+
+    implicit val testObjectFormEqCheck: FormEqualityCheck[TestObject] =
+      new FormEqualityCheck[TestObject] {
+        override def equalsString(lhs: TestObject, formValue: String): Boolean = lhs.value == formValue
+      }
+
+    val testForm: Form[TestObject] = Form(
+      "value" -> doesNotExistIn("error.duplicate", previousValues, TestObject)
+    )
+
+    "must bind for a unique input" in {
+      val result = testForm.bind(Map("value" -> "foobar"))
+      result.get mustEqual TestObject("foobar")
+    }
+
+    "must not bind for a duplicate input" in {
+      val result = testForm.bind(Map("value" -> "duplicateValue"))
+      result.errors must contain(FormError("value", "error.duplicate"))
+    }
+
   }
 }
