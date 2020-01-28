@@ -368,7 +368,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
 
   private def addressHtml(address: TraderAddress): Html = Html(
     Seq(address.buildingAndStreet, address.city, address.postcode)
-      .mkString(",<br>")
+      .mkString("<br>")
   )
 }
 

@@ -40,7 +40,7 @@ checkYourAnswers.title = Check your answers
 checkYourAnswers.heading = Check your answers
 checkYourAnswers.section.goodsLocation = Goods details
 checkYourAnswers.section.traderDetails = Trader details
-checkYourAnswers.section.notificationDetails = Place of Notification
+checkYourAnswers.section.notificationDetails = Place where this was completed
 checkYourAnswers.section.events = Events
 checkYourAnswers.confirmation.heading = Now send your arrival notification
 checkYourAnswers.confirmation.paragraph = By sending this you are confirming that the details you are providing are correct, to the best of your knowledge.
@@ -274,7 +274,7 @@ placeOfNotification.title = Where are you completing this arrival notification?
 placeOfNotification.heading = Where are you completing this arrival notification?
 placeOfNotification.checkYourAnswersLabel = Where are you completing this arrival notification?
 placeOfNotification.hintText = This is also known as the place of notification. Give the postcode.
-placeOfNotification.error.required = Where are you completing this arrival notification?
+placeOfNotification.error.required = Enter where you are completing this arrival notification
 placeOfNotification.error.length = Where are you completing this arrival notification must be 35 characters or less
 
 addEvent.title.singular = You have added {0} event
