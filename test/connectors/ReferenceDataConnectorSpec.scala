@@ -48,7 +48,8 @@ class ReferenceDataConnectorSpec extends SpecBase with WireMockServerHandler wit
       | {
       |   "id" : "testId1",
       |   "name" : "testName1",
-      |   "roles" : ["role1", "role2"]
+      |   "roles" : ["role1", "role2"],
+      |   "phoneNumber" : "testPhoneNumber"
       | },
       | {
       |   "id" : "testId2",
@@ -85,8 +86,8 @@ class ReferenceDataConnectorSpec extends SpecBase with WireMockServerHandler wit
 
       val expectedResult = {
         Seq(
-          CustomsOffice("testId1", "testName1", Seq("role1", "role2")),
-          CustomsOffice("testId2", "testName2", Seq("role1", "role2"))
+          CustomsOffice("testId1", "testName1", Seq("role1", "role2"), Some("testPhoneNumber")),
+          CustomsOffice("testId2", "testName2", Seq("role1", "role2"), None)
         )
       }
 
