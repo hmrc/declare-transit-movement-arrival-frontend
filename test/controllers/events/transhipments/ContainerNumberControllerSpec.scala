@@ -18,9 +18,10 @@ package controllers.events.transhipments
 
 import base.SpecBase
 import forms.events.transhipments.ContainerNumberFormProvider
+import generators.MessagesModelGenerators
 import matchers.JsonMatchers
 import models.messages.Container
-import models.{NormalMode, UserAnswers}
+import models.{Index, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
@@ -38,8 +39,9 @@ import repositories.SessionRepository
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
+import org.scalacheck.Arbitrary.arbitrary
 
-class ContainerNumberControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class ContainerNumberControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers with MessagesModelGenerators {
 
   def onwardRoute = Call("GET", "/foo")
 
@@ -132,6 +134,36 @@ class ContainerNumberControllerSpec extends SpecBase with MockitoSugar with Nunj
 
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual onwardRoute.url
+
+      application.stop()
+    }
+
+    "must give a bad request with an error when a duplicaate seal is submitted is submitted" in {
+      // TODO: we don't check the error at the moment, we should add a resuable way to do this
+      when(mockRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("")))
+      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+
+      val container   = arbitrary[Container].sample.value
+      val userAnswers = emptyUserAnswers.set(ContainerNumberPage(Index(0), Index(0)), container).success.value
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute))
+          )
+          .build()
+
+      val request =
+        FakeRequest(POST, containerNumberRoute)
+          .withFormUrlEncodedBody(("value", container.containerNumber))
+
+      val result = route(application, request).value
+
+      status(result) mustEqual BAD_REQUEST
+
+      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       application.stop()
     }

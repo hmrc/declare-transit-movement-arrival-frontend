@@ -21,9 +21,10 @@ import models.messages.Container
 import pages.QuestionPage
 import pages.events.SectionConstants
 import play.api.libs.json.JsPath
+import queries.ContainersQuery
 
 final case class ContainerNumberPage(eventIndex: Index, containerIndex: Index) extends QuestionPage[Container] {
 
-  override def path: JsPath = JsPath \ SectionConstants.events \ eventIndex.position \ SectionConstants.containers \ containerIndex.position
+  override def path: JsPath = ContainersQuery(eventIndex).path \ containerIndex.position
 
 }

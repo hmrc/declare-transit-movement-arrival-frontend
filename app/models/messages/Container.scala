@@ -25,5 +25,5 @@ object Container {
   implicit val formats: OFormat[Container] = Json.format[Container]
 
   implicit val containerStringEquivalenceCheck: StringEquivalence[Container] =
-    StringEquivalence[Container](_.containerNumber == _)
+    StringEquivalence[Container]((container, stringContainer) => container.containerNumber == stringContainer)
 }

@@ -315,6 +315,7 @@ containerNumber.heading = What is the new container number?
 containerNumber.checkYourAnswersLabel = What is the new container number?
 containerNumber.error.required = Enter the new container number
 containerNumber.error.length = New container number must be 100 characters or less
+containerNumber.error.duplicate = Enter a container number you have not given before
 
 addContainer.title.singular = You have added {0} container
 addContainer.title.plural = You have added {0} containers

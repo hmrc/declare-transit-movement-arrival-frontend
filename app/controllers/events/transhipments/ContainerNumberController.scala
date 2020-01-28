@@ -26,6 +26,7 @@ import pages.events.transhipments.ContainerNumberPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import queries.ContainersQuery
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
@@ -68,7 +69,9 @@ class ContainerNumberController @Inject()(
   def onSubmit(mrn: MovementReferenceNumber, eventIndex: Index, containerIndex: Index, mode: Mode): Action[AnyContent] =
     (identify andThen getData(mrn) andThen requireData).async {
       implicit request =>
-        formProvider(Seq.empty) // TODO
+        val containers = request.userAnswers.get(ContainersQuery(eventIndex)).getOrElse(Seq.empty)
+
+        formProvider(containers)
           .bindFromRequest()
           .fold(
             formWithErrors => {
