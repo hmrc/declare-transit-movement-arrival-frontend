@@ -24,7 +24,7 @@ import uk.gov.hmrc.viewmodels._
 
 class AddSealHelper(userAnswers: UserAnswers) {
 
-  def sealRow(eventIndex: Int, sealIndex: Index, mode: Mode): Option[Row] =
+  def sealRow(eventIndex: Index, sealIndex: Index, mode: Mode): Option[Row] =
     userAnswers.get(SealIdentityPage(eventIndex, sealIndex)).map {
       answer =>
         Row(

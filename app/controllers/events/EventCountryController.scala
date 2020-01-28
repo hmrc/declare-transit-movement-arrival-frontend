@@ -21,7 +21,7 @@ import controllers.actions._
 import forms.events.EventCountryFormProvider
 import javax.inject.Inject
 import models.reference.Country
-import models.{Mode, MovementReferenceNumber}
+import models.{Index, Mode, MovementReferenceNumber}
 import navigation.Navigator
 import pages.events.EventCountryPage
 import play.api.data.Form
@@ -49,13 +49,13 @@ class EventCountryController @Inject()(override val messagesApi: MessagesApi,
     with I18nSupport
     with NunjucksSupport {
 
-  def onPageLoad(mrn: MovementReferenceNumber, index: Int, mode: Mode): Action[AnyContent] =
+  def onPageLoad(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode): Action[AnyContent] =
     (identify andThen getData(mrn) andThen requireData).async {
       implicit request =>
         referenceDataConnector.getCountryList() flatMap {
           countries =>
             val form = formProvider(countries)
-            val preparedForm = request.userAnswers.get(EventCountryPage(index)) match {
+            val preparedForm = request.userAnswers.get(EventCountryPage(eventIndex)) match {
               case None        => form
               case Some(value) => form.fill(value)
             }
@@ -63,7 +63,7 @@ class EventCountryController @Inject()(override val messagesApi: MessagesApi,
         }
     }
 
-  def onSubmit(mrn: MovementReferenceNumber, index: Int, mode: Mode): Action[AnyContent] =
+  def onSubmit(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode): Action[AnyContent] =
     (identify andThen getData(mrn) andThen requireData).async {
       implicit request =>
         referenceDataConnector.getCountryList() flatMap {
@@ -76,9 +76,9 @@ class EventCountryController @Inject()(override val messagesApi: MessagesApi,
                 formWithErrors => renderPage(mrn, mode, formWithErrors, countries, Results.BadRequest),
                 value =>
                   for {
-                    updatedAnswers <- Future.fromTry(request.userAnswers.set(EventCountryPage(index), value))
+                    updatedAnswers <- Future.fromTry(request.userAnswers.set(EventCountryPage(eventIndex), value))
                     _              <- sessionRepository.set(updatedAnswers)
-                  } yield Redirect(navigator.nextPage(EventCountryPage(index), mode, updatedAnswers))
+                  } yield Redirect(navigator.nextPage(EventCountryPage(eventIndex), mode, updatedAnswers))
               )
         }
     }

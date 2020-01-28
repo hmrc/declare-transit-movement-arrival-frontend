@@ -16,12 +16,13 @@
 
 package derivable
 
+import models.Index
 import pages.events.SectionConstants
 import play.api.libs.json.{JsPath, JsString}
 
-final case class DeriveNumberOfSeals(eventIndex: Int) extends Derivable[List[JsString], Int] {
+final case class DeriveNumberOfSeals(eventIndex: Index) extends Derivable[List[JsString], Int] {
 
   override val derive: List[JsString] => Int = _.size
 
-  override def path: JsPath = JsPath \ SectionConstants.events \ eventIndex \ SectionConstants.seals
+  override def path: JsPath = JsPath \ SectionConstants.events \ eventIndex.position \ SectionConstants.seals
 }

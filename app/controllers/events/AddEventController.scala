@@ -21,7 +21,7 @@ import controllers.actions._
 import forms.events.AddEventFormProvider
 import javax.inject.Inject
 import models.requests.DataRequest
-import models.{Mode, MovementReferenceNumber}
+import models.{Index, Mode, MovementReferenceNumber}
 import navigation.Navigator
 import pages.events.AddEventPage
 import play.api.data.Form
@@ -83,7 +83,8 @@ class AddEventController @Inject()(override val messagesApi: MessagesApi,
     val numberOfEvents = request.userAnswers.get(DeriveNumberOfEvents).getOrElse(0)
 
     val cyaHelper            = new AddEventsHelper(request.userAnswers)
-    val eventsRows: Seq[Row] = (0 to numberOfEvents).flatMap(cyaHelper.listOfEvent) // TODO: Test rendering of this!
+    val listOfEvents         = List.range(0, numberOfEvents).map(Index(_))
+    val eventsRows: Seq[Row] = listOfEvents.flatMap(cyaHelper.listOfEvent) // TODO: Test rendering of this!
 
     val title =
       if (numberOfEvents == 1)

@@ -18,7 +18,7 @@ package controllers.events
 
 import com.google.inject.Inject
 import controllers.actions.{DataRequiredAction, DataRetrievalActionProvider, IdentifierAction}
-import models.{CheckMode, MovementReferenceNumber, NormalMode}
+import models.{CheckMode, Index, MovementReferenceNumber, NormalMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -39,18 +39,18 @@ class CheckEventAnswersController @Inject()(override val messagesApi: MessagesAp
     with I18nSupport
     with NunjucksSupport {
 
-  def onPageLoad(mrn: MovementReferenceNumber, index: Int): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onPageLoad(mrn: MovementReferenceNumber, eventIndex: Index): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
       val json = Json.obj(
         "mrn" -> mrn
       ) ++ Json.toJsObject {
-        CheckEventAnswersViewModel(request.userAnswers, index, CheckMode)
+        CheckEventAnswersViewModel(request.userAnswers, eventIndex, CheckMode)
       }
 
       renderer.render("events/check-event-answers.njk", json).map(Ok(_))
   }
 
-  def onSubmit(mrn: MovementReferenceNumber, index: Int): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onSubmit(mrn: MovementReferenceNumber, eventIndex: Index): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
       Future.successful(Redirect(controllers.events.routes.AddEventController.onPageLoad(mrn, NormalMode)))
   }

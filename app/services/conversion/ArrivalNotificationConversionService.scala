@@ -20,7 +20,7 @@ import java.time.LocalDate
 
 import derivable.DeriveNumberOfEvents
 import models.messages._
-import models.{TraderAddress, UserAnswers}
+import models.{Index, TraderAddress, UserAnswers}
 import pages._
 import pages.events._
 import pages.events.transhipments._
@@ -77,23 +77,24 @@ class ArrivalNotificationConversionService {
   private def enRouteEvents(userAnswers: UserAnswers): Option[Seq[EnRouteEvent]] =
     userAnswers.get(DeriveNumberOfEvents).map {
       numberOfEvents =>
-        (0 to numberOfEvents).flatMap {
-          index =>
+        val listOfEvents = List.range(0, numberOfEvents).map(Index(_))
+        listOfEvents.flatMap {
+          eventIndex =>
             for {
-              place      <- userAnswers.get(EventPlacePage(index))
-              country    <- userAnswers.get(EventCountryPage(index))
-              isReported <- userAnswers.get(EventReportedPage(index))
-              incidentInformation = userAnswers.get(IncidentInformationPage(index))
-              transportIdentity   = userAnswers.get(TransportIdentityPage(index))
-              transportCountry    = userAnswers.get(TransportNationalityPage(index))
-              containers          = userAnswers.get(ContainersQuery(index))
+              place      <- userAnswers.get(EventPlacePage(eventIndex))
+              country    <- userAnswers.get(EventCountryPage(eventIndex))
+              isReported <- userAnswers.get(EventReportedPage(eventIndex))
+              incidentInformation = userAnswers.get(IncidentInformationPage(eventIndex))
+              transportIdentity   = userAnswers.get(TransportIdentityPage(eventIndex))
+              transportCountry    = userAnswers.get(TransportNationalityPage(eventIndex))
+              containers          = userAnswers.get(ContainersQuery(eventIndex))
             } yield {
               EnRouteEvent(
                 place         = place,
                 countryCode   = country.code,
                 alreadyInNcts = isReported,
                 eventDetails  = eventDetails(incidentInformation, transportIdentity, transportCountry.map(_.code), containers),
-                seals         = userAnswers.get(SealsQuery(index)).map(seals => seals.map(Seal(_)))
+                seals         = userAnswers.get(SealsQuery(eventIndex)).map(seals => seals.map(Seal(_)))
               )
             }
         }

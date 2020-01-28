@@ -19,7 +19,7 @@ package controllers.events
 import controllers.actions._
 import forms.events.ConfirmRemoveEventFormProvider
 import javax.inject.Inject
-import models.{Mode, MovementReferenceNumber, UserAnswers}
+import models.{Index, Mode, MovementReferenceNumber, UserAnswers}
 import navigation.Navigator
 import pages.events.{ConfirmRemoveEventPage, EventCountryPage, EventPlacePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -51,7 +51,7 @@ class ConfirmRemoveEventController @Inject()(
   private val form                       = formProvider()
   private val confirmRemoveEventTemplate = "events/confirmRemoveEvent.njk"
 
-  def onPageLoad(mrn: MovementReferenceNumber, eventIndex: Int, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onPageLoad(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
       eventPlace(request.userAnswers, eventIndex) match {
         case Some(place) => {
@@ -69,7 +69,7 @@ class ConfirmRemoveEventController @Inject()(
       }
   }
 
-  def onSubmit(mrn: MovementReferenceNumber, eventIndex: Int, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onSubmit(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
       eventPlace(request.userAnswers, eventIndex) match {
         case Some(place) => {
@@ -104,7 +104,7 @@ class ConfirmRemoveEventController @Inject()(
       }
   }
 
-  private def eventPlace(userAnswers: UserAnswers, eventIndex: Int) = userAnswers.get(EventPlacePage(eventIndex)) match {
+  private def eventPlace(userAnswers: UserAnswers, eventIndex: Index) = userAnswers.get(EventPlacePage(eventIndex)) match {
     case Some(answer) => Some(answer)
     case _            => userAnswers.get(EventCountryPage(eventIndex)).map(_.code)
   }

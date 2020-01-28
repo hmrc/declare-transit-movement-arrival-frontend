@@ -194,16 +194,16 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
                   .set(IncidentOnRoutePage, true)
                   .success
                   .value
-                  .set(EventCountryPage(0), country)
+                  .set(EventCountryPage(eventIndex), country)
                   .success
                   .value
-                  .set(EventPlacePage(0), "TestPlace")
+                  .set(EventPlacePage(eventIndex), "TestPlace")
                   .success
                   .value
-                  .set(EventReportedPage(0), true)
+                  .set(EventReportedPage(eventIndex), true)
                   .success
                   .value
-                  .set(IsTranshipmentPage(0), false)
+                  .set(IsTranshipmentPage(eventIndex), false)
                   .success
                   .value
               }
@@ -667,21 +667,21 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
                   .set(IncidentOnRoutePage, true)
                   .success
                   .value
-                  .set(EventCountryPage(0), country)
+                  .set(EventCountryPage(eventIndex), country)
                   .success
                   .value
-                  .set(EventPlacePage(0), "TestPlace")
+                  .set(EventPlacePage(eventIndex), "TestPlace")
                   .success
                   .value
-                  .set(EventReportedPage(0), true)
+                  .set(EventReportedPage(eventIndex), true)
                   .success
                   .value
-                  .set(IsTranshipmentPage(0), false)
+                  .set(IsTranshipmentPage(eventIndex), false)
                   .success
                   .value
               }
               navigator
-                .nextPage(ConfirmRemoveEventPage(0), NormalMode, updatedAnswers)
+                .nextPage(ConfirmRemoveEventPage(eventIndex), NormalMode, updatedAnswers)
                 .mustBe(eventRoutes.AddEventController.onPageLoad(answers.id, NormalMode))
           }
         }
@@ -694,21 +694,21 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
                   .set(IncidentOnRoutePage, true)
                   .success
                   .value
-                  .set(EventCountryPage(0), country)
+                  .set(EventCountryPage(eventIndex), country)
                   .success
                   .value
-                  .set(EventPlacePage(0), "TestPlace")
+                  .set(EventPlacePage(eventIndex), "TestPlace")
                   .success
                   .value
-                  .set(EventReportedPage(0), true)
+                  .set(EventReportedPage(eventIndex), true)
                   .success
                   .value
-                  .set(IsTranshipmentPage(0), false)
+                  .set(IsTranshipmentPage(eventIndex), false)
                   .success
                   .value
               }
               navigator
-                .nextPage(ConfirmRemoveEventPage(0), NormalMode, updatedAnswers)
+                .nextPage(ConfirmRemoveEventPage(eventIndex), NormalMode, updatedAnswers)
                 .mustBe(eventRoutes.AddEventController.onPageLoad(answers.id, NormalMode))
           }
         }
@@ -718,7 +718,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
             answers =>
               val withoutEvents = answers.remove(EventsQuery).success.value
               navigator
-                .nextPage(ConfirmRemoveEventPage(0), NormalMode, withoutEvents)
+                .nextPage(ConfirmRemoveEventPage(eventIndex), NormalMode, withoutEvents)
                 .mustBe(routes.IncidentOnRouteController.onPageLoad(answers.id, NormalMode))
           }
         }
@@ -768,7 +768,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
                 navigator
                   .nextPage(AddEventPage, NormalMode, updatedAnswers)
-                  .mustBe(eventRoutes.EventCountryController.onPageLoad(emptyUserAnswers.id, 1, NormalMode))
+                  .mustBe(eventRoutes.EventCountryController.onPageLoad(emptyUserAnswers.id, Index(1), NormalMode))
             }
           }
         }

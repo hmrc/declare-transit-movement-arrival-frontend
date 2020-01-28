@@ -56,7 +56,7 @@ trait SpecBase
 
   val emptyUserAnswers = UserAnswers(mrn, Json.obj())
 
-  val eventIndex     = 0
+  val eventIndex     = Index(0)
   val containerIndex = Index(0)
   val sealIndex      = Index(0)
 

@@ -16,13 +16,14 @@
 
 package queries
 
+import models.Index
 import models.messages.EnRouteEvent
 import pages.QuestionPage
 import pages.events.SectionConstants
 import play.api.libs.json.JsPath
 
-final case class EventQuery(eventIndex: Int) extends QuestionPage[List[EnRouteEvent]] {
+final case class EventQuery(eventIndex: Index) extends QuestionPage[List[EnRouteEvent]] {
 
-  override def path: JsPath = JsPath \ SectionConstants.events \ eventIndex
+  override def path: JsPath = JsPath \ SectionConstants.events \ eventIndex.position
 
 }
