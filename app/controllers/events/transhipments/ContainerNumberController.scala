@@ -48,14 +48,12 @@ class ContainerNumberController @Inject()(
     with I18nSupport
     with NunjucksSupport {
 
-  private val form = formProvider()
-
   def onPageLoad(mrn: MovementReferenceNumber, eventIndex: Index, containerIndex: Index, mode: Mode): Action[AnyContent] =
     (identify andThen getData(mrn) andThen requireData).async {
       implicit request =>
         val preparedForm = request.userAnswers.get(ContainerNumberPage(eventIndex, containerIndex)) match {
-          case None        => form
-          case Some(value) => form.fill(value.containerNumber)
+          case None        => formProvider(Seq.empty) // TODO
+          case Some(value) => formProvider(Seq.empty).fill(value.containerNumber) // TODO
         }
 
         val json = Json.obj(
@@ -70,7 +68,7 @@ class ContainerNumberController @Inject()(
   def onSubmit(mrn: MovementReferenceNumber, eventIndex: Index, containerIndex: Index, mode: Mode): Action[AnyContent] =
     (identify andThen getData(mrn) andThen requireData).async {
       implicit request =>
-        form
+        formProvider(Seq.empty) // TODO
           .bindFromRequest()
           .fold(
             formWithErrors => {

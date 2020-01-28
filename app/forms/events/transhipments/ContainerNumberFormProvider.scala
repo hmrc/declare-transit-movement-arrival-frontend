@@ -18,14 +18,15 @@ package forms.events.transhipments
 
 import forms.mappings.Mappings
 import javax.inject.Inject
-import models.messages.Transhipment
+import models.messages.{Container, Transhipment}
 import play.api.data.Form
 
 class ContainerNumberFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[String] =
+  def apply(declaredContainers: Seq[Container]): Form[String] =
     Form(
       "value" -> text("containerNumber.error.required")
         .verifying(maxLength(Transhipment.Constants.containerLength, "containerNumber.error.length"))
+        .verifying(isUniqueValue(declaredContainers, "containerNumber.error.duplicate"))
     )
 }

@@ -16,10 +16,14 @@
 
 package models.messages
 
+import forms.mappings.FormEqualityCheck
 import play.api.libs.json.{Json, OFormat}
 
 case class Container(containerNumber: String)
 
 object Container {
   implicit val formats: OFormat[Container] = Json.format[Container]
+
+  implicit val containerFormEqualityCheck: FormEqualityCheck[Container] =
+    FormEqualityCheck[Container](_.containerNumber == _)
 }

@@ -17,38 +17,65 @@
 package forms.events.transhipments
 
 import forms.behaviours.StringFieldBehaviours
-import models.messages.Transhipment
+import generators.{Generators, MessagesModelGenerators}
+import models.messages.{Container, Transhipment}
+import org.scalacheck.Arbitrary
 import play.api.data.FormError
+import org.scalacheck.Arbitrary.arbitrary
 
-class ContainerNumberFormProviderSpec extends StringFieldBehaviours {
+class ContainerNumberFormProviderSpec extends StringFieldBehaviours with MessagesModelGenerators {
 
-  val requiredKey = "containerNumber.error.required"
-  val lengthKey   = "containerNumber.error.length"
-  val maxLength   = Transhipment.Constants.containerLength
+  val requiredKey  = "containerNumber.error.required"
+  val lengthKey    = "containerNumber.error.length"
+  val duplicateKey = "containerNumber.error.duplicate"
+  val maxLength    = Transhipment.Constants.containerLength
 
-  val form = new ContainerNumberFormProvider()()
+  val form = new ContainerNumberFormProvider()
 
   ".value" - {
 
     val fieldName = "value"
 
     behave like fieldThatBindsValidData(
-      form,
+      form(Seq.empty),
       fieldName,
       stringsWithMaxLength(maxLength)
     )
 
     behave like fieldWithMaxLength(
-      form,
+      form(Seq.empty),
       fieldName,
       maxLength   = maxLength,
       lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
     )
 
     behave like mandatoryField(
-      form,
+      form(Seq.empty),
       fieldName,
       requiredError = FormError(fieldName, requiredKey)
     )
+
+    "errors if there are new container is duplicate" in {
+      forAll(listWithMaxLength[Container](10), arbitrary[Container]) {
+        case (containers, container @ Container(containerNumber)) =>
+          val containersWithDuplicate = containers :+ container
+
+          val result = form(containersWithDuplicate).bind(Map(fieldName -> containerNumber)).apply(fieldName)
+
+          result.errors mustEqual Seq(FormError(fieldName, duplicateKey))
+      }
+    }
+
+    "no errors if there are new container is not a duplicate" in {
+      forAll(listWithMaxLength[Container](10), arbitrary[Container]) {
+        case (containers1, container @ Container(containerNumber)) =>
+          val containersNoDuplicate = containers1.filterNot(_ == container)
+
+          val result = form(containersNoDuplicate).bind(Map(fieldName -> containerNumber)).apply(fieldName)
+
+          result.hasErrors mustEqual false
+      }
+    }
+
   }
 }
