@@ -36,12 +36,14 @@ class AddContainerHelper(userAnswers: UserAnswers) {
             Action(
               content            = msg"site.edit",
               href               = ContainerNumberController.onPageLoad(userAnswers.id, eventIndex, containerIndex, mode).url,
-              visuallyHiddenText = Some(msg"addContainer.containerList.change".withArgs(answer)) // TODO: Prefix in message file for is hard coded, should be the same as: site.edit.hidden
+              visuallyHiddenText = Some(msg"addContainer.containerList.change".withArgs(answer)), // TODO: Prefix in message file for is hard coded, should be the same as: site.edit.hidden
+              attributes         = Map("id" -> s"""change-container-${containerIndex.display}""")
             ),
             Action(
               content            = msg"site.delete",
               href               = ConfirmRemoveContainerController.onPageLoad(userAnswers.id, eventIndex, containerIndex, mode).url,
-              visuallyHiddenText = Some(msg"addContainer.containerList.delete".withArgs(answer)) // TODO: Prefix in message file for is hard coded, should be the same as: site.delete.hidden
+              visuallyHiddenText = Some(msg"addContainer.containerList.delete".withArgs(answer)), // TODO: Prefix in message file for is hard coded, should be the same as: site.delete.hidden
+              attributes         = Map("id" -> s"""remove-container-${containerIndex.display}""")
             )
           )
         )

@@ -41,7 +41,8 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
           Action(
             content            = msg"site.edit",
             href               = sealRoutes.HaveSealsChangedController.onPageLoad(mrn, eventIndex, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"haveSealsChanged.checkYourAnswersLabel"))
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"haveSealsChanged.checkYourAnswersLabel")),
+            attributes         = Map("id" -> s"""seals-changed-${eventIndex.display}""")
           )
         )
       )
@@ -56,7 +57,8 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
           Action(
             content            = msg"site.edit",
             href               = sealRoutes.SealIdentityController.onPageLoad(mrn, eventIndex, sealIndex, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"sealIdentity.checkYourAnswersLabel"))
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"sealIdentity.checkYourAnswersLabel")),
+            attributes         = Map("id" -> s"""seal-identity-${eventIndex.display}""")
           )
         )
       )
@@ -71,7 +73,8 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
           Action(
             content            = msg"site.edit",
             href               = transhipmentRoutes.ContainerNumberController.onPageLoad(mrn, eventIndex, containerIndex, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"containerNumber.checkYourAnswersLabel"))
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"containerNumber.checkYourAnswersLabel")),
+            attributes         = Map("id" -> s"""container-number-${eventIndex.display}""")
           )
         )
       )
@@ -86,7 +89,8 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
           Action(
             content            = msg"site.edit",
             href               = transhipmentRoutes.TransportNationalityController.onPageLoad(mrn, eventIndex, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"transportNationality.checkYourAnswersLabel"))
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"transportNationality.checkYourAnswersLabel")),
+            attributes         = Map("id" -> s"""transport-nationality-${eventIndex.display}""")
           )
         )
       )
@@ -101,7 +105,8 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
           Action(
             content            = msg"site.edit",
             href               = transhipmentRoutes.TransportIdentityController.onPageLoad(mrn, eventIndex, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"transportIdentity.checkYourAnswersLabel"))
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"transportIdentity.checkYourAnswersLabel")),
+            attributes         = Map("id" -> s"""transport-identity-${eventIndex.display}""")
           )
         )
       )
@@ -116,7 +121,8 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
           Action(
             content            = msg"site.edit",
             href               = transhipmentRoutes.TranshipmentTypeController.onPageLoad(mrn, eventIndex, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"transhipmentType.checkYourAnswersLabel"))
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"transhipmentType.checkYourAnswersLabel")),
+            attributes         = Map("id" -> s"""transhipment-type-${eventIndex.display}""")
           )
         )
       )
@@ -131,7 +137,8 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
           Action(
             content            = msg"site.edit",
             href               = routes.PlaceOfNotificationController.onPageLoad(mrn, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"placeOfNotification.checkYourAnswersLabel"))
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"placeOfNotification.checkYourAnswersLabel")),
+            attributes         = Map("id" -> s"""change-place-of-notification""")
           )
         )
       )
@@ -148,7 +155,8 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
           Action(
             content            = msg"site.edit",
             href               = routes.IsTraderAddressPlaceOfNotificationController.onPageLoad(mrn, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(message))
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(message)),
+            attributes         = Map("id" -> s"""change-trader-address-place-of-notification""")
           )
         )
       )
@@ -163,7 +171,8 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
           Action(
             content            = msg"site.edit",
             href               = eventRoutes.IsTranshipmentController.onPageLoad(mrn, eventIndex, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"isTranshipment.checkYourAnswersLabel"))
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"isTranshipment.checkYourAnswersLabel")),
+            attributes         = Map("id" -> s"""change-is-transhipment-${eventIndex.display}""")
           )
         )
       )
@@ -178,7 +187,8 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
           Action(
             content            = msg"site.edit",
             href               = eventRoutes.IncidentInformationController.onPageLoad(mrn, eventIndex, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"incidentInformation.checkYourAnswersLabel"))
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"incidentInformation.checkYourAnswersLabel")),
+            attributes         = Map("id" -> s"""change-incident-information-${eventIndex.display}""")
           )
         )
       )
@@ -193,7 +203,8 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
           Action(
             content            = msg"site.edit",
             href               = eventRoutes.EventReportedController.onPageLoad(mrn, eventIndex, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"eventReported.checkYourAnswersLabel"))
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"eventReported.checkYourAnswersLabel")),
+            attributes         = Map("id" -> s"""change-event-reported-${eventIndex.display}""")
           )
         )
       )
@@ -208,7 +219,8 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
           Action(
             content            = msg"site.edit",
             href               = eventRoutes.EventPlaceController.onPageLoad(mrn, eventIndex, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"eventPlace.checkYourAnswersLabel"))
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"eventPlace.checkYourAnswersLabel")),
+            attributes         = Map("id" -> s"""change-event-place-${eventIndex.display}""")
           )
         )
       )
@@ -223,7 +235,8 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
           Action(
             content            = msg"site.edit",
             href               = eventRoutes.EventCountryController.onPageLoad(mrn, eventIndex, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"eventCountry.checkYourAnswersLabel"))
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"eventCountry.checkYourAnswersLabel")),
+            attributes         = Map("id" -> s"""change-event-country-${eventIndex.display}""")
           )
         )
       )
@@ -238,7 +251,8 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
           Action(
             content            = msg"site.edit",
             href               = routes.IncidentOnRouteController.onPageLoad(mrn, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"incidentOnRoute.checkYourAnswersLabel"))
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"incidentOnRoute.checkYourAnswersLabel")),
+            attributes         = Map("id" -> s"""change-incident-on-route""")
           )
         )
       )
@@ -253,7 +267,8 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
           Action(
             content            = msg"site.edit",
             href               = routes.TraderNameController.onPageLoad(mrn, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"traderName.checkYourAnswersLabel"))
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"traderName.checkYourAnswersLabel")),
+            attributes         = Map("id" -> s"""change-trader-name""")
           )
         )
       )
@@ -268,7 +283,8 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
           Action(
             content            = msg"site.edit",
             href               = routes.TraderEoriController.onPageLoad(mrn, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"traderEori.checkYourAnswersLabel"))
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"traderEori.checkYourAnswersLabel")),
+            attributes         = Map("id" -> s"""change-trader-eori""")
           )
         )
       )
@@ -283,7 +299,8 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
           Action(
             content            = msg"site.edit",
             href               = routes.TraderAddressController.onPageLoad(mrn, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"traderAddress.checkYourAnswersLabel"))
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"traderAddress.checkYourAnswersLabel")),
+            attributes         = Map("id" -> s"""change-trader-address""")
           )
         )
       )
@@ -298,7 +315,8 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
           Action(
             content            = msg"site.edit",
             href               = routes.AuthorisedLocationController.onPageLoad(mrn, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"authorisedLocation.checkYourAnswersLabel"))
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"authorisedLocation.checkYourAnswersLabel")),
+            attributes         = Map("id" -> s"""change-authorised-location""")
           )
         )
       )
@@ -313,7 +331,8 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
           Action(
             content            = msg"site.edit",
             href               = routes.CustomsSubPlaceController.onPageLoad(mrn, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"customsSubPlace.checkYourAnswersLabel"))
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"customsSubPlace.checkYourAnswersLabel")),
+            attributes         = Map("id" -> s"""change-customs-sub-place""")
           )
         )
       )
@@ -331,7 +350,8 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
           Action(
             content            = msg"site.edit",
             href               = routes.PresentationOfficeController.onPageLoad(mrn, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(message))
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(message)),
+            attributes         = Map("id" -> s"""change-presentation-office""")
           )
         )
       )
@@ -346,7 +366,8 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
           Action(
             content            = msg"site.edit",
             href               = routes.GoodsLocationController.onPageLoad(mrn, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"goodsLocation.checkYourAnswersLabel"))
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"goodsLocation.checkYourAnswersLabel")),
+            attributes         = Map("id" -> s"""change-goods-location""")
           )
         )
       )

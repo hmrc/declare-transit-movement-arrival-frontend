@@ -34,12 +34,14 @@ class AddEventsHelper(userAnswers: UserAnswers) {
             Action(
               content            = msg"site.edit",
               href               = eventRoutes.CheckEventAnswersController.onPageLoad(mrn, eventIndex).url,
-              visuallyHiddenText = Some(msg"addEvent.checkYourAnswersLabel.change".withArgs(eventIndex, answer)) // TODO: Prefix in message file for is hard coded, should be the same as: site.edit.hidden
+              visuallyHiddenText = Some(msg"addEvent.checkYourAnswersLabel.change".withArgs(eventIndex, answer)), // TODO: Prefix in message file for is hard coded, should be the same as: site.edit.hidden
+              attributes         = Map("id" -> s"""change-event-${eventIndex.display}""")
             ),
             Action(
               content            = msg"site.delete",
               href               = eventRoutes.ConfirmRemoveEventController.onPageLoad(mrn, eventIndex, NormalMode).url,
-              visuallyHiddenText = Some(msg"addEvent.checkYourAnswersLabel.delete".withArgs(eventIndex, answer)) // TODO: Prefix in message file for is hard coded, should be the same as: site.delete.hidden
+              visuallyHiddenText = Some(msg"addEvent.checkYourAnswersLabel.delete".withArgs(eventIndex, answer)), // TODO: Prefix in message file for is hard coded, should be the same as: site.delete.hidden
+              attributes         = Map("id" -> s"""remove-event-${eventIndex.display}""")
             )
           )
         )
