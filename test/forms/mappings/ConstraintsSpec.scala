@@ -189,12 +189,12 @@ class ConstraintsSpec extends FreeSpec with MustMatchers with ScalaCheckProperty
 
     val testObjectsToValidateAgainst = Seq(TestObject("a"))
 
-    implicit val testObjectFormEqCheck: FormEqualityCheck[TestObject] =
-      new FormEqualityCheck[TestObject] {
-        override def equalsString(lhs: TestObject, formValue: String): Boolean = lhs.value == formValue
+    implicit val testObjectFormEqCheck: StringEquivalence[TestObject] =
+      new StringEquivalence[TestObject] {
+        override def equivalentToString(lhs: TestObject, formValue: String): Boolean = lhs.value == formValue
       }
 
-    val constraint: Constraint[String] = isUniqueValue(testObjectsToValidateAgainst, "error.duplicate")
+    val constraint: Constraint[String] = doesNotExistIn(testObjectsToValidateAgainst, "error.duplicate")
 
     "returns Valid if it is not contained in the values to be tested against" in {
       val result = constraint("b")

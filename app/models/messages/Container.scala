@@ -16,7 +16,7 @@
 
 package models.messages
 
-import forms.mappings.FormEqualityCheck
+import forms.mappings.StringEquivalence
 import play.api.libs.json.{Json, OFormat}
 
 case class Container(containerNumber: String)
@@ -24,6 +24,6 @@ case class Container(containerNumber: String)
 object Container {
   implicit val formats: OFormat[Container] = Json.format[Container]
 
-  implicit val containerFormEqualityCheck: FormEqualityCheck[Container] =
-    FormEqualityCheck[Container](_.containerNumber == _)
+  implicit val containerStringEquivalenceCheck: StringEquivalence[Container] =
+    StringEquivalence[Container](_.containerNumber == _)
 }

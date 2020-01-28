@@ -50,6 +50,6 @@ trait Mappings extends Formatters with Constraints {
     of(mrnFormatter(requiredKey, invalidKey))
 
   protected def doesNotExistIn[A](errorKey: String, values: Seq[A], fromString: String => A)(implicit show: Show[A],
-                                                                                             formEqualityCheck: FormEqualityCheck[A]): FieldMapping[A] =
+                                                                                             formEqualityCheck: StringEquivalence[A]): FieldMapping[A] =
     of(uniqueDataFormatter(errorKey, values, fromString))
 }

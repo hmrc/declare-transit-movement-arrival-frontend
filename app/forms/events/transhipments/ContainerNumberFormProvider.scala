@@ -27,6 +27,6 @@ class ContainerNumberFormProvider @Inject() extends Mappings {
     Form(
       "value" -> text("containerNumber.error.required")
         .verifying(maxLength(Transhipment.Constants.containerLength, "containerNumber.error.length"))
-        .verifying(isUniqueValue(declaredContainers, "containerNumber.error.duplicate"))
+        .verifying(doesNotExistIn(declaredContainers, "containerNumber.error.duplicate"))
     )
 }

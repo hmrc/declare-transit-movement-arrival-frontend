@@ -207,9 +207,9 @@ class MappingsSpec extends FreeSpec with MustMatchers with OptionValues with Map
       override def show(t: TestObject): String = t.value
     }
 
-    implicit val testObjectFormEqCheck: FormEqualityCheck[TestObject] =
-      new FormEqualityCheck[TestObject] {
-        override def equalsString(lhs: TestObject, formValue: String): Boolean = lhs.value == formValue
+    implicit val testObjectFormEqCheck: StringEquivalence[TestObject] =
+      new StringEquivalence[TestObject] {
+        override def equivalentToString(lhs: TestObject, formValue: String): Boolean = lhs.value == formValue
       }
 
     val testForm: Form[TestObject] = Form(

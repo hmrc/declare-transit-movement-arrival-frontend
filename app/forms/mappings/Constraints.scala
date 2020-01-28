@@ -107,8 +107,8 @@ trait Constraints {
         Invalid(errorKey)
     }
 
-  protected def isUniqueValue[A: FormEqualityCheck](values: Seq[A], errorKey: String, args: Any*): Constraint[String] = {
-    import FormEqualityCheck._
+  protected def doesNotExistIn[A: StringEquivalence](values: Seq[A], errorKey: String, args: Any*): Constraint[String] = {
+    import StringEquivalence._
 
     Constraint {
       x =>

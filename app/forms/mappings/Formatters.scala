@@ -43,9 +43,9 @@ trait Formatters {
     errorKey: String,
     values: Seq[A],
     fromString: String => A
-  )(implicit show: Show[A], formEqualityCheck: FormEqualityCheck[A]): Formatter[A] =
+  )(implicit show: Show[A], formEqualityCheck: StringEquivalence[A]): Formatter[A] =
     new Formatter[A] {
-      import FormEqualityCheck._
+      import StringEquivalence._
 
       override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], A] =
         data
