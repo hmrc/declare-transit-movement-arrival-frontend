@@ -25,7 +25,7 @@ import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.events.{ConfirmRemoveEventPage, EventPlacePage}
+import pages.events.EventPlacePage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -96,7 +96,7 @@ class ConfirmRemoveEventControllerSpec extends SpecBase with MockitoSugar with N
 
       val result = route(application, request).value
 
-      status(result) mustEqual OK
+      status(result) mustEqual NOT_FOUND
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
@@ -127,7 +127,7 @@ class ConfirmRemoveEventControllerSpec extends SpecBase with MockitoSugar with N
 
       val result = route(application, request).value
 
-      status(result) mustEqual OK
+      status(result) mustEqual NOT_FOUND
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
