@@ -45,7 +45,7 @@ class PresentationOfficeControllerSpec extends SpecBase with MockitoSugar with N
   def onwardRoute: Call = Call("GET", "/foo")
 
   val formProvider              = new PresentationOfficeFormProvider()
-  val customsOffices            = Seq(CustomsOffice("id", "name", Seq.empty), CustomsOffice("officeId", "someName", Seq.empty))
+  val customsOffices            = Seq(CustomsOffice("id", "name", Seq.empty, None), CustomsOffice("officeId", "someName", Seq.empty, None))
   val form: Form[CustomsOffice] = formProvider("sub place", customsOffices)
 
   lazy val presentationOfficeRoute: String = routes.PresentationOfficeController.onPageLoad(mrn, NormalMode).url
@@ -64,7 +64,7 @@ class PresentationOfficeControllerSpec extends SpecBase with MockitoSugar with N
       val officeId   = "officeId"
       val officeName = "someName"
       val userAnswers = UserAnswers(mrn)
-        .set(PresentationOfficePage, CustomsOffice(officeId, officeName, Seq.empty))
+        .set(PresentationOfficePage, CustomsOffice(officeId, officeName, Seq.empty, None))
         .success
         .value
         .set(CustomsSubPlacePage, "subs place")

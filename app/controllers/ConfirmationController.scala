@@ -19,14 +19,15 @@ package controllers
 import controllers.actions._
 import javax.inject.Inject
 import models.MovementReferenceNumber
+import pages.PresentationOfficePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
-
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
+import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 class ConfirmationController @Inject()(override val messagesApi: MessagesApi,
                                        sessionRepository: SessionRepository,
@@ -36,14 +37,28 @@ class ConfirmationController @Inject()(override val messagesApi: MessagesApi,
                                        val controllerComponents: MessagesControllerComponents,
                                        renderer: Renderer)(implicit ec: ExecutionContext)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with NunjucksSupport {
 
   def onPageLoad(mrn: MovementReferenceNumber): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
-      val json = Json.obj("mrn" -> mrn)
+      request.userAnswers.get(PresentationOfficePage) match {
+        case Some(presentationOffice) =>
+          val contactUsMessage = presentationOffice.phoneNumber match {
+            case Some(telephone) => msg"arrivalComplete.para2.withPhoneNumber".withArgs(presentationOffice.name, telephone)
+            case None            => msg"arrivalComplete.para2".withArgs(presentationOffice.name)
+          }
 
-      sessionRepository.remove(mrn.toString)
+          val json = Json.obj(
+            "mrn"       -> mrn,
+            "contactUs" -> contactUsMessage
+          )
+          sessionRepository.remove(mrn.toString)
+          renderer.render("arrivalComplete.njk", json).map(Ok(_))
 
-      renderer.render("arrivalComplete.njk", json).map(Ok(_))
+        case _ => Future.successful(Redirect(routes.SessionExpiredController.onPageLoad()))
+
+      }
   }
+
 }
