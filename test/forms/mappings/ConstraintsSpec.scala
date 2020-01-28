@@ -23,8 +23,7 @@ import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import org.scalatest.FreeSpec
 import org.scalatest.MustMatchers
-import play.api.data.validation.Invalid
-import play.api.data.validation.Valid
+import play.api.data.validation.{Constraint, Invalid, Valid, ValidationResult}
 
 class ConstraintsSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with Generators with Constraints {
 
@@ -182,6 +181,31 @@ class ConstraintsSpec extends FreeSpec with MustMatchers with ScalaCheckProperty
           val result = minDate(min, "error.past", "foo")(date)
           result mustEqual Invalid("error.past", "foo")
       }
+    }
+  }
+
+  "isUniqueValue" - {
+    case class TestObject(value: String)
+
+    val testObjectsToValidateAgainst = Seq(TestObject("a"))
+
+    implicit val testObjectFormEqCheck: FormEqualityCheck[TestObject] =
+      new FormEqualityCheck[TestObject] {
+        override def equalsString(lhs: TestObject, formValue: String): Boolean = lhs.value == formValue
+      }
+
+    val constraint: Constraint[String] = isUniqueValue(testObjectsToValidateAgainst, "error.duplicate")
+
+    "returns Valid if it is not contained in the values to be tested against" in {
+      val result = constraint("b")
+
+      result mustEqual Valid
+    }
+
+    "returns Invalid if it is contained in the values to be tested against" in {
+      val result = constraint("a")
+
+      result mustEqual Invalid("error.duplicate")
     }
   }
 }

@@ -106,4 +106,17 @@ trait Constraints {
       case _ =>
         Invalid(errorKey)
     }
+
+  protected def isUniqueValue[A: FormEqualityCheck](values: Seq[A], errorKey: String, args: Any*): Constraint[String] = {
+    import FormEqualityCheck._
+
+    Constraint {
+      x =>
+        if (values.exists(_.equalsString(x))) {
+          Invalid(errorKey, args: _*)
+        } else {
+          Valid
+        }
+    }
+  }
 }
