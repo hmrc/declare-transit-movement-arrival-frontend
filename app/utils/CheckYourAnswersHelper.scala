@@ -35,7 +35,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswers
           Action(
             content            = msg"site.edit",
             href               = routes.PlaceOfNotificationController.onPageLoad(mrn, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"placeOfNotification.checkYourAnswersLabel"))
+            visuallyHiddenText = Some(msg"placeOfNotification.change.hidden")
           )
         )
       )
@@ -52,7 +52,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswers
           Action(
             content            = msg"site.edit",
             href               = routes.IsTraderAddressPlaceOfNotificationController.onPageLoad(mrn, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(message))
+            visuallyHiddenText = Some(msg"isTraderAddressPlaceOfNotification.change.hidden")
           )
         )
       )
@@ -67,7 +67,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswers
           Action(
             content            = msg"site.edit",
             href               = routes.IncidentOnRouteController.onPageLoad(mrn, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"incidentOnRoute.checkYourAnswersLabel"))
+            visuallyHiddenText = Some(msg"incidentOnRoute.change.hidden")
           )
         )
       )
@@ -82,7 +82,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswers
           Action(
             content            = msg"site.edit",
             href               = routes.TraderNameController.onPageLoad(mrn, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"traderName.checkYourAnswersLabel"))
+            visuallyHiddenText = Some(msg"traderName.change.hidden")
           )
         )
       )
@@ -97,7 +97,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswers
           Action(
             content            = msg"site.edit",
             href               = routes.TraderEoriController.onPageLoad(mrn, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"traderEori.checkYourAnswersLabel"))
+            visuallyHiddenText = Some(msg"traderEori.change.hidden")
           )
         )
       )
@@ -112,7 +112,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswers
           Action(
             content            = msg"site.edit",
             href               = routes.TraderAddressController.onPageLoad(mrn, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"traderAddress.checkYourAnswersLabel"))
+            visuallyHiddenText = Some(msg"traderAddress.change.hidden")
           )
         )
       )

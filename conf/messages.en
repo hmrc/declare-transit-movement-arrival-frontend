@@ -198,18 +198,21 @@ traderAddress.error.postcode.required = Enter the postcode of the trader at the 
 traderAddress.error.buildingAndStreet.length = Building and street must be 35 characters or less
 traderAddress.error.city.length = Town or city must be 35 characters or less
 traderAddress.error.postcode.length = Postcode must be 9 characters or less
+traderAddress.change.hidden = address of trader
 
 traderEori.title = What is the EORI number of the trader at destination?
 traderEori.heading = What is the EORI number of the trader at destination?
 traderEori.checkYourAnswersLabel = EORI number
 traderEori.error.required = Enter the EORI number of the trader at the destination
 traderEori.error.length = EORI number must be 17 characters or less
+traderEori.change.hidden = EORI number of trader
 
 traderName.title = What is the name of the trader at the destination?
 traderName.heading = What is the name of the trader at the destination?
 traderName.checkYourAnswersLabel = Name
 traderName.error.required = Enter the name of the trader at the destination
 traderName.error.length = Name of the trader must be 35 characters or less
+traderName.change.hidden = name of trader
 
 useDifferentService.title = You need to use a different service
 useDifferentService.heading = You need to use a different service
@@ -240,6 +243,7 @@ incidentOnRoute.hintText.bullet.5 = goods moved to a different type of transport
 incidentOnRoute.hintText.bullet.6 = the planned route changed
 incidentOnRoute.checkYourAnswersLabel = Did any events happen on the journey?
 incidentOnRoute.error.required = Select yes if there were events on the journey
+incidentOnRoute.change.hidden = if there was an event on the journey
 
 eventCountry.title = Which country were the goods in when it happened?
 eventCountry.heading = Which country were the goods in when it happened?
@@ -294,6 +298,7 @@ isTraderAddressPlaceOfNotification.title = Are you completing this arrival notif
 isTraderAddressPlaceOfNotification.heading = Are you completing this arrival notification at the trader’s address?
 isTraderAddressPlaceOfNotification.checkYourAnswersLabel = Are you completing this arrival notification at the trader’s address?
 isTraderAddressPlaceOfNotification.error.required = Select yes if you are completing this arrival notification at the trader’s address
+isTraderAddressPlaceOfNotification.change.hidden = if you are completing this arrival notification at the trader's address
 
 placeOfNotification.title = Where are you completing this arrival notification?
 placeOfNotification.heading = Where are you completing this arrival notification?
@@ -301,6 +306,7 @@ placeOfNotification.checkYourAnswersLabel = Where are you completing this arriva
 placeOfNotification.hintText = This is also known as the place of notification. Give the postcode.
 placeOfNotification.error.required = Enter where you are completing this arrival notification
 placeOfNotification.error.length = Where are you completing this arrival notification must be 35 characters or less
+placeOfNotification.change.hidden = where you are completing this arrival notification
 
 addEvent.title.singular = You have added {0} event
 addEvent.title.plural = You have added {0} events

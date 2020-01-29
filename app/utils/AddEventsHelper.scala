@@ -55,7 +55,7 @@ class AddEventsHelper(userAnswers: UserAnswers) {
             Action(
               content            = msg"site.edit",
               href               = eventRoutes.CheckEventAnswersController.onPageLoad(mrn, eventIndex).url,
-              visuallyHiddenText = Some(msg"addEvent.checkYourAnswersLabel.change".withArgs(eventIndex, answer)) // TODO: Prefix in message file for is hard coded, should be the same as: site.edit.hidden
+              visuallyHiddenText = Some(msg"addEvent.change.hidden".withArgs(eventIndex.display, answer))
             )
           )
         )
