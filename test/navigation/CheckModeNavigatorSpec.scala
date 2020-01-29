@@ -23,7 +23,7 @@ import controllers.events.transhipments.{routes => transhipmentRoutes}
 import controllers.routes
 import generators.{Generators, MessagesModelGenerators}
 import models.TranshipmentType.{DifferentContainer, DifferentContainerAndVehicle, DifferentVehicle}
-import models.messages.Container
+import models.messages.{Container, Seal}
 import models.reference.Country
 import models.{CheckMode, GoodsLocation, Index, NormalMode, TranshipmentType, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
@@ -633,9 +633,9 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
     "seals page" - {
 
       "must go from seals identity page to add seals page" in {
-        forAll(arbitrary[UserAnswers], arbitrary[String]) {
-          (answers, sealsIdentity) =>
-            val updatedAnswers = answers.set(SealIdentityPage(eventIndex, sealIndex), sealsIdentity).success.value
+        forAll(arbitrary[UserAnswers], arbitrary[Seal]) {
+          (answers, seal) =>
+            val updatedAnswers = answers.set(SealIdentityPage(eventIndex, sealIndex), seal).success.value
 
             navigator
               .nextPage(SealIdentityPage(eventIndex, sealIndex), CheckMode, updatedAnswers)

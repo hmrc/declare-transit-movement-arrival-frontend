@@ -19,6 +19,7 @@ package controllers.events.seals
 import base.SpecBase
 import forms.events.seals.SealIdentityFormProvider
 import matchers.JsonMatchers
+import models.messages.Seal
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
@@ -82,7 +83,7 @@ class SealIdentityControllerSpec extends SpecBase with MockitoSugar with Nunjuck
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers    = UserAnswers(mrn).set(SealIdentityPage(eventIndex, sealIndex), "answer").success.value
+      val userAnswers    = UserAnswers(mrn).set(SealIdentityPage(eventIndex, sealIndex), Seal("seal")).success.value
       val application    = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request        = FakeRequest(GET, sealIdentityRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -94,7 +95,7 @@ class SealIdentityControllerSpec extends SpecBase with MockitoSugar with Nunjuck
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = form.bind(Map("value" -> "answer"))
+      val filledForm = form.bind(Map("value" -> "seal"))
 
       val expectedJson = Json.obj(
         "form" -> filledForm,
