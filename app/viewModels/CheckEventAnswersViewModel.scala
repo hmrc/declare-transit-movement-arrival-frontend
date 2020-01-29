@@ -16,95 +16,30 @@
 
 package viewModels
 
-import derivable.{DeriveNumberOfContainers, DeriveNumberOfSeals}
-import models.TranshipmentType._
 import models.{Index, Mode, UserAnswers}
-import pages.events._
-import pages.events.transhipments.TranshipmentTypePage
+import pages.events.IsTranshipmentPage
 import play.api.i18n.Messages
 import play.api.libs.json.{Json, OWrites}
-import uk.gov.hmrc.viewmodels.SummaryList.Row
-import uk.gov.hmrc.viewmodels.{NunjucksSupport, Text}
-import utils.CheckEventAnswersHelper
+import viewModels.sections.{EventInfoSection, EventTypeSection, SealSection, Section}
 
-case class CheckEventAnswersViewModel(eventInfo: Section, otherInfo: Seq[Section])
+case class CheckEventAnswersViewModel(sections: Seq[Section])
 
-object CheckEventAnswersViewModel extends NunjucksSupport {
+object CheckEventAnswersViewModel {
 
   def apply(userAnswers: UserAnswers, eventIndex: Index, mode: Mode): CheckEventAnswersViewModel = {
-    val helper = new CheckEventAnswersHelper(userAnswers)
 
-    val isTranshipment = userAnswers.get(IsTranshipmentPage(eventIndex)).getOrElse(false)
+    val isTranshipment: Boolean = userAnswers.get(IsTranshipmentPage(eventIndex)).getOrElse(false)
 
-    def eventTypeSection(sectionText: Text): Seq[Section] =
-      Seq(
-        Some(Section(sectionText, Seq(helper.isTranshipment(eventIndex), helper.transhipmentType(eventIndex)).flatten)),
-        userAnswers
-          .get(DeriveNumberOfContainers(eventIndex))
-          .map {
-            containerCount =>
-              val listOfContainerIndexes = List.range(0, containerCount).map(Index(_))
-              val rows = listOfContainerIndexes.flatMap {
-                index =>
-                  helper.containerNumber(eventIndex, index)
+    val eventInfoSection: Section = EventInfoSection(userAnswers, eventIndex, isTranshipment)
 
-              }
-              Section(msg"checkEventAnswers.section.title.containerNumbers", rows)
-          }
-      ).flatten
+    val eventTypeSection: Seq[Section] = EventTypeSection(userAnswers, eventIndex, isTranshipment)
 
-    val eventInfo: Seq[Row] =
-      Seq(
-        helper.eventCountry(eventIndex),
-        helper.eventPlace(eventIndex),
-        helper.eventReported(eventIndex),
-        if (isTranshipment) None else { helper.isTranshipment(eventIndex) },
-        helper.incidentInformation(eventIndex)
-      ).flatten
-
-    val differentVehicleSection: Section = Section(
-      msg"checkEventAnswers.section.title.differentVehicle",
-      Seq(
-        if (isTranshipment) { helper.isTranshipment(eventIndex) } else None,
-        helper.transhipmentType(eventIndex),
-        helper.transportIdentity(eventIndex),
-        helper.transportNationality(eventIndex)
-      ).flatten
-    )
-
-    val sealSection: Section = {
-      val numberOfSeals    = userAnswers.get(DeriveNumberOfSeals(eventIndex)).getOrElse(0)
-      val listOfSealsIndex = List.range(0, numberOfSeals).map(Index(_))
-      val seals = listOfSealsIndex.flatMap {
-        index =>
-          helper.sealIdentity(eventIndex, index)
-      }
-
-      Section(msg"addSeal.sealList.heading", (helper.haveSealsChanged(eventIndex) ++ seals).toSeq)
-    }
-
-    val otherInfoSections: Seq[Section] = {
-      userAnswers
-        .get(TranshipmentTypePage(eventIndex))
-        .map {
-          case DifferentVehicle   => Seq(differentVehicleSection)
-          case DifferentContainer => eventTypeSection(msg"checkEventAnswers.section.title.differentContainer")
-          case DifferentContainerAndVehicle =>
-            eventTypeSection(msg"checkEventAnswers.section.title.differentContainerAndVehicle") :+
-              Section(
-                msg"checkEventAnswers.section.title.vehicleInformation",
-                Seq(
-                  helper.transportIdentity(eventIndex),
-                  helper.transportNationality(eventIndex)
-                ).flatten
-              )
-        }
-        .getOrElse(Seq.empty)
-    }
+    val sealSection: Section = SealSection(userAnswers, eventIndex)
 
     CheckEventAnswersViewModel(
-      Section(eventInfo),
-      otherInfoSections :+ sealSection
+      Seq(eventInfoSection) ++
+        eventTypeSection :+
+        sealSection
     )
   }
 

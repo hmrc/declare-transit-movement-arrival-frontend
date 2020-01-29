@@ -24,6 +24,7 @@ import uk.gov.hmrc.viewmodels.SummaryList.Key
 import uk.gov.hmrc.viewmodels.SummaryList.Row
 import uk.gov.hmrc.viewmodels.SummaryList.Value
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, Text}
+import viewModels.sections.Section
 
 class SectionSpec extends SpecBase with NunjucksSupport {
 
