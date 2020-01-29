@@ -163,19 +163,22 @@ goodsLocation.borderForceOffice = Border Force location
 goodsLocation.authorisedConsigneesLocation = Authorised consignee’s location
 goodsLocation.checkYourAnswersLabel = Where are the goods?
 goodsLocation.error.required = Select where the goods are
+goodsLocation.change.hidden = where the goods are
 
 presentationOffice.title = Which Border Force office supervises {0}?
 presentationOffice.heading = Which Border Force office supervises {0}?
 presentationOffice.hintText = Give the office location or code. For example, Dover or GB000060.
-presentationOffice.checkYourAnswersLabel = Which border force supervises {0}?
+presentationOffice.checkYourAnswersLabel = Which Border Force office supervises {0}?
 presentationOffice.error.required = Enter the Border Force office which supervises {0}
 presentationOffice.error.length = Border Force office must be 8 characters or less
+presentationOffice.change.hidden = which Border Force office supervises {0}
 
 customsSubPlace.title = Which customs sub-place or approved location has the goods?
 customsSubPlace.heading = Which customs sub-place or approved location has the goods?
 customsSubPlace.checkYourAnswersLabel = Which customs sub place or approved location has the goods?
 customsSubPlace.error.required = Enter the customs sub-place or approved location that has the goods
 customsSubPlace.error.length = Customs sub-place or approved location must be 17 characters or less
+customsSubPlace.change.hidden = the customs sub-place or approved location
 
 authorisedLocation.title = What is the authorised location code?
 authorisedLocation.heading = What is the authorised location code?
@@ -195,18 +198,21 @@ traderAddress.error.postcode.required = Enter the postcode of the trader at the 
 traderAddress.error.buildingAndStreet.length = Building and street must be 35 characters or less
 traderAddress.error.city.length = Town or city must be 35 characters or less
 traderAddress.error.postcode.length = Postcode must be 9 characters or less
+traderAddress.change.hidden = address of trader
 
 traderEori.title = What is the EORI number of the trader at destination?
 traderEori.heading = What is the EORI number of the trader at destination?
 traderEori.checkYourAnswersLabel = EORI number
 traderEori.error.required = Enter the EORI number of the trader at the destination
 traderEori.error.length = EORI number must be 17 characters or less
+traderEori.change.hidden = EORI number of trader
 
 traderName.title = What is the name of the trader at the destination?
 traderName.heading = What is the name of the trader at the destination?
 traderName.checkYourAnswersLabel = Name
 traderName.error.required = Enter the name of the trader at the destination
 traderName.error.length = Name of the trader must be 35 characters or less
+traderName.change.hidden = name of trader
 
 useDifferentService.title = You need to use a different service
 useDifferentService.heading = You need to use a different service
@@ -237,12 +243,14 @@ incidentOnRoute.hintText.bullet.5 = goods moved to a different type of transport
 incidentOnRoute.hintText.bullet.6 = the planned route changed
 incidentOnRoute.checkYourAnswersLabel = Did any events happen on the journey?
 incidentOnRoute.error.required = Select yes if there were events on the journey
+incidentOnRoute.change.hidden = if there was an event on the journey
 
 eventCountry.title = Which country were the goods in when it happened?
 eventCountry.heading = Which country were the goods in when it happened?
 eventCountry.checkYourAnswersLabel = Which country were the goods in when it happened?
 eventCountry.error.required = Which country were the goods in when it happened?
 eventCountry.error.length = Country must be 2 characters or less
+eventCountry.change.hidden = which country the goods were in when it happened
 
 eventPlace.title = Where did the event happen?
 eventPlace.heading = Where did the event happen?
@@ -250,22 +258,26 @@ eventPlace.hintText = Give the nearest town or road number.
 eventPlace.checkYourAnswersLabel = Where did the event happen?
 eventPlace.error.required = Enter where the event happened
 eventPlace.error.length = Where the event happened must be 35 characters or less
+eventPlace.change.hidden = where the event happened
 
 eventReported.title = Has this event been reported to a customs office?
 eventReported.heading = Has this event been reported to a customs office?
 eventReported.checkYourAnswersLabel = Has this event been reported to a customs office?
 eventReported.error.required = Select yes if the event has been reported
+eventReported.change.hidden = if this event has been reported to customs
 
 incidentInformation.title = What happened on the route?
 incidentInformation.heading = What happened on the route?
 incidentInformation.checkYourAnswersLabel = What happened on the route?
 incidentInformation.error.required = Enter what happened on the route
 incidentInformation.error.length = What happened on the route must be 350 characters or less
+incidentInformation.change.hidden = what happened on the journey
 
 isTranshipment.title = Did the goods move to a different vehicle or container?
 isTranshipment.heading = Did the goods move to a different vehicle or container?
 isTranshipment.checkYourAnswersLabel = Did the goods move to a different vehicle or container?
 isTranshipment.error.required = Select yes if the goods moved to a different vehicle or container
+isTranshipment.change.hidden = if the goods moved to a different vehicle or container
 
 sealsChanged.title = Have any of the seals changed?
 sealsChanged.heading = Have any of the seals changed?
@@ -282,11 +294,11 @@ checkEventAnswers.section.title.differentContainerAndVehicle = Different contain
 checkEventAnswers.section.title.containerNumbers = Container numbers
 checkEventAnswers.section.title.vehicleInformation = Vehicle information
 
-
 isTraderAddressPlaceOfNotification.title = Are you completing this arrival notification at the trader’s address?
 isTraderAddressPlaceOfNotification.heading = Are you completing this arrival notification at the trader’s address?
 isTraderAddressPlaceOfNotification.checkYourAnswersLabel = Are you completing this arrival notification at the trader’s address?
 isTraderAddressPlaceOfNotification.error.required = Select yes if you are completing this arrival notification at the trader’s address
+isTraderAddressPlaceOfNotification.change.hidden = if you are completing this arrival notification at the trader's address
 
 placeOfNotification.title = Where are you completing this arrival notification?
 placeOfNotification.heading = Where are you completing this arrival notification?
@@ -294,6 +306,7 @@ placeOfNotification.checkYourAnswersLabel = Where are you completing this arriva
 placeOfNotification.hintText = This is also known as the place of notification. Give the postcode.
 placeOfNotification.error.required = Enter where you are completing this arrival notification
 placeOfNotification.error.length = Where are you completing this arrival notification must be 35 characters or less
+placeOfNotification.change.hidden = where you are completing this arrival notification
 
 addEvent.title.singular = You have added {0} event
 addEvent.title.plural = You have added {0} events
@@ -308,10 +321,9 @@ addEvent.hintText.goods.unloaded = goods had to be unloaded
 addEvent.hintText.different.vehicle = goods moved to a different vehicle
 addEvent.hintText.type.of.transport = goods moved to a different type of transport
 addEvent.hintText.planned.route = the planned route changed
-addEvent.checkYourAnswersLabel = addEvent
 addEvent.error.required = Select yes if you need to add another event
-addEvent.checkYourAnswersLabel.change = Change event {0} at {1}?
-addEvent.checkYourAnswersLabel.delete = Remove event {0} at {1}?
+addEvent.change.hidden = event {0} at {1}
+addEvent.remove.hidden = event {0} at {1}
 
 transhipmentType.title = What did the goods move to?
 transhipmentType.heading = What did the goods move to?
@@ -320,24 +332,28 @@ transhipmentType.differentVehicle = A different vehicle
 transhipmentType.differentContainerAndVehicle = Both
 transhipmentType.checkYourAnswersLabel = What did the goods move to?
 transhipmentType.error.required = Select transhipmentType
+transhipmentType.change.hidden = what the goods moved to
 
 transportIdentity.title = What is the vehicle name, registration or reference?
 transportIdentity.heading = What is the vehicle name, registration or reference?
 transportIdentity.checkYourAnswersLabel = What is the vehicle name, registration or reference?
 transportIdentity.error.required = Enter the vehicle name, registration or reference
 transportIdentity.error.length = Vehicle name, registration or reference must be 27 characters or less
+transportIdentity.change.hidden = the vehicle name, registration or reference
 
 transportNationality.title = Which country is the vehicle registered in?
 transportNationality.heading = Which country is the vehicle registered in?
 transportNationality.checkYourAnswersLabel = Which country is the vehicle registered in?
 transportNationality.error.required = Enter which country the vehicle is registered in?
 transportNationality.error.length = TransportNationality must be TransportNationality characters or less
+transportNationality.change.hidden = the country where the vehicle is registered
 
 containerNumber.title = What is the new container number?
 containerNumber.heading = What is the new container number?
 containerNumber.checkYourAnswersLabel = What is the new container number?
 containerNumber.error.required = Enter the new container number
 containerNumber.error.length = New container number must be 17 characters or less
+containerNumber.change.hidden = container {0}
 containerNumber.error.duplicate = Enter a container number you have not given before
 
 addContainer.title.singular = You have added {0} container
@@ -346,8 +362,8 @@ addContainer.radio.label = Do you need to add another container?
 addContainer.checkYourAnswersLabel = You have added {0} containers
 addContainer.error.required = Select yes if you need to add another container
 addContainer.containerList.label = Container {0}
-addContainer.containerList.change = Change container number {0}?
-addContainer.containerList.delete = Remove container number {0}?
+addContainer.containerList.change.hidden = container {0}
+addContainer.containerList.delete.hidden = container {0}
 
 confirmRemoveContainer.title = Are you sure you want to remove the container {0}?
 confirmRemoveContainer.heading = Are you sure you want to remove the container {0}?
@@ -358,6 +374,7 @@ sealIdentity.heading = What is the new seal number or mark?
 sealIdentity.checkYourAnswersLabel = What is the new seal number or mark?
 sealIdentity.error.required = Enter the new seal number or mark
 sealIdentity.error.length = Seal number or mark must be 20 characters or less
+sealIdentity.change.hidden = seal {0}
 
 addSeal.title.singular = You have added {0} seal
 addSeal.title.plural = You have added {0} seals
@@ -368,13 +385,14 @@ addSeal.checkYourAnswersLabel = You have added {0} seals
 addSeal.error.required = Select yes if you need to add another seal
 addSeal.sealList.heading = Seals
 addSeal.sealList.label = Seal {0}
-addSeal.sealList.change = Change seal identity {0}?
-addSeal.sealList.delete = Remove seal identity {0}?
+addSeal.sealList.change.hidden = seal {0}
+addSeal.sealList.delete.hidden = seal {0}
 
 haveSealsChanged.title = Have any of the seals changed?
 haveSealsChanged.heading = Have any of the seals changed?
 haveSealsChanged.checkYourAnswersLabel = Have any of the seals changed?
 haveSealsChanged.error.required = Select yes if any seals have changed
+haveSealsChanged.change.hidden = if any of the seals changed
 
 confirmRemoveSeal.title = Are you sure you want to remove the seal {0}?
 confirmRemoveSeal.heading = Are you sure you want to remove the seal {0}?

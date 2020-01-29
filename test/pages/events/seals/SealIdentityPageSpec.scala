@@ -16,20 +16,22 @@
 
 package pages.events.seals
 
+import generators.MessagesModelGenerators
 import models.Index
+import models.messages.Seal
 import pages.behaviours.PageBehaviours
 
-class SealIdentityPageSpec extends PageBehaviours {
+class SealIdentityPageSpec extends PageBehaviours with MessagesModelGenerators {
 
-  val eventIndex = Index(0)
-  val sealIndex  = Index(0)
+  val eventIndex: Index = Index(0)
+  val sealIndex: Index  = Index(0)
 
   "SealIdentityPage" - {
 
-    beRetrievable[String](SealIdentityPage(eventIndex, sealIndex))
+    beRetrievable[Seal](SealIdentityPage(eventIndex, sealIndex))
 
-    beSettable[String](SealIdentityPage(eventIndex, sealIndex))
+    beSettable[Seal](SealIdentityPage(eventIndex, sealIndex))
 
-    beRemovable[String](SealIdentityPage(eventIndex, sealIndex))
+    beRemovable[Seal](SealIdentityPage(eventIndex, sealIndex))
   }
 }

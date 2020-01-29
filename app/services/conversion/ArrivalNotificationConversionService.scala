@@ -94,7 +94,7 @@ class ArrivalNotificationConversionService {
                 countryCode   = country.code,
                 alreadyInNcts = isReported,
                 eventDetails  = eventDetails(incidentInformation, transportIdentity, transportCountry.map(_.code), containers),
-                seals         = userAnswers.get(SealsQuery(eventIndex)).map(seals => seals.map(Seal(_)))
+                seals         = userAnswers.get(SealsQuery(eventIndex))
               )
             }
         }

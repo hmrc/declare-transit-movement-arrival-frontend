@@ -28,19 +28,19 @@ class AddEventsHelper(userAnswers: UserAnswers) {
     placeOfEvent(eventIndex).map {
       answer =>
         Row(
-          key   = Key(msg"addEvent.event.label".withArgs(eventIndex.display), classes = Seq("govuk-!-width-one-half")), // TODO: Move harded coded interpretation of eventIndex to an Index Model
+          key   = Key(msg"addEvent.event.label".withArgs(eventIndex.display), classes = Seq("govuk-!-width-one-half")),
           value = Value(lit"$answer"),
           actions = List(
             Action(
               content            = msg"site.edit",
               href               = eventRoutes.CheckEventAnswersController.onPageLoad(mrn, eventIndex).url,
-              visuallyHiddenText = Some(msg"addEvent.checkYourAnswersLabel.change".withArgs(eventIndex, answer)), // TODO: Prefix in message file for is hard coded, should be the same as: site.edit.hidden
+              visuallyHiddenText = Some(msg"addEvent.change.hidden".withArgs(eventIndex.display, answer)),
               attributes         = Map("id" -> s"""change-event-${eventIndex.display}""")
             ),
             Action(
               content            = msg"site.delete",
               href               = eventRoutes.ConfirmRemoveEventController.onPageLoad(mrn, eventIndex, NormalMode).url,
-              visuallyHiddenText = Some(msg"addEvent.checkYourAnswersLabel.delete".withArgs(eventIndex, answer)), // TODO: Prefix in message file for is hard coded, should be the same as: site.delete.hidden
+              visuallyHiddenText = Some(msg"addEvent.remove.hidden".withArgs(eventIndex.display, answer)),
               attributes         = Map("id" -> s"""remove-event-${eventIndex.display}""")
             )
           )
@@ -57,7 +57,7 @@ class AddEventsHelper(userAnswers: UserAnswers) {
             Action(
               content            = msg"site.edit",
               href               = eventRoutes.CheckEventAnswersController.onPageLoad(mrn, eventIndex).url,
-              visuallyHiddenText = Some(msg"addEvent.checkYourAnswersLabel.change".withArgs(eventIndex, answer)) // TODO: Prefix in message file for is hard coded, should be the same as: site.edit.hidden
+              visuallyHiddenText = Some(msg"addEvent.change.hidden".withArgs(eventIndex.display, answer))
             )
           )
         )
