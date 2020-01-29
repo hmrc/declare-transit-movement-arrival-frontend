@@ -20,7 +20,7 @@ import base.SpecBase
 import generators.MessagesModelGenerators
 import models.{CheckMode, Index}
 import models.TranshipmentType._
-import models.messages.Container
+import models.messages.{Container, Seal}
 import models.reference.Country
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.IncidentOnRoutePage
@@ -84,8 +84,8 @@ class CheckEventAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChe
         .set(IsTranshipmentPage(eventIndex), false).success.value
         .set(IncidentInformationPage(eventIndex), "value").success.value
         .set(HaveSealsChangedPage(eventIndex), true).success.value
-        .set(SealIdentityPage(eventIndex, Index(0)), "seal1").success.value
-        .set(SealIdentityPage(eventIndex, Index(1)), "seal2").success.value
+        .set(SealIdentityPage(eventIndex, Index(0)), Seal("seal1")).success.value
+        .set(SealIdentityPage(eventIndex, Index(1)), Seal("seal2")).success.value
 
       val vm = CheckEventAnswersViewModel(ua, eventIndex, CheckMode)
 

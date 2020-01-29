@@ -24,7 +24,7 @@ import controllers.routes
 import generators.{Generators, MessagesModelGenerators}
 import models.TranshipmentType.{DifferentContainer, DifferentContainerAndVehicle, DifferentVehicle}
 import models._
-import models.messages.{Container, EnRouteEvent}
+import models.messages.{Container, EnRouteEvent, Seal}
 import models.reference.Country
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
@@ -816,10 +816,10 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         }
 
         "to 'add seal page'" in {
-          forAll(arbitrary[UserAnswers], arbitrary[String]) {
-            (answers, sealsIdentity) =>
+          forAll(arbitrary[UserAnswers], arbitrary[Seal]) {
+            (answers, seal) =>
               val updatedAnswers = answers
-                .set(SealIdentityPage(eventIndex, sealIndex), sealsIdentity)
+                .set(SealIdentityPage(eventIndex, sealIndex), seal)
                 .success
                 .value
                 .set(HaveSealsChangedPage(eventIndex), true)
@@ -836,9 +836,9 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
       "must go from seals identity page" - {
 
         "to check event answers page" in {
-          forAll(arbitrary[UserAnswers], arbitrary[String]) {
-            (answers, sealsIdentity) =>
-              val updatedAnswers = answers.set(SealIdentityPage(eventIndex, sealIndex), sealsIdentity).success.value
+          forAll(arbitrary[UserAnswers], arbitrary[Seal]) {
+            (answers, seal) =>
+              val updatedAnswers = answers.set(SealIdentityPage(eventIndex, sealIndex), seal).success.value
 
               navigator
                 .nextPage(SealIdentityPage(eventIndex, sealIndex), NormalMode, updatedAnswers)
@@ -867,7 +867,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
             .set(AddSealPage(eventIndex), true)
             .success
             .value
-            .set(SealIdentityPage(eventIndex, sealIndex), "seal1")
+            .set(SealIdentityPage(eventIndex, sealIndex), Seal("seal1"))
             .success
             .value
 
@@ -879,10 +879,10 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
       "go from remove seals page" - {
         "add seals page when 'Yes' is selected and there are still seals" in {
-          forAll(arbitrary[UserAnswers], stringsWithMaxLength(EnRouteEvent.Constants.sealsLength)) {
-            case (userAnswers, sealId) =>
+          forAll(arbitrary[UserAnswers], arbitrary[Seal]) {
+            case (userAnswers, seal) =>
               val updatedAnswers = userAnswers
-                .set(SealIdentityPage(eventIndex, sealIndex), sealId)
+                .set(SealIdentityPage(eventIndex, sealIndex), seal)
                 .success
                 .value
 

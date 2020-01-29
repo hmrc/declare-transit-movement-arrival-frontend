@@ -79,12 +79,12 @@ class ConfirmRemoveSealController @Inject()(
   private def renderView(mrn: MovementReferenceNumber, eventIndex: Index, sealIndex: Index, mode: Mode, form: Form[Boolean], status: Status)(
     implicit request: DataRequest[AnyContent]): Future[Result] =
     request.userAnswers.get(SealIdentityPage(eventIndex, sealIndex)) match {
-      case Some(sealNumber) =>
+      case Some(seal) =>
         val json = Json.obj(
           "form"       -> form,
           "mode"       -> mode,
           "mrn"        -> mrn,
-          "sealNumber" -> sealNumber,
+          "sealNumber" -> seal.numberOrMark,
           "radios"     -> Radios.yesNo(form("value"))
         )
         renderer.render("events/seals/confirmRemoveSeal.njk", json).map(status(_))
