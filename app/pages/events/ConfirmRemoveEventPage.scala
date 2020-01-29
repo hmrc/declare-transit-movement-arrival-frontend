@@ -16,6 +16,7 @@
 
 package pages.events
 
+import models.Index
 import pages.Page
 
-final case class ConfirmRemoveEventPage(index: Int) extends Page
+final case class ConfirmRemoveEventPage(index: Index) extends Page

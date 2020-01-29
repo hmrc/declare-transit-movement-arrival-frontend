@@ -18,7 +18,7 @@ package pages.events.transhipments
 
 import generators.MessagesModelGenerators
 import models.messages.Container
-import models.{TranshipmentType, UserAnswers}
+import models.{Index, TranshipmentType, UserAnswers}
 import models.TranshipmentType._
 import models.reference.Country
 import org.scalacheck.Arbitrary.arbitrary
@@ -27,15 +27,15 @@ import queries.ContainersQuery
 
 class TranshipmentTypePageSpec extends PageBehaviours with MessagesModelGenerators {
 
-  val index = 0
+  val eventIndex = Index(0)
 
   "TranshipmentTypePage" - {
 
-    beRetrievable[TranshipmentType](TranshipmentTypePage(index))
+    beRetrievable[TranshipmentType](TranshipmentTypePage(eventIndex))
 
-    beSettable[TranshipmentType](TranshipmentTypePage(index))
+    beSettable[TranshipmentType](TranshipmentTypePage(eventIndex))
 
-    beRemovable[TranshipmentType](TranshipmentTypePage(index))
+    beRemovable[TranshipmentType](TranshipmentTypePage(eventIndex))
 
     "cleanup" - {
       "must remove transport identity and nationality when the answer change to Different Container" in {
@@ -43,21 +43,21 @@ class TranshipmentTypePageSpec extends PageBehaviours with MessagesModelGenerato
         forAll(arbitrary[UserAnswers], arbitrary[String], arbitrary[Country]) {
           (userAnswers, transportIdentity, transportNationality) =>
             val result = userAnswers
-              .set(TranshipmentTypePage(index), DifferentVehicle)
+              .set(TranshipmentTypePage(eventIndex), DifferentVehicle)
               .success
               .value
-              .set(TransportIdentityPage(index), transportIdentity)
+              .set(TransportIdentityPage(eventIndex), transportIdentity)
               .success
               .value
-              .set(TransportNationalityPage(index), transportNationality)
+              .set(TransportNationalityPage(eventIndex), transportNationality)
               .success
               .value
-              .set(TranshipmentTypePage(index), DifferentContainer)
+              .set(TranshipmentTypePage(eventIndex), DifferentContainer)
               .success
               .value
 
-            result.get(TransportIdentityPage(index)) must not be defined
-            result.get(TransportNationalityPage(index)) must not be defined
+            result.get(TransportIdentityPage(eventIndex)) must not be defined
+            result.get(TransportNationalityPage(eventIndex)) must not be defined
         }
       }
 
@@ -66,20 +66,20 @@ class TranshipmentTypePageSpec extends PageBehaviours with MessagesModelGenerato
         forAll(arbitrary[UserAnswers], arbitrary[Container]) {
           (userAnswers, containerNumber) =>
             val result = userAnswers
-              .set(TranshipmentTypePage(index), DifferentContainer)
+              .set(TranshipmentTypePage(eventIndex), DifferentContainer)
               .success
               .value
-              .set(ContainerNumberPage(index, 0), containerNumber)
+              .set(ContainerNumberPage(eventIndex, Index(0)), containerNumber)
               .success
               .value
-              .set(ContainerNumberPage(index, 1), containerNumber)
+              .set(ContainerNumberPage(eventIndex, Index(1)), containerNumber)
               .success
               .value
-              .set(TranshipmentTypePage(index), TranshipmentType.DifferentVehicle)
+              .set(TranshipmentTypePage(eventIndex), TranshipmentType.DifferentVehicle)
               .success
               .value
 
-            result.get(ContainersQuery(index)) must not be defined
+            result.get(ContainersQuery(eventIndex)) must not be defined
         }
       }
 
@@ -88,26 +88,26 @@ class TranshipmentTypePageSpec extends PageBehaviours with MessagesModelGenerato
         forAll(arbitrary[UserAnswers], arbitrary[String], arbitrary[Container], arbitrary[Country]) {
           (userAnswers, stringAnswer, container, country) =>
             val result = userAnswers
-              .set(TransportIdentityPage(index), stringAnswer)
+              .set(TransportIdentityPage(eventIndex), stringAnswer)
               .success
               .value
-              .set(TransportNationalityPage(index), country)
+              .set(TransportNationalityPage(eventIndex), country)
               .success
               .value
-              .set(ContainerNumberPage(index, 0), container)
+              .set(ContainerNumberPage(eventIndex, Index(0)), container)
               .success
               .value
-              .set(ContainerNumberPage(index, 1), container)
+              .set(ContainerNumberPage(eventIndex, Index(1)), container)
               .success
               .value
-              .remove(TranshipmentTypePage(index))
+              .remove(TranshipmentTypePage(eventIndex))
               .success
               .value
 
-            result.get(TransportIdentityPage(index)) must not be defined
-            result.get(TransportNationalityPage(index)) must not be defined
-            result.get(ContainerNumberPage(index, 0)) must not be defined
-            result.get(ContainerNumberPage(index, 1)) must not be defined
+            result.get(TransportIdentityPage(eventIndex)) must not be defined
+            result.get(TransportNationalityPage(eventIndex)) must not be defined
+            result.get(ContainerNumberPage(eventIndex, Index(0))) must not be defined
+            result.get(ContainerNumberPage(eventIndex, Index(1))) must not be defined
         }
       }
     }

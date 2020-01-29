@@ -16,19 +16,20 @@
 
 package pages.events.transhipments
 
+import models.Index
 import models.reference.Country
 import pages.behaviours.PageBehaviours
 
 class TransportNationalityPageSpec extends PageBehaviours {
 
-  val index = 0
+  val eventIndex = Index(0)
 
   "TransportNationalityPage" - {
 
-    beRetrievable[Country](TransportNationalityPage(index))
+    beRetrievable[Country](TransportNationalityPage(eventIndex))
 
-    beSettable[Country](TransportNationalityPage(index))
+    beSettable[Country](TransportNationalityPage(eventIndex))
 
-    beRemovable[Country](TransportNationalityPage(index))
+    beRemovable[Country](TransportNationalityPage(eventIndex))
   }
 }

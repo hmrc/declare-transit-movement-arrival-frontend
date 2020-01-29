@@ -15,13 +15,13 @@
  */
 
 package derivable
+import models.Index
 import pages.events.SectionConstants
 import play.api.libs.json.{JsObject, JsPath}
-import queries.EventsQuery
 
-final case class DeriveNumberOfContainers(eventIndex: Int) extends Derivable[List[JsObject], Int] {
+final case class DeriveNumberOfContainers(eventIndex: Index) extends Derivable[List[JsObject], Int] {
 
   override val derive: List[JsObject] => Int = _.size
 
-  override def path: JsPath = JsPath \ SectionConstants.events \ eventIndex \ SectionConstants.containers
+  override def path: JsPath = JsPath \ SectionConstants.events \ eventIndex.position \ SectionConstants.containers
 }

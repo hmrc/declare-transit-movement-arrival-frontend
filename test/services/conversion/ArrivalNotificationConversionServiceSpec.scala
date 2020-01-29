@@ -23,7 +23,7 @@ import generators.MessagesModelGenerators
 import models.GoodsLocation.BorderForceOffice
 import models.messages.{NormalNotification, _}
 import models.reference.{Country, CustomsOffice}
-import models.{TraderAddress, UserAnswers}
+import models.{Index, TraderAddress, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -134,8 +134,8 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
             .set(EventReportedPage(eventIndex), routeEvent.alreadyInNcts).success.value
             .set(TransportIdentityPage(eventIndex), vehicularTranshipment.transportIdentity).success.value
             .set(TransportNationalityPage(eventIndex), Country("Valid",vehicularTranshipment.transportCountry, "country name")).success.value
-            .set(SealIdentityPage(eventIndex, 0), "seal 1").success.value
-            .set(SealIdentityPage(eventIndex, 1), "seal 2").success.value
+            .set(SealIdentityPage(eventIndex, Index(0)), "seal 1").success.value
+            .set(SealIdentityPage(eventIndex, Index(1)), "seal 2").success.value
 
           service.convertToArrivalNotification(userAnswers).value mustEqual arrivalNotification
       }
@@ -163,7 +163,7 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
           val userAnswers: UserAnswers = emptyUserAnswers
             .set(MovementReferenceNumberPage, expectedArrivalNotification.movementReferenceNumber).success.value
             .set(GoodsLocationPage, BorderForceOffice).success.value
-            .set(PresentationOfficePage, CustomsOffice(id = expectedArrivalNotification.presentationOffice, name = "name", roles = Seq.empty)).success.value
+            .set(PresentationOfficePage, CustomsOffice(id = expectedArrivalNotification.presentationOffice, name = "name", roles = Seq.empty, None)).success.value
             .set(CustomsSubPlacePage, expectedArrivalNotification.customsSubPlace.value).success.value
             .set(TraderNamePage, trader.name.value).success.value
             .set(TraderAddressPage, TraderAddress(buildingAndStreet = trader.streetAndNumber.value, city = trader.city.value, postcode = trader.postCode.value)).success.value
@@ -193,15 +193,17 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
 
           val arrivalNotification: NormalNotification = arbArrivalNotification.copy(enRouteEvents = Some(Seq(routeEvent1, routeEvent2)))
 
+          val eventIndex2 = Index(1)
+
           val userAnswers: UserAnswers = createBasicUserAnswers(trader, arrivalNotification, isIncidentOnRoute = true)
             .set(IsTranshipmentPage(eventIndex), false).success.value
             .set(EventPlacePage(eventIndex), routeEvent1.place).success.value
             .set(EventCountryPage(eventIndex), Country("Valid", routeEvent1.countryCode, "country name")).success.value
             .set(EventReportedPage(eventIndex), routeEvent1.alreadyInNcts).success.value
-            .set(IsTranshipmentPage(eventIndex + 1), false).success.value
-            .set(EventPlacePage(eventIndex + 1), routeEvent2.place).success.value
-            .set(EventCountryPage(eventIndex + 1), Country("Valid", routeEvent2.countryCode, "country name")).success.value
-            .set(EventReportedPage(eventIndex + 1), routeEvent2.alreadyInNcts).success.value
+            .set(IsTranshipmentPage(eventIndex2), false).success.value
+            .set(EventPlacePage(eventIndex2), routeEvent2.place).success.value
+            .set(EventCountryPage(eventIndex2), Country("Valid", routeEvent2.countryCode, "country name")).success.value
+            .set(EventReportedPage(eventIndex2), routeEvent2.alreadyInNcts).success.value
 
           val updatedAnswers1 = incident1.information.fold[UserAnswers](userAnswers) {
             _ =>
@@ -210,7 +212,7 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
 
           val updatedAnswers = incident2.information.fold[UserAnswers](updatedAnswers1) {
             _ =>
-              updatedAnswers1.set(IncidentInformationPage(eventIndex + 1), incident2.information.value).success.value
+              updatedAnswers1.set(IncidentInformationPage(eventIndex2), incident2.information.value).success.value
           }
 
           service.convertToArrivalNotification(updatedAnswers).value mustEqual arrivalNotification
@@ -245,7 +247,7 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
     emptyUserAnswers
       .set(MovementReferenceNumberPage, arrivalNotification.movementReferenceNumber).success.value
       .set(GoodsLocationPage, BorderForceOffice).success.value
-      .set(PresentationOfficePage, CustomsOffice(id = arrivalNotification.presentationOffice, name = "name", roles = Seq.empty)).success.value
+      .set(PresentationOfficePage, CustomsOffice(id = arrivalNotification.presentationOffice, name = "name", roles = Seq.empty, None)).success.value
       .set(CustomsSubPlacePage, arrivalNotification.customsSubPlace.value).success.value
       .set(TraderNamePage, trader.name.value).success.value
       .set(TraderAddressPage, TraderAddress(buildingAndStreet = trader.streetAndNumber.value, city = trader.city.value, postcode = trader.postCode.value)).success.value

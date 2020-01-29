@@ -17,18 +17,18 @@
 package utils
 
 import controllers.events.seals.routes._
-import models.{CheckMode, Mode, UserAnswers}
+import models.{Index, Mode, UserAnswers}
 import pages.events.seals._
 import uk.gov.hmrc.viewmodels.SummaryList.{Action, Key, Row, Value}
 import uk.gov.hmrc.viewmodels._
 
 class AddSealHelper(userAnswers: UserAnswers) {
 
-  def sealRow(eventIndex: Int, sealIndex: Int, mode: Mode): Option[Row] =
+  def sealRow(eventIndex: Index, sealIndex: Index, mode: Mode): Option[Row] =
     userAnswers.get(SealIdentityPage(eventIndex, sealIndex)).map {
       answer =>
         Row(
-          key   = Key(msg"addSeal.sealList.label".withArgs(sealIndex + 1), classes = Seq("govuk-!-width-one-half")), // TODO: Move harded coded interpretation of index to an Index Model
+          key   = Key(msg"addSeal.sealList.label".withArgs(sealIndex.display), classes = Seq("govuk-!-width-one-half")),
           value = Value(lit"$answer"),
           actions = List(
             Action(

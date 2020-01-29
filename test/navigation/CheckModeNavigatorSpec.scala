@@ -25,13 +25,13 @@ import generators.{Generators, MessagesModelGenerators}
 import models.TranshipmentType.{DifferentContainer, DifferentContainerAndVehicle, DifferentVehicle}
 import models.messages.Container
 import models.reference.Country
-import models.{CheckMode, GoodsLocation, NormalMode, TranshipmentType, UserAnswers}
+import models.{CheckMode, GoodsLocation, Index, NormalMode, TranshipmentType, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.events._
 import pages._
-import pages.events.seals.{HaveSealsChangedPage, SealIdentityPage}
+import pages.events.seals.{AddSealPage, HaveSealsChangedPage, SealIdentityPage}
 import pages.events.transhipments.{
   AddContainerPage,
   ConfirmRemoveContainerPage,
@@ -611,6 +611,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
       }
 
       "to ContainerNumber page in when true with the index increased" in {
+        val nextIndex = Index(containerIndex.position + 1)
         forAll(arbitrary[UserAnswers], arbitrary[Container]) {
           (answers, container) =>
             val updatedAnswers = answers
@@ -623,7 +624,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
             navigator
               .nextPage(AddContainerPage(eventIndex), CheckMode, updatedAnswers)
-              .mustBe(transhipmentRoutes.ContainerNumberController.onPageLoad(updatedAnswers.id, eventIndex, 1, CheckMode))
+              .mustBe(transhipmentRoutes.ContainerNumberController.onPageLoad(updatedAnswers.id, eventIndex, nextIndex, CheckMode))
         }
       }
 
@@ -667,6 +668,37 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
             navigator
               .nextPage(HaveSealsChangedPage(eventIndex), CheckMode, updatedAnswers)
               .mustBe(sealRoutes.SealIdentityController.onPageLoad(answers.id, eventIndex, sealIndex, CheckMode))
+        }
+      }
+
+      "go from addSealPage to sealIdentity when Yes is selected" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers = answers
+              .remove(SealIdentityPage(eventIndex, sealIndex))
+              .success
+              .value
+              .set(AddSealPage(eventIndex), true)
+              .success
+              .value
+
+            navigator
+              .nextPage(AddSealPage(eventIndex), CheckMode, updatedAnswers)
+              .mustBe(sealRoutes.SealIdentityController.onPageLoad(answers.id, eventIndex, sealIndex, CheckMode))
+        }
+      }
+
+      "go from addSealPage to checkEventAnswers when No is selected" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers = answers
+              .set(AddSealPage(eventIndex), false)
+              .success
+              .value
+
+            navigator
+              .nextPage(AddSealPage(eventIndex), CheckMode, updatedAnswers)
+              .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(answers.id, eventIndex))
         }
       }
     }
@@ -733,7 +765,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
     "must go from Confirm remove container page" - {
 
-      "to Add container page when multiple containers exist" in {
+      "to Add container page when containers exist" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
             val updatedAnswers = answers
@@ -755,10 +787,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
               .set(TranshipmentTypePage(eventIndex), DifferentContainer)
               .success
               .value
-              .set(ContainerNumberPage(eventIndex, eventIndex), Container("1"))
-              .success
-              .value
-              .set(ContainerNumberPage(eventIndex, eventIndex + 1), Container("2"))
+              .set(ContainerNumberPage(eventIndex, containerIndex), Container("1"))
               .success
               .value
             navigator

@@ -16,7 +16,7 @@
 
 package pages.events.seals
 
-import models.UserAnswers
+import models.{Index, UserAnswers}
 import pages.QuestionPage
 import pages.events.SectionConstants
 import play.api.libs.json.JsPath
@@ -24,15 +24,15 @@ import queries.SealsQuery
 
 import scala.util.Try
 
-case class HaveSealsChangedPage(index: Int) extends QuestionPage[Boolean] {
+case class HaveSealsChangedPage(eventIndex: Index) extends QuestionPage[Boolean] {
 
-  override def path: JsPath = JsPath \ SectionConstants.events \ index \ toString
+  override def path: JsPath = JsPath \ SectionConstants.events \ eventIndex.position \ toString
 
   override def toString: String = "haveSealsChanged"
 
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
     value match {
-      case Some(false) => userAnswers.remove(SealsQuery(index))
+      case Some(false) => userAnswers.remove(SealsQuery(eventIndex))
       case _           => super.cleanup(value, userAnswers)
     }
 }

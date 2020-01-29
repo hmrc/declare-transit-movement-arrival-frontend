@@ -28,7 +28,7 @@ class PresentationOfficeFormProviderSpec extends StringFieldBehaviours with Spec
   val lengthKey           = "presentationOffice.error.length"
   val maxLength           = 8
 
-  val customsOffices = Seq(CustomsOffice("id", "name", Seq.empty), CustomsOffice("GB000003", "someName", Seq.empty))
+  val customsOffices = Seq(CustomsOffice("id", "name", Seq.empty, None), CustomsOffice("GB000003", "someName", Seq.empty, None))
   val form           = new PresentationOfficeFormProvider()(subPlace, customsOffices)
 
   ".value" - {

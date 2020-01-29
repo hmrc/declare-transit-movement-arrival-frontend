@@ -19,7 +19,7 @@ package controllers.events
 import controllers.actions._
 import forms.IncidentInformationFormProvider
 import javax.inject.Inject
-import models.{Mode, MovementReferenceNumber}
+import models.{Index, Mode, MovementReferenceNumber}
 import navigation.Navigator
 import pages.events.IncidentInformationPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -47,10 +47,10 @@ class IncidentInformationController @Inject()(override val messagesApi: Messages
 
   private val form = formProvider()
 
-  def onPageLoad(mrn: MovementReferenceNumber, index: Int, mode: Mode): Action[AnyContent] =
+  def onPageLoad(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode): Action[AnyContent] =
     (identify andThen getData(mrn) andThen requireData).async {
       implicit request =>
-        val preparedForm = request.userAnswers.get(IncidentInformationPage(index)) match {
+        val preparedForm = request.userAnswers.get(IncidentInformationPage(eventIndex)) match {
           case None        => form
           case Some(value) => form.fill(value)
         }
@@ -64,7 +64,7 @@ class IncidentInformationController @Inject()(override val messagesApi: Messages
         renderer.render("events/incidentInformation.njk", json).map(Ok(_))
     }
 
-  def onSubmit(mrn: MovementReferenceNumber, index: Int, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onSubmit(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
       form
         .bindFromRequest()
@@ -81,9 +81,9 @@ class IncidentInformationController @Inject()(override val messagesApi: Messages
           },
           value =>
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(IncidentInformationPage(index), value))
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(IncidentInformationPage(eventIndex), value))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(IncidentInformationPage(index), mode, updatedAnswers))
+            } yield Redirect(navigator.nextPage(IncidentInformationPage(eventIndex), mode, updatedAnswers))
         )
   }
 }

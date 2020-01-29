@@ -16,6 +16,7 @@
 
 package pages.events.seals
 
+import models.Index
 import pages.Page
 
-final case class ConfirmRemoveSealPage(eventIndex: Int) extends Page
+final case class ConfirmRemoveSealPage(eventIndex: Index) extends Page

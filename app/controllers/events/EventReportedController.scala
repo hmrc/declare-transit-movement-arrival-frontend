@@ -19,7 +19,7 @@ package controllers.events
 import controllers.actions._
 import forms.events.EventReportedFormProvider
 import javax.inject.Inject
-import models.{Mode, MovementReferenceNumber}
+import models.{Index, Mode, MovementReferenceNumber}
 import navigation.Navigator
 import pages.events.EventReportedPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -47,9 +47,9 @@ class EventReportedController @Inject()(override val messagesApi: MessagesApi,
 
   private val form = formProvider()
 
-  def onPageLoad(mrn: MovementReferenceNumber, index: Int, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onPageLoad(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
-      val preparedForm = request.userAnswers.get(EventReportedPage(index)) match {
+      val preparedForm = request.userAnswers.get(EventReportedPage(eventIndex)) match {
         case None        => form
         case Some(value) => form.fill(value)
       }
@@ -64,7 +64,7 @@ class EventReportedController @Inject()(override val messagesApi: MessagesApi,
       renderer.render("events/eventReported.njk", json).map(Ok(_))
   }
 
-  def onSubmit(mrn: MovementReferenceNumber, index: Int, mode: Mode): Action[AnyContent] =
+  def onSubmit(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode): Action[AnyContent] =
     (identify andThen getData(mrn) andThen requireData).async {
       implicit request =>
         form
@@ -83,9 +83,9 @@ class EventReportedController @Inject()(override val messagesApi: MessagesApi,
             },
             value =>
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(EventReportedPage(index), value))
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(EventReportedPage(eventIndex), value))
                 _              <- sessionRepository.set(updatedAnswers)
-              } yield Redirect(navigator.nextPage(EventReportedPage(index), mode, updatedAnswers))
+              } yield Redirect(navigator.nextPage(EventReportedPage(eventIndex), mode, updatedAnswers))
           )
     }
 }

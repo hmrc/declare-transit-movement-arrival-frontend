@@ -16,45 +16,45 @@
 
 package pages.events
 
-import models.{TranshipmentType, UserAnswers}
+import models.{Index, TranshipmentType, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
 import pages.events.transhipments.{TranshipmentTypePage, TransportIdentityPage, TransportNationalityPage}
 
 class EventReportedPageSpec extends PageBehaviours {
 
-  val index = 0
+  val eventIndex = Index(0)
 
   "EventReportedPage" - {
 
-    beRetrievable[Boolean](EventReportedPage(index))
+    beRetrievable[Boolean](EventReportedPage(eventIndex))
 
-    beSettable[Boolean](EventReportedPage(index))
+    beSettable[Boolean](EventReportedPage(eventIndex))
 
-    beRemovable[Boolean](EventReportedPage(index))
+    beRemovable[Boolean](EventReportedPage(eventIndex))
 
     "cleanup" - {
       "must remove incident information when IsTranshipmentPage is change to true" in {
         forAll(arbitrary[UserAnswers], arbitrary[Boolean], arbitrary[String]) {
           (userAnswers, eventReportedAnswer, incidentInformationAnswer) =>
             val ua = userAnswers
-              .set(IsTranshipmentPage(index), false)
+              .set(IsTranshipmentPage(eventIndex), false)
               .success
               .value
-              .set(IncidentInformationPage(index), incidentInformationAnswer)
+              .set(IncidentInformationPage(eventIndex), incidentInformationAnswer)
               .success
               .value
-              .set(IsTranshipmentPage(index), true)
+              .set(IsTranshipmentPage(eventIndex), true)
               .success
               .value
 
             val result = ua
-              .set(EventReportedPage(index), eventReportedAnswer)
+              .set(EventReportedPage(eventIndex), eventReportedAnswer)
               .success
               .value
 
-            result.get(IsTranshipmentPage(index)).value mustEqual true
-            result.get(IncidentInformationPage(index)) must not be defined
+            result.get(IsTranshipmentPage(eventIndex)).value mustEqual true
+            result.get(IncidentInformationPage(eventIndex)) must not be defined
         }
       }
 
@@ -62,21 +62,21 @@ class EventReportedPageSpec extends PageBehaviours {
         forAll(arbitrary[UserAnswers], arbitrary[String]) {
           (userAnswers, incidentInformation) =>
             val result = userAnswers
-              .set(EventReportedPage(index), false)
+              .set(EventReportedPage(eventIndex), false)
               .success
               .value
-              .set(IsTranshipmentPage(index), false)
+              .set(IsTranshipmentPage(eventIndex), false)
               .success
               .value
-              .set(IncidentInformationPage(index), incidentInformation)
+              .set(IncidentInformationPage(eventIndex), incidentInformation)
               .success
               .value
-              .set(EventReportedPage(index), true)
+              .set(EventReportedPage(eventIndex), true)
               .success
               .value
 
-            result.get(IsTranshipmentPage(index)).value mustEqual false
-            result.get(IncidentInformationPage(index)) must not be defined
+            result.get(IsTranshipmentPage(eventIndex)).value mustEqual false
+            result.get(IncidentInformationPage(eventIndex)) must not be defined
         }
       }
 
@@ -84,20 +84,20 @@ class EventReportedPageSpec extends PageBehaviours {
         forAll(arbitrary[UserAnswers], arbitrary[String]) {
           (userAnswers, incidentInformation) =>
             val ua = userAnswers
-              .set(IsTranshipmentPage(index), false)
+              .set(IsTranshipmentPage(eventIndex), false)
               .success
               .value
-              .set(IncidentInformationPage(index), incidentInformation)
+              .set(IncidentInformationPage(eventIndex), incidentInformation)
               .success
               .value
 
             val result = ua
-              .set(EventReportedPage(index), false)
+              .set(EventReportedPage(eventIndex), false)
               .success
               .value
 
-            result.get(IsTranshipmentPage(index)).value mustEqual false
-            result.get(IncidentInformationPage(index)) must be(defined)
+            result.get(IsTranshipmentPage(eventIndex)).value mustEqual false
+            result.get(IncidentInformationPage(eventIndex)) must be(defined)
         }
       }
 

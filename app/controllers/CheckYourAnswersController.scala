@@ -20,7 +20,7 @@ import com.google.inject.Inject
 import derivable.DeriveNumberOfEvents
 import controllers.actions.{DataRequiredAction, DataRetrievalActionProvider, IdentifierAction}
 import handlers.ErrorHandler
-import models.{MovementReferenceNumber, UserAnswers}
+import models.{Index, MovementReferenceNumber, UserAnswers}
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -79,19 +79,31 @@ class CheckYourAnswersController @Inject()(override val messagesApi: MessagesApi
         msg"checkYourAnswers.section.goodsLocation",
         Seq(helper.goodsLocation, helper.authorisedLocation, helper.customsSubPlace, helper.presentationOffice).flatten
       )
-    val traderDetails = Section(msg"checkYourAnswers.section.traderDetails", Seq(helper.traderName, helper.traderEori, helper.traderAddress).flatten)
-    val notificationDetails =
-      Section(msg"checkYourAnswers.section.notificationDetails", Seq(helper.isTraderAddressPlaceOfNotification, helper.placeOfNotification).flatten)
+    val traderDetails = Section(
+      msg"checkYourAnswers.section.traderDetails",
+      Seq(
+        helper.traderName,
+        helper.traderEori,
+        helper.traderAddress
+      ).flatten
+    )
+    val placeOfNotification = Section(
+      msg"checkYourAnswers.section.placeOfNotificationDetails",
+      Seq(
+        helper.isTraderAddressPlaceOfNotification,
+        helper.placeOfNotification
+      ).flatten
+    )
 
     val eventSeq = helper.incidentOnRoute.toSeq ++ eventList(userAnswers)
     val events   = Section(msg"checkYourAnswers.section.events", eventSeq)
-    Seq(mrn, whereAreTheGoods, traderDetails, notificationDetails, events)
+    Seq(mrn, whereAreTheGoods, traderDetails, placeOfNotification, events)
   }
 
   private def eventList(userAnswers: UserAnswers): Seq[SummaryList.Row] = {
     val numberOfEvents = userAnswers.get(DeriveNumberOfEvents).getOrElse(0)
     val cyaHelper      = new AddEventsHelper(userAnswers)
-
-    (0 to numberOfEvents).flatMap(cyaHelper.cyaListOfEvent)
+    val listOfEvents   = List.range(0, numberOfEvents).map(Index(_))
+    listOfEvents.flatMap(cyaHelper.cyaListOfEvent)
   }
 }

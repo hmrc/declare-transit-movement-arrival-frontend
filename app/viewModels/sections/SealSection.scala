@@ -16,16 +16,24 @@
 
 package viewModels.sections
 
-import models.UserAnswers
+import derivable.DeriveNumberOfSeals
+import models.{Index, UserAnswers}
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 import utils.CheckYourAnswersHelper
 
 object SealSection extends NunjucksSupport {
 
-  def apply(userAnswers: UserAnswers, eventIndex: Int): Section = {
+  def apply(userAnswers: UserAnswers, eventIndex: Index): Section = {
 
     val helper: CheckYourAnswersHelper = new CheckYourAnswersHelper(userAnswers)
 
-    Section(msg"addSeal.sealList.heading", Seq(helper.haveSealsChanged(eventIndex) ++ helper.seals(eventIndex)).flatten)
+    val numberOfSeals    = userAnswers.get(DeriveNumberOfSeals(eventIndex)).getOrElse(0)
+    val listOfSealsIndex = List.range(0, numberOfSeals).map(Index(_))
+    val seals = listOfSealsIndex.flatMap {
+      index =>
+        helper.sealIdentity(eventIndex, index)
+    }
+
+    Section(msg"addSeal.sealList.heading", (helper.haveSealsChanged(eventIndex) ++ seals).toSeq)
   }
 }

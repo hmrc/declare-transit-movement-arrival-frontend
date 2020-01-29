@@ -18,9 +18,7 @@ package base
 
 import config.FrontendAppConfig
 import controllers.actions._
-import models.MovementReferenceNumber
-import models.TraderAddress
-import models.UserAnswers
+import models.{Index, MovementReferenceNumber, TraderAddress, UserAnswers}
 import org.mockito.Mockito
 import org.scalatest._
 import org.scalatest.concurrent.IntegrationPatience
@@ -58,9 +56,9 @@ trait SpecBase
 
   val emptyUserAnswers = UserAnswers(mrn, Json.obj())
 
-  val eventIndex     = 0
-  val containerIndex = 0
-  val sealIndex      = 0
+  val eventIndex     = Index(0)
+  val containerIndex = Index(0)
+  val sealIndex      = Index(0)
 
   val traderAddress = TraderAddress("", "", "NE99 1XN")
 

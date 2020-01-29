@@ -18,7 +18,7 @@ package viewModels.sections
 
 import derivable.DeriveNumberOfContainers
 import models.TranshipmentType.{DifferentContainer, DifferentContainerAndVehicle, DifferentVehicle}
-import models.UserAnswers
+import models.{Index, UserAnswers}
 import pages.events.transhipments.TranshipmentTypePage
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, Text}
 import utils.CheckYourAnswersHelper
@@ -31,11 +31,10 @@ object EventTypeSection extends NunjucksSupport {
   val differentContainerAndVehicleTitleKey: Text =
     msg"checkEventAnswers.section.title.differentContainerAndVehicle"
 
-  def apply(userAnswers: UserAnswers, eventIndex: Int, isTranshipment: Boolean): Seq[Section] =
+  def apply(userAnswers: UserAnswers, eventIndex: Index, isTranshipment: Boolean): Seq[Section] =
     userAnswers
       .get(TranshipmentTypePage(eventIndex))
       .map {
-
         case DifferentVehicle =>
           DifferentVehicleSection(userAnswers, eventIndex, isTranshipment)
         case DifferentContainer =>
@@ -43,14 +42,13 @@ object EventTypeSection extends NunjucksSupport {
         case DifferentContainerAndVehicle =>
           DifferentContainerSection(userAnswers, eventIndex, isTranshipment, differentContainerAndVehicleTitleKey) ++
             VehicleInformationSection(userAnswers, eventIndex)
-
       }
       .getOrElse(Seq.empty)
 }
 
 object VehicleInformationSection extends NunjucksSupport {
 
-  def apply(userAnswers: UserAnswers, eventIndex: Int): Seq[Section] = {
+  def apply(userAnswers: UserAnswers, eventIndex: Index): Seq[Section] = {
 
     val helper: CheckYourAnswersHelper = new CheckYourAnswersHelper(userAnswers)
 
@@ -67,7 +65,7 @@ object VehicleInformationSection extends NunjucksSupport {
 
 object DifferentContainerSection extends NunjucksSupport {
 
-  def apply(userAnswers: UserAnswers, eventIndex: Int, isTranshipment: Boolean, sectionText: Text): Seq[Section] = {
+  def apply(userAnswers: UserAnswers, eventIndex: Index, isTranshipment: Boolean, sectionText: Text): Seq[Section] = {
 
     val helper: CheckYourAnswersHelper = new CheckYourAnswersHelper(userAnswers)
 
@@ -77,16 +75,22 @@ object DifferentContainerSection extends NunjucksSupport {
       ),
       userAnswers
         .get(DeriveNumberOfContainers(eventIndex))
-        .map(List.range(0, _))
-        .map(_.flatMap(helper.containerNumber(eventIndex, _)))
-        .map(Section.apply(msg"checkEventAnswers.section.title.containerNumbers", _))
+        .map {
+          containerCount =>
+            val listOfContainerIndexes = List.range(0, containerCount).map(Index(_))
+            val rows = listOfContainerIndexes.flatMap {
+              index =>
+                helper.containerNumber(eventIndex, index)
+            }
+            Section(msg"checkEventAnswers.section.title.containerNumbers", rows)
+        }
     ).flatten
   }
 }
 
 object DifferentVehicleSection extends NunjucksSupport {
 
-  def apply(userAnswers: UserAnswers, eventIndex: Int, isTranshipment: Boolean): Seq[Section] = {
+  def apply(userAnswers: UserAnswers, eventIndex: Index, isTranshipment: Boolean): Seq[Section] = {
 
     val helper: CheckYourAnswersHelper = new CheckYourAnswersHelper(userAnswers)
 

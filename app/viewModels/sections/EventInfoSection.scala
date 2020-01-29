@@ -16,12 +16,12 @@
 
 package viewModels.sections
 
-import models.UserAnswers
+import models.{Index, UserAnswers}
 import utils.CheckYourAnswersHelper
 
 object EventInfoSection {
 
-  def apply(userAnswers: UserAnswers, eventIndex: Int, isTranshipment: Boolean): Section = {
+  def apply(userAnswers: UserAnswers, eventIndex: Index, isTranshipment: Boolean): Section = {
 
     val helper: CheckYourAnswersHelper = new CheckYourAnswersHelper(userAnswers)
 

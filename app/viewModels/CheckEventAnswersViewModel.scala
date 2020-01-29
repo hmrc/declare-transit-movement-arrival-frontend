@@ -16,17 +16,19 @@
 
 package viewModels
 
-import models.{Mode, UserAnswers}
-import pages.events._
+import models.{Index, Mode, UserAnswers}
+import pages.events.IsTranshipmentPage
 import play.api.i18n.Messages
 import play.api.libs.json.{Json, OWrites}
+import utils.CheckYourAnswersHelper
 import viewModels.sections.{EventInfoSection, EventTypeSection, SealSection, Section}
 
 case class CheckEventAnswersViewModel(sections: Seq[Section])
 
 object CheckEventAnswersViewModel {
 
-  def apply(userAnswers: UserAnswers, eventIndex: Int, mode: Mode): CheckEventAnswersViewModel = {
+  def apply(userAnswers: UserAnswers, eventIndex: Index, mode: Mode): CheckEventAnswersViewModel = {
+    val helper = new CheckYourAnswersHelper(userAnswers)
 
     val isTranshipment: Boolean = userAnswers.get(IsTranshipmentPage(eventIndex)).getOrElse(false)
 
