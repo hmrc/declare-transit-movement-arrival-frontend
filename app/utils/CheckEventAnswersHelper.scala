@@ -127,7 +127,7 @@ class CheckEventAnswersHelper(userAnswers: UserAnswers) {
           Action(
             content            = msg"site.edit",
             href               = eventRoutes.IncidentInformationController.onPageLoad(mrn, eventIndex, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"incidentInformation.checkYourAnswersLabel"))
+            visuallyHiddenText = Some(msg"incidentInformation.change.hidden")
           )
         )
       )

@@ -163,6 +163,7 @@ goodsLocation.borderForceOffice = Border Force location
 goodsLocation.authorisedConsigneesLocation = Authorised consignee’s location
 goodsLocation.checkYourAnswersLabel = Where are the goods?
 goodsLocation.error.required = Select where the goods are
+goodsLocation.change.hidden = where the goods are
 
 presentationOffice.title = Which Border Force office supervises {0}?
 presentationOffice.heading = Which Border Force office supervises {0}?
@@ -170,12 +171,14 @@ presentationOffice.hintText = Give the office location or code. For example, Dov
 presentationOffice.checkYourAnswersLabel = Which border force supervises {0}?
 presentationOffice.error.required = Enter the Border Force office which supervises {0}
 presentationOffice.error.length = Border Force office must be 8 characters or less
+presentationOffice.change.hidden = which Border Force office supervises {0}
 
 customsSubPlace.title = Which customs sub-place or approved location has the goods?
 customsSubPlace.heading = Which customs sub-place or approved location has the goods?
 customsSubPlace.checkYourAnswersLabel = Which customs sub place or approved location has the goods?
 customsSubPlace.error.required = Enter the customs sub-place or approved location that has the goods
 customsSubPlace.error.length = Customs sub-place or approved location must be 17 characters or less
+customsSubPlace.change.hidden = the customs sub-place or approved location
 
 authorisedLocation.title = What is the authorised location code?
 authorisedLocation.heading = What is the authorised location code?
@@ -264,6 +267,7 @@ incidentInformation.heading = What happened on the route?
 incidentInformation.checkYourAnswersLabel = What happened on the route?
 incidentInformation.error.required = Enter what happened on the route
 incidentInformation.error.length = What happened on the route must be 350 characters or less
+incidentInformation.change.hidden = what happened on the journey
 
 isTranshipment.title = Did the goods move to a different vehicle or container?
 isTranshipment.heading = Did the goods move to a different vehicle or container?

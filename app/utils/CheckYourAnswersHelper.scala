@@ -142,7 +142,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswers
           Action(
             content            = msg"site.edit",
             href               = routes.CustomsSubPlaceController.onPageLoad(mrn, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"customsSubPlace.checkYourAnswersLabel"))
+            visuallyHiddenText = Some(msg"customsSubPlace.change.hidden")
           )
         )
       )
@@ -151,16 +151,18 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswers
   def presentationOffice: Option[Row] = userAnswers.get(PresentationOfficePage) map {
     answer =>
       val customsSubPlace: String = userAnswers.get(CustomsSubPlacePage).getOrElse("this location")
-      val message                 = msg"presentationOffice.checkYourAnswersLabel".withArgs(customsSubPlace)
 
       Row(
-        key   = Key(message, classes = Seq("govuk-!-width-one-half")),
+        key = Key(
+          content = msg"presentationOffice.checkYourAnswersLabel".withArgs(customsSubPlace),
+          classes = Seq("govuk-!-width-one-half")
+        ),
         value = Value(lit"${answer.name} (${answer.id})"),
         actions = List(
           Action(
             content            = msg"site.edit",
             href               = routes.PresentationOfficeController.onPageLoad(mrn, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(message))
+            visuallyHiddenText = Some(msg"presentationOffice.change.hidden".withArgs(customsSubPlace))
           )
         )
       )
@@ -175,7 +177,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswers
           Action(
             content            = msg"site.edit",
             href               = routes.GoodsLocationController.onPageLoad(mrn, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"goodsLocation.checkYourAnswersLabel"))
+            visuallyHiddenText = Some(msg"goodsLocation.change.hidden")
           )
         )
       )
