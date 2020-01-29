@@ -37,7 +37,7 @@ class CheckEventAnswersHelper(userAnswers: UserAnswers) {
           Action(
             content            = msg"site.edit",
             href               = eventRoutes.IsTranshipmentController.onPageLoad(mrn, eventIndex, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"isTranshipment.checkYourAnswersLabel"))
+            visuallyHiddenText = Some(msg"isTranshipment.change.hidden")
           )
         )
       )
@@ -52,7 +52,7 @@ class CheckEventAnswersHelper(userAnswers: UserAnswers) {
           Action(
             content            = msg"site.edit",
             href               = transhipmentRoutes.TranshipmentTypeController.onPageLoad(mrn, eventIndex, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"transhipmentType.checkYourAnswersLabel"))
+            visuallyHiddenText = Some(msg"transhipmentType.change.hidden")
           )
         )
       )
@@ -67,7 +67,7 @@ class CheckEventAnswersHelper(userAnswers: UserAnswers) {
           Action(
             content            = msg"site.edit",
             href               = transhipmentRoutes.ContainerNumberController.onPageLoad(mrn, eventIndex, containerIndex, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"containerNumber.checkYourAnswersLabel"))
+            visuallyHiddenText = Some(msg"containerNumber.change.hidden".withArgs(answer.containerNumber))
           )
         )
       )
@@ -82,7 +82,7 @@ class CheckEventAnswersHelper(userAnswers: UserAnswers) {
           Action(
             content            = msg"site.edit",
             href               = eventRoutes.EventCountryController.onPageLoad(mrn, eventIndex, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"eventCountry.checkYourAnswersLabel"))
+            visuallyHiddenText = Some(msg"eventCountry.change.hidden")
           )
         )
       )
@@ -97,7 +97,7 @@ class CheckEventAnswersHelper(userAnswers: UserAnswers) {
           Action(
             content            = msg"site.edit",
             href               = eventRoutes.EventPlaceController.onPageLoad(mrn, eventIndex, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"eventPlace.checkYourAnswersLabel"))
+            visuallyHiddenText = Some(msg"eventPlace.change.hidden")
           )
         )
       )
@@ -112,7 +112,7 @@ class CheckEventAnswersHelper(userAnswers: UserAnswers) {
           Action(
             content            = msg"site.edit",
             href               = eventRoutes.EventReportedController.onPageLoad(mrn, eventIndex, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"eventReported.checkYourAnswersLabel"))
+            visuallyHiddenText = Some(msg"eventReported.change.hidden")
           )
         )
       )
@@ -142,7 +142,7 @@ class CheckEventAnswersHelper(userAnswers: UserAnswers) {
           Action(
             content            = msg"site.edit",
             href               = transhipmentRoutes.TransportIdentityController.onPageLoad(mrn, eventIndex, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"transportIdentity.checkYourAnswersLabel"))
+            visuallyHiddenText = Some(msg"transportIdentity.change.hidden")
           )
         )
       )
@@ -157,22 +157,7 @@ class CheckEventAnswersHelper(userAnswers: UserAnswers) {
           Action(
             content            = msg"site.edit",
             href               = transhipmentRoutes.TransportNationalityController.onPageLoad(mrn, eventIndex, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"transportNationality.checkYourAnswersLabel"))
-          )
-        )
-      )
-  }
-
-  def sealIdentity(eventIndex: Index, sealIndex: Index): Option[Row] = userAnswers.get(SealIdentityPage(eventIndex, sealIndex)) map {
-    answer =>
-      Row(
-        key   = Key(msg"addSeal.sealList.label".withArgs(sealIndex.display), classes = Seq("govuk-!-width-one-half")),
-        value = Value(lit"$answer"),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = sealRoutes.SealIdentityController.onPageLoad(mrn, eventIndex, sealIndex, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"sealIdentity.checkYourAnswersLabel"))
+            visuallyHiddenText = Some(msg"transportNationality.change.hidden")
           )
         )
       )
@@ -187,7 +172,22 @@ class CheckEventAnswersHelper(userAnswers: UserAnswers) {
           Action(
             content            = msg"site.edit",
             href               = sealRoutes.HaveSealsChangedController.onPageLoad(mrn, eventIndex, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"haveSealsChanged.checkYourAnswersLabel"))
+            visuallyHiddenText = Some(msg"haveSealsChanged.change.hidden")
+          )
+        )
+      )
+  }
+
+  def sealIdentity(eventIndex: Index, sealIndex: Index): Option[Row] = userAnswers.get(SealIdentityPage(eventIndex, sealIndex)) map {
+    answer =>
+      Row(
+        key   = Key(msg"addSeal.sealList.label".withArgs(sealIndex.display), classes = Seq("govuk-!-width-one-half")),
+        value = Value(lit"$answer"),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = sealRoutes.SealIdentityController.onPageLoad(mrn, eventIndex, sealIndex, CheckMode).url,
+            visuallyHiddenText = Some(msg"sealIdentity.change.hidden".withArgs(answer))
           )
         )
       )

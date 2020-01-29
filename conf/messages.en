@@ -232,6 +232,7 @@ eventCountry.heading = Which country were the goods in when it happened?
 eventCountry.checkYourAnswersLabel = Which country were the goods in when it happened?
 eventCountry.error.required = Which country were the goods in when it happened?
 eventCountry.error.length = Country must be 2 characters or less
+eventCountry.change.hidden = which country the goods were in when it happened
 
 eventPlace.title = Where did the event happen?
 eventPlace.heading = Where did the event happen?
@@ -239,11 +240,13 @@ eventPlace.hintText = Give the nearest town or road number.
 eventPlace.checkYourAnswersLabel = Where did the event happen?
 eventPlace.error.required = Enter where the event happened
 eventPlace.error.length = Where the event happened must be 35 characters or less
+eventPlace.change.hidden = where the event happened
 
 eventReported.title = Has this event been reported to a customs office?
 eventReported.heading = Has this event been reported to a customs office?
 eventReported.checkYourAnswersLabel = Has this event been reported to a customs office?
 eventReported.error.required = Select yes if the event has been reported
+eventReported.change.hidden = if this event has been reported to customs
 
 incidentInformation.title = What happened on the route?
 incidentInformation.heading = What happened on the route?
@@ -255,6 +258,7 @@ isTranshipment.title = Did the goods move to a different vehicle or container?
 isTranshipment.heading = Did the goods move to a different vehicle or container?
 isTranshipment.checkYourAnswersLabel = Did the goods move to a different vehicle or container?
 isTranshipment.error.required = Select yes if the goods moved to a different vehicle or container
+isTranshipment.change.hidden = if the goods moved to a different vehicle or container
 
 sealsChanged.title = Have any of the seals changed?
 sealsChanged.heading = Have any of the seals changed?
@@ -270,7 +274,6 @@ checkEventAnswers.section.title.differentVehicle = Different vehicle
 checkEventAnswers.section.title.differentContainerAndVehicle = Different container and vehicle
 checkEventAnswers.section.title.containerNumbers = Container numbers
 checkEventAnswers.section.title.vehicleInformation = Vehicle information
-
 
 isTraderAddressPlaceOfNotification.title = Are you completing this arrival notification at the trader’s address?
 isTraderAddressPlaceOfNotification.heading = Are you completing this arrival notification at the trader’s address?
@@ -309,24 +312,28 @@ transhipmentType.differentVehicle = A different vehicle
 transhipmentType.differentContainerAndVehicle = Both
 transhipmentType.checkYourAnswersLabel = What did the goods move to?
 transhipmentType.error.required = Select transhipmentType
+transhipmentType.change.hidden = what the goods moved to
 
 transportIdentity.title = What is the vehicle name, registration or reference?
 transportIdentity.heading = What is the vehicle name, registration or reference?
 transportIdentity.checkYourAnswersLabel = What is the vehicle name, registration or reference?
 transportIdentity.error.required = Enter the vehicle name, registration or reference
 transportIdentity.error.length = Vehicle name, registration or reference must be 27 characters or less
+transportIdentity.change.hidden = the vehicle name, registration or reference
 
 transportNationality.title = Which country is the vehicle registered in?
 transportNationality.heading = Which country is the vehicle registered in?
 transportNationality.checkYourAnswersLabel = Which country is the vehicle registered in?
 transportNationality.error.required = Enter which country the vehicle is registered in?
 transportNationality.error.length = TransportNationality must be TransportNationality characters or less
+transportNationality.change.hidden = the country where the vehicle is registered
 
 containerNumber.title = What is the new container number?
 containerNumber.heading = What is the new container number?
 containerNumber.checkYourAnswersLabel = What is the new container number?
 containerNumber.error.required = Enter the new container number
 containerNumber.error.length = New container number must be 17 characters or less
+containerNumber.change.hidden = container {0}
 
 addContainer.title.singular = You have added {0} container
 addContainer.title.plural = You have added {0} containers
@@ -346,6 +353,7 @@ sealIdentity.heading = What is the new seal number or mark?
 sealIdentity.checkYourAnswersLabel = What is the new seal number or mark?
 sealIdentity.error.required = Enter the new seal number or mark
 sealIdentity.error.length = Seal number or mark must be 20 characters or less
+sealIdentity.change.hidden = seal {0}
 
 addSeal.title.singular = You have added {0} seal
 addSeal.title.plural = You have added {0} seals
@@ -363,6 +371,7 @@ haveSealsChanged.title = Have any of the seals changed?
 haveSealsChanged.heading = Have any of the seals changed?
 haveSealsChanged.checkYourAnswersLabel = Have any of the seals changed?
 haveSealsChanged.error.required = Select yes if any seals have changed
+haveSealsChanged.change.hidden = if any of the seals changed
 
 confirmRemoveSeal.title = Are you sure you want to remove the seal {0}?
 confirmRemoveSeal.heading = Are you sure you want to remove the seal {0}?
