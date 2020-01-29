@@ -110,15 +110,15 @@ class ConfirmRemoveSealControllerSpec extends SpecBase with MockitoSugar with Nu
       application.stop()
     }
 
-    "must return error page when there are multiple containers and user tries to remove the last container that is already removed" in {
+    "must return error page when there are multiple seals and user tries to remove the last seal that is already removed" in {
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
       val updatedAnswer = userAnswersWithSeal
-        .set(SealIdentityPage(eventIndex, Index(1)), "1")
+        .set(SealIdentityPage(eventIndex, Index(1)), seal)
         .success
         .value
-        .set(SealIdentityPage(eventIndex, Index(2)), "1")
+        .set(SealIdentityPage(eventIndex, Index(2)), seal)
         .success
         .value
         .remove(SealIdentityPage(eventIndex, Index(2)))
