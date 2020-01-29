@@ -20,7 +20,7 @@ import base.SpecBase
 import forms.events.transhipments.ConfirmRemoveContainerFormProvider
 import matchers.JsonMatchers
 import models.messages.Container
-import models.{NormalMode, UserAnswers}
+import models.{Index, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
@@ -33,6 +33,7 @@ import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
+import queries.ContainersQuery
 import repositories.SessionRepository
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
@@ -79,6 +80,76 @@ class ConfirmRemoveContainerControllerSpec extends SpecBase with MockitoSugar wi
       )
 
       templateCaptor.getValue mustEqual confirmRemoveContainerTemplate
+      jsonCaptor.getValue must containJson(expectedJson)
+
+      application.stop()
+    }
+
+    "must return error page when user tries to remove a container that does not exists" in {
+
+      when(mockRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("")))
+      val updatedAnswer  = presetUserAnswers.remove(ContainerNumberPage(eventIndex, containerIndex)).success.value
+      val application    = applicationBuilder(userAnswers = Some(updatedAnswer)).build()
+      val request        = FakeRequest(GET, confirmRemoveContainerRoute)
+      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+
+      val result = route(application, request).value
+
+      status(result) mustEqual NOT_FOUND
+
+      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+
+      val expectedJson = Json.obj(
+        "pageTitle"    -> msg"concurrent.remove.error.title".withArgs("container"),
+        "pageHeading"  -> msg"concurrent.remove.error.heading".withArgs("container"),
+        "linkText"     -> msg"concurrent.remove.error.noContainer.link.text",
+        "redirectLink" -> controllers.events.routes.IsTranshipmentController.onPageLoad(mrn, eventIndex, NormalMode).url
+      )
+
+      templateCaptor.getValue mustEqual "concurrentRemoveError.njk"
+      jsonCaptor.getValue must containJson(expectedJson)
+
+      application.stop()
+    }
+
+    "must return error page when there are multiple containers and user tries to remove the last container that is already removed" in {
+
+      when(mockRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("")))
+      val updatedAnswer = presetUserAnswers
+        .set(ContainerNumberPage(eventIndex, Index(1)), Container(containerNumber))
+        .success
+        .value
+        .set(ContainerNumberPage(eventIndex, Index(2)), Container(containerNumber))
+        .success
+        .value
+        .remove(ContainerNumberPage(eventIndex, Index(2)))
+        .success
+        .value
+
+      val removeContainerRoute = routes.ConfirmRemoveContainerController.onPageLoad(mrn, eventIndex, Index(2), NormalMode).url
+
+      val application    = applicationBuilder(userAnswers = Some(updatedAnswer)).build()
+      val request        = FakeRequest(GET, removeContainerRoute)
+      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+
+      val result = route(application, request).value
+
+      status(result) mustEqual NOT_FOUND
+
+      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+
+      val expectedJson = Json.obj(
+        "pageTitle"    -> msg"concurrent.remove.error.title".withArgs("container"),
+        "pageHeading"  -> msg"concurrent.remove.error.heading".withArgs("container"),
+        "linkText"     -> msg"concurrent.remove.error.multipleContainer.link.text",
+        "redirectLink" -> routes.AddContainerController.onPageLoad(mrn, eventIndex, NormalMode).url
+      )
+
+      templateCaptor.getValue mustEqual "concurrentRemoveError.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()

@@ -16,15 +16,19 @@
 
 package controllers.events.transhipments
 
-import controllers.actions._
+import controllers.actions.{DataRequiredAction, DataRetrievalActionProvider, IdentifierAction}
+import derivable.DeriveNumberOfContainers
 import forms.events.transhipments.ConfirmRemoveContainerFormProvider
+import handlers.ErrorHandler
 import javax.inject.Inject
+import models.requests.DataRequest
 import models.{Index, Mode, MovementReferenceNumber}
 import navigation.Navigator
 import pages.events.transhipments.{ConfirmRemoveContainerPage, ContainerNumberPage}
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
@@ -39,6 +43,7 @@ class ConfirmRemoveContainerController @Inject()(
   identify: IdentifierAction,
   getData: DataRetrievalActionProvider,
   requireData: DataRequiredAction,
+  errorHandler: ErrorHandler,
   formProvider: ConfirmRemoveContainerFormProvider,
   val controllerComponents: MessagesControllerComponents,
   renderer: Renderer
@@ -53,54 +58,46 @@ class ConfirmRemoveContainerController @Inject()(
   def onPageLoad(mrn: MovementReferenceNumber, eventIndex: Index, containerIndex: Index, mode: Mode): Action[AnyContent] =
     (identify andThen getData(mrn) andThen requireData).async {
       implicit request =>
-        request.userAnswers.get(ContainerNumberPage(eventIndex, containerIndex)) match {
-          case Some(container) => {
-            val json = Json.obj(
-              "form"            -> form,
-              "mode"            -> mode,
-              "mrn"             -> mrn,
-              "containerNumber" -> container.containerNumber,
-              "radios"          -> Radios.yesNo(form("value"))
-            )
-
-            renderer.render(confirmRemoveContainerTemplate, json).map(Ok(_))
-          }
-          case _ => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
-        }
+        renderPage(mrn, eventIndex, containerIndex, form, mode, Ok)
     }
 
   def onSubmit(mrn: MovementReferenceNumber, eventIndex: Index, containerIndex: Index, mode: Mode): Action[AnyContent] =
     (identify andThen getData(mrn) andThen requireData).async {
       implicit request =>
-        request.userAnswers.get(ContainerNumberPage(eventIndex, containerIndex)) match {
-          case Some(container) => {
-            form
-              .bindFromRequest()
-              .fold(
-                formWithErrors => {
-
-                  val json = Json.obj(
-                    "form"            -> formWithErrors,
-                    "mode"            -> mode,
-                    "mrn"             -> mrn,
-                    "containerNumber" -> container.containerNumber,
-                    "radios"          -> Radios.yesNo(formWithErrors("value"))
-                  )
-
-                  renderer.render(confirmRemoveContainerTemplate, json).map(BadRequest(_))
-                }, {
-                  case true =>
-                    for {
-                      updatedAnswers <- Future.fromTry(request.userAnswers.remove(ContainerNumberPage(eventIndex, containerIndex)))
-                      _              <- sessionRepository.set(updatedAnswers)
-                    } yield Redirect(navigator.nextPage(ConfirmRemoveContainerPage(eventIndex), mode, updatedAnswers))
-                  case false =>
-                    Future.successful(Redirect(navigator.nextPage(ConfirmRemoveContainerPage(eventIndex), mode, request.userAnswers)))
-                }
-              )
-          }
-          case _ => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
-        }
-
+        form
+          .bindFromRequest()
+          .fold(
+            formWithErrors => renderPage(mrn, eventIndex, containerIndex, formWithErrors, mode, BadRequest),
+            value =>
+              if (value) {
+                for {
+                  updatedAnswers <- Future.fromTry(request.userAnswers.remove(ContainerNumberPage(eventIndex, containerIndex)))
+                  _              <- sessionRepository.set(updatedAnswers)
+                } yield Redirect(navigator.nextPage(ConfirmRemoveContainerPage(eventIndex), mode, updatedAnswers))
+              } else {
+                Future.successful(Redirect(navigator.nextPage(ConfirmRemoveContainerPage(eventIndex), mode, request.userAnswers)))
+            }
+          )
     }
+
+  private def renderPage(mrn: MovementReferenceNumber, eventIndex: Index, containerIndex: Index, form: Form[Boolean], mode: Mode, status: Status)(
+    implicit request: DataRequest[AnyContent]): Future[Result] =
+    request.userAnswers.get(ContainerNumberPage(eventIndex, containerIndex)) match {
+      case Some(container) =>
+        val json = Json.obj(
+          "form"            -> form,
+          "mode"            -> mode,
+          "mrn"             -> mrn,
+          "containerNumber" -> container.containerNumber,
+          "radios"          -> Radios.yesNo(form("value"))
+        )
+
+        renderer.render(confirmRemoveContainerTemplate, json).map(status(_))
+      case _ =>
+        val redirectLinkText = if (request.userAnswers.get(DeriveNumberOfContainers(eventIndex)).contains(0)) "noContainer" else "multipleContainer"
+        val redirectLink     = navigator.nextPage(ConfirmRemoveContainerPage(eventIndex), mode, request.userAnswers).url
+
+        errorHandler.onConcurrentError(redirectLinkText, redirectLink, "concurrent.container")
+    }
+
 }

@@ -19,6 +19,7 @@ package controllers.events
 import controllers.actions._
 import derivable.DeriveNumberOfEvents
 import forms.events.ConfirmRemoveEventFormProvider
+import handlers.ErrorHandler
 import javax.inject.Inject
 import models.requests.DataRequest
 import models.{Index, Mode, MovementReferenceNumber, UserAnswers}
@@ -43,6 +44,7 @@ class ConfirmRemoveEventController @Inject()(
   identify: IdentifierAction,
   getData: DataRetrievalActionProvider,
   requireData: DataRequiredAction,
+  errorHandler: ErrorHandler,
   formProvider: ConfirmRemoveEventFormProvider,
   val controllerComponents: MessagesControllerComponents,
   renderer: Renderer
@@ -98,15 +100,10 @@ class ConfirmRemoveEventController @Inject()(
         renderer.render(confirmRemoveEventTemplate, json).map(status(_))
 
       case _ =>
-        val message = if (request.userAnswers.get(DeriveNumberOfEvents).contains(0)) "noEvent" else "multipleEvent"
+        val redirectLinkText = if (request.userAnswers.get(DeriveNumberOfEvents).contains(0)) "noEvent" else "multipleEvent"
+        val redirectLink     = navigator.nextPage(ConfirmRemoveEventPage(eventIndex), mode, request.userAnswers).url
 
-        val json = Json.obj(
-          "pageTitle"    -> msg"concurrent.remove.error.title".withArgs("event"),
-          "pageHeading"  -> msg"concurrent.remove.error.title".withArgs("event"),
-          "linkText"     -> msg"concurrent.remove.error.$message.link.text",
-          "redirectLink" -> navigator.nextPage(ConfirmRemoveEventPage(eventIndex), mode, request.userAnswers).url
-        )
-        renderer.render("concurrentRemoveError.njk", json).map(NotFound(_))
+        errorHandler.onConcurrentError(redirectLinkText, redirectLink, "concurrent.event")
     }
 
 }
