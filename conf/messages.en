@@ -167,7 +167,7 @@ goodsLocation.error.required = Select where the goods are
 presentationOffice.title = Which Border Force office supervises {0}?
 presentationOffice.heading = Which Border Force office supervises {0}?
 presentationOffice.hintText = Give the office location or code. For example, Dover or GB000060.
-presentationOffice.checkYourAnswersLabel = Which border force supervises {0}?
+presentationOffice.checkYourAnswersLabel = Which Border Force office supervises {0}?
 presentationOffice.error.required = Enter the Border Force office which supervises {0}
 presentationOffice.error.length = Border Force office must be 8 characters or less
 
