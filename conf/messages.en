@@ -311,10 +311,9 @@ addEvent.hintText.goods.unloaded = goods had to be unloaded
 addEvent.hintText.different.vehicle = goods moved to a different vehicle
 addEvent.hintText.type.of.transport = goods moved to a different type of transport
 addEvent.hintText.planned.route = the planned route changed
-addEvent.checkYourAnswersLabel = addEvent
 addEvent.error.required = Select yes if you need to add another event
-addEvent.checkYourAnswersLabel.change = Change event {0} at {1}?
-addEvent.checkYourAnswersLabel.delete = Remove event {0} at {1}?
+addEvent.change.hidden = event {0} at {1}
+addEvent.remove.hidden = event {0} at {1}
 
 transhipmentType.title = What did the goods move to?
 transhipmentType.heading = What did the goods move to?
