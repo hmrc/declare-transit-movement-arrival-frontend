@@ -47,4 +47,5 @@ trait Mappings extends Formatters with Constraints {
 
   protected def mrn(requiredKey: String, invalidKey: String): FieldMapping[MovementReferenceNumber] =
     of(mrnFormatter(requiredKey, invalidKey))
+
 }
