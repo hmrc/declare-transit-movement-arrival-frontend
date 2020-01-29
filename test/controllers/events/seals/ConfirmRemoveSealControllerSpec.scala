@@ -19,15 +19,14 @@ package controllers.events.seals
 import base.SpecBase
 import forms.events.seals.ConfirmRemoveSealFormProvider
 import matchers.JsonMatchers
-import models.messages.Container
-import models.{NormalMode, UserAnswers}
+import controllers.events.seals.{routes => sealRoutes}
+import models.{Index, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.events.seals.{ConfirmRemoveSealPage, SealIdentityPage}
-import pages.events.transhipments.ContainerNumberPage
+import pages.events.seals.SealIdentityPage
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
@@ -76,6 +75,76 @@ class ConfirmRemoveSealControllerSpec extends SpecBase with MockitoSugar with Nu
       )
 
       templateCaptor.getValue mustEqual "events/seals/confirmRemoveSeal.njk"
+      jsonCaptor.getValue must containJson(expectedJson)
+
+      application.stop()
+    }
+
+    "must return error page when user tries to remove a seal that does not exists" in {
+
+      when(mockRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("")))
+      val updatedAnswer  = userAnswersWithSeal.remove(SealIdentityPage(eventIndex, sealIndex)).success.value
+      val application    = applicationBuilder(userAnswers = Some(updatedAnswer)).build()
+      val request        = FakeRequest(GET, removeSealRoute)
+      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+
+      val result = route(application, request).value
+
+      status(result) mustEqual NOT_FOUND
+
+      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+
+      val expectedJson = Json.obj(
+        "pageTitle"    -> msg"concurrent.remove.error.title".withArgs("seal"),
+        "pageHeading"  -> msg"concurrent.remove.error.heading".withArgs("seal"),
+        "linkText"     -> msg"concurrent.remove.error.noSeal.link.text",
+        "redirectLink" -> sealRoutes.HaveSealsChangedController.onPageLoad(mrn, eventIndex, NormalMode).url
+      )
+
+      templateCaptor.getValue mustEqual "concurrentRemoveError.njk"
+      jsonCaptor.getValue must containJson(expectedJson)
+
+      application.stop()
+    }
+
+    "must return error page when there are multiple containers and user tries to remove the last container that is already removed" in {
+
+      when(mockRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("")))
+      val updatedAnswer = userAnswersWithSeal
+        .set(SealIdentityPage(eventIndex, Index(1)), "1")
+        .success
+        .value
+        .set(SealIdentityPage(eventIndex, Index(2)), "1")
+        .success
+        .value
+        .remove(SealIdentityPage(eventIndex, Index(2)))
+        .success
+        .value
+
+      val sealRoute: String = routes.ConfirmRemoveSealController.onPageLoad(mrn, eventIndex, Index(2), NormalMode).url
+
+      val application    = applicationBuilder(userAnswers = Some(updatedAnswer)).build()
+      val request        = FakeRequest(GET, sealRoute)
+      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+
+      val result = route(application, request).value
+
+      status(result) mustEqual NOT_FOUND
+
+      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+
+      val expectedJson = Json.obj(
+        "pageTitle"    -> msg"concurrent.remove.error.title".withArgs("seal"),
+        "pageHeading"  -> msg"concurrent.remove.error.heading".withArgs("seal"),
+        "linkText"     -> msg"concurrent.remove.error.multipleSeal.link.text",
+        "redirectLink" -> sealRoutes.AddSealController.onPageLoad(mrn, eventIndex, NormalMode).url
+      )
+
+      templateCaptor.getValue mustEqual "concurrentRemoveError.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()

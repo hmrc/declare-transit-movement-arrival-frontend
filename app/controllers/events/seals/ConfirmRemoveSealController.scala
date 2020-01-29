@@ -17,7 +17,9 @@
 package controllers.events.seals
 
 import controllers.actions._
+import derivable.DeriveNumberOfSeals
 import forms.events.seals.ConfirmRemoveSealFormProvider
+import handlers.ErrorHandler
 import javax.inject.Inject
 import models.requests.DataRequest
 import models.{Index, Mode, MovementReferenceNumber}
@@ -42,6 +44,7 @@ class ConfirmRemoveSealController @Inject()(
   getData: DataRetrievalActionProvider,
   requireData: DataRequiredAction,
   formProvider: ConfirmRemoveSealFormProvider,
+  errorHandler: ErrorHandler,
   val controllerComponents: MessagesControllerComponents,
   renderer: Renderer
 )(implicit ec: ExecutionContext)
@@ -88,6 +91,10 @@ class ConfirmRemoveSealController @Inject()(
           "radios"     -> Radios.yesNo(form("value"))
         )
         renderer.render("events/seals/confirmRemoveSeal.njk", json).map(status(_))
-      case _ => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
+      case _ =>
+        val redirectLinkText = if (request.userAnswers.get(DeriveNumberOfSeals(eventIndex)).contains(0)) "noSeal" else "multipleSeal"
+        val redirectLink     = navigator.nextPage(ConfirmRemoveSealPage(eventIndex), mode, request.userAnswers).url
+
+        errorHandler.onConcurrentError(redirectLinkText, redirectLink, "concurrent.seal")
     }
 }
