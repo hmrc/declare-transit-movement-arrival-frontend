@@ -39,7 +39,7 @@ import play.twirl.api.Html
 import repositories.SessionRepository
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 import utils.AddContainerHelper
-import viewModels.Section
+import viewModels.sections.Section
 
 import scala.concurrent.Future
 
