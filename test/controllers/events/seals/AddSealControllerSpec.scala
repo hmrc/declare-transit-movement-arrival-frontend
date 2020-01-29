@@ -20,7 +20,6 @@ import base.SpecBase
 import forms.events.seals.AddSealFormProvider
 import matchers.JsonMatchers
 import models.NormalMode
-import models.messages.Seal
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
@@ -56,7 +55,7 @@ class AddSealControllerSpec extends SpecBase with MockitoSugar with NunjucksSupp
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val ua = emptyUserAnswers.set(SealIdentityPage(eventIndex, sealIndex), Seal("seal")).success.value
+      val ua = emptyUserAnswers.set(SealIdentityPage(eventIndex, sealIndex), seal).success.value
 
       val application    = applicationBuilder(userAnswers = Some(ua)).build()
       val request        = FakeRequest(GET, addSealRoute)
@@ -116,7 +115,7 @@ class AddSealControllerSpec extends SpecBase with MockitoSugar with NunjucksSupp
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
-      val ua = emptyUserAnswers.set(SealIdentityPage(eventIndex, sealIndex), Seal("seal")).success.value
+      val ua = emptyUserAnswers.set(SealIdentityPage(eventIndex, sealIndex), seal).success.value
 
       val application    = applicationBuilder(userAnswers = Some(ua)).build()
       val request        = FakeRequest(POST, addSealRoute).withFormUrlEncodedBody(("value", ""))
