@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package viewModels
+package viewModels.sections
 
 import play.api.i18n.Messages
 import play.api.libs.functional.syntax._

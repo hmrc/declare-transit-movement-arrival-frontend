@@ -31,6 +31,7 @@ import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
+import models.messages.Seal
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -56,7 +57,7 @@ class SealIdentityController @Inject()(
       implicit request =>
         val preparedForm = request.userAnswers.get(SealIdentityPage(eventIndex, sealIndex)) match {
           case None        => form
-          case Some(value) => form.fill(value)
+          case Some(value) => form.fill(value.numberOrMark)
         }
 
         renderView(mrn, mode, preparedForm).map(Ok(_))
@@ -71,7 +72,7 @@ class SealIdentityController @Inject()(
             formWithErrors => renderView(mrn, mode, formWithErrors).map(BadRequest(_)),
             value =>
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(SealIdentityPage(eventIndex, sealIndex), value))
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(SealIdentityPage(eventIndex, sealIndex), Seal(value)))
                 _              <- sessionRepository.set(updatedAnswers)
               } yield Redirect(navigator.nextPage(SealIdentityPage(eventIndex, sealIndex), mode, updatedAnswers))
           )

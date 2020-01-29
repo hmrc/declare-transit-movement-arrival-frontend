@@ -30,7 +30,7 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.SummaryList.Row
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, SummaryList}
 import utils.{AddEventsHelper, CheckYourAnswersHelper}
-import viewModels.Section
+import viewModels.sections.Section
 
 import scala.concurrent.{ExecutionContext, Future}
 

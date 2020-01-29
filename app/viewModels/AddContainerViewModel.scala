@@ -23,6 +23,7 @@ import play.api.libs.json.{Json, OWrites}
 import uk.gov.hmrc.viewmodels.Text.Message
 import uk.gov.hmrc.viewmodels._
 import utils.AddContainerHelper
+import viewModels.sections.Section
 
 case class AddContainerViewModel private (
   pageTitle: Message,

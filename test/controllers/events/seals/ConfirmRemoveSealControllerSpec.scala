@@ -21,6 +21,7 @@ import forms.events.seals.ConfirmRemoveSealFormProvider
 import matchers.JsonMatchers
 import controllers.events.seals.{routes => sealRoutes}
 import models.{Index, NormalMode, UserAnswers}
+import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
@@ -47,9 +48,9 @@ class ConfirmRemoveSealControllerSpec extends SpecBase with MockitoSugar with Nu
   val form: Form[Boolean] = formProvider()
 
   lazy val removeSealRoute: String = routes.ConfirmRemoveSealController.onPageLoad(mrn, eventIndex, sealIndex, NormalMode).url
-  private val userAnswersWithSeal  = emptyUserAnswers.set(SealIdentityPage(eventIndex, sealIndex), "1").success.value
+  private val userAnswersWithSeal  = emptyUserAnswers.set(SealIdentityPage(eventIndex, sealIndex), seal).success.value
 
-  "RemoveSeal Controller" - {
+  "ConfirmRemoveSealController" - {
 
     "must return OK and the correct view for a GET" in {
 
@@ -70,7 +71,7 @@ class ConfirmRemoveSealControllerSpec extends SpecBase with MockitoSugar with Nu
         "form"       -> form,
         "mode"       -> NormalMode,
         "mrn"        -> mrn,
-        "sealNumber" -> "1",
+        "sealNumber" -> seal.numberOrMark,
         "radios"     -> Radios.yesNo(form("value"))
       )
 
@@ -206,7 +207,7 @@ class ConfirmRemoveSealControllerSpec extends SpecBase with MockitoSugar with Nu
         "form"       -> boundForm,
         "mode"       -> NormalMode,
         "mrn"        -> mrn,
-        "sealNumber" -> "1",
+        "sealNumber" -> seal.numberOrMark,
         "radios"     -> Radios.yesNo(boundForm("value"))
       )
 

@@ -16,15 +16,13 @@
 
 package pages.events.seals
 
-import models.{Index, UserAnswers}
+import base.SpecBase
+import models.UserAnswers
 import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
 import queries.SealsQuery
 
-class HaveSealsChangedPageSpec extends PageBehaviours {
-
-  private val eventIndex = Index(0)
-  private val sealIndex  = Index(0)
+class HaveSealsChangedPageSpec extends PageBehaviours with SpecBase {
 
   "HaveSealsChangedPage" - {
 
@@ -43,7 +41,7 @@ class HaveSealsChangedPageSpec extends PageBehaviours {
               .set(HaveSealsChangedPage(eventIndex), true)
               .success
               .value
-              .set(SealIdentityPage(eventIndex, sealIndex), "seal")
+              .set(SealIdentityPage(eventIndex, sealIndex), seal)
               .success
               .value
               .set(HaveSealsChangedPage(eventIndex), false)
@@ -63,7 +61,7 @@ class HaveSealsChangedPageSpec extends PageBehaviours {
               .set(HaveSealsChangedPage(eventIndex), false)
               .success
               .value
-              .set(SealIdentityPage(eventIndex, sealIndex), "seal")
+              .set(SealIdentityPage(eventIndex, sealIndex), seal)
               .success
               .value
               .set(HaveSealsChangedPage(eventIndex), true)
