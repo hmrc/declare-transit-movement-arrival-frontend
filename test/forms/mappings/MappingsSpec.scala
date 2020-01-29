@@ -16,7 +16,6 @@
 
 package forms.mappings
 
-import cats.Show
 import generators.Generators
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.FreeSpec
