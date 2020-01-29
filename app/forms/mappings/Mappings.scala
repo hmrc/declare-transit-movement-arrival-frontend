@@ -18,7 +18,6 @@ package forms.mappings
 
 import java.time.LocalDate
 
-import cats.Show
 import models.{Enumerable, MovementReferenceNumber}
 import play.api.data.FieldMapping
 import play.api.data.Forms.of

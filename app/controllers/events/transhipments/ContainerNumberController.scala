@@ -53,8 +53,8 @@ class ContainerNumberController @Inject()(
     (identify andThen getData(mrn) andThen requireData).async {
       implicit request =>
         val preparedForm = request.userAnswers.get(ContainerNumberPage(eventIndex, containerIndex)) match {
-          case None        => formProvider(Seq.empty)
-          case Some(value) => formProvider(Seq.empty).fill(value.containerNumber)
+          case None        => formProvider()
+          case Some(value) => formProvider().fill(value.containerNumber)
         }
 
         val json = Json.obj(

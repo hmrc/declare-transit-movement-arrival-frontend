@@ -23,7 +23,7 @@ import play.api.data.Form
 
 class ContainerNumberFormProvider @Inject() extends Mappings {
 
-  def apply(declaredContainers: Seq[Container]): Form[String] =
+  def apply(declaredContainers: Seq[Container] = Seq.empty[Container]): Form[String] =
     Form(
       "value" -> text("containerNumber.error.required")
         .verifying(maxLength(Transhipment.Constants.containerLength, "containerNumber.error.length"))
