@@ -14,19 +14,25 @@
  * limitations under the License.
  */
 
-package forms.events.transhipments
+package viewModels.sections
 
-import forms.mappings.Mappings
-import javax.inject.Inject
-import models.messages.{Container, Transhipment}
-import play.api.data.Form
+import models.{Index, UserAnswers}
+import utils.CheckYourAnswersHelper
 
-class ContainerNumberFormProvider @Inject() extends Mappings {
+object EventInfoSection {
 
-  def apply(declaredContainers: Seq[Container] = Seq.empty[Container]): Form[String] =
-    Form(
-      "value" -> text("containerNumber.error.required")
-        .verifying(maxLength(Transhipment.Constants.containerLength, "containerNumber.error.length"))
-        .verifying(doesNotExistIn(declaredContainers, "containerNumber.error.duplicate"))
-    )
+  def apply(userAnswers: UserAnswers, eventIndex: Index, isTranshipment: Boolean): Section = {
+
+    val helper: CheckYourAnswersHelper = new CheckYourAnswersHelper(userAnswers)
+
+    Section(
+      Seq(
+        helper.eventCountry(eventIndex),
+        helper.eventPlace(eventIndex),
+        helper.eventReported(eventIndex),
+        if (isTranshipment) None else { helper.isTranshipment(eventIndex) },
+        helper.incidentInformation(eventIndex)
+      ).flatten)
+  }
+
 }

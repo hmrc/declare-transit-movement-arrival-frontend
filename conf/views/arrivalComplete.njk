@@ -18,10 +18,10 @@
           </h1>
 
           <div class="govuk-panel__body">
-           {{ messages("arrivalComplete.yourReferenceNumber", mrn)}}
+           {{ messages("arrivalComplete.yourReferenceNumber")}}
+           <strong>{{mrn}}</strong>
           </div>
         </div>
-
 
          <h2 class="govuk-heading-m"> {{ messages("arrivalComplete.subHeading") }}</h2>
 
@@ -30,7 +30,7 @@
           <ul class="govuk-list govuk-list--bullet">
                              <li>{{ messages("arrivalComplete.BulletPoint1") }}</li>
                              <li>{{ messages("arrivalComplete.BulletPoint2") }}</li>
-                             </ul><br>
+                             </ul>
 
              <p class="govuk-body"> {{ contactUs }}</p>
      </div>

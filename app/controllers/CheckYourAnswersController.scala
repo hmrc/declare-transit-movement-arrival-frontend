@@ -30,7 +30,7 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.SummaryList.Row
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, SummaryList}
 import utils.{AddEventsHelper, CheckYourAnswersHelper}
-import viewModels.Section
+import viewModels.sections.Section
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -79,13 +79,25 @@ class CheckYourAnswersController @Inject()(override val messagesApi: MessagesApi
         msg"checkYourAnswers.section.goodsLocation",
         Seq(helper.goodsLocation, helper.authorisedLocation, helper.customsSubPlace, helper.presentationOffice).flatten
       )
-    val traderDetails = Section(msg"checkYourAnswers.section.traderDetails", Seq(helper.traderName, helper.traderEori, helper.traderAddress).flatten)
-    val notificationDetails =
-      Section(msg"checkYourAnswers.section.notificationDetails", Seq(helper.isTraderAddressPlaceOfNotification, helper.placeOfNotification).flatten)
+    val traderDetails = Section(
+      msg"checkYourAnswers.section.traderDetails",
+      Seq(
+        helper.traderName,
+        helper.traderEori,
+        helper.traderAddress
+      ).flatten
+    )
+    val placeOfNotification = Section(
+      msg"checkYourAnswers.section.placeOfNotificationDetails",
+      Seq(
+        helper.isTraderAddressPlaceOfNotification,
+        helper.placeOfNotification
+      ).flatten
+    )
 
     val eventSeq = helper.incidentOnRoute.toSeq ++ eventList(userAnswers)
     val events   = Section(msg"checkYourAnswers.section.events", eventSeq)
-    Seq(mrn, whereAreTheGoods, traderDetails, notificationDetails, events)
+    Seq(mrn, whereAreTheGoods, traderDetails, placeOfNotification, events)
   }
 
   private def eventList(userAnswers: UserAnswers): Seq[SummaryList.Row] = {

@@ -61,7 +61,7 @@ class Navigator @Inject()() {
     case ConfirmRemoveEventPage(eventIndex)=> confirmRemoveEventRoute(eventIndex, NormalMode)
     case HaveSealsChangedPage(eventIndex) => haveSealsChanged(eventIndex, NormalMode)
     case SealIdentityPage(eventIndex, _) => ua => Some(sealRoutes.AddSealController.onPageLoad(ua.id, eventIndex, NormalMode))
-    case AddSealPage(eventIndex) => addSeal(eventIndex)
+    case AddSealPage(eventIndex) => addSeal(eventIndex, NormalMode)
     case ConfirmRemoveSealPage(eventIndex) => removeSeal(eventIndex, NormalMode)
   }
 
@@ -84,6 +84,7 @@ class Navigator @Inject()() {
     case SealIdentityPage(index, _) => ua => Some(sealRoutes.AddSealController.onPageLoad(ua.id, index, CheckMode))
     case HaveSealsChangedPage(index) => haveSealsChanged(index, CheckMode)
     case ConfirmRemoveSealPage(eventIndex) => removeSeal(eventIndex, CheckMode)
+    case AddSealPage(eventIndex) => addSeal(eventIndex, CheckMode)
   }
 
   def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = mode match {
@@ -281,12 +282,12 @@ class Navigator @Inject()() {
       case false => eventRoutes.CheckEventAnswersController.onPageLoad(userAnswers.id, eventIndex)
     }
 
-  private def addSeal(eventIndex: Index)(userAnswers: UserAnswers): Option[Call] =
+  private def addSeal(eventIndex: Index, mode: Mode)(userAnswers: UserAnswers): Option[Call] =
     userAnswers.get(AddSealPage(eventIndex)).map {
       case true =>
         val sealCount = userAnswers.get(DeriveNumberOfSeals(eventIndex)).getOrElse(0)
         val sealIndex = Index(sealCount)
-        sealRoutes.SealIdentityController.onPageLoad(userAnswers.id, eventIndex, sealIndex, NormalMode)
+        sealRoutes.SealIdentityController.onPageLoad(userAnswers.id, eventIndex, sealIndex, mode)
       case false =>
         eventRoutes.CheckEventAnswersController.onPageLoad(userAnswers.id, eventIndex)
     }

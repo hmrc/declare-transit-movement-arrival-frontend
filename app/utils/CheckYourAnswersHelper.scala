@@ -22,6 +22,7 @@ import controllers.events.seals.{routes => sealRoutes}
 import controllers.events.transhipments.{routes => transhipmentRoutes}
 import controllers.events.{routes => eventRoutes}
 import controllers.routes
+import derivable.DeriveNumberOfSeals
 import models.{CheckMode, Index, MovementReferenceNumber, TraderAddress, UserAnswers}
 import pages._
 import pages.events._
@@ -389,7 +390,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
 
   private def addressHtml(address: TraderAddress): Html = Html(
     Seq(address.buildingAndStreet, address.city, address.postcode)
-      .mkString(",<br>")
+      .mkString("<br>")
   )
 }
 
