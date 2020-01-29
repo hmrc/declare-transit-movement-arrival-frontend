@@ -21,7 +21,7 @@ import models.TranshipmentType.{DifferentContainer, DifferentContainerAndVehicle
 import models.{Index, UserAnswers}
 import pages.events.transhipments.TranshipmentTypePage
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, Text}
-import utils.CheckYourAnswersHelper
+import utils.CheckEventAnswersHelper
 
 object EventTypeSection extends NunjucksSupport {
 
@@ -50,7 +50,7 @@ object VehicleInformationSection extends NunjucksSupport {
 
   def apply(userAnswers: UserAnswers, eventIndex: Index): Seq[Section] = {
 
-    val helper: CheckYourAnswersHelper = new CheckYourAnswersHelper(userAnswers)
+    val helper = new CheckEventAnswersHelper(userAnswers)
 
     Seq(
       Section(
@@ -67,7 +67,7 @@ object DifferentContainerSection extends NunjucksSupport {
 
   def apply(userAnswers: UserAnswers, eventIndex: Index, isTranshipment: Boolean, sectionText: Text): Seq[Section] = {
 
-    val helper: CheckYourAnswersHelper = new CheckYourAnswersHelper(userAnswers)
+    val helper: CheckEventAnswersHelper = new CheckEventAnswersHelper(userAnswers)
 
     Seq(
       Some(
@@ -92,7 +92,7 @@ object DifferentVehicleSection extends NunjucksSupport {
 
   def apply(userAnswers: UserAnswers, eventIndex: Index, isTranshipment: Boolean): Seq[Section] = {
 
-    val helper: CheckYourAnswersHelper = new CheckYourAnswersHelper(userAnswers)
+    val helper: CheckEventAnswersHelper = new CheckEventAnswersHelper(userAnswers)
 
     Seq(
       Section(
