@@ -376,6 +376,7 @@ sealIdentity.heading = What is the new seal number or mark?
 sealIdentity.checkYourAnswersLabel = What is the new seal number or mark?
 sealIdentity.error.required = Enter the new seal number or mark
 sealIdentity.error.length = Seal number or mark must be 20 characters or less
+sealIdentity.error.duplicate = Enter a seal number or mark you have not given before
 sealIdentity.change.hidden = seal {0}
 
 addSeal.title.singular = You have added {0} seal

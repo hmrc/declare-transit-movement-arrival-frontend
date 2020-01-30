@@ -138,8 +138,7 @@ class ContainerNumberControllerSpec extends SpecBase with MockitoSugar with Nunj
       application.stop()
     }
 
-    "must give a bad request with an error when a duplicaate seal is submitted is submitted" in {
-      // TODO: we don't check the error at the moment, we should add a resuable way to do this
+    "must give a bad request with an error when an existing container is submitted" in {
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])

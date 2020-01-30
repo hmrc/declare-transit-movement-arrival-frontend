@@ -107,7 +107,7 @@ trait Constraints {
         Invalid(errorKey)
     }
 
-  protected def doesNotExistIn[A: StringEquivalence](values: Seq[A], errorKey: String, args: Any*): Constraint[String] = {
+  protected def doesNotExistIn[A](values: Seq[A], errorKey: String, args: Any*)(implicit ev: StringEquivalence[A]): Constraint[String] = {
     import StringEquivalence._
 
     Constraint {
