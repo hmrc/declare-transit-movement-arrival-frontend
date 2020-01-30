@@ -39,7 +39,6 @@ class CheckEventAnswersHelper(userAnswers: UserAnswers) {
             href               = eventRoutes.IsTranshipmentController.onPageLoad(mrn, eventIndex, CheckMode).url,
             visuallyHiddenText = Some(msg"isTranshipment.change.hidden"),
             attributes         = Map("id" -> s"""change-is-transhipment-${eventIndex.display}""")
-
           )
         )
       )
@@ -136,7 +135,6 @@ class CheckEventAnswersHelper(userAnswers: UserAnswers) {
             href               = eventRoutes.IncidentInformationController.onPageLoad(mrn, eventIndex, CheckMode).url,
             visuallyHiddenText = Some(msg"incidentInformation.change.hidden"),
             attributes         = Map("id" -> s"""change-incident-information-${eventIndex.display}""")
-
           )
         )
       )
@@ -153,7 +151,6 @@ class CheckEventAnswersHelper(userAnswers: UserAnswers) {
             href               = transhipmentRoutes.TransportIdentityController.onPageLoad(mrn, eventIndex, CheckMode).url,
             visuallyHiddenText = Some(msg"transportIdentity.change.hidden"),
             attributes         = Map("id" -> s"""transport-identity-${eventIndex.display}""")
-
           )
         )
       )
@@ -186,7 +183,6 @@ class CheckEventAnswersHelper(userAnswers: UserAnswers) {
             href               = sealRoutes.HaveSealsChangedController.onPageLoad(mrn, eventIndex, CheckMode).url,
             visuallyHiddenText = Some(msg"haveSealsChanged.change.hidden"),
             attributes         = Map("id" -> s"""seals-changed-${eventIndex.display}""")
-
           )
         )
       )
