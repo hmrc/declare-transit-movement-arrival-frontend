@@ -23,9 +23,10 @@ import play.api.data.Form
 
 class SealIdentityFormProvider @Inject() extends Mappings {
 
-  def apply(seal: Seq[Seal] = Seq.empty[Seal]): Form[String] =
+  def apply(seals: Seq[Seal] = Seq.empty[Seal]): Form[String] =
     Form(
       "value" -> text("sealIdentity.error.required")
-        .verifying(maxLength(20, "sealIdentity.error.length"))
+        .verifying(maxLength(Seal.Constants.sealNumberOrMarkLength, "sealIdentity.error.length"))
+        .verifying(doesNotExistIn(seals, "sealIdentity.error.duplicate"))
     )
 }

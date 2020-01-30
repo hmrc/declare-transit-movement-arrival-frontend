@@ -58,7 +58,7 @@ class ContainerNumberFormProviderSpec extends StringFieldBehaviours with Message
     "errors if there are new container is duplicate" in {
       forAll(listWithMaxLength[Container](10), arbitrary[Container]) {
         case (containers, container @ Container(containerNumber)) =>
-          val containersWithDuplicate = containers :+ container
+          val containersWithDuplicate: Seq[Container] = containers :+ container
 
           val result = form(containersWithDuplicate).bind(Map(fieldName -> containerNumber)).apply(fieldName)
 
