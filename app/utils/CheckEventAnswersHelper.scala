@@ -182,12 +182,12 @@ class CheckEventAnswersHelper(userAnswers: UserAnswers) {
     answer =>
       Row(
         key   = Key(msg"addSeal.sealList.label".withArgs(sealIndex.display), classes = Seq("govuk-!-width-one-half")),
-        value = Value(lit"$answer"),
+        value = Value(lit"${answer.numberOrMark}"),
         actions = List(
           Action(
             content            = msg"site.edit",
             href               = sealRoutes.SealIdentityController.onPageLoad(mrn, eventIndex, sealIndex, CheckMode).url,
-            visuallyHiddenText = Some(msg"sealIdentity.change.hidden".withArgs(answer))
+            visuallyHiddenText = Some(msg"sealIdentity.change.hidden".withArgs(answer.numberOrMark))
           )
         )
       )
