@@ -29,17 +29,17 @@ class AddSealHelper(userAnswers: UserAnswers) {
       answer =>
         Row(
           key   = Key(msg"addSeal.sealList.label".withArgs(sealIndex.display), classes = Seq("govuk-!-width-one-half")),
-          value = Value(lit"$answer"),
+          value = Value(lit"${answer.numberOrMark}"),
           actions = List(
             Action(
               content            = msg"site.edit",
               href               = SealIdentityController.onPageLoad(userAnswers.id, eventIndex, sealIndex, mode).url,
-              visuallyHiddenText = Some(msg"addSeal.sealList.change".withArgs(answer)) // TODO: Prefix in message file for is hard coded, should be the same as: site.edit.hidden
+              visuallyHiddenText = Some(msg"addSeal.sealList.change.hidden".withArgs(answer.numberOrMark))
             ),
             Action(
               content            = msg"site.delete",
               href               = ConfirmRemoveSealController.onPageLoad(userAnswers.id, eventIndex, sealIndex, mode).url,
-              visuallyHiddenText = Some(msg"addSeal.sealList.delete".withArgs(answer)) // TODO: Prefix in message file for is hard coded, should be the same as: site.delete.hidden
+              visuallyHiddenText = Some(msg"addSeal.sealList.delete.hidden".withArgs(answer.numberOrMark))
             )
           )
         )

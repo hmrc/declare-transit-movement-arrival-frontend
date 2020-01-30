@@ -17,22 +17,27 @@
 package handlers
 
 import javax.inject.{Inject, Singleton}
+import models.requests.DataRequest
 import play.api.http.HeaderNames.CACHE_CONTROL
 import play.api.http.HttpErrorHandler
 import play.api.http.Status._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.Results._
-import play.api.mvc.{RequestHeader, Result, Results}
+import play.api.mvc.{AnyContent, RequestHeader, Result, Results}
 import play.api.{Logger, PlayException}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.http.ApplicationException
+import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.{ExecutionContext, Future}
 
 // NOTE: There should be changes to bootstrap to make this easier, the API in bootstrap should allow a `Future[Html]` rather than just an `Html`
 @Singleton
-class ErrorHandler @Inject()(renderer: Renderer, val messagesApi: MessagesApi)(implicit ec: ExecutionContext) extends HttpErrorHandler with I18nSupport {
+class ErrorHandler @Inject()(renderer: Renderer, val messagesApi: MessagesApi)(implicit ec: ExecutionContext)
+    extends HttpErrorHandler
+    with I18nSupport
+    with NunjucksSupport {
 
   override def onClientError(request: RequestHeader, statusCode: Int, message: String = ""): Future[Result] = {
 
@@ -65,6 +70,16 @@ class ErrorHandler @Inject()(renderer: Renderer, val messagesApi: MessagesApi)(i
             InternalServerError(content).withHeaders(CACHE_CONTROL -> "no-cache")
         }
     }
+  }
+
+  def onConcurrentError(message: String, redirectLink: String, journey: String)(implicit request: DataRequest[AnyContent]): Future[Result] = {
+    val json = Json.obj(
+      "pageTitle"    -> msg"concurrent.remove.error.title".withArgs(msg"$journey"),
+      "pageHeading"  -> msg"concurrent.remove.error.title".withArgs(msg"$journey"),
+      "linkText"     -> msg"concurrent.remove.error.$message.link.text",
+      "redirectLink" -> redirectLink
+    )
+    renderer.render("concurrentRemoveError.njk", json).map(NotFound(_))
   }
 
   private def logError(request: RequestHeader, ex: Throwable): Unit =
