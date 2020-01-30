@@ -19,16 +19,18 @@ site.title.suffix = - Common Transit Convention for traders - GOV.UK
 error.title.prefix = Error:
 error.summary.title = There is a problem
 
+concurrent.event = event
+concurrent.container = container
+concurrent.seal = seal
 concurrent.remove.error.title = Sorry, there is a problem with this {0}.
 concurrent.remove.error.heading = Sorry, there is a problem with this {0}.
 concurrent.remove.error.paragraph = You will need to answer some questions again.
-concurrent.remove.error.noEvent.link.text = Go back to did any events happen on the journey
-concurrent.remove.error.container.link.text = Go back to have any of the seals changed journey
-concurrent.remove.error.seal.link.text = Go back to did the goods move to a different vehicle or container journey
-#### TODO needs message from Ruth  ######
-concurrent.remove.error.multipleEvent.link.text = Needs message
-concurrent.remove.error.add.container.link.text = Needs message
-concurrent.remove.error.add.seal.link.text = Needs message
+concurrent.remove.error.noEvent.link.text = Go back to did any events happen on the journey?
+concurrent.remove.error.noContainer.link.text = Go back to have any of the seals changed?
+concurrent.remove.error.noSeal.link.text = Go back to did the goods move to a different vehicle or container?
+concurrent.remove.error.multipleEvent.link.text = Go back to you have added events
+concurrent.remove.error.multipleContainer.link.text = Go back to you have added containers
+concurrent.remove.error.multipleSeal.link.text = Go back to you have added seals
 
 footer.links.support_links = Cysylltiadau cymorth
 footer.links.help = Help using GOV.UK
