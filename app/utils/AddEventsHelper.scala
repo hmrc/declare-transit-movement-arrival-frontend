@@ -28,8 +28,8 @@ class AddEventsHelper(userAnswers: UserAnswers) {
     placeOfEvent(eventIndex).map {
       answer =>
         Row(
-          key   = Key(msg"addEvent.event.label".withArgs(eventIndex.display), classes = Seq("govuk-!-width-one-half")),
-          value = Value(lit"$answer"),
+          key   = Key(msg"addEvent.event.label".withArgs(eventIndex.display), classes = Seq("govuk-!-width-one-quarter")),
+          value = Value(lit"$answer", classes                                         = Seq("govuk-!-width-one-quarter")),
           actions = List(
             Action(
               content            = msg"site.edit",
