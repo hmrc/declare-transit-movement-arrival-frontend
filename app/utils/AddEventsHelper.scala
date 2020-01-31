@@ -34,12 +34,14 @@ class AddEventsHelper(userAnswers: UserAnswers) {
             Action(
               content            = msg"site.edit",
               href               = eventRoutes.CheckEventAnswersController.onPageLoad(mrn, eventIndex).url,
-              visuallyHiddenText = Some(msg"addEvent.change.hidden".withArgs(eventIndex.display, answer))
+              visuallyHiddenText = Some(msg"addEvent.change.hidden".withArgs(eventIndex.display, answer)),
+              attributes         = Map("id" -> s"""change-event-${eventIndex.display}""")
             ),
             Action(
               content            = msg"site.delete",
               href               = eventRoutes.ConfirmRemoveEventController.onPageLoad(mrn, eventIndex, NormalMode).url,
-              visuallyHiddenText = Some(msg"addEvent.remove.hidden".withArgs(eventIndex.display, answer))
+              visuallyHiddenText = Some(msg"addEvent.remove.hidden".withArgs(eventIndex.display, answer)),
+              attributes         = Map("id" -> s"""remove-event-${eventIndex.display}""")
             )
           )
         )
