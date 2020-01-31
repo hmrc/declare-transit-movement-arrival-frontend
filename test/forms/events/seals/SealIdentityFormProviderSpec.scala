@@ -16,38 +16,62 @@
 
 package forms.events.seals
 
+import base.SpecBase
 import forms.behaviours.StringFieldBehaviours
+import generators.MessagesModelGenerators
+import models.messages.Seal
 import play.api.data.FormError
 
-class SealIdentityFormProviderSpec extends StringFieldBehaviours {
+class SealIdentityFormProviderSpec extends StringFieldBehaviours with MessagesModelGenerators with SpecBase {
 
-  val requiredKey = "sealIdentity.error.required"
-  val lengthKey   = "sealIdentity.error.length"
-  val maxLength   = 20
+  val requiredKey  = "sealIdentity.error.required"
+  val lengthKey    = "sealIdentity.error.length"
+  val duplicateKey = "sealIdentity.error.duplicate"
+  val maxLength    = 20
+  val fieldName    = "value"
 
-  val form = new SealIdentityFormProvider()()
+  val form = new SealIdentityFormProvider()
 
   ".value" - {
 
-    val fieldName = "value"
-
     behave like fieldThatBindsValidData(
-      form,
+      form(),
       fieldName,
       stringsWithMaxLength(maxLength)
     )
 
     behave like fieldWithMaxLength(
-      form,
+      form(),
       fieldName,
       maxLength   = maxLength,
       lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
     )
 
     behave like mandatoryField(
-      form,
+      form(),
       fieldName,
       requiredError = FormError(fieldName, requiredKey)
     )
   }
+
+  "errors if there are existing seal numbers or marks" in {
+
+    forAll(listWithMaxLength[Seal](10)) {
+      seals =>
+        val result = form(seals).bind(Map(fieldName -> seals.head.numberOrMark)).apply(fieldName)
+
+        result.errors mustEqual Seq(FormError(fieldName, duplicateKey))
+    }
+  }
+
+  "no errors if there are no existing seal numbers or marks" in {
+    forAll(listWithMaxLength[Seal](10)) {
+      seals =>
+        val sealsWithDuplicatesRemoved = seals.toSet.filterNot(_.numberOrMark == seal.numberOrMark).toSeq
+        val result                     = form(sealsWithDuplicatesRemoved).bind(Map(fieldName -> seal.numberOrMark)).apply(fieldName)
+
+        result.hasErrors mustEqual false
+    }
+  }
+
 }

@@ -18,7 +18,9 @@ package controllers.events.seals
 
 import base.SpecBase
 import forms.events.seals.SealIdentityFormProvider
+import generators.MessagesModelGenerators
 import matchers.JsonMatchers
+import models.messages.Seal
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
@@ -37,8 +39,9 @@ import repositories.SessionRepository
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
+import org.scalacheck.Arbitrary.arbitrary
 
-class SealIdentityControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class SealIdentityControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers with MessagesModelGenerators {
 
   def onwardRoute: Call = Call("GET", "/foo")
 
@@ -159,6 +162,29 @@ class SealIdentityControllerSpec extends SpecBase with MockitoSugar with Nunjuck
 
       templateCaptor.getValue mustEqual "events/seals/sealIdentity.njk"
       jsonCaptor.getValue must containJson(expectedJson)
+
+      application.stop()
+    }
+
+    "must return a Bad Request and errors when an existing seal is submitted" in {
+      when(mockRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("")))
+      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+
+      val seal        = arbitrary[Seal].sample.value
+      val userAnswers = emptyUserAnswers.set(SealIdentityPage(eventIndex, sealIndex), seal).success.value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val request     = FakeRequest(POST, sealIdentityRoute).withFormUrlEncodedBody(("value", seal.numberOrMark))
+
+      val result = route(application, request).value
+
+      status(result) mustEqual BAD_REQUEST
+
+      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+
+      templateCaptor.getValue mustEqual "events/seals/sealIdentity.njk"
 
       application.stop()
     }

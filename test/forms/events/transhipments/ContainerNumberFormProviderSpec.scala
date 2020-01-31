@@ -16,14 +16,13 @@
 
 package forms.events.transhipments
 
+import base.SpecBase
 import forms.behaviours.StringFieldBehaviours
-import generators.{Generators, MessagesModelGenerators}
+import generators.MessagesModelGenerators
 import models.messages.{Container, Transhipment}
-import org.scalacheck.Arbitrary
 import play.api.data.FormError
-import org.scalacheck.Arbitrary.arbitrary
 
-class ContainerNumberFormProviderSpec extends StringFieldBehaviours with MessagesModelGenerators {
+class ContainerNumberFormProviderSpec extends StringFieldBehaviours with MessagesModelGenerators with SpecBase {
 
   val requiredKey  = "containerNumber.error.required"
   val lengthKey    = "containerNumber.error.length"
@@ -55,27 +54,31 @@ class ContainerNumberFormProviderSpec extends StringFieldBehaviours with Message
       requiredError = FormError(fieldName, requiredKey)
     )
 
-    "errors if there are new container is duplicate" in {
-      forAll(listWithMaxLength[Container](10), arbitrary[Container]) {
-        case (containers, container @ Container(containerNumber)) =>
-          val containersWithDuplicate = containers :+ container
+    "errors if there are existing container numbers" in {
 
-          val result = form(containersWithDuplicate).bind(Map(fieldName -> containerNumber)).apply(fieldName)
+      forAll(listWithMaxLength[Container](10)) {
+        containers =>
+          val result = form(containers).bind(Map(fieldName -> containers.head.containerNumber)).apply(fieldName)
 
           result.errors mustEqual Seq(FormError(fieldName, duplicateKey))
       }
     }
 
-    "no errors if there are new container is not a duplicate" in {
-      forAll(listWithMaxLength[Container](10), arbitrary[Container]) {
-        case (containers1, container @ Container(containerNumber)) =>
-          val containersNoDuplicate = containers1.filterNot(_ == container)
+    "no errors if there are no existing container number" in {
+      forAll(listWithMaxLength[Container](10)) {
+        containers =>
+          val containersWithDuplicatesRemoved = {
+            containers.toSet.filterNot(_.containerNumber == container.containerNumber).toSeq
+          }
 
-          val result = form(containersNoDuplicate).bind(Map(fieldName -> containerNumber)).apply(fieldName)
+          val result = {
+            form(containersWithDuplicatesRemoved)
+              .bind(Map(fieldName -> container.containerNumber))
+              .apply(fieldName)
+          }
 
           result.hasErrors mustEqual false
       }
     }
-
   }
 }
