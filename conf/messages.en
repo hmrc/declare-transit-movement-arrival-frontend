@@ -268,11 +268,11 @@ eventReported.checkYourAnswersLabel = Has this event been reported to a customs 
 eventReported.error.required = Select yes if the event has been reported
 eventReported.change.hidden = if this event has been reported to customs
 
-incidentInformation.title = What happened on the route?
-incidentInformation.heading = What happened on the route?
-incidentInformation.checkYourAnswersLabel = What happened on the route?
-incidentInformation.error.required = Enter what happened on the route
-incidentInformation.error.length = What happened on the route must be 350 characters or less
+incidentInformation.title = What happened on the journey?
+incidentInformation.heading = What happened on the journey?
+incidentInformation.checkYourAnswersLabel = What happened on the journey?
+incidentInformation.error.required = Enter what happened on the journey
+incidentInformation.error.length = What happened on the journey must be 350 characters or less
 incidentInformation.change.hidden = what happened on the journey
 
 isTranshipment.title = Did the goods move to a different vehicle or container?
