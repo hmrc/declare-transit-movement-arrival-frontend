@@ -29,18 +29,18 @@ class AddSealHelper(userAnswers: UserAnswers) {
       answer =>
         Row(
           key   = Key(msg"addSeal.sealList.label".withArgs(sealIndex.display), classes = Seq("govuk-!-width-one-half")),
-          value = Value(lit"$answer"),
+          value = Value(lit"${answer.numberOrMark}"),
           actions = List(
             Action(
               content            = msg"site.edit",
               href               = SealIdentityController.onPageLoad(userAnswers.id, eventIndex, sealIndex, mode).url,
-              visuallyHiddenText = Some(msg"addSeal.sealList.change.hidden".withArgs(answer)),
+              visuallyHiddenText = Some(msg"addSeal.sealList.change.hidden".withArgs(answer.numberOrMark)),
               attributes         = Map("id" -> s"""change-seal-${sealIndex.display}""")
             ),
             Action(
               content            = msg"site.delete",
               href               = ConfirmRemoveSealController.onPageLoad(userAnswers.id, eventIndex, sealIndex, mode).url,
-              visuallyHiddenText = Some(msg"addSeal.sealList.delete.hidden".withArgs(answer)),
+              visuallyHiddenText = Some(msg"addSeal.sealList.delete.hidden".withArgs(answer.numberOrMark)),
               attributes         = Map("id" -> s"""remove-seal-${sealIndex.display}""")
             )
           )
