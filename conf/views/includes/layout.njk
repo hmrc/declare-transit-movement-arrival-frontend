@@ -19,10 +19,10 @@
 
 {% block beforeContent %}
   {% include "includes/phase-banner.njk" %}
+  {% include "includes/language-toggles.njk" %}
 {% endblock %}
 
 {% block content %}
-  {% include "includes/language-toggles.njk" %}
   {% block mainContent %}{% endblock %}
 {% endblock %}
 

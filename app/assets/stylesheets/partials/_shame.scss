@@ -15,6 +15,21 @@
 
 // ******************************************************
 // ******************************************************
+// hide back link if no js is enabled as link is js powered
+// ******************************************************
+// ******************************************************
+.govuk-back-link {
+    display: none;
+}
+.js-enabled .govuk-back-link {
+    display: inline-block;
+}
+
+
+
+
+// ******************************************************
+// ******************************************************
 // move back link and lang switcher alongside each other
 // ******************************************************
 // ******************************************************
@@ -23,14 +38,8 @@
 }
 .govuk-back-link {
     float: left;
-    top: -20px;
-    margin-bottom: -20px;
-}
-@media screen and (min-width: 40.0625em){
-    .govuk-back-link {
-        top: -40px;
-        margin-bottom: -40px;
-    }
+    top: -40px;
+    margin-bottom: -40px;
 }
 .govuk-back-link:after {
     content: "";

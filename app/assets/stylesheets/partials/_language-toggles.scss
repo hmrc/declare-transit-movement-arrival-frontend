@@ -1,7 +1,5 @@
 // Language switcher
 .lang {
-  margin-top: -20px; // this should match the padding-top of .govuk-main-wrapper
-
   &::after {
     content: "";
     display: table;
@@ -29,10 +27,5 @@
     [aria-current] {
       padding: 0.25em;
     }
-  }
-}
-@media (min-width: 40.0625em) {
-  .lang {
-    margin-top: -40px;
   }
 }
