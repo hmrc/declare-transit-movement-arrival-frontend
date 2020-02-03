@@ -46,7 +46,7 @@ class ContainerNumberControllerSpec extends SpecBase with MockitoSugar with Nunj
   def onwardRoute = Call("GET", "/foo")
 
   private val formProvider       = new ContainerNumberFormProvider()
-  private val form: Form[String] = formProvider(Seq.empty)
+  private val form: Form[String] = formProvider(containerIndex, Seq.empty)
 
   private lazy val containerNumberRoute: String = routes.ContainerNumberController.onPageLoad(mrn, eventIndex, containerIndex, NormalMode).url
   private lazy val containerNumberTemplate      = "events/transhipments/containerNumber.njk"
