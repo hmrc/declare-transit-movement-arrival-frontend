@@ -19,6 +19,7 @@ package forms.events.seals
 import base.SpecBase
 import forms.behaviours.StringFieldBehaviours
 import generators.MessagesModelGenerators
+import models.Index
 import models.messages.Seal
 import play.api.data.FormError
 
@@ -54,11 +55,23 @@ class SealIdentityFormProviderSpec extends StringFieldBehaviours with MessagesMo
     )
   }
 
-  "errors if there are existing seal numbers or marks" in {
+  "no errors if there are existing seal numbers or marks when applying against the same index" in {
 
     forAll(listWithMaxLength[Seal](10)) {
       seals =>
         val result = form(sealIndex, seals).bind(Map(fieldName -> seals.head.numberOrMark)).apply(fieldName)
+
+        result.hasErrors mustEqual false
+    }
+  }
+
+  "errors if there are existing seal numbers or marks and index is different from current" in {
+
+    forAll(listWithMaxLength[Seal](10)) {
+      seals =>
+        val nextIndex = seals.length
+        val index     = Index(nextIndex)
+        val result    = form(index, seals).bind(Map(fieldName -> seals.head.numberOrMark)).apply(fieldName)
 
         result.errors mustEqual Seq(FormError(fieldName, duplicateKey))
     }

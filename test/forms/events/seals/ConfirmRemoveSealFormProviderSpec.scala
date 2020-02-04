@@ -21,7 +21,7 @@ import play.api.data.FormError
 
 class ConfirmRemoveSealFormProviderSpec extends BooleanFieldBehaviours {
 
-  val requiredKey = "removeSeal.error.required"
+  val requiredKey = "confirmRemoveSeal.error.required"
   val invalidKey  = "error.boolean"
 
   val form = new ConfirmRemoveSealFormProvider()()
