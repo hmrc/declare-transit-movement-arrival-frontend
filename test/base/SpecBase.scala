@@ -18,7 +18,7 @@ package base
 
 import config.FrontendAppConfig
 import controllers.actions._
-import models.messages.Seal
+import models.messages.{Container, Seal}
 import models.{Index, MovementReferenceNumber, TraderAddress, UserAnswers}
 import org.mockito.Mockito
 import org.scalatest._
@@ -61,7 +61,8 @@ trait SpecBase
   val containerIndex = Index(0)
   val sealIndex      = Index(0)
 
-  val seal = Seal("sealNumber")
+  val seal      = Seal("sealNumber")
+  val container = Container("containerNumber")
 
   val traderAddress = TraderAddress("", "", "NE99 1XN")
 
