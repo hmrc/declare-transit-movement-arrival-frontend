@@ -21,7 +21,7 @@ import forms.events.seals.SealIdentityFormProvider
 import generators.MessagesModelGenerators
 import matchers.JsonMatchers
 import models.messages.Seal
-import models.{NormalMode, UserAnswers}
+import models.{Index, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
@@ -46,9 +46,9 @@ class SealIdentityControllerSpec extends SpecBase with MockitoSugar with Nunjuck
   def onwardRoute: Call = Call("GET", "/foo")
 
   val formProvider       = new SealIdentityFormProvider()
-  val form: Form[String] = formProvider()
+  val form: Form[String] = formProvider(sealIndex)
 
-  lazy val sealIdentityRoute: String = routes.SealIdentityController.onPageLoad(mrn, eventIndex, sealIndex, NormalMode).url
+  private def sealIdentityRoute(index: Index = sealIndex): String = routes.SealIdentityController.onPageLoad(mrn, eventIndex, index, NormalMode).url
 
   "SealIdentity Controller" - {
 
@@ -58,7 +58,7 @@ class SealIdentityControllerSpec extends SpecBase with MockitoSugar with Nunjuck
         .thenReturn(Future.successful(Html("")))
 
       val application    = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request        = FakeRequest(GET, sealIdentityRoute)
+      val request        = FakeRequest(GET, sealIdentityRoute())
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -87,7 +87,7 @@ class SealIdentityControllerSpec extends SpecBase with MockitoSugar with Nunjuck
 
       val userAnswers    = UserAnswers(mrn).set(SealIdentityPage(eventIndex, sealIndex), seal).success.value
       val application    = applicationBuilder(userAnswers = Some(userAnswers)).build()
-      val request        = FakeRequest(GET, sealIdentityRoute)
+      val request        = FakeRequest(GET, sealIdentityRoute())
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -126,8 +126,37 @@ class SealIdentityControllerSpec extends SpecBase with MockitoSugar with Nunjuck
           .build()
 
       val request =
-        FakeRequest(POST, sealIdentityRoute)
+        FakeRequest(POST, sealIdentityRoute())
           .withFormUrlEncodedBody(("value", "answer"))
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual onwardRoute.url
+
+      application.stop()
+    }
+
+    "must redirect to the next page when a value that is the same as the previous is submitted within the same index" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val seal        = arbitrary[Seal].sample.value
+      val userAnswers = emptyUserAnswers.set(SealIdentityPage(eventIndex, sealIndex), seal).success.value
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      val request =
+        FakeRequest(POST, sealIdentityRoute())
+          .withFormUrlEncodedBody(("value", seal.numberOrMark))
 
       val result = route(application, request).value
 
@@ -143,7 +172,7 @@ class SealIdentityControllerSpec extends SpecBase with MockitoSugar with Nunjuck
         .thenReturn(Future.successful(Html("")))
 
       val application    = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request        = FakeRequest(POST, sealIdentityRoute).withFormUrlEncodedBody(("value", ""))
+      val request        = FakeRequest(POST, sealIdentityRoute()).withFormUrlEncodedBody(("value", ""))
       val boundForm      = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
@@ -166,7 +195,7 @@ class SealIdentityControllerSpec extends SpecBase with MockitoSugar with Nunjuck
       application.stop()
     }
 
-    "must return a Bad Request and errors when an existing seal is submitted" in {
+    "must return a Bad Request and errors when an existing seal is submitted and index is different to current index" in {
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -175,8 +204,9 @@ class SealIdentityControllerSpec extends SpecBase with MockitoSugar with Nunjuck
       val seal        = arbitrary[Seal].sample.value
       val userAnswers = emptyUserAnswers.set(SealIdentityPage(eventIndex, sealIndex), seal).success.value
 
+      val nextIndex   = Index(1)
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-      val request     = FakeRequest(POST, sealIdentityRoute).withFormUrlEncodedBody(("value", seal.numberOrMark))
+      val request     = FakeRequest(POST, sealIdentityRoute(nextIndex)).withFormUrlEncodedBody(("value", seal.numberOrMark))
 
       val result = route(application, request).value
 
@@ -193,7 +223,7 @@ class SealIdentityControllerSpec extends SpecBase with MockitoSugar with Nunjuck
 
       val application = applicationBuilder(userAnswers = None).build()
 
-      val request = FakeRequest(GET, sealIdentityRoute)
+      val request = FakeRequest(GET, sealIdentityRoute())
 
       val result = route(application, request).value
 
@@ -209,7 +239,7 @@ class SealIdentityControllerSpec extends SpecBase with MockitoSugar with Nunjuck
       val application = applicationBuilder(userAnswers = None).build()
 
       val request =
-        FakeRequest(POST, sealIdentityRoute)
+        FakeRequest(POST, sealIdentityRoute())
           .withFormUrlEncodedBody(("value", "answer"))
 
       val result = route(application, request).value

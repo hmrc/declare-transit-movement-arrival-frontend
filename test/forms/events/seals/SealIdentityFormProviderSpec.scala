@@ -19,6 +19,7 @@ package forms.events.seals
 import base.SpecBase
 import forms.behaviours.StringFieldBehaviours
 import generators.MessagesModelGenerators
+import models.Index
 import models.messages.Seal
 import play.api.data.FormError
 
@@ -35,30 +36,42 @@ class SealIdentityFormProviderSpec extends StringFieldBehaviours with MessagesMo
   ".value" - {
 
     behave like fieldThatBindsValidData(
-      form(),
+      form(sealIndex),
       fieldName,
       stringsWithMaxLength(maxLength)
     )
 
     behave like fieldWithMaxLength(
-      form(),
+      form(sealIndex),
       fieldName,
       maxLength   = maxLength,
       lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
     )
 
     behave like mandatoryField(
-      form(),
+      form(sealIndex),
       fieldName,
       requiredError = FormError(fieldName, requiredKey)
     )
   }
 
-  "errors if there are existing seal numbers or marks" in {
+  "no errors if there are existing seal numbers or marks when applying against the same index" in {
 
     forAll(listWithMaxLength[Seal](10)) {
       seals =>
-        val result = form(seals).bind(Map(fieldName -> seals.head.numberOrMark)).apply(fieldName)
+        val result = form(sealIndex, seals).bind(Map(fieldName -> seals.head.numberOrMark)).apply(fieldName)
+
+        result.hasErrors mustEqual false
+    }
+  }
+
+  "errors if there are existing seal numbers or marks and index is different from current" in {
+
+    forAll(listWithMaxLength[Seal](10)) {
+      seals =>
+        val nextIndex = seals.length
+        val index     = Index(nextIndex)
+        val result    = form(index, seals).bind(Map(fieldName -> seals.head.numberOrMark)).apply(fieldName)
 
         result.errors mustEqual Seq(FormError(fieldName, duplicateKey))
     }
@@ -68,7 +81,7 @@ class SealIdentityFormProviderSpec extends StringFieldBehaviours with MessagesMo
     forAll(listWithMaxLength[Seal](10)) {
       seals =>
         val sealsWithDuplicatesRemoved = seals.toSet.filterNot(_.numberOrMark == seal.numberOrMark).toSeq
-        val result                     = form(sealsWithDuplicatesRemoved).bind(Map(fieldName -> seal.numberOrMark)).apply(fieldName)
+        val result                     = form(sealIndex, sealsWithDuplicatesRemoved).bind(Map(fieldName -> seal.numberOrMark)).apply(fieldName)
 
         result.hasErrors mustEqual false
     }

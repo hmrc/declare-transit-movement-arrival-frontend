@@ -19,6 +19,7 @@ package forms.events.transhipments
 import base.SpecBase
 import forms.behaviours.StringFieldBehaviours
 import generators.MessagesModelGenerators
+import models.Index
 import models.messages.{Container, Transhipment}
 import play.api.data.FormError
 
@@ -36,29 +37,42 @@ class ContainerNumberFormProviderSpec extends StringFieldBehaviours with Message
     val fieldName = "value"
 
     behave like fieldThatBindsValidData(
-      form(),
+      form(containerIndex),
       fieldName,
       stringsWithMaxLength(maxLength)
     )
 
     behave like fieldWithMaxLength(
-      form(),
+      form(containerIndex),
       fieldName,
       maxLength   = maxLength,
       lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
     )
 
     behave like mandatoryField(
-      form(),
+      form(containerIndex),
       fieldName,
       requiredError = FormError(fieldName, requiredKey)
     )
 
-    "errors if there are existing container numbers" in {
+    "no errors if there are existing container numbers when applying against the same index" in {
 
       forAll(listWithMaxLength[Container](10)) {
         containers =>
-          val result = form(containers).bind(Map(fieldName -> containers.head.containerNumber)).apply(fieldName)
+          val result = form(containerIndex, containers).bind(Map(fieldName -> containers.head.containerNumber)).apply(fieldName)
+
+          result.hasErrors mustEqual false
+      }
+    }
+
+    "errors if there are existing container numbers and index is different from current" in {
+
+      forAll(listWithMaxLength[Container](10)) {
+        containers =>
+          val nextIndex = containers.length
+          val index     = Index(nextIndex)
+
+          val result = form(index, containers).bind(Map(fieldName -> containers.head.containerNumber)).apply(fieldName)
 
           result.errors mustEqual Seq(FormError(fieldName, duplicateKey))
       }
@@ -72,7 +86,7 @@ class ContainerNumberFormProviderSpec extends StringFieldBehaviours with Message
           }
 
           val result = {
-            form(containersWithDuplicatesRemoved)
+            form(containerIndex, containersWithDuplicatesRemoved)
               .bind(Map(fieldName -> container.containerNumber))
               .apply(fieldName)
           }

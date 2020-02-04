@@ -57,8 +57,8 @@ class SealIdentityController @Inject()(
     (identify andThen getData(mrn) andThen requireData).async {
       implicit request =>
         val preparedForm = request.userAnswers.get(SealIdentityPage(eventIndex, sealIndex)) match {
-          case None        => form()
-          case Some(value) => form().fill(value.numberOrMark)
+          case None        => form(sealIndex)
+          case Some(value) => form(sealIndex).fill(value.numberOrMark)
         }
 
         renderView(mrn, mode, preparedForm).map(Ok(_))
@@ -69,7 +69,7 @@ class SealIdentityController @Inject()(
       implicit request =>
         val seals = request.userAnswers.get(SealsQuery(eventIndex)).getOrElse(Seq.empty)
 
-        form(seals)
+        form(sealIndex, seals)
           .bindFromRequest()
           .fold(
             formWithErrors => renderView(mrn, mode, formWithErrors).map(BadRequest(_)),
