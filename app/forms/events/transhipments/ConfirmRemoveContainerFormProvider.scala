@@ -18,12 +18,16 @@ package forms.events.transhipments
 
 import forms.mappings.Mappings
 import javax.inject.Inject
+import models.messages.Container
 import play.api.data.Form
 
 class ConfirmRemoveContainerFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[Boolean] =
+  def apply(container: Container): Form[Boolean] =
     Form(
-      "value" -> boolean("confirmRemoveContainer.error.required")
+      "value" -> boolean(
+        requiredKey = "confirmRemoveContainer.error.required",
+        args        = Seq(container.containerNumber)
+      )
     )
 }
