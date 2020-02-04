@@ -21,18 +21,15 @@ import matchers.JsonMatchers
 import models.reference.CustomsOffice
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
-import org.mockito.Mockito.times
-import org.mockito.Mockito.verify
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.PresentationOfficePage
-import play.api.libs.json.JsObject
-import play.api.libs.json.Json
+import play.api.inject.bind
+import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import repositories.SessionRepository
-import play.api.inject.bind
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, Text}
 
 import scala.concurrent.Future
