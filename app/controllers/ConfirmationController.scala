@@ -16,6 +16,7 @@
 
 package controllers
 
+import config.FrontendAppConfig
 import controllers.actions._
 import javax.inject.Inject
 import models.MovementReferenceNumber
@@ -26,10 +27,12 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
+
 import scala.concurrent.{ExecutionContext, Future}
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 class ConfirmationController @Inject()(override val messagesApi: MessagesApi,
+                                       appConfig: FrontendAppConfig,
                                        sessionRepository: SessionRepository,
                                        identify: IdentifierAction,
                                        getData: DataRetrievalActionProvider,
@@ -50,8 +53,9 @@ class ConfirmationController @Inject()(override val messagesApi: MessagesApi,
           }
 
           val json = Json.obj(
-            "mrn"       -> mrn,
-            "contactUs" -> contactUsMessage
+            "mrn"                       -> mrn,
+            "contactUs"                 -> contactUsMessage,
+            "manageTransitMovementsUrl" -> appConfig.manageTransitMovementsUrl
           )
           sessionRepository.remove(mrn.toString)
           renderer.render("arrivalComplete.njk", json).map(Ok(_))
