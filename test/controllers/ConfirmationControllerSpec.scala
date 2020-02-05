@@ -44,13 +44,11 @@ class ConfirmationControllerSpec extends SpecBase with MockitoSugar with JsonMat
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val mockFrontendAppConfig = mock[FrontendAppConfig]
       val mockSessionRepository = mock[SessionRepository]
       val presentationOffice    = CustomsOffice("id", "name", Seq.empty, None)
       val userAnswers           = emptyUserAnswers.set(PresentationOfficePage, presentationOffice).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers))
         .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
-        .overrides(bind[FrontendAppConfig].toInstance(mockFrontendAppConfig))
         .build()
       val request        = FakeRequest(GET, routes.ConfirmationController.onPageLoad(mrn).url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -59,16 +57,13 @@ class ConfirmationControllerSpec extends SpecBase with MockitoSugar with JsonMat
 
       val contactUsMessage: Text.Message = msg"arrivalComplete.para2".withArgs(presentationOffice.name)
 
-      when(mockFrontendAppConfig.manageTransitMovementsUrl)
-        .thenReturn("http://test.local/test-url")
-
       status(result) mustEqual OK
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
       verify(mockSessionRepository, times(1)).remove(mrn.toString)
 
       val expectedJson =
-        Json.obj("mrn" -> mrn, "contactUs" -> contactUsMessage, "manageTransitMovementsUrl" -> "http://test.local/test-url")
+        Json.obj("mrn" -> mrn, "contactUs" -> contactUsMessage, "manageTransitMovementsUrl" -> frontendAppConfig.manageTransitMovementsUrl)
 
       templateCaptor.getValue mustEqual "arrivalComplete.njk"
       jsonCaptor.getValue must containJson(expectedJson)

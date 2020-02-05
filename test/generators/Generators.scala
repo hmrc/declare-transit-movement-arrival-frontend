@@ -112,7 +112,7 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
   def listWithMaxLength[A](maxLength: Int)(implicit a: Arbitrary[A]): Gen[List[A]] =
     for {
       length <- choose(1, maxLength)
-      seq <- listOfN(length, arbitrary[A])
+      seq    <- listOfN(length, arbitrary[A])
     } yield seq
 
   def datesBetween(min: LocalDate, max: LocalDate): Gen[LocalDate] = {
