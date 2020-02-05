@@ -47,7 +47,7 @@ class ConfirmRemoveSealControllerSpec extends SpecBase with MockitoSugar with Nu
   private val formProvider        = new ConfirmRemoveSealFormProvider()
   private val form: Form[Boolean] = formProvider(seal)
 
-  private val removeSealRoute: String      = routes.ConfirmRemoveSealController.onPageLoad(mrn, eventIndex, sealIndex, NormalMode).url
+  private val removeSealRoute: String   = routes.ConfirmRemoveSealController.onPageLoad(mrn, eventIndex, sealIndex, NormalMode).url
   private val userAnswersWithSeal       = emptyUserAnswers.set(SealIdentityPage(eventIndex, sealIndex), seal).success.value
   private val confirmRemoveSealTemplate = "events/seals/confirmRemoveSeal.njk"
 

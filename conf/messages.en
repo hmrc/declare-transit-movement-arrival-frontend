@@ -403,4 +403,4 @@ confirmRemoveSeal.error.required = Select yes if you are sure you want to remove
 
 confirmRemoveEvent.title = Are you sure you want to remove the event {0}?
 confirmRemoveEvent.heading = Are you sure you want to remove the event {0}?
-confirmRemoveEvent.error.required = Select yes if you are sure you want to remove the event {0}?
+confirmRemoveEvent.error.required = Select yes if you are sure you want to remove the event {0}
