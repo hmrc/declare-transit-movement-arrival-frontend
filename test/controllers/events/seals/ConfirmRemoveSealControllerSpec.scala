@@ -44,11 +44,12 @@ class ConfirmRemoveSealControllerSpec extends SpecBase with MockitoSugar with Nu
 
   def onwardRoute: Call = Call("GET", "/foo")
 
-  val formProvider        = new ConfirmRemoveSealFormProvider()
-  val form: Form[Boolean] = formProvider()
+  private val formProvider        = new ConfirmRemoveSealFormProvider()
+  private val form: Form[Boolean] = formProvider(seal)
 
-  lazy val removeSealRoute: String = routes.ConfirmRemoveSealController.onPageLoad(mrn, eventIndex, sealIndex, NormalMode).url
-  private val userAnswersWithSeal  = emptyUserAnswers.set(SealIdentityPage(eventIndex, sealIndex), seal).success.value
+  private val removeSealRoute: String      = routes.ConfirmRemoveSealController.onPageLoad(mrn, eventIndex, sealIndex, NormalMode).url
+  private val userAnswersWithSeal       = emptyUserAnswers.set(SealIdentityPage(eventIndex, sealIndex), seal).success.value
+  private val confirmRemoveSealTemplate = "events/seals/confirmRemoveSeal.njk"
 
   "ConfirmRemoveSealController" - {
 
@@ -75,7 +76,7 @@ class ConfirmRemoveSealControllerSpec extends SpecBase with MockitoSugar with Nu
         "radios"     -> Radios.yesNo(form("value"))
       )
 
-      templateCaptor.getValue mustEqual "events/seals/confirmRemoveSeal.njk"
+      templateCaptor.getValue mustEqual confirmRemoveSealTemplate
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -211,7 +212,7 @@ class ConfirmRemoveSealControllerSpec extends SpecBase with MockitoSugar with Nu
         "radios"     -> Radios.yesNo(boundForm("value"))
       )
 
-      templateCaptor.getValue mustEqual "events/seals/confirmRemoveSeal.njk"
+      templateCaptor.getValue mustEqual confirmRemoveSealTemplate
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
