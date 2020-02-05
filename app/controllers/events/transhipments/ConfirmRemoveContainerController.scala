@@ -21,14 +21,16 @@ import derivable.DeriveNumberOfContainers
 import forms.events.transhipments.ConfirmRemoveContainerFormProvider
 import handlers.ErrorHandler
 import javax.inject.Inject
+import models.messages.Container
 import models.requests.DataRequest
-import models.{Index, Mode, MovementReferenceNumber}
+import models.{Index, Mode, MovementReferenceNumber, UserAnswers}
 import navigation.Navigator
 import pages.events.transhipments.{ConfirmRemoveContainerPage, ContainerNumberPage}
-import play.api.data.Form
+import play.api.data.{Field, Form}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.twirl.api.Html
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
@@ -52,52 +54,64 @@ class ConfirmRemoveContainerController @Inject()(
     with I18nSupport
     with NunjucksSupport {
 
-  private val form                           = formProvider()
   private val confirmRemoveContainerTemplate = "events/transhipments/confirmRemoveContainer.njk"
 
   def onPageLoad(mrn: MovementReferenceNumber, eventIndex: Index, containerIndex: Index, mode: Mode): Action[AnyContent] =
     (identify andThen getData(mrn) andThen requireData).async {
       implicit request =>
-        renderPage(mrn, eventIndex, containerIndex, form, mode, Ok)
+        request.userAnswers.get(ContainerNumberPage(eventIndex, containerIndex)) match {
+          case Some(container) =>
+            val form = formProvider(container)
+            renderPage(mrn, eventIndex, containerIndex, form, mode, container).map(Ok(_))
+          case _ =>
+            renderErrorPage(eventIndex, mode, request.userAnswers)
+        }
+
     }
 
   def onSubmit(mrn: MovementReferenceNumber, eventIndex: Index, containerIndex: Index, mode: Mode): Action[AnyContent] =
     (identify andThen getData(mrn) andThen requireData).async {
       implicit request =>
-        form
-          .bindFromRequest()
-          .fold(
-            formWithErrors => renderPage(mrn, eventIndex, containerIndex, formWithErrors, mode, BadRequest),
-            value =>
-              if (value) {
-                for {
-                  updatedAnswers <- Future.fromTry(request.userAnswers.remove(ContainerNumberPage(eventIndex, containerIndex)))
-                  _              <- sessionRepository.set(updatedAnswers)
-                } yield Redirect(navigator.nextPage(ConfirmRemoveContainerPage(eventIndex), mode, updatedAnswers))
-              } else {
-                Future.successful(Redirect(navigator.nextPage(ConfirmRemoveContainerPage(eventIndex), mode, request.userAnswers)))
-            }
-          )
+        request.userAnswers.get(ContainerNumberPage(eventIndex, containerIndex)) match {
+          case Some(container) =>
+            formProvider(container)
+              .bindFromRequest()
+              .fold(
+                formWithErrors => renderPage(mrn, eventIndex, containerIndex, formWithErrors, mode, container).map(BadRequest(_)),
+                value =>
+                  if (value) {
+                    for {
+                      updatedAnswers <- Future.fromTry(request.userAnswers.remove(ContainerNumberPage(eventIndex, containerIndex)))
+                      _              <- sessionRepository.set(updatedAnswers)
+                    } yield Redirect(navigator.nextPage(ConfirmRemoveContainerPage(eventIndex), mode, updatedAnswers))
+                  } else {
+                    Future.successful(Redirect(navigator.nextPage(ConfirmRemoveContainerPage(eventIndex), mode, request.userAnswers)))
+                }
+              )
+          case _ =>
+            renderErrorPage(eventIndex, mode, request.userAnswers)
+        }
     }
 
-  private def renderPage(mrn: MovementReferenceNumber, eventIndex: Index, containerIndex: Index, form: Form[Boolean], mode: Mode, status: Status)(
-    implicit request: DataRequest[AnyContent]): Future[Result] =
-    request.userAnswers.get(ContainerNumberPage(eventIndex, containerIndex)) match {
-      case Some(container) =>
-        val json = Json.obj(
-          "form"            -> form,
-          "mode"            -> mode,
-          "mrn"             -> mrn,
-          "containerNumber" -> container.containerNumber,
-          "radios"          -> Radios.yesNo(form("value"))
-        )
+  private def renderPage(mrn: MovementReferenceNumber, eventIndex: Index, containerIndex: Index, form: Form[Boolean], mode: Mode, container: Container)(
+    implicit request: DataRequest[AnyContent]): Future[Html] = {
 
-        renderer.render(confirmRemoveContainerTemplate, json).map(status(_))
-      case _ =>
-        val redirectLinkText = if (request.userAnswers.get(DeriveNumberOfContainers(eventIndex)).contains(0)) "noContainer" else "multipleContainer"
-        val redirectLink     = navigator.nextPage(ConfirmRemoveContainerPage(eventIndex), mode, request.userAnswers).url
+    val json = Json.obj(
+      "form"            -> form,
+      "mode"            -> mode,
+      "mrn"             -> mrn,
+      "containerNumber" -> container.containerNumber,
+      "radios"          -> Radios.yesNo(form("value"))
+    )
 
-        errorHandler.onConcurrentError(redirectLinkText, redirectLink, "concurrent.container")
-    }
+    renderer.render(confirmRemoveContainerTemplate, json)
+  }
+
+  private def renderErrorPage(eventIndex: Index, mode: Mode, userAnswers: UserAnswers)(implicit request: DataRequest[AnyContent]): Future[Result] = {
+    val redirectLinkText = if (userAnswers.get(DeriveNumberOfContainers(eventIndex)).contains(0)) "noContainer" else "multipleContainer"
+    val redirectLink     = navigator.nextPage(ConfirmRemoveContainerPage(eventIndex), mode, userAnswers).url
+
+    errorHandler.onConcurrentError(redirectLinkText, redirectLink, "concurrent.container")
+  }
 
 }
