@@ -23,8 +23,9 @@ class ConfirmRemoveEventFormProviderSpec extends BooleanFieldBehaviours {
 
   val requiredKey = "confirmRemoveEvent.error.required"
   val invalidKey  = "error.boolean"
+  val eventTitle  = "eventTitle"
 
-  val form = new ConfirmRemoveEventFormProvider()()
+  val form = new ConfirmRemoveEventFormProvider()(eventTitle)
 
   ".value" - {
 
@@ -33,13 +34,13 @@ class ConfirmRemoveEventFormProviderSpec extends BooleanFieldBehaviours {
     behave like booleanField(
       form,
       fieldName,
-      invalidError = FormError(fieldName, invalidKey)
+      invalidError = FormError(fieldName, invalidKey, Seq(eventTitle))
     )
 
     behave like mandatoryField(
       form,
       fieldName,
-      requiredError = FormError(fieldName, requiredKey)
+      requiredError = FormError(fieldName, requiredKey, Seq(eventTitle))
     )
   }
 }

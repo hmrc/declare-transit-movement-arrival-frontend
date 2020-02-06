@@ -18,12 +18,13 @@ package forms.events.seals
 
 import forms.mappings.Mappings
 import javax.inject.Inject
+import models.messages.Seal
 import play.api.data.Form
 
 class ConfirmRemoveSealFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[Boolean] =
+  def apply(seal: Seal): Form[Boolean] =
     Form(
-      "value" -> boolean("confirmRemoveSeal.error.required")
+      "value" -> boolean("confirmRemoveSeal.error.required", args = Seq(seal.numberOrMark))
     )
 }

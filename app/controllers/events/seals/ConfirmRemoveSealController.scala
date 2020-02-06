@@ -21,14 +21,16 @@ import derivable.DeriveNumberOfSeals
 import forms.events.seals.ConfirmRemoveSealFormProvider
 import handlers.ErrorHandler
 import javax.inject.Inject
+import models.messages.Seal
 import models.requests.DataRequest
-import models.{Index, Mode, MovementReferenceNumber}
+import models.{Index, Mode, MovementReferenceNumber, UserAnswers}
 import navigation.Navigator
 import pages.events.seals.{ConfirmRemoveSealPage, SealIdentityPage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.twirl.api.Html
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
@@ -52,49 +54,60 @@ class ConfirmRemoveSealController @Inject()(
     with I18nSupport
     with NunjucksSupport {
 
-  private val form = formProvider()
+  private val confirmRemoveSealTemplate = "events/seals/confirmRemoveSeal.njk"
 
   def onPageLoad(mrn: MovementReferenceNumber, eventIndex: Index, sealIndex: Index, mode: Mode): Action[AnyContent] =
     (identify andThen getData(mrn) andThen requireData).async {
       implicit request =>
-        renderView(mrn, eventIndex, sealIndex, mode, form, Ok)
+        request.userAnswers.get(SealIdentityPage(eventIndex, sealIndex)) match {
+          case Some(seal) =>
+            val form = formProvider(seal)
+            renderPage(mrn, eventIndex, sealIndex, mode, form, seal).map(Ok(_))
+          case _ =>
+            renderErrorPage(eventIndex, mode, request.userAnswers)
+        }
     }
 
   def onSubmit(mrn: MovementReferenceNumber, eventIndex: Index, sealIndex: Index, mode: Mode): Action[AnyContent] =
     (identify andThen getData(mrn) andThen requireData).async {
       implicit request =>
-        form
-          .bindFromRequest()
-          .fold(
-            formWithErrors => renderView(mrn, eventIndex, sealIndex, mode, formWithErrors, BadRequest),
-            value =>
-              if (value) {
-                for {
-                  updatedAnswers <- Future.fromTry(request.userAnswers.remove(SealIdentityPage(eventIndex, sealIndex)))
-                  _              <- sessionRepository.set(updatedAnswers)
-                } yield Redirect(navigator.nextPage(ConfirmRemoveSealPage(eventIndex), mode, updatedAnswers))
-              } else {
-                Future.successful(Redirect(navigator.nextPage(ConfirmRemoveSealPage(eventIndex), mode, request.userAnswers)))
-            }
-          )
+        request.userAnswers.get(SealIdentityPage(eventIndex, sealIndex)) match {
+          case Some(seal) =>
+            formProvider(seal)
+              .bindFromRequest()
+              .fold(
+                formWithErrors => renderPage(mrn, eventIndex, sealIndex, mode, formWithErrors, seal).map(BadRequest(_)),
+                value =>
+                  if (value) {
+                    for {
+                      updatedAnswers <- Future.fromTry(request.userAnswers.remove(SealIdentityPage(eventIndex, sealIndex)))
+                      _              <- sessionRepository.set(updatedAnswers)
+                    } yield Redirect(navigator.nextPage(ConfirmRemoveSealPage(eventIndex), mode, updatedAnswers))
+                  } else {
+                    Future.successful(Redirect(navigator.nextPage(ConfirmRemoveSealPage(eventIndex), mode, request.userAnswers)))
+                }
+              )
+          case _ =>
+            renderErrorPage(eventIndex, mode, request.userAnswers)
+        }
     }
 
-  private def renderView(mrn: MovementReferenceNumber, eventIndex: Index, sealIndex: Index, mode: Mode, form: Form[Boolean], status: Status)(
-    implicit request: DataRequest[AnyContent]): Future[Result] =
-    request.userAnswers.get(SealIdentityPage(eventIndex, sealIndex)) match {
-      case Some(seal) =>
-        val json = Json.obj(
-          "form"       -> form,
-          "mode"       -> mode,
-          "mrn"        -> mrn,
-          "sealNumber" -> seal.numberOrMark,
-          "radios"     -> Radios.yesNo(form("value"))
-        )
-        renderer.render("events/seals/confirmRemoveSeal.njk", json).map(status(_))
-      case _ =>
-        val redirectLinkText = if (request.userAnswers.get(DeriveNumberOfSeals(eventIndex)).contains(0)) "noSeal" else "multipleSeal"
-        val redirectLink     = navigator.nextPage(ConfirmRemoveSealPage(eventIndex), mode, request.userAnswers).url
+  private def renderPage(mrn: MovementReferenceNumber, eventIndex: Index, sealIndex: Index, mode: Mode, form: Form[Boolean], seal: Seal)(
+    implicit request: DataRequest[AnyContent]): Future[Html] = {
+    val json = Json.obj(
+      "form"       -> form,
+      "mode"       -> mode,
+      "mrn"        -> mrn,
+      "sealNumber" -> seal.numberOrMark,
+      "radios"     -> Radios.yesNo(form("value"))
+    )
+    renderer.render(confirmRemoveSealTemplate, json)
 
-        errorHandler.onConcurrentError(redirectLinkText, redirectLink, "concurrent.seal")
-    }
+  }
+  private def renderErrorPage(eventIndex: Index, mode: Mode, userAnswers: UserAnswers)(implicit request: DataRequest[AnyContent]): Future[Result] = {
+    val redirectLinkText = if (request.userAnswers.get(DeriveNumberOfSeals(eventIndex)).contains(0)) "noSeal" else "multipleSeal"
+    val redirectLink     = navigator.nextPage(ConfirmRemoveSealPage(eventIndex), mode, request.userAnswers).url
+
+    errorHandler.onConcurrentError(redirectLinkText, redirectLink, "concurrent.seal")
+  }
 }

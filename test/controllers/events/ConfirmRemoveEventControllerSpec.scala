@@ -42,14 +42,14 @@ class ConfirmRemoveEventControllerSpec extends SpecBase with MockitoSugar with N
 
   private def onwardRoute = Call("GET", "/foo")
 
+  private val eventTitle   = "eventTitle"
   private val formProvider = new ConfirmRemoveEventFormProvider()
-  private val form         = formProvider()
+  private val form         = formProvider(eventTitle)
 
   private lazy val confirmRemoveEventRoute = routes.ConfirmRemoveEventController.onPageLoad(mrn, eventIndex, NormalMode).url
   private val confirmRemoveEventTemplate   = "events/confirmRemoveEvent.njk"
 
-  private val eventPlace                = "eventPlace"
-  private val userAnswersWithEventPlace = emptyUserAnswers.set(EventPlacePage(eventIndex), eventPlace).success.value
+  private val userAnswersWithEventPlace = emptyUserAnswers.set(EventPlacePage(eventIndex), eventTitle).success.value
 
   "ConfirmRemoveEvent Controller" - {
 
@@ -73,7 +73,7 @@ class ConfirmRemoveEventControllerSpec extends SpecBase with MockitoSugar with N
         "form"       -> form,
         "mode"       -> NormalMode,
         "mrn"        -> mrn,
-        "eventTitle" -> eventPlace,
+        "eventTitle" -> eventTitle,
         "radios"     -> Radios.yesNo(form("value"))
       )
 
