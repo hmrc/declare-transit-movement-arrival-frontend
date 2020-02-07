@@ -69,5 +69,8 @@ document.querySelector('.govuk-skip-link').addEventListener('click',function(e) 
     if(header!=undefined){
         header.setAttribute('tabindex', '-1')
         header.focus();
+        setTimeout(function(){
+            header.removeAttribute('tabindex')
+        }, 1000)
     }
 });
