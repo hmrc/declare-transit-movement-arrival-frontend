@@ -16,10 +16,19 @@
 
 package models.messages
 
+import forms.mappings.StringEquivalence
 import play.api.libs.json.{Json, OFormat}
 
 case class Seal(numberOrMark: String)
 
 object Seal {
+
+  object Constants {
+    val sealNumberOrMarkLength = 20
+  }
+
   implicit val format: OFormat[Seal] = Json.format[Seal]
+
+  implicit val sealStringEquivalenceCheck: StringEquivalence[Seal] =
+    StringEquivalence[Seal]((seal, sealNumberOrMark) => seal.numberOrMark == sealNumberOrMark)
 }

@@ -29,6 +29,7 @@ import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.twirl.api.Html
 import queries.EventQuery
 import renderer.Renderer
 import repositories.SessionRepository
@@ -53,57 +54,68 @@ class ConfirmRemoveEventController @Inject()(
     with I18nSupport
     with NunjucksSupport {
 
-  private val form                       = formProvider()
   private val confirmRemoveEventTemplate = "events/confirmRemoveEvent.njk"
 
   def onPageLoad(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
-      renderPage(mrn, eventIndex, mode, form, Ok)
+      eventPlaceOrCountry(request.userAnswers, eventIndex) match {
+        case Some(placeOrCountry) =>
+          renderPage(mrn, eventIndex, mode, formProvider(placeOrCountry), placeOrCountry).map(Ok(_))
+        case _ => renderErrorPage(request.userAnswers, eventIndex, mode)
+      }
   }
 
   def onSubmit(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
-      form
-        .bindFromRequest()
-        .fold(
-          formWithErrors => renderPage(mrn, eventIndex, mode, formWithErrors, BadRequest),
-          value => {
-            if (value) {
-              for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.remove(EventQuery(eventIndex)))
-                _              <- sessionRepository.set(updatedAnswers)
-              } yield Redirect(navigator.nextPage(ConfirmRemoveEventPage(eventIndex), mode, updatedAnswers))
-            } else {
-              Future.successful(Redirect(navigator.nextPage(ConfirmRemoveEventPage(eventIndex), mode, request.userAnswers)))
-            }
-          }
-        )
+      eventPlaceOrCountry(request.userAnswers, eventIndex) match {
+        case Some(placeOrCountry) =>
+          formProvider(placeOrCountry)
+            .bindFromRequest()
+            .fold(
+              formWithErrors => {
+                renderPage(mrn, eventIndex, mode, formWithErrors, placeOrCountry).map(BadRequest(_))
+              },
+              value => {
+                if (value) {
+                  for {
+                    updatedAnswers <- Future.fromTry(request.userAnswers.remove(EventQuery(eventIndex)))
+                    _              <- sessionRepository.set(updatedAnswers)
+                  } yield Redirect(navigator.nextPage(ConfirmRemoveEventPage(eventIndex), mode, updatedAnswers))
+                } else {
+                  Future.successful(Redirect(navigator.nextPage(ConfirmRemoveEventPage(eventIndex), mode, request.userAnswers)))
+                }
+              }
+            )
+        case _ => renderErrorPage(request.userAnswers, eventIndex, mode)
+      }
+
   }
 
-  private def eventPlace(userAnswers: UserAnswers, eventIndex: Index): Option[String] = userAnswers.get(EventPlacePage(eventIndex)) match {
-    case Some(answer) => Some(answer)
-    case _            => userAnswers.get(EventCountryPage(eventIndex)).map(_.code)
-  }
-
-  private def renderPage(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode, form: Form[Boolean], status: Status)(
-    implicit request: DataRequest[AnyContent]): Future[Result] =
-    eventPlace(request.userAnswers, eventIndex) match {
-
-      case Some(place) =>
-        val json = Json.obj(
-          "form"       -> form,
-          "mode"       -> mode,
-          "mrn"        -> mrn,
-          "eventTitle" -> place,
-          "radios"     -> Radios.yesNo(form("value"))
-        )
-        renderer.render(confirmRemoveEventTemplate, json).map(status(_))
-
-      case _ =>
-        val redirectLinkText = if (request.userAnswers.get(DeriveNumberOfEvents).contains(0)) "noEvent" else "multipleEvent"
-        val redirectLink     = navigator.nextPage(ConfirmRemoveEventPage(eventIndex), mode, request.userAnswers).url
-
-        errorHandler.onConcurrentError(redirectLinkText, redirectLink, "concurrent.event")
+  private def eventPlaceOrCountry(userAnswers: UserAnswers, eventIndex: Index): Option[String] =
+    userAnswers.get(EventPlacePage(eventIndex)) match {
+      case Some(answer) => Some(answer)
+      case _            => userAnswers.get(EventCountryPage(eventIndex)).map(_.code)
     }
+
+  private def renderPage(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode, form: Form[Boolean], eventTitle: String)(
+    implicit request: DataRequest[AnyContent]): Future[Html] = {
+    val json = Json.obj(
+      "form"       -> form,
+      "mode"       -> mode,
+      "mrn"        -> mrn,
+      "eventTitle" -> eventTitle,
+      "radios"     -> Radios.yesNo(form("value"))
+    )
+
+    renderer.render(confirmRemoveEventTemplate, json)
+  }
+
+  private def renderErrorPage(userAnswers: UserAnswers, eventIndex: Index, mode: Mode)(implicit request: DataRequest[AnyContent]): Future[Result] = {
+
+    val redirectLinkText = if (userAnswers.get(DeriveNumberOfEvents).contains(0)) "noEvent" else "multipleEvent"
+    val redirectLink     = navigator.nextPage(ConfirmRemoveEventPage(eventIndex), mode, userAnswers).url
+
+    errorHandler.onConcurrentError(redirectLinkText, redirectLink, "concurrent.event")
+  }
 
 }

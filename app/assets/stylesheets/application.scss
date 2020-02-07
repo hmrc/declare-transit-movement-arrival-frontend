@@ -3,3 +3,7 @@ $govuk-assets-path: "/common-transit-convention-trader-arrival/assets/lib/govuk-
 @import "lib/govuk-frontend/govuk/all";
 @import "partials/language-toggles";
 @import "partials/shame";
+
+.govuk-summary-list__actions-list-item {
+    display: block;
+}

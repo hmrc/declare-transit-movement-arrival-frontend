@@ -16,15 +16,16 @@
 
 package forms.events.transhipments
 
+import base.SpecBase
 import forms.behaviours.BooleanFieldBehaviours
 import play.api.data.FormError
 
-class ConfirmRemoveContainerFormProviderSpec extends BooleanFieldBehaviours {
+class ConfirmRemoveContainerFormProviderSpec extends BooleanFieldBehaviours with SpecBase {
 
   val requiredKey = "confirmRemoveContainer.error.required"
   val invalidKey  = "error.boolean"
 
-  val form = new ConfirmRemoveContainerFormProvider()()
+  val form = new ConfirmRemoveContainerFormProvider()(container)
 
   ".value" - {
 
@@ -33,13 +34,13 @@ class ConfirmRemoveContainerFormProviderSpec extends BooleanFieldBehaviours {
     behave like booleanField(
       form,
       fieldName,
-      invalidError = FormError(fieldName, invalidKey)
+      invalidError = FormError(fieldName, invalidKey, Seq(container.containerNumber))
     )
 
     behave like mandatoryField(
       form,
       fieldName,
-      requiredError = FormError(fieldName, requiredKey)
+      requiredError = FormError(fieldName, requiredKey, Seq(container.containerNumber))
     )
   }
 }

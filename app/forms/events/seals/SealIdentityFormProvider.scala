@@ -18,14 +18,16 @@ package forms.events.seals
 
 import forms.mappings.Mappings
 import javax.inject.Inject
+import models.Index
 import models.messages.Seal
 import play.api.data.Form
 
 class SealIdentityFormProvider @Inject() extends Mappings {
 
-  def apply(seal: Seq[Seal] = Seq.empty[Seal]): Form[String] =
+  def apply(index: Index, seals: Seq[Seal] = Seq.empty[Seal]): Form[String] =
     Form(
       "value" -> text("sealIdentity.error.required")
-        .verifying(maxLength(20, "sealIdentity.error.length"))
+        .verifying(maxLength(Seal.Constants.sealNumberOrMarkLength, "sealIdentity.error.length"))
+        .verifying(doesNotExistIn(seals, index, "sealIdentity.error.duplicate"))
     )
 }

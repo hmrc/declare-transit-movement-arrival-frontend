@@ -26,6 +26,7 @@ import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
+import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.mockito.MockitoSugar
 import pages.events.transhipments.ContainerNumberPage
 import play.api.data.Form
@@ -39,17 +40,16 @@ import repositories.SessionRepository
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
-import org.scalacheck.Arbitrary.arbitrary
 
 class ContainerNumberControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers with MessagesModelGenerators {
 
   def onwardRoute = Call("GET", "/foo")
 
   private val formProvider       = new ContainerNumberFormProvider()
-  private val form: Form[String] = formProvider(Seq.empty)
+  private val form: Form[String] = formProvider(containerIndex, Seq.empty)
 
-  private lazy val containerNumberRoute: String = routes.ContainerNumberController.onPageLoad(mrn, eventIndex, containerIndex, NormalMode).url
-  private lazy val containerNumberTemplate      = "events/transhipments/containerNumber.njk"
+  private def containerNumberRoute(index: Index = containerIndex): String = routes.ContainerNumberController.onPageLoad(mrn, eventIndex, index, NormalMode).url
+  private lazy val containerNumberTemplate = "events/transhipments/containerNumber.njk"
 
   "ContainerNumber Controller" - {
 
@@ -59,7 +59,7 @@ class ContainerNumberControllerSpec extends SpecBase with MockitoSugar with Nunj
         .thenReturn(Future.successful(Html("")))
 
       val application    = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request        = FakeRequest(GET, containerNumberRoute)
+      val request        = FakeRequest(GET, containerNumberRoute())
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -88,7 +88,7 @@ class ContainerNumberControllerSpec extends SpecBase with MockitoSugar with Nunj
 
       val userAnswers    = UserAnswers(mrn).set(ContainerNumberPage(eventIndex, containerIndex), Container("answer")).success.value
       val application    = applicationBuilder(userAnswers = Some(userAnswers)).build()
-      val request        = FakeRequest(GET, containerNumberRoute)
+      val request        = FakeRequest(GET, containerNumberRoute())
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -127,7 +127,7 @@ class ContainerNumberControllerSpec extends SpecBase with MockitoSugar with Nunj
           .build()
 
       val request =
-        FakeRequest(POST, containerNumberRoute)
+        FakeRequest(POST, containerNumberRoute())
           .withFormUrlEncodedBody(("value", "answer"))
 
       val result = route(application, request).value
@@ -138,32 +138,55 @@ class ContainerNumberControllerSpec extends SpecBase with MockitoSugar with Nunj
       application.stop()
     }
 
-    "must give a bad request with an error when a duplicaate seal is submitted is submitted" in {
-      // TODO: we don't check the error at the moment, we should add a resuable way to do this
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+    "must redirect to the next page when a value that is the same as the previous is submitted within the same index" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       val container   = arbitrary[Container].sample.value
-      val userAnswers = emptyUserAnswers.set(ContainerNumberPage(Index(0), Index(0)), container).success.value
+      val userAnswers = emptyUserAnswers.set(ContainerNumberPage(eventIndex, containerIndex), container).success.value
 
       val application =
         applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute))
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
 
       val request =
-        FakeRequest(POST, containerNumberRoute)
+        FakeRequest(POST, containerNumberRoute())
           .withFormUrlEncodedBody(("value", container.containerNumber))
 
       val result = route(application, request).value
 
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual onwardRoute.url
+
+      application.stop()
+    }
+
+    "must return a Bad Request and errors when an existing container is submitted and index is different to current index" in {
+
+      when(mockRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("")))
+
+      val container   = arbitrary[Container].sample.value
+      val userAnswers = emptyUserAnswers.set(ContainerNumberPage(eventIndex, containerIndex), container).success.value
+      val nextIndex   = Index(1)
+
+      val application    = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val request        = FakeRequest(POST, containerNumberRoute(nextIndex)).withFormUrlEncodedBody(("value", container.containerNumber))
+      val result         = route(application, request).value
+      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+
       status(result) mustEqual BAD_REQUEST
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+
+      templateCaptor.getValue mustEqual containerNumberTemplate
 
       application.stop()
     }
@@ -174,7 +197,7 @@ class ContainerNumberControllerSpec extends SpecBase with MockitoSugar with Nunj
         .thenReturn(Future.successful(Html("")))
 
       val application    = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request        = FakeRequest(POST, containerNumberRoute).withFormUrlEncodedBody(("value", ""))
+      val request        = FakeRequest(POST, containerNumberRoute()).withFormUrlEncodedBody(("value", ""))
       val boundForm      = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
@@ -201,7 +224,7 @@ class ContainerNumberControllerSpec extends SpecBase with MockitoSugar with Nunj
 
       val application = applicationBuilder(userAnswers = None).build()
 
-      val request = FakeRequest(GET, containerNumberRoute)
+      val request = FakeRequest(GET, containerNumberRoute())
 
       val result = route(application, request).value
 
@@ -217,7 +240,7 @@ class ContainerNumberControllerSpec extends SpecBase with MockitoSugar with Nunj
       val application = applicationBuilder(userAnswers = None).build()
 
       val request =
-        FakeRequest(POST, containerNumberRoute)
+        FakeRequest(POST, containerNumberRoute())
           .withFormUrlEncodedBody(("value", "answer"))
 
       val result = route(application, request).value

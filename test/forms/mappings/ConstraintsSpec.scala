@@ -19,6 +19,7 @@ package forms.mappings
 import java.time.LocalDate
 
 import generators.Generators
+import models.Index
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import org.scalatest.FreeSpec
@@ -184,7 +185,7 @@ class ConstraintsSpec extends FreeSpec with MustMatchers with ScalaCheckProperty
     }
   }
 
-  "isUniqueValue" - {
+  "doesNotExistIn" - {
     case class TestObject(value: String)
 
     val testObjectsToValidateAgainst = Seq(TestObject("a"))
@@ -194,18 +195,27 @@ class ConstraintsSpec extends FreeSpec with MustMatchers with ScalaCheckProperty
         override def equivalentToString(lhs: TestObject, formValue: String): Boolean = lhs.value == formValue
       }
 
-    val constraint: Constraint[String] = doesNotExistIn(testObjectsToValidateAgainst, "error.duplicate")
+    val nextIndex    = Index(1)
+    val currentIndex = Index(0)
 
-    "returns Valid if it is not contained in the values to be tested against" in {
-      val result = constraint("b")
+    def constraint(index: Index): Constraint[String] = doesNotExistIn(testObjectsToValidateAgainst, index, "error.duplicate")
+
+    "returns Valid if it is not contained in the values to be tested against and index is the next sequential index" in {
+      val result = constraint(nextIndex)("b")
 
       result mustEqual Valid
     }
 
-    "returns Invalid if it is contained in the values to be tested against" in {
-      val result = constraint("a")
+    "returns Invalid if it is contained in the values to be tested against and index is the next sequential index" in {
+      val result = constraint(nextIndex)("a")
 
       result mustEqual Invalid("error.duplicate")
+    }
+
+    "returns Valid if new answer is the same as the previous in current index" in {
+      val result = constraint(currentIndex)("a")
+
+      result mustEqual Valid
     }
   }
 }

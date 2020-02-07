@@ -16,15 +16,16 @@
 
 package forms.events.seals
 
+import base.SpecBase
 import forms.behaviours.BooleanFieldBehaviours
 import play.api.data.FormError
 
-class ConfirmRemoveSealFormProviderSpec extends BooleanFieldBehaviours {
+class ConfirmRemoveSealFormProviderSpec extends BooleanFieldBehaviours with SpecBase {
 
-  val requiredKey = "removeSeal.error.required"
+  val requiredKey = "confirmRemoveSeal.error.required"
   val invalidKey  = "error.boolean"
 
-  val form = new ConfirmRemoveSealFormProvider()()
+  val form = new ConfirmRemoveSealFormProvider()(seal)
 
   ".value" - {
 
@@ -33,13 +34,13 @@ class ConfirmRemoveSealFormProviderSpec extends BooleanFieldBehaviours {
     behave like booleanField(
       form,
       fieldName,
-      invalidError = FormError(fieldName, invalidKey)
+      invalidError = FormError(fieldName, invalidKey, Seq(seal.numberOrMark))
     )
 
     behave like mandatoryField(
       form,
       fieldName,
-      requiredError = FormError(fieldName, requiredKey)
+      requiredError = FormError(fieldName, requiredKey, Seq(seal.numberOrMark))
     )
   }
 }

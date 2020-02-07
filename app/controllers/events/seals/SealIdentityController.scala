@@ -32,6 +32,7 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 import models.messages.Seal
+import queries.{ContainersQuery, SealsQuery}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -50,14 +51,14 @@ class SealIdentityController @Inject()(
     with I18nSupport
     with NunjucksSupport {
 
-  private val form = formProvider()
+  private val form = formProvider
 
   def onPageLoad(mrn: MovementReferenceNumber, eventIndex: Index, sealIndex: Index, mode: Mode): Action[AnyContent] =
     (identify andThen getData(mrn) andThen requireData).async {
       implicit request =>
         val preparedForm = request.userAnswers.get(SealIdentityPage(eventIndex, sealIndex)) match {
-          case None        => form
-          case Some(value) => form.fill(value.numberOrMark)
+          case None        => form(sealIndex)
+          case Some(value) => form(sealIndex).fill(value.numberOrMark)
         }
 
         renderView(mrn, mode, preparedForm).map(Ok(_))
@@ -66,7 +67,9 @@ class SealIdentityController @Inject()(
   def onSubmit(mrn: MovementReferenceNumber, eventIndex: Index, sealIndex: Index, mode: Mode): Action[AnyContent] =
     (identify andThen getData(mrn) andThen requireData).async {
       implicit request =>
-        form
+        val seals = request.userAnswers.get(SealsQuery(eventIndex)).getOrElse(Seq.empty)
+
+        form(sealIndex, seals)
           .bindFromRequest()
           .fold(
             formWithErrors => renderView(mrn, mode, formWithErrors).map(BadRequest(_)),
