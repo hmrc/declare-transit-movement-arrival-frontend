@@ -28,8 +28,8 @@ class AddSealHelper(userAnswers: UserAnswers) {
     userAnswers.get(SealIdentityPage(eventIndex, sealIndex)).map {
       answer =>
         Row(
-          key   = Key(msg"addSeal.sealList.label".withArgs(sealIndex.display), classes = Seq("govuk-!-width-one-quarter")),
-          value = Value(lit"${answer.numberOrMark}", classes                           = Seq("govuk-!-width-one-quarter")),
+          key   = Key(msg"addSeal.sealList.label".withArgs(sealIndex.display)),
+          value = Value(lit"${answer.numberOrMark}"),
           actions = List(
             Action(
               content            = msg"site.edit",
