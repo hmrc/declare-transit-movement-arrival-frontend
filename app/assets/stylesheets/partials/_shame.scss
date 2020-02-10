@@ -38,16 +38,27 @@
     top: -40px;
     margin-bottom: -40px;
 }
-.govuk-back-link:after {
-    content: "";
-    display: table;
-    width: 100%;
-    clear: both;
-}
 @media screen and (max-width: 40.0624em){
     .govuk-main-wrapper {
         padding-top: 40px;
     }
+}
+// clear float back link
+.govuk-back-link + .govuk-main-wrapper {
+    clear: both;
+}
+
+// ******************************************************
+// ******************************************************
+// make back link border and arrow scale with text
+// ******************************************************
+// ******************************************************
+.govuk-back-link {
+    border-bottom-width: 0.065em;
+    padding-left: 0.91em;
+}
+.govuk-back-link:before {
+    border-width: 0.325em 0.39em 0.325em 0;
 }
 
 // ******************************************************
