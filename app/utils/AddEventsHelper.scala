@@ -28,7 +28,7 @@ class AddEventsHelper(userAnswers: UserAnswers) {
     placeOfEvent(eventIndex).map {
       answer =>
         Row(
-          key   = Key(msg"addEvent.event.label".withArgs(eventIndex.display), classes = Seq("govuk-!-width-one-half")),
+          key   = Key(msg"addEvent.event.label".withArgs(eventIndex.display)),
           value = Value(lit"$answer"),
           actions = List(
             Action(

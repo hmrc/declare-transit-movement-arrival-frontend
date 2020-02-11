@@ -1,7 +1,7 @@
 {% extends "includes/layout.njk" %}
 
 {% from "govuk/components/back-link/macro.njk"     import govukBackLink %}
-{% from "govuk/components/input/macro.njk"         import govukInput %}
+{% from "govuk/components/character-count/macro.njk" import govukCharacterCount %}
 {% from "govuk/components/button/macro.njk"        import govukButton %}
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 {% from "macros/title.njk"                         import title %}
@@ -31,16 +31,19 @@
 
           {{ csrf() | safe }}
 
-          {{ govukInput({
+
+
+          {{ govukCharacterCount({
+            id: "value",
+            name: "value",
+            maxlength: 350,
+            value: form.value.value,
+            errorMessage: form.value.error,
             label: {
               text: messages('incidentInformation.title'),
               isPageHeading: true,
               classes: "govuk-label--xl"
-            },
-            id: "value",
-            name: "value",
-            value: form.value.value,
-            errorMessage: form.value.error
+            }
           }) }}
 
           {{ govukButton({

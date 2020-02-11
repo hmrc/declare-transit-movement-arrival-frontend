@@ -30,7 +30,7 @@ class AddContainerHelper(userAnswers: UserAnswers) {
     userAnswers.get(ContainerNumberPage(eventIndex, containerIndex)).map {
       case Container(answer) =>
         Row(
-          key   = Key(msg"addContainer.containerList.label".withArgs(containerIndex.display), classes = Seq("govuk-!-width-one-half")),
+          key   = Key(msg"addContainer.containerList.label".withArgs(containerIndex.display)),
           value = Value(lit"$answer"),
           actions = List(
             Action(
