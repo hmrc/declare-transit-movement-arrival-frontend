@@ -49,8 +49,8 @@ phaseBanner.1 = This is a new service – your
 phaseBanner.2 = feedback
 phaseBanner.3 = will help us to improve it.
 
-checkYourAnswers.title = Check your answers
-checkYourAnswers.heading = Check your answers
+checkYourAnswers.title = Check your answers before sending this arrival notification
+checkYourAnswers.heading = Check your answers before sending this arrival notification
 checkYourAnswers.section.goodsLocation = Goods details
 checkYourAnswers.section.traderDetails = Trader’s details
 checkYourAnswers.section.placeOfNotificationDetails = Place where this was completed
@@ -188,8 +188,8 @@ authorisedLocation.checkYourAnswersLabel = Authorised location
 authorisedLocation.error.required = Enter authorised location code
 authorisedLocation.error.length = Authorised location code must be 17 characters or less
 
-traderAddress.title = What is the address of the trader at destination?
-traderAddress.heading = What is the address of the trader at destination?
+traderAddress.title = What is the address of the trader at the destination?
+traderAddress.heading = What is the address of the trader at the destination?
 traderAddress.buildingAndStreet = Building and street
 traderAddress.city = Town or city
 traderAddress.postcode = Postcode
@@ -202,8 +202,8 @@ traderAddress.error.city.length = Town or city must be 35 characters or less
 traderAddress.error.postcode.length = Postcode must be 9 characters or less
 traderAddress.change.hidden = address of trader
 
-traderEori.title = What is the EORI number of the trader at destination?
-traderEori.heading = What is the EORI number of the trader at destination?
+traderEori.title = What is the EORI number of the trader at the destination?
+traderEori.heading = What is the EORI number of the trader at the destination?
 traderEori.checkYourAnswersLabel = EORI number
 traderEori.error.required = Enter the EORI number of the trader at the destination
 traderEori.error.length = EORI number must be 17 characters or less
@@ -252,7 +252,7 @@ incidentOnRoute.change.hidden = if there was an event on the journey
 eventCountry.title = Which country were the goods in when it happened?
 eventCountry.heading = Which country were the goods in when it happened?
 eventCountry.checkYourAnswersLabel = Which country were the goods in when it happened?
-eventCountry.error.required = Which country were the goods in when it happened?
+eventCountry.error.required = Enter which country the goods were in when the event happened
 eventCountry.error.length = Country must be 2 characters or less
 eventCountry.change.hidden = which country the goods were in when it happened
 
@@ -264,17 +264,17 @@ eventPlace.error.required = Enter where the event happened
 eventPlace.error.length = Where the event happened must be 35 characters or less
 eventPlace.change.hidden = where the event happened
 
-eventReported.title = Has this event been reported to a customs office?
-eventReported.heading = Has this event been reported to a customs office?
-eventReported.checkYourAnswersLabel = Has this event been reported to a customs office?
-eventReported.error.required = Select yes if the event has been reported
+eventReported.title = Has this event been reported to customs?
+eventReported.heading = Has this event been reported to customs?
+eventReported.checkYourAnswersLabel = Has this event been reported to customs?
+eventReported.error.required = Select yes if the event has been reported to customs
 eventReported.change.hidden = if this event has been reported to customs
 
-incidentInformation.title = What happened on the route?
-incidentInformation.heading = What happened on the route?
-incidentInformation.checkYourAnswersLabel = What happened on the route?
-incidentInformation.error.required = Enter what happened on the route
-incidentInformation.error.length = What happened on the route must be 350 characters or less
+incidentInformation.title = What happened on the journey?
+incidentInformation.heading = What happened on the journey?
+incidentInformation.checkYourAnswersLabel = What happened on the journey?
+incidentInformation.error.required = Enter what happened on the journey
+incidentInformation.error.length = What happened on the journey must be 350 characters or less
 incidentInformation.change.hidden = what happened on the journey
 
 isTranshipment.title = Did the goods move to a different vehicle or container?
@@ -288,8 +288,8 @@ sealsChanged.heading = Have any of the seals changed?
 sealsChanged.checkYourAnswersLabel = Have any of the seals changed?
 sealsChanged.error.required = Select yes if any of the seals have changed
 
-checkEventAnswers.title = Check event answers
-checkEventAnswers.heading = Check event answers
+checkEventAnswers.title = Check your answers for this event
+checkEventAnswers.heading = Check your answers for this event
 checkEventAnswers.section.events = Events
 checkEventAnswers.section.vehicleOrContainer = Vehicle or container
 checkEventAnswers.section.title.differentContainer = Different container
@@ -334,21 +334,24 @@ transhipmentType.heading = What did the goods move to?
 transhipmentType.differentContainer = A different container
 transhipmentType.differentVehicle = A different vehicle
 transhipmentType.differentContainerAndVehicle = Both
+transhipmentType.checkYourAnswers.differentContainer = A different container
+transhipmentType.checkYourAnswers.differentVehicle = A different vehicle
+transhipmentType.checkYourAnswers.differentContainerAndVehicle = Different container and vehicle
 transhipmentType.checkYourAnswersLabel = What did the goods move to?
-transhipmentType.error.required = Select transhipmentType
+transhipmentType.error.required = Select what the goods moved to
 transhipmentType.change.hidden = what the goods moved to
 
-transportIdentity.title = What is the vehicle name, registration or reference?
-transportIdentity.heading = What is the vehicle name, registration or reference?
-transportIdentity.checkYourAnswersLabel = What is the vehicle name, registration or reference?
-transportIdentity.error.required = Enter the vehicle name, registration or reference
-transportIdentity.error.length = Vehicle name, registration or reference must be 27 characters or less
-transportIdentity.change.hidden = the vehicle name, registration or reference
+transportIdentity.title = What is the name, registration or reference of the new vehicle?
+transportIdentity.heading = What is the name, registration or reference of the new vehicle?
+transportIdentity.checkYourAnswersLabel = What is the name, registration or reference of the new vehicle?
+transportIdentity.error.required = Enter the name, registration or reference of the new vehicle
+transportIdentity.error.length = Name, registration or reference of the new vehicle must be 27 characters or less
+transportIdentity.change.hidden = the name, registration or reference of the new vehicle
 
 transportNationality.title = Which country is the vehicle registered in?
 transportNationality.heading = Which country is the vehicle registered in?
 transportNationality.checkYourAnswersLabel = Which country is the vehicle registered in?
-transportNationality.error.required = Enter which country the vehicle is registered in?
+transportNationality.error.required = Enter which country the vehicle is registered in
 transportNationality.error.length = TransportNationality must be TransportNationality characters or less
 transportNationality.change.hidden = the country where the vehicle is registered
 
