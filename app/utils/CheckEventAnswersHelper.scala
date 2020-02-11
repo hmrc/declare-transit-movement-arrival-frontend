@@ -48,7 +48,7 @@ class CheckEventAnswersHelper(userAnswers: UserAnswers) {
     answer =>
       Row(
         key   = Key(msg"transhipmentType.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value = Value(msg"transhipmentType.$answer"),
+        value = Value(msg"transhipmentType.checkYourAnswers.$answer"),
         actions = List(
           Action(
             content            = msg"site.edit",
