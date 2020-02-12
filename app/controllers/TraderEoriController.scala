@@ -80,11 +80,12 @@ class TraderEoriController @Inject()(override val messagesApi: MessagesApi,
 
               renderer.render("traderEori.njk", json).map(BadRequest(_))
             },
-            value =>
+            value => {
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(TraderEoriPage, value))
                 _              <- sessionRepository.set(updatedAnswers)
               } yield Redirect(navigator.nextPage(TraderEoriPage, mode, updatedAnswers))
+            }
           )
     }
 }
