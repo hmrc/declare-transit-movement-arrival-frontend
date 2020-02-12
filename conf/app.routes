@@ -114,8 +114,8 @@ POST       /:mrn/event/:eventIndex/change-what-changed                          
 
 GET        /:mrn/event/:eventIndex/vehicle-name-registration-reference                   controllers.events.transhipments.TransportIdentityController.onPageLoad(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode = NormalMode)
 POST       /:mrn/event/:eventIndex/vehicle-name-registration-reference                   controllers.events.transhipments.TransportIdentityController.onSubmit(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode = NormalMode)
-GET        /:mrn/event/:eventIndex/vehicle-name-registration-reference                   controllers.events.transhipments.TransportIdentityController.onPageLoad(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode = CheckMode)
-POST       /:mrn/event/:eventIndex/vehicle-name-registration-reference                   controllers.events.transhipments.TransportIdentityController.onSubmit(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode = CheckMode)
+GET        /:mrn/event/:eventIndex/change-vehicle-name-registration-reference            controllers.events.transhipments.TransportIdentityController.onPageLoad(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode = CheckMode)
+POST       /:mrn/event/:eventIndex/change-vehicle-name-registration-reference            controllers.events.transhipments.TransportIdentityController.onSubmit(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode = CheckMode)
 
 GET        /:mrn/event/:eventIndex/vehicle-registration-country                                 controllers.events.transhipments.TransportNationalityController.onPageLoad(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode = NormalMode)
 POST       /:mrn/event/:eventIndex/vehicle-registration-country                                 controllers.events.transhipments.TransportNationalityController.onSubmit(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode = NormalMode)
