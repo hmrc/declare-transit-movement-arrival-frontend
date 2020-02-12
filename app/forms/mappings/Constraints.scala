@@ -18,6 +18,7 @@ package forms.mappings
 
 import java.time.LocalDate
 
+import com.google.common.base.CharMatcher
 import models.Index
 import play.api.data.validation.{Constraint, Invalid, Valid}
 
@@ -82,6 +83,14 @@ trait Constraints {
         Valid
       case _ =>
         Invalid(errorKey, maximum)
+    }
+
+  protected def validAscii(errorKey: String): Constraint[String] =
+    Constraint {
+      case str if CharMatcher.ascii().matchesAllOf(str) =>
+        Valid
+      case _ =>
+        Invalid(errorKey)
     }
 
   protected def maxDate(maximum: LocalDate, errorKey: String, args: Any*): Constraint[LocalDate] =
