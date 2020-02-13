@@ -42,8 +42,9 @@ class CustomsSubPlaceFormProviderSpec extends StringFieldBehaviours {
     behave like fieldWithMaxLength(
       form,
       fieldName,
-      maxLength   = maxLength,
-      lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
+      maxLength            = maxLength,
+      lengthError          = FormError(fieldName, lengthKey, Seq(maxLength)),
+      withoutExtendedAscii = true
     )
 
     behave like mandatoryField(
