@@ -20,12 +20,13 @@ import forms.FormSpec
 import generators.Generators
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.data.{Field, Form, FormError}
+import play.api.data.Form
+import play.api.data.FormError
 
 trait FieldBehaviours extends FormSpec with ScalaCheckPropertyChecks with Generators {
 
-  def fieldThatBindsValidData(form: Form[_], fieldName: String, validDataGenerator: Gen[String]): Unit = {
-    "must bind valid arbitrary data" in {
+  def fieldThatBindsValidData(form: Form[_], fieldName: String, validDataGenerator: Gen[String]): Unit =
+    "must bind valid data" in {
 
       forAll(validDataGenerator -> "validDataItem") {
         dataItem: String =>
@@ -33,20 +34,6 @@ trait FieldBehaviours extends FormSpec with ScalaCheckPropertyChecks with Genera
           result.value.value mustBe dataItem
       }
     }
-
-    "must bind valid data with trailing and leading spaces trimmed" in {
-      val result: Field = form.bind(Map(fieldName -> "    abcd   ")).apply(fieldName)
-
-      print(s"****************")
-      print(s"****************")
-      println(s"result.value - ${result.value}")
-      println(s"result.format - ${result.format}")
-
-      println(s"HERE - ${result.format}")
-
-      result.format mustBe Some("abcd")
-    }
-  }
 
   def mandatoryField(form: Form[_], fieldName: String, requiredError: FormError): Unit = {
 
@@ -59,12 +46,6 @@ trait FieldBehaviours extends FormSpec with ScalaCheckPropertyChecks with Genera
     "must not bind blank values" in {
 
       val result = form.bind(Map(fieldName -> "")).apply(fieldName)
-      result.errors mustEqual Seq(requiredError)
-    }
-
-    "must not bind spaces" in {
-
-      val result = form.bind(Map(fieldName -> "   ")).apply(fieldName)
       result.errors mustEqual Seq(requiredError)
     }
   }
