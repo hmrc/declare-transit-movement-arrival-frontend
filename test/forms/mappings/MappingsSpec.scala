@@ -58,8 +58,18 @@ class MappingsSpec extends FreeSpec with MustMatchers with OptionValues with Map
       result.get mustEqual "foobar"
     }
 
+    "must bind a valid string with leading and trailing spaces" in {
+      val result = testForm.bind(Map("value" -> "  foobar     "))
+      result.get mustEqual "foobar"
+    }
+
     "must not bind an empty string" in {
       val result = testForm.bind(Map("value" -> ""))
+      result.errors must contain(FormError("value", "error.required"))
+    }
+
+    "must not bind a string with spaces" in {
+      val result = testForm.bind(Map("value" -> "      "))
       result.errors must contain(FormError("value", "error.required"))
     }
 
