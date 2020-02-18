@@ -252,9 +252,9 @@ incidentOnRoute.change.hidden = if there was an event on the journey
 eventCountry.title = Which country were the goods in when the event happened?
 eventCountry.heading = Which country were the goods in when the event happened?
 eventCountry.checkYourAnswersLabel = Which country were the goods in when the event happened?
+eventCountry.change.hidden = which country the goods were in when the event happened
 eventCountry.error.required = Enter which country the goods were in when the event happened
 eventCountry.error.length = Country must be 2 characters or less
-eventCountry.change.hidden = which country the goods were in when it happened
 
 eventPlace.title = Where did the event happen?
 eventPlace.heading = Where did the event happen?
