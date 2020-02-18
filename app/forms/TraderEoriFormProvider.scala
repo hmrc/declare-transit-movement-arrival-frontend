@@ -23,9 +23,14 @@ import models.messages.TraderWithEori.Constants.eoriLength
 
 class TraderEoriFormProvider @Inject() extends Mappings {
 
+  private val traderEoriRegex = "[A-Z]{2}[^\n\r]*"
+
   def apply(): Form[String] =
     Form(
       "value" -> text("traderEori.error.required")
-        .verifying(maxLength(eoriLength, "traderEori.error.length"))
+        .verifying(
+          maxLength(eoriLength, "traderEori.error.length"),
+          regexp(traderEoriRegex, "traderEori.error.invalid")
+        )
     )
 }
