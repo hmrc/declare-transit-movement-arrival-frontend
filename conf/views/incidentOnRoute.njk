@@ -2,6 +2,7 @@
 
 {% from "govuk/components/back-link/macro.njk"     import govukBackLink %}
 {% from "govuk/components/radios/macro.njk"        import govukRadios %}
+{% from "govuk/components/fieldset/macro.njk"      import govukFieldset %}
 {% from "govuk/components/button/macro.njk"        import govukButton %}
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 {% from "macros/title.njk"                         import title %}
@@ -31,35 +32,38 @@
 
           {{ csrf() | safe }}
 
-              {% macro radioBtnHintText() %}
-                   {{ messages("incidentOnRoute.hintText.tad") }}
-                    <p class="govuk-hint">{{ messages("incidentOnRoute.hintText.tellUs") }}</p>
-                      <ul class="govuk-list govuk-list--bullet govuk-hint">
-                      <li>{{ messages("incidentOnRoute.hintText.bullet.1") }}</li>
-                      <li>{{ messages("incidentOnRoute.hintText.bullet.2") }} </li>
-                      <li>{{ messages("incidentOnRoute.hintText.bullet.3") }}</li>
-                      <li>{{ messages("incidentOnRoute.hintText.bullet.4") }}</li>
-                      <li>{{ messages("incidentOnRoute.hintText.bullet.5") }} </li>
-                      <li>{{ messages("incidentOnRoute.hintText.bullet.6") }} </li>
-                      </ul>
-              {% endmacro %}
+          <div class="govuk-form-group{% if form.errors.length > 0 %} govuk-form-group--error{% endif %}">
 
-          {{ govukRadios({
-            classes: "govuk-radios--inline",
-            name: 'value',
-            fieldset: {
-              legend: {
-                text: messages('incidentOnRoute.title'),
-                isPageHeading: true,
-                classes: "govuk-fieldset__legend--xl"
+            <h1 class="govuk-heading-xl">{{ messages('incidentOnRoute.title') }}</h1>
+
+            <div class="govuk-body">
+              <p>{{ messages("incidentOnRoute.hintText.tad") }}</p>
+              <p>{{ messages("incidentOnRoute.hintText.tellUs") }}</p>
+              <ul class="govuk-list govuk-list--bullet">
+                <li>{{ messages("incidentOnRoute.hintText.bullet.1") }}</li>
+                <li>{{ messages("incidentOnRoute.hintText.bullet.2") }} </li>
+                <li>{{ messages("incidentOnRoute.hintText.bullet.3") }}</li>
+                <li>{{ messages("incidentOnRoute.hintText.bullet.4") }}</li>
+                <li>{{ messages("incidentOnRoute.hintText.bullet.5") }} </li>
+                <li>{{ messages("incidentOnRoute.hintText.bullet.6") }} </li>
+              </ul>
+            </div>
+
+            {{ govukRadios({
+              classes: "govuk-radios--inline",
+              name: 'value',
+              items: radios,
+              errorMessage: form.value.error,
+              fieldset: {
+                legend: {
+                  text: messages('incidentOnRoute.title'),
+                  isPageHeading: false,
+                  classes: "govuk-visually-hidden"
+                }
               }
-            },
-             hint: {
-              html: radioBtnHintText()
-             },
-            items: radios,
-            errorMessage: form.value.error
-          }) }}
+            }) }}
+
+          </div>
 
           {{ govukButton({
             text: messages("site.continue"),
