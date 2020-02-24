@@ -18,9 +18,4 @@ package pages
 
 import play.api.libs.json.JsPath
 
-case object MovementReferenceNumberPage extends QuestionPage[String] {
-
-  override def path: JsPath = JsPath \ toString
-
-  override def toString: String = "movementReferenceNumber"
-}
+case object MovementReferenceNumberPage extends Page

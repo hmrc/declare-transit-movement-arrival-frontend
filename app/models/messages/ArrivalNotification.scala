@@ -18,6 +18,7 @@ package models.messages
 
 import java.time.LocalDate
 
+import models.MovementReferenceNumber
 import play.api.libs.json._
 
 import scala.language.implicitConversions
@@ -47,7 +48,7 @@ object ArrivalNotification {
   }
 }
 
-final case class NormalNotification(movementReferenceNumber: String,
+final case class NormalNotification(movementReferenceNumber: MovementReferenceNumber,
                                     notificationPlace: String,
                                     notificationDate: LocalDate,
                                     customsSubPlace: Option[String],
@@ -84,7 +85,7 @@ object NormalNotification {
       }
       .andKeep(
         (
-          (__ \ "movementReferenceNumber").read[String] and
+          (__ \ "movementReferenceNumber").read[MovementReferenceNumber] and
             (__ \ "notificationPlace").read[String] and
             (__ \ "notificationDate").read[LocalDate] and
             (__ \ "customsSubPlace").readNullable[String] and
@@ -113,7 +114,7 @@ object NormalNotification {
 }
 
 final case class SimplifiedNotification(
-  movementReferenceNumber: String,
+  movementReferenceNumber: String, // TODO: Make this a MovementReferenceNumber
   notificationPlace: String,
   notificationDate: LocalDate,
   approvedLocation: Option[String],
