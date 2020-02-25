@@ -141,7 +141,8 @@ class ArrivalNotificationSpec extends FreeSpec with MustMatchers with ScalaCheck
       "enRouteEvents"           -> Json.toJson(notification.enRouteEvents),
       "customsSubPlace"         -> Json.toJson(notification.customsSubPlace),
       "trader"                  -> Json.toJson(notification.trader),
-      "presentationOffice"      -> notification.presentationOffice
+      "presentationOfficeId"    -> notification.presentationOfficeId,
+      "presentationOfficeName"  -> notification.presentationOfficeName
     )
 
   private def createSimplifiedNotificationJson(notification: SimplifiedNotification): JsObject =
@@ -153,6 +154,7 @@ class ArrivalNotificationSpec extends FreeSpec with MustMatchers with ScalaCheck
       "enRouteEvents"           -> Json.toJson(notification.enRouteEvents),
       "approvedLocation"        -> Json.toJson(notification.approvedLocation),
       "trader"                  -> Json.toJson(notification.trader),
-      "presentationOffice"      -> notification.presentationOffice
+      "presentationOfficeId"    -> notification.presentationOfficeId,
+      "presentationOfficeName"  -> notification.presentationOfficeName
     )
 }
