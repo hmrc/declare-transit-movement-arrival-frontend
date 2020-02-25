@@ -28,29 +28,33 @@
         {% endif %}
 
         <form action="{{ routes.controllers.IsTraderAddressPlaceOfNotificationController.onSubmit(mrn, mode).url }}" method="post">
-
           {{ csrf() | safe }}
 
-          <h1 class="govuk-heading-xl">{{ messages('isTraderAddressPlaceOfNotification.title') }}</h1>
+          <div class="govuk-form-group{% if form.errors.length > 0 %} govuk-form-group--error{% endif %}">
 
-          <p class="govuk-body-l">
-            {{ traderLine1 }} <br>
-            {{ traderTown }} <br>
-            {{ traderPostcode }}
-          </p>
+            <h1 class="govuk-heading-xl">{{ messages('isTraderAddressPlaceOfNotification.title') }}</h1>
 
-          {{ govukRadios({
-            classes: "govuk-radios--inline",
-            name: 'value',
-            fieldset: {
-              legend: {
-                isPageHeading: false,
-                classes: "govuk-fieldset__legend--xl"
-              }
-            },
-            items: radios,
-            errorMessage: form.value.error
-          }) }}
+            <p class="govuk-body-l">
+              {{ traderLine1 }} <br>
+              {{ traderTown }} <br>
+              {{ traderPostcode }}
+            </p>
+
+            {{ govukRadios({
+              classes: "govuk-radios--inline",
+              name: 'value',
+              fieldset: {
+                legend: {
+                  text: messages('isTraderAddressPlaceOfNotification.title'),
+                  isPageHeading: false,
+                  classes: "govuk-visually-hidden"
+                }
+              },
+              items: radios,
+              errorMessage: form.value.error
+            }) }}
+
+          </div>
 
           {{ govukButton({
             text: messages("site.continue"),
