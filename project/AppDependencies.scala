@@ -9,10 +9,10 @@ object AppDependencies {
     "uk.gov.hmrc"       %% "logback-json-logger"           % "4.6.0",
     "uk.gov.hmrc"       %% "play-health"                   % "3.14.0-play-26",
     "uk.gov.hmrc"       %% "play-conditional-form-mapping" % "1.2.0-play-26",
-    "uk.gov.hmrc"       %% "bootstrap-play-26"             % "1.0.0",
+    "uk.gov.hmrc"       %% "bootstrap-play-26"             % "1.4.0",
     "uk.gov.hmrc"       %% "play-whitelist-filter"         % "3.1.0-play-26",
-    "uk.gov.hmrc"       %% "play-nunjucks"                 % "0.22.0-play-26",
-    "uk.gov.hmrc"       %% "play-nunjucks-viewmodel"       % "0.6.0-play-26",
+    "uk.gov.hmrc"       %% "play-nunjucks"                 % "0.23.0-play-26",
+    "uk.gov.hmrc"       %% "play-nunjucks-viewmodel"       % "0.8.0-play-26",
     "org.webjars.npm"   % "govuk-frontend"                 % "3.3.0"
   )
 
@@ -28,4 +28,15 @@ object AppDependencies {
   ).map(_ % Test)
 
   def apply(): Seq[ModuleID] = compile ++ test
+
+  val akkaVersion = "2.5.23"
+  val akkaHttpVersion = "10.0.15"
+
+  val overrides = Seq(
+    "com.typesafe.akka" %% "akka-stream" % akkaVersion,
+    "com.typesafe.akka" %% "akka-protobuf" % akkaVersion,
+    "com.typesafe.akka" %% "akka-slf4j" % akkaVersion,
+    "com.typesafe.akka" %% "akka-actor" % akkaVersion,
+    "com.typesafe.akka" %% "akka-http-core" % akkaHttpVersion
+  )
 }
