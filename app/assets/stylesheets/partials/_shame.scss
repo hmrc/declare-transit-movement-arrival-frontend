@@ -51,10 +51,11 @@
 // ******************************************************
 // ******************************************************
 // make back link border and arrow scale with text
+// bottom border has to be above 1px to trigger render on older iOS
 // ******************************************************
 // ******************************************************
 .govuk-back-link {
-    border-bottom-width: 0.065em;
+    border-bottom-width: 0.075em;
     padding-left: 0.91em;
 }
 .govuk-back-link:before {
@@ -79,4 +80,17 @@
     word-wrap: break-word;
     overflow-wrap: break-word;
     hyphens: auto;
+}
+
+
+
+// make numbers easier to read
+@supports (font-variant-numeric: tabular-nums) {
+    table,
+    input,
+    .ctc-format-ref {
+        -webkit-font-feature-settings:normal;
+        font-feature-settings: normal;
+        font-variant-numeric: tabular-nums;
+    }
 }

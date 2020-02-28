@@ -35,10 +35,10 @@ POST       /:mrn/goods-approved-location                     controllers.Customs
 GET        /:mrn/change-goods-approved-location              controllers.CustomsSubPlaceController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
 POST       /:mrn/change-goods-approved-location              controllers.CustomsSubPlaceController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
 
-GET        /:mrn/authorisedLocation                          controllers.AuthorisedLocationController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
-POST       /:mrn/authorisedLocation                          controllers.AuthorisedLocationController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
-GET        /:mrn/changeAuthorisedLocation                    controllers.AuthorisedLocationController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
-POST       /:mrn/changeAuthorisedLocation                    controllers.AuthorisedLocationController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
+GET        /:mrn/authorised-location-code                    controllers.AuthorisedLocationController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
+POST       /:mrn/authorised-location-code                    controllers.AuthorisedLocationController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
+GET        /:mrn/change-authorised-location-code             controllers.AuthorisedLocationController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
+POST       /:mrn/change-authorised-location-code             controllers.AuthorisedLocationController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
 
 GET        /:mrn/destination-trader-address                  controllers.TraderAddressController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
 POST       /:mrn/destination-trader-address                  controllers.TraderAddressController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
@@ -55,9 +55,9 @@ POST       /:mrn/destination-trader-name                     controllers.TraderN
 GET        /:mrn/change-destination-trader-name              controllers.TraderNameController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
 POST       /:mrn/change-destination-trader-name              controllers.TraderNameController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
 
-GET        /:mrn/use-different-service                       controllers.UseDifferentServiceController.onPageLoad(mrn: MovementReferenceNumber)
+GET        /:mrn/use-ncts-service                            controllers.UseDifferentServiceController.onPageLoad(mrn: MovementReferenceNumber)
 
-GET        /:mrn/confirmation                                controllers.ConfirmationController.onPageLoad(mrn: MovementReferenceNumber)
+GET        /:mrn/arrival-notification-sent                   controllers.ConfirmationController.onPageLoad(mrn: MovementReferenceNumber)
 
 GET        /:mrn/event-on-journey                            controllers.IncidentOnRouteController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
 POST       /:mrn/event-on-journey                            controllers.IncidentOnRouteController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
