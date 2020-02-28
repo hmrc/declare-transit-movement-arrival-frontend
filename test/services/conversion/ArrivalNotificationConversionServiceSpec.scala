@@ -45,7 +45,7 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
     } yield {
 
       val expected: NormalNotification = base
-        .copy(movementReferenceNumber = mrn.toString)
+        .copy(movementReferenceNumber = mrn)
         .copy(trader = trader)
         .copy(customsSubPlace = Some(subPlace))
         .copy(notificationDate = LocalDate.now())
@@ -161,7 +161,7 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
           val containers: Seq[Container] = containerTranshipment.containers
 
           val userAnswers: UserAnswers = emptyUserAnswers
-            .set(MovementReferenceNumberPage, expectedArrivalNotification.movementReferenceNumber).success.value
+            .copy(id = expectedArrivalNotification.movementReferenceNumber)
             .set(GoodsLocationPage, BorderForceOffice).success.value
             .set(PresentationOfficePage, CustomsOffice(id = expectedArrivalNotification.presentationOffice, name = "name", roles = Seq.empty, None)).success.value
             .set(CustomsSubPlacePage, expectedArrivalNotification.customsSubPlace.value).success.value
@@ -228,9 +228,7 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
         case (arrivalNotification, trader) =>
           val userAnswers: UserAnswers =
             emptyUserAnswers
-              .set(MovementReferenceNumberPage, arrivalNotification.movementReferenceNumber)
-              .success
-              .value
+              .copy(id = arrivalNotification.movementReferenceNumber)
               .set(TraderEoriPage, trader.eori)
               .success
               .value
@@ -245,7 +243,7 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
 
   private def createBasicUserAnswers(trader: TraderWithEori, arrivalNotification: NormalNotification, isIncidentOnRoute: Boolean = false): UserAnswers =
     emptyUserAnswers
-      .set(MovementReferenceNumberPage, arrivalNotification.movementReferenceNumber).success.value
+      .copy(id = arrivalNotification.movementReferenceNumber)
       .set(GoodsLocationPage, BorderForceOffice).success.value
       .set(PresentationOfficePage, CustomsOffice(id = arrivalNotification.presentationOffice, name = "name", roles = Seq.empty, None)).success.value
       .set(CustomsSubPlacePage, arrivalNotification.customsSubPlace.value).success.value

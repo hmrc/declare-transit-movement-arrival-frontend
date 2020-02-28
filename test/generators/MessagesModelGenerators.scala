@@ -164,7 +164,7 @@ trait MessagesModelGenerators extends Generators {
     Arbitrary {
 
       for {
-        mrn                <- arbitrary[MovementReferenceNumber].map(_.toString())
+        mrn                <- arbitrary[MovementReferenceNumber]
         place              <- stringsWithMaxLength(NormalNotification.Constants.notificationPlaceLength)
         date               <- localDateGen
         subPlace           <- Gen.option(stringsWithMaxLength(NormalNotification.Constants.customsSubPlaceLength))

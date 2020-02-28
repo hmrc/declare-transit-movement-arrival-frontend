@@ -40,7 +40,7 @@ class ArrivalNotificationConversionService {
       notificationPlace  <- userAnswers.get(PlaceOfNotificationPage) orElse Some(tradersAddress.postcode)
     } yield {
       NormalNotification(
-        movementReferenceNumber = userAnswers.id.toString,
+        movementReferenceNumber = userAnswers.id,
         notificationPlace       = notificationPlace,
         notificationDate        = LocalDate.now(),
         customsSubPlace         = Some(customsSubPlace),
