@@ -60,7 +60,7 @@ class TraderEoriFormProviderSpec extends StringFieldBehaviours {
 
     "must not bind strings that do not match regex" in {
 
-      val validRegex    = "[A-Z]{2}[^\n\r]*"
+      val validRegex    = "[A-Z]{2}[^\n\r]{1,}"
       val expectedError = FormError(fieldName, invalidKey, Seq(validRegex))
 
       val genInvalidString: Gen[String] = {

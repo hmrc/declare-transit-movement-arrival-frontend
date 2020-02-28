@@ -157,7 +157,7 @@ movementReferenceNumber.heading = What is the movement reference number (MRN)?
 movementReferenceNumber.hintText = It is on the transit accompanying document (TAD) that is with the goods. It is 18 characters like 19GB00005112345678.
 movementReferenceNumber.checkYourAnswersLabel = Movement reference number
 movementReferenceNumber.error.required = Enter the movement reference number
-movementReferenceNumber.error.invalid = Movement reference number must only include letters a to z and numbers 0 to 9
+movementReferenceNumber.error.invalid = Enter a valid movement reference number
 
 goodsLocation.title = Where are the goods?
 goodsLocation.heading = Where are the goods?
