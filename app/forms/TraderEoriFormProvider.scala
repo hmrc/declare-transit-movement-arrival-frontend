@@ -19,18 +19,17 @@ package forms
 import forms.mappings.Mappings
 import javax.inject.Inject
 import play.api.data.Form
-import models.messages.TraderWithEori.Constants.eoriLength
+import models.messages.TraderWithEori.Constants._
+import models.messages.TraderWithEori.eoriRegex
 
 class TraderEoriFormProvider @Inject() extends Mappings {
-
-  private val traderEoriRegex = "[A-Z]{2}[^\n\r]*"
 
   def apply(): Form[String] =
     Form(
       "value" -> text("traderEori.error.required")
         .verifying(
           maxLength(eoriLength, "traderEori.error.length"),
-          regexp(traderEoriRegex, "traderEori.error.invalid")
+          regexp(eoriRegex, "traderEori.error.invalid")
         )
     )
 }

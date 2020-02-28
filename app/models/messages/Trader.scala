@@ -63,6 +63,8 @@ object TraderWithEori {
     val countryCodeLength     = 2
   }
 
+  val eoriRegex = "[A-Z]{2}[^\n\r]*"
+
   implicit lazy val format: Format[TraderWithEori] =
     Json.format[TraderWithEori]
 }

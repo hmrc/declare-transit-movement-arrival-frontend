@@ -85,9 +85,9 @@ trait Constraints {
         Invalid(errorKey, maximum)
     }
 
-  protected def validAscii(errorKey: String): Constraint[String] =
+  protected def printableAscii(errorKey: String): Constraint[String] =
     Constraint {
-      case str if CharMatcher.ascii().matchesAllOf(str) =>
+      case str if !str.toCharArray.exists(c => 32 > c || c > 126) =>
         Valid
       case _ =>
         Invalid(errorKey)
