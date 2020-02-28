@@ -157,7 +157,7 @@ movementReferenceNumber.heading = What is the movement reference number (MRN)?
 movementReferenceNumber.hintText = It is on the transit accompanying document (TAD) that is with the goods. It is 18 characters like 19GB00005112345678.
 movementReferenceNumber.checkYourAnswersLabel = Movement reference number
 movementReferenceNumber.error.required = Enter the movement reference number
-movementReferenceNumber.error.invalid = Enter a valid movement reference number
+movementReferenceNumber.error.invalid = Enter a real movement reference number
 
 goodsLocation.title = Where are the goods?
 goodsLocation.heading = Where are the goods?
@@ -177,10 +177,11 @@ presentationOffice.change.hidden = which Border Force office supervises {0}
 
 customsSubPlace.title = Which customs sub-place or approved location has the goods?
 customsSubPlace.heading = Which customs sub-place or approved location has the goods?
-customsSubPlace.checkYourAnswersLabel = Which customs sub place or approved location has the goods?
+customsSubPlace.checkYourAnswersLabel = Which customs sub-place or approved location has the goods?
 customsSubPlace.error.required = Enter the customs sub-place or approved location that has the goods
 customsSubPlace.error.length = Customs sub-place or approved location must be 17 characters or less
 customsSubPlace.change.hidden = the customs sub-place or approved location
+customsSubPlace.error.invalid = Enter a real customs sub-place or approved location
 
 authorisedLocation.title = What is the authorised location code?
 authorisedLocation.heading = What is the authorised location code?
@@ -207,6 +208,7 @@ traderEori.heading = What is the EORI number of the trader at the destination?
 traderEori.checkYourAnswersLabel = EORI number
 traderEori.error.required = Enter the EORI number of the trader at the destination
 traderEori.error.length = EORI number must be 17 characters or less
+traderEori.error.invalid = EORI number must start with a 2 letter country code then include numbers
 traderEori.change.hidden = EORI number of trader
 
 traderName.title = What is the name of the trader at the destination?

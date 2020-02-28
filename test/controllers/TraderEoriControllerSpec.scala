@@ -47,8 +47,9 @@ class TraderEoriControllerSpec extends SpecBase with MockitoSugar with NunjucksS
 
   def onwardRoute = Call("GET", "/foo")
 
-  val formProvider = new TraderEoriFormProvider()
-  val form         = formProvider()
+  private val formProvider = new TraderEoriFormProvider()
+  private val form         = formProvider()
+  private val validEori    = "AB123456789012345"
 
   lazy val traderEoriRoute = routes.TraderEoriController.onPageLoad(mrn, NormalMode).url
 
@@ -87,7 +88,7 @@ class TraderEoriControllerSpec extends SpecBase with MockitoSugar with NunjucksS
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers    = UserAnswers(mrn).set(TraderEoriPage, "answer").success.value
+      val userAnswers    = UserAnswers(mrn).set(TraderEoriPage, validEori).success.value
       val application    = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request        = FakeRequest(GET, traderEoriRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -99,7 +100,7 @@ class TraderEoriControllerSpec extends SpecBase with MockitoSugar with NunjucksS
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = form.bind(Map("value" -> "answer"))
+      val filledForm = form.bind(Map("value" -> validEori))
 
       val expectedJson = Json.obj(
         "form" -> filledForm,
@@ -129,7 +130,7 @@ class TraderEoriControllerSpec extends SpecBase with MockitoSugar with NunjucksS
 
       val request =
         FakeRequest(POST, traderEoriRoute)
-          .withFormUrlEncodedBody(("value", "answer"))
+          .withFormUrlEncodedBody(("value", validEori))
 
       val result = route(application, request).value
 

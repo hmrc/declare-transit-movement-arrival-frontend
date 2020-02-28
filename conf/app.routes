@@ -55,7 +55,7 @@ POST       /:mrn/destination-trader-name                     controllers.TraderN
 GET        /:mrn/change-destination-trader-name              controllers.TraderNameController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
 POST       /:mrn/change-destination-trader-name              controllers.TraderNameController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
 
-GET        /:mrn/use-NCTS-service                            controllers.UseDifferentServiceController.onPageLoad(mrn: MovementReferenceNumber)
+GET        /:mrn/use-ncts-service                            controllers.UseDifferentServiceController.onPageLoad(mrn: MovementReferenceNumber)
 
 GET        /:mrn/arrival-notification-sent                   controllers.ConfirmationController.onPageLoad(mrn: MovementReferenceNumber)
 

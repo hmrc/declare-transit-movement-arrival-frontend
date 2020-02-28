@@ -17,12 +17,14 @@
 package forms
 
 import forms.behaviours.StringFieldBehaviours
+import generators.Generators
 import play.api.data.FormError
 
 class CustomsSubPlaceFormProviderSpec extends StringFieldBehaviours {
 
   val requiredKey = "customsSubPlace.error.required"
   val lengthKey   = "customsSubPlace.error.length"
+  val invalidKey  = "customsSubPlace.error.invalid"
   val maxLength   = 17
 
   val form = new CustomsSubPlaceFormProvider()()
@@ -40,8 +42,9 @@ class CustomsSubPlaceFormProviderSpec extends StringFieldBehaviours {
     behave like fieldWithMaxLength(
       form,
       fieldName,
-      maxLength   = maxLength,
-      lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
+      maxLength            = maxLength,
+      lengthError          = FormError(fieldName, lengthKey, Seq(maxLength)),
+      withoutExtendedAscii = true
     )
 
     behave like mandatoryField(
@@ -49,5 +52,16 @@ class CustomsSubPlaceFormProviderSpec extends StringFieldBehaviours {
       fieldName,
       requiredError = FormError(fieldName, requiredKey)
     )
+
+    "return error when given a non-ASCII character" in {
+
+      forAll(extendedAsciiWithMaxLength(maxLength)) {
+        invalidCharacters =>
+          val invalidCharacterError = FormError(fieldName, invalidKey)
+
+          val result = form.bind(Map(fieldName -> invalidCharacters)).apply(fieldName)
+          result.errors mustEqual Seq(invalidCharacterError)
+      }
+    }
   }
 }

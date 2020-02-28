@@ -218,4 +218,31 @@ class ConstraintsSpec extends FreeSpec with MustMatchers with ScalaCheckProperty
       result mustEqual Valid
     }
   }
+
+  "validAscii" - {
+
+    "returns valid if there are only printable ascii characters within the string" in {
+
+      val stringsWithOnlyPrintableAscii: Gen[String] = stringsLongerThan(1, withOnlyPrintableAscii = true)
+
+      forAll(stringsWithOnlyPrintableAscii) {
+        value =>
+          val result = printableAscii("error.invalid")(value)
+          result mustBe Valid
+      }
+
+    }
+
+    "returns invalid if there are any non-printable ascii characters within the string" in {
+
+      val stringsWithoutPrintableAscii: Gen[String] = stringsLongerThan(1, withOnlyPrintableAscii = false)
+
+      forAll(stringsWithoutPrintableAscii) {
+        value =>
+          val result = printableAscii("error.invalid")(value)
+          result mustBe Invalid("error.invalid")
+      }
+    }
+  }
+
 }
