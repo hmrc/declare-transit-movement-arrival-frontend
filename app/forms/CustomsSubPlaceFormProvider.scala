@@ -27,5 +27,6 @@ class CustomsSubPlaceFormProvider @Inject() extends Mappings {
     Form(
       "value" -> text("customsSubPlace.error.required")
         .verifying(maxLength(customsSubPlaceLength, "customsSubPlace.error.length"))
+        .verifying(printableAscii("customsSubPlace.error.invalid"))
     )
 }
