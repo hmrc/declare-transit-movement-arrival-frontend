@@ -39,15 +39,15 @@ class AuthenticatedIdentifierAction @Inject()(
     extends IdentifierAction
     with AuthorisedFunctions {
 
+  private val enrolmentIdentifierKey: String = "VATRegNoTURN"
+
   override def invokeBlock[A](request: Request[A], block: IdentifierRequest[A] => Future[Result]): Future[Result] = {
 
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
 
-    authorised().retrieve(Retrievals.internalId) {
-      _.map {
-        internalId =>
-          block(IdentifierRequest(request, internalId))
-      }.getOrElse(throw new UnauthorizedException("Unable to retrieve internal Id"))
+    authorised(Enrolment(config.enrolmentKey)).retrieve(Retrievals.allEnrolments) {
+      allEnrolments =>
+        block(IdentifierRequest(request, getEoriNumber(allEnrolments)))
     } recover {
       case _: NoActiveSession =>
         Redirect(config.loginUrl, Map("continue" -> Seq(config.loginContinueUrl)))
@@ -55,6 +55,12 @@ class AuthenticatedIdentifierAction @Inject()(
         Redirect(routes.UnauthorisedController.onPageLoad())
     }
   }
+
+  private def getEoriNumber[A](allEnrolments: Enrolments): String =
+    (for {
+      enrolment  <- allEnrolments.getEnrolment(config.enrolmentKey).find(_.isActivated)
+      identifier <- enrolment.getIdentifier(enrolmentIdentifierKey)
+    } yield identifier.value).getOrElse(throw new UnauthorizedException(s"Unable to retrieve enrolment for $enrolmentIdentifierKey"))
 }
 
 class SessionIdentifierAction @Inject()(
