@@ -64,7 +64,7 @@ class TraderEoriFormProviderSpec extends StringFieldBehaviours {
       val expectedError = FormError(fieldName, invalidKey, Seq(validRegex))
 
       val genInvalidString: Gen[String] = {
-        stringsWithMaxLength(maxLength) suchThat (!_.matches("[A-Z]{2}[^\n\r]{15}"))
+        stringsWithMaxLength(maxLength) suchThat (!_.matches("[A-Z]{2}[^\n\r]{1,}"))
       }
 
       forAll(genInvalidString) {

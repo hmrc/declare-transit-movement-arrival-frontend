@@ -91,7 +91,7 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
       chars  <- listOfN(length, alphaNumChar)
     } yield chars.mkString
 
-  def extendedAsciiChar: Gen[Char] = chooseNum(128, 255).map(_.toChar)
+  def extendedAsciiChar: Gen[Char] = chooseNum(128, 254).map(_.toChar)
 
   def extendedAsciiWithMaxLength(maxLength: Int): Gen[String] =
     for {
@@ -101,13 +101,15 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
 
   def stringsLongerThan(minLength: Int, withOnlyPrintableAscii: Boolean = false): Gen[String] =
     for {
-      maxLength <- (minLength * 2).max(100)
-      length    <- Gen.chooseNum(minLength + 1, maxLength)
+      maxLength     <- (minLength * 2).max(100)
+      length        <- Gen.chooseNum(minLength + 1, maxLength)
+      extendedAscii <- extendedAsciiChar
       chars <- {
         if (withOnlyPrintableAscii) {
-          listOfN(length, Gen.asciiPrintableChar)
+          listOfN(length, Gen.alphaChar)
         } else {
-          listOfN(length, alphaNumChar)
+          val listOfChar = listOfN(length, arbitrary[Char])
+          listOfChar.map(_ ++ List(extendedAscii))
         }
       }
     } yield chars.mkString
