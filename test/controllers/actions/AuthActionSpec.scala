@@ -19,8 +19,9 @@ package controllers.actions
 import base.SpecBase
 import com.google.inject.Inject
 import controllers.routes
-import play.api.mvc.BodyParsers
-import play.api.mvc.Results
+import org.mockito.Matchers.any
+import org.mockito.Mockito.{reset, when}
+import play.api.mvc.{BodyParsers, Results}
 import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.authorise.Predicate
@@ -28,8 +29,7 @@ import uk.gov.hmrc.auth.core.retrieve.Retrieval
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.ExecutionContext
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class AuthActionSpec extends SpecBase {
 
@@ -40,6 +40,58 @@ class AuthActionSpec extends SpecBase {
         Results.Ok
     }
   }
+
+  val mockAuthConnector: AuthConnector = mock[AuthConnector]
+
+  val enrolmentsWithoutEori: Enrolments = Enrolments(
+    Set(
+      Enrolment(
+        key = "IR-SA",
+        identifiers = Seq(
+          EnrolmentIdentifier(
+            "UTR",
+            "123"
+          )
+        ),
+        state = "Activated"
+      ),
+      Enrolment(
+        key = "IR-CT",
+        identifiers = Seq(
+          EnrolmentIdentifier(
+            "UTR",
+            "456"
+          )
+        ),
+        state = "Activated"
+      )
+    )
+  )
+
+  val enrolmentsWithEori: Enrolments = Enrolments(
+    Set(
+      Enrolment(
+        key = "IR-SA",
+        identifiers = Seq(
+          EnrolmentIdentifier(
+            "UTR",
+            "123"
+          )
+        ),
+        state = "Activated"
+      ),
+      Enrolment(
+        key = "HMCE-NCTS-ORG",
+        identifiers = Seq(
+          EnrolmentIdentifier(
+            "VATRegNoTURN",
+            "123"
+          )
+        ),
+        state = "Activated"
+      )
+    )
+  )
 
   "Auth Action" - {
 
@@ -168,6 +220,47 @@ class AuthActionSpec extends SpecBase {
         redirectLocation(result) mustBe Some(routes.UnauthorisedController.onPageLoad().url)
       }
     }
+
+    "AuthAction" - {
+      "must redirect to unauthorised page when given enrolments without eori" in {
+
+        when(mockAuthConnector.authorise[Enrolments](any(), any())(any(), any()))
+          .thenReturn(Future.successful(enrolmentsWithoutEori))
+
+        val application = applicationBuilder(userAnswers = None).build()
+
+        val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
+
+        val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, frontendAppConfig, bodyParsers)
+        val controller = new Harness(authAction)
+        val result     = controller.onPageLoad()(fakeRequest)
+
+        status(result) mustBe SEE_OTHER
+
+        redirectLocation(result) mustBe Some(routes.UnauthorisedController.onPageLoad().url)
+      }
+
+      "must return Ok when given enrolments with eori" in {
+
+        when(mockAuthConnector.authorise[Enrolments](any(), any())(any(), any()))
+          .thenReturn(Future.successful(enrolmentsWithEori))
+
+        val application = applicationBuilder(userAnswers = None).build()
+
+        val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
+
+        val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, frontendAppConfig, bodyParsers)
+        val controller = new Harness(authAction)
+        val result     = controller.onPageLoad()(fakeRequest)
+
+        status(result) mustBe OK
+      }
+    }
+  }
+
+  override def beforeEach: Unit = {
+    super.beforeEach
+    reset(mockAuthConnector)
   }
 }
 
