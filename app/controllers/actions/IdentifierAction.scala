@@ -45,39 +45,23 @@ class AuthenticatedIdentifierAction @Inject()(
 
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
 
-    authorised(Enrolment(config.enrolmentKey)).retrieve(Retrievals.allEnrolments) {
-      allEnrolments =>
-        block(IdentifierRequest(request, getEoriNumber(allEnrolments)))
-    } recover {
-      case _: NoActiveSession =>
-        Redirect(config.loginUrl, Map("continue" -> Seq(config.loginContinueUrl)))
-      case _: AuthorisationException =>
-        Redirect(routes.UnauthorisedController.onPageLoad())
+    authorised(Enrolment(config.enrolmentKey)).retrieve(Retrievals.authorisedEnrolments) {
+      enrolments =>
+        val identifierRequest: Option[Future[Result]] = for {
+          enrolment  <- enrolments.enrolments.headOption
+          identifier <- enrolment.getIdentifier(enrolmentIdentifierKey)
+        } yield block(IdentifierRequest(request, identifier.value))
+
+        identifierRequest
+          .getOrElse(
+            throw InsufficientEnrolments(s"Unable to retrieve enrolment for $enrolmentIdentifierKey")
+          )
     }
-  }
 
-  private def getEoriNumber[A](allEnrolments: Enrolments): String =
-    (for {
-      enrolment  <- allEnrolments.getEnrolment(config.enrolmentKey).find(_.isActivated)
-      identifier <- enrolment.getIdentifier(enrolmentIdentifierKey)
-    } yield identifier.value).getOrElse(throw new UnauthorizedException(s"Unable to retrieve enrolment for $enrolmentIdentifierKey"))
-}
-
-class SessionIdentifierAction @Inject()(
-  config: FrontendAppConfig,
-  val parser: BodyParsers.Default
-)(implicit val executionContext: ExecutionContext)
-    extends IdentifierAction {
-
-  override def invokeBlock[A](request: Request[A], block: IdentifierRequest[A] => Future[Result]): Future[Result] = {
-
-    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
-
-    hc.sessionId match {
-      case Some(session) =>
-        block(IdentifierRequest(request, session.value))
-      case None =>
-        Future.successful(Redirect(routes.SessionExpiredController.onPageLoad()))
-    }
+  } recover {
+    case _: NoActiveSession =>
+      Redirect(config.loginUrl, Map("continue" -> Seq(config.loginContinueUrl)))
+    case _: AuthorisationException =>
+      Redirect(routes.UnauthorisedController.onPageLoad())
   }
 }
