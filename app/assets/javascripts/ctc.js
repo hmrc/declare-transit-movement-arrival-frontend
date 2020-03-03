@@ -35,16 +35,48 @@ if (document.querySelector('.autocomplete') != null) {
     // =====================================================
     setTimeout(function(){
         var originalSelect = document.querySelector('select.autocomplete');
+        var parentForm = upTo(originalSelect, 'form');
+        var combo = parentForm.querySelector('[role="combobox"]');
+
         if(originalSelect && originalSelect.getAttribute('aria-describedby') > ""){
-            var parentForm = upTo(originalSelect, 'form');
             if(parentForm){
-                var combo = parentForm.querySelector('[role="combobox"]');
                 if(combo){
                     combo.setAttribute('aria-describedby', originalSelect.getAttribute('aria-describedby') + ' ' + combo.getAttribute('aria-describedby'));
                 }
             }
 
         }
+
+        // ensure when user replaces valid answer with a non-valid answer, then valid answer is not retained
+        var holdSubmit = true;
+        parentForm.addEventListener('submit', function(e){
+            if(holdSubmit){
+                e.preventDefault()
+                if(originalSelect.querySelectorAll('[selected]').length > 0 || originalSelect.value > ""){
+
+                    var resetSelect = false;
+                    if(originalSelect.querySelectorAll('[selected]').length > 0 && originalSelect.querySelectorAll('[selected]')[0].text != combo.value){
+                        resetSelect = true;
+                    }
+
+                    if(originalSelect.value){
+                        if(combo.value != originalSelect.querySelector('option[value="' + originalSelect.value +'"]').text){
+                            resetSelect = true;
+                        }
+                    }
+                    if(resetSelect){
+                        originalSelect.value = "";
+                        if(originalSelect.querySelectorAll('[selected]').length > 0){
+                            originalSelect.querySelectorAll('[selected]')[0].removeAttribute('selected');
+                        }
+                    }
+                }
+
+                holdSubmit = false;
+                HTMLFormElement.prototype.submit.call(parentForm); // because submit buttons have id of "submit" which masks the form's natural form.submit() function
+            }
+        })
+
     }, 2000)
 }
 
