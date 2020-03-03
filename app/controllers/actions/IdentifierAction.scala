@@ -24,7 +24,7 @@ import play.api.mvc.Results._
 import play.api.mvc._
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
-import uk.gov.hmrc.http.{HeaderCarrier, UnauthorizedException}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -47,15 +47,13 @@ class AuthenticatedIdentifierAction @Inject()(
 
     authorised(Enrolment(config.enrolmentKey)).retrieve(Retrievals.authorisedEnrolments) {
       enrolments =>
-        val identifierRequest: Option[Future[Result]] = for {
-          enrolment  <- enrolments.enrolments.headOption
+        val eoriNumber: String = (for {
+          enrolment  <- enrolments.enrolments.find(_.key.equals(config.enrolmentKey))
           identifier <- enrolment.getIdentifier(enrolmentIdentifierKey)
-        } yield block(IdentifierRequest(request, identifier.value))
+        } yield identifier.value).getOrElse(throw InsufficientEnrolments(s"Unable to retrieve enrolment for $enrolmentIdentifierKey"))
 
-        identifierRequest
-          .getOrElse(throw InsufficientEnrolments(s"Unable to retrieve enrolment for $enrolmentIdentifierKey"))
+        block(IdentifierRequest(request, eoriNumber))
     }
-
   } recover {
     case _: NoActiveSession =>
       Redirect(config.loginUrl, Map("continue" -> Seq(config.loginContinueUrl)))
