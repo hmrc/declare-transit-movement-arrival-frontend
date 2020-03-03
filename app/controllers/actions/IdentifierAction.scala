@@ -53,9 +53,7 @@ class AuthenticatedIdentifierAction @Inject()(
         } yield block(IdentifierRequest(request, identifier.value))
 
         identifierRequest
-          .getOrElse(
-            throw InsufficientEnrolments(s"Unable to retrieve enrolment for $enrolmentIdentifierKey")
-          )
+          .getOrElse(throw InsufficientEnrolments(s"Unable to retrieve enrolment for $enrolmentIdentifierKey"))
     }
 
   } recover {
