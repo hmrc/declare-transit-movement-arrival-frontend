@@ -23,10 +23,12 @@ import wolfendale.scalacheck.regexp.RegexpGen
 
 class TraderEoriFormProviderSpec extends StringFieldBehaviours {
 
-  private val requiredKey = "traderEori.error.required"
-  private val lengthKey   = "traderEori.error.length"
-  private val invalidKey  = "traderEori.error.invalid"
-  private val maxLength   = 17
+  private val requiredKey  = "traderEori.error.required"
+  private val lengthKey    = "traderEori.error.length"
+  private val minLengthKey = "traderEori.error.minLength"
+  private val invalidKey   = "traderEori.error.invalid"
+  private val maxLength    = 17
+  private val minLength    = 3
 
   private val form = new TraderEoriFormProvider()()
 
@@ -46,15 +48,25 @@ class TraderEoriFormProviderSpec extends StringFieldBehaviours {
       requiredError = FormError(fieldName, requiredKey)
     )
 
-    "must not bind strings longer than 17 characters" in {
+    s"must not bind strings shorter than $minLength characters" in {
 
-      val genInvalidLengthString = RegexpGen.from("[A-Z]{2}[^\n\r]{15,}")
-      val expectedError          = FormError(fieldName, lengthKey, Seq(maxLength))
+      val expectedError = FormError(fieldName, minLengthKey, Seq(minLength))
 
-      forAll(genInvalidLengthString) {
+      forAll(stringsWithMaxLength(minLength - 1)) {
         string =>
           val result = form.bind(Map(fieldName -> string)).apply(fieldName)
-          result.errors mustEqual Seq(expectedError)
+          result.errors must contain(expectedError)
+      }
+    }
+
+    s"must not bind strings longer than $maxLength characters" in {
+
+      val expectedError = FormError(fieldName, lengthKey, Seq(maxLength))
+
+      forAll(stringsLongerThan(maxLength + 1)) {
+        string =>
+          val result = form.bind(Map(fieldName -> string)).apply(fieldName)
+          result.errors must contain(expectedError)
       }
     }
 
@@ -70,7 +82,7 @@ class TraderEoriFormProviderSpec extends StringFieldBehaviours {
       forAll(genInvalidString) {
         invalidString =>
           val result: Field = form.bind(Map(fieldName -> invalidString)).apply(fieldName)
-          result.errors mustEqual Seq(expectedError)
+          result.errors must contain(expectedError)
       }
     }
   }
