@@ -88,6 +88,16 @@ class AuthActionSpec extends SpecBase {
             "123"
           )
         ),
+        state = "NotYetActivated"
+      ),
+      Enrolment(
+        key = "HMCE-NCTS-ORG",
+        identifiers = Seq(
+          EnrolmentIdentifier(
+            "VATRegNoTURN",
+            "456"
+          )
+        ),
         state = "Activated"
       )
     )
