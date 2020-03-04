@@ -19,14 +19,14 @@ package forms
 import forms.behaviours.StringFieldBehaviours
 import org.scalacheck.Gen
 import play.api.data.{Field, FormError}
-import wolfendale.scalacheck.regexp.RegexpGen
+import models.messages.TraderWithEori.Constants._
 
 class TraderEoriFormProviderSpec extends StringFieldBehaviours {
 
-  private val requiredKey = "traderEori.error.required"
-  private val lengthKey   = "traderEori.error.length"
-  private val invalidKey  = "traderEori.error.invalid"
-  private val maxLength   = 17
+  private val requiredKey  = "traderEori.error.required"
+  private val lengthKey    = "traderEori.error.length"
+  private val minLengthKey = "traderEori.error.minLength"
+  private val invalidKey   = "traderEori.error.invalid"
 
   private val form = new TraderEoriFormProvider()()
 
@@ -37,7 +37,7 @@ class TraderEoriFormProviderSpec extends StringFieldBehaviours {
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      stringsWithMaxLength(maxLength)
+      stringsWithMaxLength(eoriLength)
     )
 
     behave like mandatoryField(
@@ -46,15 +46,25 @@ class TraderEoriFormProviderSpec extends StringFieldBehaviours {
       requiredError = FormError(fieldName, requiredKey)
     )
 
-    "must not bind strings longer than 17 characters" in {
+    "must not bind strings shorter than TraderWithEori.Constants.eoriMinLength characters" in {
 
-      val genInvalidLengthString = RegexpGen.from("[A-Z]{2}[^\n\r]{15,}")
-      val expectedError          = FormError(fieldName, lengthKey, Seq(maxLength))
+      val expectedError = FormError(fieldName, minLengthKey, Seq(eoriMinLength))
 
-      forAll(genInvalidLengthString) {
+      forAll(stringsWithMaxLength(eoriMinLength - 1)) {
         string =>
           val result = form.bind(Map(fieldName -> string)).apply(fieldName)
-          result.errors mustEqual Seq(expectedError)
+          result.errors must contain(expectedError)
+      }
+    }
+
+    "must not bind strings longer than TraderWithEori.Constants.eoriLength characters" in {
+
+      val expectedError = FormError(fieldName, lengthKey, Seq(eoriLength))
+
+      forAll(stringsLongerThan(eoriLength + 1)) {
+        string =>
+          val result = form.bind(Map(fieldName -> string)).apply(fieldName)
+          result.errors must contain(expectedError)
       }
     }
 
@@ -64,13 +74,13 @@ class TraderEoriFormProviderSpec extends StringFieldBehaviours {
       val expectedError = FormError(fieldName, invalidKey, Seq(validRegex))
 
       val genInvalidString: Gen[String] = {
-        stringsWithMaxLength(maxLength) suchThat (!_.matches("[A-Z]{2}[^\n\r]{1,}"))
+        stringsWithMaxLength(eoriLength) suchThat (!_.matches("[A-Z]{2}[^\n\r]{1,}"))
       }
 
       forAll(genInvalidString) {
         invalidString =>
           val result: Field = form.bind(Map(fieldName -> invalidString)).apply(fieldName)
-          result.errors mustEqual Seq(expectedError)
+          result.errors must contain(expectedError)
       }
     }
   }

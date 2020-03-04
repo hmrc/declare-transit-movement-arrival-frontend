@@ -85,6 +85,14 @@ trait Constraints {
         Invalid(errorKey, maximum)
     }
 
+  protected def minLength(minimum: Int, errorKey: String): Constraint[String] =
+    Constraint {
+      case str if str.length >= minimum =>
+        Valid
+      case _ =>
+        Invalid(errorKey, minimum)
+    }
+
   protected def printableAscii(errorKey: String): Constraint[String] =
     Constraint {
       case str if !str.toCharArray.exists(c => 32 > c || c > 126) =>

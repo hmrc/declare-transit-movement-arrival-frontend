@@ -56,6 +56,7 @@ object TraderWithEori {
 
   object Constants {
     val eoriLength            = 17
+    val eoriMinLength         = 3
     val nameLength            = 35
     val streetAndNumberLength = 35
     val postCodeLength        = 9
