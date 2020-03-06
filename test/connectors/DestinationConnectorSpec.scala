@@ -51,7 +51,7 @@ class DestinationConnectorSpec extends SpecBase with WireMockServerHandler with 
 
       forAll(arbitrary[NormalNotification]) {
         notification =>
-          val result = connector.submitArrivalNotification(notification)
+          val result = connector.submitArrivalNotification(notification, eoriNumber)
           result.futureValue.status mustBe OK
       }
     }
@@ -62,7 +62,7 @@ class DestinationConnectorSpec extends SpecBase with WireMockServerHandler with 
 
       forAll(arbitrary[NormalNotification]) {
         notification =>
-          val result = connector.submitArrivalNotification(notification)
+          val result = connector.submitArrivalNotification(notification, eoriNumber)
           result.futureValue.status mustBe BAD_REQUEST
       }
     }
@@ -73,7 +73,7 @@ class DestinationConnectorSpec extends SpecBase with WireMockServerHandler with 
 
       forAll(arbitrary[NormalNotification]) {
         notification =>
-          val result = connector.submitArrivalNotification(notification)
+          val result = connector.submitArrivalNotification(notification, eoriNumber)
           result.futureValue.status mustBe INTERNAL_SERVER_ERROR
       }
     }
