@@ -18,13 +18,10 @@ package controllers.testOnly
 
 import controllers.actions._
 import javax.inject.Inject
-import models.UserAnswers
-import navigation.Navigator
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.MessagesApi
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.modules.reactivemongo.ReactiveMongoApi
-import reactivemongo.api.Cursor
 import reactivemongo.play.json.ImplicitBSONHandlers.JsObjectDocumentWriter
 import reactivemongo.play.json.collection.JSONCollection
 import renderer.Renderer
@@ -34,12 +31,10 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class TestOnlyController @Inject()(override val messagesApi: MessagesApi,
                                    mongo: ReactiveMongoApi,
-                                   navigator: Navigator,
                                    identify: IdentifierAction,
                                    val controllerComponents: MessagesControllerComponents,
                                    renderer: Renderer)(implicit ec: ExecutionContext)
-    extends FrontendBaseController
-    with I18nSupport {
+    extends FrontendBaseController {
 
   def dropMongoCollection: Action[AnyContent] = Action.async {
     implicit request =>
