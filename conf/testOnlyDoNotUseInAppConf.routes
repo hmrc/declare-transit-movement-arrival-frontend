@@ -10,7 +10,6 @@
 # Failing to follow this rule may result in test routes deployed in production.
 
 DELETE   /common-transit-convention-trader-arrival/test-only/dropMongoCollection       controllers.testOnly.TestOnlyController.dropMongoCollection
-DELETE   /common-transit-convention-trader-arrival/test-only/removeMovement/:mrn       controllers.testOnly.TestOnlyController.removeMovement(mrn)
 
 # Add all the application routes to the prod.routes file
 ->         /                          prod.Routes

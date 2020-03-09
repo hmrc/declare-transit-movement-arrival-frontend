@@ -45,18 +45,4 @@ class TestOnlyController @Inject()(override val messagesApi: MessagesApi,
         }
       )
   }
-
-  def removeMovement(mrn: String): Action[AnyContent] = Action.async {
-    implicit request =>
-      val collection: Future[JSONCollection] = mongo.database.map(_.collection[JSONCollection]("user-answers"))
-
-      collection.flatMap(
-        _.findAndRemove(Json.obj("_id" -> mrn)) map {
-          _.value match {
-            case Some(_) => Ok(s"transit movement removed for the mrn $mrn")
-            case _       => Ok("record does not exists")
-          }
-        }
-      )
-  }
 }
