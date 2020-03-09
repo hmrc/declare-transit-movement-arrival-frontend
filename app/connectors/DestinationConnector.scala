@@ -26,9 +26,10 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class DestinationConnector @Inject()(val config: FrontendAppConfig, val http: HttpClient) {
 
-  def submitArrivalNotification(model: ArrivalNotification)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = {
+  def submitArrivalNotification(model: ArrivalNotification, eoriNumber: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = {
 
-    val serviceUrl = s"${config.destinationUrl}/arrival-notification"
-    http.POST[ArrivalNotification, HttpResponse](serviceUrl, model)
+    val headers: Seq[(String, String)] = Seq(("eoriNumber", eoriNumber))
+    val serviceUrl                     = s"${config.destinationUrl}/arrival-notification"
+    http.POST[ArrivalNotification, HttpResponse](serviceUrl, model, headers)
   }
 }

@@ -29,8 +29,10 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.Application
 import play.api.http.Status._
 import play.api.inject.guice.GuiceApplicationBuilder
+import uk.gov.hmrc.http.HttpResponse
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 class DestinationConnectorSpec extends SpecBase with WireMockServerHandler with MessagesModelGenerators with ScalaCheckPropertyChecks {
 
@@ -51,7 +53,8 @@ class DestinationConnectorSpec extends SpecBase with WireMockServerHandler with 
 
       forAll(arbitrary[NormalNotification]) {
         notification =>
-          val result = connector.submitArrivalNotification(notification)
+          val result: Future[HttpResponse] = connector.submitArrivalNotification(notification, eoriNumber)
+          result.futureValue.header("eoriNumber") mustBe Some(eoriNumber)
           result.futureValue.status mustBe OK
       }
     }
@@ -62,7 +65,7 @@ class DestinationConnectorSpec extends SpecBase with WireMockServerHandler with 
 
       forAll(arbitrary[NormalNotification]) {
         notification =>
-          val result = connector.submitArrivalNotification(notification)
+          val result = connector.submitArrivalNotification(notification, eoriNumber)
           result.futureValue.status mustBe BAD_REQUEST
       }
     }
@@ -73,7 +76,7 @@ class DestinationConnectorSpec extends SpecBase with WireMockServerHandler with 
 
       forAll(arbitrary[NormalNotification]) {
         notification =>
-          val result = connector.submitArrivalNotification(notification)
+          val result = connector.submitArrivalNotification(notification, eoriNumber)
           result.futureValue.status mustBe INTERNAL_SERVER_ERROR
       }
     }
@@ -85,6 +88,7 @@ class DestinationConnectorSpec extends SpecBase with WireMockServerHandler with 
         .willReturn(
           aResponse()
             .withStatus(expectedStatus)
+            .withHeader("eoriNumber", eoriNumber)
         )
     )
 }
