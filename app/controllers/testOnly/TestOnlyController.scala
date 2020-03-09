@@ -16,7 +16,6 @@
 
 package controllers.testOnly
 
-import controllers.actions._
 import javax.inject.Inject
 import play.api.i18n.MessagesApi
 import play.api.libs.json.Json
@@ -31,7 +30,6 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class TestOnlyController @Inject()(override val messagesApi: MessagesApi,
                                    mongo: ReactiveMongoApi,
-                                   identify: IdentifierAction,
                                    val controllerComponents: MessagesControllerComponents,
                                    renderer: Renderer)(implicit ec: ExecutionContext)
     extends FrontendBaseController {
@@ -41,7 +39,7 @@ class TestOnlyController @Inject()(override val messagesApi: MessagesApi,
       val collection: Future[JSONCollection] = mongo.database.map(_.collection[JSONCollection]("user-answers"))
 
       collection.flatMap(
-        _.drop(false) map {
+        _.drop(failIfNotFound = false) map {
           case true  => Ok("Dropped  'User-answers' Mongo collection")
           case false => Ok("collection does not exist or something gone wrong")
         }
