@@ -23,31 +23,39 @@ function upTo(el, tagName) {
 // initialise GovUK lib
 GOVUKFrontend.initAll();
 
-if (document.querySelector('.autocomplete') != null) {
+
+
+if (accessibleAutocomplete && document.querySelector('.autocomplete') != null) {
+    // load autocomplete
     accessibleAutocomplete.enhanceSelectElement({
         selectElement: document.querySelector('.autocomplete'),
         showAllValues: true
     });
 
     // =====================================================
-    // Update autocomplete once loaded with fallback's aria attributes
-    // Ensures hint and error are read out before usage instructions
+    // Polyfill autocomplete once loaded
     // =====================================================
-    setTimeout(function(){
-        var originalSelect = document.querySelector('select.autocomplete');
-        var parentForm = upTo(originalSelect, 'form');
-        var combo = parentForm.querySelector('[role="combobox"]');
+    var checkForLoad = setInterval(checkForAutocompleteLoad, 500);
+    var originalSelect = document.querySelector('select.autocomplete');
+    var parentForm = upTo(originalSelect, 'form');
 
+    function polyfillAutocomplete(){
+        var combo = parentForm.querySelector('[role="combobox"]');
+        // =====================================================
+        // Update autocomplete once loaded with fallback's aria attributes
+        // Ensures hint and error are read out before usage instructions
+        // =====================================================
         if(originalSelect && originalSelect.getAttribute('aria-describedby') > ""){
             if(parentForm){
                 if(combo){
                     combo.setAttribute('aria-describedby', originalSelect.getAttribute('aria-describedby') + ' ' + combo.getAttribute('aria-describedby'));
                 }
             }
-
         }
 
-        // ensure when user replaces valid answer with a non-valid answer, then valid answer is not retained
+        // =====================================================
+        // Ensure when user replaces valid answer with a non-valid answer, then valid answer is not retained
+        // =====================================================
         var holdSubmit = true;
         parentForm.addEventListener('submit', function(e){
             if(holdSubmit){
@@ -73,11 +81,20 @@ if (document.querySelector('.autocomplete') != null) {
                 }
 
                 holdSubmit = false;
+                //parentForm.submit();
                 HTMLFormElement.prototype.submit.call(parentForm); // because submit buttons have id of "submit" which masks the form's natural form.submit() function
             }
         })
 
-    }, 2000)
+    }
+    function checkForAutocompleteLoad(){
+        if(parentForm.querySelector('[role="combobox"]')){
+            clearInterval(checkForLoad)
+            polyfillAutocomplete();
+        }
+    }
+
+
 }
 
 // back link
