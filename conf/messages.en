@@ -32,7 +32,7 @@ concurrent.remove.error.multipleEvent.link.text = Go back to you have added even
 concurrent.remove.error.multipleContainer.link.text = Go back to you have added containers
 concurrent.remove.error.multipleSeal.link.text = Go back to you have added seals
 
-footer.links.support_links = Cysylltiadau cymorth
+footer.links.support_links = Support links
 footer.links.help = Help using GOV.UK
 footer.links.cookies = Cookies
 footer.links.accessibility = Accessibility
