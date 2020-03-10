@@ -120,6 +120,30 @@ class CheckYourAnswersControllerSpec extends SpecBase with JsonMatchers {
       application.stop()
     }
 
+    "must fail with an Unauthorised error when backend returns 401" in {
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .overrides(bind[ArrivalNotificationService].toInstance(mockService))
+        .build()
+
+      when(mockRenderer.render(any(), any())(any())).thenReturn(Future.successful(Html("")))
+      when(mockService.submit(any())(any(), any())).thenReturn(Future.successful(Some(HttpResponse(UNAUTHORIZED))))
+
+      val request = FakeRequest(POST, routes.CheckYourAnswersController.onPost(mrn).url)
+
+      val result = route(application, request).value
+
+      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+
+      status(result) mustEqual UNAUTHORIZED
+
+      verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
+
+      templateCaptor.getValue mustEqual "unauthorised.njk"
+
+      application.stop()
+    }
+
     "must fail with internal server error when service fails" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))

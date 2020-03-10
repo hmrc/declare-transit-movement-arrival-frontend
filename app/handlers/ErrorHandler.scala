@@ -48,6 +48,8 @@ class ErrorHandler @Inject()(renderer: Renderer, val messagesApi: MessagesApi)(i
         renderer.render("badRequest.njk").map(BadRequest(_))
       case NOT_FOUND =>
         renderer.render("notFound.njk", Json.obj()).map(NotFound(_))
+      case UNAUTHORIZED =>
+        renderer.render("unauthorised.njk", Json.obj()).map(Unauthorized(_))
       case _ =>
         renderer.render("error.njk", Json.obj()).map {
           content =>
