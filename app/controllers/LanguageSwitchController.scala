@@ -28,7 +28,7 @@ class LanguageSwitchController @Inject()(appConfig: FrontendAppConfig,
     extends FrontendBaseController
     with I18nSupport {
 
-  private def fallbackURL: String = routes.IndexController.onPageLoad().url
+  private def fallbackURL: String = appConfig.manageTransitMovementsUrl
 
   private def languageMap: Map[String, Lang] = appConfig.languageMap
 
