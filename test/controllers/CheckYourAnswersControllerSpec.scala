@@ -83,7 +83,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with JsonMatchers {
         .overrides(bind[ArrivalNotificationService].toInstance(mockService))
         .build()
 
-      when(mockService.submit(any())(any(), any())).thenReturn(Future.successful(Some(HttpResponse(OK))))
+      when(mockService.submit(any())(any())).thenReturn(Future.successful(Some(HttpResponse(OK))))
 
       val request = FakeRequest(POST, routes.CheckYourAnswersController.onPost(mrn).url)
 
@@ -103,7 +103,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with JsonMatchers {
         .build()
 
       when(mockRenderer.render(any(), any())(any())).thenReturn(Future.successful(Html("")))
-      when(mockService.submit(any())(any(), any())).thenReturn(Future.successful(Some(HttpResponse(BAD_REQUEST))))
+      when(mockService.submit(any())(any())).thenReturn(Future.successful(Some(HttpResponse(BAD_REQUEST))))
 
       val request = FakeRequest(POST, routes.CheckYourAnswersController.onPost(mrn).url)
 
@@ -127,7 +127,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with JsonMatchers {
         .build()
 
       when(mockRenderer.render(any(), any())(any())).thenReturn(Future.successful(Html("")))
-      when(mockService.submit(any())(any(), any())).thenReturn(Future.successful(Some(HttpResponse(UNAUTHORIZED))))
+      when(mockService.submit(any())(any())).thenReturn(Future.successful(Some(HttpResponse(UNAUTHORIZED))))
 
       val request = FakeRequest(POST, routes.CheckYourAnswersController.onPost(mrn).url)
 
@@ -151,7 +151,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with JsonMatchers {
         .build()
 
       when(mockRenderer.render(any(), any())(any())).thenReturn(Future.successful(Html("")))
-      when(mockService.submit(any())(any(), any())).thenReturn(Future.successful(None))
+      when(mockService.submit(any())(any())).thenReturn(Future.successful(None))
 
       val request = FakeRequest(POST, routes.CheckYourAnswersController.onPost(mrn).url)
 
