@@ -24,9 +24,9 @@ import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class DestinationConnector @Inject()(val config: FrontendAppConfig, val http: HttpClient) {
+class DestinationConnector @Inject()(val config: FrontendAppConfig, val http: HttpClient)(implicit ec: ExecutionContext) {
 
-  def submitArrivalNotification(model: ArrivalNotification)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = {
+  def submitArrivalNotification(model: ArrivalNotification)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
 
     val serviceUrl = s"${config.destinationUrl}/arrival-notification"
     http.POST[ArrivalNotification, HttpResponse](serviceUrl, model)
