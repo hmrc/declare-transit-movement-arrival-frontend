@@ -63,9 +63,10 @@ if (accessibleAutocomplete && document.querySelector('.autocomplete') != null) {
                 if(originalSelect.querySelectorAll('[selected]').length > 0 || originalSelect.value > ""){
 
                     var resetSelect = false;
-                    if(originalSelect.querySelectorAll('[selected]').length > 0 && originalSelect.querySelectorAll('[selected]')[0].text != combo.value){
+                    //TODO Need to check with Adam for this condition
+                   /* if(originalSelect.querySelectorAll('[selected]').length > 0 && originalSelect.querySelectorAll('[selected]')[0].text != combo.value){
                         resetSelect = true;
-                    }
+                    }*/
 
                     if(originalSelect.value){
                         if(combo.value != originalSelect.querySelector('option[value="' + originalSelect.value +'"]').text){
