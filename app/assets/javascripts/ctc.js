@@ -25,7 +25,7 @@ GOVUKFrontend.initAll();
 
 
 
-if (accessibleAutocomplete && document.querySelector('.autocomplete') != null) {
+if (typeof accessibleAutocomplete != 'undefined' && document.querySelector('.autocomplete') != null) {
     // load autocomplete
     accessibleAutocomplete.enhanceSelectElement({
         selectElement: document.querySelector('.autocomplete'),
