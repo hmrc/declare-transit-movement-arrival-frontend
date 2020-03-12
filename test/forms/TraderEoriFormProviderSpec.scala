@@ -23,10 +23,9 @@ import models.messages.TraderWithEori.Constants._
 
 class TraderEoriFormProviderSpec extends StringFieldBehaviours {
 
-  private val requiredKey  = "traderEori.error.required"
-  private val lengthKey    = "traderEori.error.length"
-  private val minLengthKey = "traderEori.error.minLength"
-  private val invalidKey   = "traderEori.error.invalid"
+  private val requiredKey = "traderEori.error.required"
+  private val lengthKey   = "traderEori.error.length"
+  private val invalidKey  = "traderEori.error.invalid"
 
   private val form = new TraderEoriFormProvider()()
 
