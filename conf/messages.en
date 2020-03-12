@@ -208,7 +208,6 @@ traderEori.heading = What is the EORI number of the trader at the destination?
 traderEori.checkYourAnswersLabel = EORI number
 traderEori.error.required = Enter the EORI number of the trader at the destination
 traderEori.error.length = EORI number must be 17 characters or less
-traderEori.error.minLength = Enter a real EORI number
 traderEori.error.invalid = EORI number must start with a 2 letter country code then include numbers
 traderEori.change.hidden = EORI number of trader
 

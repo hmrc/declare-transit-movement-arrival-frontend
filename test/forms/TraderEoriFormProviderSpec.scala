@@ -46,17 +46,6 @@ class TraderEoriFormProviderSpec extends StringFieldBehaviours {
       requiredError = FormError(fieldName, requiredKey)
     )
 
-    "must not bind strings shorter than TraderWithEori.Constants.eoriMinLength characters" in {
-
-      val expectedError = FormError(fieldName, minLengthKey, Seq(eoriMinLength))
-
-      forAll(stringsWithMaxLength(eoriMinLength - 1)) {
-        string =>
-          val result = form.bind(Map(fieldName -> string)).apply(fieldName)
-          result.errors must contain(expectedError)
-      }
-    }
-
     "must not bind strings longer than TraderWithEori.Constants.eoriLength characters" in {
 
       val expectedError = FormError(fieldName, lengthKey, Seq(eoriLength))

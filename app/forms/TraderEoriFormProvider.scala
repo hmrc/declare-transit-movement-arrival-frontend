@@ -29,7 +29,6 @@ class TraderEoriFormProvider @Inject() extends Mappings {
       "value" -> text("traderEori.error.required")
         .verifying(
           maxLength(eoriLength, "traderEori.error.length"),
-          minLength(eoriMinLength, "traderEori.error.minLength"),
           regexp(eoriRegex, "traderEori.error.invalid")
         )
     )
