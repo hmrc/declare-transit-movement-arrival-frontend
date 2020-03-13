@@ -17,14 +17,17 @@
 package generators
 
 import java.time.LocalDate
-import models.MovementReferenceNumber
+
 import models.messages._
+import models.{MovementReferenceNumber, RejectionError}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 
 trait MessagesModelGenerators extends Generators {
 
-  private val maxNumberOfSeals = 99
+  private val maxNumberOfSeals    = 99
+  private val pastDate: LocalDate = LocalDate.of(1900, 1, 1)
+  private val dateNow: LocalDate  = LocalDate.now
 
   implicit lazy val arbitraryProcedureType: Arbitrary[ProcedureType] =
     Arbitrary {
@@ -64,17 +67,6 @@ trait MessagesModelGenerators extends Generators {
   private val localDateGen: Gen[LocalDate] =
     datesBetween(LocalDate.of(1900, 1, 1), LocalDate.now)
 
-  implicit lazy val arbitraryEndorsement: Arbitrary[Endorsement] =
-    Arbitrary {
-
-      for {
-        date      <- Gen.option(localDateGen)
-        authority <- Gen.option(stringsWithMaxLength(Endorsement.Constants.authorityLength))
-        place     <- Gen.option(stringsWithMaxLength(Endorsement.Constants.placeLength))
-        country   <- Gen.option(stringsWithMaxLength(Endorsement.Constants.countryLength))
-      } yield Endorsement(date, authority, place, country)
-    }
-
   implicit lazy val arbitraryIncident: Arbitrary[Incident] =
     Arbitrary {
 
@@ -90,7 +82,6 @@ trait MessagesModelGenerators extends Generators {
 
         transportIdentity <- stringsWithMaxLength(VehicularTranshipment.Constants.transportIdentityLength)
         transportCountry  <- stringsWithMaxLength(VehicularTranshipment.Constants.transportCountryLength)
-        endorsement       <- arbitrary[Endorsement]
         containers        <- Gen.option(listWithMaxLength[Container](Transhipment.Constants.maxContainers))
       } yield VehicularTranshipment(transportIdentity = transportIdentity, transportCountry = transportCountry, containers = containers)
     }
@@ -201,4 +192,37 @@ trait MessagesModelGenerators extends Generators {
       city            <- stringsWithMaxLength(TraderWithEori.Constants.cityLength)
     } yield TraderWithEori(eori, Some(name), Some(streetAndNumber), Some(postCode), Some(city), Some("GB"))
 
+  implicit lazy val arbitraryGoodsReleaseNotification: Arbitrary[GoodsReleaseNotificationMessage] =
+    Arbitrary {
+
+      for {
+        mrn                <- arbitrary[MovementReferenceNumber].map(_.toString())
+        releaseDate        <- datesBetween(pastDate, dateNow)
+        trader             <- arbitrary[Trader]
+        presentationOffice <- stringsWithMaxLength(GoodsReleaseNotificationMessage.Constants.presentationOfficeLength)
+      } yield models.messages.GoodsReleaseNotificationMessage(mrn, releaseDate, trader, presentationOffice)
+    }
+
+  implicit lazy val arbitraryArrivalNotificationRejection: Arbitrary[ArrivalNotificationRejectionMessage] =
+    Arbitrary {
+
+      for {
+        mrn    <- arbitrary[MovementReferenceNumber].map(_.toString())
+        date   <- datesBetween(pastDate, dateNow)
+        action <- arbitrary[Option[String]]
+        reason <- arbitrary[Option[String]]
+        errors <- arbitrary[Seq[RejectionError]]
+      } yield ArrivalNotificationRejectionMessage(mrn, date, action, reason, errors)
+    }
+
+  implicit lazy val arbitraryRejectionError: Arbitrary[RejectionError] =
+    Arbitrary {
+
+      for {
+        errorType     <- arbitrary[Int]
+        pointer       <- arbitrary[String]
+        reason        <- arbitrary[Option[String]]
+        originalValue <- arbitrary[Option[String]]
+      } yield RejectionError(errorType, pointer, reason, originalValue)
+    }
 }
