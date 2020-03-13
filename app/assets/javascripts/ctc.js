@@ -35,7 +35,7 @@ if (typeof accessibleAutocomplete != 'undefined' && document.querySelector('.aut
     // =====================================================
     // Polyfill autocomplete once loaded
     // =====================================================
-    var checkForLoad = setInterval(checkForAutocompleteLoad, 500);
+    var checkForLoad = setInterval(checkForAutocompleteLoad, 50);
     var originalSelect = document.querySelector('select.autocomplete');
     var parentForm = upTo(originalSelect, 'form');
 
@@ -63,9 +63,6 @@ if (typeof accessibleAutocomplete != 'undefined' && document.querySelector('.aut
                 if(originalSelect.querySelectorAll('[selected]').length > 0 || originalSelect.value > ""){
 
                     var resetSelect = false;
-                    if(originalSelect.querySelectorAll('[selected]').length > 0 && originalSelect.querySelectorAll('[selected]')[0].text != combo.value){
-                        resetSelect = true;
-                    }
 
                     if(originalSelect.value){
                         if(combo.value != originalSelect.querySelector('option[value="' + originalSelect.value +'"]').text){
