@@ -56,13 +56,13 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
   private val enRouteEventIncident: Gen[(EnRouteEvent, Incident)] = for {
     enRouteEvent <- arbitrary[EnRouteEvent]
     incident     <- arbitrary[Incident]
-  } yield (enRouteEvent.copy(eventDetails = incident), incident)
+  } yield (enRouteEvent.copy(eventDetails = Some(incident)), incident)
 
 
   private val enRouteEventVehicularTranshipment: Gen[(EnRouteEvent, VehicularTranshipment)] = for {
     enRouteEvent <- arbitrary[EnRouteEvent]
     vehicularTranshipment     <- arbitrary[VehicularTranshipment]
-  } yield (enRouteEvent.copy(eventDetails = vehicularTranshipment), vehicularTranshipment)
+  } yield (enRouteEvent.copy(eventDetails = Some(vehicularTranshipment)), vehicularTranshipment)
 
   "ArrivalNotificationConversionService" - {
     "must return 'Normal Arrival Notification' message when there are no EventDetails on route" in {
@@ -97,7 +97,7 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
         case ((arbArrivalNotification, trader), (enRouteEvent, incident)) =>
           val routeEvent: EnRouteEvent = enRouteEvent
             .copy(seals = None)
-            .copy(eventDetails = incident.copy(endorsement = Endorsement(None, None, None, None)))
+            .copy(eventDetails = Some(incident.copy(date = None, authority = None, place = None, country = None)))
 
           val arrivalNotification: NormalNotification = arbArrivalNotification.copy(enRouteEvents = Some(Seq(routeEvent)))
 
@@ -121,10 +121,8 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
         case ((arbArrivalNotification, trader), (enRouteEvent, vehicularTranshipment)) =>
           val routeEvent: EnRouteEvent = enRouteEvent
             .copy(seals = Some(Seq(Seal("seal 1"), Seal("seal 2"))))
-            .copy(eventDetails = vehicularTranshipment.copy(
-              endorsement = Endorsement(None, None, None, None),
-              containers = None
-            ))
+            .copy(eventDetails = Some(vehicularTranshipment.copy(date = None, authority = None, place = None, country = None,
+              containers = None)))
 
           val arrivalNotification: NormalNotification = arbArrivalNotification.copy(enRouteEvents = Some(Seq(routeEvent)))
           val userAnswers: UserAnswers = createBasicUserAnswers(trader, arrivalNotification, isIncidentOnRoute = true)
@@ -145,9 +143,9 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
       generatedEnRouteEvent <- arbitrary[EnRouteEvent]
       ct <- arbitrary[ContainerTranshipment]
     } yield {
-      val containerTranshipment = ct.copy(endorsement = Endorsement(None, None, None, None))
+      val containerTranshipment = ct.copy(date = None, authority = None, place = None, country = None)
 
-      val enRouteEvent = generatedEnRouteEvent.copy(eventDetails = containerTranshipment, seals = None)
+      val enRouteEvent = generatedEnRouteEvent.copy(eventDetails = Some(containerTranshipment), seals = None)
 
       (enRouteEvent, containerTranshipment)
     }
@@ -185,11 +183,11 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
         case ((arbArrivalNotification, trader), (enRouteEvent1, incident1), (enRouteEvent2, incident2)) =>
           val routeEvent1: EnRouteEvent = enRouteEvent1
             .copy(seals = None)
-            .copy(eventDetails = incident1.copy(endorsement = Endorsement(None, None, None, None)))
+            .copy(eventDetails = Some(incident1.copy(date = None, authority = None, place = None, country = None)))
 
           val routeEvent2: EnRouteEvent = enRouteEvent2
             .copy(seals = None)
-            .copy(eventDetails = incident2.copy(endorsement = Endorsement(None, None, None, None)))
+            .copy(eventDetails = Some(incident2.copy(date = None, authority = None, place = None, country = None)))
 
           val arrivalNotification: NormalNotification = arbArrivalNotification.copy(enRouteEvents = Some(Seq(routeEvent1, routeEvent2)))
 

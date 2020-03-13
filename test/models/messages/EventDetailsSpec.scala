@@ -50,11 +50,8 @@ class EventDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckPropert
 
     "must fail to construct when given an empty sequence of containers" in {
 
-      forAll(arbitrary[Endorsement]) {
-        endorsement =>
-          intercept[IllegalArgumentException] {
-            ContainerTranshipment(endorsement, Seq.empty)
-          }
+      intercept[IllegalArgumentException] {
+        ContainerTranshipment(containers = Seq.empty)
       }
     }
 
@@ -62,7 +59,7 @@ class EventDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckPropert
 
       forAll(arbitrary[ContainerTranshipment]) {
         containerTranshipment =>
-          val json = containerTranshipmentJson(containerTranshipment)
+          val json = Json.toJson(containerTranshipment)
           json.validate[ContainerTranshipment] mustEqual JsSuccess(containerTranshipment)
       }
     }
@@ -71,7 +68,7 @@ class EventDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckPropert
 
       forAll(arbitrary[ContainerTranshipment]) {
         containerTranshipment =>
-          val json = containerTranshipmentJson(containerTranshipment)
+          val json = Json.toJson(containerTranshipment)
           Json.toJson(containerTranshipment) mustEqual json
       }
     }
@@ -83,7 +80,7 @@ class EventDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckPropert
 
       forAll(arbitrary[VehicularTranshipment]) {
         vehicularTranshipment =>
-          val json = vehicularTranshipmentJson(vehicularTranshipment)
+          val json = Json.toJson(vehicularTranshipment)
           json.validate[VehicularTranshipment] mustEqual JsSuccess(vehicularTranshipment)
       }
     }
@@ -114,7 +111,7 @@ class EventDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckPropert
 
       forAll(arbitrary[ContainerTranshipment]) {
         containerTranshipment =>
-          val json = containerTranshipmentJson(containerTranshipment)
+          val json = Json.toJson(containerTranshipment)
           json.validate[Transhipment] mustEqual JsSuccess(containerTranshipment)
 
       }
@@ -133,7 +130,7 @@ class EventDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckPropert
 
       forAll(arbitrary[ContainerTranshipment]) {
         containerTranshipment =>
-          val json = containerTranshipmentJson(containerTranshipment)
+          val json = Json.toJson(containerTranshipment)
           Json.toJson(containerTranshipment: Transhipment)(Transhipment.writes) mustEqual json
       }
     }
@@ -163,7 +160,7 @@ class EventDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckPropert
 
       forAll(arbitrary[ContainerTranshipment]) {
         containerTranshipment =>
-          val json = containerTranshipmentJson(containerTranshipment)
+          val json = Json.toJson(containerTranshipment)
           json.validate[EventDetails] mustEqual JsSuccess(containerTranshipment)
       }
     }
@@ -181,7 +178,7 @@ class EventDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckPropert
 
       forAll(arbitrary[VehicularTranshipment]) {
         vehicularTranshipment =>
-          val json = vehicularTranshipmentJson(vehicularTranshipment)
+          val json = Json.toJson(vehicularTranshipment)
           Json.toJson(vehicularTranshipment: EventDetails) mustEqual json
       }
     }
@@ -190,34 +187,28 @@ class EventDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckPropert
 
       forAll(arbitrary[ContainerTranshipment]) {
         containerTranshipment =>
-          val json = containerTranshipmentJson(containerTranshipment)
+          val json = Json.toJson(containerTranshipment)
           Json.toJson(containerTranshipment: EventDetails) mustEqual json
       }
     }
   }
 
-  private def incidentJson(incident: Incident): JsObject = {
-    val information = incident.information match {
+  private def incidentJson(incident: Incident): JsObject =
+    incident.information match {
       case Some(information) =>
         Json.obj("information" -> information)
       case _ =>
         JsObject.empty
     }
 
-    information ++ Json.obj("endorsement" -> Json.toJson(incident.endorsement))
-  }
-
-  private def containerTranshipmentJson(containerTranshipment: ContainerTranshipment): JsObject =
-    Json.obj(
-      "endorsement" -> Json.toJson(containerTranshipment.endorsement),
-      "containers"  -> Json.toJson(containerTranshipment.containers)
-    )
-
   private def vehicularTranshipmentJson(vehicularTranshipment: VehicularTranshipment): JsObject =
     Json.obj(
       "transportIdentity" -> vehicularTranshipment.transportIdentity,
       "transportCountry"  -> vehicularTranshipment.transportCountry,
-      "endorsement"       -> Json.toJson(vehicularTranshipment.endorsement),
+      "date"              -> Json.toJson(vehicularTranshipment.date),
+      "authority"         -> Json.toJson(vehicularTranshipment.authority),
+      "place"             -> Json.toJson(vehicularTranshipment.place),
+      "country"           -> Json.toJson(vehicularTranshipment.country),
       "containers"        -> Json.toJson(vehicularTranshipment.containers)
     )
 

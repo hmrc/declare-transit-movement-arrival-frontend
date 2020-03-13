@@ -16,14 +16,26 @@
 
 package models.messages
 
+import java.time.LocalDate
+
+import helpers.XmlBuilderHelper
 import models._
 import play.api.libs.json._
 
 import scala.language.implicitConversions
+import scala.xml.{Node, NodeSeq}
 
-sealed trait EventDetails
+sealed trait EventDetails {
+  def toXml: Node
+}
 
 object EventDetails {
+
+  object Constants {
+    val authorityLength = 35
+    val placeLength     = 35
+    val countryLength   = 2
+  }
 
   implicit lazy val reads: Reads[EventDetails] = {
 
@@ -46,7 +58,34 @@ object EventDetails {
   }
 }
 
-final case class Incident(information: Option[String], endorsement: Endorsement) extends EventDetails
+final case class Incident(
+  information: Option[String],
+  date: Option[LocalDate]   = None,
+  authority: Option[String] = None,
+  place: Option[String]     = None,
+  country: Option[String]   = None
+) extends XmlBuilderHelper
+    with EventDetails {
+
+  def toXml: Node =
+    <INCINC>
+    {
+      information.map(
+        information =>
+          buildAndEncodeElem(information, "IncInfINC4")
+      ).getOrElse(
+          <IncFlaINC3>1</IncFlaINC3>
+      ) ++
+      buildAndEncodeElem(Header.Constants.languageCode, "IncInfINC4LNG") ++
+      buildOptionalElem(date, "EndDatINC6") ++
+      buildOptionalElem(authority, "EndAutINC7") ++
+      buildAndEncodeElem(Header.Constants.languageCode, "EndAutINC7LNG") ++
+      buildOptionalElem(place, "EndPlaINC10") ++
+      buildAndEncodeElem(Header.Constants.languageCode, "EndPlaINC10LNG") ++
+      buildOptionalElem(country, "EndCouINC12")
+    }
+    </INCINC>
+}
 
 object Incident {
 
@@ -91,9 +130,30 @@ object Transhipment {
 final case class VehicularTranshipment(
   transportIdentity: String,
   transportCountry: String,
-  endorsement: Endorsement,
+  date: Option[LocalDate]   = None,
+  authority: Option[String] = None,
+  place: Option[String]     = None,
+  country: Option[String]   = None,
   containers: Option[Seq[Container]]
-) extends Transhipment
+) extends XmlBuilderHelper
+    with Transhipment {
+
+  def toXml: Node =
+    <TRASHP>
+      {
+        buildAndEncodeElem(transportIdentity,"NewTraMeaIdeSHP26") ++
+        buildAndEncodeElem(Header.Constants.languageCode,"NewTraMeaIdeSHP26LNG") ++
+        buildAndEncodeElem(transportCountry,"NewTraMeaNatSHP54") ++
+        buildOptionalElem(date, "EndDatSHP60") ++
+        buildOptionalElem(authority, "EndAutSHP61") ++
+        buildAndEncodeElem(Header.Constants.languageCode, "EndAutSHP61LNG") ++
+        buildOptionalElem(place, "EndPlaSHP63") ++
+        buildAndEncodeElem(Header.Constants.languageCode, "EndPlaSHP63LNG") ++
+        buildOptionalElem(country, "EndCouSHP65") ++
+        containers.fold(NodeSeq.Empty)(_.map(_.toXml))
+      }
+    </TRASHP>
+}
 
 object VehicularTranshipment {
 
@@ -111,10 +171,12 @@ object VehicularTranshipment {
     (
       (__ \ "transportIdentity").read[String] and
         (__ \ "transportCountry").read[String] and
-        (__ \ "endorsement").read[Endorsement] and
+        (__ \ "date").readNullable[LocalDate] and
+        (__ \ "authority").readNullable[String] and
+        (__ \ "place").readNullable[String] and
+        (__ \ "country").readNullable[String] and
         (__ \ "containers").readNullable[Seq[Container]]
     )(VehicularTranshipment.apply _)
-
   }
 
   implicit lazy val writes: OWrites[VehicularTranshipment] =
@@ -124,13 +186,35 @@ object VehicularTranshipment {
           .obj(
             "transportIdentity" -> transhipment.transportIdentity,
             "transportCountry"  -> transhipment.transportCountry,
-            "endorsement"       -> Json.toJson(transhipment.endorsement),
+            "date"              -> transhipment.date,
+            "authority"         -> transhipment.authority,
+            "place"             -> transhipment.place,
+            "country"           -> transhipment.country,
             "containers"        -> Json.toJson(transhipment.containers)
           )
     }
 }
 
-final case class ContainerTranshipment(endorsement: Endorsement, containers: Seq[Container]) extends Transhipment {
+final case class ContainerTranshipment(
+  date: Option[LocalDate]   = None,
+  authority: Option[String] = None,
+  place: Option[String]     = None,
+  country: Option[String]   = None,
+  containers: Seq[Container]
+) extends XmlBuilderHelper
+    with Transhipment {
+
+  def toXml: Node =
+    <TRASHP> {
+        buildOptionalElem(date, "EndDatSHP60") ++
+        buildOptionalElem(authority, "EndAutSHP61") ++
+        buildAndEncodeElem(Header.Constants.languageCode,"EndAutSHP61LNG") ++
+        buildOptionalElem(place, "EndPlaSHP63") ++
+        buildAndEncodeElem(Header.Constants.languageCode,"EndPlaSHP63LNG") ++
+        buildOptionalElem(country, "EndCouSHP65") ++
+        containers.map(_.toXml)
+      }
+    </TRASHP>
 
   require(containers.nonEmpty, "At least one container number must be provided")
 }

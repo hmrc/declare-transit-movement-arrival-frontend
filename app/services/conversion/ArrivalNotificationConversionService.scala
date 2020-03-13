@@ -55,24 +55,20 @@ class ArrivalNotificationConversionService {
     transportIdentity: Option[String],
     transportCountry: Option[String],
     containers: Option[Seq[Container]]
-  ): EventDetails = {
-    val endorsement = Endorsement(None, None, None, None) // TODO: Find out where this data comes from
-
+  ): EventDetails =
     (incidentInformation, transportIdentity, transportCountry, containers) match {
       case (ii, None, None, None) =>
-        Incident(ii, endorsement)
+        Incident(ii)
       case (None, Some(ti), Some(tc), _) =>
         VehicularTranshipment(
           transportIdentity = ti,
           transportCountry  = tc,
-          endorsement       = endorsement,
           containers        = containers
         )
       case (None, None, None, Some(containers)) =>
-        ContainerTranshipment(endorsement, containers)
+        ContainerTranshipment(containers = containers)
       case _ => ???
     }
-  }
 
   private def enRouteEvents(userAnswers: UserAnswers): Option[Seq[EnRouteEvent]] =
     userAnswers.get(DeriveNumberOfEvents).map {
@@ -93,7 +89,7 @@ class ArrivalNotificationConversionService {
                 place         = place,
                 countryCode   = country.code,
                 alreadyInNcts = isReported,
-                eventDetails  = eventDetails(incidentInformation, transportIdentity, transportCountry.map(_.code), containers),
+                eventDetails  = Some(eventDetails(incidentInformation, transportIdentity, transportCountry.map(_.code), containers)),
                 seals         = userAnswers.get(SealsQuery(eventIndex))
               )
             }

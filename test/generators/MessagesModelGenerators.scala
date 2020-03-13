@@ -80,8 +80,7 @@ trait MessagesModelGenerators extends Generators {
 
       for {
         information <- Gen.option(stringsWithMaxLength(Incident.Constants.informationLength))
-        endorsement <- arbitrary[Endorsement]
-      } yield Incident(information, endorsement)
+      } yield Incident(information)
     }
 
   implicit lazy val arbitraryVehicularTranshipment: Arbitrary[VehicularTranshipment] =
@@ -93,7 +92,7 @@ trait MessagesModelGenerators extends Generators {
         transportCountry  <- stringsWithMaxLength(VehicularTranshipment.Constants.transportCountryLength)
         endorsement       <- arbitrary[Endorsement]
         containers        <- Gen.option(listWithMaxLength[Container](Transhipment.Constants.maxContainers))
-      } yield VehicularTranshipment(transportIdentity, transportCountry, endorsement, containers)
+      } yield VehicularTranshipment(transportIdentity = transportIdentity, transportCountry = transportCountry, containers = containers)
     }
 
   implicit lazy val arbitraryContainer: Arbitrary[Container] =
@@ -109,9 +108,8 @@ trait MessagesModelGenerators extends Generators {
   implicit lazy val arbitraryContainerTranshipment: Arbitrary[ContainerTranshipment] =
     Arbitrary {
       for {
-        endorsement <- arbitrary[Endorsement]
-        containers  <- listWithMaxLength[Container](Transhipment.Constants.maxContainers)
-      } yield ContainerTranshipment(endorsement, containers)
+        containers <- listWithMaxLength[Container](Transhipment.Constants.maxContainers)
+      } yield ContainerTranshipment(containers = containers)
     }
 
   implicit lazy val arbitraryTranshipment: Arbitrary[Transhipment] =
@@ -147,7 +145,7 @@ trait MessagesModelGenerators extends Generators {
         place         <- stringsWithMaxLength(EnRouteEvent.Constants.placeLength)
         countryCode   <- stringsWithMaxLength(EnRouteEvent.Constants.countryCodeLength)
         alreadyInNcts <- arbitrary[Boolean]
-        eventDetails  <- arbitrary[EventDetails]
+        eventDetails  <- arbitrary[Option[EventDetails]]
         seals         <- arbitrary[Seq[Seal]]
       } yield {
 
