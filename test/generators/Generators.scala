@@ -16,9 +16,7 @@
 
 package generators
 
-import java.time.Instant
-import java.time.LocalDate
-import java.time.ZoneOffset
+import java.time.{Instant, LocalDate, LocalDateTime, LocalTime, ZoneOffset}
 
 import org.scalacheck.Arbitrary._
 import org.scalacheck.Gen._
@@ -59,7 +57,7 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
     arbitrary[BigInt] suchThat (x => x < Int.MinValue)
 
   def nonNumerics: Gen[String] =
-    alphaStr suchThat (_.size > 0)
+    alphaStr suchThat (_.nonEmpty)
 
   def decimals: Gen[String] =
     arbitrary[BigDecimal]
@@ -140,5 +138,27 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
       millis =>
         Instant.ofEpochMilli(millis).atOffset(ZoneOffset.UTC).toLocalDate
     }
+  }
+
+  def dateTimesBetween(min: LocalDateTime, max: LocalDateTime): Gen[LocalDateTime] = {
+
+    def toMillis(date: LocalDateTime): Long =
+      date.atZone(ZoneOffset.UTC).toInstant.toEpochMilli
+
+    Gen.choose(toMillis(min), toMillis(max)).map {
+      millis =>
+        Instant.ofEpochMilli(millis).atOffset(ZoneOffset.UTC).toLocalDateTime
+    }
+  }
+
+  implicit lazy val arbitraryLocalDate: Arbitrary[LocalDate] = Arbitrary {
+    datesBetween(LocalDate.of(1900, 1, 1), LocalDate.of(2100, 1, 1))
+  }
+
+  implicit lazy val arbitraryLocalTime: Arbitrary[LocalTime] = Arbitrary {
+    dateTimesBetween(
+      LocalDateTime.of(1900, 1, 1, 0, 0, 0),
+      LocalDateTime.of(2100, 1, 1, 0, 0, 0)
+    ).map(_.toLocalTime)
   }
 }

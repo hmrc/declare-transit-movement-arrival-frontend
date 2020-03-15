@@ -16,10 +16,10 @@
 
 package generators
 
-import java.time.LocalDate
+import java.time.{LocalDate, LocalTime}
 
 import models.messages._
-import models.{MovementReferenceNumber, RejectionError}
+import models.{Header, MovementReferenceNumber, NormalProcedureFlag, ProcedureTypeFlag, RejectionError, SimplifiedProcedureFlag}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 
@@ -215,6 +215,106 @@ trait MessagesModelGenerators extends Generators {
       } yield ArrivalNotificationRejectionMessage(mrn, date, action, reason, errors)
     }
 
+  implicit lazy val arbitraryCustomsOfficeOfPresentation: Arbitrary[CustomsOfficeOfPresentation] = {
+    Arbitrary {
+
+      for {
+        presentationOffice <- stringsWithMaxLength(CustomsOfficeOfPresentation.Constants.presentationOfficeLength)
+      } yield CustomsOfficeOfPresentation(presentationOffice)
+    }
+  }
+
+  implicit lazy val arbitraryTraderDestination: Arbitrary[TraderDestination] = {
+    Arbitrary {
+
+      for {
+        name            <- Gen.option(stringsWithMaxLength(TraderDestination.Constants.nameLength))
+        streetAndNumber <- Gen.option(stringsWithMaxLength(TraderDestination.Constants.streetAndNumberLength))
+        postCode        <- Gen.option(stringsWithMaxLength(TraderDestination.Constants.postCodeLength))
+        city            <- Gen.option(stringsWithMaxLength(TraderDestination.Constants.cityLength))
+        countryCode     <- Gen.option(stringsWithMaxLength(TraderDestination.Constants.countryCodeLength))
+        eori            <- Gen.option(stringsWithMaxLength(TraderDestination.Constants.eoriLength))
+      } yield TraderDestination(name, streetAndNumber, postCode, city, countryCode, eori)
+
+    }
+  }
+
+  implicit lazy val arbitraryMessageSender: Arbitrary[MessageSender] = {
+    Arbitrary {
+      for {
+        environment <- arbitrary[String]
+        eori        <- arbitrary[String]
+      } yield MessageSender(environment, eori)
+    }
+  }
+
+  implicit lazy val arbitraryInterchangeControlReference: Arbitrary[InterchangeControlReference] = {
+    Arbitrary {
+      for {
+        dateTime <- arbitrary[String]
+        index    <- arbitrary[Int]
+      } yield InterchangeControlReference(dateTime, index)
+    }
+  }
+
+  implicit lazy val arbitraryMeta: Arbitrary[Meta] = {
+    Arbitrary {
+      for {
+        messageSender               <- arbitrary[MessageSender]
+        interchangeControlReference <- arbitrary[InterchangeControlReference]
+        date                        <- arbitrary[LocalDate]
+        time                        <- arbitrary[LocalTime]
+      } yield
+        Meta(
+          messageSender,
+          interchangeControlReference,
+          date,
+          time,
+          None,
+          None,
+          None,
+          None,
+          None,
+          None,
+          None,
+          None,
+          None,
+          None
+        )
+    }
+  }
+
+  implicit lazy val arbitraryProcedureTypeFlag: Arbitrary[ProcedureTypeFlag] = {
+    Arbitrary {
+      for {
+        procedureType <- Gen.oneOf(Seq(SimplifiedProcedureFlag, NormalProcedureFlag))
+      } yield procedureType
+    }
+  }
+
+  implicit lazy val arbitraryHeader: Arbitrary[Header] = {
+    Arbitrary {
+      for {
+        movementReferenceNumber  <- arbitrary[MovementReferenceNumber].map(_.toString())
+        customsSubPlace          <- Gen.option(stringsWithMaxLength(Header.Constants.customsSubPlaceLength))
+        arrivalNotificationPlace <- stringsWithMaxLength(Header.Constants.arrivalNotificationPlaceLength)
+        procedureTypeFlag        <- arbitrary[ProcedureTypeFlag]
+        notificationDate         <- arbitrary[LocalDate]
+      } yield Header(movementReferenceNumber, customsSubPlace, arrivalNotificationPlace, None, procedureTypeFlag, notificationDate)
+    }
+  }
+
+  implicit lazy val arbitraryArrivalMovementRequest: Arbitrary[ArrivalMovementRequest] = {
+    Arbitrary {
+      for {
+        meta              <- arbitrary[Meta]
+        header            <- arbitrary[Header].map(_.copy(notificationDate = meta.dateOfPreparation))
+        traderDestination <- arbitrary[TraderDestination]
+        customsOffice     <- arbitrary[CustomsOfficeOfPresentation]
+        enRouteEvents     <- Gen.option(listWithMaxLength[EnRouteEvent](2))
+      } yield ArrivalMovementRequest(meta, header, traderDestination, customsOffice, enRouteEvents)
+    }
+  }
   implicit lazy val arbitraryRejectionError: Arbitrary[RejectionError] =
     Arbitrary {
 
