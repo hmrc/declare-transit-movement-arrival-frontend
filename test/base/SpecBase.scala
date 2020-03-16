@@ -66,8 +66,6 @@ trait SpecBase
 
   val traderAddress = TraderAddress("", "", "NE99 1XN")
 
-  val eoriNumber = "EORINUMBER"
-
   def injector: Injector = app.injector
 
   def frontendAppConfig: FrontendAppConfig = injector.instanceOf[FrontendAppConfig]
