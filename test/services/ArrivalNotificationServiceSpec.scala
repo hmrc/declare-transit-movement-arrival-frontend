@@ -44,7 +44,7 @@ class ArrivalNotificationServiceSpec extends SpecBase with MockitoSugar {
 
       when(mockConverterService.convertToArrivalNotification(any()))
         .thenReturn(Some(normalNotification))
-      when(mockDestinationConnector.submitArrivalNotification(any())(any(), any()))
+      when(mockDestinationConnector.submitArrivalNotification(any())(any()))
         .thenReturn(Future.successful(HttpResponse(OK)))
 
       val application = applicationBuilder(Some(emptyUserAnswers))
