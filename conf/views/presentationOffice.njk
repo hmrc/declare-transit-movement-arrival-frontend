@@ -7,7 +7,7 @@
 {% from "macros/title.njk"                         import title %}
 
 {% block pageTitle %}
-  {{ title(messages("presentationOffice.title", subsPlace), form.errors) }}
+  {{ title(header, form.errors) }}
 {% endblock %}
 
 {% block pageHead %}

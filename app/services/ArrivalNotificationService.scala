@@ -24,11 +24,12 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class ArrivalNotificationService @Inject()(converterService: ArrivalNotificationConversionService, connector: DestinationConnector) {
+class ArrivalNotificationService @Inject()(converterService: ArrivalNotificationConversionService, connector: DestinationConnector)(
+  implicit ec: ExecutionContext) {
 
-  def submit(userAnswers: UserAnswers, eoriNumber: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[HttpResponse]] =
+  def submit(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[Option[HttpResponse]] =
     converterService.convertToArrivalNotification(userAnswers) match {
-      case Some(notification) => connector.submitArrivalNotification(notification, eoriNumber).map(Some(_))
+      case Some(notification) => connector.submitArrivalNotification(notification).map(Some(_))
       case None               => Future.successful(None)
     }
 }
