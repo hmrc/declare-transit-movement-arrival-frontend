@@ -25,7 +25,7 @@ import play.api.mvc.Call
 @Singleton
 class FrontendAppConfig @Inject()(configuration: Configuration) {
 
-  private val contactHost                  = configuration.get[Service]("microservice.services.contact-frontend").baseUrl
+  private val contactHost                  = configuration.get[String]("urls.contactFrontend")
   private val contactFormServiceIdentifier = "play26frontend"
 
   val analyticsToken: String         = configuration.get[String](s"google-analytics.token")
@@ -36,8 +36,7 @@ class FrontendAppConfig @Inject()(configuration: Configuration) {
   val betaFeedbackUnauthenticatedUrl = s"$contactHost/beta-feedback-unauthenticated"
   val signOutUrl: String             = configuration.get[String]("urls.logout")
 
-  lazy val manageTransitMovementsUrl: String =
-    configuration.get[Service]("microservice.services.manage-transit-movements-frontend").baseUrl
+  lazy val manageTransitMovementsUrl: String = configuration.get[String]("urls.manageTransitMovementsFrontend")
 
   lazy val authUrl: String          = configuration.get[Service]("auth").baseUrl
   lazy val loginUrl: String         = configuration.get[String]("urls.login")
