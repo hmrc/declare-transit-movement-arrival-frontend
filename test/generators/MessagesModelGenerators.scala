@@ -315,6 +315,50 @@ trait MessagesModelGenerators extends Generators {
       } yield ArrivalMovementRequest(meta, header, traderDestination, customsOffice, enRouteEvents)
     }
   }
+
+  val arbitraryArrivalMovementRequestWithEori: Gen[ArrivalMovementRequest] = {
+    for {
+      arrivalNotificationRequest <- arbitraryArrivalMovementRequest.arbitrary
+      traderWithEori             <- arbitrary[TraderWithEori]
+
+    } yield {
+
+      val newHeader = arrivalNotificationRequest.header.copy(procedureTypeFlag = NormalProcedureFlag)
+
+      arrivalNotificationRequest
+        .copy(header = newHeader)
+        .copy(
+          traderDestination = TraderDestination(
+            traderWithEori.name,
+            traderWithEori.streetAndNumber,
+            traderWithEori.postCode,
+            traderWithEori.city,
+            traderWithEori.countryCode,
+            Some(traderWithEori.eori)
+          ))
+    }
+  }
+
+  val arbitraryArrivalMovementRequestWithoutEori: Gen[ArrivalMovementRequest] = {
+    for {
+      arrivalNotificationRequest <- arbitraryArrivalMovementRequestWithEori
+      traderWithEori             <- arbitrary[TraderWithoutEori]
+    } yield {
+
+      arrivalNotificationRequest.copy(traderDestination = {
+        TraderDestination(
+          Some(traderWithEori.name),
+          Some(traderWithEori.streetAndNumber),
+          Some(traderWithEori.postCode),
+          Some(traderWithEori.city),
+          Some(traderWithEori.countryCode),
+          None
+        )
+      })
+
+    }
+  }
+
   implicit lazy val arbitraryRejectionError: Arbitrary[RejectionError] =
     Arbitrary {
 

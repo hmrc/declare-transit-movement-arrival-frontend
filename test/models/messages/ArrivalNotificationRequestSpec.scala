@@ -92,7 +92,7 @@ class ArrivalNotificationRequestSpec
       </CC007A>
   }
 
-  "ArrivalNotificationRequest" - {
+  "ArrivalMovementRequest" - {
     "must create valid xml" in {
       forAll(arbitrary[ArrivalMovementRequest]) {
         arrivalMovementRequest =>
