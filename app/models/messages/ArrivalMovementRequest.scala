@@ -17,7 +17,6 @@
 package models.messages
 
 import helpers.XmlBuilderHelper
-import models.Header
 
 import scala.collection.immutable.ListMap
 import scala.xml.{Node, NodeSeq}

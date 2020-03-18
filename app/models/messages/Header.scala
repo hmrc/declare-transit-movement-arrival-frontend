@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models
+package models.messages
 
 /*
  * Copyright 2020 HM Revenue & Customs
@@ -35,6 +35,7 @@ package models
 import java.time.LocalDate
 
 import helpers.XmlBuilderHelper
+import models.{LanguageCode, LanguageCodeEnglish, ProcedureTypeFlag}
 import utils.Format
 
 import scala.xml.Node

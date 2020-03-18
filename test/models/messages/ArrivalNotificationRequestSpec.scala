@@ -19,7 +19,7 @@ package models.messages
 import java.time.{LocalDate, LocalDateTime, LocalTime}
 
 import generators.MessagesModelGenerators
-import models.{Header, LanguageCode, NormalProcedureFlag, ProcedureTypeFlag}
+import models.{messages, LanguageCode, NormalProcedureFlag, ProcedureTypeFlag}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.{FreeSpec, MustMatchers, OptionValues}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
@@ -52,7 +52,7 @@ class ArrivalNotificationRequestSpec
         dateOfPreparation,
         timeOfPreparation
       ),
-      header                      = Header("MovementReferenceNumber", None, "arrivalNotificationPlace", None, NormalProcedureFlag, dateOfPreparation),
+      header                      = messages.Header("MovementReferenceNumber", None, "arrivalNotificationPlace", None, NormalProcedureFlag, dateOfPreparation),
       traderDestination           = TraderDestination(None, None, None, None, None, None),
       customsOfficeOfPresentation = CustomsOfficeOfPresentation("PresentationOffice"),
       enRouteEvents               = None
@@ -175,7 +175,7 @@ class ArrivalNotificationRequestSpec
             dateOfPreparation,
             timeOfPreparation
           ),
-          header                      = Header("MovementReferenceNumber", None, "arrivalNotificationPlace", None, NormalProcedureFlag, dateOfPreparation),
+          header                      = messages.Header("MovementReferenceNumber", None, "arrivalNotificationPlace", None, NormalProcedureFlag, dateOfPreparation),
           traderDestination           = TraderDestination(None, None, None, None, None, None),
           customsOfficeOfPresentation = CustomsOfficeOfPresentation("PresentationOffice"),
           enRouteEvents = Some(
