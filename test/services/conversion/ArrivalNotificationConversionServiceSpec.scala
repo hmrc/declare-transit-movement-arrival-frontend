@@ -23,7 +23,7 @@ import generators.MessagesModelGenerators
 import models.GoodsLocation.BorderForceOffice
 import models.messages.{NormalNotification, _}
 import models.reference.{Country, CustomsOffice}
-import models.{Index, TraderAddress, UserAnswers}
+import models.{Index, MovementReferenceNumber, TraderAddress, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks

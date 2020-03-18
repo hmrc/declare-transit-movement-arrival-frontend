@@ -27,8 +27,8 @@ class FrontendAppConfig @Inject()(configuration: Configuration) {
 
   private val contactHost                  = configuration.get[String]("urls.contactFrontend")
   private val contactFormServiceIdentifier = "play26frontend"
+  val analyticsToken: String               = configuration.get[String](s"google-analytics.token")
 
-  val analyticsToken: String         = configuration.get[String](s"google-analytics.token")
   val analyticsHost: String          = configuration.get[String](s"google-analytics.host")
   val reportAProblemPartialUrl       = s"$contactHost/problem_reports_ajax?service=$contactFormServiceIdentifier"
   val reportAProblemNonJSUrl         = s"$contactHost/problem_reports_nonjs?service=$contactFormServiceIdentifier"
@@ -44,6 +44,8 @@ class FrontendAppConfig @Inject()(configuration: Configuration) {
   lazy val enrolmentKey: String     = configuration.get[String]("urls.enrolmentKey")
   lazy val destinationUrl: String   = configuration.get[Service]("microservice.services.destination").baseUrl
   lazy val referenceDataUrl: String = configuration.get[Service]("microservice.services.referenceData").baseUrl
+
+  val env: String = configuration.get[String]("env")
 
   lazy val languageTranslationEnabled: Boolean =
     configuration.get[Boolean]("microservice.services.features.welsh-translation")
