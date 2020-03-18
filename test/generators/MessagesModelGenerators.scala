@@ -19,7 +19,7 @@ package generators
 import java.time.{LocalDate, LocalTime}
 
 import models.messages._
-import models.{Header, MovementReferenceNumber, NormalProcedureFlag, ProcedureTypeFlag, RejectionError, SimplifiedProcedureFlag}
+import models.{MovementReferenceNumber, NormalProcedureFlag, ProcedureTypeFlag, RejectionError, SimplifiedProcedureFlag}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 

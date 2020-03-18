@@ -57,14 +57,15 @@ class ArrivalNotificationConversionService {
     containers: Option[Seq[Container]]
   ): Option[EventDetails] =
     (incidentInformation, transportIdentity, transportCountry, containers) match {
-      case (information, None, None, None) =>
-        Some(Incident(information))
+      case (incidentInformation, None, None, None) =>
+        Some(Incident(incidentInformation))
       case (None, Some(transportIdentity), Some(transportCountry), _) =>
-        Some(VehicularTranshipment(
-          transportIdentity = transportIdentity,
-          transportCountry  = transportCountry,
-          containers        = containers
-        ))
+        Some(
+          VehicularTranshipment(
+            transportIdentity = transportIdentity,
+            transportCountry  = transportCountry,
+            containers        = containers
+          ))
       case (None, None, None, Some(containers)) =>
         Some(ContainerTranshipment(containers = containers))
       case _ => None

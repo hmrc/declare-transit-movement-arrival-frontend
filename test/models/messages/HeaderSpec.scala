@@ -19,7 +19,7 @@ package models.messages
 import java.time.LocalDate
 
 import generators.MessagesModelGenerators
-import models.{Header, LanguageCodeEnglish}
+import models.LanguageCodeEnglish
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.{FreeSpec, MustMatchers}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
