@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,8 @@
 package repositories
 
 import models.messages.InterchangeControlReference
-import org.scalatest.{FreeSpec, FunSuite, MustMatchers}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
+import org.scalatest.{BeforeAndAfterEach, FreeSpec, MustMatchers}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
 import play.api.inject.bind
@@ -31,11 +31,12 @@ import services.mocks.MockDateTimeService
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class SequentialInterchangeControlReferenceIdRepositorySpec
+class InterchangeControlReferenceIdRepositorySpec
     extends FreeSpec
     with MustMatchers
     with MongoSuite
     with ScalaFutures
+    with BeforeAndAfterEach
     with GuiceOneAppPerSuite
     with IntegrationPatience
     with MockDateTimeService {
@@ -46,15 +47,16 @@ class SequentialInterchangeControlReferenceIdRepositorySpec
     )
     .build()
 
+  override def beforeEach(): Unit =
+    database.flatMap(_.drop()).futureValue
+
   val service: InterchangeControlReferenceIdRepository = app.injector.instanceOf[InterchangeControlReferenceIdRepository]
 
-  "SequentialInterchangeControlReferenceIdRepository" - {
+  "InterchangeControlReferenceIdRepository" - {
 
     "must generate correct InterchangeControlReference when no record exists within the database" in {
 
       mockDateFormatted("20190101")
-
-      database.flatMap(_.drop()).futureValue
 
       val first = service.nextInterchangeControlReferenceId().futureValue
 
@@ -71,16 +73,13 @@ class SequentialInterchangeControlReferenceIdRepositorySpec
 
       database.flatMap {
         db =>
-          db.drop().flatMap {
-            _ =>
-              db.collection[JSONCollection]("interchange-control-reference-ids")
-                .insert(ordered = false)
-                .one(
-                  Json.obj(
-                    "_id"        -> mockTimeService.dateFormatted,
-                    "last-index" -> 1
-                  ))
-          }
+          db.collection[JSONCollection]("interchange-control-reference-ids")
+            .insert(ordered = false)
+            .one(
+              Json.obj(
+                "_id"        -> mockTimeService.dateFormatted,
+                "last-index" -> 1
+              ))
       }.futureValue
 
       val first  = service.nextInterchangeControlReferenceId().futureValue
@@ -88,6 +87,7 @@ class SequentialInterchangeControlReferenceIdRepositorySpec
 
       first.index mustEqual 2
       second.index mustEqual 3
+
     }
 
   }
