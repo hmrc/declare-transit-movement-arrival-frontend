@@ -16,35 +16,20 @@
 
 package services
 
-import config.FrontendAppConfig
 import connectors.DestinationConnector
 import javax.inject.Inject
 import models.UserAnswers
-import models.messages.MessageSender
-import repositories.InterchangeControlReferenceIdRepository
-import services.conversion.{ArrivalNotificationConversionService, SubmissionModelService}
+import services.conversion.ArrivalNotificationConversionService
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class ArrivalNotificationService @Inject()(appConfig: FrontendAppConfig,
-                                            converterService: ArrivalNotificationConversionService,
-                                           interchangeControlReferenceIdRepository: InterchangeControlReferenceIdRepository,
-                                           submissionModelService: SubmissionModelService,
-                                           connector: DestinationConnector)(
+class ArrivalNotificationService @Inject()(converterService: ArrivalNotificationConversionService, connector: DestinationConnector)(
   implicit ec: ExecutionContext) {
 
   def submit(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[Option[HttpResponse]] =
     converterService.convertToArrivalNotification(userAnswers) match {
-      case Some(notification) => {
-        val messageSender = MessageSender(appConfig.env, "eori")
-        interchangeControlReferenceIdRepository.nextInterchangeControlReferenceId map {
-          referenceId =>
-            submissionModelService.convertToSubmissionModel(notification, messageSender, referenceId, )
-            connector.submitArrivalNotification(notification).map(Some(_))
-        }
-
-      }
+      case Some(notification) => connector.submitArrivalNotification(notification).map(Some(_))
       case None               => Future.successful(None)
     }
 }

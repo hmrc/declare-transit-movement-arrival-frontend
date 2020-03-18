@@ -21,7 +21,7 @@ import java.time.LocalTime
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import models.messages._
-import models.{Header, NormalProcedureFlag, ProcedureTypeFlag}
+import models.{NormalProcedureFlag, ProcedureTypeFlag}
 
 class SubmissionModelService @Inject()(appConfig: FrontendAppConfig) {
 
