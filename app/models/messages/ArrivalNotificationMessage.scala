@@ -132,6 +132,7 @@ object SimplifiedNotification {
     val notificationPlaceLength  = 35
     val approvedLocationLength   = 17
     val presentationOfficeLength = 8
+    val maxNumberOfEnRouteEvents = 9
   }
 
   implicit lazy val reads: Reads[SimplifiedNotification] = {
@@ -157,7 +158,7 @@ object SimplifiedNotification {
             (__ \ "trader").read[Trader] and
             (__ \ "presentationOffice").read[String] and
             (__ \ "enRouteEvents").readNullable[Seq[EnRouteEvent]]
-        )(SimplifiedNotification(_, _, _, _, _, _, _))
+        )(SimplifiedNotification.apply _)
       )
   }
 

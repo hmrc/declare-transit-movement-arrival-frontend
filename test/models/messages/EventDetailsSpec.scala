@@ -17,15 +17,75 @@
 package models.messages
 
 import generators.MessagesModelGenerators
+import models.LanguageCodeEnglish
 import models.messages.behaviours.JsonBehaviours
 import org.scalacheck.Arbitrary.arbitrary
+import org.scalatest.OptionValues._
 import org.scalatest.{FreeSpec, MustMatchers}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.{JsObject, JsSuccess, Json}
+import utils.Format
+
+import scala.xml.NodeSeq
+import scala.xml.Utility.trim
+import scala.xml.XML.loadString
 
 class EventDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with MessagesModelGenerators with JsonBehaviours {
 
   "Incident" - {
+
+    "must create valid xml" in {
+
+      forAll(arbitrary[Incident]) {
+        incident =>
+          val incidentInformationOrFlagNode = incident.information
+            .map {
+              information =>
+                <IncInfINC4>{information}</IncInfINC4>
+            }
+            .getOrElse {
+              <IncFlaINC3>1</IncFlaINC3>
+            }
+          val endorsementDateNode = incident.date.map {
+            date =>
+              <EndDatINC6>{Format.dateFormatted(date)}</EndDatINC6>
+          }
+          val endorsementAuthority = incident.authority.map {
+            authority =>
+              <EndAutINC7>{authority}</EndAutINC7>
+          }
+          val endorsementPlace = incident.place.map {
+            place =>
+              <EndPlaINC10>{place}</EndPlaINC10>
+          }
+          val endorsementCountry = incident.country.map {
+            country =>
+              <EndCouINC12>{country}</EndCouINC12>
+          }
+
+          val expectedResult =
+            <INCINC>
+              {
+              incidentInformationOrFlagNode
+              }
+              <IncInfINC4LNG>{LanguageCodeEnglish.code}</IncInfINC4LNG>
+              {
+              endorsementDateNode.getOrElse(NodeSeq.Empty) ++
+                endorsementAuthority.getOrElse(NodeSeq.Empty)
+              }
+              <EndAutINC7LNG>{LanguageCodeEnglish.code}</EndAutINC7LNG>
+              {
+              endorsementPlace.getOrElse(NodeSeq.Empty)
+              }
+              <EndPlaINC10LNG>{LanguageCodeEnglish.code}</EndPlaINC10LNG>
+              {
+              endorsementCountry.getOrElse(NodeSeq.Empty)
+              }
+            </INCINC>
+
+          trim(incident.toXml) mustEqual trim(loadString(expectedResult.toString))
+      }
+    }
 
     "must deserialise" in {
 
@@ -48,13 +108,61 @@ class EventDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckPropert
 
   "Container transhipment" - {
 
+    "must create valid xml" in {
+
+      forAll(arbitrary[ContainerTranshipment], arbitrary[Container], arbitrary[Container]) {
+        (transhipment, container1, container2) =>
+          val containerTranshipment: ContainerTranshipment = {
+            transhipment.copy(containers = Seq(container1, container2))
+          }
+
+          val endorsementDateNode = containerTranshipment.date.map {
+            date =>
+              <EndDatSHP60>{Format.dateFormatted(date)}</EndDatSHP60>
+          }
+          val endorsementAuthority = containerTranshipment.authority.map {
+            authority =>
+              <EndAutSHP61>{authority}</EndAutSHP61>
+          }
+          val endorsementPlace = containerTranshipment.place.map {
+            place =>
+              <EndPlaSHP63>{place}</EndPlaSHP63>
+          }
+          val endorsementCountry = containerTranshipment.country.map {
+            country =>
+              <EndCouSHP65>{country}</EndCouSHP65>
+          }
+
+          val expectedResult =
+            <TRASHP>
+              {
+              endorsementDateNode.getOrElse(NodeSeq.Empty) ++
+                endorsementAuthority.getOrElse(NodeSeq.Empty)
+              }
+              <EndAutSHP61LNG>{LanguageCodeEnglish.code}</EndAutSHP61LNG>
+              {
+              endorsementPlace.getOrElse(NodeSeq.Empty)
+              }
+              <EndPlaSHP63LNG>{LanguageCodeEnglish.code}</EndPlaSHP63LNG>
+              {
+              endorsementCountry.getOrElse(NodeSeq.Empty)
+              }
+              <CONNR3>
+                <ConNumNR31>{containerTranshipment.containers.head.containerNumber}</ConNumNR31>
+              </CONNR3>
+              <CONNR3>
+                <ConNumNR31>{containerTranshipment.containers(1).containerNumber}</ConNumNR31>
+              </CONNR3>
+            </TRASHP>
+
+          trim(containerTranshipment.toXml) mustEqual trim(loadString(expectedResult.toString))
+      }
+    }
+
     "must fail to construct when given an empty sequence of containers" in {
 
-      forAll(arbitrary[Endorsement]) {
-        endorsement =>
-          intercept[IllegalArgumentException] {
-            ContainerTranshipment(endorsement, Seq.empty)
-          }
+      intercept[IllegalArgumentException] {
+        ContainerTranshipment(containers = Seq.empty)
       }
     }
 
@@ -62,7 +170,7 @@ class EventDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckPropert
 
       forAll(arbitrary[ContainerTranshipment]) {
         containerTranshipment =>
-          val json = containerTranshipmentJson(containerTranshipment)
+          val json = Json.toJson(containerTranshipment)
           json.validate[ContainerTranshipment] mustEqual JsSuccess(containerTranshipment)
       }
     }
@@ -71,7 +179,7 @@ class EventDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckPropert
 
       forAll(arbitrary[ContainerTranshipment]) {
         containerTranshipment =>
-          val json = containerTranshipmentJson(containerTranshipment)
+          val json = Json.toJson(containerTranshipment)
           Json.toJson(containerTranshipment) mustEqual json
       }
     }
@@ -79,11 +187,107 @@ class EventDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckPropert
 
   "Vehicular transhipment" - {
 
+    "must create valid xml without containers" in {
+      forAll(arbitrary[VehicularTranshipment]) {
+        transhipment =>
+          val vehicularTranshipment = transhipment.copy(containers = None)
+
+          val endorsementDateNode = vehicularTranshipment.date.map {
+            date =>
+              <EndDatSHP60>{Format.dateFormatted(date)}</EndDatSHP60>
+          }
+          val endorsementAuthority = vehicularTranshipment.authority.map {
+            authority =>
+              <EndAutSHP61>{authority}</EndAutSHP61>
+          }
+          val endorsementPlace = vehicularTranshipment.place.map {
+            place =>
+              <EndPlaSHP63>{place}</EndPlaSHP63>
+          }
+          val endorsementCountry = vehicularTranshipment.country.map {
+            country =>
+              <EndCouSHP65>{country}</EndCouSHP65>
+          }
+
+          val expectedResult =
+            <TRASHP>
+              <NewTraMeaIdeSHP26>{vehicularTranshipment.transportIdentity}</NewTraMeaIdeSHP26>
+              <NewTraMeaIdeSHP26LNG>{LanguageCodeEnglish.code}</NewTraMeaIdeSHP26LNG>
+              <NewTraMeaNatSHP54>{vehicularTranshipment.transportCountry}</NewTraMeaNatSHP54>
+              {
+              endorsementDateNode.getOrElse(NodeSeq.Empty) ++
+                endorsementAuthority.getOrElse(NodeSeq.Empty)
+              }
+              <EndAutSHP61LNG>{LanguageCodeEnglish.code}</EndAutSHP61LNG>
+              {
+              endorsementPlace.getOrElse(NodeSeq.Empty)
+              }
+              <EndPlaSHP63LNG>{LanguageCodeEnglish.code}</EndPlaSHP63LNG>
+              {
+              endorsementCountry.getOrElse(NodeSeq.Empty)
+              }
+            </TRASHP>
+
+          trim(vehicularTranshipment.toXml) mustEqual trim(loadString(expectedResult.toString))
+      }
+    }
+
+    "must create valid xml with containers" in {
+      forAll(arbitrary[VehicularTranshipment], arbitrary[Container], arbitrary[Container]) {
+        (transhipment, container1, container2) =>
+          val vehicularTranshipment = transhipment.copy(containers = Some(Seq(container1, container2)))
+
+          val endorsementDateNode = vehicularTranshipment.date.map {
+            date =>
+              <EndDatSHP60>{Format.dateFormatted(date)}</EndDatSHP60>
+          }
+          val endorsementAuthority = vehicularTranshipment.authority.map {
+            authority =>
+              <EndAutSHP61>{authority}</EndAutSHP61>
+          }
+          val endorsementPlace = vehicularTranshipment.place.map {
+            place =>
+              <EndPlaSHP63>{place}</EndPlaSHP63>
+          }
+          val endorsementCountry = vehicularTranshipment.country.map {
+            country =>
+              <EndCouSHP65>{country}</EndCouSHP65>
+          }
+
+          val expectedResult =
+            <TRASHP>
+              <NewTraMeaIdeSHP26>{vehicularTranshipment.transportIdentity}</NewTraMeaIdeSHP26>
+              <NewTraMeaIdeSHP26LNG>{LanguageCodeEnglish.code}</NewTraMeaIdeSHP26LNG>
+              <NewTraMeaNatSHP54>{vehicularTranshipment.transportCountry}</NewTraMeaNatSHP54>
+              {
+              endorsementDateNode.getOrElse(NodeSeq.Empty) ++
+                endorsementAuthority.getOrElse(NodeSeq.Empty)
+              }
+              <EndAutSHP61LNG>{LanguageCodeEnglish.code}</EndAutSHP61LNG>
+              {
+              endorsementPlace.getOrElse(NodeSeq.Empty)
+              }
+              <EndPlaSHP63LNG>{LanguageCodeEnglish.code}</EndPlaSHP63LNG>
+              {
+              endorsementCountry.getOrElse(NodeSeq.Empty)
+              }
+              <CONNR3>
+                <ConNumNR31>{vehicularTranshipment.containers.value.head.containerNumber}</ConNumNR31>
+              </CONNR3>
+              <CONNR3>
+                <ConNumNR31>{vehicularTranshipment.containers.value(1).containerNumber}</ConNumNR31>
+              </CONNR3>
+            </TRASHP>
+
+          trim(vehicularTranshipment.toXml) mustEqual trim(loadString(expectedResult.toString))
+      }
+    }
+
     "must deserialise" in {
 
       forAll(arbitrary[VehicularTranshipment]) {
         vehicularTranshipment =>
-          val json = vehicularTranshipmentJson(vehicularTranshipment)
+          val json = Json.toJson(vehicularTranshipment)
           json.validate[VehicularTranshipment] mustEqual JsSuccess(vehicularTranshipment)
       }
     }
@@ -114,7 +318,7 @@ class EventDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckPropert
 
       forAll(arbitrary[ContainerTranshipment]) {
         containerTranshipment =>
-          val json = containerTranshipmentJson(containerTranshipment)
+          val json = Json.toJson(containerTranshipment)
           json.validate[Transhipment] mustEqual JsSuccess(containerTranshipment)
 
       }
@@ -133,7 +337,7 @@ class EventDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckPropert
 
       forAll(arbitrary[ContainerTranshipment]) {
         containerTranshipment =>
-          val json = containerTranshipmentJson(containerTranshipment)
+          val json = Json.toJson(containerTranshipment)
           Json.toJson(containerTranshipment: Transhipment)(Transhipment.writes) mustEqual json
       }
     }
@@ -163,7 +367,7 @@ class EventDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckPropert
 
       forAll(arbitrary[ContainerTranshipment]) {
         containerTranshipment =>
-          val json = containerTranshipmentJson(containerTranshipment)
+          val json = Json.toJson(containerTranshipment)
           json.validate[EventDetails] mustEqual JsSuccess(containerTranshipment)
       }
     }
@@ -181,7 +385,7 @@ class EventDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckPropert
 
       forAll(arbitrary[VehicularTranshipment]) {
         vehicularTranshipment =>
-          val json = vehicularTranshipmentJson(vehicularTranshipment)
+          val json = Json.toJson(vehicularTranshipment)
           Json.toJson(vehicularTranshipment: EventDetails) mustEqual json
       }
     }
@@ -190,34 +394,28 @@ class EventDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckPropert
 
       forAll(arbitrary[ContainerTranshipment]) {
         containerTranshipment =>
-          val json = containerTranshipmentJson(containerTranshipment)
+          val json = Json.toJson(containerTranshipment)
           Json.toJson(containerTranshipment: EventDetails) mustEqual json
       }
     }
   }
 
-  private def incidentJson(incident: Incident): JsObject = {
-    val information = incident.information match {
+  private def incidentJson(incident: Incident): JsObject =
+    incident.information match {
       case Some(information) =>
         Json.obj("information" -> information)
       case _ =>
         JsObject.empty
     }
 
-    information ++ Json.obj("endorsement" -> Json.toJson(incident.endorsement))
-  }
-
-  private def containerTranshipmentJson(containerTranshipment: ContainerTranshipment): JsObject =
-    Json.obj(
-      "endorsement" -> Json.toJson(containerTranshipment.endorsement),
-      "containers"  -> Json.toJson(containerTranshipment.containers)
-    )
-
   private def vehicularTranshipmentJson(vehicularTranshipment: VehicularTranshipment): JsObject =
     Json.obj(
       "transportIdentity" -> vehicularTranshipment.transportIdentity,
       "transportCountry"  -> vehicularTranshipment.transportCountry,
-      "endorsement"       -> Json.toJson(vehicularTranshipment.endorsement),
+      "date"              -> Json.toJson(vehicularTranshipment.date),
+      "authority"         -> Json.toJson(vehicularTranshipment.authority),
+      "place"             -> Json.toJson(vehicularTranshipment.place),
+      "country"           -> Json.toJson(vehicularTranshipment.country),
       "containers"        -> Json.toJson(vehicularTranshipment.containers)
     )
 

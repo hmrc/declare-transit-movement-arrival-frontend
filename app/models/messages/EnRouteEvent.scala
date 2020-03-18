@@ -16,9 +16,50 @@
 
 package models.messages
 
+import helpers.XmlBuilderHelper
+import models.LanguageCodeEnglish
 import play.api.libs.json._
 
-final case class EnRouteEvent(place: String, countryCode: String, alreadyInNcts: Boolean, eventDetails: EventDetails, seals: Option[Seq[Seal]])
+import scala.xml.{Node, NodeSeq}
+
+final case class EnRouteEvent(place: String, countryCode: String, alreadyInNcts: Boolean, eventDetails: Option[EventDetails], seals: Option[Seq[Seal]])
+    extends XmlBuilderHelper {
+
+  def toXml: Node = {
+
+    val buildSealsXml = seals match {
+      case Some(seals) => {
+        <SEAINFSF1>
+        {
+          buildAndEncodeElem(seals.size.toString, "SeaNumSF12") ++
+          seals.map(_.toXml)
+        }
+        </SEAINFSF1>
+      }
+      case _ => NodeSeq.Empty
+    }
+
+    <ENROUEVETEV>
+      {
+        buildAndEncodeElem(place,"PlaTEV10") ++
+        buildAndEncodeElem(LanguageCodeEnglish.code,"PlaTEV10LNG") ++
+        buildAndEncodeElem(countryCode,"CouTEV13")
+      }
+      <CTLCTL>
+        {
+        buildAndEncodeElem(alreadyInNcts,"AlrInNCTCTL29")
+        }
+      </CTLCTL>
+      {
+        eventDetails.map {
+          case incident: Incident                           => incident.toXml ++ buildSealsXml
+          case containerTranshipment: ContainerTranshipment => buildSealsXml ++ containerTranshipment.toXml
+          case vehicularTranshipment: VehicularTranshipment => buildSealsXml ++ vehicularTranshipment.toXml
+        }.getOrElse(NodeSeq.Empty)
+      }
+    </ENROUEVETEV>
+  }
+}
 
 object EnRouteEvent {
 
@@ -36,7 +77,7 @@ object EnRouteEvent {
       (__ \ "place").read[String] and
         (__ \ "countryCode").read[String] and
         (__ \ "alreadyInNcts").read[Boolean] and
-        (__ \ "eventDetails").read[EventDetails] and
+        (__ \ "eventDetails").readNullable[EventDetails] and
         (__ \ "seals").readNullable[Seq[Seal]]
     )(EnRouteEvent(_, _, _, _, _))
   }

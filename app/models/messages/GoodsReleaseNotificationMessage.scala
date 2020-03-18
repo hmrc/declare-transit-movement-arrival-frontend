@@ -16,29 +16,23 @@
 
 package models.messages
 
-import forms.mappings.StringEquivalence
-import helpers.XmlBuilderHelper
-import play.api.libs.json.{Json, OFormat}
+import java.time.LocalDate
 
-import scala.xml.Node
+import play.api.libs.json.{Format, Json}
 
-case class Container(containerNumber: String) extends XmlBuilderHelper {
+final case class GoodsReleaseNotificationMessage(
+  movementReferenceNumber: String,
+  releaseDate: LocalDate,
+  trader: Trader,
+  presentationOffice: String
+)
 
-  def toXml: Node =
-    <CONNR3>
-      {buildAndEncodeElem(containerNumber, "ConNumNR31")}
-    </CONNR3>
-
-}
-
-object Container {
+object GoodsReleaseNotificationMessage {
 
   object Constants {
-    val containerNumberLength = 17
+    val presentationOfficeLength = 8
   }
 
-  implicit val formats: OFormat[Container] = Json.format[Container]
-
-  implicit val containerStringEquivalenceCheck: StringEquivalence[Container] =
-    StringEquivalence[Container]((container, stringContainer) => container.containerNumber == stringContainer)
+  implicit lazy val format: Format[GoodsReleaseNotificationMessage] =
+    Json.format[GoodsReleaseNotificationMessage]
 }

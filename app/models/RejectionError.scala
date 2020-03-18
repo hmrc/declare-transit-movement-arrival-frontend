@@ -14,22 +14,20 @@
  * limitations under the License.
  */
 
-package models.messages
+package models
 
-import java.time.LocalDate
+import play.api.libs.json.Json
+import play.api.libs.json.Format
 
-import play.api.libs.json.{Format, Json}
+final case class RejectionError(
+  errorType: Int,
+  pointer: String,
+  reason: Option[String],
+  originalValue: Option[String]
+)
 
-final case class Endorsement(date: Option[LocalDate], authority: Option[String], place: Option[String], country: Option[String])
+object RejectionError {
 
-object Endorsement {
-
-  object Constants {
-    val authorityLength = 35
-    val placeLength     = 35
-    val countryLength   = 2
-  }
-
-  implicit lazy val format: Format[Endorsement] =
-    Json.format[Endorsement]
+  implicit lazy val format: Format[RejectionError] =
+    Json.format[RejectionError]
 }

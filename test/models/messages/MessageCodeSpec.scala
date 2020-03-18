@@ -16,29 +16,27 @@
 
 package models.messages
 
-import forms.mappings.StringEquivalence
-import helpers.XmlBuilderHelper
-import play.api.libs.json.{Json, OFormat}
+import org.scalacheck.Arbitrary.arbitrary
+import org.scalatest.{FreeSpec, MustMatchers}
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
 import scala.xml.Node
+import scala.xml.XML._
 
-case class Container(containerNumber: String) extends XmlBuilderHelper {
+class MessageCodeSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks {
 
-  def toXml: Node =
-    <CONNR3>
-      {buildAndEncodeElem(containerNumber, "ConNumNR31")}
-    </CONNR3>
+  "MessageCode" - {
+    "must create valid xml" in {
 
-}
+      forAll(arbitrary[String]) {
+        code =>
+          val messageCode: MessageCode = MessageCode(code)
+          val expectedResult: Node     = <MesTypMES20>{code}</MesTypMES20>
 
-object Container {
+          messageCode.toXml mustBe loadString(expectedResult.toString)
+      }
 
-  object Constants {
-    val containerNumberLength = 17
+    }
   }
 
-  implicit val formats: OFormat[Container] = Json.format[Container]
-
-  implicit val containerStringEquivalenceCheck: StringEquivalence[Container] =
-    StringEquivalence[Container]((container, stringContainer) => container.containerNumber == stringContainer)
 }

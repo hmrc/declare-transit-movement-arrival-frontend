@@ -16,29 +16,11 @@
 
 package models.messages
 
-import forms.mappings.StringEquivalence
 import helpers.XmlBuilderHelper
-import play.api.libs.json.{Json, OFormat}
 
-import scala.xml.Node
+import scala.xml.NodeSeq
 
-case class Container(containerNumber: String) extends XmlBuilderHelper {
+case class MessageSender(environment: String, eori: String) extends XmlBuilderHelper {
 
-  def toXml: Node =
-    <CONNR3>
-      {buildAndEncodeElem(containerNumber, "ConNumNR31")}
-    </CONNR3>
-
-}
-
-object Container {
-
-  object Constants {
-    val containerNumberLength = 17
-  }
-
-  implicit val formats: OFormat[Container] = Json.format[Container]
-
-  implicit val containerStringEquivalenceCheck: StringEquivalence[Container] =
-    StringEquivalence[Container]((container, stringContainer) => container.containerNumber == stringContainer)
+  def toXml: NodeSeq = buildAndEncodeElem(s"$environment-$eori", "MesSenMES3")
 }

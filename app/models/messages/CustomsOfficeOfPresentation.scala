@@ -16,34 +16,21 @@
 
 package models.messages
 
-import forms.mappings.StringEquivalence
 import helpers.XmlBuilderHelper
-import models.{LanguageCode, LanguageCodeEnglish}
-import play.api.libs.json.{Json, OFormat}
 
 import scala.xml.Node
 
-case class Seal(numberOrMark: String) extends XmlBuilderHelper {
+case class CustomsOfficeOfPresentation(presentationOffice: String) extends XmlBuilderHelper {
 
   def toXml: Node =
-    <SEAIDSI1>
-      {
-        buildAndEncodeElem(numberOrMark, "SeaIdeSI11") ++
-        buildAndEncodeElem(Seal.Constants.languageCode, "SeaIdeSI11LNG")
-      }
-    </SEAIDSI1>
-
+    <CUSOFFPREOFFRES>
+      {buildAndEncodeElem(presentationOffice, "RefNumRES1")}
+    </CUSOFFPREOFFRES>
 }
 
-object Seal {
+object CustomsOfficeOfPresentation {
 
   object Constants {
-    val sealNumberOrMarkLength     = 20
-    val languageCode: LanguageCode = LanguageCodeEnglish
+    val presentationOfficeLength = 8
   }
-
-  implicit val format: OFormat[Seal] = Json.format[Seal]
-
-  implicit val sealStringEquivalenceCheck: StringEquivalence[Seal] =
-    StringEquivalence[Seal]((seal, sealNumberOrMark) => seal.numberOrMark == sealNumberOrMark)
 }
