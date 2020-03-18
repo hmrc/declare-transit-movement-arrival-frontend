@@ -46,7 +46,7 @@ class SequentialInterchangeControlReferenceIdRepositorySpec
     )
     .build()
 
-  val service: SequentialInterchangeControlReferenceIdRepository = app.injector.instanceOf[SequentialInterchangeControlReferenceIdRepository]
+  val service: InterchangeControlReferenceIdRepository = app.injector.instanceOf[InterchangeControlReferenceIdRepository]
 
   "SequentialInterchangeControlReferenceIdRepository" - {
 

@@ -28,10 +28,10 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class SequentialInterchangeControlReferenceIdRepository @Inject()(
+class InterchangeControlReferenceIdRepository @Inject()(
   mongo: ReactiveMongoApi,
   dateTimeService: DateTimeService
-) extends InterchangeControlReferenceIdRepository {
+) {
 
   private val lastIndexKey = "last-index"
 
@@ -45,7 +45,7 @@ class SequentialInterchangeControlReferenceIdRepository @Inject()(
   private def collection: Future[JSONCollection] =
     mongo.database.map(_.collection[JSONCollection](collectionName))
 
-  override def nextInterchangeControlReferenceId(): Future[InterchangeControlReference] = {
+  def nextInterchangeControlReferenceId(): Future[InterchangeControlReference] = {
 
     val date = dateTimeService.dateFormatted
 
@@ -64,11 +64,3 @@ class SequentialInterchangeControlReferenceIdRepository @Inject()(
     }
   }
 }
-
-trait InterchangeControlReferenceIdRepository {
-  def nextInterchangeControlReferenceId(): Future[InterchangeControlReference]
-}
-
-sealed trait FailedCreatingInterchangeControlReference
-
-object FailedCreatingInterchangeControlReference extends FailedCreatingInterchangeControlReference

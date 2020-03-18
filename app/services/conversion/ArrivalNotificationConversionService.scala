@@ -55,19 +55,19 @@ class ArrivalNotificationConversionService {
     transportIdentity: Option[String],
     transportCountry: Option[String],
     containers: Option[Seq[Container]]
-  ): EventDetails =
+  ): Option[EventDetails] =
     (incidentInformation, transportIdentity, transportCountry, containers) match {
-      case (ii, None, None, None) =>
-        Incident(ii)
-      case (None, Some(ti), Some(tc), _) =>
-        VehicularTranshipment(
-          transportIdentity = ti,
-          transportCountry  = tc,
+      case (information, None, None, None) =>
+        Some(Incident(information))
+      case (None, Some(transportIdentity), Some(transportCountry), _) =>
+        Some(VehicularTranshipment(
+          transportIdentity = transportIdentity,
+          transportCountry  = transportCountry,
           containers        = containers
-        )
+        ))
       case (None, None, None, Some(containers)) =>
-        ContainerTranshipment(containers = containers)
-      case _ => ???
+        Some(ContainerTranshipment(containers = containers))
+      case _ => None
     }
 
   private def enRouteEvents(userAnswers: UserAnswers): Option[Seq[EnRouteEvent]] =
@@ -89,7 +89,7 @@ class ArrivalNotificationConversionService {
                 place         = place,
                 countryCode   = country.code,
                 alreadyInNcts = isReported,
-                eventDetails  = Some(eventDetails(incidentInformation, transportIdentity, transportCountry.map(_.code), containers)),
+                eventDetails  = eventDetails(incidentInformation, transportIdentity, transportCountry.map(_.code), containers),
                 seals         = userAnswers.get(SealsQuery(eventIndex))
               )
             }
