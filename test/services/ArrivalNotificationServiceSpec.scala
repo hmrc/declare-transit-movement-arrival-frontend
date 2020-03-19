@@ -72,5 +72,18 @@ class ArrivalNotificationServiceSpec extends SpecBase with MockitoSugar {
 
       arrivalNotificationService.submit(emptyUserAnswers).futureValue mustBe None
     }
+
+    "generateXml" - {
+
+      "must create an xml on a future success" in {
+
+
+
+      }
+
+      "must return a future failed if interchangeControlReferenceIdRepository fails" in {
+
+      }
+    }
   }
 }

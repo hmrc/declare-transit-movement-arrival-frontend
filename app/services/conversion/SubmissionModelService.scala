@@ -47,6 +47,27 @@ class SubmissionModelService @Inject()(appConfig: FrontendAppConfig) {
         Left(FailedToConvertModel)
     }
 
+  def convertToSubmissionModel1(
+                                 arrivalNotification: NormalNotification,
+                                 messageSender: MessageSender,
+                                 interchangeControlReference: InterchangeControlReference,
+                                 timeOfPresentation: LocalTime
+                               ): ArrivalMovementRequest = {
+
+    val meta = Meta(
+      messageSender = messageSender,
+      interchangeControlReference = interchangeControlReference,
+      dateOfPreparation = arrivalNotification.notificationDate,
+      timeOfPreparation = timeOfPresentation
+    )
+    val header = buildHeader(arrivalNotification, NormalProcedureFlag)
+    val traderDestination = buildTrader(arrivalNotification.trader)
+    val customsOffice = CustomsOfficeOfPresentation(presentationOffice = arrivalNotification.presentationOffice)
+    val enRouteEvents: Option[Seq[EnRouteEvent]] = arrivalNotification.enRouteEvents
+
+    ArrivalMovementRequest(meta, header, traderDestination, customsOffice, enRouteEvents)
+  }
+
   private def buildHeader(arrivalNotification: NormalNotification, procedureTypeFlag: ProcedureTypeFlag): Header =
     Header(
       movementReferenceNumber  = arrivalNotification.movementReferenceNumber.toString,
