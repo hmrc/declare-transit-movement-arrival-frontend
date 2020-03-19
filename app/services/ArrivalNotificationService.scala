@@ -31,19 +31,18 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.xml.Node
 
 class ArrivalNotificationService @Inject()(
-                                            converterService: ArrivalNotificationConversionService,
-                                            connector: DestinationConnector,
-                                            appConfig: FrontendAppConfig,
-                                            databaseService: DatabaseService,
-                                            submissionModelService: SubmissionModelService,
-                                            interchangeControlReferenceIdRepository: InterchangeControlReferenceIdRepository
-                                          )(
-  implicit ec: ExecutionContext) {
+  converterService: ArrivalNotificationConversionService,
+  connector: DestinationConnector,
+  appConfig: FrontendAppConfig,
+  databaseService: DatabaseService,
+  submissionModelService: SubmissionModelService,
+  interchangeControlReferenceIdRepository: InterchangeControlReferenceIdRepository
+)(implicit ec: ExecutionContext) {
 
   def submit(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[Option[HttpResponse]] =
     converterService.convertToArrivalNotification(userAnswers) match {
       case Some(notification) => connector.submitArrivalNotification(notification).map(Some(_))
-      case None => Future.successful(None)
+      case None               => Future.successful(None)
     }
 
   def generateXml(arrivalNotification: NormalNotification): Future[Node] = {
@@ -52,13 +51,14 @@ class ArrivalNotificationService @Inject()(
 
     interchangeControlReferenceIdRepository.nextInterchangeControlReferenceId().map {
       referenceId =>
-        submissionModelService.convertToSubmissionModel1(
-          arrivalNotification = arrivalNotification,
-          messageSender = messageSender,
-          interchangeControlReference = referenceId,
-          timeOfPresentation = LocalTime.now()
-        )
-        .toXml
+        submissionModelService
+          .convertToSubmissionModel1(
+            arrivalNotification         = arrivalNotification,
+            messageSender               = messageSender,
+            interchangeControlReference = referenceId,
+            timeOfPresentation          = LocalTime.now()
+          )
+          .toXml
     }
   }
 }

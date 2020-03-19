@@ -20,27 +20,30 @@ import java.time.LocalDate
 
 import base.SpecBase
 import connectors.DestinationConnector
-import models.messages.{NormalNotification, TraderWithoutEori}
+import models.messages.{InterchangeControlReference, NormalNotification, TraderWithoutEori}
 import org.mockito.Matchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.http.Status._
 import play.api.inject.bind
+import repositories.InterchangeControlReferenceIdRepository
 import services.conversion.ArrivalNotificationConversionService
 import uk.gov.hmrc.http.HttpResponse
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import scala.xml.Node
 
 class ArrivalNotificationServiceSpec extends SpecBase with MockitoSugar {
 
-  private val mockConverterService     = mock[ArrivalNotificationConversionService]
-  private val mockDestinationConnector = mock[DestinationConnector]
+  private val mockConverterService               = mock[ArrivalNotificationConversionService]
+  private val mockDestinationConnector           = mock[DestinationConnector]
+  private val mockInterchangeControllerReference = mock[InterchangeControlReferenceIdRepository]
+
+  private val traderWithoutEori  = TraderWithoutEori("", "", "", "", "")
+  private val normalNotification = NormalNotification(mrn, "", LocalDate.now(), None, traderWithoutEori, "", None)
 
   "ArrivalNotificationService" - {
     "must submit data for valid input " in {
-      val traderWithoutEori  = TraderWithoutEori("", "", "", "", "")
-      val normalNotification = NormalNotification(mrn, "", LocalDate.now(), None, traderWithoutEori, "", None)
 
       when(mockConverterService.convertToArrivalNotification(any()))
         .thenReturn(Some(normalNotification))
@@ -77,11 +80,42 @@ class ArrivalNotificationServiceSpec extends SpecBase with MockitoSugar {
 
       "must create an xml on a future success" in {
 
+        when(mockInterchangeControllerReference.nextInterchangeControlReferenceId())
+          .thenReturn(Future.successful(InterchangeControlReference("date", 0)))
 
+        when(mockConverterService.convertToArrivalNotification(any()))
+          .thenReturn(Some(normalNotification))
 
+        val application = applicationBuilder(Some(emptyUserAnswers))
+          .overrides(bind[InterchangeControlReferenceIdRepository].toInstance(mockInterchangeControllerReference))
+          .overrides(bind[ArrivalNotificationConversionService].toInstance(mockConverterService))
+          .build()
+
+        val arrivalNotificationService = application.injector.instanceOf[ArrivalNotificationService]
+
+        arrivalNotificationService.generateXml(normalNotification).futureValue mustBe an[Node]
       }
 
       "must return a future failed if interchangeControlReferenceIdRepository fails" in {
+
+        when(mockInterchangeControllerReference.nextInterchangeControlReferenceId())
+          .thenReturn(Future.failed(new Exception))
+
+        when(mockConverterService.convertToArrivalNotification(any()))
+          .thenReturn(Some(normalNotification))
+
+        val application = applicationBuilder(Some(emptyUserAnswers))
+          .overrides(bind[InterchangeControlReferenceIdRepository].toInstance(mockInterchangeControllerReference))
+          .overrides(bind[ArrivalNotificationConversionService].toInstance(mockConverterService))
+          .build()
+
+        val arrivalNotificationService = application.injector.instanceOf[ArrivalNotificationService]
+
+        val result = arrivalNotificationService.generateXml(normalNotification)
+
+        whenReady(result.failed) {
+          _ mustBe an[Exception]
+        }
 
       }
     }
