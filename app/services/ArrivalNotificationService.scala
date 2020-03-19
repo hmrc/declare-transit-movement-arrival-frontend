@@ -34,7 +34,6 @@ class ArrivalNotificationService @Inject()(
   converterService: ArrivalNotificationConversionService,
   connector: DestinationConnector,
   appConfig: FrontendAppConfig,
-  databaseService: DatabaseService,
   submissionModelService: SubmissionModelService,
   interchangeControlReferenceIdRepository: InterchangeControlReferenceIdRepository
 )(implicit ec: ExecutionContext) {
