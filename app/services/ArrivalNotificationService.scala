@@ -51,7 +51,7 @@ class ArrivalNotificationService @Inject()(
     interchangeControlReferenceIdRepository.nextInterchangeControlReferenceId().map {
       referenceId =>
         submissionModelService
-          .convertToSubmissionModel1(
+          .convertToSubmissionModel(
             arrivalNotification         = arrivalNotification,
             messageSender               = messageSender,
             interchangeControlReference = referenceId,

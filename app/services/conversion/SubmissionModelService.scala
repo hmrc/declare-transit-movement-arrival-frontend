@@ -25,29 +25,7 @@ import models.{NormalProcedureFlag, ProcedureTypeFlag}
 
 class SubmissionModelService @Inject()(appConfig: FrontendAppConfig) {
 
-  def convertToSubmissionModel[A](arrivalNotification: A,
-                                  messageSender: MessageSender,
-                                  interchangeControlReference: InterchangeControlReference,
-                                  timeOfPresentation: LocalTime): Either[ModelConversionError, ArrivalMovementRequest] =
-    arrivalNotification match {
-      case arrivalNotification: NormalNotification =>
-        val meta = Meta(
-          messageSender               = messageSender,
-          interchangeControlReference = interchangeControlReference,
-          dateOfPreparation           = arrivalNotification.notificationDate,
-          timeOfPreparation           = timeOfPresentation
-        )
-        val header                                   = buildHeader(arrivalNotification, NormalProcedureFlag)
-        val traderDestination                        = buildTrader(arrivalNotification.trader)
-        val customsOffice                            = CustomsOfficeOfPresentation(presentationOffice = arrivalNotification.presentationOffice)
-        val enRouteEvents: Option[Seq[EnRouteEvent]] = arrivalNotification.enRouteEvents
-
-        Right(ArrivalMovementRequest(meta, header, traderDestination, customsOffice, enRouteEvents))
-      case _ =>
-        Left(FailedToConvertModel)
-    }
-
-  def convertToSubmissionModel1(
+  def convertToSubmissionModel(
     arrivalNotification: NormalNotification,
     messageSender: MessageSender,
     interchangeControlReference: InterchangeControlReference,

@@ -17,21 +17,19 @@
 package connectors
 
 import base.SpecBase
-import com.github.tomakehurst.wiremock.client.WireMock.aResponse
-import com.github.tomakehurst.wiremock.client.WireMock.post
-import com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo
+import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, post, urlEqualTo}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import generators.MessagesModelGenerators
 import helper.WireMockServerHandler
 import models.messages.NormalNotification
 import org.scalacheck.Arbitrary.arbitrary
+import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.Application
 import play.api.http.Status._
 import play.api.inject.guice.GuiceApplicationBuilder
 import uk.gov.hmrc.http.HttpResponse
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class DestinationConnectorSpec extends SpecBase with WireMockServerHandler with MessagesModelGenerators with ScalaCheckPropertyChecks {
@@ -45,8 +43,11 @@ class DestinationConnectorSpec extends SpecBase with WireMockServerHandler with 
     .build()
 
   lazy val connector: DestinationConnector = app.injector.instanceOf[DestinationConnector]
+  private val arrivalMovementXml           = "<xml>data</xml>"
+  val errorResponsesCodes: Gen[Int]        = Gen.chooseNum(400, 599)
 
   "DestinationConnector" - {
+    //TODO need to remove these tests that method that is deprecated
     "must return status as OK for submission of valid arrival notification" in {
 
       stubResponse(s"/$startUrl/arrival-notification", OK)
@@ -77,6 +78,27 @@ class DestinationConnectorSpec extends SpecBase with WireMockServerHandler with 
         notification =>
           val result = connector.submitArrivalNotification(notification)
           result.futureValue.status mustBe INTERNAL_SERVER_ERROR
+      }
+    }
+
+    "must return status as OK for submission of valid arrival movement" in {
+
+      stubResponse(s"/$startUrl/movements/arrivals", OK)
+
+      val result: Future[HttpResponse] = connector.submitArrivalMovement(arrivalMovementXml)
+      result.futureValue.status mustBe OK
+    }
+
+    "must return an error status when an error response is returned from submitArrivalMovement" in {
+
+      val errorResponsesCodes: Gen[Int] = Gen.chooseNum(400, 599)
+
+      forAll(errorResponsesCodes) {
+        errorResponseCode =>
+          stubResponse(s"/$startUrl/movements/arrivals", errorResponseCode)
+
+          val result = connector.submitArrivalMovement(arrivalMovementXml)
+          result.futureValue.status mustBe errorResponseCode
       }
     }
   }
