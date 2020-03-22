@@ -43,6 +43,7 @@ class FrontendAppConfig @Inject()(configuration: Configuration) {
   lazy val loginContinueUrl: String = configuration.get[String]("urls.loginContinue")
   lazy val enrolmentKey: String     = configuration.get[String]("urls.enrolmentKey")
   lazy val destinationUrl: String   = configuration.get[Service]("microservice.services.destination").baseUrl
+  lazy val xmlEndpoint: Boolean     = configuration.getOptional[Boolean]("microservice.services.destination.xmlEndpoint").getOrElse(false)
   lazy val referenceDataUrl: String = configuration.get[Service]("microservice.services.referenceData").baseUrl
 
   val env: String = configuration.get[String]("env")

@@ -22,7 +22,8 @@ import config.FrontendAppConfig
 import connectors.DestinationConnector
 import javax.inject.Inject
 import models.UserAnswers
-import models.messages.{MessageSender, NormalNotification}
+import models.messages.{ArrivalNotification, MessageSender}
+import play.api.Logger
 import repositories.InterchangeControlReferenceIdRepository
 import services.conversion.{ArrivalNotificationConversionService, SubmissionModelService}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
@@ -40,11 +41,21 @@ class ArrivalNotificationService @Inject()(
 
   def submit(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[Option[HttpResponse]] =
     converterService.convertToArrivalNotification(userAnswers) match {
-      case Some(notification) => connector.submitArrivalNotification(notification).map(Some(_))
-      case None               => Future.successful(None)
+      case Some(notification) => {
+        if (appConfig.xmlEndpoint) {
+          convertToXml(notification).flatMap {
+            xml =>
+              connector.submitArrivalMovement(xml).map(Some(_))
+          }
+        } else {
+          connector.submitArrivalNotification(notification).map(Some(_))
+        }
+      }.recover({ case ex: Exception => Logger.error(s"${ex.getMessage}"); None })
+
+      case None => Future.successful(None)
     }
 
-  def generateXml(arrivalNotification: NormalNotification): Future[Node] = {
+  private def convertToXml(arrivalNotification: ArrivalNotification): Future[Node] = {
 
     val messageSender = MessageSender(appConfig.env, "eori")
 

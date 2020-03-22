@@ -43,7 +43,7 @@ class DestinationConnectorSpec extends SpecBase with WireMockServerHandler with 
     .build()
 
   lazy val connector: DestinationConnector = app.injector.instanceOf[DestinationConnector]
-  private val arrivalMovementXml           = "<xml>data</xml>"
+  private val arrivalMovementXml           = <xml>data</xml>
   val errorResponsesCodes: Gen[Int]        = Gen.chooseNum(400, 599)
 
   "DestinationConnector" - {

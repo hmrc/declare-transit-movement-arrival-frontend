@@ -17,6 +17,7 @@
 package models.messages
 
 import helpers.XmlBuilderHelper
+import play.api.libs.json.Json
 
 import scala.collection.immutable.ListMap
 import scala.xml.{Node, NodeSeq}
@@ -47,8 +48,6 @@ case class ArrivalMovementRequest(meta: Meta,
       }
     }
 
-    val arrivalNotificationRequestXml = addChildrenToRoot(parentNode, childNodes)
-
-    arrivalNotificationRequestXml
+    addChildrenToRoot(parentNode, childNodes)
   }
 }

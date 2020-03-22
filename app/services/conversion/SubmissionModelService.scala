@@ -26,25 +26,27 @@ import models.{NormalProcedureFlag, ProcedureTypeFlag}
 class SubmissionModelService @Inject()(appConfig: FrontendAppConfig) {
 
   def convertToSubmissionModel(
-    arrivalNotification: NormalNotification,
+    arrivalNotification: ArrivalNotification,
     messageSender: MessageSender,
     interchangeControlReference: InterchangeControlReference,
     timeOfPresentation: LocalTime
-  ): ArrivalMovementRequest = {
+  ): ArrivalMovementRequest =
+    arrivalNotification match {
+      case normalNotification: NormalNotification =>
+        val meta = Meta(
+          messageSender               = messageSender,
+          interchangeControlReference = interchangeControlReference,
+          dateOfPreparation           = normalNotification.notificationDate,
+          timeOfPreparation           = timeOfPresentation
+        )
+        val header                                   = buildHeader(normalNotification, NormalProcedureFlag)
+        val traderDestination                        = buildTrader(normalNotification.trader)
+        val customsOffice                            = CustomsOfficeOfPresentation(presentationOffice = normalNotification.presentationOffice)
+        val enRouteEvents: Option[Seq[EnRouteEvent]] = normalNotification.enRouteEvents
 
-    val meta = Meta(
-      messageSender               = messageSender,
-      interchangeControlReference = interchangeControlReference,
-      dateOfPreparation           = arrivalNotification.notificationDate,
-      timeOfPreparation           = timeOfPresentation
-    )
-    val header                                   = buildHeader(arrivalNotification, NormalProcedureFlag)
-    val traderDestination                        = buildTrader(arrivalNotification.trader)
-    val customsOffice                            = CustomsOfficeOfPresentation(presentationOffice = arrivalNotification.presentationOffice)
-    val enRouteEvents: Option[Seq[EnRouteEvent]] = arrivalNotification.enRouteEvents
-
-    ArrivalMovementRequest(meta, header, traderDestination, customsOffice, enRouteEvents)
-  }
+        ArrivalMovementRequest(meta, header, traderDestination, customsOffice, enRouteEvents)
+      case _ => ???
+    }
 
   private def buildHeader(arrivalNotification: NormalNotification, procedureTypeFlag: ProcedureTypeFlag): Header =
     Header(
