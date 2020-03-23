@@ -19,7 +19,7 @@ package connectors
 import config.FrontendAppConfig
 import javax.inject.Inject
 import models.messages.ArrivalNotification
-import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -38,6 +38,7 @@ class DestinationConnector @Inject()(val config: FrontendAppConfig, val http: Ht
 
     val serviceUrl = s"${config.destinationUrl}/movements/arrivals"
 
-    http.POSTString[HttpResponse](serviceUrl, arrivalMovementXml.toString())
+    val headers = Seq(("Content-Type", "application/xml"))
+    http.POSTString[HttpResponse](serviceUrl, arrivalMovementXml.toString(), headers)
   }
 }
