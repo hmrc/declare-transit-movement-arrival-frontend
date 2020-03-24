@@ -21,8 +21,6 @@ import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, post, urlEqua
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import generators.MessagesModelGenerators
 import helper.WireMockServerHandler
-import models.messages.NormalNotification
-import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.Application
@@ -46,39 +44,6 @@ class DestinationConnectorSpec extends SpecBase with WireMockServerHandler with 
   private val arrivalMovementXml           = <xml>data</xml>
 
   "DestinationConnector" - {
-    //TODO need to remove these tests that method that is deprecated
-    "must return status as OK for submission of valid arrival notification" in {
-
-      stubResponse(s"/$startUrl/arrival-notification", OK)
-
-      forAll(arbitrary[NormalNotification]) {
-        notification =>
-          val result: Future[HttpResponse] = connector.submitArrivalNotification(notification)
-          result.futureValue.status mustBe OK
-      }
-    }
-
-    "must return status as BAD_REQUEST for submission of invalid arrival notification" in {
-
-      stubResponse(s"/$startUrl/arrival-notification", BAD_REQUEST)
-
-      forAll(arbitrary[NormalNotification]) {
-        notification =>
-          val result = connector.submitArrivalNotification(notification)
-          result.futureValue.status mustBe BAD_REQUEST
-      }
-    }
-
-    "must return status as INTERNAL_SERVER_ERROR for technical error incurred" in {
-
-      stubResponse(s"/$startUrl/arrival-notification", INTERNAL_SERVER_ERROR)
-
-      forAll(arbitrary[NormalNotification]) {
-        notification =>
-          val result = connector.submitArrivalNotification(notification)
-          result.futureValue.status mustBe INTERNAL_SERVER_ERROR
-      }
-    }
 
     "must return status as OK for submission of valid arrival movement" in {
 

@@ -43,28 +43,8 @@ class ArrivalNotificationServiceSpec extends SpecBase with MockitoSugar {
   private val normalNotification = NormalNotification(mrn, "", LocalDate.now(), None, traderWithoutEori, "", None)
 
   "ArrivalNotificationService" - {
-    "must submit data for valid json input" in {
 
-      when(mockConverterService.convertToArrivalNotification(any()))
-        .thenReturn(Some(normalNotification))
-      when(mockDestinationConnector.submitArrivalNotification(any())(any()))
-        .thenReturn(Future.successful(HttpResponse(OK)))
-
-      val application = applicationBuilder(Some(emptyUserAnswers))
-        .configure(Configuration("microservice.services.destination.xmlEndpoint" -> false))
-        .overrides(
-          bind[ArrivalNotificationConversionService].toInstance(mockConverterService),
-          bind[DestinationConnector].toInstance(mockDestinationConnector)
-        )
-        .build()
-
-      val arrivalNotificationService = application.injector.instanceOf[ArrivalNotificationService]
-
-      val response = arrivalNotificationService.submit(emptyUserAnswers).futureValue.get
-      response.status mustBe OK
-    }
-
-    "must return None on submission of invalid json data" in {
+    "must return None on submission of invalid data" in {
       when(mockConverterService.convertToArrivalNotification(any()))
         .thenReturn(None)
 

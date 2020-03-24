@@ -27,13 +27,6 @@ import scala.xml.Node
 
 class DestinationConnector @Inject()(val config: FrontendAppConfig, val http: HttpClient)(implicit ec: ExecutionContext) {
 
-  @deprecated("we need to use submitArrivalMovement instead", "xml is sent instead of json")
-  def submitArrivalNotification(model: ArrivalNotification)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
-
-    val serviceUrl = s"${config.destinationUrl}/arrival-notification"
-    http.POST[ArrivalNotification, HttpResponse](serviceUrl, model)
-  }
-
   def submitArrivalMovement(arrivalMovementXml: Node)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
 
     val serviceUrl = s"${config.destinationUrl}/movements/arrivals"
