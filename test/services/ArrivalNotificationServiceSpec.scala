@@ -87,7 +87,7 @@ class ArrivalNotificationServiceSpec extends SpecBase with MockitoSugar {
         .thenReturn(Some(normalNotification))
 
       when(mockDestinationConnector.submitArrivalMovement(any())(any()))
-        .thenReturn(Future.successful(HttpResponse(OK)))
+        .thenReturn(Future.successful(HttpResponse(ACCEPTED)))
 
       val application = applicationBuilder(Some(emptyUserAnswers))
         .configure(Configuration("microservice.services.destination.xmlEndpoint" -> true))
@@ -99,7 +99,7 @@ class ArrivalNotificationServiceSpec extends SpecBase with MockitoSugar {
       val arrivalNotificationService = application.injector.instanceOf[ArrivalNotificationService]
 
       val response = arrivalNotificationService.submit(emptyUserAnswers).futureValue.get
-      response.status mustBe OK
+      response.status mustBe ACCEPTED
     }
 
     "must return None if interchangeControlReferenceIdRepository fails" in {

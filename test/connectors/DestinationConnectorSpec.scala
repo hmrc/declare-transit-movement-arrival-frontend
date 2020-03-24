@@ -82,10 +82,10 @@ class DestinationConnectorSpec extends SpecBase with WireMockServerHandler with 
 
     "must return status as OK for submission of valid arrival movement" in {
 
-      stubResponse(s"/$startUrl/movements/arrivals", OK)
+      stubResponse(s"/$startUrl/movements/arrivals", ACCEPTED)
 
       val result: Future[HttpResponse] = connector.submitArrivalMovement(arrivalMovementXml)
-      result.futureValue.status mustBe OK
+      result.futureValue.status mustBe ACCEPTED
     }
 
     "must return an error status when an error response is returned from submitArrivalMovement" in {
