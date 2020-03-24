@@ -16,18 +16,14 @@
 
 package services.conversion
 
-import java.time.LocalTime
-
 import generators.MessagesModelGenerators
 import models.MovementReferenceNumber
 import models.messages._
-import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatest.{FreeSpec, MustMatchers, OptionValues}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import play.api.inject.Injector
-import support.InvalidRequestModel
 
 class SubmissionModelServiceSpec
     extends FreeSpec
@@ -84,7 +80,7 @@ class SubmissionModelServiceSpec
                                                                          interchangeControlReference,
                                                                          arrivalNotificationRequest.meta.timeOfPreparation)
 
-          result mustBe Right(arrivalNotificationRequest)
+          result mustBe arrivalNotificationRequest
       }
     }
   }
@@ -129,23 +125,7 @@ class SubmissionModelServiceSpec
                                                                        interchangeControlReference,
                                                                        arrivalNotificationRequest.meta.timeOfPreparation)
 
-        result mustBe Right(arrivalNotificationRequest)
+        result mustBe arrivalNotificationRequest
     }
   }
-
-  "must return FailedToConvert when given an invalid request" in {
-
-    forAll(arbitrary[MessageSender], arbitrary[InterchangeControlReference]) {
-      (messageSender, interchangeControlReference) =>
-        val result = convertToSubmissionModel.convertToSubmissionModel(
-          arrivalNotification         = InvalidRequestModel,
-          messageSender               = messageSender,
-          interchangeControlReference = interchangeControlReference,
-          LocalTime.now()
-        )
-
-        result mustBe Left(FailedToConvertModel)
-    }
-  }
-
 }

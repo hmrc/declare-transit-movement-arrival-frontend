@@ -16,20 +16,59 @@
 
 package services
 
+import java.time.LocalTime
+
+import config.FrontendAppConfig
 import connectors.DestinationConnector
 import javax.inject.Inject
 import models.UserAnswers
-import services.conversion.ArrivalNotificationConversionService
+import models.messages.{ArrivalNotification, MessageSender}
+import play.api.Logger
+import repositories.InterchangeControlReferenceIdRepository
+import services.conversion.{ArrivalNotificationConversionService, SubmissionModelService}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.xml.Node
 
-class ArrivalNotificationService @Inject()(converterService: ArrivalNotificationConversionService, connector: DestinationConnector)(
-  implicit ec: ExecutionContext) {
+class ArrivalNotificationService @Inject()(
+  converterService: ArrivalNotificationConversionService,
+  connector: DestinationConnector,
+  appConfig: FrontendAppConfig,
+  submissionModelService: SubmissionModelService,
+  interchangeControlReferenceIdRepository: InterchangeControlReferenceIdRepository
+)(implicit ec: ExecutionContext) {
 
   def submit(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[Option[HttpResponse]] =
     converterService.convertToArrivalNotification(userAnswers) match {
-      case Some(notification) => connector.submitArrivalNotification(notification).map(Some(_))
-      case None               => Future.successful(None)
+      case Some(notification) => {
+        if (appConfig.xmlEndpoint) {
+          convertToXml(notification).flatMap {
+            xml =>
+              connector.submitArrivalMovement(xml).map(Some(_))
+          }
+        } else {
+          connector.submitArrivalNotification(notification).map(Some(_))
+        }
+      }.recover({ case ex: Exception => Logger.error(s"${ex.getMessage}"); None })
+
+      case None => Future.successful(None)
     }
+
+  private def convertToXml(arrivalNotification: ArrivalNotification): Future[Node] = {
+
+    val messageSender = MessageSender(appConfig.env, "eori")
+
+    interchangeControlReferenceIdRepository.nextInterchangeControlReferenceId().map {
+      referenceId =>
+        submissionModelService
+          .convertToSubmissionModel(
+            arrivalNotification         = arrivalNotification,
+            messageSender               = messageSender,
+            interchangeControlReference = referenceId,
+            timeOfPresentation          = LocalTime.now()
+          )
+          .toXml
+    }
+  }
 }

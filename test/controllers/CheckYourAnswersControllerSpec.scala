@@ -83,7 +83,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with JsonMatchers {
         .overrides(bind[ArrivalNotificationService].toInstance(mockService))
         .build()
 
-      when(mockService.submit(any())(any())).thenReturn(Future.successful(Some(HttpResponse(OK))))
+      when(mockService.submit(any())(any())).thenReturn(Future.successful(Some(HttpResponse(ACCEPTED))))
 
       val request = FakeRequest(POST, routes.CheckYourAnswersController.onPost(mrn).url)
 

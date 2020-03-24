@@ -23,12 +23,22 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.xml.Node
 
 class DestinationConnector @Inject()(val config: FrontendAppConfig, val http: HttpClient)(implicit ec: ExecutionContext) {
 
+  @deprecated("we need to use submitArrivalMovement instead", "xml is sent instead of json")
   def submitArrivalNotification(model: ArrivalNotification)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
 
     val serviceUrl = s"${config.destinationUrl}/arrival-notification"
     http.POST[ArrivalNotification, HttpResponse](serviceUrl, model)
+  }
+
+  def submitArrivalMovement(arrivalMovementXml: Node)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
+
+    val serviceUrl = s"${config.destinationUrl}/movements/arrivals"
+
+    val headers = Seq(("Content-Type", "application/xml"))
+    http.POSTString[HttpResponse](serviceUrl, arrivalMovementXml.toString(), headers)
   }
 }
