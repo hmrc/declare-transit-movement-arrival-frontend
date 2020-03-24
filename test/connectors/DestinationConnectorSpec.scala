@@ -44,7 +44,6 @@ class DestinationConnectorSpec extends SpecBase with WireMockServerHandler with 
 
   lazy val connector: DestinationConnector = app.injector.instanceOf[DestinationConnector]
   private val arrivalMovementXml           = <xml>data</xml>
-  val errorResponsesCodes: Gen[Int]        = Gen.chooseNum(400, 599)
 
   "DestinationConnector" - {
     //TODO need to remove these tests that method that is deprecated
