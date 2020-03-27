@@ -42,13 +42,9 @@ class ArrivalNotificationService @Inject()(
   def submit(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[Option[HttpResponse]] =
     converterService.convertToArrivalNotification(userAnswers) match {
       case Some(notification) => {
-        if (appConfig.xmlEndpoint) {
-          convertToXml(notification).flatMap {
-            xml =>
-              connector.submitArrivalMovement(xml).map(Some(_))
-          }
-        } else {
-          connector.submitArrivalNotification(notification).map(Some(_))
+        convertToXml(notification).flatMap {
+          xml =>
+            connector.submitArrivalMovement(xml).map(Some(_))
         }
       }.recover({ case ex: Exception => Logger.error(s"${ex.getMessage}"); None })
 
