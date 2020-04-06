@@ -16,6 +16,7 @@
 
 package models.messages
 
+import models.XMLWrites
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.{FreeSpec, MustMatchers}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -29,7 +30,9 @@ class InterchangeControlReferenceSpec extends FreeSpec with MustMatchers with Sc
       forAll(arbitrary[String], arbitrary[Int]) {
         (date, index) =>
           val expectedResult = <IntConRefMES11>{s"WE$date$index"}</IntConRefMES11>
-          val result         = InterchangeControlReference(date, index).toXml
+
+          val interchangeControlReference = InterchangeControlReference(date, index)
+          val result                      = XMLWrites.toXml(interchangeControlReference)
 
           result mustBe loadString(expectedResult.toString)
       }

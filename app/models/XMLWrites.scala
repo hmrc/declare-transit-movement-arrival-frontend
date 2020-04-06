@@ -14,21 +14,16 @@
  * limitations under the License.
  */
 
-package models.messages
-
-import helpers.XmlBuilderHelper
-import models.XMLWrites
+package models
 
 import scala.xml.NodeSeq
 
-case class InterchangeControlReference(date: String, index: Int)
+trait XMLWrites[A] {
+  def writes(a: A): NodeSeq
+}
 
-object InterchangeControlReference extends XmlBuilderHelper {
-  implicit val writes: XMLWrites[InterchangeControlReference] = new XMLWrites[InterchangeControlReference] {
-    override def writes(a: InterchangeControlReference): NodeSeq = {
+object XMLWrites {
 
-      val prefix = "WE"
-      buildAndEncodeElem(s"$prefix${a.date}${a.index}", "IntConRefMES11")
-    }
-  }
+  def toXml[A](a: A)(implicit writer: XMLWrites[A]): NodeSeq =
+    writer.writes(a)
 }

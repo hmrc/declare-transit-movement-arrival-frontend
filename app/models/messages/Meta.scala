@@ -19,6 +19,7 @@ package models.messages
 import java.time.{LocalDate, LocalTime}
 
 import helpers.XmlBuilderHelper
+import models.XMLWrites
 import utils.Format
 
 import scala.xml.NodeSeq
@@ -49,7 +50,7 @@ case class Meta(messageSender: MessageSender,
       buildAndEncodeElem(messageRecipient, "MesRecMES6") ++
       buildAndEncodeElem(Format.dateFormatted(dateOfPreparation), "DatOfPreMES9") ++
       buildAndEncodeElem(Format.timeFormatted(timeOfPreparation), "TimOfPreMES10") ++
-      interchangeControlReference.toXml ++
+      XMLWrites.toXml(interchangeControlReference) ++
       buildOptionalElem(recipientsReferencePassword, "RecRefMES12") ++
       buildOptionalElem(recipientsReferencePasswordQualifier, "RecRefQuaMES13") ++
       buildAndEncodeElem(applicationReference, "AppRefMES14") ++

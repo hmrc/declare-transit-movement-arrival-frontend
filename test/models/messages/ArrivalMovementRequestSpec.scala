@@ -19,7 +19,7 @@ package models.messages
 import java.time.{LocalDate, LocalDateTime, LocalTime}
 
 import generators.MessagesModelGenerators
-import models.{messages, LanguageCode, NormalProcedureFlag, ProcedureTypeFlag}
+import models.{messages, LanguageCode, NormalProcedureFlag, ProcedureTypeFlag, XMLWrites}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.{FreeSpec, MustMatchers, OptionValues}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
@@ -31,7 +31,7 @@ import scala.xml.{Node, NodeSeq}
 import scala.xml.Utility.trim
 import scala.xml.XML.loadString
 
-class ArrivalNotificationRequestSpec
+class ArrivalMovementRequestSpec
     extends FreeSpec
     with MustMatchers
     with GuiceOneAppPerSuite
@@ -69,7 +69,7 @@ class ArrivalNotificationRequestSpec
         <DatOfPreMES9>{dateOfPreparationFormatted}</DatOfPreMES9>
         <TimOfPreMES10>{timeOfPreparationFormatted}</TimOfPreMES10>
         {
-          minimalArrivalNotificationRequest.meta.interchangeControlReference.toXml
+          XMLWrites.toXml(minimalArrivalNotificationRequest.meta.interchangeControlReference)
         }
         <AppRefMES14>{minimalArrivalNotificationRequest.meta.applicationReference}</AppRefMES14>
         <TesIndMES18>{minimalArrivalNotificationRequest.meta.testIndicator}</TesIndMES18>
@@ -108,7 +108,7 @@ class ArrivalNotificationRequestSpec
                     buildAndEncodeElem(arrivalMovementRequest.meta.messageRecipient, "MesRecMES6") ++
                     buildAndEncodeElem(arrivalMovementRequest.meta.dateOfPreparation, "DatOfPreMES9") ++
                     buildAndEncodeElem(Format.timeFormatted(arrivalMovementRequest.meta.timeOfPreparation), "TimOfPreMES10") ++
-                    arrivalMovementRequest.meta.interchangeControlReference.toXml ++
+                    XMLWrites.toXml(arrivalMovementRequest.meta.interchangeControlReference) ++
                     buildOptionalElem(arrivalMovementRequest.meta.recipientsReferencePassword, "RecRefMES12") ++
                     buildOptionalElem(arrivalMovementRequest.meta.recipientsReferencePasswordQualifier, "RecRefQuaMES13") ++
                     buildAndEncodeElem(arrivalMovementRequest.meta.applicationReference, "AppRefMES14") ++
@@ -201,7 +201,7 @@ class ArrivalNotificationRequestSpec
           <DatOfPreMES9>{dateOfPreparationFormatted}</DatOfPreMES9>
           <TimOfPreMES10>{timeOfPreparationFormatted}</TimOfPreMES10>
           {
-            arrivalNotificationRequestWithIncident.meta.interchangeControlReference.toXml
+            XMLWrites.toXml(minimalArrivalNotificationRequest.meta.interchangeControlReference)
           }
           <AppRefMES14>{arrivalNotificationRequestWithIncident.meta.applicationReference}</AppRefMES14>
           <TesIndMES18>{arrivalNotificationRequestWithIncident.meta.testIndicator}</TesIndMES18>
