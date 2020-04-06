@@ -19,7 +19,7 @@ package models.messages
 import java.time.LocalDateTime
 
 import generators.MessagesModelGenerators
-import models.XMLWrites
+import models.XMLWrites._
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.{FreeSpec, MustMatchers}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -97,7 +97,7 @@ class MetaSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks 
               <MesRecMES6>{messageRecipient}</MesRecMES6> ++
               <DatOfPreMES9>{Format.dateFormatted(meta.dateOfPreparation)}</DatOfPreMES9> ++
               <TimOfPreMES10>{Format.timeFormatted(meta.timeOfPreparation)}</TimOfPreMES10> ++ {
-              XMLWrites.toXml(meta.interchangeControlReference) ++
+              meta.interchangeControlReference.toXml ++
                 recipientsReferencePassword ++
                 recipientsReferencePasswordQualifier
             } ++

@@ -19,7 +19,8 @@ package models.messages
 import java.time.{LocalDate, LocalDateTime, LocalTime}
 
 import generators.MessagesModelGenerators
-import models.{messages, LanguageCode, NormalProcedureFlag, ProcedureTypeFlag, XMLWrites}
+import models.{messages, LanguageCode, NormalProcedureFlag, ProcedureTypeFlag}
+import models.XMLWrites._
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.{FreeSpec, MustMatchers, OptionValues}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
@@ -69,7 +70,7 @@ class ArrivalMovementRequestSpec
         <DatOfPreMES9>{dateOfPreparationFormatted}</DatOfPreMES9>
         <TimOfPreMES10>{timeOfPreparationFormatted}</TimOfPreMES10>
         {
-          XMLWrites.toXml(minimalArrivalNotificationRequest.meta.interchangeControlReference)
+          minimalArrivalNotificationRequest.meta.interchangeControlReference.toXml
         }
         <AppRefMES14>{minimalArrivalNotificationRequest.meta.applicationReference}</AppRefMES14>
         <TesIndMES18>{minimalArrivalNotificationRequest.meta.testIndicator}</TesIndMES18>
@@ -108,7 +109,7 @@ class ArrivalMovementRequestSpec
                     buildAndEncodeElem(arrivalMovementRequest.meta.messageRecipient, "MesRecMES6") ++
                     buildAndEncodeElem(arrivalMovementRequest.meta.dateOfPreparation, "DatOfPreMES9") ++
                     buildAndEncodeElem(Format.timeFormatted(arrivalMovementRequest.meta.timeOfPreparation), "TimOfPreMES10") ++
-                    XMLWrites.toXml(arrivalMovementRequest.meta.interchangeControlReference) ++
+                    arrivalMovementRequest.meta.interchangeControlReference.toXml ++
                     buildOptionalElem(arrivalMovementRequest.meta.recipientsReferencePassword, "RecRefMES12") ++
                     buildOptionalElem(arrivalMovementRequest.meta.recipientsReferencePasswordQualifier, "RecRefQuaMES13") ++
                     buildAndEncodeElem(arrivalMovementRequest.meta.applicationReference, "AppRefMES14") ++
@@ -201,7 +202,7 @@ class ArrivalMovementRequestSpec
           <DatOfPreMES9>{dateOfPreparationFormatted}</DatOfPreMES9>
           <TimOfPreMES10>{timeOfPreparationFormatted}</TimOfPreMES10>
           {
-            XMLWrites.toXml(minimalArrivalNotificationRequest.meta.interchangeControlReference)
+            minimalArrivalNotificationRequest.meta.interchangeControlReference.toXml
           }
           <AppRefMES14>{arrivalNotificationRequestWithIncident.meta.applicationReference}</AppRefMES14>
           <TesIndMES18>{arrivalNotificationRequestWithIncident.meta.testIndicator}</TesIndMES18>

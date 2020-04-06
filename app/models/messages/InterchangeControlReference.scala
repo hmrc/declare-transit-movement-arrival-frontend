@@ -16,19 +16,17 @@
 
 package models.messages
 
-import helpers.XmlBuilderHelper
 import models.XMLWrites
+import play.twirl.api.utils.StringEscapeUtils
 
 import scala.xml.NodeSeq
 
 case class InterchangeControlReference(date: String, index: Int)
 
-object InterchangeControlReference extends XmlBuilderHelper {
-  implicit val writes: XMLWrites[InterchangeControlReference] = new XMLWrites[InterchangeControlReference] {
-    override def writes(a: InterchangeControlReference): NodeSeq = {
+object InterchangeControlReference {
 
-      val prefix = "WE"
-      buildAndEncodeElem(s"$prefix${a.date}${a.index}", "IntConRefMES11")
-    }
+  implicit val writes: XMLWrites[InterchangeControlReference] = new XMLWrites[InterchangeControlReference] {
+    override def writes(a: InterchangeControlReference): NodeSeq =
+      <IntConRefMES11> {StringEscapeUtils.escapeXml11(s"WE${a.date}${a.index}")} </IntConRefMES11>
   }
 }
