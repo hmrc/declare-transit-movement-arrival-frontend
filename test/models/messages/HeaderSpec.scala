@@ -20,6 +20,7 @@ import java.time.LocalDate
 
 import generators.MessagesModelGenerators
 import models.LanguageCodeEnglish
+import models.XMLWrites._
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.{FreeSpec, MustMatchers}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -53,7 +54,7 @@ class HeaderSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyCheck
               <ArrNotDatHEA141>{Format.dateFormatted(arrivalNotificationDate)}</ArrNotDatHEA141>
             </HEAHEA>
 
-          trim(minimalHeader.toXml) mustBe trim(loadString(expectedResult.toString))
+          minimalHeader.toXml mustBe trim(loadString(expectedResult.toString))
       }
     }
 
@@ -87,7 +88,7 @@ class HeaderSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyCheck
               <ArrNotDatHEA141>{Format.dateFormatted(header.notificationDate)}</ArrNotDatHEA141>
             </HEAHEA>
 
-          trim(header.toXml) mustBe trim(loadString(expectedResult.toString))
+          header.toXml mustBe trim(loadString(expectedResult.toString))
       }
     }
   }

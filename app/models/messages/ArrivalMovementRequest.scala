@@ -17,7 +17,7 @@
 package models.messages
 
 import helpers.XmlBuilderHelper
-import play.api.libs.json.Json
+import models.XMLWrites._
 
 import scala.collection.immutable.ListMap
 import scala.xml.{Elem, Node, NodeSeq}

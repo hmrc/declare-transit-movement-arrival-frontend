@@ -34,11 +34,10 @@ package models.messages
 
 import java.time.LocalDate
 
-import helpers.XmlBuilderHelper
-import models.{LanguageCode, LanguageCodeEnglish, ProcedureTypeFlag}
+import models.{LanguageCode, LanguageCodeEnglish, ProcedureTypeFlag, XMLWrites}
 import utils.Format
 
-import scala.xml.Node
+import scala.xml.NodeSeq
 
 case class Header(movementReferenceNumber: String,
                   customsSubPlace: Option[String] = None,
@@ -46,24 +45,6 @@ case class Header(movementReferenceNumber: String,
                   arrivalAgreedLocationOfGoods: Option[String] = None,
                   procedureTypeFlag: ProcedureTypeFlag,
                   notificationDate: LocalDate)
-    extends XmlBuilderHelper {
-
-  def toXml: Node =
-    <HEAHEA>
-      {
-      buildAndEncodeElem(movementReferenceNumber, "DocNumHEA5") ++
-        buildOptionalElem(customsSubPlace, "CusSubPlaHEA66") ++
-        buildAndEncodeElem(arrivalNotificationPlace, "ArrNotPlaHEA60") ++
-        buildAndEncodeElem(Header.Constants.languageCode, "ArrNotPlaHEA60LNG") ++
-        buildOptionalElem(arrivalAgreedLocationOfGoods, "ArrAgrLocCodHEA62") ++
-        buildOptionalElem(arrivalAgreedLocationOfGoods, "ArrAgrLocOfGooHEA63") ++
-        buildAndEncodeElem(Header.Constants.languageCode, "ArrAgrLocOfGooHEA63LNG") ++
-        buildOptionalElem(arrivalAgreedLocationOfGoods, "ArrAutLocOfGooHEA65") ++
-        buildAndEncodeElem(procedureTypeFlag, "SimProFlaHEA132") ++
-        buildAndEncodeElem(Format.dateFormatted(notificationDate), "ArrNotDatHEA141")
-      }
-    </HEAHEA>
-}
 
 object Header {
 
@@ -71,5 +52,21 @@ object Header {
     val languageCode: LanguageCode     = LanguageCodeEnglish
     val customsSubPlaceLength          = 17
     val arrivalNotificationPlaceLength = 35
+  }
+
+  implicit def writes: XMLWrites[Header] = new XMLWrites[Header] {
+    override def writes(a: Header): NodeSeq = <HEAHEA>{
+      <DocNumHEA5>{escapeXml(a.movementReferenceNumber)}</DocNumHEA5> ++
+        a.customsSubPlace.fold(NodeSeq.Empty){place => <CusSubPlaHEA66>{escapeXml(place)}</CusSubPlaHEA66>} ++
+        <ArrNotPlaHEA60>{escapeXml(a.arrivalNotificationPlace)}</ArrNotPlaHEA60> ++
+        <ArrNotPlaHEA60LNG>{Header.Constants.languageCode.code}</ArrNotPlaHEA60LNG> ++
+        a.arrivalAgreedLocationOfGoods.fold(NodeSeq.Empty) { location =>
+          <ArrAgrLocCodHEA62>{escapeXml(location)} </ArrAgrLocCodHEA62> ++
+          <ArrAgrLocOfGooHEA63>{escapeXml(location)} </ArrAgrLocOfGooHEA63>} ++
+        <ArrAgrLocOfGooHEA63LNG>{Header.Constants.languageCode.code}</ArrAgrLocOfGooHEA63LNG> ++
+        a.arrivalAgreedLocationOfGoods.fold(NodeSeq.Empty){ location =>
+          <ArrAutLocOfGooHEA65> {escapeXml(location)} </ArrAutLocOfGooHEA65>} ++
+        <SimProFlaHEA132>{a.procedureTypeFlag.code}</SimProFlaHEA132> ++
+        <ArrNotDatHEA141>{Format.dateFormatted(a.notificationDate)}</ArrNotDatHEA141>}</HEAHEA>
   }
 }

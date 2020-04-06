@@ -14,18 +14,11 @@
  * limitations under the License.
  */
 
-package models.messages
+package models
 
-import models.XMLWrites
+import play.twirl.api.utils.StringEscapeUtils
 
-import scala.xml.NodeSeq
+package object messages {
 
-case class InterchangeControlReference(date: String, index: Int)
-
-object InterchangeControlReference {
-
-  implicit val writes: XMLWrites[InterchangeControlReference] = new XMLWrites[InterchangeControlReference] {
-    override def writes(a: InterchangeControlReference): NodeSeq =
-      <IntConRefMES11>{escapeXml(s"WE${a.date}${a.index}")}</IntConRefMES11>
-  }
+  def escapeXml(xml: String): String = StringEscapeUtils.escapeXml11(xml)
 }
