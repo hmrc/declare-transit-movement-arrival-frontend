@@ -42,29 +42,29 @@ class ArrivalNotificationService @Inject()(
   def submit(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[Option[HttpResponse]] =
     converterService.convertToArrivalNotification(userAnswers) match {
       case Some(notification) => {
-        convertToXml(notification).flatMap {
-          xml =>
-            connector.submitArrivalMovement(xml).map(Some(_))
-        }
+
+        val messageSender = MessageSender(appConfig.env, "eori")
+
+        interchangeControlReferenceIdRepository
+          .nextInterchangeControlReferenceId()
+          .map {
+            referenceId =>
+              submissionModelService
+                .convertToSubmissionModel(
+                  arrivalNotification         = notification,
+                  messageSender               = messageSender,
+                  interchangeControlReference = referenceId,
+                  timeOfPresentation          = LocalTime.now()
+                )
+                .toXml
+          }
+          .flatMap {
+            xml =>
+              connector.submitArrivalMovement(xml).map(Some(_))
+          }
       }.recover({ case ex: Exception => Logger.error(s"${ex.getMessage}"); None })
 
       case None => Future.successful(None)
     }
 
-  private def convertToXml(arrivalNotification: ArrivalNotification): Future[Node] = {
-
-    val messageSender = MessageSender(appConfig.env, "eori")
-
-    interchangeControlReferenceIdRepository.nextInterchangeControlReferenceId().map {
-      referenceId =>
-        submissionModelService
-          .convertToSubmissionModel(
-            arrivalNotification         = arrivalNotification,
-            messageSender               = messageSender,
-            interchangeControlReference = referenceId,
-            timeOfPresentation          = LocalTime.now()
-          )
-          .toXml
-    }
-  }
 }

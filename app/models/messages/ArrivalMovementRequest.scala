@@ -20,15 +20,14 @@ import helpers.XmlBuilderHelper
 import play.api.libs.json.Json
 
 import scala.collection.immutable.ListMap
-import scala.xml.{Node, NodeSeq}
+import scala.xml.{Elem, Node, NodeSeq}
 
 case class ArrivalMovementRequest(meta: Meta,
                                   header: Header,
                                   traderDestination: TraderDestination,
                                   customsOfficeOfPresentation: CustomsOfficeOfPresentation,
                                   enRouteEvents: Option[Seq[EnRouteEvent]])
-    extends XmlBuilderHelper
-    with RequestConstants {
+    extends XmlBuilderHelper {
 
   val xMessageType: XMessageType     = XMessageType("IE007")
   val messageCode: MessageCode       = MessageCode("GB007A")
@@ -48,6 +47,7 @@ case class ArrivalMovementRequest(meta: Meta,
       }
     }
 
-    addChildrenToRoot(parentNode, childNodes)
+    Elem(parentNode.prefix, parentNode.label, parentNode.attributes, parentNode.scope, parentNode.child.isEmpty, parentNode.child ++ childNodes: _*)
+
   }
 }

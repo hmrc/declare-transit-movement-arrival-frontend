@@ -44,6 +44,4 @@ class XmlBuilderHelper {
     case _            => NodeSeq.Empty
   }
 
-  def addChildrenToRoot(root: Node, childNodes: NodeSeq): Node =
-    Elem(root.prefix, root.label, root.attributes, root.scope, root.child.isEmpty, root.child ++ childNodes: _*)
 }
