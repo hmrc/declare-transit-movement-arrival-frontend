@@ -17,12 +17,13 @@
 package models.messages
 
 import generators.MessagesModelGenerators
+import models.XMLWrites._
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.{FreeSpec, MustMatchers}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
+import scala.xml.{Node, NodeSeq}
 import scala.xml.Utility.trim
-import scala.xml.XML.loadString
 
 class CustomsOfficeOfPresentationSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with MessagesModelGenerators {
 
@@ -31,12 +32,12 @@ class CustomsOfficeOfPresentationSpec extends FreeSpec with MustMatchers with Sc
     "must create valid xml" in {
       forAll(arbitrary[CustomsOfficeOfPresentation]) {
         customsOfficeOfPresentation =>
-          val expectedResult =
+          val expectedResult: NodeSeq =
             <CUSOFFPREOFFRES>
               <RefNumRES1>{customsOfficeOfPresentation.presentationOffice}</RefNumRES1>
             </CUSOFFPREOFFRES>
 
-          trim(customsOfficeOfPresentation.toXml) mustBe trim(loadString(expectedResult.toString))
+          customsOfficeOfPresentation.toXml.map(trim) mustBe expectedResult.map(trim)
       }
     }
   }

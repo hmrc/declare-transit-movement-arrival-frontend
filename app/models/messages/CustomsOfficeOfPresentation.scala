@@ -16,21 +16,20 @@
 
 package models.messages
 
-import helpers.XmlBuilderHelper
+import models.XMLWrites
 
-import scala.xml.Node
-
-case class CustomsOfficeOfPresentation(presentationOffice: String) extends XmlBuilderHelper {
-
-  def toXml: Node =
-    <CUSOFFPREOFFRES>
-      {buildAndEncodeElem(presentationOffice, "RefNumRES1")}
-    </CUSOFFPREOFFRES>
-}
+case class CustomsOfficeOfPresentation(presentationOffice: String)
 
 object CustomsOfficeOfPresentation {
+
+  implicit val writes: XMLWrites[CustomsOfficeOfPresentation] = {
+    XMLWrites(a => <CUSOFFPREOFFRES>
+        <RefNumRES1>{a.presentationOffice}</RefNumRES1>
+      </CUSOFFPREOFFRES>)
+  }
 
   object Constants {
     val presentationOfficeLength = 8
   }
+
 }

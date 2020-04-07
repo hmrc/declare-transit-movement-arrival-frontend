@@ -16,7 +16,7 @@
 
 package models.messages
 
-import models.{LanguageCode, LanguageCodeEnglish, XMLWrites}
+import models.{LanguageCodeEnglish, XMLWrites}
 
 import scala.xml.NodeSeq
 
@@ -67,12 +67,11 @@ object TraderDestination {
   }
 
   object Constants {
-    val languageCode: LanguageCode = LanguageCodeEnglish
-    val eoriLength                 = 17
-    val nameLength                 = 35
-    val streetAndNumberLength      = 35
-    val postCodeLength             = 9
-    val cityLength                 = 35
-    val countryCodeLength          = 2
+    val eoriLength            = 17
+    val nameLength            = 35
+    val streetAndNumberLength = 35
+    val postCodeLength        = 9
+    val cityLength            = 35
+    val countryCodeLength     = 2
   }
 }
