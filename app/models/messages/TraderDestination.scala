@@ -16,10 +16,9 @@
 
 package models.messages
 
-import helpers.XmlBuilderHelper
-import models.{LanguageCode, LanguageCodeEnglish}
+import models.{LanguageCode, LanguageCodeEnglish, XMLWrites}
 
-import scala.xml.Node
+import scala.xml.NodeSeq
 
 case class TraderDestination(name: Option[String],
                              streetAndNumber: Option[String],
@@ -27,24 +26,45 @@ case class TraderDestination(name: Option[String],
                              city: Option[String],
                              countryCode: Option[String],
                              eori: Option[String])
-    extends XmlBuilderHelper {
-
-  def toXml: Node =
-    <TRADESTRD>
-      {
-      buildOptionalElem(name, "NamTRD7") ++
-        buildOptionalElem(streetAndNumber, "StrAndNumTRD22") ++
-        buildOptionalElem(postCode, "PosCodTRD23") ++
-        buildOptionalElem(city, "CitTRD24") ++
-        buildOptionalElem(countryCode, "CouTRD25") ++
-        buildAndEncodeElem(TraderDestination.Constants.languageCode, "NADLNGRD") ++
-        buildOptionalElem(eori, "TINTRD59")
-      }
-    </TRADESTRD>
-
-}
 
 object TraderDestination {
+
+  implicit val writes: XMLWrites[TraderDestination] = {
+    XMLWrites(a => <TRADESTRD>
+        {
+          a.name.fold(NodeSeq.Empty) {
+            name =>
+            <NamTRD7>{name}</NamTRD7>
+          } ++ {
+            a.streetAndNumber.fold(NodeSeq.Empty) {
+              streetAndNumber =>
+                <StrAndNumTRD22>{streetAndNumber}</StrAndNumTRD22>
+            }
+          } ++ {
+            a.postCode.fold(NodeSeq.Empty) {
+              postCode =>
+                <PosCodTRD23>{postCode}</PosCodTRD23>
+            }
+          } ++ {
+            a.city.fold(NodeSeq.Empty) {
+              city =>
+                <CitTRD24>{city}</CitTRD24>
+            }
+          } ++ {
+            a.countryCode.fold(NodeSeq.Empty) {
+              countryCode =>
+                <CouTRD25>{countryCode}</CouTRD25>
+            }
+          } ++
+          <NADLNGRD>{LanguageCodeEnglish.code}</NADLNGRD> ++ {
+            a.eori.fold(NodeSeq.Empty) {
+              eori =>
+                <TINTRD59>{eori}</TINTRD59>
+            }
+          }
+        }
+      </TRADESTRD>)
+  }
 
   object Constants {
     val languageCode: LanguageCode = LanguageCodeEnglish
