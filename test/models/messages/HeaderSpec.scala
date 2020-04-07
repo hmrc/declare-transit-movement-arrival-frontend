@@ -54,7 +54,7 @@ class HeaderSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyCheck
               <ArrNotDatHEA141>{Format.dateFormatted(arrivalNotificationDate)}</ArrNotDatHEA141>
             </HEAHEA>
 
-          minimalHeader.toXml mustBe trim(loadString(expectedResult.toString))
+          minimalHeader.toXml mustEqual trim(expectedResult)
       }
     }
 
@@ -88,7 +88,7 @@ class HeaderSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyCheck
               <ArrNotDatHEA141>{Format.dateFormatted(header.notificationDate)}</ArrNotDatHEA141>
             </HEAHEA>
 
-          header.toXml mustBe trim(loadString(expectedResult.toString))
+          header.toXml mustEqual trim(expectedResult)
       }
     }
   }

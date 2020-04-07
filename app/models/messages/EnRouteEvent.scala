@@ -19,6 +19,7 @@ package models.messages
 import helpers.XmlBuilderHelper
 import models.LanguageCodeEnglish
 import play.api.libs.json._
+import models.XMLWrites._
 
 import scala.xml.{Node, NodeSeq}
 
