@@ -24,8 +24,7 @@ case class InterchangeControlReference(date: String, index: Int)
 
 object InterchangeControlReference {
 
-  implicit val writes: XMLWrites[InterchangeControlReference] = new XMLWrites[InterchangeControlReference] {
-    override def writes(a: InterchangeControlReference): NodeSeq =
-      <IntConRefMES11>{escapeXml(s"WE${a.date}${a.index}")}</IntConRefMES11>
-  }
+  implicit val writes: XMLWrites[InterchangeControlReference] =
+    XMLWrites(a => <IntConRefMES11>{escapeXml(s"WE${a.date}${a.index}")}</IntConRefMES11>)
+
 }

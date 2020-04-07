@@ -24,6 +24,10 @@ trait XMLWrites[A] {
 
 object XMLWrites {
 
+  def apply[A](writerFn: A => NodeSeq): XMLWrites[A] = new XMLWrites[A] {
+    override def writes(a: A): NodeSeq = writerFn(a)
+  }
+
   implicit class XMLWritesOps[A](a: A) {
 
     def toXml(implicit writer: XMLWrites[A]): NodeSeq =
