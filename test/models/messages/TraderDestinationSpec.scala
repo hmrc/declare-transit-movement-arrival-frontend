@@ -18,13 +18,13 @@ package models.messages
 
 import generators.MessagesModelGenerators
 import models.LanguageCodeEnglish
+import models.XMLWrites._
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.{FreeSpec, MustMatchers}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
 import scala.xml.NodeSeq
 import scala.xml.Utility.trim
-import scala.xml.XML.loadString
 
 class TraderDestinationSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with MessagesModelGenerators {
 
@@ -33,12 +33,12 @@ class TraderDestinationSpec extends FreeSpec with MustMatchers with ScalaCheckPr
 
       val traderDestination = TraderDestination(None, None, None, None, None, None)
 
-      val expectedResult =
+      val expectedResult: NodeSeq =
         <TRADESTRD>
           <NADLNGRD>{LanguageCodeEnglish.code}</NADLNGRD>
         </TRADESTRD>
 
-      trim(traderDestination.toXml) mustBe trim(loadString(expectedResult.toString))
+      traderDestination.toXml.map(trim) mustBe expectedResult.map(trim)
     }
 
     "must create valid xml" in {
@@ -76,7 +76,7 @@ class TraderDestinationSpec extends FreeSpec with MustMatchers with ScalaCheckPr
             }
             </TRADESTRD>
 
-          trim(traderDestination.toXml) mustBe trim(loadString(expectedResult.toString))
+          traderDestination.toXml.map(trim) mustBe expectedResult.map(trim)
       }
     }
 

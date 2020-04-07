@@ -16,8 +16,6 @@
 
 package models.messages
 
-import java.time.LocalDateTime
-
 import generators.MessagesModelGenerators
 import models.XMLWrites._
 import org.scalacheck.Arbitrary.arbitrary
