@@ -61,35 +61,23 @@ class ArrivalMovementRequestSpec
 
   private val minimalValidXml: Node = {
     <CC007A>
-        <SynIdeMES1>{minimalArrivalNotificationRequest.syntaxIdentifier}</SynIdeMES1>
-        <SynVerNumMES2>{minimalArrivalNotificationRequest.meta.syntaxVersionNumber}</SynVerNumMES2>
-        {
-          minimalArrivalNotificationRequest.meta.messageSender.toXml
-        }
-        <MesRecMES6>{minimalArrivalNotificationRequest.meta.messageRecipient}</MesRecMES6>
-        <DatOfPreMES9>{dateOfPreparationFormatted}</DatOfPreMES9>
-        <TimOfPreMES10>{timeOfPreparationFormatted}</TimOfPreMES10>
-        {
-          minimalArrivalNotificationRequest.meta.interchangeControlReference.toXml
-        }
-        <AppRefMES14>{minimalArrivalNotificationRequest.meta.applicationReference}</AppRefMES14>
-        <TesIndMES18>{minimalArrivalNotificationRequest.meta.testIndicator}</TesIndMES18>
-        <MesIdeMES19>{minimalArrivalNotificationRequest.meta.messageIndication}</MesIdeMES19>
-        <MesTypMES20>{minimalArrivalNotificationRequest.messageCode.code}</MesTypMES20>
-        <HEAHEA>
-          <DocNumHEA5>{minimalArrivalNotificationRequest.header.movementReferenceNumber}</DocNumHEA5>
-          <ArrNotPlaHEA60>{minimalArrivalNotificationRequest.header.arrivalNotificationPlace}</ArrNotPlaHEA60>
-          <ArrNotPlaHEA60LNG>{Header.Constants.languageCode.code}</ArrNotPlaHEA60LNG>
-          <ArrAgrLocOfGooHEA63LNG>{Header.Constants.languageCode.code}</ArrAgrLocOfGooHEA63LNG>
-          <SimProFlaHEA132>{minimalArrivalNotificationRequest.header.procedureTypeFlag.code}</SimProFlaHEA132>
-          <ArrNotDatHEA141>{dateOfPreparationFormatted}</ArrNotDatHEA141>
-        </HEAHEA>
-        <TRADESTRD>
-          <NADLNGRD>{Header.Constants.languageCode.code}</NADLNGRD>
-        </TRADESTRD>
-        <CUSOFFPREOFFRES>
-          <RefNumRES1>{minimalArrivalNotificationRequest.customsOfficeOfPresentation.presentationOffice}</RefNumRES1>
-        </CUSOFFPREOFFRES>
+      {
+        minimalArrivalNotificationRequest.meta.toXml
+      }
+      <HEAHEA>
+        <DocNumHEA5>{minimalArrivalNotificationRequest.header.movementReferenceNumber}</DocNumHEA5>
+        <ArrNotPlaHEA60>{minimalArrivalNotificationRequest.header.arrivalNotificationPlace}</ArrNotPlaHEA60>
+        <ArrNotPlaHEA60LNG>{Header.Constants.languageCode.code}</ArrNotPlaHEA60LNG>
+        <ArrAgrLocOfGooHEA63LNG>{Header.Constants.languageCode.code}</ArrAgrLocOfGooHEA63LNG>
+        <SimProFlaHEA132>{minimalArrivalNotificationRequest.header.procedureTypeFlag.code}</SimProFlaHEA132>
+        <ArrNotDatHEA141>{dateOfPreparationFormatted}</ArrNotDatHEA141>
+      </HEAHEA>
+      <TRADESTRD>
+        <NADLNGRD>{Header.Constants.languageCode.code}</NADLNGRD>
+      </TRADESTRD>
+      <CUSOFFPREOFFRES>
+        <RefNumRES1>{minimalArrivalNotificationRequest.customsOfficeOfPresentation.presentationOffice}</RefNumRES1>
+      </CUSOFFPREOFFRES>
       </CC007A>
   }
 
@@ -101,27 +89,7 @@ class ArrivalMovementRequestSpec
 
             val validXml: Node =
               <CC007A> {
-                    buildAndEncodeElem(arrivalMovementRequest.meta.syntaxIdentifier, "SynIdeMES1") ++
-                    buildAndEncodeElem(arrivalMovementRequest.meta.syntaxVersionNumber, "SynVerNumMES2") ++
-                    arrivalMovementRequest.meta.messageSender.toXml ++
-                    buildOptionalElem(arrivalMovementRequest.meta.senderIdentificationCodeQualifier, "SenIdeCodQuaMES4") ++
-                    buildOptionalElem(arrivalMovementRequest.meta.recipientIdentificationCodeQualifier, "RecIdeCodQuaMES7") ++
-                    buildAndEncodeElem(arrivalMovementRequest.meta.messageRecipient, "MesRecMES6") ++
-                    buildAndEncodeElem(arrivalMovementRequest.meta.dateOfPreparation, "DatOfPreMES9") ++
-                    buildAndEncodeElem(Format.timeFormatted(arrivalMovementRequest.meta.timeOfPreparation), "TimOfPreMES10") ++
-                    arrivalMovementRequest.meta.interchangeControlReference.toXml ++
-                    buildOptionalElem(arrivalMovementRequest.meta.recipientsReferencePassword, "RecRefMES12") ++
-                    buildOptionalElem(arrivalMovementRequest.meta.recipientsReferencePasswordQualifier, "RecRefQuaMES13") ++
-                    buildAndEncodeElem(arrivalMovementRequest.meta.applicationReference, "AppRefMES14") ++
-                    buildOptionalElem(arrivalMovementRequest.meta.priority, "PriMES15") ++
-                    buildOptionalElem(arrivalMovementRequest.meta.acknowledgementRequest, "AckReqMES16") ++
-                    buildOptionalElem(arrivalMovementRequest.meta.communicationsAgreementId, "ComAgrIdMES17") ++
-                    buildAndEncodeElem(arrivalMovementRequest.meta.testIndicator, "TesIndMES18") ++
-                    buildAndEncodeElem(arrivalMovementRequest.meta.messageIndication, "MesIdeMES19") ++
-                    buildAndEncodeElem(arrivalMovementRequest.messageCode.code, "MesTypMES20") ++
-                    buildOptionalElem(arrivalMovementRequest.meta.commonAccessReference, "ComAccRefMES21") ++
-                    buildOptionalElem(arrivalMovementRequest.meta.messageSequenceNumber, "MesSeqNumMES22") ++
-                    buildOptionalElem(arrivalMovementRequest.meta.firstAndLastTransfer, "FirAndLasTraMES23")
+                    arrivalMovementRequest.meta.toXml
                   }
                   <HEAHEA> {
                     buildAndEncodeElem(arrivalMovementRequest.header.movementReferenceNumber, "DocNumHEA5") ++
@@ -193,21 +161,9 @@ class ArrivalMovementRequestSpec
 
       val minimalValidXmlWithEnrouteEvent: Node =
         <CC007A>
-          <SynIdeMES1>{arrivalNotificationRequestWithIncident.syntaxIdentifier}</SynIdeMES1>
-          <SynVerNumMES2>{arrivalNotificationRequestWithIncident.meta.syntaxVersionNumber}</SynVerNumMES2>
           {
-            arrivalNotificationRequestWithIncident.meta.messageSender.toXml
+            arrivalNotificationRequestWithIncident.meta.toXml
           }
-          <MesRecMES6>{arrivalNotificationRequestWithIncident.meta.messageRecipient}</MesRecMES6>
-          <DatOfPreMES9>{dateOfPreparationFormatted}</DatOfPreMES9>
-          <TimOfPreMES10>{timeOfPreparationFormatted}</TimOfPreMES10>
-          {
-            minimalArrivalNotificationRequest.meta.interchangeControlReference.toXml
-          }
-          <AppRefMES14>{arrivalNotificationRequestWithIncident.meta.applicationReference}</AppRefMES14>
-          <TesIndMES18>{arrivalNotificationRequestWithIncident.meta.testIndicator}</TesIndMES18>
-          <MesIdeMES19>{arrivalNotificationRequestWithIncident.meta.messageIndication}</MesIdeMES19>
-          <MesTypMES20>{arrivalNotificationRequestWithIncident.messageCode.code}</MesTypMES20>
           <HEAHEA>
             <DocNumHEA5>{arrivalNotificationRequestWithIncident.header.movementReferenceNumber}</DocNumHEA5>
             <ArrNotPlaHEA60>{arrivalNotificationRequestWithIncident.header.arrivalNotificationPlace}</ArrNotPlaHEA60>

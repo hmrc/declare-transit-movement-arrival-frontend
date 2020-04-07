@@ -29,7 +29,6 @@ import scala.xml.NodeSeq
 
 class MetaSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with MessagesModelGenerators {
 
-  private val genDateTime = dateTimesBetween(LocalDateTime.of(1900, 1, 1, 0, 0), LocalDateTime.now)
   //format off
   "Meta" - {
 
@@ -39,12 +38,11 @@ class MetaSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks 
     val applicationReference = "NCTS"
     val messageIndication    = "1"
     val testIndicator        = "0"
+    val messageCode          = "GB007A"
 
     "must create valid xml" in {
-      forAll(arbitrary[Meta], arbitrary[String]) {
-        (meta, code) =>
-          val messageCode = MessageCode(code)
-
+      forAll(arbitrary[Meta]) {
+        (meta) =>
           val senderIdentificationCodeQualifier = meta.senderIdentificationCodeQualifier.fold(NodeSeq.Empty)(
             senderIdentification => <SenIdeCodQuaMES4>{senderIdentification}</SenIdeCodQuaMES4>
           )
@@ -108,14 +106,14 @@ class MetaSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks 
             } ++
               <TesIndMES18>{testIndicator}</TesIndMES18> ++
               <MesIdeMES19>{messageIndication}</MesIdeMES19> ++ {
-              messageCode.toXml ++
+              <MesTypMES20>{messageCode}</MesTypMES20> ++
                 commonAccessReference ++
                 messageSequenceNumber ++
                 firstAndLastTransfer
             }
           }
 
-          meta.toXml(messageCode) mustBe expectedResult
+          meta.toXml mustBe expectedResult
       }
     }
   }

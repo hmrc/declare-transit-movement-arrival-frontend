@@ -16,11 +16,12 @@
 
 package models.messages
 
-import helpers.XmlBuilderHelper
+import models.XMLWrites
 
-import scala.xml.NodeSeq
+case class MessageSender(environment: String, eori: String)
 
-case class MessageSender(environment: String, eori: String) extends XmlBuilderHelper {
+object MessageSender {
 
-  def toXml: NodeSeq = buildAndEncodeElem(s"$environment-$eori", "MesSenMES3")
+  implicit val writes: XMLWrites[MessageSender] =
+    XMLWrites(a => <MesSenMES3>{escapeXml(s"${a.environment}-${a.eori}")}</MesSenMES3>)
 }

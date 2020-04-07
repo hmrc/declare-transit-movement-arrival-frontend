@@ -21,8 +21,6 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.{FreeSpec, MustMatchers}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
-import scala.xml.XML._
-
 class InterchangeControlReferenceSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks {
 
   "InterchangeControlReference" - {
@@ -34,7 +32,7 @@ class InterchangeControlReferenceSpec extends FreeSpec with MustMatchers with Sc
           val interchangeControlReference = InterchangeControlReference(date, index)
           val result                      = interchangeControlReference.toXml
 
-          result mustBe loadString(expectedResult.toString)
+          result mustBe expectedResult
       }
     }
   }

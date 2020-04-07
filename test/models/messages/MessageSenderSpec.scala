@@ -16,12 +16,11 @@
 
 package models.messages
 
+import models.XMLWrites._
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatest.{FreeSpec, MustMatchers}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-
-import scala.xml.XML.loadString
 
 class MessageSenderSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks {
 
@@ -35,9 +34,10 @@ class MessageSenderSpec extends FreeSpec with MustMatchers with ScalaCheckProper
         (eori, environment) =>
           val expectedResult = <MesSenMES3>{s"$environment-$eori"}</MesSenMES3>
 
-          val result = MessageSender(environment, eori).toXml
+          val messageSender = MessageSender(environment, eori)
+          val result        = messageSender.toXml
 
-          result mustBe loadString(expectedResult.toString)
+          result mustBe expectedResult
       }
     }
   }

@@ -29,17 +29,12 @@ case class ArrivalMovementRequest(meta: Meta,
                                   enRouteEvents: Option[Seq[EnRouteEvent]])
     extends XmlBuilderHelper {
 
-  val xMessageType: XMessageType     = XMessageType("IE007")
-  val messageCode: MessageCode       = MessageCode("GB007A")
-  val syntaxIdentifier: String       = "UNOC"
-  val nameSpace: Map[String, String] = ListMap()
-
   def toXml: Node = {
 
     val parentNode: Node = <CC007A></CC007A>
 
     val childNodes: NodeSeq = {
-      meta.toXml(messageCode) ++
+      meta.toXml ++
         header.toXml ++
         traderDestination.toXml ++
         customsOfficeOfPresentation.toXml ++ {
