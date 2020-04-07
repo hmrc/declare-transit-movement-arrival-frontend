@@ -129,9 +129,9 @@ class ArrivalMovementRequestSpec
 
     "must return minimal valid xml" in {
 
-      val result = trim(minimalArrivalNotificationRequest.toXml)
+      val result = minimalArrivalNotificationRequest.toXml.map(trim)
 
-      result mustBe trim(loadString(minimalValidXml.toString))
+      result mustBe minimalValidXml.map(trim)
     }
 
     "must return valid xml with an EnRouteEvent" in {
