@@ -19,6 +19,7 @@ package models.messages
 import java.time.LocalDate
 
 import models.XMLWrites
+import models.XMLWrites._
 import play.api.libs.json._
 import utils.Format
 
@@ -206,7 +207,7 @@ object VehicularTranshipment {
             transhipment.country.fold(NodeSeq.Empty)(country =>
               <EndCouSHP65> {escapeXml(country)} </EndCouSHP65>
             )
-          } ++ transhipment.containers.fold(NodeSeq.Empty)(_.map(_.toXml))
+          } ++ transhipment.containers.fold(NodeSeq.Empty)(_.flatMap(_.toXml))
         }
       </TRASHP>
   }

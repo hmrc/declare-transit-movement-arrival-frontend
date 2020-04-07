@@ -22,6 +22,5 @@ case class MessageSender(environment: String, eori: String)
 
 object MessageSender {
 
-  implicit val writes: XMLWrites[MessageSender] =
-    XMLWrites(a => <MesSenMES3>{escapeXml(s"${a.environment}-${a.eori}")}</MesSenMES3>)
+  implicit val writes: XMLWrites[MessageSender] = XMLWrites(a => <MesSenMES3>{escapeXml(s"${a.environment}-${a.eori}")}</MesSenMES3>)
 }
