@@ -54,19 +54,20 @@ object Header {
     val arrivalNotificationPlaceLength = 35
   }
 
-  implicit def writes: XMLWrites[Header] = new XMLWrites[Header] {
-    override def writes(a: Header): NodeSeq = <HEAHEA>{
-      <DocNumHEA5>{escapeXml(a.movementReferenceNumber)}</DocNumHEA5> ++
-        a.customsSubPlace.fold(NodeSeq.Empty){place => <CusSubPlaHEA66>{escapeXml(place)}</CusSubPlaHEA66>} ++
-        <ArrNotPlaHEA60>{escapeXml(a.arrivalNotificationPlace)}</ArrNotPlaHEA60> ++
+  implicit def writes: XMLWrites[Header] = XMLWrites[Header] {
+    header =>
+      <HEAHEA>{
+      <DocNumHEA5>{escapeXml(header.movementReferenceNumber)}</DocNumHEA5> ++
+        header.customsSubPlace.fold(NodeSeq.Empty){ place => <CusSubPlaHEA66>{escapeXml(place)}</CusSubPlaHEA66>} ++
+        <ArrNotPlaHEA60>{escapeXml(header.arrivalNotificationPlace)}</ArrNotPlaHEA60> ++
         <ArrNotPlaHEA60LNG>{Header.Constants.languageCode.code}</ArrNotPlaHEA60LNG> ++
-        a.arrivalAgreedLocationOfGoods.fold(NodeSeq.Empty) { location =>
+        header.arrivalAgreedLocationOfGoods.fold(NodeSeq.Empty) { location =>
           <ArrAgrLocCodHEA62>{escapeXml(location)} </ArrAgrLocCodHEA62> ++
           <ArrAgrLocOfGooHEA63>{escapeXml(location)} </ArrAgrLocOfGooHEA63>} ++
         <ArrAgrLocOfGooHEA63LNG>{Header.Constants.languageCode.code}</ArrAgrLocOfGooHEA63LNG> ++
-        a.arrivalAgreedLocationOfGoods.fold(NodeSeq.Empty){ location =>
+        header.arrivalAgreedLocationOfGoods.fold(NodeSeq.Empty){ location =>
           <ArrAutLocOfGooHEA65> {escapeXml(location)} </ArrAutLocOfGooHEA65>} ++
-        <SimProFlaHEA132>{a.procedureTypeFlag.code}</SimProFlaHEA132> ++
-        <ArrNotDatHEA141>{Format.dateFormatted(a.notificationDate)}</ArrNotDatHEA141>}</HEAHEA>
+        <SimProFlaHEA132>{header.procedureTypeFlag.code}</SimProFlaHEA132> ++
+        <ArrNotDatHEA141>{Format.dateFormatted(header.notificationDate)}</ArrNotDatHEA141>}</HEAHEA>
   }
 }
