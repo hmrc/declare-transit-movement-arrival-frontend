@@ -54,8 +54,9 @@ object Header {
     val arrivalNotificationPlaceLength = 35
   }
 
-  implicit def writes: XMLWrites[Header] = new XMLWrites[Header] {
-    override def writes(a: Header): NodeSeq = <HEAHEA>{
+  implicit def writes: XMLWrites[Header] = XMLWrites[Header] {
+    a =>
+      <HEAHEA>{
       <DocNumHEA5>{escapeXml(a.movementReferenceNumber)}</DocNumHEA5> ++
         a.customsSubPlace.fold(NodeSeq.Empty){place => <CusSubPlaHEA66>{escapeXml(place)}</CusSubPlaHEA66>} ++
         <ArrNotPlaHEA60>{escapeXml(a.arrivalNotificationPlace)}</ArrNotPlaHEA60> ++
