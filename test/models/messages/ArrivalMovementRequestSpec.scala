@@ -19,7 +19,7 @@ package models.messages
 import java.time.{LocalDate, LocalDateTime, LocalTime}
 
 import generators.MessagesModelGenerators
-import models.{messages, LanguageCode, NormalProcedureFlag, ProcedureTypeFlag}
+import models.{messages, LanguageCode, LanguageCodeEnglish, NormalProcedureFlag, ProcedureTypeFlag}
 import models.XMLWrites._
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.{FreeSpec, MustMatchers, OptionValues}
@@ -110,7 +110,7 @@ class ArrivalMovementRequestSpec
                     buildOptionalElem(arrivalMovementRequest.traderDestination.postCode, "PosCodTRD23") ++
                     buildOptionalElem(arrivalMovementRequest.traderDestination.city, "CitTRD24") ++
                     buildOptionalElem(arrivalMovementRequest.traderDestination.countryCode, "CouTRD25") ++
-                    buildAndEncodeElem(TraderDestination.Constants.languageCode, "NADLNGRD") ++
+                    buildAndEncodeElem(LanguageCodeEnglish, "NADLNGRD") ++
                     buildOptionalElem(arrivalMovementRequest.traderDestination.eori, "TINTRD59")
                     }
                   </TRADESTRD>
