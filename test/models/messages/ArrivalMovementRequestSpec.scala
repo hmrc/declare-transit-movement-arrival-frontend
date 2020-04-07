@@ -120,9 +120,9 @@ class ArrivalMovementRequestSpec
                   {buildEnRouteEvent(arrivalMovementRequest.enRouteEvents, Header.Constants.languageCode)}
                 </CC007A>
 
-            val result = trim(arrivalMovementRequest.toXml)
+            val result: NodeSeq = arrivalMovementRequest.toXml.map(trim)
 
-            result mustBe trim(loadString(validXml.toString))
+            result.toString mustEqual validXml.map(trim).toString()
           }
       }
     }
@@ -199,9 +199,9 @@ class ArrivalMovementRequestSpec
           }
         </CC007A>
 
-      val result = trim(arrivalNotificationRequestWithIncident.toXml)
+      val result: NodeSeq = arrivalNotificationRequestWithIncident.toXml.map(trim)
 
-      result mustBe trim(loadString(minimalValidXmlWithEnrouteEvent.toString))
+      result.toString() mustEqual minimalValidXmlWithEnrouteEvent.map(trim).toString()
     }
   }
 

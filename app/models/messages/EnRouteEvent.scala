@@ -16,51 +16,13 @@
 
 package models.messages
 
-import helpers.XmlBuilderHelper
-import models.LanguageCodeEnglish
-import play.api.libs.json._
 import models.XMLWrites._
+import models.{LanguageCodeEnglish, XMLWrites}
+import play.api.libs.json._
 
-import scala.xml.{Node, NodeSeq}
+import scala.xml.NodeSeq
 
 final case class EnRouteEvent(place: String, countryCode: String, alreadyInNcts: Boolean, eventDetails: Option[EventDetails], seals: Option[Seq[Seal]])
-    extends XmlBuilderHelper {
-
-  def toXml: Node = {
-
-    val buildSealsXml = seals match {
-      case Some(seals) => {
-        <SEAINFSF1>
-        {
-          buildAndEncodeElem(seals.size.toString, "SeaNumSF12") ++
-          seals.map(_.toXml)
-        }
-        </SEAINFSF1>
-      }
-      case _ => NodeSeq.Empty
-    }
-
-    <ENROUEVETEV>
-      {
-        buildAndEncodeElem(place,"PlaTEV10") ++
-        buildAndEncodeElem(LanguageCodeEnglish.code,"PlaTEV10LNG") ++
-        buildAndEncodeElem(countryCode,"CouTEV13")
-      }
-      <CTLCTL>
-        {
-        buildAndEncodeElem(alreadyInNcts,"AlrInNCTCTL29")
-        }
-      </CTLCTL>
-      {
-        eventDetails.map {
-          case incident: Incident                           => incident.toXml ++ buildSealsXml
-          case containerTranshipment: ContainerTranshipment => buildSealsXml ++ containerTranshipment.toXml
-          case vehicularTranshipment: VehicularTranshipment => buildSealsXml ++ vehicularTranshipment.toXml
-        }.getOrElse(NodeSeq.Empty)
-      }
-    </ENROUEVETEV>
-  }
-}
 
 object EnRouteEvent {
 
@@ -96,4 +58,38 @@ object EnRouteEvent {
           )
 
     }
+
+  implicit def xmlWrites: XMLWrites[EnRouteEvent] = XMLWrites[EnRouteEvent] {
+    enRouteEvent =>
+      val buildSealsXml = enRouteEvent.seals match {
+        case Some(seals) =>
+          <SEAINFSF1>
+            {
+            <SeaNumSF12> {escapeXml(seals.size.toString)} </SeaNumSF12> ++
+              seals.map(_.toXml)
+            }
+          </SEAINFSF1>
+        case _ => NodeSeq.Empty
+      }
+
+      <ENROUEVETEV>
+        {
+          <PlaTEV10> { escapeXml(enRouteEvent.place)} </PlaTEV10> ++
+          <PlaTEV10LNG> { LanguageCodeEnglish.code} </PlaTEV10LNG> ++
+          <CouTEV13> { enRouteEvent.countryCode } </CouTEV13>
+        }
+        <CTLCTL>
+          {
+            <AlrInNCTCTL29> {booleanToInt(enRouteEvent.alreadyInNcts)} </AlrInNCTCTL29>
+          }
+        </CTLCTL>
+        {
+        enRouteEvent.eventDetails.map {
+          case incident: Incident                           => incident.toXml ++ buildSealsXml
+          case containerTranshipment: ContainerTranshipment => buildSealsXml ++ containerTranshipment.toXml
+          case vehicularTranshipment: VehicularTranshipment => buildSealsXml ++ vehicularTranshipment.toXml
+        }.getOrElse(NodeSeq.Empty)
+        }
+      </ENROUEVETEV>
+  }
 }

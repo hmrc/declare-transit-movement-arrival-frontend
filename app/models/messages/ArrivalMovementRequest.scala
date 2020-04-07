@@ -19,7 +19,6 @@ package models.messages
 import helpers.XmlBuilderHelper
 import models.XMLWrites._
 
-import scala.collection.immutable.ListMap
 import scala.xml.{Elem, Node, NodeSeq}
 
 case class ArrivalMovementRequest(meta: Meta,
@@ -38,7 +37,7 @@ case class ArrivalMovementRequest(meta: Meta,
         header.toXml ++
         traderDestination.toXml ++
         customsOfficeOfPresentation.toXml ++ {
-        enRouteEvents.map(_.map(_.toXml)).getOrElse(NodeSeq.Empty)
+        enRouteEvents.map(_.flatMap(_.toXml)).getOrElse(NodeSeq.Empty)
       }
     }
 

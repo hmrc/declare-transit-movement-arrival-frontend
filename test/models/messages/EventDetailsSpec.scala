@@ -29,7 +29,6 @@ import utils.Format
 
 import scala.xml.NodeSeq
 import scala.xml.Utility.trim
-import scala.xml.XML.loadString
 
 class EventDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with MessagesModelGenerators with JsonBehaviours {
 

@@ -26,7 +26,6 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.{JsObject, JsSuccess, Json}
 
 import scala.xml.Utility.trim
-import scala.xml.XML.loadString
 
 class EnRouteEventSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with MessagesModelGenerators with JsonBehaviours {
 
@@ -58,9 +57,10 @@ class EnRouteEventSpec extends FreeSpec with MustMatchers with ScalaCheckPropert
             </ENROUEVETEV>
           }
 
-          trim(enRouteEventWithSealAndIncident.toXml) mustBe trim(loadString(result.toString))
+          enRouteEventWithSealAndIncident.toXml.map(trim) mustBe result.map(trim)
       }
     }
+
     "must create valid xml with container transhipment and seal" in {
 
       forAll(arbitrary[EnRouteEvent], arbitrary[Seal], arbitrary[ContainerTranshipment]) {
@@ -87,7 +87,7 @@ class EnRouteEventSpec extends FreeSpec with MustMatchers with ScalaCheckPropert
             </ENROUEVETEV>
           }
 
-          trim(enRouteEventWithContainer.toXml) mustBe trim(loadString(result.toString))
+          enRouteEventWithContainer.toXml.map(trim) mustBe result.map(trim)
       }
     }
 
@@ -117,7 +117,7 @@ class EnRouteEventSpec extends FreeSpec with MustMatchers with ScalaCheckPropert
             </ENROUEVETEV>
           }
 
-          trim(enRouteEventWithVehicle.toXml) mustBe trim(loadString(result.toString))
+          enRouteEventWithVehicle.toXml.map(trim) mustBe result.map(trim)
       }
     }
     "must deserialise" in {
