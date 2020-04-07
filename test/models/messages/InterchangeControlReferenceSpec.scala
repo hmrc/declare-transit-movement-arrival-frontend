@@ -21,13 +21,15 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.{FreeSpec, MustMatchers}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
+import scala.xml.NodeSeq
+
 class InterchangeControlReferenceSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks {
 
   "InterchangeControlReference" - {
     "must convert to xml and convert to correct format" in {
       forAll(arbitrary[String], arbitrary[Int]) {
         (date, index) =>
-          val expectedResult = <IntConRefMES11>{s"WE$date$index"}</IntConRefMES11>
+          val expectedResult: NodeSeq = <IntConRefMES11>{s"WE$date$index"}</IntConRefMES11>
 
           val interchangeControlReference = InterchangeControlReference(date, index)
           val result                      = interchangeControlReference.toXml
