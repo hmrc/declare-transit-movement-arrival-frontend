@@ -18,14 +18,12 @@ package models.messages
 
 import generators.MessagesModelGenerators
 import models.LanguageCodeEnglish
+import models.XMLWrites._
 import models.messages.behaviours.JsonBehaviours
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalatest.FreeSpec
-import org.scalatest.MustMatchers
+import org.scalatest.{FreeSpec, MustMatchers}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.libs.json.JsObject
-import play.api.libs.json.JsSuccess
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, JsSuccess, Json}
 
 import scala.xml.Utility.trim
 import scala.xml.XML.loadString

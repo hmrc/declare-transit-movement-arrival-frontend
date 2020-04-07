@@ -58,16 +58,21 @@ object Header {
     header =>
       <HEAHEA>{
       <DocNumHEA5>{escapeXml(header.movementReferenceNumber)}</DocNumHEA5> ++
-        header.customsSubPlace.fold(NodeSeq.Empty){ place => <CusSubPlaHEA66>{escapeXml(place)}</CusSubPlaHEA66>} ++
+        header.customsSubPlace.fold(NodeSeq.Empty){ place =>
+          <CusSubPlaHEA66>{escapeXml(place)}</CusSubPlaHEA66>
+        } ++
         <ArrNotPlaHEA60>{escapeXml(header.arrivalNotificationPlace)}</ArrNotPlaHEA60> ++
         <ArrNotPlaHEA60LNG>{Header.Constants.languageCode.code}</ArrNotPlaHEA60LNG> ++
-        header.arrivalAgreedLocationOfGoods.fold(NodeSeq.Empty) { location =>
-          <ArrAgrLocCodHEA62>{escapeXml(location)} </ArrAgrLocCodHEA62> ++
-          <ArrAgrLocOfGooHEA63>{escapeXml(location)} </ArrAgrLocOfGooHEA63>} ++
-        <ArrAgrLocOfGooHEA63LNG>{Header.Constants.languageCode.code}</ArrAgrLocOfGooHEA63LNG> ++
-        header.arrivalAgreedLocationOfGoods.fold(NodeSeq.Empty){ location =>
-          <ArrAutLocOfGooHEA65> {escapeXml(location)} </ArrAutLocOfGooHEA65>} ++
-        <SimProFlaHEA132>{header.procedureTypeFlag.code}</SimProFlaHEA132> ++
-        <ArrNotDatHEA141>{Format.dateFormatted(header.notificationDate)}</ArrNotDatHEA141>}</HEAHEA>
+          header.arrivalAgreedLocationOfGoods.fold(NodeSeq.Empty) { location =>
+            <ArrAgrLocCodHEA62>{escapeXml(location)} </ArrAgrLocCodHEA62> ++
+              <ArrAgrLocOfGooHEA63>{escapeXml(location)} </ArrAgrLocOfGooHEA63>
+          } ++
+            <ArrAgrLocOfGooHEA63LNG>{Header.Constants.languageCode.code}</ArrAgrLocOfGooHEA63LNG> ++
+            header.arrivalAgreedLocationOfGoods.fold(NodeSeq.Empty){ location =>
+              <ArrAutLocOfGooHEA65> {escapeXml(location)} </ArrAutLocOfGooHEA65>
+            } ++
+            <SimProFlaHEA132>{header.procedureTypeFlag.code}</SimProFlaHEA132> ++
+            <ArrNotDatHEA141>{Format.dateFormatted(header.notificationDate)}</ArrNotDatHEA141>
+        }</HEAHEA>
   }
 }
