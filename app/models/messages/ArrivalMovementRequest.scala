@@ -16,7 +16,7 @@
 
 package models.messages
 
-import helpers.XmlBuilderHelper
+import models.XMLWrites
 import models.XMLWrites._
 
 import scala.xml.{Elem, Node, NodeSeq}
@@ -26,22 +26,22 @@ case class ArrivalMovementRequest(meta: Meta,
                                   traderDestination: TraderDestination,
                                   customsOfficeOfPresentation: CustomsOfficeOfPresentation,
                                   enRouteEvents: Option[Seq[EnRouteEvent]])
-    extends XmlBuilderHelper {
 
-  def toXml: Node = {
+object ArrivalMovementRequest {
 
-    val parentNode: Node = <CC007A></CC007A>
+  implicit def writes: XMLWrites[ArrivalMovementRequest] = XMLWrites[ArrivalMovementRequest] {
+    arrivalRequest =>
+      val parentNode: Node = <CC007A></CC007A>
 
-    val childNodes: NodeSeq = {
-      meta.toXml ++
-        header.toXml ++
-        traderDestination.toXml ++
-        customsOfficeOfPresentation.toXml ++ {
-        enRouteEvents.map(_.flatMap(_.toXml)).getOrElse(NodeSeq.Empty)
+      val childNodes: NodeSeq = {
+        arrivalRequest.meta.toXml ++
+          arrivalRequest.header.toXml ++
+          arrivalRequest.traderDestination.toXml ++
+          arrivalRequest.customsOfficeOfPresentation.toXml ++ {
+          arrivalRequest.enRouteEvents.map(_.flatMap(_.toXml)).getOrElse(NodeSeq.Empty)
+        }
       }
-    }
 
-    Elem(parentNode.prefix, parentNode.label, parentNode.attributes, parentNode.scope, parentNode.child.isEmpty, parentNode.child ++ childNodes: _*)
-
+      Elem(parentNode.prefix, parentNode.label, parentNode.attributes, parentNode.scope, parentNode.child.isEmpty, parentNode.child ++ childNodes: _*)
   }
 }

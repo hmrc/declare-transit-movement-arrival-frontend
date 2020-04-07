@@ -22,11 +22,11 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.xml.Node
+import scala.xml.NodeSeq
 
 class DestinationConnector @Inject()(val config: FrontendAppConfig, val http: HttpClient)(implicit ec: ExecutionContext) {
 
-  def submitArrivalMovement(arrivalMovementXml: Node)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
+  def submitArrivalMovement(arrivalMovementXml: NodeSeq)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
 
     val serviceUrl = s"${config.destinationUrl}/movements/arrivals"
 

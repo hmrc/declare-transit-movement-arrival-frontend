@@ -18,8 +18,6 @@ package models.messages
 
 import models.XMLWrites
 
-import scala.xml.NodeSeq
-
 case class InterchangeControlReference(date: String, index: Int)
 
 object InterchangeControlReference {

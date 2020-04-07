@@ -22,14 +22,14 @@ import config.FrontendAppConfig
 import connectors.DestinationConnector
 import javax.inject.Inject
 import models.UserAnswers
-import models.messages.{ArrivalNotification, MessageSender}
+import models.XMLWrites._
+import models.messages.MessageSender
 import play.api.Logger
 import repositories.InterchangeControlReferenceIdRepository
 import services.conversion.{ArrivalNotificationConversionService, SubmissionModelService}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.xml.Node
 
 class ArrivalNotificationService @Inject()(
   converterService: ArrivalNotificationConversionService,
