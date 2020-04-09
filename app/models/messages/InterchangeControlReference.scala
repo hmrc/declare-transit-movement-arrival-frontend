@@ -23,6 +23,10 @@ case class InterchangeControlReference(date: String, index: Int)
 object InterchangeControlReference {
 
   implicit val writes: XMLWrites[InterchangeControlReference] =
-    XMLWrites(a => <IntConRefMES11>{escapeXml(s"WE${a.date}${a.index}")}</IntConRefMES11>)
+    XMLWrites {
+      a =>
+        val prefix = "AF"
+        <IntConRefMES11>{escapeXml(s"$prefix${a.date}${a.index}")}</IntConRefMES11>
+    }
 
 }
