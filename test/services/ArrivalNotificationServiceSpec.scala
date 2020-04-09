@@ -20,6 +20,7 @@ import java.time.LocalDate
 
 import base.SpecBase
 import connectors.DestinationConnector
+import generators.Generators
 import models.messages.{InterchangeControlReference, NormalNotification, TraderWithoutEori}
 import org.mockito.Matchers.any
 import org.mockito.Mockito.when
@@ -30,6 +31,7 @@ import play.api.inject.bind
 import repositories.InterchangeControlReferenceIdRepository
 import services.conversion.ArrivalNotificationConversionService
 import uk.gov.hmrc.http.HttpResponse
+import org.scalacheck.Arbitrary.arbitrary
 
 import scala.concurrent.Future
 
@@ -41,6 +43,8 @@ class ArrivalNotificationServiceSpec extends SpecBase with MockitoSugar {
 
   private val traderWithoutEori  = TraderWithoutEori("", "", "", "", "")
   private val normalNotification = NormalNotification(mrn, "", LocalDate.now(), None, traderWithoutEori, "", None)
+
+  private val userEoriNumber = arbitrary[String].sample.value
 
   "ArrivalNotificationService" - {
 
@@ -55,7 +59,7 @@ class ArrivalNotificationServiceSpec extends SpecBase with MockitoSugar {
 
       val arrivalNotificationService = application.injector.instanceOf[ArrivalNotificationService]
 
-      arrivalNotificationService.submit(emptyUserAnswers).futureValue mustBe None
+      arrivalNotificationService.submit(emptyUserAnswers, userEoriNumber).futureValue mustBe None
     }
 
     "must submit data for valid xml input" in {
@@ -78,7 +82,7 @@ class ArrivalNotificationServiceSpec extends SpecBase with MockitoSugar {
 
       val arrivalNotificationService = application.injector.instanceOf[ArrivalNotificationService]
 
-      val response = arrivalNotificationService.submit(emptyUserAnswers).futureValue.get
+      val response = arrivalNotificationService.submit(emptyUserAnswers, userEoriNumber).futureValue.get
       response.status mustBe ACCEPTED
     }
 
@@ -99,7 +103,7 @@ class ArrivalNotificationServiceSpec extends SpecBase with MockitoSugar {
 
       val arrivalNotificationService = application.injector.instanceOf[ArrivalNotificationService]
 
-      arrivalNotificationService.submit(emptyUserAnswers).futureValue mustBe None
+      arrivalNotificationService.submit(emptyUserAnswers, userEoriNumber).futureValue mustBe None
 
     }
   }

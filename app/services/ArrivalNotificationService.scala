@@ -22,7 +22,6 @@ import config.FrontendAppConfig
 import connectors.DestinationConnector
 import javax.inject.Inject
 import models.UserAnswers
-import models.XMLWrites._
 import models.messages.MessageSender
 import play.api.Logger
 import repositories.InterchangeControlReferenceIdRepository
@@ -39,30 +38,31 @@ class ArrivalNotificationService @Inject()(
   interchangeControlReferenceIdRepository: InterchangeControlReferenceIdRepository
 )(implicit ec: ExecutionContext) {
 
-  def submit(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[Option[HttpResponse]] =
+  def submit(userAnswers: UserAnswers, eori: String)(implicit hc: HeaderCarrier): Future[Option[HttpResponse]] =
     converterService.convertToArrivalNotification(userAnswers) match {
-      case Some(notification) => {
-
-        val messageSender = MessageSender(appConfig.env, "eori")
+      case Some(notification) =>
+        val messageSender = MessageSender(appConfig.env, eori)
 
         interchangeControlReferenceIdRepository
           .nextInterchangeControlReferenceId()
-          .map {
-            referenceId =>
-              submissionModelService
-                .convertToSubmissionModel(
-                  arrivalNotification         = notification,
-                  messageSender               = messageSender,
-                  interchangeControlReference = referenceId,
-                  timeOfPresentation          = LocalTime.now()
-                )
-                .toXml
-          }
           .flatMap {
-            xml =>
-              connector.submitArrivalMovement(xml).map(Some(_))
+            referenceId =>
+              val arrivalMovementRequest = {
+                submissionModelService
+                  .convertToSubmissionModel(
+                    arrivalNotification         = notification,
+                    messageSender               = messageSender,
+                    interchangeControlReference = referenceId,
+                    timeOfPresentation          = LocalTime.now()
+                  )
+              }
+              connector.submitArrivalMovement(arrivalMovementRequest).map(Some(_))
           }
-      }.recover({ case ex: Exception => Logger.error(s"${ex.getMessage}"); None })
+          .recover {
+            case ex =>
+              Logger.error(s"${ex.getMessage}")
+              None
+          }
 
       case None => Future.successful(None)
     }

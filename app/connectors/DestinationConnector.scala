@@ -18,19 +18,20 @@ package connectors
 
 import config.FrontendAppConfig
 import javax.inject.Inject
+import models.XMLWrites._
+import models.messages.ArrivalMovementRequest
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.xml.NodeSeq
 
 class DestinationConnector @Inject()(val config: FrontendAppConfig, val http: HttpClient)(implicit ec: ExecutionContext) {
 
-  def submitArrivalMovement(arrivalMovementXml: NodeSeq)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
+  def submitArrivalMovement(arrivalMovement: ArrivalMovementRequest)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
 
     val serviceUrl = s"${config.destinationUrl}/movements/arrivals"
+    val headers    = Seq(("Content-Type", "application/xml"))
 
-    val headers = Seq(("Content-Type", "application/xml"))
-    http.POSTString[HttpResponse](serviceUrl, arrivalMovementXml.toString(), headers)
+    http.POSTString[HttpResponse](serviceUrl, arrivalMovement.toXml.toString, headers)
   }
 }
