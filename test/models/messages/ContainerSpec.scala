@@ -17,6 +17,7 @@
 package models.messages
 
 import generators.ModelGenerators
+import models.XMLWrites._
 import models.messages.behaviours.JsonBehaviours
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.{FreeSpec, MustMatchers}
@@ -24,7 +25,6 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
 import scala.xml.Node
 import scala.xml.Utility.trim
-import scala.xml.XML.loadString
 
 class ContainerSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with ModelGenerators with JsonBehaviours {
 
@@ -38,7 +38,7 @@ class ContainerSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyCh
               <ConNumNR31>{container.containerNumber}</ConNumNR31>
             </CONNR3>
 
-          trim(container.toXml) mustBe trim(loadString(expectedXml.toString))
+          container.toXml.map(trim) mustBe expectedXml.map(trim)
       }
     }
   }

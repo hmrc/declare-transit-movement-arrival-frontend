@@ -22,14 +22,13 @@ import config.FrontendAppConfig
 import connectors.DestinationConnector
 import javax.inject.Inject
 import models.UserAnswers
-import models.messages.{ArrivalNotification, MessageSender}
+import models.messages.MessageSender
 import play.api.Logger
 import repositories.InterchangeControlReferenceIdRepository
 import services.conversion.{ArrivalNotificationConversionService, SubmissionModelService}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.xml.Node
 
 class ArrivalNotificationService @Inject()(
   converterService: ArrivalNotificationConversionService,
@@ -39,32 +38,33 @@ class ArrivalNotificationService @Inject()(
   interchangeControlReferenceIdRepository: InterchangeControlReferenceIdRepository
 )(implicit ec: ExecutionContext) {
 
-  def submit(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[Option[HttpResponse]] =
+  def submit(userAnswers: UserAnswers, eori: String)(implicit hc: HeaderCarrier): Future[Option[HttpResponse]] =
     converterService.convertToArrivalNotification(userAnswers) match {
-      case Some(notification) => {
-        convertToXml(notification).flatMap {
-          xml =>
-            connector.submitArrivalMovement(xml).map(Some(_))
-        }
-      }.recover({ case ex: Exception => Logger.error(s"${ex.getMessage}"); None })
+      case Some(notification) =>
+        val messageSender = MessageSender(appConfig.env, eori)
+
+        interchangeControlReferenceIdRepository
+          .nextInterchangeControlReferenceId()
+          .flatMap {
+            referenceId =>
+              val arrivalMovementRequest = {
+                submissionModelService
+                  .convertToSubmissionModel(
+                    arrivalNotification         = notification,
+                    messageSender               = messageSender,
+                    interchangeControlReference = referenceId,
+                    timeOfPresentation          = LocalTime.now()
+                  )
+              }
+              connector.submitArrivalMovement(arrivalMovementRequest).map(Some(_))
+          }
+          .recover {
+            case ex =>
+              Logger.error(s"${ex.getMessage}")
+              None
+          }
 
       case None => Future.successful(None)
     }
 
-  private def convertToXml(arrivalNotification: ArrivalNotification): Future[Node] = {
-
-    val messageSender = MessageSender(appConfig.env, "eori")
-
-    interchangeControlReferenceIdRepository.nextInterchangeControlReferenceId().map {
-      referenceId =>
-        submissionModelService
-          .convertToSubmissionModel(
-            arrivalNotification         = arrivalNotification,
-            messageSender               = messageSender,
-            interchangeControlReference = referenceId,
-            timeOfPresentation          = LocalTime.now()
-          )
-          .toXml
-    }
-  }
 }

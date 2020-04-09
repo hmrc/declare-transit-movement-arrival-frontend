@@ -18,16 +18,15 @@ package models.messages
 
 import java.time.LocalDate
 
-import helpers.XmlBuilderHelper
-import models._
+import models.XMLWrites
+import models.XMLWrites._
 import play.api.libs.json._
+import utils.Format
 
 import scala.language.implicitConversions
-import scala.xml.{Node, NodeSeq}
+import scala.xml.NodeSeq
 
-sealed trait EventDetails {
-  def toXml: Node
-}
+sealed trait EventDetails
 
 object EventDetails {
 
@@ -64,28 +63,7 @@ final case class Incident(
   authority: Option[String] = None,
   place: Option[String]     = None,
   country: Option[String]   = None
-) extends XmlBuilderHelper
-    with EventDetails {
-
-  def toXml: Node =
-    <INCINC>
-    {
-      information.map(
-        information =>
-          buildAndEncodeElem(information, "IncInfINC4")
-      ).getOrElse(
-          <IncFlaINC3>1</IncFlaINC3>
-      ) ++
-      buildAndEncodeElem(Header.Constants.languageCode, "IncInfINC4LNG") ++
-      buildOptionalElem(date, "EndDatINC6") ++
-      buildOptionalElem(authority, "EndAutINC7") ++
-      buildAndEncodeElem(Header.Constants.languageCode, "EndAutINC7LNG") ++
-      buildOptionalElem(place, "EndPlaINC10") ++
-      buildAndEncodeElem(Header.Constants.languageCode, "EndPlaINC10LNG") ++
-      buildOptionalElem(country, "EndCouINC12")
-    }
-    </INCINC>
-}
+) extends EventDetails
 
 object Incident {
 
@@ -95,6 +73,35 @@ object Incident {
 
   implicit lazy val format: Format[Incident] =
     Json.format[Incident]
+
+  implicit def writes: XMLWrites[Incident] = XMLWrites[Incident] {
+    incident =>
+      <INCINC>
+      {
+      incident.information.map(
+        information =>
+        <IncInfINC4> {escapeXml(information)} </IncInfINC4>
+      ).getOrElse(
+        <IncFlaINC3>1</IncFlaINC3>
+      ) ++
+        <IncInfINC4LNG> {Header.Constants.languageCode.code} </IncInfINC4LNG> ++
+        incident.date.fold[NodeSeq](NodeSeq.Empty)(date =>
+          <EndDatINC6> {Format.dateFormatted(date)} </EndDatINC6>
+        ) ++
+        incident.authority.fold[NodeSeq](NodeSeq.Empty)(authority =>
+          <EndAutINC7> {escapeXml(authority)} </EndAutINC7>
+        ) ++
+        <EndAutINC7LNG>{Header.Constants.languageCode.code}</EndAutINC7LNG> ++
+        incident.place.fold(NodeSeq.Empty)(place =>
+          <EndPlaINC10> {escapeXml(place)}</EndPlaINC10>
+        ) ++
+        <EndPlaINC10LNG>{Header.Constants.languageCode.code}</EndPlaINC10LNG> ++
+        incident.country.fold(NodeSeq.Empty)(country =>
+          <EndCouINC12> {escapeXml(country)} </EndCouINC12>
+        )
+      }
+    </INCINC>
+  }
 }
 
 sealed trait Transhipment extends EventDetails
@@ -135,25 +142,7 @@ final case class VehicularTranshipment(
   place: Option[String]     = None,
   country: Option[String]   = None,
   containers: Option[Seq[Container]]
-) extends XmlBuilderHelper
-    with Transhipment {
-
-  def toXml: Node =
-    <TRASHP>
-      {
-        buildAndEncodeElem(transportIdentity,"NewTraMeaIdeSHP26") ++
-        buildAndEncodeElem(Header.Constants.languageCode,"NewTraMeaIdeSHP26LNG") ++
-        buildAndEncodeElem(transportCountry,"NewTraMeaNatSHP54") ++
-        buildOptionalElem(date, "EndDatSHP60") ++
-        buildOptionalElem(authority, "EndAutSHP61") ++
-        buildAndEncodeElem(Header.Constants.languageCode, "EndAutSHP61LNG") ++
-        buildOptionalElem(place, "EndPlaSHP63") ++
-        buildAndEncodeElem(Header.Constants.languageCode, "EndPlaSHP63LNG") ++
-        buildOptionalElem(country, "EndCouSHP65") ++
-        containers.fold(NodeSeq.Empty)(_.map(_.toXml))
-      }
-    </TRASHP>
-}
+) extends Transhipment
 
 object VehicularTranshipment {
 
@@ -193,6 +182,35 @@ object VehicularTranshipment {
             "containers"        -> Json.toJson(transhipment.containers)
           )
     }
+
+  implicit def xmlWrites: XMLWrites[VehicularTranshipment] = XMLWrites[VehicularTranshipment] {
+    transhipment =>
+      <TRASHP>
+        {
+          <NewTraMeaIdeSHP26> {escapeXml(transhipment.transportIdentity)} </NewTraMeaIdeSHP26> ++
+            <NewTraMeaIdeSHP26LNG> {Header.Constants.languageCode.code} </NewTraMeaIdeSHP26LNG> ++
+            <NewTraMeaNatSHP54> {escapeXml(transhipment.transportCountry)} </NewTraMeaNatSHP54> ++ {
+            transhipment.date.fold(NodeSeq.Empty)(date =>
+              <EndDatSHP60> {Format.dateFormatted(date)} </EndDatSHP60>
+            )
+          } ++ {
+            transhipment.authority.fold(NodeSeq.Empty)(authority =>
+              <EndAutSHP61> {escapeXml(authority)} </EndAutSHP61>
+            )
+          } ++
+            <EndAutSHP61LNG> {Header.Constants.languageCode.code} </EndAutSHP61LNG> ++ {
+            transhipment.place.fold(NodeSeq.Empty)(place =>
+              <EndPlaSHP63> {escapeXml(place)} </EndPlaSHP63>
+            )
+          } ++
+            <EndPlaSHP63LNG> {Header.Constants.languageCode.code} </EndPlaSHP63LNG> ++ {
+            transhipment.country.fold(NodeSeq.Empty)(country =>
+              <EndCouSHP65> {escapeXml(country)} </EndCouSHP65>
+            )
+          } ++ transhipment.containers.fold(NodeSeq.Empty)(_.flatMap(_.toXml))
+        }
+      </TRASHP>
+  }
 }
 
 final case class ContainerTranshipment(
@@ -201,21 +219,7 @@ final case class ContainerTranshipment(
   place: Option[String]     = None,
   country: Option[String]   = None,
   containers: Seq[Container]
-) extends XmlBuilderHelper
-    with Transhipment {
-
-  def toXml: Node =
-    <TRASHP> {
-        buildOptionalElem(date, "EndDatSHP60") ++
-        buildOptionalElem(authority, "EndAutSHP61") ++
-        buildAndEncodeElem(Header.Constants.languageCode,"EndAutSHP61LNG") ++
-        buildOptionalElem(place, "EndPlaSHP63") ++
-        buildAndEncodeElem(Header.Constants.languageCode,"EndPlaSHP63LNG") ++
-        buildOptionalElem(country, "EndCouSHP65") ++
-        containers.map(_.toXml)
-      }
-    </TRASHP>
-
+) extends Transhipment {
   require(containers.nonEmpty, "At least one container number must be provided")
 }
 
@@ -223,4 +227,30 @@ object ContainerTranshipment {
 
   implicit lazy val format: Format[ContainerTranshipment] =
     Json.format[ContainerTranshipment]
+
+  implicit def xmlWrites: XMLWrites[ContainerTranshipment] = XMLWrites[ContainerTranshipment] {
+    transhipment =>
+      <TRASHP>
+        {
+          transhipment.date.fold(NodeSeq.Empty) (
+            date =>
+              <EndDatSHP60> {Format.dateFormatted(date)} </EndDatSHP60>
+          ) ++
+          transhipment.authority.fold(NodeSeq.Empty) (
+            authority =>
+            <EndAutSHP61> {escapeXml(authority)} </EndAutSHP61>
+          ) ++
+            <EndAutSHP61LNG> {Header.Constants.languageCode.code} </EndAutSHP61LNG> ++
+          transhipment.place.fold(NodeSeq.Empty) (
+            place =>
+              <EndPlaSHP63> {escapeXml(place)} </EndPlaSHP63>
+          ) ++
+            <EndPlaSHP63LNG> {Header.Constants.languageCode.code} </EndPlaSHP63LNG> ++
+          transhipment.country.fold(NodeSeq.Empty) (
+              country =>
+                <EndCouSHP65> {escapeXml(country)} </EndCouSHP65>
+          ) ++ transhipment.containers.map(_.toXml)
+      }
+      </TRASHP>
+  }
 }

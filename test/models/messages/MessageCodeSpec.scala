@@ -16,12 +16,13 @@
 
 package models.messages
 
+import models.XMLWrites._
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.{FreeSpec, MustMatchers}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
 import scala.xml.Node
-import scala.xml.XML._
+import scala.xml.Utility.trim
 
 class MessageCodeSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks {
 
@@ -33,9 +34,8 @@ class MessageCodeSpec extends FreeSpec with MustMatchers with ScalaCheckProperty
           val messageCode: MessageCode = MessageCode(code)
           val expectedResult: Node     = <MesTypMES20>{code}</MesTypMES20>
 
-          messageCode.toXml mustBe loadString(expectedResult.toString)
+          messageCode.toXml.map(trim) mustBe expectedResult.map(trim)
       }
-
     }
   }
 

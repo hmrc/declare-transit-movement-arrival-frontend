@@ -14,19 +14,13 @@
  * limitations under the License.
  */
 
-package models.messages
+package models
 
-import models.XMLWrites
+import play.twirl.api.utils.StringEscapeUtils
 
-case class InterchangeControlReference(date: String, index: Int)
+package object messages {
 
-object InterchangeControlReference {
+  def escapeXml(xml: String): String = StringEscapeUtils.escapeXml11(xml)
 
-  implicit val writes: XMLWrites[InterchangeControlReference] =
-    XMLWrites {
-      a =>
-        val prefix = "AF"
-        <IntConRefMES11>{escapeXml(s"$prefix${a.date}${a.index}")}</IntConRefMES11>
-    }
-
+  def booleanToInt(flag: Boolean): Int = if (flag) 1 else 0
 }

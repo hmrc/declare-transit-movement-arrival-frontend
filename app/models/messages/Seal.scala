@@ -17,23 +17,10 @@
 package models.messages
 
 import forms.mappings.StringEquivalence
-import helpers.XmlBuilderHelper
-import models.{LanguageCode, LanguageCodeEnglish}
+import models.{LanguageCode, LanguageCodeEnglish, XMLWrites}
 import play.api.libs.json.{Json, OFormat}
 
-import scala.xml.Node
-
-case class Seal(numberOrMark: String) extends XmlBuilderHelper {
-
-  def toXml: Node =
-    <SEAIDSI1>
-      {
-        buildAndEncodeElem(numberOrMark, "SeaIdeSI11") ++
-        buildAndEncodeElem(Seal.Constants.languageCode, "SeaIdeSI11LNG")
-      }
-    </SEAIDSI1>
-
-}
+case class Seal(numberOrMark: String)
 
 object Seal {
 
@@ -46,4 +33,14 @@ object Seal {
 
   implicit val sealStringEquivalenceCheck: StringEquivalence[Seal] =
     StringEquivalence[Seal]((seal, sealNumberOrMark) => seal.numberOrMark == sealNumberOrMark)
+
+  implicit def writes: XMLWrites[Seal] = XMLWrites[Seal] {
+    seal =>
+      <SEAIDSI1>
+        {
+          <SeaIdeSI11> { escapeXml(seal.numberOrMark) } </SeaIdeSI11> ++
+          <SeaIdeSI11LNG> { Seal.Constants.languageCode.code } </SeaIdeSI11LNG>
+        }
+      </SEAIDSI1>
+  }
 }

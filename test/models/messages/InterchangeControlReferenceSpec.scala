@@ -16,11 +16,12 @@
 
 package models.messages
 
+import models.XMLWrites._
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.{FreeSpec, MustMatchers}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
-import scala.xml.XML._
+import scala.xml.NodeSeq
 
 class InterchangeControlReferenceSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks {
 
@@ -28,10 +29,12 @@ class InterchangeControlReferenceSpec extends FreeSpec with MustMatchers with Sc
     "must convert to xml and convert to correct format" in {
       forAll(arbitrary[String], arbitrary[Int]) {
         (date, index) =>
-          val expectedResult = <IntConRefMES11>{s"WE$date$index"}</IntConRefMES11>
-          val result         = InterchangeControlReference(date, index).toXml
+          val expectedResult: NodeSeq = <IntConRefMES11>{s"AF$date$index"}</IntConRefMES11>
 
-          result mustBe loadString(expectedResult.toString)
+          val interchangeControlReference = InterchangeControlReference(date, index)
+          val result                      = interchangeControlReference.toXml
+
+          result mustBe expectedResult
       }
     }
   }

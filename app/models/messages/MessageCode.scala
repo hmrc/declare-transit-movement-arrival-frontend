@@ -16,12 +16,14 @@
 
 package models.messages
 
-import helpers.XmlBuilderHelper
+import models.XMLWrites
 
-import scala.xml.NodeSeq
+case class MessageCode(code: String)
 
-case class MessageCode(code: String) extends XmlBuilderHelper {
+object MessageCode {
 
-  def toXml: NodeSeq = buildAndEncodeElem(code, "MesTypMES20")
-
+  implicit def writes: XMLWrites[MessageCode] = XMLWrites[MessageCode] {
+    messageCode =>
+      <MesTypMES20> { messageCode.code } </MesTypMES20>
+  }
 }
