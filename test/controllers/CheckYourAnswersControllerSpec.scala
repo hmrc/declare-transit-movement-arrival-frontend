@@ -23,6 +23,7 @@ import org.mockito.Matchers.any
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.when
+import org.scalacheck.Gen
 import play.api.inject.bind
 import play.api.libs.json.JsObject
 import play.api.test.FakeRequest
@@ -140,6 +141,32 @@ class CheckYourAnswersControllerSpec extends SpecBase with JsonMatchers {
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
 
       templateCaptor.getValue mustEqual "unauthorised.njk"
+
+      application.stop()
+    }
+
+    "must redirected to internalServerError page when there is a server side error" in {
+
+      val genServerError = Gen.chooseNum(500, 599).sample.value
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .overrides(bind[ArrivalNotificationService].toInstance(mockService))
+        .build()
+
+      when(mockRenderer.render(any(), any())(any())).thenReturn(Future.successful(Html("")))
+      when(mockService.submit(any())(any())).thenReturn(Future.successful(Some(HttpResponse(genServerError))))
+
+      val request = FakeRequest(POST, routes.CheckYourAnswersController.onPost(mrn).url)
+
+      val result = route(application, request).value
+
+      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+
+      status(result) mustEqual INTERNAL_SERVER_ERROR
+
+      verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
+
+      templateCaptor.getValue mustEqual "internalServerError.njk"
 
       application.stop()
     }
