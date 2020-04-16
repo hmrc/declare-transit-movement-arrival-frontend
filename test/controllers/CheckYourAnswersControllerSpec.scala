@@ -153,20 +153,13 @@ class CheckYourAnswersControllerSpec extends SpecBase with JsonMatchers {
         .overrides(bind[ArrivalNotificationService].toInstance(mockService))
         .build()
 
-      when(mockRenderer.render(any(), any())(any())).thenReturn(Future.successful(Html("")))
-      when(mockService.submit(any())(any())).thenReturn(Future.successful(Some(HttpResponse(genServerError))))
+      when(mockService.submit(any(), any())(any())).thenReturn(Future.successful(Some(HttpResponse(genServerError))))
 
       val request = FakeRequest(POST, routes.CheckYourAnswersController.onPost(mrn).url)
 
       val result = route(application, request).value
 
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-
-      status(result) mustEqual INTERNAL_SERVER_ERROR
-
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
-
-      templateCaptor.getValue mustEqual "internalServerError.njk"
+      status(result) mustEqual SEE_OTHER
 
       application.stop()
     }

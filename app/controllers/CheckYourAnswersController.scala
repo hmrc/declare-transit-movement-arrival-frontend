@@ -67,7 +67,7 @@ class CheckYourAnswersController @Inject()(override val messagesApi: MessagesApi
             result.status match {
               case status if is2xx(status) => Future.successful(Redirect(routes.ConfirmationController.onPageLoad(mrn)))
               case status if is4xx(status) => errorHandler.onClientError(request, status)
-              case _                       => renderer.render("internalServerError.njk").map(InternalServerError(_))
+              case _                       => Future.successful(Redirect(routes.TechnicalDifficultiesController.onPageLoad()))
             }
           case None => errorHandler.onClientError(request, BAD_REQUEST) //TODO waiting for design
         }
