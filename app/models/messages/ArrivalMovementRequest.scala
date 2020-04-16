@@ -16,38 +16,32 @@
 
 package models.messages
 
-import helpers.XmlBuilderHelper
-import play.api.libs.json.Json
+import models.XMLWrites
+import models.XMLWrites._
 
-import scala.collection.immutable.ListMap
-import scala.xml.{Node, NodeSeq}
+import scala.xml.{Elem, Node, NodeSeq}
 
 case class ArrivalMovementRequest(meta: Meta,
                                   header: Header,
                                   traderDestination: TraderDestination,
                                   customsOfficeOfPresentation: CustomsOfficeOfPresentation,
                                   enRouteEvents: Option[Seq[EnRouteEvent]])
-    extends XmlBuilderHelper
-    with RequestConstants {
 
-  val xMessageType: XMessageType     = XMessageType("IE007")
-  val messageCode: MessageCode       = MessageCode("GB007A")
-  val syntaxIdentifier: String       = "UNOC"
-  val nameSpace: Map[String, String] = ListMap()
+object ArrivalMovementRequest {
 
-  def toXml: Node = {
+  implicit def writes: XMLWrites[ArrivalMovementRequest] = XMLWrites[ArrivalMovementRequest] {
+    arrivalRequest =>
+      val parentNode: Node = <CC007A></CC007A>
 
-    val parentNode: Node = <CC007A></CC007A>
-
-    val childNodes: NodeSeq = {
-      meta.toXml(messageCode) ++
-        header.toXml ++
-        traderDestination.toXml ++
-        customsOfficeOfPresentation.toXml ++ {
-        enRouteEvents.map(_.map(_.toXml)).getOrElse(NodeSeq.Empty)
+      val childNodes: NodeSeq = {
+        arrivalRequest.meta.toXml ++
+          arrivalRequest.header.toXml ++
+          arrivalRequest.traderDestination.toXml ++
+          arrivalRequest.customsOfficeOfPresentation.toXml ++ {
+          arrivalRequest.enRouteEvents.map(_.flatMap(_.toXml)).getOrElse(NodeSeq.Empty)
+        }
       }
-    }
 
-    addChildrenToRoot(parentNode, childNodes)
+      Elem(parentNode.prefix, parentNode.label, parentNode.attributes, parentNode.scope, parentNode.child.isEmpty, parentNode.child ++ childNodes: _*)
   }
 }

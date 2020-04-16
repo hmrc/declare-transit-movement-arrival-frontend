@@ -62,7 +62,7 @@ class CheckYourAnswersController @Inject()(override val messagesApi: MessagesApi
   def onPost(mrn: MovementReferenceNumber): Action[AnyContent] =
     (identify andThen getData(mrn) andThen requireData).async {
       implicit request =>
-        service.submit(request.userAnswers) flatMap {
+        service.submit(request.userAnswers, request.eoriNumber) flatMap {
           case Some(result) =>
             result.status match {
               case status if is2xx(status) => Future.successful(Redirect(routes.ConfirmationController.onPageLoad(mrn)))

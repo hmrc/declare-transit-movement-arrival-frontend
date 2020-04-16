@@ -18,6 +18,7 @@ package models.messages
 
 import generators.MessagesModelGenerators
 import models.LanguageCodeEnglish
+import models.XMLWrites._
 import models.messages.behaviours.JsonBehaviours
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.OptionValues._
@@ -28,7 +29,6 @@ import utils.Format
 
 import scala.xml.NodeSeq
 import scala.xml.Utility.trim
-import scala.xml.XML.loadString
 
 class EventDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with MessagesModelGenerators with JsonBehaviours {
 
@@ -83,7 +83,7 @@ class EventDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckPropert
               }
             </INCINC>
 
-          trim(incident.toXml) mustEqual trim(loadString(expectedResult.toString))
+          incident.toXml.map(trim) mustEqual expectedResult.map(trim)
       }
     }
 
@@ -155,7 +155,7 @@ class EventDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckPropert
               </CONNR3>
             </TRASHP>
 
-          trim(containerTranshipment.toXml) mustEqual trim(loadString(expectedResult.toString))
+          containerTranshipment.toXml.map(trim) mustEqual expectedResult.map(trim)
       }
     }
 
@@ -228,7 +228,7 @@ class EventDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckPropert
               }
             </TRASHP>
 
-          trim(vehicularTranshipment.toXml) mustEqual trim(loadString(expectedResult.toString))
+          vehicularTranshipment.toXml.map(trim) mustEqual expectedResult.map(trim)
       }
     }
 
@@ -279,7 +279,7 @@ class EventDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckPropert
               </CONNR3>
             </TRASHP>
 
-          trim(vehicularTranshipment.toXml) mustEqual trim(loadString(expectedResult.toString))
+          vehicularTranshipment.toXml.map(trim) mustEqual expectedResult.map(trim)
       }
     }
 

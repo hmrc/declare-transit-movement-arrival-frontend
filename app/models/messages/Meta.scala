@@ -18,7 +18,8 @@ package models.messages
 
 import java.time.{LocalDate, LocalTime}
 
-import helpers.XmlBuilderHelper
+import models.XMLWrites
+import models.XMLWrites._
 import utils.Format
 
 import scala.xml.NodeSeq
@@ -37,39 +38,81 @@ case class Meta(messageSender: MessageSender,
                 commonAccessReference: Option[String]                = None,
                 messageSequenceNumber: Option[String]                = None,
                 firstAndLastTransfer: Option[String]                 = None)
-    extends XmlBuilderHelper
-    with MetaConstants {
 
-  def toXml(messageCode: MessageCode): NodeSeq =
-    buildAndEncodeElem(syntaxIdentifier, "SynIdeMES1") ++
-      buildAndEncodeElem(syntaxVersionNumber, "SynVerNumMES2") ++
-      messageSender.toXml ++
-      buildOptionalElem(senderIdentificationCodeQualifier, "SenIdeCodQuaMES4") ++
-      buildOptionalElem(recipientIdentificationCodeQualifier, "RecIdeCodQuaMES7") ++
-      buildAndEncodeElem(messageRecipient, "MesRecMES6") ++
-      buildAndEncodeElem(Format.dateFormatted(dateOfPreparation), "DatOfPreMES9") ++
-      buildAndEncodeElem(Format.timeFormatted(timeOfPreparation), "TimOfPreMES10") ++
-      interchangeControlReference.toXml ++
-      buildOptionalElem(recipientsReferencePassword, "RecRefMES12") ++
-      buildOptionalElem(recipientsReferencePasswordQualifier, "RecRefQuaMES13") ++
-      buildAndEncodeElem(applicationReference, "AppRefMES14") ++
-      buildOptionalElem(priority, "PriMES15") ++
-      buildOptionalElem(acknowledgementRequest, "AckReqMES16") ++
-      buildOptionalElem(communicationsAgreementId, "ComAgrIdMES17") ++
-      buildAndEncodeElem(testIndicator, "TesIndMES18") ++
-      buildAndEncodeElem(messageIndication, "MesIdeMES19") ++
-      buildAndEncodeElem(messageCode.code, "MesTypMES20") ++
-      buildOptionalElem(commonAccessReference, "ComAccRefMES21") ++
-      buildOptionalElem(messageSequenceNumber, "MesSeqNumMES22") ++
-      buildOptionalElem(firstAndLastTransfer, "FirAndLasTraMES23")
+object Meta {
 
-}
+  implicit def writes: XMLWrites[Meta] =
+    XMLWrites(
+      a =>
+        <SynIdeMES1>UNOC</SynIdeMES1>
+        <SynVerNumMES2>3</SynVerNumMES2> ++ {
+          a.messageSender.toXml
+        } ++ {
+          a.senderIdentificationCodeQualifier.fold(NodeSeq.Empty) {
+            senderIdentificationCodeQualifier =>
+              <SenIdeCodQuaMES4>{escapeXml(senderIdentificationCodeQualifier)}</SenIdeCodQuaMES4>
+          }
+        } ++ {
+          a.recipientIdentificationCodeQualifier.fold(NodeSeq.Empty) {
+            recipientIdentificationCodeQualifier =>
+              <RecIdeCodQuaMES7>{escapeXml(recipientIdentificationCodeQualifier)}</RecIdeCodQuaMES7>
+          }
+        } ++
+          <MesRecMES6>NCTS</MesRecMES6>
+        <DatOfPreMES9>{Format.dateFormatted(a.dateOfPreparation)}</DatOfPreMES9>
+        <TimOfPreMES10>{Format.timeFormatted(a.timeOfPreparation)}</TimOfPreMES10> ++ {
+          a.interchangeControlReference.toXml
+        } ++ {
+          a.recipientsReferencePassword.fold(NodeSeq.Empty) {
+            recipientsReferencePassword =>
+              <RecRefMES12>{escapeXml(recipientsReferencePassword)}</RecRefMES12>
+          }
+        } ++ {
+          a.recipientsReferencePasswordQualifier.fold(NodeSeq.Empty) {
+            recipientsReferencePasswordQualifier =>
+              <RecRefQuaMES13>{escapeXml(recipientsReferencePasswordQualifier)}</RecRefQuaMES13>
+          }
+        } ++
+          <AppRefMES14>NCTS</AppRefMES14> ++ {
 
-sealed trait MetaConstants {
-  val syntaxIdentifier: String     = "UNOC"
-  val syntaxVersionNumber: String  = "3"
-  val messageRecipient: String     = "NCTS"
-  val applicationReference: String = "NCTS"
-  val messageIndication            = "1"
-  val testIndicator                = "0"
+          a.priority.fold(NodeSeq.Empty) {
+            priority =>
+              <PriMES15>{escapeXml(priority)}</PriMES15>
+          }
+        } ++ {
+
+          a.acknowledgementRequest.fold(NodeSeq.Empty) {
+            acknowledgementRequest =>
+              <AckReqMES16>{acknowledgementRequest}</AckReqMES16>
+          }
+        } ++ {
+
+          a.communicationsAgreementId.fold(NodeSeq.Empty) {
+            communicationsAgreementId =>
+              <ComAgrIdMES17>{escapeXml(communicationsAgreementId)}</ComAgrIdMES17>
+          }
+
+        } ++
+          <TesIndMES18>0</TesIndMES18>
+        <MesIdeMES19>1</MesIdeMES19>
+        <MesTypMES20>GB007A</MesTypMES20> ++ {
+
+          a.commonAccessReference.fold(NodeSeq.Empty) {
+            commonAccessReference =>
+              <ComAccRefMES21>{escapeXml(commonAccessReference)}</ComAccRefMES21>
+          }
+        } ++ {
+
+          a.messageSequenceNumber.fold(NodeSeq.Empty) {
+            messageSequenceNumber =>
+              <MesSeqNumMES22>{escapeXml(messageSequenceNumber)}</MesSeqNumMES22>
+          }
+        } ++ {
+
+          a.firstAndLastTransfer.fold(NodeSeq.Empty) {
+            firstAndLastTransfer =>
+              <FirAndLasTraMES23>{escapeXml(firstAndLastTransfer)}</FirAndLasTraMES23>
+          }
+      })
+
 }

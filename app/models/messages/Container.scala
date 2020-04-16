@@ -17,19 +17,10 @@
 package models.messages
 
 import forms.mappings.StringEquivalence
-import helpers.XmlBuilderHelper
+import models.XMLWrites
 import play.api.libs.json.{Json, OFormat}
 
-import scala.xml.Node
-
-case class Container(containerNumber: String) extends XmlBuilderHelper {
-
-  def toXml: Node =
-    <CONNR3>
-      {buildAndEncodeElem(containerNumber, "ConNumNR31")}
-    </CONNR3>
-
-}
+case class Container(containerNumber: String)
 
 object Container {
 
@@ -41,4 +32,11 @@ object Container {
 
   implicit val containerStringEquivalenceCheck: StringEquivalence[Container] =
     StringEquivalence[Container]((container, stringContainer) => container.containerNumber == stringContainer)
+
+  implicit def xmlWrites: XMLWrites[Container] = XMLWrites[Container] {
+    container =>
+      <CONNR3>
+          <ConNumNR31> {escapeXml(container.containerNumber)} </ConNumNR31>
+      </CONNR3>
+  }
 }
