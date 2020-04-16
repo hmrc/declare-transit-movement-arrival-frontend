@@ -23,6 +23,7 @@ import org.mockito.Matchers.any
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.when
+import org.scalacheck.Gen
 import play.api.inject.bind
 import play.api.libs.json.JsObject
 import play.api.test.FakeRequest
@@ -140,6 +141,25 @@ class CheckYourAnswersControllerSpec extends SpecBase with JsonMatchers {
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
 
       templateCaptor.getValue mustEqual "unauthorised.njk"
+
+      application.stop()
+    }
+
+    "must redirected to TechnicalDifficulties page when there is a server side error" in {
+
+      val genServerError = Gen.chooseNum(500, 599).sample.value
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .overrides(bind[ArrivalNotificationService].toInstance(mockService))
+        .build()
+
+      when(mockService.submit(any(), any())(any())).thenReturn(Future.successful(Some(HttpResponse(genServerError))))
+
+      val request = FakeRequest(POST, routes.CheckYourAnswersController.onPost(mrn).url)
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
 
       application.stop()
     }

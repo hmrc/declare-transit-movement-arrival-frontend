@@ -17,20 +17,21 @@
 package controllers
 
 import com.google.inject.Inject
-import derivable.DeriveNumberOfEvents
 import controllers.actions.{DataRequiredAction, DataRetrievalActionProvider, IdentifierAction}
+import derivable.DeriveNumberOfEvents
 import handlers.ErrorHandler
 import models.{Index, MovementReferenceNumber, UserAnswers}
-import play.api.i18n.{I18nSupport, Messages, MessagesApi}
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
+import play.api.mvc.Results.BadRequest
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import services.ArrivalNotificationService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
-import uk.gov.hmrc.viewmodels.SummaryList.Row
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, SummaryList}
 import utils.{AddEventsHelper, CheckYourAnswersHelper}
 import viewModels.sections.Section
+import uk.gov.hmrc.http.HttpErrorFunctions
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -44,7 +45,8 @@ class CheckYourAnswersController @Inject()(override val messagesApi: MessagesApi
                                            renderer: Renderer)(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
-    with NunjucksSupport {
+    with NunjucksSupport
+    with HttpErrorFunctions {
 
   def onPageLoad(mrn: MovementReferenceNumber): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
@@ -63,8 +65,9 @@ class CheckYourAnswersController @Inject()(override val messagesApi: MessagesApi
         service.submit(request.userAnswers, request.eoriNumber) flatMap {
           case Some(result) =>
             result.status match {
-              case OK | NO_CONTENT | ACCEPTED => Future.successful(Redirect(routes.ConfirmationController.onPageLoad(mrn)))
-              case status                     => errorHandler.onClientError(request, status)
+              case status if is2xx(status) => Future.successful(Redirect(routes.ConfirmationController.onPageLoad(mrn)))
+              case status if is4xx(status) => errorHandler.onClientError(request, status)
+              case _                       => Future.successful(Redirect(routes.TechnicalDifficultiesController.onPageLoad()))
             }
           case None => errorHandler.onClientError(request, BAD_REQUEST) //TODO waiting for design
         }
