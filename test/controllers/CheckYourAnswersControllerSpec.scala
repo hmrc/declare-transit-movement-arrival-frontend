@@ -145,7 +145,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with JsonMatchers {
       application.stop()
     }
 
-    "must redirected to internalServerError page when there is a server side error" in {
+    "must redirected to TechnicalDifficulties page when there is a server side error" in {
 
       val genServerError = Gen.chooseNum(500, 599).sample.value
 
