@@ -22,6 +22,8 @@ import org.scalacheck.Gen
 import org.scalatest.{FreeSpec, MustMatchers}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
+import scala.xml.NodeSeq
+
 class MessageSenderSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks {
 
   "MessageSender" - {
@@ -32,10 +34,10 @@ class MessageSenderSpec extends FreeSpec with MustMatchers with ScalaCheckProper
 
       forAll(arbitrary[String], environment) {
         (eori, environment) =>
-          val expectedResult = <MesSenMES3>{s"$environment-$eori"}</MesSenMES3>
+          val expectedResult: NodeSeq = <MesSenMES3>{s"$environment-$eori"}</MesSenMES3>
 
-          val messageSender = MessageSender(environment, eori)
-          val result        = messageSender.toXml
+          val messageSender   = MessageSender(environment, eori)
+          val result: NodeSeq = messageSender.toXml
 
           result mustBe expectedResult
       }
