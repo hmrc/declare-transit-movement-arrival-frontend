@@ -65,6 +65,7 @@ trait SpecBase
   val container = Container("containerNumber")
 
   val traderAddress = TraderAddress("", "", "NE99 1XN")
+  val configKey     = "config"
 
   def injector: Injector = app.injector
 
