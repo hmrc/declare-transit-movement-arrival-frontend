@@ -16,6 +16,14 @@
           {{ messages("unauthorised.heading") }}
         </h1>
 
+        <p class="govuk-body">
+          {{ messages("unauthorised.paragraph1") }}
+        </p>
+
+        <p class="govuk-body"> {{ messages("unauthorised.paragraph2") }}
+          <a class="govuk-link" href={{ loginHmrcService }} target=_blank> {{ messages("unauthorised.signIn") }}</a>
+          {{ messages("unauthorised.again.later") }}
+        </p>
       </div>
     </div>
   </div>
