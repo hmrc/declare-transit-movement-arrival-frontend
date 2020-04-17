@@ -17,12 +17,9 @@
 package controllers
 
 import base.SpecBase
-import matchers.JsonMatchers
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
-import org.mockito.Mockito.times
-import org.mockito.Mockito.verify
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{times, verify, when}
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -30,7 +27,7 @@ import play.twirl.api.Html
 
 import scala.concurrent.Future
 
-class UnauthorisedControllerSpec extends SpecBase with JsonMatchers {
+class UnauthorisedControllerSpec extends SpecBase {
 
   "Unauthorised Controller" - {
 
@@ -55,7 +52,7 @@ class UnauthorisedControllerSpec extends SpecBase with JsonMatchers {
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       templateCaptor.getValue mustEqual "unauthorised.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
+      jsonCaptor.getValue - configKey mustBe expectedJson
 
       application.stop()
     }
