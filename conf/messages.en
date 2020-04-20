@@ -164,7 +164,7 @@ compliant.nine.p3=This page was prepared on [date when it was first published]. 
 
 movementReferenceNumber.title = What is the movement reference number (MRN)?
 movementReferenceNumber.heading = What is the movement reference number (MRN)?
-movementReferenceNumber.hintText = It is on the transit accompanying document (TAD) that is with the goods. It is 18 characters like 19GB00005112345678.
+movementReferenceNumber.hintText = It is on the transit accompanying document (TAD) that is with the goods. It is 18 characters, like 19GB12345678901234. 
 movementReferenceNumber.checkYourAnswersLabel = Movement reference number
 movementReferenceNumber.error.required = Enter the movement reference number
 movementReferenceNumber.error.invalid = Enter a real movement reference number
@@ -289,11 +289,11 @@ incidentInformation.error.required = Enter what happened on the journey
 incidentInformation.error.length = What happened on the journey must be 350 characters or less
 incidentInformation.change.hidden = what happened on the journey
 
-isTranshipment.title = Did the goods move to a different vehicle or container?
-isTranshipment.heading = Did the goods move to a different vehicle or container?
-isTranshipment.checkYourAnswersLabel = Did the goods move to a different vehicle or container?
-isTranshipment.error.required = Select yes if the goods moved to a different vehicle or container
-isTranshipment.change.hidden = if the goods moved to a different vehicle or container
+isTranshipment.title = Were the goods moved to a different vehicle or container?
+isTranshipment.heading = Were the goods moved to a different vehicle or container?
+isTranshipment.checkYourAnswersLabel = Were the goods moved to a different vehicle or container?
+isTranshipment.error.required = Select yes if the goods were moved to a different vehicle or container
+isTranshipment.change.hidden = if the goods were moved to a different vehicle or container
 
 sealsChanged.title = Have any of the seals changed?
 sealsChanged.heading = Have any of the seals changed?
@@ -341,17 +341,17 @@ addEvent.error.required = Select yes if you need to add another event
 addEvent.change.hidden = event {0} at {1}
 addEvent.remove.hidden = event {0} at {1}
 
-transhipmentType.title = What did the goods move to?
-transhipmentType.heading = What did the goods move to?
+transhipmentType.title = Where were the goods moved?
+transhipmentType.heading = Where were the goods moved?
 transhipmentType.differentContainer = A different container
 transhipmentType.differentVehicle = A different vehicle
-transhipmentType.differentContainerAndVehicle = Both
+transhipmentType.differentContainerAndVehicle = A different container on a different vehicle
 transhipmentType.checkYourAnswers.differentContainer = A different container
 transhipmentType.checkYourAnswers.differentVehicle = A different vehicle
 transhipmentType.checkYourAnswers.differentContainerAndVehicle = Different container and vehicle
-transhipmentType.checkYourAnswersLabel = What did the goods move to?
-transhipmentType.error.required = Select what the goods moved to
-transhipmentType.change.hidden = what the goods moved to
+transhipmentType.checkYourAnswersLabel = Where were the goods moved?
+transhipmentType.error.required = Select where the goods moved to
+transhipmentType.change.hidden = where the goods moved to
 
 transportIdentity.title = What is the name, registration or reference of the new vehicle?
 transportIdentity.heading = What is the name, registration or reference of the new vehicle?
