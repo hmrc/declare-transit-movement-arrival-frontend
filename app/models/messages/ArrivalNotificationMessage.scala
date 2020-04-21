@@ -53,7 +53,8 @@ final case class NormalNotification(movementReferenceNumber: MovementReferenceNu
                                     notificationDate: LocalDate,
                                     customsSubPlace: Option[String],
                                     trader: Trader,
-                                    presentationOffice: String,
+                                    presentationOfficeId: String,
+                                    presentationOfficeName: String,
                                     enRouteEvents: Option[Seq[EnRouteEvent]])
     extends ArrivalNotification {
 
@@ -90,9 +91,10 @@ object NormalNotification {
             (__ \ "notificationDate").read[LocalDate] and
             (__ \ "customsSubPlace").readNullable[String] and
             (__ \ "trader").read[Trader] and
-            (__ \ "presentationOffice").read[String] and
+            (__ \ "presentationOfficeId").read[String] and
+            (__ \ "presentationOfficeName").read[String] and
             (__ \ "enRouteEvents").readNullable[Seq[EnRouteEvent]]
-        )(NormalNotification(_, _, _, _, _, _, _))
+        )(NormalNotification(_, _, _, _, _, _, _, _))
       )
   }
 
@@ -107,7 +109,8 @@ object NormalNotification {
             "notificationDate"        -> notification.notificationDate,
             "customsSubPlace"         -> notification.customsSubPlace,
             "trader"                  -> Json.toJson(notification.trader),
-            "presentationOffice"      -> notification.presentationOffice,
+            "presentationOfficeId"    -> notification.presentationOfficeId,
+            "presentationOfficeName"  -> notification.presentationOfficeName,
             "enRouteEvents"           -> Json.toJson(notification.enRouteEvents)
           )
     }
