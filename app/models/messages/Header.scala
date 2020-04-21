@@ -42,6 +42,8 @@ import scala.xml.NodeSeq
 case class Header(movementReferenceNumber: String,
                   customsSubPlace: Option[String] = None,
                   arrivalNotificationPlace: String,
+                  presentationOfficeId: String,
+                  presentationOfficeName: String,
                   arrivalAgreedLocationOfGoods: Option[String] = None,
                   procedureTypeFlag: ProcedureTypeFlag,
                   notificationDate: LocalDate)

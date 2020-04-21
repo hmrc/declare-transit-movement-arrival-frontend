@@ -100,15 +100,15 @@ class SubmissionModelServiceSpec
             notificationDate        = arrivalNotificationRequest.header.notificationDate,
             customsSubPlace         = arrivalNotificationRequest.header.customsSubPlace,
             trader = TraderWithoutEori(
-              name                  = arrivalNotificationRequest.traderDestination.name.value,
-              streetAndNumber       = arrivalNotificationRequest.traderDestination.streetAndNumber.value,
-              postCode              = arrivalNotificationRequest.traderDestination.postCode.value,
-              city                  = arrivalNotificationRequest.traderDestination.city.value,
-              countryCode           = arrivalNotificationRequest.traderDestination.countryCode.value
+              name            = arrivalNotificationRequest.traderDestination.name.value,
+              streetAndNumber = arrivalNotificationRequest.traderDestination.streetAndNumber.value,
+              postCode        = arrivalNotificationRequest.traderDestination.postCode.value,
+              city            = arrivalNotificationRequest.traderDestination.city.value,
+              countryCode     = arrivalNotificationRequest.traderDestination.countryCode.value
             ),
-            presentationOfficeId    = arrivalNotificationRequest.customsOfficeOfPresentation.presentationOffice,
-            presentationOfficeName  = arrivalNotificationRequest.customsOfficeOfPresentation.presentationOffice,
-            enRouteEvents           = arrivalNotificationRequest.enRouteEvents
+            presentationOfficeId   = arrivalNotificationRequest.customsOfficeOfPresentation.presentationOffice,
+            presentationOfficeName = arrivalNotificationRequest.customsOfficeOfPresentation.presentationOffice,
+            enRouteEvents          = arrivalNotificationRequest.enRouteEvents
           )
         }
 

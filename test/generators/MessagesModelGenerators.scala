@@ -301,7 +301,17 @@ trait MessagesModelGenerators extends Generators {
         arrivalNotificationPlace <- stringsWithMaxLength(Header.Constants.arrivalNotificationPlaceLength)
         procedureTypeFlag        <- arbitrary[ProcedureTypeFlag]
         notificationDate         <- arbitrary[LocalDate]
-      } yield Header(movementReferenceNumber, customsSubPlace, arrivalNotificationPlace, None, procedureTypeFlag, notificationDate)
+        presentationOfficeId     <- stringsWithMaxLength(CustomsOfficeOfPresentation.Constants.presentationOfficeLength)
+        presentationOfficeName   <- arbitrary[String]
+      } yield
+        Header(movementReferenceNumber,
+               customsSubPlace,
+               arrivalNotificationPlace,
+               presentationOfficeId,
+               presentationOfficeName,
+               None,
+               procedureTypeFlag,
+               notificationDate)
     }
   }
 
