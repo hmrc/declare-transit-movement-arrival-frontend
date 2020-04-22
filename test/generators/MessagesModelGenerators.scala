@@ -321,7 +321,7 @@ trait MessagesModelGenerators extends Generators {
         meta              <- arbitrary[Meta]
         header            <- arbitrary[Header].map(_.copy(notificationDate = meta.dateOfPreparation))
         traderDestination <- arbitrary[TraderDestination]
-        customsOffice     <- arbitrary[CustomsOfficeOfPresentation]
+        customsOffice     <- arbitrary[CustomsOfficeOfPresentation].map(_.copy(presentationOffice = header.presentationOfficeId))
         enRouteEvents     <- Gen.option(listWithMaxLength[EnRouteEvent](2))
       } yield ArrivalMovementRequest(meta, header, traderDestination, customsOffice, enRouteEvents)
     }

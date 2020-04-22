@@ -60,8 +60,8 @@ class SubmissionModelServiceSpec
                 countryCode     = arrivalNotificationRequest.traderDestination.countryCode,
                 eori            = arrivalNotificationRequest.traderDestination.eori.value
               ),
-              presentationOfficeId   = arrivalNotificationRequest.customsOfficeOfPresentation.presentationOffice,
-              presentationOfficeName = arrivalNotificationRequest.customsOfficeOfPresentation.presentationOffice,
+              presentationOfficeId   = arrivalNotificationRequest.header.presentationOfficeId,
+              presentationOfficeName = arrivalNotificationRequest.header.presentationOfficeName,
               enRouteEvents          = arrivalNotificationRequest.enRouteEvents
             )
           }
@@ -106,8 +106,8 @@ class SubmissionModelServiceSpec
               city            = arrivalNotificationRequest.traderDestination.city.value,
               countryCode     = arrivalNotificationRequest.traderDestination.countryCode.value
             ),
-            presentationOfficeId   = arrivalNotificationRequest.customsOfficeOfPresentation.presentationOffice,
-            presentationOfficeName = arrivalNotificationRequest.customsOfficeOfPresentation.presentationOffice,
+            presentationOfficeId   = arrivalNotificationRequest.header.presentationOfficeId,
+            presentationOfficeName = arrivalNotificationRequest.header.presentationOfficeName,
             enRouteEvents          = arrivalNotificationRequest.enRouteEvents
           )
         }
