@@ -63,15 +63,15 @@ object Header {
         header.customsSubPlace.fold(NodeSeq.Empty){ place =>
           <CusSubPlaHEA66>{escapeXml(place)}</CusSubPlaHEA66>
         } ++
-        <ArrNotPlaHEA60>{escapeXml(header.arrivalNotificationPlace)}</ArrNotPlaHEA60> ++
-        <ArrNotPlaHEA60LNG>{Header.Constants.languageCode.code}</ArrNotPlaHEA60LNG> ++
-        <ArrAgrLocCodHEA62>{escapeXml(header.presentationOfficeId)}</ArrAgrLocCodHEA62> ++
+        <ArrNotPlaHEA60>{escapeXml(header.arrivalNotificationPlace)}</ArrNotPlaHEA60>
+        <ArrNotPlaHEA60LNG>{Header.Constants.languageCode.code}</ArrNotPlaHEA60LNG>
+        <ArrAgrLocCodHEA62>{escapeXml(header.presentationOfficeId)}</ArrAgrLocCodHEA62>
         <ArrAgrLocOfGooHEA63>{escapeXml(header.presentationOfficeName)}</ArrAgrLocOfGooHEA63>
         <ArrAgrLocOfGooHEA63LNG>{Header.Constants.languageCode.code}</ArrAgrLocOfGooHEA63LNG> ++
           header.arrivalAgreedLocationOfGoods.fold(NodeSeq.Empty){ location =>
             <ArrAutLocOfGooHEA65>{escapeXml(location)}</ArrAutLocOfGooHEA65>
           } ++
-        <SimProFlaHEA132>{header.procedureTypeFlag.code}</SimProFlaHEA132> ++
+        <SimProFlaHEA132>{header.procedureTypeFlag.code}</SimProFlaHEA132>
         <ArrNotDatHEA141>{Format.dateFormatted(header.notificationDate)}</ArrNotDatHEA141>
         }</HEAHEA>
   }
