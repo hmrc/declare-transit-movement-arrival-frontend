@@ -42,7 +42,7 @@ class ArrivalNotificationServiceSpec extends SpecBase with MockitoSugar {
   private val mockInterchangeControllerReference = mock[InterchangeControlReferenceIdRepository]
 
   private val traderWithoutEori  = TraderWithoutEori("", "", "", "", "")
-  private val normalNotification = NormalNotification(mrn, "", LocalDate.now(), None, traderWithoutEori, "", None)
+  private val normalNotification = NormalNotification(mrn, "", LocalDate.now(), None, traderWithoutEori, "", "", None)
 
   private val userEoriNumber = arbitrary[String].sample.value
 

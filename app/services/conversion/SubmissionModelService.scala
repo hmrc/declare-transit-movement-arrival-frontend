@@ -19,11 +19,10 @@ package services.conversion
 import java.time.LocalTime
 
 import com.google.inject.Inject
-import config.FrontendAppConfig
 import models.messages._
 import models.{NormalProcedureFlag, ProcedureTypeFlag}
 
-class SubmissionModelService @Inject()(appConfig: FrontendAppConfig) {
+class SubmissionModelService @Inject()() {
 
   def convertToSubmissionModel(
     arrivalNotification: ArrivalNotification,
@@ -41,7 +40,7 @@ class SubmissionModelService @Inject()(appConfig: FrontendAppConfig) {
         )
         val header                                   = buildHeader(normalNotification, NormalProcedureFlag)
         val traderDestination                        = buildTrader(normalNotification.trader)
-        val customsOffice                            = CustomsOfficeOfPresentation(presentationOffice = normalNotification.presentationOffice)
+        val customsOffice                            = CustomsOfficeOfPresentation(presentationOffice = normalNotification.presentationOfficeId)
         val enRouteEvents: Option[Seq[EnRouteEvent]] = normalNotification.enRouteEvents
 
         ArrivalMovementRequest(meta, header, traderDestination, customsOffice, enRouteEvents)
@@ -53,6 +52,8 @@ class SubmissionModelService @Inject()(appConfig: FrontendAppConfig) {
       movementReferenceNumber  = arrivalNotification.movementReferenceNumber.toString,
       customsSubPlace          = arrivalNotification.customsSubPlace,
       arrivalNotificationPlace = arrivalNotification.notificationPlace,
+      presentationOfficeId     = arrivalNotification.presentationOfficeId,
+      presentationOfficeName   = arrivalNotification.presentationOfficeName,
       procedureTypeFlag        = procedureTypeFlag,
       notificationDate         = arrivalNotification.notificationDate
     )

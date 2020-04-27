@@ -153,14 +153,15 @@ trait MessagesModelGenerators extends Generators {
     Arbitrary {
 
       for {
-        mrn                <- arbitrary[MovementReferenceNumber]
-        place              <- stringsWithMaxLength(NormalNotification.Constants.notificationPlaceLength)
-        date               <- localDateGen
-        subPlace           <- Gen.option(stringsWithMaxLength(NormalNotification.Constants.customsSubPlaceLength))
-        trader             <- arbitrary[Trader]
-        presentationOffice <- stringsWithMaxLength(NormalNotification.Constants.presentationOfficeLength)
-        events             <- Gen.option(listWithMaxLength[EnRouteEvent](NormalNotification.Constants.maxNumberOfEnRouteEvents))
-      } yield NormalNotification(mrn, place, date, subPlace, trader, presentationOffice, events)
+        mrn                    <- arbitrary[MovementReferenceNumber]
+        place                  <- stringsWithMaxLength(NormalNotification.Constants.notificationPlaceLength)
+        date                   <- localDateGen
+        subPlace               <- Gen.option(stringsWithMaxLength(NormalNotification.Constants.customsSubPlaceLength))
+        trader                 <- arbitrary[Trader]
+        presentationOfficeId   <- stringsWithMaxLength(NormalNotification.Constants.presentationOfficeLength)
+        presentationOfficeName <- arbitrary[String]
+        events                 <- Gen.option(listWithMaxLength[EnRouteEvent](NormalNotification.Constants.maxNumberOfEnRouteEvents))
+      } yield NormalNotification(mrn, place, date, subPlace, trader, presentationOfficeId, presentationOfficeName, events)
     }
 
   implicit lazy val arbitrarySimplifiedNotification: Arbitrary[SimplifiedNotification] =
@@ -300,7 +301,17 @@ trait MessagesModelGenerators extends Generators {
         arrivalNotificationPlace <- stringsWithMaxLength(Header.Constants.arrivalNotificationPlaceLength)
         procedureTypeFlag        <- arbitrary[ProcedureTypeFlag]
         notificationDate         <- arbitrary[LocalDate]
-      } yield Header(movementReferenceNumber, customsSubPlace, arrivalNotificationPlace, None, procedureTypeFlag, notificationDate)
+        presentationOfficeId     <- stringsWithMaxLength(CustomsOfficeOfPresentation.Constants.presentationOfficeLength)
+        presentationOfficeName   <- arbitrary[String]
+      } yield
+        Header(movementReferenceNumber,
+               customsSubPlace,
+               arrivalNotificationPlace,
+               presentationOfficeId,
+               presentationOfficeName,
+               None,
+               procedureTypeFlag,
+               notificationDate)
     }
   }
 
@@ -310,7 +321,7 @@ trait MessagesModelGenerators extends Generators {
         meta              <- arbitrary[Meta]
         header            <- arbitrary[Header].map(_.copy(notificationDate = meta.dateOfPreparation))
         traderDestination <- arbitrary[TraderDestination]
-        customsOffice     <- arbitrary[CustomsOfficeOfPresentation]
+        customsOffice     <- arbitrary[CustomsOfficeOfPresentation].map(_.copy(presentationOffice = header.presentationOfficeId))
         enRouteEvents     <- Gen.option(listWithMaxLength[EnRouteEvent](2))
       } yield ArrivalMovementRequest(meta, header, traderDestination, customsOffice, enRouteEvents)
     }

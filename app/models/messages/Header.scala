@@ -42,6 +42,8 @@ import scala.xml.NodeSeq
 case class Header(movementReferenceNumber: String,
                   customsSubPlace: Option[String] = None,
                   arrivalNotificationPlace: String,
+                  presentationOfficeId: String,
+                  presentationOfficeName: String,
                   arrivalAgreedLocationOfGoods: Option[String] = None,
                   procedureTypeFlag: ProcedureTypeFlag,
                   notificationDate: LocalDate)
@@ -61,18 +63,16 @@ object Header {
         header.customsSubPlace.fold(NodeSeq.Empty){ place =>
           <CusSubPlaHEA66>{escapeXml(place)}</CusSubPlaHEA66>
         } ++
-        <ArrNotPlaHEA60>{escapeXml(header.arrivalNotificationPlace)}</ArrNotPlaHEA60> ++
-        <ArrNotPlaHEA60LNG>{Header.Constants.languageCode.code}</ArrNotPlaHEA60LNG> ++
-          header.arrivalAgreedLocationOfGoods.fold(NodeSeq.Empty) { location =>
-            <ArrAgrLocCodHEA62>{escapeXml(location)} </ArrAgrLocCodHEA62> ++
-              <ArrAgrLocOfGooHEA63>{escapeXml(location)} </ArrAgrLocOfGooHEA63>
+        <ArrNotPlaHEA60>{escapeXml(header.arrivalNotificationPlace)}</ArrNotPlaHEA60>
+        <ArrNotPlaHEA60LNG>{Header.Constants.languageCode.code}</ArrNotPlaHEA60LNG>
+        <ArrAgrLocCodHEA62>{escapeXml(header.presentationOfficeId)}</ArrAgrLocCodHEA62>
+        <ArrAgrLocOfGooHEA63>{escapeXml(header.presentationOfficeName)}</ArrAgrLocOfGooHEA63>
+        <ArrAgrLocOfGooHEA63LNG>{Header.Constants.languageCode.code}</ArrAgrLocOfGooHEA63LNG> ++
+          header.arrivalAgreedLocationOfGoods.fold(NodeSeq.Empty){ location =>
+            <ArrAutLocOfGooHEA65>{escapeXml(location)}</ArrAutLocOfGooHEA65>
           } ++
-            <ArrAgrLocOfGooHEA63LNG>{Header.Constants.languageCode.code}</ArrAgrLocOfGooHEA63LNG> ++
-            header.arrivalAgreedLocationOfGoods.fold(NodeSeq.Empty){ location =>
-              <ArrAutLocOfGooHEA65> {escapeXml(location)} </ArrAutLocOfGooHEA65>
-            } ++
-            <SimProFlaHEA132>{header.procedureTypeFlag.code}</SimProFlaHEA132> ++
-            <ArrNotDatHEA141>{Format.dateFormatted(header.notificationDate)}</ArrNotDatHEA141>
+        <SimProFlaHEA132>{header.procedureTypeFlag.code}</SimProFlaHEA132>
+        <ArrNotDatHEA141>{Format.dateFormatted(header.notificationDate)}</ArrNotDatHEA141>
         }</HEAHEA>
   }
 }

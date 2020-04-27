@@ -161,7 +161,7 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
           val userAnswers: UserAnswers = emptyUserAnswers
             .copy(id = expectedArrivalNotification.movementReferenceNumber)
             .set(GoodsLocationPage, BorderForceOffice).success.value
-            .set(PresentationOfficePage, CustomsOffice(id = expectedArrivalNotification.presentationOffice, name = "name", roles = Seq.empty, None)).success.value
+            .set(PresentationOfficePage, CustomsOffice(id = expectedArrivalNotification.presentationOfficeId, name = expectedArrivalNotification.presentationOfficeName, roles = Seq.empty, None)).success.value
             .set(CustomsSubPlacePage, expectedArrivalNotification.customsSubPlace.value).success.value
             .set(TraderNamePage, trader.name.value).success.value
             .set(TraderAddressPage, TraderAddress(buildingAndStreet = trader.streetAndNumber.value, city = trader.city.value, postcode = trader.postCode.value)).success.value
@@ -243,7 +243,7 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
     emptyUserAnswers
       .copy(id = arrivalNotification.movementReferenceNumber)
       .set(GoodsLocationPage, BorderForceOffice).success.value
-      .set(PresentationOfficePage, CustomsOffice(id = arrivalNotification.presentationOffice, name = "name", roles = Seq.empty, None)).success.value
+      .set(PresentationOfficePage, CustomsOffice(id = arrivalNotification.presentationOfficeId, name = arrivalNotification.presentationOfficeName, roles = Seq.empty, None)).success.value
       .set(CustomsSubPlacePage, arrivalNotification.customsSubPlace.value).success.value
       .set(TraderNamePage, trader.name.value).success.value
       .set(TraderAddressPage, TraderAddress(buildingAndStreet = trader.streetAndNumber.value, city = trader.city.value, postcode = trader.postCode.value)).success.value

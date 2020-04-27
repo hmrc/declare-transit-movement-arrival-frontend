@@ -38,10 +38,12 @@ class HeaderSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyCheck
       forAll(arbitrary[Header], arbitrary[LocalDate]) {
         (header, arrivalNotificationDate) =>
           val minimalHeader = Header(
-            movementReferenceNumber  = header.movementReferenceNumber.toString,
+            movementReferenceNumber  = header.movementReferenceNumber,
             procedureTypeFlag        = header.procedureTypeFlag,
             arrivalNotificationPlace = header.arrivalNotificationPlace,
-            notificationDate         = arrivalNotificationDate
+            notificationDate         = arrivalNotificationDate,
+            presentationOfficeId     = header.presentationOfficeId,
+            presentationOfficeName   = header.presentationOfficeName
           )
 
           val expectedResult =
@@ -49,6 +51,8 @@ class HeaderSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyCheck
               <DocNumHEA5>{minimalHeader.movementReferenceNumber}</DocNumHEA5>
               <ArrNotPlaHEA60>{minimalHeader.arrivalNotificationPlace}</ArrNotPlaHEA60>
               <ArrNotPlaHEA60LNG>{LanguageCodeEnglish.code}</ArrNotPlaHEA60LNG>
+              <ArrAgrLocCodHEA62>{minimalHeader.presentationOfficeId}</ArrAgrLocCodHEA62>
+              <ArrAgrLocOfGooHEA63>{minimalHeader.presentationOfficeName}</ArrAgrLocOfGooHEA63>
               <ArrAgrLocOfGooHEA63LNG>{LanguageCodeEnglish.code}</ArrAgrLocOfGooHEA63LNG>
               <SimProFlaHEA132>{minimalHeader.procedureTypeFlag.code}</SimProFlaHEA132>
               <ArrNotDatHEA141>{Format.dateFormatted(arrivalNotificationDate)}</ArrNotDatHEA141>
@@ -61,16 +65,10 @@ class HeaderSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyCheck
     "must create valid xml" in {
       forAll(arbitrary[Header]) {
         header =>
-          // TODO need to follow up on these elements as ArrAgrLocCodHEA62,
-          //  ArrAgrLocCodHEA62 and ArrAutLocOfGooHEA65 are the same value
-
           val customsSubPlaceNode = header.customsSubPlace.map(
             customsSubPlace => <CusSubPlaHEA66>{customsSubPlace}</CusSubPlaHEA66>
           )
-          val agreedLocationOfGoods = header.arrivalAgreedLocationOfGoods.map(
-            arrivalAgreedLocationOfGoods => <ArrAgrLocCodHEA62>{arrivalAgreedLocationOfGoods}</ArrAgrLocCodHEA62>
-              <ArrAgrLocOfGooHEA63>{arrivalAgreedLocationOfGoods}</ArrAgrLocOfGooHEA63>
-          )
+
           val authorisedLocationOfGoods = header.arrivalAgreedLocationOfGoods.map(
             arrivalAgreedLocationOfGoods => <ArrAutLocOfGooHEA65>{arrivalAgreedLocationOfGoods}</ArrAutLocOfGooHEA65>
           )
@@ -81,7 +79,8 @@ class HeaderSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyCheck
               {customsSubPlaceNode.getOrElse(NodeSeq.Empty)}
               <ArrNotPlaHEA60>{header.arrivalNotificationPlace}</ArrNotPlaHEA60>
               <ArrNotPlaHEA60LNG>{LanguageCodeEnglish.code}</ArrNotPlaHEA60LNG>
-              {agreedLocationOfGoods.getOrElse(NodeSeq.Empty)}
+              <ArrAgrLocCodHEA62>{header.presentationOfficeId}</ArrAgrLocCodHEA62>
+              <ArrAgrLocOfGooHEA63>{header.presentationOfficeName}</ArrAgrLocOfGooHEA63>
               <ArrAgrLocOfGooHEA63LNG>{LanguageCodeEnglish.code}</ArrAgrLocOfGooHEA63LNG>
               {authorisedLocationOfGoods.getOrElse(NodeSeq.Empty)}
               <SimProFlaHEA132>{header.procedureTypeFlag.code}</SimProFlaHEA132>
