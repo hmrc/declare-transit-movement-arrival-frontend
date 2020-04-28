@@ -18,12 +18,12 @@ package models.messages
 
 import models.XMLWrites._
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalatest.{FreeSpec, MustMatchers}
+import org.scalatest.{FreeSpec, MustMatchers, StreamlinedXmlEquality}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
 import scala.xml.NodeSeq
 
-class InterchangeControlReferenceSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks {
+class InterchangeControlReferenceSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with StreamlinedXmlEquality {
 
   "InterchangeControlReference" - {
     "must convert to xml and convert to correct format" in {
@@ -34,7 +34,7 @@ class InterchangeControlReferenceSpec extends FreeSpec with MustMatchers with Sc
           val interchangeControlReference = InterchangeControlReference(date, index)
           val result                      = interchangeControlReference.toXml
 
-          result mustBe expectedResult
+          result mustEqual expectedResult
       }
     }
   }

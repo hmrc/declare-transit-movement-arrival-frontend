@@ -19,12 +19,12 @@ package models.messages
 import models.XMLWrites._
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
-import org.scalatest.{FreeSpec, MustMatchers}
+import org.scalatest.{FreeSpec, MustMatchers, StreamlinedXmlEquality}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
 import scala.xml.NodeSeq
 
-class MessageSenderSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks {
+class MessageSenderSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with StreamlinedXmlEquality {
 
   "MessageSender" - {
 
@@ -39,7 +39,7 @@ class MessageSenderSpec extends FreeSpec with MustMatchers with ScalaCheckProper
           val messageSender   = MessageSender(environment, eori)
           val result: NodeSeq = messageSender.toXml
 
-          result mustBe expectedResult
+          result mustEqual expectedResult
       }
     }
   }

@@ -20,7 +20,7 @@ import generators.MessagesModelGenerators
 import models.NormalProcedureFlag
 import models.XMLWrites._
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalatest.{FreeSpec, MustMatchers, OptionValues}
+import org.scalatest.{FreeSpec, MustMatchers, OptionValues, StreamlinedXmlEquality}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 
@@ -33,7 +33,8 @@ class ArrivalMovementRequestSpec
     with GuiceOneAppPerSuite
     with MessagesModelGenerators
     with ScalaCheckDrivenPropertyChecks
-    with OptionValues {
+    with OptionValues
+    with StreamlinedXmlEquality {
 
   "ArrivalMovementRequest" - {
     "must create valid xml" in {
@@ -50,7 +51,7 @@ class ArrivalMovementRequestSpec
                 arrivalMovementRequest.enRouteEvents.map(_.flatMap(_.toXml)).getOrElse(NodeSeq.Empty)}
               </CC007A>
 
-            arrivalMovementRequest.toXml.map(trim) mustEqual validXml.map(trim)
+            arrivalMovementRequest.toXml mustEqual validXml
           }
       }
     }

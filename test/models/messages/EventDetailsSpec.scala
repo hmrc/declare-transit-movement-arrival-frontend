@@ -22,15 +22,20 @@ import models.XMLWrites._
 import models.messages.behaviours.JsonBehaviours
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.OptionValues._
-import org.scalatest.{FreeSpec, MustMatchers}
+import org.scalatest.{FreeSpec, MustMatchers, StreamlinedXmlEquality}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.{JsObject, JsSuccess, Json}
 import utils.Format
 
 import scala.xml.NodeSeq
-import scala.xml.Utility.trim
 
-class EventDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with MessagesModelGenerators with JsonBehaviours {
+class EventDetailsSpec
+    extends FreeSpec
+    with MustMatchers
+    with ScalaCheckPropertyChecks
+    with MessagesModelGenerators
+    with JsonBehaviours
+    with StreamlinedXmlEquality {
 
   "Incident" - {
 
@@ -83,7 +88,7 @@ class EventDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckPropert
               }
             </INCINC>
 
-          incident.toXml.map(trim) mustEqual expectedResult.map(trim)
+          incident.toXml mustEqual expectedResult
       }
     }
 
@@ -155,7 +160,7 @@ class EventDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckPropert
               </CONNR3>
             </TRASHP>
 
-          containerTranshipment.toXml.map(trim) mustEqual expectedResult.map(trim)
+          containerTranshipment.toXml mustEqual expectedResult
       }
     }
 
@@ -228,7 +233,7 @@ class EventDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckPropert
               }
             </TRASHP>
 
-          vehicularTranshipment.toXml.map(trim) mustEqual expectedResult.map(trim)
+          vehicularTranshipment.toXml mustEqual expectedResult
       }
     }
 
@@ -279,7 +284,7 @@ class EventDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckPropert
               </CONNR3>
             </TRASHP>
 
-          vehicularTranshipment.toXml.map(trim) mustEqual expectedResult.map(trim)
+          vehicularTranshipment.toXml mustEqual expectedResult
       }
     }
 

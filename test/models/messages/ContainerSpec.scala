@@ -20,13 +20,12 @@ import generators.ModelGenerators
 import models.XMLWrites._
 import models.messages.behaviours.JsonBehaviours
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalatest.{FreeSpec, MustMatchers}
+import org.scalatest.{FreeSpec, MustMatchers, StreamlinedXmlEquality}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
 import scala.xml.Node
-import scala.xml.Utility.trim
 
-class ContainerSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with ModelGenerators with JsonBehaviours {
+class ContainerSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with ModelGenerators with JsonBehaviours with StreamlinedXmlEquality {
 
   "Container" - {
     "must create valid xml" in {
@@ -38,7 +37,7 @@ class ContainerSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyCh
               <ConNumNR31>{container.containerNumber}</ConNumNR31>
             </CONNR3>
 
-          container.toXml.map(trim) mustBe expectedXml.map(trim)
+          container.toXml mustEqual expectedXml
       }
     }
   }

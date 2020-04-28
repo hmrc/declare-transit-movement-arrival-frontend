@@ -19,13 +19,13 @@ package models.messages
 import generators.MessagesModelGenerators
 import models.XMLWrites._
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalatest.{FreeSpec, MustMatchers}
+import org.scalatest.{FreeSpec, MustMatchers, StreamlinedXmlEquality}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import utils.Format
 
 import scala.xml.NodeSeq
 
-class MetaSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with MessagesModelGenerators {
+class MetaSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with MessagesModelGenerators with StreamlinedXmlEquality {
 
   //format off
   "Meta" - {
@@ -111,7 +111,7 @@ class MetaSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks 
             }
           }
 
-          meta.toXml mustBe expectedResult
+          meta.toXml mustEqual expectedResult
       }
     }
   }

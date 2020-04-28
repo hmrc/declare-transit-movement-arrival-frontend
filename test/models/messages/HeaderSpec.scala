@@ -22,15 +22,13 @@ import generators.MessagesModelGenerators
 import models.LanguageCodeEnglish
 import models.XMLWrites._
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalatest.{FreeSpec, MustMatchers}
+import org.scalatest.{FreeSpec, MustMatchers, StreamlinedXmlEquality}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import utils.Format
 
 import scala.xml.NodeSeq
-import scala.xml.Utility.trim
-import scala.xml.XML.loadString
 
-class HeaderSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with MessagesModelGenerators {
+class HeaderSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with MessagesModelGenerators with StreamlinedXmlEquality {
 
   "Header" - {
     "must create minimal valid xml" in {
@@ -46,7 +44,7 @@ class HeaderSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyCheck
             presentationOfficeName   = header.presentationOfficeName
           )
 
-          val expectedResult =
+          val expectedResult: NodeSeq =
             <HEAHEA>
               <DocNumHEA5>{minimalHeader.movementReferenceNumber}</DocNumHEA5>
               <ArrNotPlaHEA60>{minimalHeader.arrivalNotificationPlace}</ArrNotPlaHEA60>
@@ -58,7 +56,7 @@ class HeaderSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyCheck
               <ArrNotDatHEA141>{Format.dateFormatted(arrivalNotificationDate)}</ArrNotDatHEA141>
             </HEAHEA>
 
-          minimalHeader.toXml mustEqual trim(expectedResult)
+          minimalHeader.toXml mustEqual expectedResult
       }
     }
 
@@ -73,7 +71,7 @@ class HeaderSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyCheck
             arrivalAgreedLocationOfGoods => <ArrAutLocOfGooHEA65>{arrivalAgreedLocationOfGoods}</ArrAutLocOfGooHEA65>
           )
 
-          val expectedResult =
+          val expectedResult: NodeSeq =
             <HEAHEA>
               <DocNumHEA5>{header.movementReferenceNumber}</DocNumHEA5>
               {customsSubPlaceNode.getOrElse(NodeSeq.Empty)}
@@ -87,7 +85,7 @@ class HeaderSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyCheck
               <ArrNotDatHEA141>{Format.dateFormatted(header.notificationDate)}</ArrNotDatHEA141>
             </HEAHEA>
 
-          header.toXml mustEqual trim(expectedResult)
+          header.toXml mustEqual expectedResult
       }
     }
   }

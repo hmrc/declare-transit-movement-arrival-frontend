@@ -19,13 +19,18 @@ package models.messages
 import generators.MessagesModelGenerators
 import models.XMLWrites._
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalatest.{FreeSpec, MustMatchers}
+import org.scalatest.{FreeSpec, MustMatchers, StreamlinedXmlEquality}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
 import scala.xml.{Node, NodeSeq}
 import scala.xml.Utility.trim
 
-class CustomsOfficeOfPresentationSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with MessagesModelGenerators {
+class CustomsOfficeOfPresentationSpec
+    extends FreeSpec
+    with MustMatchers
+    with ScalaCheckPropertyChecks
+    with MessagesModelGenerators
+    with StreamlinedXmlEquality {
 
   "CustomsOfficeOfPresentation" - {
 
@@ -37,7 +42,7 @@ class CustomsOfficeOfPresentationSpec extends FreeSpec with MustMatchers with Sc
               <RefNumRES1>{customsOfficeOfPresentation.presentationOffice}</RefNumRES1>
             </CUSOFFPREOFFRES>
 
-          customsOfficeOfPresentation.toXml.map(trim) mustBe expectedResult.map(trim)
+          customsOfficeOfPresentation.toXml mustEqual expectedResult
       }
     }
   }
