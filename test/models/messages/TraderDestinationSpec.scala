@@ -20,13 +20,13 @@ import generators.MessagesModelGenerators
 import models.LanguageCodeEnglish
 import models.XMLWrites._
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalatest.{FreeSpec, MustMatchers}
+import org.scalatest.{FreeSpec, MustMatchers, StreamlinedXmlEquality}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
 import scala.xml.NodeSeq
 import scala.xml.Utility.trim
 
-class TraderDestinationSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with MessagesModelGenerators {
+class TraderDestinationSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with MessagesModelGenerators with StreamlinedXmlEquality {
 
   "TraderDestination" - {
     "must create minimal valid xml" in {
@@ -38,7 +38,7 @@ class TraderDestinationSpec extends FreeSpec with MustMatchers with ScalaCheckPr
           <NADLNGRD>{LanguageCodeEnglish.code}</NADLNGRD>
         </TRADESTRD>
 
-      traderDestination.toXml.map(trim) mustBe expectedResult.map(trim)
+      traderDestination.toXml mustEqual expectedResult
     }
 
     "must create valid xml" in {
@@ -76,7 +76,7 @@ class TraderDestinationSpec extends FreeSpec with MustMatchers with ScalaCheckPr
             }
             </TRADESTRD>
 
-          traderDestination.toXml.map(trim) mustBe expectedResult.map(trim)
+          traderDestination.toXml mustEqual expectedResult
       }
     }
 

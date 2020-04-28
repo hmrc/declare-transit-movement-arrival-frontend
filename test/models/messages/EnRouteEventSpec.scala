@@ -21,13 +21,19 @@ import models.LanguageCodeEnglish
 import models.XMLWrites._
 import models.messages.behaviours.JsonBehaviours
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalatest.{FreeSpec, MustMatchers}
+import org.scalatest.{FreeSpec, MustMatchers, StreamlinedXmlEquality}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.{JsObject, JsSuccess, Json}
 
 import scala.xml.Utility.trim
 
-class EnRouteEventSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with MessagesModelGenerators with JsonBehaviours {
+class EnRouteEventSpec
+    extends FreeSpec
+    with MustMatchers
+    with ScalaCheckPropertyChecks
+    with MessagesModelGenerators
+    with JsonBehaviours
+    with StreamlinedXmlEquality {
 
   "EnRouteEvent" - {
 
@@ -57,7 +63,7 @@ class EnRouteEventSpec extends FreeSpec with MustMatchers with ScalaCheckPropert
             </ENROUEVETEV>
           }
 
-          enRouteEventWithSealAndIncident.toXml.map(trim) mustBe result.map(trim)
+          enRouteEventWithSealAndIncident.toXml mustEqual result
       }
     }
 
@@ -87,7 +93,7 @@ class EnRouteEventSpec extends FreeSpec with MustMatchers with ScalaCheckPropert
             </ENROUEVETEV>
           }
 
-          enRouteEventWithContainer.toXml.map(trim) mustBe result.map(trim)
+          enRouteEventWithContainer.toXml mustEqual result
       }
     }
 
@@ -117,7 +123,7 @@ class EnRouteEventSpec extends FreeSpec with MustMatchers with ScalaCheckPropert
             </ENROUEVETEV>
           }
 
-          enRouteEventWithVehicle.toXml.map(trim) mustBe result.map(trim)
+          enRouteEventWithVehicle.toXml mustEqual result
       }
     }
     "must deserialise" in {

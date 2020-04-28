@@ -18,13 +18,12 @@ package models.messages
 
 import models.XMLWrites._
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalatest.{FreeSpec, MustMatchers}
+import org.scalatest.{FreeSpec, MustMatchers, StreamlinedXmlEquality}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
-import scala.xml.Node
-import scala.xml.Utility.trim
+import scala.xml.NodeSeq
 
-class MessageCodeSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks {
+class MessageCodeSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with StreamlinedXmlEquality {
 
   "MessageCode" - {
     "must create valid xml" in {
@@ -32,9 +31,9 @@ class MessageCodeSpec extends FreeSpec with MustMatchers with ScalaCheckProperty
       forAll(arbitrary[String]) {
         code =>
           val messageCode: MessageCode = MessageCode(code)
-          val expectedResult: Node     = <MesTypMES20>{code}</MesTypMES20>
+          val expectedResult: NodeSeq  = <MesTypMES20>{code}</MesTypMES20>
 
-          messageCode.toXml.map(trim) mustBe expectedResult.map(trim)
+          messageCode.toXml mustEqual expectedResult
       }
     }
   }
