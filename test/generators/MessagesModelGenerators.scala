@@ -243,7 +243,7 @@ trait MessagesModelGenerators extends Generators {
   implicit lazy val arbitraryMessageSender: Arbitrary[MessageSender] = {
     Arbitrary {
       for {
-        environment <- arbitrary[String]
+        environment <- Gen.oneOf(Seq("LOCAL", "QA", "STAGING", "PRODUCTION"))
         eori        <- arbitrary[String]
       } yield MessageSender(environment, eori)
     }
