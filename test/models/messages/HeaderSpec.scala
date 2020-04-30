@@ -46,13 +46,13 @@ class HeaderSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyCheck
 
           val expectedResult: NodeSeq =
             <HEAHEA>
-              <DocNumHEA5>{minimalHeader.movementReferenceNumber}</DocNumHEA5>
-              <ArrNotPlaHEA60>{minimalHeader.arrivalNotificationPlace}</ArrNotPlaHEA60>
+              <DocNumHEA5>{escapeXml(minimalHeader.movementReferenceNumber)}</DocNumHEA5>
+              <ArrNotPlaHEA60>{escapeXml(minimalHeader.arrivalNotificationPlace)}</ArrNotPlaHEA60>
               <ArrNotPlaHEA60LNG>{LanguageCodeEnglish.code}</ArrNotPlaHEA60LNG>
-              <ArrAgrLocCodHEA62>{minimalHeader.presentationOfficeId}</ArrAgrLocCodHEA62>
-              <ArrAgrLocOfGooHEA63>{minimalHeader.presentationOfficeName}</ArrAgrLocOfGooHEA63>
+              <ArrAgrLocCodHEA62>{escapeXml(minimalHeader.presentationOfficeId)}</ArrAgrLocCodHEA62>
+              <ArrAgrLocOfGooHEA63>{escapeXml(minimalHeader.presentationOfficeName)}</ArrAgrLocOfGooHEA63>
               <ArrAgrLocOfGooHEA63LNG>{LanguageCodeEnglish.code}</ArrAgrLocOfGooHEA63LNG>
-              <SimProFlaHEA132>{minimalHeader.procedureTypeFlag.code}</SimProFlaHEA132>
+              <SimProFlaHEA132>{escapeXml(minimalHeader.procedureTypeFlag.code)}</SimProFlaHEA132>
               <ArrNotDatHEA141>{Format.dateFormatted(arrivalNotificationDate)}</ArrNotDatHEA141>
             </HEAHEA>
 

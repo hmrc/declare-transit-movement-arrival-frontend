@@ -32,7 +32,7 @@ class MessageSenderSpec extends FreeSpec with MustMatchers with ScalaCheckProper
       forAll(arbitrary[MessageSender]) {
         messageSender =>
           val expectedResult: NodeSeq =
-            <MesSenMES3>{s"${messageSender.environment}-${messageSender.eori}"}</MesSenMES3>
+            <MesSenMES3>{escapeXml(s"${messageSender.environment}-${messageSender.eori}")}</MesSenMES3>
 
           messageSender.toXml mustEqual expectedResult
       }
