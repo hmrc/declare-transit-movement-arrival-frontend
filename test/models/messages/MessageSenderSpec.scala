@@ -16,30 +16,25 @@
 
 package models.messages
 
+import generators.MessagesModelGenerators
 import models.XMLWrites._
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalacheck.Gen
 import org.scalatest.{FreeSpec, MustMatchers, StreamlinedXmlEquality}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
 import scala.xml.NodeSeq
 
-class MessageSenderSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with StreamlinedXmlEquality {
+class MessageSenderSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with StreamlinedXmlEquality with MessagesModelGenerators {
 
   "MessageSender" - {
 
     "must convert to xml and convert to correct format" in {
+      forAll(arbitrary[MessageSender]) {
+        messageSender =>
+          val expectedResult: NodeSeq =
+            <MesSenMES3>{escapeXml(s"${messageSender.environment}-${messageSender.eori}")}</MesSenMES3>
 
-      val environment: Gen[String] = Gen.oneOf(Seq("LOCAL", "QA", "STAGING", "PRODUCTION"))
-
-      forAll(arbitrary[String], environment) {
-        (eori, environment) =>
-          val expectedResult: NodeSeq = <MesSenMES3>{s"$environment-$eori"}</MesSenMES3>
-
-          val messageSender   = MessageSender(environment, eori)
-          val result: NodeSeq = messageSender.toXml
-
-          result mustEqual expectedResult
+          messageSender.toXml mustEqual expectedResult
       }
     }
   }

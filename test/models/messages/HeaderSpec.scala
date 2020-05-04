@@ -46,13 +46,13 @@ class HeaderSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyCheck
 
           val expectedResult: NodeSeq =
             <HEAHEA>
-              <DocNumHEA5>{minimalHeader.movementReferenceNumber}</DocNumHEA5>
-              <ArrNotPlaHEA60>{minimalHeader.arrivalNotificationPlace}</ArrNotPlaHEA60>
+              <DocNumHEA5>{escapeXml(minimalHeader.movementReferenceNumber)}</DocNumHEA5>
+              <ArrNotPlaHEA60>{escapeXml(minimalHeader.arrivalNotificationPlace)}</ArrNotPlaHEA60>
               <ArrNotPlaHEA60LNG>{LanguageCodeEnglish.code}</ArrNotPlaHEA60LNG>
-              <ArrAgrLocCodHEA62>{minimalHeader.presentationOfficeId}</ArrAgrLocCodHEA62>
-              <ArrAgrLocOfGooHEA63>{minimalHeader.presentationOfficeName}</ArrAgrLocOfGooHEA63>
+              <ArrAgrLocCodHEA62>{escapeXml(minimalHeader.presentationOfficeId)}</ArrAgrLocCodHEA62>
+              <ArrAgrLocOfGooHEA63>{escapeXml(minimalHeader.presentationOfficeName)}</ArrAgrLocOfGooHEA63>
               <ArrAgrLocOfGooHEA63LNG>{LanguageCodeEnglish.code}</ArrAgrLocOfGooHEA63LNG>
-              <SimProFlaHEA132>{minimalHeader.procedureTypeFlag.code}</SimProFlaHEA132>
+              <SimProFlaHEA132>{escapeXml(minimalHeader.procedureTypeFlag.code)}</SimProFlaHEA132>
               <ArrNotDatHEA141>{Format.dateFormatted(arrivalNotificationDate)}</ArrNotDatHEA141>
             </HEAHEA>
 
@@ -64,21 +64,21 @@ class HeaderSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyCheck
       forAll(arbitrary[Header]) {
         header =>
           val customsSubPlaceNode = header.customsSubPlace.map(
-            customsSubPlace => <CusSubPlaHEA66>{customsSubPlace}</CusSubPlaHEA66>
+            customsSubPlace => <CusSubPlaHEA66>{escapeXml(customsSubPlace)}</CusSubPlaHEA66>
           )
 
           val authorisedLocationOfGoods = header.arrivalAgreedLocationOfGoods.map(
-            arrivalAgreedLocationOfGoods => <ArrAutLocOfGooHEA65>{arrivalAgreedLocationOfGoods}</ArrAutLocOfGooHEA65>
+            arrivalAgreedLocationOfGoods => <ArrAutLocOfGooHEA65>{escapeXml(arrivalAgreedLocationOfGoods)}</ArrAutLocOfGooHEA65>
           )
 
           val expectedResult: NodeSeq =
             <HEAHEA>
-              <DocNumHEA5>{header.movementReferenceNumber}</DocNumHEA5>
+              <DocNumHEA5>{escapeXml(header.movementReferenceNumber)}</DocNumHEA5>
               {customsSubPlaceNode.getOrElse(NodeSeq.Empty)}
-              <ArrNotPlaHEA60>{header.arrivalNotificationPlace}</ArrNotPlaHEA60>
+              <ArrNotPlaHEA60>{escapeXml(header.arrivalNotificationPlace)}</ArrNotPlaHEA60>
               <ArrNotPlaHEA60LNG>{LanguageCodeEnglish.code}</ArrNotPlaHEA60LNG>
-              <ArrAgrLocCodHEA62>{header.presentationOfficeId}</ArrAgrLocCodHEA62>
-              <ArrAgrLocOfGooHEA63>{header.presentationOfficeName}</ArrAgrLocOfGooHEA63>
+              <ArrAgrLocCodHEA62>{escapeXml(header.presentationOfficeId)}</ArrAgrLocCodHEA62>
+              <ArrAgrLocOfGooHEA63>{escapeXml(header.presentationOfficeName)}</ArrAgrLocOfGooHEA63>
               <ArrAgrLocOfGooHEA63LNG>{LanguageCodeEnglish.code}</ArrAgrLocOfGooHEA63LNG>
               {authorisedLocationOfGoods.getOrElse(NodeSeq.Empty)}
               <SimProFlaHEA132>{header.procedureTypeFlag.code}</SimProFlaHEA132>

@@ -24,6 +24,6 @@ object MessageCode {
 
   implicit def writes: XMLWrites[MessageCode] = XMLWrites[MessageCode] {
     messageCode =>
-      <MesTypMES20> { messageCode.code } </MesTypMES20>
+      <MesTypMES20>{messageCode.code}</MesTypMES20>
   }
 }
