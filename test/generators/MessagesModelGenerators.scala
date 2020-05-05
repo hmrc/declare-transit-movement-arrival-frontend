@@ -19,7 +19,7 @@ package generators
 import java.time.{LocalDate, LocalTime}
 
 import models.messages._
-import models.{MovementReferenceNumber, NormalProcedureFlag, ProcedureTypeFlag, RejectionError, SimplifiedProcedureFlag}
+import models._
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 
@@ -212,7 +212,7 @@ trait MessagesModelGenerators extends Generators {
         date   <- datesBetween(pastDate, dateNow)
         action <- arbitrary[Option[String]]
         reason <- arbitrary[Option[String]]
-        errors <- arbitrary[Seq[RejectionError]]
+        errors <- listWithMaxLength[FunctionalError](5)
       } yield ArrivalNotificationRejectionMessage(mrn, date, action, reason, errors)
     }
 
@@ -370,7 +370,7 @@ trait MessagesModelGenerators extends Generators {
     }
   }
 
-  implicit lazy val arbitraryRejectionError: Arbitrary[RejectionError] =
+  implicit lazy val arbitraryRejectionError: Arbitrary[FunctionalError] =
     Arbitrary {
 
       for {
@@ -378,6 +378,6 @@ trait MessagesModelGenerators extends Generators {
         pointer       <- arbitrary[String]
         reason        <- arbitrary[Option[String]]
         originalValue <- arbitrary[Option[String]]
-      } yield RejectionError(errorType, pointer, reason, originalValue)
+      } yield FunctionalError(ErrorType(errorType), ErrorPointer(pointer), reason, originalValue)
     }
 }
