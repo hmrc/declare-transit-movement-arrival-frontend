@@ -16,4 +16,11 @@
 
 package models
 
+import com.lucidchart.open.xtract.{__, XmlReader}
+
 case class ErrorPointer(value: String)
+
+object ErrorPointer {
+  implicit val xmlReader: XmlReader[ErrorPointer] =
+    (__ \ "ErrPoiER12").read[String].map(apply)
+}

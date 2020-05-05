@@ -1,12 +1,31 @@
+/*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package models.messages
+
+import java.time.LocalDate
 
 import base.SpecBase
 import com.lucidchart.open.xtract.XmlReader
-import generators.{MessagesModelGenerators, ModelGenerators}
+import generators.MessagesModelGenerators
 import models.{FunctionalError, MovementReferenceNumber}
-import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
+import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
+import utils.Format._
 
 class ArrivalNotificationRejectionMessageSpec extends SpecBase with ScalaCheckDrivenPropertyChecks with MessagesModelGenerators {
 
@@ -17,35 +36,30 @@ class ArrivalNotificationRejectionMessageSpec extends SpecBase with ScalaCheckDr
       action <- arbitrary[String]
       reason <- arbitrary[String]
       errors <- arbitrary[FunctionalError]
-    } yield ArrivalNotificationRejectionMessage(mrn, date, Some(action), Some(reason), Seq(errors))
+    } yield {
+      ArrivalNotificationRejectionMessage(mrn, date, Some(action), Some(reason), Seq(errors))
+    }
 
   "deserialization from XML" - {
     "do the thing" in {
-      forAll(arbitrary[ArrivalNotificationRejectionMessage]) {
+      forAll(rejectionMessageXmlGen) {
         rejectionMessage =>
-          val xml = <CC008A>
-            <SynIdeMES1>UNOC</SynIdeMES1>
-            <SynVerNumMES2>3</SynVerNumMES2>
-            <MesSenMES3>NTA.GB</MesSenMES3>
-            <MesRecMES6>SYST17B-NCTS_EU_EXIT</MesRecMES6>
-            <DatOfPreMES9>20191018</DatOfPreMES9>
-            <TimOfPreMES10>1525</TimOfPreMES10>
-            <IntConRefMES11>81391018152535</IntConRefMES11>
-            <AppRefMES14>NCTS</AppRefMES14>
-            <TesIndMES18>0</TesIndMES18>
-            <MesIdeMES19>81391018152535</MesIdeMES19>
-            <MesTypMES20>GB008A</MesTypMES20>
-            <HEAHEA>
-              <DocNumHEA5>19IT021300100075E9</DocNumHEA5>
-              <ArrRejDatHEA142>20191018</ArrRejDatHEA142>
-              <ArrRejReaHEA242>Invalid IE007 Message</ArrRejReaHEA242>
-            </HEAHEA>
-            <FUNERRER1>
-              <ErrTypER11>93</ErrTypER11>
-              <ErrPoiER12>Invalid MRN</ErrPoiER12>
-              <OriAttValER14>19IT02110010007827</OriAttValER14>
-            </FUNERRER1>
-          </CC008A>
+          val xml = {
+            <CC008A>
+              <HEAHEA>
+                <DocNumHEA5>{rejectionMessage.movementReferenceNumber}</DocNumHEA5>
+                <ArrRejDatHEA142>{dateFormatted(rejectionMessage.rejectionDate)}</ArrRejDatHEA142>
+                <ActToBeTakHEA238>{rejectionMessage.action.getOrElse("test")}</ActToBeTakHEA238>
+                <ArrRejReaHEA242>{rejectionMessage.reason.getOrElse("test")}</ArrRejReaHEA242>
+              </HEAHEA>
+              <FUNERRER1>
+                <ErrTypER11>{rejectionMessage.errors.head.errorType}</ErrTypER11>
+                <ErrPoiER12>{rejectionMessage.errors.head.pointer}</ErrPoiER12>
+                <ErrReaER13>{rejectionMessage.errors.head.reason.getOrElse("test")}</ErrReaER13>
+                <OriAttValER14>{rejectionMessage.errors.head.originalAttributeValue.getOrElse("test")}</OriAttValER14>
+              </FUNERRER1>
+            </CC008A>
+          }
 
           val result = XmlReader.of[ArrivalNotificationRejectionMessage].read(xml).toOption.value
 

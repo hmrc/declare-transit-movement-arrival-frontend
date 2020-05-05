@@ -16,4 +16,11 @@
 
 package models
 
+import com.lucidchart.open.xtract.{__, XmlReader}
+
 case class ErrorType(value: Int)
+
+object ErrorType {
+  implicit val xmlReader: XmlReader[ErrorType] =
+    (__ \ "ErrTypER11").read[Int].map(apply)
+}

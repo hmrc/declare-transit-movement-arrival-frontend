@@ -16,9 +16,15 @@
 
 package models.messages
 
-import models._
 import java.time.LocalDate
-import play.api.libs.json._
+
+import cats.syntax.all._
+import com.lucidchart.open.xtract.XmlReader._
+import com.lucidchart.open.xtract.{__, ParseResult, ParseSuccess, XmlReader}
+import models.FunctionalError
+import utils.Format.dateFormatter
+
+import scala.xml.NodeSeq
 
 final case class ArrivalNotificationRejectionMessage(
   movementReferenceNumber: String,
@@ -27,3 +33,23 @@ final case class ArrivalNotificationRejectionMessage(
   reason: Option[String],
   errors: Seq[FunctionalError]
 )
+
+object ArrivalNotificationRejectionMessage {
+
+  implicit val xmlDateReads: XmlReader[LocalDate] = {
+    new XmlReader[LocalDate] {
+      override def read(xml: NodeSeq): ParseResult[LocalDate] = {
+        val parseXml = LocalDate.parse(xml.text, dateFormatter)
+        ParseSuccess(parseXml)
+      }
+    }
+  }
+
+  implicit val xmlReader: XmlReader[ArrivalNotificationRejectionMessage] = (
+    (__ \ "HEAHEA" \ "DocNumHEA5").read[String],
+    (__ \ "HEAHEA" \ "ArrRejDatHEA142").read[LocalDate],
+    (__ \ "HEAHEA" \ "ActToBeTakHEA238").read[String].optional,
+    (__ \ "HEAHEA" \ "ArrRejReaHEA242").read[String].optional,
+    (__ \ "FUNERRER1").read(seq[FunctionalError])
+  ).mapN(apply)
+}

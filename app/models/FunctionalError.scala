@@ -16,9 +16,22 @@
 
 package models
 
+import com.lucidchart.open.xtract.{__, XmlReader}
+import cats.syntax.all._
+
 final case class FunctionalError(
   errorType: ErrorType,
   pointer: ErrorPointer,
   reason: Option[String],
   originalAttributeValue: Option[String]
 )
+
+object FunctionalError {
+
+  implicit val xmlReader: XmlReader[FunctionalError] = (
+    __.read[ErrorType],
+    __.read[ErrorPointer],
+    (__ \ "ErrReaER13").read[String].optional,
+    (__ \ "OriAttValER14").read[String].optional
+  ).mapN(apply)
+}
