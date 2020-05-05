@@ -212,7 +212,7 @@ trait MessagesModelGenerators extends Generators {
         date   <- datesBetween(pastDate, dateNow)
         action <- arbitrary[Option[String]]
         reason <- arbitrary[Option[String]]
-        errors <- listWithMaxLength[RejectionError](5)
+        errors <- listWithMaxLength[FunctionalError](5)
       } yield ArrivalNotificationRejectionMessage(mrn, date, action, reason, errors)
     }
 
@@ -370,7 +370,7 @@ trait MessagesModelGenerators extends Generators {
     }
   }
 
-  implicit lazy val arbitraryRejectionError: Arbitrary[RejectionError] =
+  implicit lazy val arbitraryRejectionError: Arbitrary[FunctionalError] =
     Arbitrary {
 
       for {
@@ -378,6 +378,6 @@ trait MessagesModelGenerators extends Generators {
         pointer       <- arbitrary[String]
         reason        <- arbitrary[Option[String]]
         originalValue <- arbitrary[Option[String]]
-      } yield RejectionError(ErrorType(errorType), ErrorPointer(pointer), reason, originalValue)
+      } yield FunctionalError(ErrorType(errorType), ErrorPointer(pointer), reason, originalValue)
     }
 }

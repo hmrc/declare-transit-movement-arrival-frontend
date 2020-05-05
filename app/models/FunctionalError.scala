@@ -14,16 +14,11 @@
  * limitations under the License.
  */
 
-package models.messages
+package models
 
-import models._
-import java.time.LocalDate
-import play.api.libs.json._
-
-final case class ArrivalNotificationRejectionMessage(
-  movementReferenceNumber: String,
-  rejectionDate: LocalDate,
-  action: Option[String],
+final case class FunctionalError(
+  errorType: ErrorType,
+  pointer: ErrorPointer,
   reason: Option[String],
-  errors: Seq[FunctionalError]
+  originalAttributeValue: Option[String]
 )

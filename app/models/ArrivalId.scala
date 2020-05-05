@@ -16,9 +16,4 @@
 
 package models
 
-final case class RejectionError(
-  errorType: ErrorType,
-  pointer: ErrorPointer,
-  reason: Option[String],
-  originalAttributeValue: Option[String]
-)
+case class ArrivalId(value: String)
