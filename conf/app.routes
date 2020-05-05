@@ -161,3 +161,5 @@ GET        /:mrn/event/:eventIndex/confirm-remove-event                         
 POST       /:mrn/event/:eventIndex/confirm-remove-event                                         controllers.events.ConfirmRemoveEventController.onSubmit(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode = NormalMode)
 GET        /:mrn/event/:eventIndex/change-confirm-remove-event                                  controllers.events.ConfirmRemoveEventController.onPageLoad(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode = CheckMode)
 POST       /:mrn/event/:eventIndex/change-confirm-remove-event                                  controllers.events.ConfirmRemoveEventController.onSubmit(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode = CheckMode)
+
+GET        /:mrn/arrivalRejection                       controllers.ArrivalRejectionController.onPageLoad(mrn: MovementReferenceNumber)
