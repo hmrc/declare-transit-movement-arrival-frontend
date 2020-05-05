@@ -25,9 +25,9 @@ import org.scalacheck.{Arbitrary, Gen}
 
 trait MessagesModelGenerators extends Generators {
 
-  private val maxNumberOfSeals    = 99
-  private val pastDate: LocalDate = LocalDate.of(1900, 1, 1)
-  private val dateNow: LocalDate  = LocalDate.now
+  private val maxNumberOfSeals = 99
+  val pastDate: LocalDate      = LocalDate.of(1900, 1, 1)
+  val dateNow: LocalDate       = LocalDate.now
 
   implicit lazy val arbitraryProcedureType: Arbitrary[ProcedureType] =
     Arbitrary {
