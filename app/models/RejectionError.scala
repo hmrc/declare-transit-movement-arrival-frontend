@@ -16,18 +16,9 @@
 
 package models
 
-import play.api.libs.json.Json
-import play.api.libs.json.Format
-
 final case class RejectionError(
-  errorType: Int,
-  pointer: String,
+  errorType: ErrorType,
+  pointer: ErrorPointer,
   reason: Option[String],
-  originalValue: Option[String]
+  originalAttributeValue: Option[String]
 )
-
-object RejectionError {
-
-  implicit lazy val format: Format[RejectionError] =
-    Json.format[RejectionError]
-}
