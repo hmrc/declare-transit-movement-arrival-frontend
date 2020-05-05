@@ -50,6 +50,6 @@ object ArrivalNotificationRejectionMessage {
     (__ \ "HEAHEA" \ "ArrRejDatHEA142").read[LocalDate],
     (__ \ "HEAHEA" \ "ActToBeTakHEA238").read[String].optional,
     (__ \ "HEAHEA" \ "ArrRejReaHEA242").read[String].optional,
-    (__ \ "FUNERRER1").read(seq[FunctionalError])
+    (__ \ "FUNERRER1").read(strictReadSeq[FunctionalError])
   ).mapN(apply)
 }

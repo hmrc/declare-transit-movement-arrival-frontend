@@ -16,8 +16,6 @@
 
 package models.messages
 
-import java.time.LocalDate
-
 import base.SpecBase
 import com.lucidchart.open.xtract.XmlReader
 import generators.MessagesModelGenerators
@@ -37,7 +35,10 @@ class ArrivalNotificationRejectionMessageSpec extends SpecBase with ScalaCheckDr
       reason <- arbitrary[String]
       errors <- arbitrary[FunctionalError]
     } yield {
-      ArrivalNotificationRejectionMessage(mrn, date, Some(action), Some(reason), Seq(errors))
+
+      val funError = errors.copy(reason = Some("test"), originalAttributeValue = Some("test"))
+
+      ArrivalNotificationRejectionMessage(mrn, date, Some(action), Some(reason), Seq(funError))
     }
 
   "deserialization from XML" - {
@@ -49,14 +50,14 @@ class ArrivalNotificationRejectionMessageSpec extends SpecBase with ScalaCheckDr
               <HEAHEA>
                 <DocNumHEA5>{rejectionMessage.movementReferenceNumber}</DocNumHEA5>
                 <ArrRejDatHEA142>{dateFormatted(rejectionMessage.rejectionDate)}</ArrRejDatHEA142>
-                <ActToBeTakHEA238>{rejectionMessage.action.getOrElse("test")}</ActToBeTakHEA238>
-                <ArrRejReaHEA242>{rejectionMessage.reason.getOrElse("test")}</ArrRejReaHEA242>
+                <ActToBeTakHEA238>{rejectionMessage.action.value}</ActToBeTakHEA238>
+                <ArrRejReaHEA242>{rejectionMessage.reason.value}</ArrRejReaHEA242>
               </HEAHEA>
               <FUNERRER1>
-                <ErrTypER11>{rejectionMessage.errors.head.errorType}</ErrTypER11>
-                <ErrPoiER12>{rejectionMessage.errors.head.pointer}</ErrPoiER12>
-                <ErrReaER13>{rejectionMessage.errors.head.reason.getOrElse("test")}</ErrReaER13>
-                <OriAttValER14>{rejectionMessage.errors.head.originalAttributeValue.getOrElse("test")}</OriAttValER14>
+                <ErrTypER11>{rejectionMessage.errors.head.errorType.value}</ErrTypER11>
+                <ErrPoiER12>{rejectionMessage.errors.head.pointer.value}</ErrPoiER12>
+                <ErrReaER13>{rejectionMessage.errors.head.reason.value}</ErrReaER13>
+                <OriAttValER14>{rejectionMessage.errors.head.originalAttributeValue.value}</OriAttValER14>
               </FUNERRER1>
             </CC008A>
           }
@@ -64,7 +65,6 @@ class ArrivalNotificationRejectionMessageSpec extends SpecBase with ScalaCheckDr
           val result = XmlReader.of[ArrivalNotificationRejectionMessage].read(xml).toOption.value
 
           result mustEqual rejectionMessage
-
       }
     }
   }
