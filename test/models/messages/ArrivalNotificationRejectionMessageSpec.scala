@@ -19,53 +19,82 @@ package models.messages
 import base.SpecBase
 import com.lucidchart.open.xtract.XmlReader
 import generators.MessagesModelGenerators
-import models.{FunctionalError, MovementReferenceNumber}
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import utils.Format._
 
 class ArrivalNotificationRejectionMessageSpec extends SpecBase with ScalaCheckDrivenPropertyChecks with MessagesModelGenerators {
 
-  val rejectionMessageXmlGen: Gen[ArrivalNotificationRejectionMessage] =
-    for {
-      mrn    <- arbitrary[MovementReferenceNumber].map(_.toString())
-      date   <- datesBetween(pastDate, dateNow)
-      action <- arbitrary[String]
-      reason <- arbitrary[String]
-      errors <- arbitrary[FunctionalError]
-    } yield {
+  "ArrivalNotificationRejectionMessage" - {
+    "must deserialize from XML with minimal answers" in {
+      forAll(arbitrary[ArrivalNotificationRejectionMessage], arbitrary[FunctionalError]) {
+        (rejectionMessage, functionalError) =>
+          val minimalFunctionalError = functionalError.copy(
+            reason                 = None,
+            originalAttributeValue = None
+          )
 
-      val funError = errors.copy(reason = Some("test"), originalAttributeValue = Some("test"))
+          val minimalRejectionMessage = rejectionMessage.copy(
+            action = None,
+            reason = None,
+            errors = Seq(minimalFunctionalError)
+          )
 
-      ArrivalNotificationRejectionMessage(mrn, date, Some(action), Some(reason), Seq(funError))
-    }
-
-  "deserialization from XML" - {
-    "do the thing" in {
-      forAll(rejectionMessageXmlGen) {
-        rejectionMessage =>
           val xml = {
             <CC008A>
               <HEAHEA>
-                <DocNumHEA5>{rejectionMessage.movementReferenceNumber}</DocNumHEA5>
-                <ArrRejDatHEA142>{dateFormatted(rejectionMessage.rejectionDate)}</ArrRejDatHEA142>
-                <ActToBeTakHEA238>{rejectionMessage.action.value}</ActToBeTakHEA238>
-                <ArrRejReaHEA242>{rejectionMessage.reason.value}</ArrRejReaHEA242>
+                <DocNumHEA5>{minimalRejectionMessage.movementReferenceNumber}</DocNumHEA5>
+                <ArrRejDatHEA142>{dateFormatted(minimalRejectionMessage.rejectionDate)}</ArrRejDatHEA142>
               </HEAHEA>
               <FUNERRER1>
-                <ErrTypER11>{rejectionMessage.errors.head.errorType.value}</ErrTypER11>
-                <ErrPoiER12>{rejectionMessage.errors.head.pointer.value}</ErrPoiER12>
-                <ErrReaER13>{rejectionMessage.errors.head.reason.value}</ErrReaER13>
-                <OriAttValER14>{rejectionMessage.errors.head.originalAttributeValue.value}</OriAttValER14>
+                <ErrTypER11>{functionalError.errorType.value}</ErrTypER11>
+                <ErrPoiER12>{functionalError.pointer.value}</ErrPoiER12>
               </FUNERRER1>
             </CC008A>
           }
 
           val result = XmlReader.of[ArrivalNotificationRejectionMessage].read(xml).toOption.value
 
-          result mustEqual rejectionMessage
+          result mustEqual minimalRejectionMessage
+      }
+    }
+
+    "must deserialize from XML with full answers" in {
+      forAll(arbitrary[ArrivalNotificationRejectionMessage], arbitrary[FunctionalError]) {
+        (rejectionMessage, functionalError) =>
+          val fullFunctionalError = functionalError.copy(
+            reason                 = Some(arbitrary[String].sample.value),
+            originalAttributeValue = Some(arbitrary[String].sample.value)
+          )
+
+          val fullRejectionMessage = rejectionMessage.copy(
+            action = Some(arbitrary[String].sample.value),
+            reason = Some(arbitrary[String].sample.value),
+            errors = Seq(fullFunctionalError)
+          )
+
+          val xml = {
+            <CC008A>
+              <HEAHEA>
+                <DocNumHEA5>{fullRejectionMessage.movementReferenceNumber}</DocNumHEA5>
+                <ArrRejDatHEA142>{dateFormatted(fullRejectionMessage.rejectionDate)}</ArrRejDatHEA142>
+                <ActToBeTakHEA238>{fullRejectionMessage.action.value}</ActToBeTakHEA238>
+                <ArrRejReaHEA242>{fullRejectionMessage.reason.value}</ArrRejReaHEA242>
+              </HEAHEA>
+              <FUNERRER1>
+                <ErrTypER11>{fullFunctionalError.errorType.value}</ErrTypER11>
+                <ErrPoiER12>{fullFunctionalError.pointer.value}</ErrPoiER12>
+                <ErrReaER13>{fullFunctionalError.reason.value}</ErrReaER13>
+                <OriAttValER14>{fullFunctionalError.originalAttributeValue.value}</OriAttValER14>
+              </FUNERRER1>
+            </CC008A>
+          }
+
+          val result = XmlReader.of[ArrivalNotificationRejectionMessage].read(xml).toOption.value
+
+          result mustEqual fullRejectionMessage
       }
     }
   }
+
 }

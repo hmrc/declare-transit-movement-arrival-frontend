@@ -21,7 +21,6 @@ import java.time.LocalDate
 import cats.syntax.all._
 import com.lucidchart.open.xtract.XmlReader._
 import com.lucidchart.open.xtract.{__, ParseResult, ParseSuccess, XmlReader}
-import models.FunctionalError
 import utils.Format.dateFormatter
 
 import scala.xml.NodeSeq

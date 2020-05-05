@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models
+package models.messages
 
 import com.lucidchart.open.xtract.{__, XmlReader}
 

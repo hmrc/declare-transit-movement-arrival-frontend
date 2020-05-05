@@ -19,30 +19,33 @@ package models.messages
 import base.SpecBase
 import com.lucidchart.open.xtract.XmlReader
 import generators.MessagesModelGenerators
-import models.FunctionalError
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 
 class FunctionalErrorSpec extends SpecBase with ScalaCheckDrivenPropertyChecks with MessagesModelGenerators {
 
-  "deserialization from XML" - {
-    "must deserialize to a FunctionalError" in {
+  "FunctionalError" - {
+    "must deserialize from XML" in {
       forAll(arbitrary[FunctionalError]) {
         functionalError =>
-          val error = functionalError.copy(reason = Some("test"), originalAttributeValue = Some("test"))
-
           val xml = {
             <FUNERRER1>
-              <ErrTypER11>{error.errorType.value}</ErrTypER11>
-              <ErrPoiER12>{error.pointer.value}</ErrPoiER12>
-              <ErrReaER13>{error.reason.get}</ErrReaER13>
-              <OriAttValER14>{error.originalAttributeValue.get}</OriAttValER14>
+              <ErrTypER11>{functionalError.errorType.value}</ErrTypER11>
+              <ErrPoiER12>{functionalError.pointer.value}</ErrPoiER12> ++
+              {
+                functionalError.reason.map {
+                  reason => <ErrReaER13>{reason}</ErrReaER13>
+                } ++
+                functionalError.originalAttributeValue.map {
+                  originalAttributeValue => <OriAttValER14>{originalAttributeValue}</OriAttValER14>
+                }
+              }
             </FUNERRER1>
           }
 
           val result = XmlReader.of[FunctionalError].read(xml).toOption.value
 
-          result mustEqual error
+          result mustEqual functionalError
       }
     }
   }

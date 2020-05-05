@@ -14,13 +14,24 @@
  * limitations under the License.
  */
 
-package models
+package models.messages
 
+import cats.syntax.all._
 import com.lucidchart.open.xtract.{__, XmlReader}
 
-case class ErrorPointer(value: String)
+final case class FunctionalError(
+  errorType: ErrorType,
+  pointer: ErrorPointer,
+  reason: Option[String],
+  originalAttributeValue: Option[String]
+)
 
-object ErrorPointer {
-  implicit val xmlReader: XmlReader[ErrorPointer] =
-    (__ \ "ErrPoiER12").read[String].map(apply)
+object FunctionalError {
+
+  implicit val xmlReader: XmlReader[FunctionalError] = (
+    __.read[ErrorType],
+    __.read[ErrorPointer],
+    (__ \ "ErrReaER13").read[String].optional,
+    (__ \ "OriAttValER14").read[String].optional
+  ).mapN(apply)
 }

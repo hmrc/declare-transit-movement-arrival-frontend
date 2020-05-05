@@ -16,10 +16,7 @@
 
 package utils
 
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
-import java.time.OffsetDateTime
+import java.time.{LocalDate, LocalDateTime, LocalTime, OffsetDateTime}
 import java.time.format.DateTimeFormatter
 
 object Format {
