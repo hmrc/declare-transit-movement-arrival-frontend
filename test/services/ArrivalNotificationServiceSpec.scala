@@ -19,7 +19,7 @@ package services
 import java.time.LocalDate
 
 import base.SpecBase
-import connectors.DestinationConnector
+import connectors.ArrivalMovementConnector
 import generators.Generators
 import models.messages.{InterchangeControlReference, NormalNotification, TraderWithoutEori}
 import org.mockito.Matchers.any
@@ -38,7 +38,7 @@ import scala.concurrent.Future
 class ArrivalNotificationServiceSpec extends SpecBase with MockitoSugar {
 
   private val mockConverterService               = mock[ArrivalNotificationConversionService]
-  private val mockDestinationConnector           = mock[DestinationConnector]
+  private val mockArrivalMovementConnector       = mock[ArrivalMovementConnector]
   private val mockInterchangeControllerReference = mock[InterchangeControlReferenceIdRepository]
 
   private val traderWithoutEori  = TraderWithoutEori("", "", "", "", "")
@@ -70,14 +70,14 @@ class ArrivalNotificationServiceSpec extends SpecBase with MockitoSugar {
       when(mockConverterService.convertToArrivalNotification(any()))
         .thenReturn(Some(normalNotification))
 
-      when(mockDestinationConnector.submitArrivalMovement(any())(any()))
+      when(mockArrivalMovementConnector.submitArrivalMovement(any())(any()))
         .thenReturn(Future.successful(HttpResponse(ACCEPTED)))
 
       val application = applicationBuilder(Some(emptyUserAnswers))
         .configure(Configuration("microservice.services.destination.xmlEndpoint" -> true))
         .overrides(bind[InterchangeControlReferenceIdRepository].toInstance(mockInterchangeControllerReference))
         .overrides(bind[ArrivalNotificationConversionService].toInstance(mockConverterService))
-        .overrides(bind[DestinationConnector].toInstance(mockDestinationConnector))
+        .overrides(bind[ArrivalMovementConnector].toInstance(mockArrivalMovementConnector))
         .build()
 
       val arrivalNotificationService = application.injector.instanceOf[ArrivalNotificationService]
@@ -98,7 +98,7 @@ class ArrivalNotificationServiceSpec extends SpecBase with MockitoSugar {
         .configure(Configuration("microservice.services.destination.xmlEndpoint" -> true))
         .overrides(bind[InterchangeControlReferenceIdRepository].toInstance(mockInterchangeControllerReference))
         .overrides(bind[ArrivalNotificationConversionService].toInstance(mockConverterService))
-        .overrides(bind[DestinationConnector].toInstance(mockDestinationConnector))
+        .overrides(bind[ArrivalMovementConnector].toInstance(mockArrivalMovementConnector))
         .build()
 
       val arrivalNotificationService = application.injector.instanceOf[ArrivalNotificationService]

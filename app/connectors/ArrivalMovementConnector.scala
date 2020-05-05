@@ -19,13 +19,14 @@ package connectors
 import config.FrontendAppConfig
 import javax.inject.Inject
 import models.XMLWrites._
-import models.messages.ArrivalMovementRequest
+import models.messages.{ArrivalMovementRequest, ArrivalNotificationRejectionMessage}
+import models.{ArrivalId, MessageId}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class DestinationConnector @Inject()(val config: FrontendAppConfig, val http: HttpClient)(implicit ec: ExecutionContext) {
+class ArrivalMovementConnector @Inject()(val config: FrontendAppConfig, val http: HttpClient)(implicit ec: ExecutionContext) {
 
   def submitArrivalMovement(arrivalMovement: ArrivalMovementRequest)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
 
@@ -34,4 +35,6 @@ class DestinationConnector @Inject()(val config: FrontendAppConfig, val http: Ht
 
     http.POSTString[HttpResponse](serviceUrl, arrivalMovement.toXml.toString, headers)
   }
+
+  def getRejectionMessage(arrivalId: ArrivalId, messageId: MessageId): Future[ArrivalNotificationRejectionMessage] = ???
 }
