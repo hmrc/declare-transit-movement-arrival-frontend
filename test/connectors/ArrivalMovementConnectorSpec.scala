@@ -32,7 +32,7 @@ import org.scalacheck.Arbitrary.arbitrary
 
 import scala.concurrent.Future
 
-class DestinationConnectorSpec extends SpecBase with WireMockServerHandler with MessagesModelGenerators with ScalaCheckPropertyChecks {
+class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler with MessagesModelGenerators with ScalaCheckPropertyChecks {
 
   override lazy val app: Application = new GuiceApplicationBuilder()
     .configure(
@@ -40,9 +40,9 @@ class DestinationConnectorSpec extends SpecBase with WireMockServerHandler with 
     )
     .build()
 
-  lazy val connector: DestinationConnector = app.injector.instanceOf[DestinationConnector]
+  lazy val connector: ArrivalMovementConnector = app.injector.instanceOf[ArrivalMovementConnector]
 
-  "DestinationConnector" - {
+  "ArrivalMovementConnector" - {
 
     "must return status as OK for submission of valid arrival movement" in {
 
