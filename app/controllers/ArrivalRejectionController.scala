@@ -43,7 +43,7 @@ class ArrivalRejectionController @Inject()(
 
   def onPageLoad(arrivalId: ArrivalId, messageId: MessageId): Action[AnyContent] = identify.async {
     implicit request =>
-      if (frontendAppConfig.featureToggleArrivalRejection) { //TODO Feature toggle to be removed later when it is ready
+      if (frontendAppConfig.featureToggleArrivalRejection) {
         arrivalMovementConnector.getRejectionMessage(arrivalId, messageId) flatMap {
           rejectionMessage: ArrivalNotificationRejectionMessage =>
             val json = Json.obj("mrn" -> rejectionMessage.movementReferenceNumber, "errors" -> rejectionMessage.errors)
