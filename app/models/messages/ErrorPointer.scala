@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-package models
+package models.messages
 
-final case class FunctionalError(
-  errorType: ErrorType,
-  pointer: ErrorPointer,
-  reason: Option[String],
-  originalAttributeValue: Option[String]
-)
+import com.lucidchart.open.xtract.{__, XmlReader}
+
+case class ErrorPointer(value: String)
+
+object ErrorPointer {
+  implicit val xmlReader: XmlReader[ErrorPointer] =
+    (__ \ "ErrPoiER12").read[String].map(apply)
+}

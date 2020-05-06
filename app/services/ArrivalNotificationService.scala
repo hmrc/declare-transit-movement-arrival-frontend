@@ -31,11 +31,11 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import scala.concurrent.{ExecutionContext, Future}
 
 class ArrivalNotificationService @Inject()(
-                                            converterService: ArrivalNotificationConversionService,
-                                            connector: ArrivalMovementConnector,
-                                            appConfig: FrontendAppConfig,
-                                            submissionModelService: SubmissionModelService,
-                                            interchangeControlReferenceIdRepository: InterchangeControlReferenceIdRepository
+  converterService: ArrivalNotificationConversionService,
+  connector: ArrivalMovementConnector,
+  appConfig: FrontendAppConfig,
+  submissionModelService: SubmissionModelService,
+  interchangeControlReferenceIdRepository: InterchangeControlReferenceIdRepository
 )(implicit ec: ExecutionContext) {
 
   def submit(userAnswers: UserAnswers, eori: String)(implicit hc: HeaderCarrier): Future[Option[HttpResponse]] =

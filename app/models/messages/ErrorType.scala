@@ -14,6 +14,13 @@
  * limitations under the License.
  */
 
-package models
+package models.messages
+
+import com.lucidchart.open.xtract.{__, XmlReader}
 
 case class ErrorType(value: Int)
+
+object ErrorType {
+  implicit val xmlReader: XmlReader[ErrorType] =
+    (__ \ "ErrTypER11").read[Int].map(apply)
+}
