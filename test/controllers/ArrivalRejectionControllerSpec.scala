@@ -16,46 +16,86 @@
 
 package controllers
 
+import java.time.LocalDate
+
 import base.SpecBase
+import connectors.ArrivalMovementConnector
 import matchers.JsonMatchers
+import models.{ErrorPointer, ErrorType, FunctionalError}
+import models.messages.ArrivalNotificationRejectionMessage
 import models.{ArrivalId, MessageId}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
-import org.mockito.Mockito.{times, verify, when}
+import org.mockito.Mockito.{reset, times, verify, when}
+import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
+import play.api.Configuration
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
+import play.api.inject.bind
 
 import scala.concurrent.Future
 
-class ArrivalRejectionControllerSpec extends SpecBase with MockitoSugar with JsonMatchers {
+class ArrivalRejectionControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with BeforeAndAfterEach {
+
+  private val mockArrivalMovementConnector = mock[ArrivalMovementConnector]
+
+  override def beforeEach: Unit = {
+    super.beforeEach
+    reset(mockArrivalMovementConnector)
+  }
 
   private val arrivalId = ArrivalId("1")
   private val messageId = MessageId(1)
 
   "ArrivalRejection Controller" - {
 
-    "return OK and the correct view for a GET" in {
+    "return OK and the correct view for a GET when 'arrivalRejection' feature toggle set to true" in {
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application    = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val errors = Seq(FunctionalError(ErrorType(91), ErrorPointer("Duplicate MRN"), None, None))
+
+      when(mockArrivalMovementConnector.getRejectionMessage(any(), any()))
+        .thenReturn(Future.successful(ArrivalNotificationRejectionMessage(mrn.toString, LocalDate.now, None, None, errors)))
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .configure(Configuration("feature-toggles.arrivalRejection" -> true))
+        .overrides(
+          bind[ArrivalMovementConnector].toInstance(mockArrivalMovementConnector)
+        )
+        .build()
       val request        = FakeRequest(GET, routes.ArrivalRejectionController.onPageLoad(arrivalId, messageId).url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(application, request).value
+
       status(result) mustEqual OK
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val expectedJson = Json.obj("mrn" -> "mrn")
+      val expectedJson = Json.obj("mrn" -> mrn, "errors" -> errors)
 
       templateCaptor.getValue mustEqual "arrivalRejection.njk"
       jsonCaptor.getValue must containJson(expectedJson)
+
+      application.stop()
+    }
+
+    "redirect to Unauthorised page when 'arrivalRejection' feature toggle set to false" in {
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .configure(Configuration("feature-toggles.arrivalRejection" -> false))
+        .build()
+      val request = FakeRequest(GET, routes.ArrivalRejectionController.onPageLoad(arrivalId, messageId).url)
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
 
       application.stop()
     }

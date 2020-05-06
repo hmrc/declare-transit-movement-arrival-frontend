@@ -16,4 +16,10 @@
 
 package models
 
+import play.api.libs.json.Json
+
 case class ErrorPointer(value: String)
+
+object ErrorPointer {
+  implicit val format = Json.format[ErrorPointer]
+}

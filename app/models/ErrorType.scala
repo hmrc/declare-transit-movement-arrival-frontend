@@ -16,4 +16,10 @@
 
 package models
 
+import play.api.libs.json.Json
+
 case class ErrorType(value: Int)
+
+object ErrorType {
+  implicit val format = Json.format[ErrorType]
+}

@@ -47,6 +47,8 @@ class FrontendAppConfig @Inject()(configuration: Configuration) {
   lazy val destinationUrl: String   = configuration.get[Service]("microservice.services.destination").baseUrl
   lazy val referenceDataUrl: String = configuration.get[Service]("microservice.services.referenceData").baseUrl
 
+  lazy val featureToggleArrivalRejection: Boolean = configuration.getOptional[Boolean]("feature-toggles.arrivalRejection").getOrElse(false)
+
   val env: String = configuration.get[String]("env")
 
   lazy val languageTranslationEnabled: Boolean =

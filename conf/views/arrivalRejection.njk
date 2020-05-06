@@ -1,6 +1,7 @@
 {% extends "includes/layout.njk" %}
 
 {% from "macros/title.njk"                         import title %}
+{% from "govuk/components/button/macro.njk"        import govukButton %}
 
 {% block pageTitle %}
   {{ title(messages("arrivalRejection.title")) }}
@@ -15,6 +16,29 @@
         <h1 class="govuk-heading-xl">
           {{ messages("arrivalRejection.heading") }}
         </h1>
+
+        <dl class="govuk-summary-list govuk-summary-list">
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key" style="width: 48%">
+              {{ messages("site.movement.reference.number") }}
+            </dt>
+            <dd class="govuk-summary-list__value" style="width: 62%">
+              {{ mrn }}
+            </dd>
+          </div>
+        </dl>
+        <ul>
+        {% for error in errors %}
+          <li> <p class="govuk-body"> {{ error.pointer.value }} </p></li>
+        {% else %}
+          <li>This would display if the 'item' collection were empty</li>
+        {% endfor %}
+        </ul>
+
+        {{ govukButton({
+                    text: messages("site.continue"),
+                    attributes: {id:"submit"}
+                  }) }}
 
       </div>
     </div>

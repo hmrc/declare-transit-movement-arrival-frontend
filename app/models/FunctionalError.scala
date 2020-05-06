@@ -16,9 +16,15 @@
 
 package models
 
+import play.api.libs.json.Json
+
 final case class FunctionalError(
   errorType: ErrorType,
   pointer: ErrorPointer,
   reason: Option[String],
   originalAttributeValue: Option[String]
 )
+
+object FunctionalError {
+  implicit val format = Json.format[FunctionalError]
+}
