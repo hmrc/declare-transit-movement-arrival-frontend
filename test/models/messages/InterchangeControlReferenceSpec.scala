@@ -29,7 +29,7 @@ class InterchangeControlReferenceSpec extends FreeSpec with MustMatchers with Sc
     "must convert to xml and convert to correct format" in {
       forAll(arbitrary[String], arbitrary[Int]) {
         (date, index) =>
-          val expectedResult: NodeSeq = <IntConRefMES11>{s"AF$date$index"}</IntConRefMES11>
+          val expectedResult: NodeSeq = <IntConRefMES11>{s"AF${escapeXml(date)}$index"}</IntConRefMES11>
 
           val interchangeControlReference = InterchangeControlReference(date, index)
           val result                      = interchangeControlReference.toXml
