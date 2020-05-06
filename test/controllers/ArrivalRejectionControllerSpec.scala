@@ -18,6 +18,7 @@ package controllers
 
 import base.SpecBase
 import matchers.JsonMatchers
+import models.{ArrivalId, MessageId}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
@@ -31,6 +32,9 @@ import scala.concurrent.Future
 
 class ArrivalRejectionControllerSpec extends SpecBase with MockitoSugar with JsonMatchers {
 
+  private val arrivalId = ArrivalId("1")
+  private val messageId = MessageId(1)
+
   "ArrivalRejection Controller" - {
 
     "return OK and the correct view for a GET" in {
@@ -39,17 +43,16 @@ class ArrivalRejectionControllerSpec extends SpecBase with MockitoSugar with Jso
         .thenReturn(Future.successful(Html("")))
 
       val application    = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request        = FakeRequest(GET, routes.ArrivalRejectionController.onPageLoad(mrn).url)
+      val request        = FakeRequest(GET, routes.ArrivalRejectionController.onPageLoad(arrivalId, messageId).url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(application, request).value
-
       status(result) mustEqual OK
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val expectedJson = Json.obj("mrn" -> mrn)
+      val expectedJson = Json.obj("mrn" -> "mrn")
 
       templateCaptor.getValue mustEqual "arrivalRejection.njk"
       jsonCaptor.getValue must containJson(expectedJson)

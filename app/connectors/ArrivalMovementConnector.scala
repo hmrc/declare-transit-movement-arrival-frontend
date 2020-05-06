@@ -18,9 +18,9 @@ package connectors
 
 import config.FrontendAppConfig
 import javax.inject.Inject
+import models.{ArrivalId, MessageId}
 import models.XMLWrites._
 import models.messages.{ArrivalMovementRequest, ArrivalNotificationRejectionMessage}
-import models.{ArrivalId, MessageId}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 

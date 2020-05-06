@@ -18,7 +18,7 @@ package controllers
 
 import controllers.actions._
 import javax.inject.Inject
-import models.MovementReferenceNumber
+import models.{ArrivalId, MessageId}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -30,17 +30,15 @@ import scala.concurrent.ExecutionContext
 class ArrivalRejectionController @Inject()(
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
-  getData: DataRetrievalActionProvider,
-  requireData: DataRequiredAction,
   val controllerComponents: MessagesControllerComponents,
   renderer: Renderer
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(mrn: MovementReferenceNumber): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onPageLoad(arrivalId: ArrivalId, messageId: MessageId): Action[AnyContent] = identify.async {
     implicit request =>
-      val json = Json.obj("mrn" -> mrn)
+      val json = Json.obj("mrn" -> "mrn")
 
       renderer.render("arrivalRejection.njk", json).map(Ok(_))
   }

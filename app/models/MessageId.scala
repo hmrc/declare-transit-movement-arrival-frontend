@@ -16,4 +16,19 @@
 
 package models
 
+import play.api.mvc.PathBindable
+
 case class MessageId(value: Int)
+
+object MessageId {
+  implicit def pathBindable(implicit intBinder: PathBindable[Int]): PathBindable[MessageId] = new PathBindable[MessageId] {
+    override def bind(key: String, value: String): Either[String, MessageId] =
+      intBinder.bind(key, value) match {
+        case Right(id) if id > 0 => Right(MessageId(id))
+        case _                   => Left("invalid Message Id")
+      }
+
+    override def unbind(key: String, value: MessageId): String =
+      intBinder.unbind(key, value.value)
+  }
+}
