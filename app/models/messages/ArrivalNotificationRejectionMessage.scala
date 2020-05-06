@@ -20,10 +20,8 @@ import java.time.LocalDate
 
 import cats.syntax.all._
 import com.lucidchart.open.xtract.XmlReader._
-import com.lucidchart.open.xtract.{__, ParseResult, ParseSuccess, XmlReader}
-import utils.Format.dateFormatter
-
-import scala.xml.NodeSeq
+import com.lucidchart.open.xtract.{__, XmlReader}
+import models.XMLReads._
 
 final case class ArrivalNotificationRejectionMessage(
   movementReferenceNumber: String,
@@ -34,15 +32,6 @@ final case class ArrivalNotificationRejectionMessage(
 )
 
 object ArrivalNotificationRejectionMessage {
-
-  implicit val xmlDateReads: XmlReader[LocalDate] = {
-    new XmlReader[LocalDate] {
-      override def read(xml: NodeSeq): ParseResult[LocalDate] = {
-        val parseXml = LocalDate.parse(xml.text, dateFormatter)
-        ParseSuccess(parseXml)
-      }
-    }
-  }
 
   implicit val xmlReader: XmlReader[ArrivalNotificationRejectionMessage] = (
     (__ \ "HEAHEA" \ "DocNumHEA5").read[String],
