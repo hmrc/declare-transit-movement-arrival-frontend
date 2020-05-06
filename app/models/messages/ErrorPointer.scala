@@ -14,12 +14,17 @@
  * limitations under the License.
  */
 
-package models
+package models.messages
 
-import play.api.libs.json.Json
+import com.lucidchart.open.xtract.{__, XmlReader}
+import play.api.libs.json.{Json, OFormat}
 
 case class ErrorPointer(value: String)
 
 object ErrorPointer {
-  implicit val format = Json.format[ErrorPointer]
+
+  implicit val format: OFormat[ErrorPointer] = Json.format[ErrorPointer]
+
+  implicit val xmlReader: XmlReader[ErrorPointer] =
+    (__ \ "ErrPoiER12").read[String].map(apply)
 }

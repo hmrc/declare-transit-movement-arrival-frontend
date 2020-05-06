@@ -16,14 +16,11 @@
 
 package connectors
 
-import java.time.LocalDate
-
 import config.FrontendAppConfig
 import javax.inject.Inject
-import models.{ArrivalId, MessageId}
 import models.XMLWrites._
 import models.messages.{ArrivalMovementRequest, ArrivalNotificationRejectionMessage}
-import models.{ArrivalId, ErrorPointer, ErrorType, FunctionalError, MessageId}
+import models.{ArrivalId, MessageId}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
@@ -39,9 +36,5 @@ class ArrivalMovementConnector @Inject()(val config: FrontendAppConfig, val http
     http.POSTString[HttpResponse](serviceUrl, arrivalMovement.toXml.toString, headers)
   }
 
-  def getRejectionMessage(arrivalId: ArrivalId, messageId: MessageId): Future[ArrivalNotificationRejectionMessage] = {
-    val errors = Seq(FunctionalError(ErrorType(91), ErrorPointer("Duplicate MRN"), None, None))
-
-    Future.successful(ArrivalNotificationRejectionMessage("12345", LocalDate.now, None, None, errors))
-  }
+  def getRejectionMessage(arrivalId: ArrivalId, messageId: MessageId): Future[ArrivalNotificationRejectionMessage] = ???
 }

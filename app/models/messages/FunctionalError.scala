@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-package models
+package models.messages
 
-import play.api.libs.json.Json
+import cats.syntax.all._
+import com.lucidchart.open.xtract.{__, XmlReader}
+import play.api.libs.json.{Json, OFormat}
 
 final case class FunctionalError(
   errorType: ErrorType,
@@ -26,5 +28,13 @@ final case class FunctionalError(
 )
 
 object FunctionalError {
-  implicit val format = Json.format[FunctionalError]
+
+  implicit val format: OFormat[FunctionalError] = Json.format[FunctionalError]
+
+  implicit val xmlReader: XmlReader[FunctionalError] = (
+    __.read[ErrorType],
+    __.read[ErrorPointer],
+    (__ \ "ErrReaER13").read[String].optional,
+    (__ \ "OriAttValER14").read[String].optional
+  ).mapN(apply)
 }

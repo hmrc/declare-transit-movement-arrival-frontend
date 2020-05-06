@@ -14,12 +14,17 @@
  * limitations under the License.
  */
 
-package models
+package models.messages
 
-import play.api.libs.json.Json
+import com.lucidchart.open.xtract.{__, XmlReader}
+import play.api.libs.json.{Json, OFormat}
 
 case class ErrorType(value: Int)
 
 object ErrorType {
-  implicit val format = Json.format[ErrorType]
+
+  implicit val format: OFormat[ErrorType] = Json.format[ErrorType]
+
+  implicit val xmlReader: XmlReader[ErrorType] =
+    (__ \ "ErrTypER11").read[Int].map(apply)
 }

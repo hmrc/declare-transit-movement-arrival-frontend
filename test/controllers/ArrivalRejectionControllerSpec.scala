@@ -21,8 +21,7 @@ import java.time.LocalDate
 import base.SpecBase
 import connectors.ArrivalMovementConnector
 import matchers.JsonMatchers
-import models.{ErrorPointer, ErrorType, FunctionalError}
-import models.messages.ArrivalNotificationRejectionMessage
+import models.messages.{ArrivalNotificationRejectionMessage, ErrorPointer, ErrorType, FunctionalError}
 import models.{ArrivalId, MessageId}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
