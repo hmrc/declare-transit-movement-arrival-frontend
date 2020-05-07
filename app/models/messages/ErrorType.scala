@@ -17,10 +17,14 @@
 package models.messages
 
 import com.lucidchart.open.xtract.{__, XmlReader}
+import play.api.libs.json.{Json, OWrites}
 
 case class ErrorType(value: Int)
 
 object ErrorType {
+
+  implicit val writes: OWrites[ErrorType] = Json.writes[ErrorType]
+
   implicit val xmlReader: XmlReader[ErrorType] =
     (__ \ "ErrTypER11").read[Int].map(apply)
 }

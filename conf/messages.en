@@ -15,6 +15,7 @@ site.acceptAndSend = Accept and Send
 site.service_name = Common Transit Convention for traders
 site.textarea.char_limit = (Limit is {0} characters)
 site.title.suffix = - Common Transit Convention for traders - GOV.UK
+site.movement.reference.number = Movement reference number
 
 error.title.prefix = Error:
 error.summary.title = There is a problem
@@ -421,3 +422,6 @@ confirmRemoveSeal.error.required = Select yes if you are sure you want to remove
 confirmRemoveEvent.title = Are you sure you want to remove the event {0}?
 confirmRemoveEvent.heading = Are you sure you want to remove the event {0}?
 confirmRemoveEvent.error.required = Select yes if you are sure you want to remove the event {0}
+
+arrivalRejection.title = There is an error in this arrival notification
+arrivalRejection.heading = There is an error in this arrival notification

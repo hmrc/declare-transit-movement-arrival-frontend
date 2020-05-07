@@ -16,16 +16,26 @@
 
 package models
 
+import org.scalatest.{EitherValues, FreeSpec, MustMatchers}
 import play.api.mvc.PathBindable
 
-case class ArrivalId(value: String)
+class MessageIdSpec extends FreeSpec with MustMatchers with EitherValues {
 
-object ArrivalId {
-  implicit def pathBindable: PathBindable[ArrivalId] = new PathBindable[ArrivalId] {
-    override def bind(key: String, value: String): Either[String, ArrivalId] =
-      if (value.nonEmpty) Right(ArrivalId(value)) else Left("Invalid Arrival Id")
+  "MessageId Id" - {
+    "must bind from url" in {
+      val pathBindable = implicitly[PathBindable[MessageId]]
+      val messageId    = MessageId(12)
 
-    override def unbind(key: String, value: ArrivalId): String =
-      value.value
+      val bind: Either[String, MessageId] = pathBindable.bind("messageId", "12")
+      bind.right.value mustBe messageId
+    }
+
+    "unbind to path value" in {
+      val pathBindable = implicitly[PathBindable[MessageId]]
+      val messageId    = MessageId(12)
+
+      val bindValue = pathBindable.unbind("messageId", messageId)
+      bindValue mustBe "12"
+    }
   }
 }
