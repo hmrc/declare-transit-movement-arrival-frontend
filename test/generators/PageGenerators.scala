@@ -25,6 +25,9 @@ import pages.events.transhipments._
 
 trait PageGenerators {
 
+  implicit lazy val arbitraryConsigneeNamePage: Arbitrary[ConsigneeNamePage.type] =
+    Arbitrary(ConsigneeNamePage)
+
   implicit lazy val arbitraryHaveSealsChangedPage: Arbitrary[HaveSealsChangedPage] =
     Arbitrary(HaveSealsChangedPage(Index(0)))
 

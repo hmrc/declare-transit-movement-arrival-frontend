@@ -38,6 +38,7 @@ class Navigator @Inject()() {
   private val normalRoutes: PartialFunction[Page, UserAnswers => Option[Call]] = {
     case MovementReferenceNumberPage => ua => Some(routes.GoodsLocationController.onPageLoad(ua.id, NormalMode))
     case GoodsLocationPage => goodsLocationPageRoutes
+    case AuthorisedLocationPage => ua => Some(routes.ConsigneeNameController.onPageLoad(ua.id, NormalMode))
     case PresentationOfficePage => ua => Some(routes.TraderNameController.onPageLoad(ua.id, NormalMode))
     case CustomsSubPlacePage => ua => Some(routes.PresentationOfficeController.onPageLoad(ua.id, NormalMode))
     case TraderNamePage => ua => Some(routes.TraderEoriController.onPageLoad(ua.id, NormalMode))
@@ -67,6 +68,7 @@ class Navigator @Inject()() {
 
   private val checkRouteMap: PartialFunction[Page, UserAnswers => Option[Call]] = {
     case GoodsLocationPage => goodsLocationCheckRoute
+    case AuthorisedLocationPage => ua => Some(routes.ConsigneeNameController.onPageLoad(ua.id, CheckMode))
     case EventCountryPage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
     case EventPlacePage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
     case IsTraderAddressPlaceOfNotificationPage => isTraderAddressPlaceOfNotificationCheckRoute
@@ -197,7 +199,7 @@ class Navigator @Inject()() {
   private def goodsLocationPageRoutes(ua: UserAnswers): Option[Call] =
     ua.get(GoodsLocationPage) map {
       case BorderForceOffice            => routes.CustomsSubPlaceController.onPageLoad(ua.id, NormalMode)
-      case AuthorisedConsigneesLocation => routes.UseDifferentServiceController.onPageLoad(ua.id)
+      case AuthorisedConsigneesLocation => routes.AuthorisedLocationController.onPageLoad(ua.id, NormalMode)
     }
 
   private def incidentOnRoute(ua: UserAnswers): Option[Call] =

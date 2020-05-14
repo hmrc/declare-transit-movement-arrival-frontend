@@ -163,3 +163,8 @@ GET        /:mrn/event/:eventIndex/change-confirm-remove-event                  
 POST       /:mrn/event/:eventIndex/change-confirm-remove-event                                  controllers.events.ConfirmRemoveEventController.onSubmit(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode = CheckMode)
 
 GET        /:arrivalId/:messageId/arrival-rejection                                             controllers.ArrivalRejectionController.onPageLoad(arrivalId: ArrivalId, messageId: MessageId)
+
+GET        /:mrn/consignee-name                        controllers.ConsigneeNameController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
+POST       /:mrn/consignee-name                        controllers.ConsigneeNameController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
+GET        /:mrn/change-consignee-name                  controllers.ConsigneeNameController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
+POST       /:mrn/change-consignee-name                  controllers.ConsigneeNameController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)

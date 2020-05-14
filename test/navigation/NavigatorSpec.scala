@@ -94,7 +94,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(GoodsLocationPage, NormalMode, updatedAnswers)
-              .mustBe(routes.UseDifferentServiceController.onPageLoad(updatedAnswers.id))
+              .mustBe(routes.AuthorisedLocationController.onPageLoad(updatedAnswers.id, NormalMode))
         }
       }
 
