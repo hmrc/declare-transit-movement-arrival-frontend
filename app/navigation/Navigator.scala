@@ -199,7 +199,7 @@ class Navigator @Inject()() {
   private def goodsLocationPageRoutes(ua: UserAnswers): Option[Call] =
     ua.get(GoodsLocationPage) map {
       case BorderForceOffice            => routes.CustomsSubPlaceController.onPageLoad(ua.id, NormalMode)
-      case AuthorisedConsigneesLocation => routes.AuthorisedLocationController.onPageLoad(ua.id, NormalMode)
+      case AuthorisedConsigneesLocation => routes.UseDifferentServiceController.onPageLoad(ua.id)
     }
 
   private def incidentOnRoute(ua: UserAnswers): Option[Call] =
