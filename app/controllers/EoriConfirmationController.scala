@@ -21,7 +21,7 @@ import forms.EoriConfirmationFormProvider
 import javax.inject.Inject
 import models.{Mode, MovementReferenceNumber}
 import navigation.Navigator
-import pages.EoriConfirmationPage
+import pages.{ConsigneeNamePage, EoriConfirmationPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -51,42 +51,53 @@ class EoriConfirmationController @Inject()(
 
   def onPageLoad(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
-      val preparedForm = request.userAnswers.get(EoriConfirmationPage) match {
-        case None        => form
-        case Some(value) => form.fill(value)
+      request.userAnswers.get(ConsigneeNamePage) match {
+        case Some(consigneeName) =>
+          val preparedForm = request.userAnswers.get(EoriConfirmationPage) match {
+            case None        => form
+            case Some(value) => form.fill(value)
+          }
+          val json = Json.obj(
+            "form"          -> preparedForm,
+            "mode"          -> mode,
+            "mrn"           -> mrn,
+            "radios"        -> Radios.yesNo(preparedForm("value")),
+            "consigneeName" -> consigneeName,
+            "eoriNumber"    -> request.eoriNumber
+          )
+
+          renderer.render("eoriConfirmation.njk", json).map(Ok(_))
+        case _ => Future.successful(Redirect(routes.SessionExpiredController.onPageLoad()))
       }
-
-      val json = Json.obj(
-        "form"   -> preparedForm,
-        "mode"   -> mode,
-        "mrn"    -> mrn,
-        "radios" -> Radios.yesNo(preparedForm("value"))
-      )
-
-      renderer.render("eoriConfirmation.njk", json).map(Ok(_))
   }
 
   def onSubmit(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
-      form
-        .bindFromRequest()
-        .fold(
-          formWithErrors => {
+      request.userAnswers.get(ConsigneeNamePage) match {
+        case Some(consigneeName) =>
+          form
+            .bindFromRequest()
+            .fold(
+              formWithErrors => {
 
-            val json = Json.obj(
-              "form"   -> formWithErrors,
-              "mode"   -> mode,
-              "mrn"    -> mrn,
-              "radios" -> Radios.yesNo(formWithErrors("value"))
+                val json = Json.obj(
+                  "form"          -> formWithErrors,
+                  "mode"          -> mode,
+                  "mrn"           -> mrn,
+                  "radios"        -> Radios.yesNo(formWithErrors("value")),
+                  "consigneeName" -> consigneeName,
+                  "eoriNumber"    -> request.eoriNumber
+                )
+
+                renderer.render("eoriConfirmation.njk", json).map(BadRequest(_))
+              },
+              value =>
+                for {
+                  updatedAnswers <- Future.fromTry(request.userAnswers.set(EoriConfirmationPage, value))
+                  _              <- sessionRepository.set(updatedAnswers)
+                } yield Redirect(navigator.nextPage(EoriConfirmationPage, mode, updatedAnswers))
             )
-
-            renderer.render("eoriConfirmation.njk", json).map(BadRequest(_))
-          },
-          value =>
-            for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(EoriConfirmationPage, value))
-              _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(EoriConfirmationPage, mode, updatedAnswers))
-        )
+        case _ => Future.successful(Redirect(routes.SessionExpiredController.onPageLoad()))
+      }
   }
 }
