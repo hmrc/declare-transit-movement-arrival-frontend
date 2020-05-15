@@ -26,6 +26,21 @@ import uk.gov.hmrc.viewmodels._
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswersHelper(userAnswers) {
 
+  def eoriConfirmation: Option[Row] = userAnswers.get(EoriConfirmationPage) map {
+    answer =>
+      Row(
+        key   = Key(msg"eoriConfirmation.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value = Value(yesOrNo(answer)),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = routes.EoriConfirmationController.onPageLoad(mrn, CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"eoriConfirmation.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
   def consigneeName: Option[Row] = userAnswers.get(ConsigneeNamePage) map {
     answer =>
       Row(

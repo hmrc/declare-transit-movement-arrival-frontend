@@ -29,6 +29,14 @@ import play.api.libs.json.Json
 trait UserAnswersEntryGenerators extends PageGenerators {
   self: Generators =>
 
+  implicit lazy val arbitraryEoriConfirmationUserAnswersEntry: Arbitrary[(EoriConfirmationPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[EoriConfirmationPage.type]
+        value <- arbitrary[Boolean].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
   implicit lazy val arbitraryConsigneeNameUserAnswersEntry: Arbitrary[(ConsigneeNamePage.type, JsValue)] =
     Arbitrary {
       for {
