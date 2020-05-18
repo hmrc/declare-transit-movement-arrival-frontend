@@ -25,6 +25,9 @@ import pages.events.transhipments._
 
 trait PageGenerators {
 
+  implicit lazy val arbitraryEoriNumberPage: Arbitrary[EoriNumberPage.type] =
+    Arbitrary(EoriNumberPage)
+
   implicit lazy val arbitraryEoriConfirmationPage: Arbitrary[EoriConfirmationPage.type] =
     Arbitrary(EoriConfirmationPage)
 

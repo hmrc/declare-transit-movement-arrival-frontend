@@ -173,3 +173,8 @@ GET        /:mrn/eori-confirmation                        controllers.EoriConfir
 POST       /:mrn/eori-confirmation                        controllers.EoriConfirmationController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
 GET        /:mrn/change-eori-confirmation                  controllers.EoriConfirmationController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
 POST       /:mrn/change-eori-confirmation                  controllers.EoriConfirmationController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
+
+GET        /:mrn/eori-number                        controllers.EoriNumberController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
+POST       /:mrn/eori-number                        controllers.EoriNumberController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
+GET        /:mrn/change-eori-number                  controllers.EoriNumberController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
+POST       /:mrn/change-eori-number                  controllers.EoriNumberController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
