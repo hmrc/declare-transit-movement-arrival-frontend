@@ -16,15 +16,16 @@
 
 package forms
 
+import base.SpecBase
 import forms.behaviours.BooleanFieldBehaviours
 import play.api.data.FormError
 
-class EoriConfirmationFormProviderSpec extends BooleanFieldBehaviours {
+class EoriConfirmationFormProviderSpec extends BooleanFieldBehaviours with SpecBase {
 
   val requiredKey = "eoriConfirmation.error.required"
   val invalidKey  = "error.boolean"
 
-  val form = new EoriConfirmationFormProvider()()
+  val form = new EoriConfirmationFormProvider()(eoriNumber, traderName)
 
   ".value" - {
 
@@ -33,13 +34,13 @@ class EoriConfirmationFormProviderSpec extends BooleanFieldBehaviours {
     behave like booleanField(
       form,
       fieldName,
-      invalidError = FormError(fieldName, invalidKey)
+      invalidError = FormError(fieldName, invalidKey, Seq(eoriNumber, traderName))
     )
 
     behave like mandatoryField(
       form,
       fieldName,
-      requiredError = FormError(fieldName, requiredKey)
+      requiredError = FormError(fieldName, requiredKey, Seq(eoriNumber, traderName))
     )
   }
 }

@@ -47,16 +47,15 @@ class EoriConfirmationController @Inject()(
     with I18nSupport
     with NunjucksSupport {
 
-  private val form = formProvider()
-
   def onPageLoad(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
       request.userAnswers.get(ConsigneeNamePage) match {
         case Some(consigneeName) =>
           val preparedForm = request.userAnswers.get(EoriConfirmationPage) match {
-            case None        => form
-            case Some(value) => form.fill(value)
+            case None        => formProvider(request.eoriNumber, consigneeName)
+            case Some(value) => formProvider(request.eoriNumber, consigneeName).fill(value)
           }
+
           val json = Json.obj(
             "form"          -> preparedForm,
             "mode"          -> mode,
@@ -75,7 +74,7 @@ class EoriConfirmationController @Inject()(
     implicit request =>
       request.userAnswers.get(ConsigneeNamePage) match {
         case Some(consigneeName) =>
-          form
+          formProvider(request.eoriNumber, consigneeName)
             .bindFromRequest()
             .fold(
               formWithErrors => {
