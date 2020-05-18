@@ -21,7 +21,7 @@ import forms.ConsigneeAddressFormProvider
 import javax.inject.Inject
 import models.{Mode, MovementReferenceNumber}
 import navigation.Navigator
-import pages.ConsigneeAddressPage
+import pages.{ConsigneeAddressPage, ConsigneeNamePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -51,18 +51,22 @@ class ConsigneeAddressController @Inject()(
 
   def onPageLoad(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
-      val preparedForm = request.userAnswers.get(ConsigneeAddressPage) match {
-        case None        => form
-        case Some(value) => form.fill(value)
+      request.userAnswers.get(ConsigneeNamePage) match {
+        case Some(consigneeName) =>
+          val preparedForm = request.userAnswers.get(ConsigneeAddressPage) match {
+            case None        => form
+            case Some(value) => form.fill(value)
+          }
+
+          val json = Json.obj(
+            "form"          -> preparedForm,
+            "mrn"           -> mrn,
+            "mode"          -> mode,
+            "consigneeName" -> consigneeName
+          )
+
+          renderer.render("consigneeAddress.njk", json).map(Ok(_))
       }
-
-      val json = Json.obj(
-        "form" -> preparedForm,
-        "mrn"  -> mrn,
-        "mode" -> mode
-      )
-
-      renderer.render("consigneeAddress.njk", json).map(Ok(_))
   }
 
   def onSubmit(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {

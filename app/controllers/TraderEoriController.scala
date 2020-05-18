@@ -21,7 +21,7 @@ import forms.TraderEoriFormProvider
 import javax.inject.Inject
 import models.{Mode, MovementReferenceNumber}
 import navigation.Navigator
-import pages.TraderEoriPage
+import pages.{ConsigneeNamePage, TraderEoriPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}

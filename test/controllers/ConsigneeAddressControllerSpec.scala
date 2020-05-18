@@ -25,7 +25,7 @@ import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.ConsigneeAddressPage
+import pages.{ConsigneeAddressPage, ConsigneeNamePage}
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, JsString, Json}
 import play.api.mvc.Call
@@ -52,8 +52,11 @@ class ConsigneeAddressControllerSpec extends SpecBase with MockitoSugar with Nun
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
-
-      val application    = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val userAnswers = emptyUserAnswers
+        .set(ConsigneeNamePage, "foo")
+        .success
+        .value
+      val application    = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request        = FakeRequest(GET, consigneeAddressRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
@@ -79,9 +82,15 @@ class ConsigneeAddressControllerSpec extends SpecBase with MockitoSugar with Nun
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
       when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
+        .thenReturn(Future.successful(Html("consigneeName")))
 
-      val userAnswers    = UserAnswers(mrn).set(ConsigneeAddressPage, "answer").success.value
+      val userAnswers = UserAnswers(mrn)
+        .set(ConsigneeAddressPage, "validAddress")
+        .success
+        .value
+        .set(ConsigneeNamePage, "fred")
+        .success
+        .value
       val application    = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request        = FakeRequest(GET, consigneeAddressRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -93,7 +102,7 @@ class ConsigneeAddressControllerSpec extends SpecBase with MockitoSugar with Nun
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = form.bind(Map("value" -> "answer"))
+      val filledForm = form.bind(Map("value" -> "validAddress"))
 
       val expectedJson = Json.obj(
         "form" -> filledForm,
