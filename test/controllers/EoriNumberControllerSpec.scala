@@ -25,7 +25,7 @@ import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.EoriNumberPage
+import pages.{ConsigneeNamePage, EoriConfirmationPage, EoriNumberPage}
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, JsString, Json}
 import play.api.mvc.Call
@@ -52,8 +52,15 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar with NunjucksS
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
+      val userAnswers = UserAnswers(mrn)
+        .set(EoriConfirmationPage, true)
+        .success
+        .value
+        .set(ConsigneeNamePage, "Fred")
+        .success
+        .value
 
-      val application    = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application    = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request        = FakeRequest(GET, eoriNumberRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
@@ -80,8 +87,17 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar with NunjucksS
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
+      val userAnswers = UserAnswers(mrn)
+        .set(EoriConfirmationPage, true)
+        .success
+        .value
+        .set(ConsigneeNamePage, "Fred")
+        .success
+        .value
+        .set(EoriNumberPage, "GB123456")
+        .success
+        .value
 
-      val userAnswers    = UserAnswers(mrn).set(EoriNumberPage, "answer").success.value
       val application    = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request        = FakeRequest(GET, eoriNumberRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -93,7 +109,7 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar with NunjucksS
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = form.bind(Map("value" -> "answer"))
+      val filledForm = form.bind(Map("value" -> "GB123456"))
 
       val expectedJson = Json.obj(
         "form" -> filledForm,
