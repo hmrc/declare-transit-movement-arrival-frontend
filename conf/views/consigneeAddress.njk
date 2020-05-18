@@ -1,0 +1,80 @@
+{% extends "includes/layout.njk" %}
+
+{% from "govuk/components/back-link/macro.njk"     import govukBackLink %}
+{% from "govuk/components/input/macro.njk"         import govukInput %}
+{% from "govuk/components/button/macro.njk"        import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "macros/title.njk"                         import title %}
+
+{% block pageTitle %}
+  {{ title(messages("consigneeAddress.title"), form.errors) }}
+{% endblock %}
+
+{% block mainContent %}
+
+  {{ govukBackLink({
+    text: messages("site.back")
+  }) }}
+
+  <div class="govuk-main-wrapper">
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+
+        {% if form.errors.length > 0 %}
+          {{ govukErrorSummary({
+            "titleText": messages("error.summary.title"),
+            "errorList": form.errors
+          }) }}
+        {% endif %}
+
+        <form action="{{ routes.controllers.ConsigneeAddressController.onSubmit(mrn, mode).url }}" method="post">
+
+          {{ csrf() | safe }}
+ <h1 class="govuk-heading-xl">
+          {{ messages("consigneeAddress.heading", consigneeName) }}
+        </h1>
+            {{ govukInput({
+                      classes: "govuk-!-width-two-thirds",
+                      label: {
+                        text: messages('traderAddress.buildingAndStreet')
+                      },
+                      id: "buildingAndStreet",
+                      name: "buildingAndStreet",
+                      value: form.buildingAndStreet.value,
+                      errorMessage: form.buildingAndStreet.error
+                    }) }}
+
+                    {{ govukInput({
+                      classes: "govuk-!-width-two-thirds",
+                      label: {
+                        text: messages('traderAddress.city')
+                      },
+                      id: "city",
+                      name: "city",
+                      value: form.city.value,
+                      errorMessage: form.city.error
+                    }) }}
+
+                    {{ govukInput({
+                      classes: "govuk-input--width-10",
+                      label: {
+                        text: messages('traderAddress.postcode')
+                      },
+                      id: "postcode",
+                      name: "postcode",
+                      value: form.postcode.value,
+                      errorMessage: form.postcode.error
+                    }) }}
+
+          {{ govukButton({
+            text: messages("site.continue"),
+            attributes: {id:"submit"}
+          }) }}
+
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

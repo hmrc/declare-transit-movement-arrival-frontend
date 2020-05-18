@@ -178,3 +178,8 @@ GET        /:mrn/eori-number                        controllers.EoriNumberContro
 POST       /:mrn/eori-number                        controllers.EoriNumberController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
 GET        /:mrn/change-eori-number                  controllers.EoriNumberController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
 POST       /:mrn/change-eori-number                  controllers.EoriNumberController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
+
+GET        /:mrn/consignee-address                        controllers.ConsigneeAddressController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
+POST       /:mrn/consignee-address                        controllers.ConsigneeAddressController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
+GET        /:mrn/change-consignee-address                  controllers.ConsigneeAddressController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
+POST       /:mrn/change-consignee-address                  controllers.ConsigneeAddressController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)

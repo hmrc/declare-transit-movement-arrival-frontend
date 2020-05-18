@@ -25,6 +25,9 @@ import pages.events.transhipments._
 
 trait PageGenerators {
 
+  implicit lazy val arbitraryConsigneeAddressPage: Arbitrary[ConsigneeAddressPage.type] =
+    Arbitrary(ConsigneeAddressPage)
+
   implicit lazy val arbitraryEoriNumberPage: Arbitrary[EoriNumberPage.type] =
     Arbitrary(EoriNumberPage)
 

@@ -41,6 +41,8 @@ class Navigator @Inject()() {
     case AuthorisedLocationPage => ua => Some(routes.ConsigneeNameController.onPageLoad(ua.id, NormalMode))
     case ConsigneeNamePage => ua => Some(routes.EoriConfirmationController.onPageLoad(ua.id, NormalMode))
     case EoriConfirmationPage => eoriConfirmationRoutes
+    case EoriNumberPage => ua => Some(routes.ConsigneeAddressController.onPageLoad(ua.id, NormalMode))
+    case ConsigneeAddressPage => ua => Some(routes.IncidentOnRouteController.onPageLoad(ua.id, NormalMode))
     case PresentationOfficePage => ua => Some(routes.TraderNameController.onPageLoad(ua.id, NormalMode))
     case CustomsSubPlacePage => ua => Some(routes.PresentationOfficeController.onPageLoad(ua.id, NormalMode))
     case TraderNamePage => ua => Some(routes.TraderEoriController.onPageLoad(ua.id, NormalMode))
@@ -94,7 +96,7 @@ class Navigator @Inject()() {
 
   def eoriConfirmationRoutes(ua:UserAnswers) = 
     ua.get(EoriConfirmationPage) map {
-      case true => ???
+      case true => routes.ConsigneeAddressController.onPageLoad(ua.id, NormalMode)
       case _   => routes.EoriNumberController.onPageLoad(ua.id ,NormalMode)
     }
   
