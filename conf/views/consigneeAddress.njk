@@ -30,18 +30,41 @@
         <form action="{{ routes.controllers.ConsigneeAddressController.onSubmit(mrn, mode).url }}" method="post">
 
           {{ csrf() | safe }}
+ <h1 class="govuk-heading-xl">
+          {{ messages("consigneeAddress.heading", consigneeName) }}
+        </h1>
+            {{ govukInput({
+                      classes: "govuk-!-width-two-thirds",
+                      label: {
+                        text: messages('traderAddress.buildingAndStreet')
+                      },
+                      id: "buildingAndStreet",
+                      name: "buildingAndStreet",
+                      value: form.buildingAndStreet.value,
+                      errorMessage: form.buildingAndStreet.error
+                    }) }}
 
-          {{ govukInput({
-            label: {
-              text: messages('consigneeAddress.title', consigneeName),
-              isPageHeading: true,
-              classes: "govuk-label--xl"
-            },
-            id: "value",
-            name: "value",
-            value: form.value.value,
-            errorMessage: form.value.error
-          }) }}
+                    {{ govukInput({
+                      classes: "govuk-!-width-two-thirds",
+                      label: {
+                        text: messages('traderAddress.city')
+                      },
+                      id: "city",
+                      name: "city",
+                      value: form.city.value,
+                      errorMessage: form.city.error
+                    }) }}
+
+                    {{ govukInput({
+                      classes: "govuk-input--width-10",
+                      label: {
+                        text: messages('traderAddress.postcode')
+                      },
+                      id: "postcode",
+                      name: "postcode",
+                      value: form.postcode.value,
+                      errorMessage: form.postcode.error
+                    }) }}
 
           {{ govukButton({
             text: messages("site.continue"),
