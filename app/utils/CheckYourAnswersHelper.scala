@@ -26,6 +26,21 @@ import uk.gov.hmrc.viewmodels._
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswersHelper(userAnswers) {
 
+  def consigneeAddress: Option[Row] = userAnswers.get(ConsigneeAddressPage) map {
+    answer =>
+      Row(
+        key   = Key(msg"consigneeAddress.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value = Value(lit"$answer"),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = routes.ConsigneeAddressController.onPageLoad(mrn, CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"consigneeAddress.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
   def eoriNumber: Option[Row] = userAnswers.get(EoriNumberPage) map {
     answer =>
       Row(

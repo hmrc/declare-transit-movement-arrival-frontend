@@ -442,3 +442,9 @@ eoriNumber.heading =  What is {0}'s EORI number?
 eoriNumber.checkYourAnswersLabel =  What is {0}'s EORI number?
 eoriNumber.error.required = Enter {0}'s EORI number
 eoriNumber.error.length = {0}'s EORI mumber must be 17 characters or less
+
+consigneeAddress.title = What is {0}'s address?'
+consigneeAddress.heading = What is {0}'s address?'
+consigneeAddress.checkYourAnswersLabel = What is {0}'s address?'
+consigneeAddress.error.required = Enter {0}'s Address
+consigneeAddress.error.length = {0}'s address must be 100 characters or less
