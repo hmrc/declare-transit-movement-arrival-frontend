@@ -25,7 +25,7 @@ import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.{ConsigneeAddressPage, ConsigneeNamePage}
+import pages.{ConsigneeAddressPage, ConsigneeNamePage, EoriConfirmationPage, EoriNumberPage}
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, JsString, Json}
 import play.api.mvc.Call
@@ -42,7 +42,7 @@ class ConsigneeAddressControllerSpec extends SpecBase with MockitoSugar with Nun
   def onwardRoute = Call("GET", "/foo")
 
   val formProvider = new ConsigneeAddressFormProvider()
-  val form         = formProvider(consigneeName)
+  val form         = formProvider(traderName)
 
   lazy val consigneeAddressRoute = routes.ConsigneeAddressController.onPageLoad(mrn, NormalMode).url
 
@@ -93,8 +93,20 @@ class ConsigneeAddressControllerSpec extends SpecBase with MockitoSugar with Nun
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
       when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("consigneeName")))
-
+        .thenReturn(Future.successful(Html(traderName)))
+      val userAnswers = UserAnswers(mrn)
+        .set(EoriConfirmationPage, false)
+        .success
+        .value
+        .set(ConsigneeNamePage, traderName)
+        .success
+        .value
+        .set(EoriNumberPage, eoriNumber)
+        .success
+        .value
+        .set(ConsigneeAddressPage, traderAddress)
+        .success
+        .value
       val application    = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request        = FakeRequest(GET, consigneeAddressRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -106,12 +118,14 @@ class ConsigneeAddressControllerSpec extends SpecBase with MockitoSugar with Nun
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = form.bind(Map("buildingAndStreet" -> "value 1", "city" -> "value 3", "postcode" -> "value 4"))
+      val filledForm =
+        form.bind(Map("buildingAndStreet" -> traderAddress.buildingAndStreet, "city" -> traderAddress.city, "postcode" -> traderAddress.postcode))
 
       val expectedJson = Json.obj(
-        "form" -> filledForm,
-        "mrn"  -> mrn,
-        "mode" -> NormalMode
+        "form"          -> filledForm,
+        "mrn"           -> mrn,
+        "mode"          -> NormalMode,
+        "consigneeName" -> traderName
       )
 
       templateCaptor.getValue mustEqual "consigneeAddress.njk"
