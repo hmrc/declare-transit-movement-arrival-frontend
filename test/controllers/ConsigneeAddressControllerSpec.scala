@@ -42,9 +42,20 @@ class ConsigneeAddressControllerSpec extends SpecBase with MockitoSugar with Nun
   def onwardRoute = Call("GET", "/foo")
 
   val formProvider = new ConsigneeAddressFormProvider()
-  val form         = formProvider()
+  val form         = formProvider(consigneeName)
 
   lazy val consigneeAddressRoute = routes.ConsigneeAddressController.onPageLoad(mrn, NormalMode).url
+
+  val userAnswers = UserAnswers(
+    mrn,
+    Json.obj(
+      ConsigneeAddressPage.toString -> Json.obj(
+        "buildingAndStreet" -> "value 1",
+        "city"              -> "value 3",
+        "postcode"          -> "value 4"
+      )
+    )
+  )
 
   "ConsigneeAddress Controller" - {
 
@@ -84,13 +95,6 @@ class ConsigneeAddressControllerSpec extends SpecBase with MockitoSugar with Nun
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("consigneeName")))
 
-      val userAnswers = UserAnswers(mrn)
-        .set(ConsigneeAddressPage, "validAddress")
-        .success
-        .value
-        .set(ConsigneeNamePage, "fred")
-        .success
-        .value
       val application    = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request        = FakeRequest(GET, consigneeAddressRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -102,7 +106,7 @@ class ConsigneeAddressControllerSpec extends SpecBase with MockitoSugar with Nun
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = form.bind(Map("value" -> "validAddress"))
+      val filledForm = form.bind(Map("buildingAndStreet" -> "value 1", "city" -> "value 3", "postcode" -> "value 4"))
 
       val expectedJson = Json.obj(
         "form" -> filledForm,

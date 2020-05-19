@@ -448,3 +448,15 @@ consigneeAddress.heading =  What is the address for {0}?
 consigneeAddress.checkYourAnswersLabel =  What is the address for {0}?
 consigneeAddress.error.required = Enter {0}'s Address
 consigneeAddress.error.length = The address for {0} must be 100 characters or less
+
+consigneeAddress.buildingAndStreet = Building and street
+consigneeAddress.city = Town or city
+consigneeAddress.postcode = Postcode
+traderAddress.checkYourAnswersLabel = Address
+consigneeAddress.error.buildingAndStreet.required = Enter the building and street of {0}
+consigneeAddress.error.city.required = Enter the town or city of {0}
+consigneeAddress.error.postcode.required = Enter the postcode of {0}
+consigneeAddress.error.buildingAndStreet.length = Building and street must be 35 characters or less
+consigneeAddress.error.city.length = Town or city must be 35 characters or less
+consigneeAddress.error.postcode.length = Postcode must be 9 characters or less
+consigneeAddress.change.hidden = address of consignee

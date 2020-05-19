@@ -51,16 +51,15 @@ class EoriNumberController @Inject()(
     implicit request =>
       request.userAnswers.get(ConsigneeNamePage) match {
         case Some(consigneeName) =>
-          val preparedForm = request.userAnswers.get(EoriConfirmationPage) match {
+          val preparedForm = request.userAnswers.get(EoriNumberPage) match {
             case None        => formProvider(consigneeName)
-            case Some(value) => formProvider(consigneeName)
+            case Some(value) => formProvider(consigneeName).fill(value)
           }
           val json = Json.obj(
-            "form"          -> preparedForm,
-            "mrn"           -> mrn,
-            "mode"          -> mode,
-            "consigneeName" -> consigneeName,
-            "eoriNumber"    -> request.eoriNumber
+            "form"       -> preparedForm,
+            "mrn"        -> mrn,
+            "mode"       -> mode,
+            "eoriNumber" -> request.eoriNumber
           )
 
           renderer.render("eoriNumber.njk", json).map(Ok(_))
@@ -80,10 +79,10 @@ class EoriNumberController @Inject()(
               formWithErrors => {
 
                 val json = Json.obj(
-                  "form"          -> formWithErrors,
-                  "mrn"           -> mrn,
-                  "mode"          -> mode,
-                  "consigneeName" -> consigneeName
+                  "form"       -> formWithErrors,
+                  "mrn"        -> mrn,
+                  "mode"       -> mode,
+                  "eoriNumber" -> request.eoriNumber
                 )
 
                 renderer.render("eoriNumber.njk", json).map(BadRequest(_))

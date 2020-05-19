@@ -19,7 +19,7 @@ package base
 import config.FrontendAppConfig
 import controllers.actions._
 import models.messages.{Container, Seal}
-import models.{Index, MovementReferenceNumber, TraderAddress, UserAnswers}
+import models.{Address, Index, MovementReferenceNumber, UserAnswers}
 import org.mockito.Mockito
 import org.scalatest._
 import org.scalatest.concurrent.IntegrationPatience
@@ -64,11 +64,12 @@ trait SpecBase
   val seal: Seal           = Seal("sealNumber")
   val container: Container = Container("containerNumber")
 
-  val eoriNumber: String = "eoriNumber"
-  val traderName: String = "traderName"
+  val eoriNumber: String    = "eoriNumber"
+  val traderName: String    = "traderName"
+  val consigneeName: String = "consigneeName"
 
-  val traderAddress: TraderAddress = TraderAddress("", "", "NE99 1XN")
-  val configKey                    = "config"
+  val traderAddress: Address = Address("", "", "NE99 1XN")
+  val configKey              = "config"
 
   def injector: Injector = app.injector
 

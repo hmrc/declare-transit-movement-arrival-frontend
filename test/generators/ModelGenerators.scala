@@ -30,13 +30,13 @@ trait ModelGenerators {
       Gen.oneOf(TranshipmentType.values)
     }
 
-  implicit lazy val arbitraryTraderAddress: Arbitrary[TraderAddress] =
+  implicit lazy val arbitraryTraderAddress: Arbitrary[Address] =
     Arbitrary {
       for {
-        buildingAndStreet <- stringsWithMaxLength(TraderAddress.Constants.buildingAndStreetLength)
-        city              <- stringsWithMaxLength(TraderAddress.Constants.cityLength)
-        postcode          <- stringsWithMaxLength(TraderAddress.Constants.postcodeLength)
-      } yield TraderAddress(buildingAndStreet, city, postcode)
+        buildingAndStreet <- stringsWithMaxLength(Address.Constants.buildingAndStreetLength)
+        city              <- stringsWithMaxLength(Address.Constants.cityLength)
+        postcode          <- stringsWithMaxLength(Address.Constants.postcodeLength)
+      } yield Address(buildingAndStreet, city, postcode)
     }
 
   implicit lazy val arbitraryGoodsLocation: Arbitrary[GoodsLocation] =

@@ -16,16 +16,15 @@
 
 package forms
 
-import javax.inject.Inject
-
 import forms.mappings.Mappings
+import javax.inject.Inject
 import play.api.data.Form
 
 class EoriNumberFormProvider @Inject() extends Mappings {
 
   def apply(consigneeName: String): Form[String] =
     Form(
-      "value" -> text("eoriNumber.error.required")
+      "value" -> text("eoriNumber.error.required", args = Seq(consigneeName))
         .verifying(maxLength(17, "eoriNumber.error.length"))
     )
 }

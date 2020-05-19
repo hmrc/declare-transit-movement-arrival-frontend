@@ -20,7 +20,7 @@ import java.time.LocalDate
 
 import derivable.DeriveNumberOfEvents
 import models.messages._
-import models.{Index, TraderAddress, UserAnswers}
+import models.{Address, Index, UserAnswers}
 import pages._
 import pages.events._
 import pages.events.transhipments._
@@ -99,7 +99,7 @@ class ArrivalNotificationConversionService {
     }
 
   // TODO: Move this to the Trader model as a constructor?
-  private def traderAddress(traderAddress: TraderAddress, traderEori: String, traderName: String): TraderWithEori =
+  private def traderAddress(traderAddress: Address, traderEori: String, traderName: String): TraderWithEori =
     TraderWithEori(
       eori            = traderEori,
       name            = Some(traderName),

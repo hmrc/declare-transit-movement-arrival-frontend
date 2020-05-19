@@ -18,21 +18,21 @@ package forms
 
 import javax.inject.Inject
 import forms.mappings.Mappings
-import models.ConsigneeAddress
+import models.Address
 import play.api.data.Form
 import play.api.data.Forms._
 import models.messages.TraderWithEori.Constants.{cityLength, postCodeLength, streetAndNumberLength}
 
 class ConsigneeAddressFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[ConsigneeAddress] = Form(
+  def apply(consigneeName: String): Form[Address] = Form(
     mapping(
-      "buildingAndStreet" -> text("consigneeAddress.error.buildingAndStreet.required")
+      "buildingAndStreet" -> text("consigneeAddress.error.buildingAndStreet.required", Seq(consigneeName))
         .verifying(maxLength(streetAndNumberLength, "consigneeAddress.error.buildingAndStreet.length")),
-      "city" -> text("consigneeAddress.error.city.required")
+      "city" -> text("consigneeAddress.error.city.required", Seq(consigneeName))
         .verifying(maxLength(cityLength, "consigneeAddress.error.city.length")),
-      "postcode" -> text("consigneeAddress.error.postcode.required")
+      "postcode" -> text("consigneeAddress.error.postcode.required", Seq(consigneeName))
         .verifying(maxLength(postCodeLength, "consigneeAddress.error.postcode.length"))
-    )(ConsigneeAddress.apply)(ConsigneeAddress.unapply)
+    )(Address.apply)(Address.unapply)
   )
 }

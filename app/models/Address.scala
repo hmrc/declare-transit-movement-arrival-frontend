@@ -18,9 +18,9 @@ package models
 
 import play.api.libs.json._
 
-case class TraderAddress(buildingAndStreet: String, city: String, postcode: String)
+case class Address(buildingAndStreet: String, city: String, postcode: String)
 
-object TraderAddress {
+object Address {
 
   object Constants {
     val buildingAndStreetLength = 35
@@ -28,5 +28,5 @@ object TraderAddress {
     val postcodeLength          = 9
   }
 
-  implicit val format = Json.format[TraderAddress]
+  implicit val format = Json.format[Address]
 }

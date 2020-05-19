@@ -16,16 +16,16 @@
 
 package forms
 
+import base.SpecBase
 import forms.behaviours.StringFieldBehaviours
 import play.api.data.FormError
 
-class EoriNumberFormProviderSpec extends StringFieldBehaviours {
-
+class EoriNumberFormProviderSpec extends StringFieldBehaviours with SpecBase {
   val requiredKey = "eoriNumber.error.required"
   val lengthKey   = "eoriNumber.error.length"
   val maxLength   = 17
 
-  val form = new EoriNumberFormProvider()()
+  val form = new EoriNumberFormProvider()(traderName)
 
   ".value" - {
 
@@ -47,7 +47,7 @@ class EoriNumberFormProviderSpec extends StringFieldBehaviours {
     behave like mandatoryField(
       form,
       fieldName,
-      requiredError = FormError(fieldName, requiredKey)
+      requiredError = FormError(fieldName, requiredKey, Seq(traderName))
     )
   }
 }

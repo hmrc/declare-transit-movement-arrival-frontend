@@ -21,7 +21,7 @@ import forms.ConsigneeAddressFormProvider
 import javax.inject.Inject
 import models.{Mode, MovementReferenceNumber}
 import navigation.Navigator
-import pages.{ConsigneeAddressPage, ConsigneeNamePage}
+import pages.{ConsigneeAddressPage, ConsigneeNamePage, EoriConfirmationPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -29,7 +29,6 @@ import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
-import pages.ConsigneeAddressPage
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -48,16 +47,11 @@ class ConsigneeAddressController @Inject()(
     with I18nSupport
     with NunjucksSupport {
 
-  private val form = formProvider()
-
   def onPageLoad(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
       request.userAnswers.get(ConsigneeNamePage) match {
         case Some(consigneeName) =>
-          val preparedForm = request.userAnswers.get(ConsigneeAddressPage) match {
-            case None        => form
-            case Some(value) => form.fill(value)
-          }
+          val preparedForm = formProvider(consigneeName)
 
           val json = Json.obj(
             "form"          -> preparedForm,
@@ -72,24 +66,28 @@ class ConsigneeAddressController @Inject()(
 
   def onSubmit(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
-      form
-        .bindFromRequest()
-        .fold(
-          formWithErrors => {
+      request.userAnswers.get(ConsigneeNamePage) match {
+        case Some(consigneeName) =>
+          formProvider(consigneeName)
+            .bindFromRequest()
+            .fold(
+              formWithErrors => {
 
-            val json = Json.obj(
-              "form" -> formWithErrors,
-              "mrn"  -> mrn,
-              "mode" -> mode
+                val json = Json.obj(
+                  "form"          -> formWithErrors,
+                  "mrn"           -> mrn,
+                  "mode"          -> mode,
+                  "consigneeName" -> consigneeName
+                )
+
+                renderer.render("consigneeAddress.njk", json).map(BadRequest(_))
+              },
+              value =>
+                for {
+                  updatedAnswers <- Future.fromTry(request.userAnswers.set(ConsigneeAddressPage, value))
+                  _              <- sessionRepository.set(updatedAnswers)
+                } yield Redirect(navigator.nextPage(ConsigneeAddressPage, mode, updatedAnswers))
             )
-
-            renderer.render("consigneeAddress.njk", json).map(BadRequest(_))
-          },
-          value =>
-            for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(ConsigneeAddressPage, value))
-              _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(ConsigneeAddressPage, mode, updatedAnswers))
-        )
+      }
   }
 }

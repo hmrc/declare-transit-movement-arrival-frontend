@@ -19,7 +19,7 @@ package utils
 import controllers.events.seals.{routes => sealRoutes}
 import controllers.events.transhipments.{routes => transhipmentRoutes}
 import controllers.events.{routes => eventRoutes}
-import models.{CheckMode, Index, MovementReferenceNumber, TraderAddress, UserAnswers}
+import models.{Address, CheckMode, Index, MovementReferenceNumber, UserAnswers}
 import pages.events._
 import pages.events.seals._
 import pages.events.transhipments._
@@ -218,7 +218,7 @@ class CheckEventAnswersHelper(userAnswers: UserAnswers) {
 
   def mrn: MovementReferenceNumber = userAnswers.id
 
-  def addressHtml(address: TraderAddress): Html = Html(
+  def addressHtml(address: Address): Html = Html(
     Seq(address.buildingAndStreet, address.city, address.postcode)
       .mkString("<br>")
   )

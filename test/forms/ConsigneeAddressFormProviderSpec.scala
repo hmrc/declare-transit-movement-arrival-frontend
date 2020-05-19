@@ -16,38 +16,95 @@
 
 package forms
 
+import base.SpecBase
 import forms.behaviours.StringFieldBehaviours
 import play.api.data.FormError
 
-class ConsigneeAddressFormProviderSpec extends StringFieldBehaviours {
+class ConsigneeAddressFormProviderSpec extends StringFieldBehaviours with SpecBase {
 
-  val requiredKey = "consigneeAddress.error.required"
-  val lengthKey   = "consigneeAddress.error.length"
-  val maxLength   = 100
-
-  val form = new ConsigneeAddressFormProvider()()
+  val form = new ConsigneeAddressFormProvider()(traderName)
 
   ".value" - {
 
-    val fieldName = "value"
+    ".buildingAndStreet" - {
 
-    behave like fieldThatBindsValidData(
-      form,
-      fieldName,
-      stringsWithMaxLength(maxLength)
-    )
+      val fieldName   = "buildingAndStreet"
+      val requiredKey = "consigneeAddress.error.buildingAndStreet.required"
+      val lengthKey   = "consigneeAddress.error.buildingAndStreet.length"
+      val maxLength   = 35
 
-    behave like fieldWithMaxLength(
-      form,
-      fieldName,
-      maxLength   = maxLength,
-      lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
-    )
+      behave like fieldThatBindsValidData(
+        form,
+        fieldName,
+        stringsWithMaxLength(maxLength)
+      )
 
-    behave like mandatoryField(
-      form,
-      fieldName,
-      requiredError = FormError(fieldName, requiredKey)
-    )
+      behave like fieldWithMaxLength(
+        form,
+        fieldName,
+        maxLength   = maxLength,
+        lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
+      )
+
+      behave like mandatoryField(
+        form,
+        fieldName,
+        requiredError = FormError(fieldName, requiredKey, Seq(traderName))
+      )
+    }
+
+    ".city" - {
+
+      val fieldName   = "city"
+      val requiredKey = "consigneeAddress.error.city.required"
+      val lengthKey   = "consigneeAddress.error.city.length"
+      val maxLength   = 35
+
+      behave like fieldThatBindsValidData(
+        form,
+        fieldName,
+        stringsWithMaxLength(maxLength)
+      )
+
+      behave like fieldWithMaxLength(
+        form,
+        fieldName,
+        maxLength   = maxLength,
+        lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
+      )
+
+      behave like mandatoryField(
+        form,
+        fieldName,
+        requiredError = FormError(fieldName, requiredKey, Seq(traderName))
+      )
+    }
+
+    ".postcode" - {
+
+      val fieldName   = "postcode"
+      val requiredKey = "consigneeAddress.error.postcode.required"
+      val lengthKey   = "consigneeAddress.error.postcode.length"
+      val maxLength   = 9
+
+      behave like fieldThatBindsValidData(
+        form,
+        fieldName,
+        stringsWithMaxLength(maxLength)
+      )
+
+      behave like fieldWithMaxLength(
+        form,
+        fieldName,
+        maxLength   = maxLength,
+        lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
+      )
+
+      behave like mandatoryField(
+        form,
+        fieldName,
+        requiredError = FormError(fieldName, requiredKey, Seq(traderName))
+      )
+    }
   }
 }
