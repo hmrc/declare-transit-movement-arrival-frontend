@@ -68,7 +68,7 @@ trait SpecBase
   val traderName: String    = "traderName"
   val consigneeName: String = "consigneeName"
 
-  val traderAddress: Address = Address("", "", "NE99 1XN")
+  val traderAddress: Address = Address("buildingAndStreet", "city", "NE99 1XN")
   val configKey              = "config"
 
   def injector: Injector = app.injector

@@ -21,7 +21,7 @@ import forms.ConsigneeAddressFormProvider
 import javax.inject.Inject
 import models.{Mode, MovementReferenceNumber}
 import navigation.Navigator
-import pages.{ConsigneeAddressPage, ConsigneeNamePage, EoriConfirmationPage}
+import pages.{ConsigneeAddressPage, ConsigneeNamePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -51,7 +51,10 @@ class ConsigneeAddressController @Inject()(
     implicit request =>
       request.userAnswers.get(ConsigneeNamePage) match {
         case Some(consigneeName) =>
-          val preparedForm = formProvider(consigneeName)
+          val preparedForm = request.userAnswers.get(ConsigneeAddressPage) match {
+            case Some(value) => formProvider(consigneeName).fill(value)
+            case None        => formProvider(consigneeName)
+          }
 
           val json = Json.obj(
             "form"          -> preparedForm,
@@ -61,6 +64,7 @@ class ConsigneeAddressController @Inject()(
           )
 
           renderer.render("consigneeAddress.njk", json).map(Ok(_))
+        case _ => Future.successful(Redirect(routes.SessionExpiredController.onPageLoad()))
       }
   }
 
@@ -88,6 +92,7 @@ class ConsigneeAddressController @Inject()(
                   _              <- sessionRepository.set(updatedAnswers)
                 } yield Redirect(navigator.nextPage(ConsigneeAddressPage, mode, updatedAnswers))
             )
+        case _ => Future.successful(Redirect(routes.SessionExpiredController.onPageLoad()))
       }
   }
 }

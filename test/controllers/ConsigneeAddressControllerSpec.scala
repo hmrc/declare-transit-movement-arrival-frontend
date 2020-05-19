@@ -39,23 +39,12 @@ import scala.concurrent.Future
 
 class ConsigneeAddressControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
-  def onwardRoute = Call("GET", "/foo")
+  private def onwardRoute = Call("GET", "/foo")
 
-  val formProvider = new ConsigneeAddressFormProvider()
-  val form         = formProvider(traderName)
+  private val formProvider = new ConsigneeAddressFormProvider()
+  private val form         = formProvider(traderName)
 
-  lazy val consigneeAddressRoute = routes.ConsigneeAddressController.onPageLoad(mrn, NormalMode).url
-
-  val userAnswers = UserAnswers(
-    mrn,
-    Json.obj(
-      ConsigneeAddressPage.toString -> Json.obj(
-        "buildingAndStreet" -> "value 1",
-        "city"              -> "value 3",
-        "postcode"          -> "value 4"
-      )
-    )
-  )
+  private lazy val consigneeAddressRoute = routes.ConsigneeAddressController.onPageLoad(mrn, NormalMode).url
 
   "ConsigneeAddress Controller" - {
 
@@ -94,19 +83,15 @@ class ConsigneeAddressControllerSpec extends SpecBase with MockitoSugar with Nun
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html(traderName)))
+
       val userAnswers = UserAnswers(mrn)
-        .set(EoriConfirmationPage, false)
-        .success
-        .value
         .set(ConsigneeNamePage, traderName)
-        .success
-        .value
-        .set(EoriNumberPage, eoriNumber)
         .success
         .value
         .set(ConsigneeAddressPage, traderAddress)
         .success
         .value
+
       val application    = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request        = FakeRequest(GET, consigneeAddressRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -119,7 +104,13 @@ class ConsigneeAddressControllerSpec extends SpecBase with MockitoSugar with Nun
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val filledForm =
-        form.bind(Map("buildingAndStreet" -> traderAddress.buildingAndStreet, "city" -> traderAddress.city, "postcode" -> traderAddress.postcode))
+        form.bind(
+          Map(
+            "buildingAndStreet" -> traderAddress.buildingAndStreet,
+            "city"              -> traderAddress.city,
+            "postcode"          -> traderAddress.postcode
+          )
+        )
 
       val expectedJson = Json.obj(
         "form"          -> filledForm,
@@ -140,8 +131,13 @@ class ConsigneeAddressControllerSpec extends SpecBase with MockitoSugar with Nun
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
+      val userAnswers = UserAnswers(mrn)
+        .set(ConsigneeNamePage, traderName)
+        .success
+        .value
+
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
@@ -150,7 +146,7 @@ class ConsigneeAddressControllerSpec extends SpecBase with MockitoSugar with Nun
 
       val request =
         FakeRequest(POST, consigneeAddressRoute)
-          .withFormUrlEncodedBody(("value", "answer"))
+          .withFormUrlEncodedBody(("buildingAndStreet", traderAddress.buildingAndStreet), ("city", traderAddress.city), ("postcode", traderAddress.postcode))
 
       val result = route(application, request).value
 
@@ -165,7 +161,12 @@ class ConsigneeAddressControllerSpec extends SpecBase with MockitoSugar with Nun
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application    = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val userAnswers = UserAnswers(mrn)
+        .set(ConsigneeNamePage, traderName)
+        .success
+        .value
+
+      val application    = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request        = FakeRequest(POST, consigneeAddressRoute).withFormUrlEncodedBody(("value", ""))
       val boundForm      = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
