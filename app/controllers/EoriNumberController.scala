@@ -21,7 +21,7 @@ import forms.EoriNumberFormProvider
 import javax.inject.Inject
 import models.{Mode, MovementReferenceNumber}
 import navigation.Navigator
-import pages.{ConsigneeNamePage, EoriNumberPage}
+import pages.{ConsigneeAddressPage, ConsigneeNamePage, EoriConfirmationPage, EoriNumberPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -47,48 +47,55 @@ class EoriNumberController @Inject()(
     with I18nSupport
     with NunjucksSupport {
 
-  private val form = formProvider()
-
   def onPageLoad(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
       request.userAnswers.get(ConsigneeNamePage) match {
         case Some(consigneeName) =>
-          val preparedForm = request.userAnswers.get(EoriNumberPage) match {
-            case None        => form
-            case Some(value) => form.fill(value)
+          val preparedForm = request.userAnswers.get(EoriConfirmationPage) match {
+            case None        => formProvider(consigneeName)
+            case Some(value) => formProvider(consigneeName)
           }
-
           val json = Json.obj(
             "form"          -> preparedForm,
             "mrn"           -> mrn,
             "mode"          -> mode,
-            "consigneeName" -> consigneeName
+            "consigneeName" -> consigneeName,
+            "eoriNumber"    -> request.eoriNumber
           )
 
           renderer.render("eoriNumber.njk", json).map(Ok(_))
+
+        case _ => Future.successful(Redirect(routes.SessionExpiredController.onPageLoad()))
+
       }
   }
 
   def onSubmit(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
-      form
-        .bindFromRequest()
-        .fold(
-          formWithErrors => {
+      request.userAnswers.get(ConsigneeNamePage) match {
+        case Some(consigneeName) =>
+          formProvider(consigneeName)
+            .bindFromRequest()
+            .fold(
+              formWithErrors => {
 
-            val json = Json.obj(
-              "form" -> formWithErrors,
-              "mrn"  -> mrn,
-              "mode" -> mode
+                val json = Json.obj(
+                  "form"          -> formWithErrors,
+                  "mrn"           -> mrn,
+                  "mode"          -> mode,
+                  "consigneeName" -> consigneeName
+                )
+
+                renderer.render("eoriNumber.njk", json).map(BadRequest(_))
+              },
+              value =>
+                for {
+                  updatedAnswers <- Future.fromTry(request.userAnswers.set(EoriNumberPage, value))
+                  _              <- sessionRepository.set(updatedAnswers)
+                } yield Redirect(navigator.nextPage(EoriNumberPage, mode, updatedAnswers))
             )
+        case _ => Future.successful(Redirect(routes.SessionExpiredController.onPageLoad()))
 
-            renderer.render("eoriNumber.njk", json).map(BadRequest(_))
-          },
-          value =>
-            for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(EoriNumberPage, value))
-              _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(EoriNumberPage, mode, updatedAnswers))
-        )
+      }
   }
 }

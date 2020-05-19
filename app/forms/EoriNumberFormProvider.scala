@@ -23,7 +23,7 @@ import play.api.data.Form
 
 class EoriNumberFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[String] =
+  def apply(consigneeName: String): Form[String] =
     Form(
       "value" -> text("eoriNumber.error.required")
         .verifying(maxLength(17, "eoriNumber.error.length"))

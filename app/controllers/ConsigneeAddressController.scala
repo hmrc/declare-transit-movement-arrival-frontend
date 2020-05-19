@@ -29,6 +29,7 @@ import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
+import pages.ConsigneeAddressPage
 
 import scala.concurrent.{ExecutionContext, Future}
 
