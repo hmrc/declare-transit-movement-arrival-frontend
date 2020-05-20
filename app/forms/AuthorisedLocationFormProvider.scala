@@ -23,7 +23,7 @@ import play.api.data.Form
 
 class AuthorisedLocationFormProvider @Inject() extends Mappings {
 
-  val alRegex = "[A-Z0-9]"
+  val alRegex = "^[a-zA-Z0-9]*$"
 
   def apply(): Form[String] =
     Form(
