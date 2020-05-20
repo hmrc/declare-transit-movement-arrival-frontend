@@ -23,14 +23,12 @@ import play.api.data.Form
 
 class AuthorisedLocationFormProvider @Inject() extends Mappings {
 
-  val alRegex = "^[a-zA-Z0-9]*$"
-
   def apply(): Form[String] =
     Form(
       "value" -> text("authorisedLocation.error.required")
         .verifying(
           maxLength(SimplifiedNotification.Constants.approvedLocationLength, "authorisedLocation.error.length"),
-          regexp(alRegex, "authorisedLocation.error.invalid")
+          regexp(SimplifiedNotification.Constants.authorisedLocationRegex, "authorisedLocation.error.invalid")
         )
     )
 }

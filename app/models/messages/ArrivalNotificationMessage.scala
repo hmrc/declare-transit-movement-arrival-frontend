@@ -136,6 +136,7 @@ object SimplifiedNotification {
     val approvedLocationLength   = 17
     val presentationOfficeLength = 8
     val maxNumberOfEnRouteEvents = 9
+    val authorisedLocationRegex  = "^[a-zA-Z0-9]*$"
   }
 
   implicit lazy val reads: Reads[SimplifiedNotification] = {

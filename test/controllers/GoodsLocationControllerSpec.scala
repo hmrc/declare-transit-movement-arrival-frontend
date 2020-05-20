@@ -109,7 +109,7 @@ class GoodsLocationControllerSpec extends SpecBase with MockitoSugar with Nunjuc
       application.stop()
     }
 
-    "must redirect to the correct page when valid data is submitted and consignee location toggle is false" in {
+    "must redirect to the correct page when valid data is submitted and Simplified Journey toggle is false" in {
 
       val mockSessionRepository = mock[SessionRepository]
 
@@ -117,7 +117,7 @@ class GoodsLocationControllerSpec extends SpecBase with MockitoSugar with Nunjuc
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .configure(Map("feature-toggles.consigneeLocation" -> false))
+          .configure(Map("feature-toggles.simplifiedJourney" -> false))
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository),
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute))
@@ -137,7 +137,7 @@ class GoodsLocationControllerSpec extends SpecBase with MockitoSugar with Nunjuc
       application.stop()
     }
 
-    "must redirect to the correct page for Border Force Office when valid data is submitted and consignee location toggle is true" in {
+    "must redirect to the correct page for Border Force Office when valid data is submitted and Simplified Journey toggle is true" in {
 
       val mockSessionRepository = mock[SessionRepository]
 
@@ -145,7 +145,7 @@ class GoodsLocationControllerSpec extends SpecBase with MockitoSugar with Nunjuc
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .configure(Map("feature-toggles.consigneeLocation" -> true))
+          .configure(Map("feature-toggles.simplifiedJourney" -> true))
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
@@ -164,7 +164,7 @@ class GoodsLocationControllerSpec extends SpecBase with MockitoSugar with Nunjuc
       application.stop()
     }
 
-    "must redirect to the correct page for Authorised Consignees Location when valid data is submitted and consignee location toggle is true" in {
+    "must redirect to the correct page for Authorised Consignees Location when valid data is submitted and Simplified Journey toggle is true" in {
 
       val mockSessionRepository = mock[SessionRepository]
 
@@ -172,7 +172,7 @@ class GoodsLocationControllerSpec extends SpecBase with MockitoSugar with Nunjuc
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .configure(Map("feature-toggles.consigneeLocation" -> true))
+          .configure(Map("feature-toggles.simplifiedJourney" -> true))
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository)
           )

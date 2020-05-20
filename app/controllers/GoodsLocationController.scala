@@ -87,7 +87,7 @@ class GoodsLocationController @Inject()(override val messagesApi: MessagesApi,
               updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(mrn)).set(GoodsLocationPage, value))
               _              <- sessionRepository.set(updatedAnswers)
             } yield
-              if (frontendAppConfig.featureToggleConsigneeLocation) {
+              if (frontendAppConfig.featureToggleSimplifiedJourney) {
                 value match {
                   case BorderForceOffice            => Redirect(routes.CustomsSubPlaceController.onPageLoad(updatedAnswers.id, mode))
                   case AuthorisedConsigneesLocation => Redirect(routes.AuthorisedLocationController.onPageLoad(updatedAnswers.id, mode))
