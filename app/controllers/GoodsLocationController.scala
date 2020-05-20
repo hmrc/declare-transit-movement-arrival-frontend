@@ -93,7 +93,10 @@ class GoodsLocationController @Inject()(override val messagesApi: MessagesApi,
                   case AuthorisedConsigneesLocation => Redirect(routes.AuthorisedLocationController.onPageLoad(updatedAnswers.id, mode))
                 }
               } else {
-                Redirect(navigator.nextPage(GoodsLocationPage, mode, updatedAnswers))
+                value match {
+                  case BorderForceOffice            => Redirect(routes.CustomsSubPlaceController.onPageLoad(updatedAnswers.id, mode))
+                  case AuthorisedConsigneesLocation => Redirect(routes.UseDifferentServiceController.onPageLoad(updatedAnswers.id))
+                }
             }
         )
   }

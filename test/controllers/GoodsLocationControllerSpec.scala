@@ -28,7 +28,7 @@ import org.scalatestplus.mockito.MockitoSugar
 import pages.GoodsLocationPage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.Call
+import play.api.mvc.{AnyContentAsFormUrlEncoded, Call}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
@@ -109,7 +109,7 @@ class GoodsLocationControllerSpec extends SpecBase with MockitoSugar with Nunjuc
       application.stop()
     }
 
-    "must redirect to the correct page when valid data is submitted and Simplified Journey toggle is false" in {
+    "must redirect to the correct page when Border Force is submitted and Simplified Journey toggle is false" in {
 
       val mockSessionRepository = mock[SessionRepository]
 
@@ -119,20 +119,46 @@ class GoodsLocationControllerSpec extends SpecBase with MockitoSugar with Nunjuc
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .configure(Map("feature-toggles.simplifiedJourney" -> false))
           .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute))
+            bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
 
       val request =
         FakeRequest(POST, goodsLocationRoute)
-          .withFormUrlEncodedBody(("value", GoodsLocation.values.head.toString))
+          .withFormUrlEncodedBody(("value", GoodsLocation.BorderForceOffice.toString))
 
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual onwardRoute.url
+      redirectLocation(result).value mustEqual s"/common-transit-convention-trader-arrival/${emptyUserAnswers.id}/goods-approved-location"
+
+      application.stop()
+    }
+
+    "must redirect to the correct page when AuthorisedConsignee is submitted and Simplified Journey toggle is false" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .configure(Map("feature-toggles.simplifiedJourney" -> false))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      val request =
+        FakeRequest(POST, goodsLocationRoute)
+          .withFormUrlEncodedBody(("value", GoodsLocation.AuthorisedConsigneesLocation.toString))
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+
+      redirectLocation(result).value mustEqual s"/common-transit-convention-trader-arrival/${emptyUserAnswers.id}/use-ncts-service"
 
       application.stop()
     }

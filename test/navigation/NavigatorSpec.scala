@@ -67,14 +67,84 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
       }
 
-      "must go from 'goods location' to  'customs approved location' when user chooses 'Border Force Office'" in {
+      "must go from 'goods location' to  'customs approved location' when user chooses 'Border Force Office' when Simplified Journey toggle is on or off" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
-            val updatedAnswers = answers.set(GoodsLocationPage, GoodsLocation.BorderForceOffice).success.value
+            if (frontendAppConfig.featureToggleSimplifiedJourney) {
+              val updatedAnswers = answers.set(GoodsLocationPage, GoodsLocation.BorderForceOffice).success.value
+
+              navigator
+                .nextPage(GoodsLocationPage, NormalMode, updatedAnswers)
+                .mustBe(routes.CustomsSubPlaceController.onPageLoad(updatedAnswers.id, NormalMode))
+            } else {
+              Some(routes.ConsigneeNameController.onPageLoad(mrn, NormalMode))
+            }
+        }
+      }
+      "must go from 'goods location' to correct page when user chooses 'Auhorised Consignee' when Simplified Journey toggle is on  or off" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            if (frontendAppConfig.featureToggleSimplifiedJourney) {
+              val updatedAnswers = answers.set(GoodsLocationPage, GoodsLocation.AuthorisedConsigneesLocation).success.value
+
+              navigator
+                .nextPage(GoodsLocationPage, NormalMode, updatedAnswers)
+                .mustBe(routes.CustomsSubPlaceController.onPageLoad(updatedAnswers.id, NormalMode))
+            } else {
+              routes.UseDifferentServiceController.onPageLoad(mrn)
+            }
+        }
+      }
+      "must go from'authorisedLocationCode page to consigneeName page" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            navigator
+              .nextPage(AuthorisedLocationPage, NormalMode, answers)
+              .mustBe(routes.ConsigneeNameController.onPageLoad(answers.id, NormalMode))
+        }
+      }
+      "must go from'consigneeName page to eoriConfirmation page" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            navigator
+              .nextPage(ConsigneeNamePage, NormalMode, answers)
+              .mustBe(routes.EoriConfirmationController.onPageLoad(answers.id, NormalMode))
+        }
+      }
+      "must go from'eoriConfirmation page to eoriNumber page when 'No' is selcted" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers = answers.set(EoriConfirmationPage, false).success.value
 
             navigator
-              .nextPage(GoodsLocationPage, NormalMode, updatedAnswers)
-              .mustBe(routes.CustomsSubPlaceController.onPageLoad(updatedAnswers.id, NormalMode))
+              .nextPage(EoriConfirmationPage, NormalMode, updatedAnswers)
+              .mustBe(routes.EoriNumberController.onPageLoad(answers.id, NormalMode))
+        }
+      }
+      "must go from'eoriConfirmation page to consigneeAddress page when 'Yes' is selcted" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers = answers.set(EoriConfirmationPage, true).success.value
+
+            navigator
+              .nextPage(EoriConfirmationPage, NormalMode, updatedAnswers)
+              .mustBe(routes.ConsigneeAddressController.onPageLoad(answers.id, NormalMode))
+        }
+      }
+      "must go from eoriNumber page to consigneeAddress page" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            navigator
+              .nextPage(EoriNumberPage, NormalMode, answers)
+              .mustBe(routes.ConsigneeAddressController.onPageLoad(answers.id, NormalMode))
+        }
+      }
+      "must go from consigneeAddress page to Incident On route page" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            navigator
+              .nextPage(ConsigneeAddressPage, NormalMode, answers)
+              .mustBe(routes.IncidentOnRouteController.onPageLoad(answers.id, NormalMode))
         }
       }
 
@@ -84,17 +154,6 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
             navigator
               .nextPage(CustomsSubPlacePage, NormalMode, answers)
               .mustBe(routes.PresentationOfficeController.onPageLoad(answers.id, NormalMode))
-        }
-      }
-
-      "must go from 'goods location' to  'use different service' when user chooses 'Authorised consignee’s location'" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-            val updatedAnswers = answers.set(GoodsLocationPage, GoodsLocation.AuthorisedConsigneesLocation).success.value
-
-            navigator
-              .nextPage(GoodsLocationPage, NormalMode, updatedAnswers)
-              .mustBe(routes.UseDifferentServiceController.onPageLoad(updatedAnswers.id))
         }
       }
 
