@@ -23,8 +23,8 @@ import play.api.data.Form
 
 class EoriConfirmationFormProvider @Inject() extends Mappings {
 
-  def apply(eoriNumber: String, traderName: String): Form[Boolean] =
+  def apply(traderName: String): Form[Boolean] =
     Form(
-      "value" -> boolean(requiredKey = "eoriConfirmation.error.required", args = Seq(eoriNumber, traderName))
+      "value" -> boolean(requiredKey = "eoriConfirmation.error.required", args = Seq(traderName))
     )
 }

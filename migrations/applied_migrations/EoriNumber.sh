@@ -18,7 +18,7 @@ echo "eoriNumber.title = eoriNumber" >> ../conf/messages.en
 echo "eoriNumber.heading = eoriNumber" >> ../conf/messages.en
 echo "eoriNumber.checkYourAnswersLabel = eoriNumber" >> ../conf/messages.en
 echo "eoriNumber.error.required = Enter eoriNumber" >> ../conf/messages.en
-echo "eoriNumber.error.length = EoriNumber must be 17 characters or less" >> ../conf/messages.en
+echo "eoriNumber.error.length = EoriNumber must be 35 characters or less" >> ../conf/messages.en
 
 echo "Adding to UserAnswersEntryGenerators"
 awk '/self: Generators =>/ {\

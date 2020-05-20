@@ -42,7 +42,7 @@ class EoriConfirmationControllerSpec extends SpecBase with MockitoSugar with Nun
   def onwardRoute = Call("GET", "/foo")
 
   val formProvider = new EoriConfirmationFormProvider()
-  val form         = formProvider(eoriNumber, traderName)
+  val form         = formProvider(traderName)
 
   lazy val eoriConfirmationRoute = routes.EoriConfirmationController.onPageLoad(mrn, NormalMode).url
 
@@ -163,7 +163,7 @@ class EoriConfirmationControllerSpec extends SpecBase with MockitoSugar with Nun
 
       val application    = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request        = FakeRequest(POST, eoriConfirmationRoute).withFormUrlEncodedBody(("value", ""))
-      val boundForm      = formProvider(eoriNumber, traderName).bind(Map("value" -> ""))
+      val boundForm      = formProvider(traderName).bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 

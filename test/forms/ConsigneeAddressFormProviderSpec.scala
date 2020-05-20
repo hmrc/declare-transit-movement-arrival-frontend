@@ -22,7 +22,7 @@ import play.api.data.FormError
 
 class ConsigneeAddressFormProviderSpec extends StringFieldBehaviours with SpecBase {
 
-  val form = new ConsigneeAddressFormProvider()(traderName)
+  val form = new ConsigneeAddressFormProvider()()
 
   ".value" - {
 
@@ -49,7 +49,7 @@ class ConsigneeAddressFormProviderSpec extends StringFieldBehaviours with SpecBa
       behave like mandatoryField(
         form,
         fieldName,
-        requiredError = FormError(fieldName, requiredKey, Seq(traderName))
+        requiredError = FormError(fieldName, requiredKey)
       )
     }
 
@@ -76,7 +76,7 @@ class ConsigneeAddressFormProviderSpec extends StringFieldBehaviours with SpecBa
       behave like mandatoryField(
         form,
         fieldName,
-        requiredError = FormError(fieldName, requiredKey, Seq(traderName))
+        requiredError = FormError(fieldName, requiredKey)
       )
     }
 
@@ -103,7 +103,7 @@ class ConsigneeAddressFormProviderSpec extends StringFieldBehaviours with SpecBa
       behave like mandatoryField(
         form,
         fieldName,
-        requiredError = FormError(fieldName, requiredKey, Seq(traderName))
+        requiredError = FormError(fieldName, requiredKey)
       )
     }
   }

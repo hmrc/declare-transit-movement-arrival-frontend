@@ -42,7 +42,7 @@ class ConsigneeAddressControllerSpec extends SpecBase with MockitoSugar with Nun
   private def onwardRoute = Call("GET", "/foo")
 
   private val formProvider = new ConsigneeAddressFormProvider()
-  private val form         = formProvider(traderName)
+  private val form         = formProvider()
 
   private lazy val consigneeAddressRoute = routes.ConsigneeAddressController.onPageLoad(mrn, NormalMode).url
 

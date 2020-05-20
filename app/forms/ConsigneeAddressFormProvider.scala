@@ -25,13 +25,13 @@ import models.messages.TraderWithEori.Constants.{cityLength, postCodeLength, str
 
 class ConsigneeAddressFormProvider @Inject() extends Mappings {
 
-  def apply(consigneeName: String): Form[Address] = Form(
+  def apply(): Form[Address] = Form(
     mapping(
-      "buildingAndStreet" -> text("consigneeAddress.error.buildingAndStreet.required", Seq(consigneeName))
+      "buildingAndStreet" -> text("consigneeAddress.error.buildingAndStreet.required")
         .verifying(maxLength(streetAndNumberLength, "consigneeAddress.error.buildingAndStreet.length")),
-      "city" -> text("consigneeAddress.error.city.required", Seq(consigneeName))
+      "city" -> text("consigneeAddress.error.city.required")
         .verifying(maxLength(cityLength, "consigneeAddress.error.city.length")),
-      "postcode" -> text("consigneeAddress.error.postcode.required", Seq(consigneeName))
+      "postcode" -> text("consigneeAddress.error.postcode.required")
         .verifying(maxLength(postCodeLength, "consigneeAddress.error.postcode.length"))
     )(Address.apply)(Address.unapply)
   )

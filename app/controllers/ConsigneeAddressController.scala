@@ -52,8 +52,8 @@ class ConsigneeAddressController @Inject()(
       request.userAnswers.get(ConsigneeNamePage) match {
         case Some(consigneeName) =>
           val preparedForm = request.userAnswers.get(ConsigneeAddressPage) match {
-            case Some(value) => formProvider(consigneeName).fill(value)
-            case None        => formProvider(consigneeName)
+            case Some(value) => formProvider().fill(value)
+            case None        => formProvider()
           }
 
           val json = Json.obj(
@@ -72,7 +72,7 @@ class ConsigneeAddressController @Inject()(
     implicit request =>
       request.userAnswers.get(ConsigneeNamePage) match {
         case Some(consigneeName) =>
-          formProvider(consigneeName)
+          formProvider()
             .bindFromRequest()
             .fold(
               formWithErrors => {
