@@ -45,7 +45,7 @@ class CheckYourAnswersController @Inject()(override val messagesApi: MessagesApi
                                            errorHandler: ErrorHandler,
                                            val controllerComponents: MessagesControllerComponents,
                                            renderer: Renderer)(implicit ec: ExecutionContext)
-    extends FrontendBaseController
+  extends FrontendBaseController
     with I18nSupport
     with NunjucksSupport
     with HttpErrorFunctions {
@@ -56,7 +56,7 @@ class CheckYourAnswersController @Inject()(override val messagesApi: MessagesApi
 
       val json = Json.obj(
         "sections" -> Json.toJson(answers),
-        "mrn"      -> mrn
+        "mrn" -> mrn
       )
       renderer.render("check-your-answers.njk", json).map(Ok(_))
   }
@@ -69,7 +69,7 @@ class CheckYourAnswersController @Inject()(override val messagesApi: MessagesApi
             result.status match {
               case status if is2xx(status) => Future.successful(Redirect(routes.ConfirmationController.onPageLoad(mrn)))
               case status if is4xx(status) => errorHandler.onClientError(request, status)
-              case _                       => Future.successful(Redirect(routes.TechnicalDifficultiesController.onPageLoad()))
+              case _ => Future.successful(Redirect(routes.TechnicalDifficultiesController.onPageLoad()))
             }
           case None => errorHandler.onClientError(request, BAD_REQUEST) //TODO waiting for design
         }
@@ -79,10 +79,19 @@ class CheckYourAnswersController @Inject()(override val messagesApi: MessagesApi
     val helper = new CheckYourAnswersHelper(userAnswers)
 
     val mrn = Section(Seq(helper.movementReferenceNumber))
-    val whereAreTheGoods =
-      Section(
-        msg"checkYourAnswers.section.goodsLocation",
-        Seq(helper.goodsLocation, helper.authorisedLocation, helper.customsSubPlace, helper.presentationOffice).flatten
+    val whereAreTheGoods: Section = (
+      userAnswers.get(AuthorisedLocationPage) match {
+        case Some("BorderForceOffice") =>
+          Section(
+            msg"checkYourAnswers.section.goodsLocation",
+            Seq(helper.goodsLocation, helper.authorisedLocation, helper.customsSubPlace, helper.presentationOffice).flatten
+          )
+        case _ =>
+          Section(
+            msg"checkYourAnswers.section.goodsLocation",
+            Seq(helper.goodsLocation, helper.authorisedLocation, helper.presentationOffice).flatten
+          )
+      }
       )
     val traderDetails = Section(
       msg"checkYourAnswers.section.traderDetails",
@@ -101,7 +110,6 @@ class CheckYourAnswersController @Inject()(override val messagesApi: MessagesApi
         helper.consigneeAddress
       ).flatten
     )
-
     val placeOfNotification = Section(
       msg"checkYourAnswers.section.placeOfNotificationDetails",
       Seq(
@@ -109,19 +117,17 @@ class CheckYourAnswersController @Inject()(override val messagesApi: MessagesApi
         helper.placeOfNotification
       ).flatten
     )
-
     val eventSeq = helper.incidentOnRoute.toSeq ++ eventList(userAnswers)
-    val events   = Section(msg"checkYourAnswers.section.events", eventSeq)
+    val events = Section(msg"checkYourAnswers.section.events", eventSeq)
     userAnswers.get(AuthorisedLocationPage) match {
       case Some("BorderForceOffice") => Seq(mrn, whereAreTheGoods, traderDetails, placeOfNotification, events)
-      case _                         => Seq(mrn, whereAreTheGoods, consigneeDetails, events)
+      case _ => Seq(mrn, whereAreTheGoods, consigneeDetails, events)
     }
   }
-
   private def eventList(userAnswers: UserAnswers): Seq[SummaryList.Row] = {
     val numberOfEvents = userAnswers.get(DeriveNumberOfEvents).getOrElse(0)
-    val cyaHelper      = new AddEventsHelper(userAnswers)
-    val listOfEvents   = List.range(0, numberOfEvents).map(Index(_))
+    val cyaHelper = new AddEventsHelper(userAnswers)
+    val listOfEvents = List.range(0, numberOfEvents).map(Index(_))
     listOfEvents.flatMap(cyaHelper.cyaListOfEvent)
   }
 }
