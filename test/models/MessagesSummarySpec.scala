@@ -19,12 +19,12 @@ package models
 import org.scalatest.{FreeSpec, MustMatchers}
 import play.api.libs.json.Json
 
-class MessageActionsSpec extends FreeSpec with MustMatchers {
+class MessagesSummarySpec extends FreeSpec with MustMatchers {
 
   "MessageActionsSpec" - {
     "De-serialise to Model" in {
 
-      val messageActions = MessageActions(ArrivalId(123), MessageAction("/movements/arrivals/1234/messages/3", Some("/movements/arrivals/1234/messages/5")))
+      val messageActions = MessagesSummary(ArrivalId(123), MessagesLocation("/movements/arrivals/1234/messages/3", Some("/movements/arrivals/1234/messages/5")))
 
       val json = Json.obj("arrivalId" -> 123,
                           "messages" -> Json.obj(
@@ -32,7 +32,7 @@ class MessageActionsSpec extends FreeSpec with MustMatchers {
                             "IE008" -> "/movements/arrivals/1234/messages/5"
                           ))
 
-      json.as[MessageActions] mustBe messageActions
+      json.as[MessagesSummary] mustBe messageActions
     }
   }
 }

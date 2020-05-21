@@ -20,8 +20,8 @@ import config.FrontendAppConfig
 import connectors.ArrivalMovementConnector
 import controllers.actions._
 import javax.inject.Inject
+import models.ArrivalId
 import models.messages.ArrivalNotificationRejectionMessage
-import models.{ArrivalId, MessageId}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -41,14 +41,21 @@ class ArrivalRejectionController @Inject()(
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(arrivalId: ArrivalId, messageId: MessageId): Action[AnyContent] = identify.async {
+  def onPageLoad(arrivalId: ArrivalId): Action[AnyContent] = identify.async {
     implicit request =>
       if (frontendAppConfig.featureToggleArrivalRejection) {
-        arrivalMovementConnector.getRejectionMessage(arrivalId, messageId) flatMap {
-          rejectionMessage: ArrivalNotificationRejectionMessage =>
-            val json = Json.obj("mrn" -> rejectionMessage.movementReferenceNumber, "errors" -> rejectionMessage.errors)
+        arrivalMovementConnector.getSummary(arrivalId) flatMap {
+          summary =>
+            summary.messages.arrivalRejection match {
+              case Some(rejectionMessage) =>
+                arrivalMovementConnector.getRejectionMessage(arrivalId, rejectionMessage) flatMap {
+                  rejectionMessage: ArrivalNotificationRejectionMessage =>
+                    val json = Json.obj("mrn" -> rejectionMessage.movementReferenceNumber, "errors" -> rejectionMessage.errors)
 
-            renderer.render("arrivalRejection.njk", json).map(Ok(_))
+                    renderer.render("arrivalRejection.njk", json).map(Ok(_))
+                }
+              case _ => Future.successful(Redirect(routes.TechnicalDifficultiesController.onPageLoad()))
+            }
         }
       } else {
         Future.successful(Redirect(routes.UnauthorisedController.onPageLoad()))

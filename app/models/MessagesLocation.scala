@@ -19,15 +19,14 @@ package models
 import play.api.libs.json.Reads
 import play.api.libs.json._
 
-case class MessageAction(arrivalNotificationUrl: String, arrivalRejection: Option[String] = None)
+case class MessagesLocation(arrivalNotification: String, arrivalRejection: Option[String] = None)
 
-object MessageAction {
+object MessagesLocation {
 
   import play.api.libs.functional.syntax._
 
-  implicit val reads: Reads[MessageAction] = {
+  implicit val reads: Reads[MessagesLocation] = {
     ((__ \ "IE007").read[String] and
-      (__ \ "IE008").readNullable[String])(MessageAction.apply _)
+      (__ \ "IE008").readNullable[String])(MessagesLocation.apply _)
   }
-
 }

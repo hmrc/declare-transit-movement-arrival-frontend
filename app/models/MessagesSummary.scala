@@ -16,19 +16,18 @@
 
 package models
 
-import play.api.mvc.PathBindable
+import play.api.libs.json.Reads
+import play.api.libs.json._
 
-case class MessageId(value: Int)
+case class MessagesSummary(arrivalId: ArrivalId, messages: MessagesLocation)
 
-object MessageId {
-  implicit def pathBindable(implicit intBinder: PathBindable[Int]): PathBindable[MessageId] = new PathBindable[MessageId] {
-    override def bind(key: String, value: String): Either[String, MessageId] =
-      intBinder.bind(key, value) match {
-        case Right(id) if id > 0 => Right(MessageId(id))
-        case _                   => Left("invalid Message Id")
-      }
+object MessagesSummary {
 
-    override def unbind(key: String, value: MessageId): String =
-      intBinder.unbind(key, value.value)
+  implicit lazy val reads: Reads[MessagesSummary] = {
+    import play.api.libs.functional.syntax._
+    (
+      (__ \ "arrivalId").read[ArrivalId] and
+        (__ \ "messages").read[MessagesLocation]
+    )(MessagesSummary.apply _)
   }
 }

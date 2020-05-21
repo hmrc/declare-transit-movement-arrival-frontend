@@ -22,9 +22,9 @@ import base.SpecBase
 import connectors.ArrivalMovementConnector
 import matchers.JsonMatchers
 import models.messages.{ArrivalNotificationRejectionMessage, ErrorPointer, ErrorType, FunctionalError}
-import models.{ArrivalId, MessageId}
+import models.{ArrivalId, MessagesLocation, MessagesSummary}
 import org.mockito.ArgumentCaptor
-import org.mockito.Matchers.any
+import org.mockito.Matchers.{any, eq => eqTo}
 import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
@@ -47,7 +47,6 @@ class ArrivalRejectionControllerSpec extends SpecBase with MockitoSugar with Jso
   }
 
   private val arrivalId = ArrivalId(1)
-  private val messageId = MessageId(1)
 
   "ArrivalRejection Controller" - {
 
@@ -57,8 +56,14 @@ class ArrivalRejectionControllerSpec extends SpecBase with MockitoSugar with Jso
         .thenReturn(Future.successful(Html("")))
 
       val errors = Seq(FunctionalError(ErrorType(91), ErrorPointer("Duplicate MRN"), None, None))
+      val messageActions =
+        MessagesSummary(arrivalId,
+                        MessagesLocation(s"/movements/arrivals/${arrivalId.value}/messages/3", Some(s"/movements/arrivals/${arrivalId.value}/messages/5")))
 
-      when(mockArrivalMovementConnector.getRejectionMessage(any(), any()))
+      when(mockArrivalMovementConnector.getSummary(any())(any()))
+        .thenReturn(Future.successful(messageActions))
+
+      when(mockArrivalMovementConnector.getRejectionMessage(any(), any())(any()))
         .thenReturn(Future.successful(ArrivalNotificationRejectionMessage(mrn.toString, LocalDate.now, None, None, errors)))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
@@ -67,7 +72,7 @@ class ArrivalRejectionControllerSpec extends SpecBase with MockitoSugar with Jso
           bind[ArrivalMovementConnector].toInstance(mockArrivalMovementConnector)
         )
         .build()
-      val request        = FakeRequest(GET, routes.ArrivalRejectionController.onPageLoad(arrivalId, messageId).url)
+      val request        = FakeRequest(GET, routes.ArrivalRejectionController.onPageLoad(arrivalId).url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -76,6 +81,8 @@ class ArrivalRejectionControllerSpec extends SpecBase with MockitoSugar with Jso
       status(result) mustEqual OK
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+      verify(mockArrivalMovementConnector, times(1)).getSummary(eqTo(arrivalId))(any())
+      verify(mockArrivalMovementConnector, times(1)).getRejectionMessage(eqTo(arrivalId), eqTo(s"/movements/arrivals/${arrivalId.value}/messages/5"))(any())
 
       val expectedJson = Json.obj("mrn" -> mrn, "errors" -> errors)
 
@@ -90,7 +97,7 @@ class ArrivalRejectionControllerSpec extends SpecBase with MockitoSugar with Jso
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .configure(Configuration("feature-toggles.arrivalRejection" -> false))
         .build()
-      val request = FakeRequest(GET, routes.ArrivalRejectionController.onPageLoad(arrivalId, messageId).url)
+      val request = FakeRequest(GET, routes.ArrivalRejectionController.onPageLoad(arrivalId).url)
 
       val result = route(application, request).value
 

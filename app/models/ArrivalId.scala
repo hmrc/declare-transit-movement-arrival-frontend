@@ -16,7 +16,7 @@
 
 package models
 
-import play.api.libs.json.{Reads, __}
+import play.api.libs.json.{__, Reads}
 import play.api.mvc.PathBindable
 
 case class ArrivalId(value: Int)

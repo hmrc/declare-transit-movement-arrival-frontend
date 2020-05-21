@@ -18,10 +18,9 @@ package generators
 
 import java.time.{LocalDate, LocalTime}
 
-import models.messages._
 import models._
+import models.messages._
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalacheck.Gen.{choose, listOfN, numChar}
 import org.scalacheck.{Arbitrary, Gen}
 
 trait MessagesModelGenerators extends Generators {
@@ -368,15 +367,6 @@ trait MessagesModelGenerators extends Generators {
         )
       })
 
-    }
-  }
-
-  implicit lazy val arbitraryArrivalId: Arbitrary[ArrivalId] = {
-    Arbitrary {
-      for {
-        length        <- choose(1, 9)
-        listOfCharNum <- listOfN(length, numChar)
-      } yield ArrivalId(listOfCharNum.mkString.toInt)
     }
   }
 

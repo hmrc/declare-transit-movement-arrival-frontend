@@ -21,7 +21,7 @@ import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import generators.MessagesModelGenerators
 import helper.WireMockServerHandler
-import models.{ArrivalId, MessageAction, MessageActions}
+import models.{ArrivalId, MessagesLocation, MessagesSummary}
 import models.messages.ArrivalMovementRequest
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -79,7 +79,7 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
                             "IE008" -> "/movements/arrivals/1/messages/5"
                           ))
 
-      val messageAction = MessageActions(ArrivalId(1), MessageAction("/movements/arrivals/1/messages/3", Some("/movements/arrivals/1/messages/5")))
+      val messageAction = MessagesSummary(ArrivalId(1), MessagesLocation("/movements/arrivals/1/messages/3", Some("/movements/arrivals/1/messages/5")))
 
       "must be successful and return MessageActions" in {
         server.stubFor(
