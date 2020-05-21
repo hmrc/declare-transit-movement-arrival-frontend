@@ -17,10 +17,11 @@
 package connectors
 
 import base.SpecBase
-import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, post, urlEqualTo}
+import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import generators.MessagesModelGenerators
 import helper.WireMockServerHandler
+import models.{ArrivalId, MessageAction, MessageActions}
 import models.messages.ArrivalMovementRequest
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -29,6 +30,7 @@ import play.api.http.Status._
 import play.api.inject.guice.GuiceApplicationBuilder
 import uk.gov.hmrc.http.HttpResponse
 import org.scalacheck.Arbitrary.arbitrary
+import play.api.libs.json.Json
 
 import scala.concurrent.Future
 
@@ -44,29 +46,49 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
 
   "ArrivalMovementConnector" - {
 
-    "must return status as OK for submission of valid arrival movement" in {
+    "submitArrivalMovement" - {
 
-      stubResponse(ACCEPTED)
+      "must return status as OK for submission of valid arrival movement" in {
 
-      forAll(arbitrary[ArrivalMovementRequest]) {
-        arrivalMovementRequest =>
-          val result: Future[HttpResponse] = connector.submitArrivalMovement(arrivalMovementRequest)
-          result.futureValue.status mustBe ACCEPTED
+        stubResponse(ACCEPTED)
+
+        forAll(arbitrary[ArrivalMovementRequest]) {
+          arrivalMovementRequest =>
+            val result: Future[HttpResponse] = connector.submitArrivalMovement(arrivalMovementRequest)
+            result.futureValue.status mustBe ACCEPTED
+        }
+
       }
 
+      "must return an error status when an error response is returned from submitArrivalMovement" in {
+
+        val errorResponsesCodes: Gen[Int] = Gen.chooseNum(400, 599)
+
+        forAll(arbitrary[ArrivalMovementRequest], errorResponsesCodes) {
+          (arrivalMovementRequest, errorResponseCode) =>
+            stubResponse(errorResponseCode)
+
+            val result = connector.submitArrivalMovement(arrivalMovementRequest)
+            result.futureValue.status mustBe errorResponseCode
+        }
+      }
     }
 
-    "must return an error status when an error response is returned from submitArrivalMovement" in {
+    "getSummary" - {
 
-      val errorResponsesCodes: Gen[Int] = Gen.chooseNum(400, 599)
+      val messageAction = MessageActions(ArrivalId("1"), Seq(MessageAction("IE008", "/movements/arrivals/1234/messages/5")))
 
-      forAll(arbitrary[ArrivalMovementRequest], errorResponsesCodes) {
-        (arrivalMovementRequest, errorResponseCode) =>
-          stubResponse(errorResponseCode)
+      "must be successful and return MessageActions" in {
+        server.stubFor(
+          post(urlEqualTo("/transit-movements-trader-at-destination/movements/arrivals/1/messages/summary"))
+            .willReturn(
+              okJson(Json.toJson(messageAction).toString)
+            )
+        )
 
-          val result = connector.submitArrivalMovement(arrivalMovementRequest)
-          result.futureValue.status mustBe errorResponseCode
+        connector.getSummary(ArrivalId("1")) mustBe Future.successful(messageAction)
       }
+
     }
   }
 

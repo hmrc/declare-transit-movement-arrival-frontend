@@ -20,7 +20,8 @@ import config.FrontendAppConfig
 import javax.inject.Inject
 import models.XMLWrites._
 import models.messages.{ArrivalMovementRequest, ArrivalNotificationRejectionMessage}
-import models.{ArrivalId, MessageId}
+import models.reference.CustomsOffice
+import models.{ArrivalId, MessageAction, MessageActions, MessageId}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
@@ -34,6 +35,14 @@ class ArrivalMovementConnector @Inject()(val config: FrontendAppConfig, val http
     val headers    = Seq(("Content-Type", "application/xml"))
 
     http.POSTString[HttpResponse](serviceUrl, arrivalMovement.toXml.toString, headers)
+  }
+
+  def getSummary(arrivalId: ArrivalId)(implicit hc: HeaderCarrier): Future[MessageActions] = {
+
+    val serviceUrl = s"${config.destinationUrl}/movements/arrivals/${arrivalId}/messages/summary"
+
+    // Future.successful(MessageActions(ArrivalId("1"), Seq(MessageAction("IE008", "/movements/arrivals/1234/messages/5"))))
+    http.GET[MessageActions](serviceUrl)
   }
 
   def getRejectionMessage(arrivalId: ArrivalId, messageId: MessageId): Future[ArrivalNotificationRejectionMessage] = ???
