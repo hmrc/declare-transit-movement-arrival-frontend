@@ -40,7 +40,7 @@ class Navigator @Inject()() {
     case GoodsLocationPage => ua => Some(routes.CustomsSubPlaceController.onPageLoad(ua.id, NormalMode))
     case AuthorisedLocationPage => ua => Some(routes.ConsigneeNameController.onPageLoad(ua.id, NormalMode))
     case ConsigneeNamePage => ua => Some(routes.EoriConfirmationController.onPageLoad(ua.id, NormalMode))
-    case EoriConfirmationPage => ua => eoriConfirmationRoutes(ua, NormalMode)
+    case EoriConfirmationPage => ua => Some(eoriConfirmationRoutes(ua, NormalMode))
     case EoriNumberPage => ua => Some(routes.ConsigneeAddressController.onPageLoad(ua.id, NormalMode))
     case ConsigneeAddressPage => ua => Some(routes.IncidentOnRouteController.onPageLoad(ua.id, NormalMode))
     case PresentationOfficePage => ua => Some(routes.TraderNameController.onPageLoad(ua.id, NormalMode))
@@ -74,7 +74,7 @@ class Navigator @Inject()() {
     case GoodsLocationPage => goodsLocationCheckRoute
     case AuthorisedLocationPage => ua => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
     case ConsigneeNamePage => ua => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
-    case EoriConfirmationPage => ua => eoriConfirmationRoutes(ua, CheckMode)
+    case EoriConfirmationPage => ua => Some(eoriConfirmationRoutes(ua, CheckMode))
     case EoriNumberPage => ua => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
     case ConsigneeAddressPage => ua => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
     case EventCountryPage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
@@ -99,9 +99,12 @@ class Navigator @Inject()() {
 
 
   def eoriConfirmationRoutes(ua: UserAnswers, mode:Mode) =
-    ua.get(EoriConfirmationPage) map {
-      case true => routes.ConsigneeAddressController.onPageLoad(ua.id, mode)
-      case _ => routes.EoriNumberController.onPageLoad(ua.id, NormalMode)
+    ((ua.get(EoriConfirmationPage)),mode) match {
+      case (Some(true), NormalMode) => routes.ConsigneeAddressController.onPageLoad(ua.id, mode)
+      case (Some(true), CheckMode) => routes.CheckYourAnswersController.onPageLoad(ua.id)
+      case _ => routes.EoriNumberController.onPageLoad(ua.id, mode)
+//      case (Some(false), CheckMode) => routes.EoriNumberController.onPageLoad(ua.id, CheckMode)
+//      case _ => routes.EoriNumberController.onPageLoad(ua.id, NormalMode)
     }
 
 

@@ -56,10 +56,11 @@ class EoriNumberController @Inject()(
             case Some(value) => formProvider(consigneeName).fill(value)
           }
           val json = Json.obj(
-            "form"       -> preparedForm,
-            "mrn"        -> mrn,
-            "mode"       -> mode,
-            "eoriNumber" -> request.eoriNumber
+            "form"          -> preparedForm,
+            "mrn"           -> mrn,
+            "mode"          -> mode,
+            "eoriNumber"    -> request.eoriNumber,
+            "consigneeName" -> consigneeName
           )
 
           renderer.render("eoriNumber.njk", json).map(Ok(_))

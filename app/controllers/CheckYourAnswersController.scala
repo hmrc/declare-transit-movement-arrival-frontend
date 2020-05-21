@@ -80,8 +80,8 @@ class CheckYourAnswersController @Inject()(override val messagesApi: MessagesApi
 
     val mrn = Section(Seq(helper.movementReferenceNumber))
     val whereAreTheGoods: Section = (
-      userAnswers.get(AuthorisedLocationPage) match {
-        case Some("BorderForceOffice") =>
+      userAnswers.get(GoodsLocationPage) match {
+        case Some(BorderForceOffice) =>
           Section(
             msg"checkYourAnswers.section.goodsLocation",
             Seq(helper.goodsLocation, helper.authorisedLocation, helper.customsSubPlace, helper.presentationOffice).flatten
@@ -106,7 +106,10 @@ class CheckYourAnswersController @Inject()(override val messagesApi: MessagesApi
       Seq(
         helper.consigneeName,
         helper.eoriConfirmation(eori),
-        helper.eoriNumber,
+        userAnswers.get(EoriConfirmationPage) match {
+          case Some(false) => helper.eoriNumber
+          case _           => None
+        },
         helper.consigneeAddress
       ).flatten
     )
@@ -120,9 +123,9 @@ class CheckYourAnswersController @Inject()(override val messagesApi: MessagesApi
     val eventSeq = helper.incidentOnRoute.toSeq ++ eventList(userAnswers)
     val events   = Section(msg"checkYourAnswers.section.events", eventSeq)
 
-    userAnswers.get(AuthorisedLocationPage) match {
-      case Some("BorderForceOffice") => Seq(mrn, whereAreTheGoods, traderDetails, placeOfNotification, events)
-      case _                         => Seq(mrn, whereAreTheGoods, consigneeDetails, events)
+    userAnswers.get(GoodsLocationPage) match {
+      case Some(BorderForceOffice) => Seq(mrn, whereAreTheGoods, traderDetails, placeOfNotification, events)
+      case _                       => Seq(mrn, whereAreTheGoods, consigneeDetails, events)
     }
   }
   private def eventList(userAnswers: UserAnswers): Seq[SummaryList.Row] = {
