@@ -64,35 +64,15 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
               .nextPage(MovementReferenceNumberPage, NormalMode, answers)
               .mustBe(routes.GoodsLocationController.onPageLoad(answers.id, NormalMode))
         }
-
       }
-
-      "must go from 'goods location' to  'customs approved location' when user chooses 'Border Force Office' when Simplified Journey toggle is on or off" in {
+      "must go from 'goods location' to  'customs approved location' when user chooses 'Border Force Office' " in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
-            if (frontendAppConfig.featureToggleSimplifiedJourney) {
-              val updatedAnswers = answers.set(GoodsLocationPage, GoodsLocation.BorderForceOffice).success.value
+            val updatedAnswers = answers.set(GoodsLocationPage, GoodsLocation.BorderForceOffice).success.value
 
-              navigator
-                .nextPage(GoodsLocationPage, NormalMode, updatedAnswers)
-                .mustBe(routes.CustomsSubPlaceController.onPageLoad(updatedAnswers.id, NormalMode))
-            } else {
-              Some(routes.ConsigneeNameController.onPageLoad(mrn, NormalMode))
-            }
-        }
-      }
-      "must go from 'goods location' to correct page when user chooses 'Auhorised Consignee' when Simplified Journey toggle is on  or off" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-            if (frontendAppConfig.featureToggleSimplifiedJourney) {
-              val updatedAnswers = answers.set(GoodsLocationPage, GoodsLocation.AuthorisedConsigneesLocation).success.value
-
-              navigator
-                .nextPage(GoodsLocationPage, NormalMode, updatedAnswers)
-                .mustBe(routes.CustomsSubPlaceController.onPageLoad(updatedAnswers.id, NormalMode))
-            } else {
-              routes.UseDifferentServiceController.onPageLoad(mrn)
-            }
+            navigator
+              .nextPage(GoodsLocationPage, NormalMode, updatedAnswers)
+              .mustBe(routes.CustomsSubPlaceController.onPageLoad(updatedAnswers.id, NormalMode))
         }
       }
       "must go from'authorisedLocationCode page to consigneeName page" in {
@@ -139,7 +119,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
               .mustBe(routes.ConsigneeAddressController.onPageLoad(answers.id, NormalMode))
         }
       }
-      "must go from consigneeAddress page to Incident On route page" in {
+      "must go from consigneeAddress page to Incident On routwe page" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
             navigator
