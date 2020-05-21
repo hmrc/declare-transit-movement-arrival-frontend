@@ -40,7 +40,8 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswers
                 Action(
                   content            = msg"site.edit",
                   href               = routes.EoriNumberController.onPageLoad(mrn, CheckMode).url,
-                  visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"eoriNumber.checkYourAnswersLabel"))
+                  visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"eoriNumber.checkYourAnswersLabel")),
+                  attributes         = Map("id" -> s"""change-eori-number""")
                 )
               )
             )
@@ -59,7 +60,8 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswers
           Action(
             content            = msg"site.edit",
             href               = routes.EoriConfirmationController.onPageLoad(mrn, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"eoriConfirmation.checkYourAnswersLabel"))
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"eoriConfirmation.checkYourAnswersLabel")),
+            attributes         = Map("id" -> s"""change-eori-confirmation""")
           )
         )
       )
@@ -74,7 +76,8 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswers
           Action(
             content            = msg"site.edit",
             href               = routes.ConsigneeNameController.onPageLoad(mrn, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"consigneeName.checkYourAnswersLabel"))
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"consigneeName.checkYourAnswersLabel")),
+            attributes         = Map("id" -> s"""change-consignee-name""")
           )
         )
       )
