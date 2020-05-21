@@ -98,7 +98,7 @@ class CheckYourAnswersController @Inject()(override val messagesApi: MessagesApi
       Seq(
         helper.traderName,
         helper.traderEori,
-        helper.traderAddress``
+        helper.traderAddress,
       ).flatten
     )
     val consigneeDetails = Section(
