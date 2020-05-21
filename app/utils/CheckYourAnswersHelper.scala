@@ -26,21 +26,6 @@ import uk.gov.hmrc.viewmodels._
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswersHelper(userAnswers) {
 
-  def consigneeAddress: Option[Row] = userAnswers.get(ConsigneeAddressPage) map {
-    answer =>
-      Row(
-        key   = Key(msg"consigneeAddress.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value = Value(lit"$answer"),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = routes.ConsigneeAddressController.onPageLoad(mrn, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"consigneeAddress.checkYourAnswersLabel"))
-          )
-        )
-      )
-  }
-
   def eoriNumber: Option[Row] = userAnswers.get(EoriNumberPage) map {
     answer =>
       Row(
@@ -179,6 +164,22 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswers
             href               = routes.TraderAddressController.onPageLoad(mrn, CheckMode).url,
             visuallyHiddenText = Some(msg"traderAddress.change.hidden"),
             attributes         = Map("id" -> s"""change-trader-address""")
+          )
+        )
+      )
+  }
+
+  def consigneeAddress: Option[Row] = userAnswers.get(ConsigneeAddressPage) map {
+    answer =>
+      Row(
+        key   = Key(msg"consigneeAddress.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value = Value(addressHtml(answer)),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = routes.ConsigneeAddressController.onPageLoad(mrn, CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"consigneeAddress.checkYourAnswersLabel")),
+            attributes         = Map("id" -> s"""change-consignee-address""")
           )
         )
       )

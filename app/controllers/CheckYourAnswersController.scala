@@ -20,7 +20,9 @@ import com.google.inject.Inject
 import controllers.actions.{DataRequiredAction, DataRetrievalActionProvider, IdentifierAction}
 import derivable.DeriveNumberOfEvents
 import handlers.ErrorHandler
-import models.{Index, MovementReferenceNumber, UserAnswers}
+import models.GoodsLocation.BorderForceOffice
+import models.{GoodsLocation, Index, MovementReferenceNumber, UserAnswers}
+import pages.{AuthorisedLocationPage, GoodsLocationPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.Results.BadRequest
@@ -90,6 +92,16 @@ class CheckYourAnswersController @Inject()(override val messagesApi: MessagesApi
         helper.traderAddress
       ).flatten
     )
+    val consigneeDetails = Section(
+      msg"checkYourAnswers.section.consigneeDetails",
+      Seq(
+        helper.consigneeName,
+        helper.eoriConfirmation,
+        helper.eoriNumber,
+        helper.consigneeAddress
+      ).flatten
+    )
+
     val placeOfNotification = Section(
       msg"checkYourAnswers.section.placeOfNotificationDetails",
       Seq(
@@ -100,7 +112,10 @@ class CheckYourAnswersController @Inject()(override val messagesApi: MessagesApi
 
     val eventSeq = helper.incidentOnRoute.toSeq ++ eventList(userAnswers)
     val events   = Section(msg"checkYourAnswers.section.events", eventSeq)
-    Seq(mrn, whereAreTheGoods, traderDetails, placeOfNotification, events)
+    userAnswers.get(AuthorisedLocationPage) match {
+      case Some("BorderForceOffice") => Seq(mrn, whereAreTheGoods, traderDetails, placeOfNotification, events)
+      case _                         => Seq(mrn, whereAreTheGoods, consigneeDetails, events)
+    }
   }
 
   private def eventList(userAnswers: UserAnswers): Seq[SummaryList.Row] = {

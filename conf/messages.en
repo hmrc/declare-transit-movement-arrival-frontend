@@ -54,6 +54,7 @@ checkYourAnswers.title = Check your answers before sending this arrival notifica
 checkYourAnswers.heading = Check your answers before sending this arrival notification
 checkYourAnswers.section.goodsLocation = Goods details
 checkYourAnswers.section.traderDetails = Trader’s details
+checkYourAnswers.section.consigneeDetails = Consignee’s details
 checkYourAnswers.section.placeOfNotificationDetails = Place where this was completed
 checkYourAnswers.section.events = Events
 checkYourAnswers.confirmation.heading = Now send your arrival notification
