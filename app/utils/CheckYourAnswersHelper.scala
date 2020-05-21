@@ -26,25 +26,25 @@ import uk.gov.hmrc.viewmodels._
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswersHelper(userAnswers) {
 
-  def eoriNumber: Option[Row] = userAnswers.get(EoriNumberPage) map {
+  def eoriNumber: Option[Row] =
+      userAnswers.get(EoriNumberPage) map {
+        answer =>
+          val consigneeName = userAnswers.get(ConsigneeNamePage).getOrElse("")
+          val messages = msg"eoriNumber.checkYourAnswersLabel".withArgs(consigneeName)
+            Row(
+              key = Key(messages, classes = Seq("govuk-!-width-one-half")),
+              value = Value(lit"$answer"),
+              actions = List(
+                Action(
+                  content = msg"site.edit",
+                  href = routes.EoriNumberController.onPageLoad(mrn, CheckMode).url,
+                  visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"eoriNumber.checkYourAnswersLabel"))
+                )
+              )
+            )
+          
 
-    answer =>
-      val consigneeName = userAnswers.get(ConsigneeNamePage).getOrElse("")
-      val messages      = msg"eoriNumber.checkYourAnswersLabel".withArgs(consigneeName)
-      Row(
-        key   = Key(messages, classes = Seq("govuk-!-width-one-half")),
-        value = Value(lit"$answer"),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = routes.EoriNumberController.onPageLoad(mrn, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"eoriNumber.checkYourAnswersLabel"))
-          )
-        )
-      )
-
-  }
-
+    }
   def eoriConfirmation(eoriNumber: String): Option[Row] = userAnswers.get(EoriConfirmationPage) map {
     answer =>
       val consigneeName = userAnswers.get(ConsigneeNamePage).getOrElse("")
