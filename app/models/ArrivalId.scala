@@ -16,7 +16,7 @@
 
 package models
 
-import play.api.libs.json.{JsNumber, Reads, __}
+import play.api.libs.json.{Reads, __}
 import play.api.mvc.PathBindable
 
 case class ArrivalId(value: Int)
@@ -33,6 +33,5 @@ object ArrivalId {
       intBinder.unbind(key, value.value)
   }
 
-  implicit def reads: Reads[ArrivalId]                = __.read[Int] map ArrivalId.apply
-  implicit def writes(arrivalId: ArrivalId): JsNumber = JsNumber(arrivalId.value)
+  implicit def reads: Reads[ArrivalId] = __.read[Int] map ArrivalId.apply
 }

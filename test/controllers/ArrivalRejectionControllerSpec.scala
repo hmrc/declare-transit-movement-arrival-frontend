@@ -46,7 +46,7 @@ class ArrivalRejectionControllerSpec extends SpecBase with MockitoSugar with Jso
     reset(mockArrivalMovementConnector)
   }
 
-  private val arrivalId = ArrivalId("1")
+  private val arrivalId = ArrivalId(1)
   private val messageId = MessageId(1)
 
   "ArrivalRejection Controller" - {

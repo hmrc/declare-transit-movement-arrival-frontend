@@ -44,6 +44,7 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
 
   lazy val connector: ArrivalMovementConnector = app.injector.instanceOf[ArrivalMovementConnector]
 
+  private val errorResponsesCodes: Gen[Int] = Gen.chooseNum(400, 599)
   "ArrivalMovementConnector" - {
 
     "submitArrivalMovement" - {
@@ -57,13 +58,9 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
             val result: Future[HttpResponse] = connector.submitArrivalMovement(arrivalMovementRequest)
             result.futureValue.status mustBe ACCEPTED
         }
-
       }
 
       "must return an error status when an error response is returned from submitArrivalMovement" in {
-
-        val errorResponsesCodes: Gen[Int] = Gen.chooseNum(400, 599)
-
         forAll(arbitrary[ArrivalMovementRequest], errorResponsesCodes) {
           (arrivalMovementRequest, errorResponseCode) =>
             stubResponse(errorResponseCode)
@@ -76,19 +73,40 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
 
     "getSummary" - {
 
-      val messageAction = MessageActions(ArrivalId("1"), Seq(MessageAction("IE008", "/movements/arrivals/1234/messages/5")))
+      val json = Json.obj("arrivalId" -> 1,
+                          "messages" -> Json.obj(
+                            "IE007" -> "/movements/arrivals/1/messages/3",
+                            "IE008" -> "/movements/arrivals/1/messages/5"
+                          ))
+
+      val messageAction = MessageActions(ArrivalId(1), MessageAction("/movements/arrivals/1/messages/3", Some("/movements/arrivals/1/messages/5")))
 
       "must be successful and return MessageActions" in {
         server.stubFor(
-          post(urlEqualTo("/transit-movements-trader-at-destination/movements/arrivals/1/messages/summary"))
+          get(urlEqualTo("/transit-movements-trader-at-destination/movements/arrivals/1/messages/summary"))
             .willReturn(
-              okJson(Json.toJson(messageAction).toString)
+              okJson(json.toString)
             )
         )
-
-        connector.getSummary(ArrivalId("1")) mustBe Future.successful(messageAction)
+        connector.getSummary(ArrivalId(1)).futureValue mustBe messageAction
       }
 
+      "must return an error status when an error response is returned from getSummary" in {
+        forAll(errorResponsesCodes) {
+          errorResponseCode =>
+            server.stubFor(
+              get(urlEqualTo(s"/transit-movements-trader-at-destination/movements/arrivals/1/messages/summary"))
+                .willReturn(
+                  aResponse()
+                    .withStatus(errorResponseCode)
+                ))
+
+            val result = connector.getSummary(ArrivalId(1))
+            whenReady(result.failed) {
+              _ mustBe an[Exception]
+            }
+        }
+      }
     }
   }
 
