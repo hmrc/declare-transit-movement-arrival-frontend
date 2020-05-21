@@ -26,10 +26,13 @@ import uk.gov.hmrc.viewmodels._
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswersHelper(userAnswers) {
 
-  def eoriNumber: Option[Row] = userAnswers.get(EoriNumberPage) map {
+  def eoriNumber: Option[Row] = userAnswers.get(EoriNumberPage) map  {
+
     answer =>
+     val consigneeName = userAnswers.get(ConsigneeNamePage).getOrElse("")
+      val messages      = msg"eoriNumber.checkYourAnswersLabel".withArgs(consigneeName)
       Row(
-        key   = Key(msg"eoriNumber.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        key   = Key(messages, classes = Seq("govuk-!-width-one-half")),
         value = Value(lit"$answer"),
         actions = List(
           Action(
@@ -39,12 +42,15 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswers
           )
         )
       )
+     
   }
 
-  def eoriConfirmation: Option[Row] = userAnswers.get(EoriConfirmationPage) map {
+  def eoriConfirmation(eoriNumber: String): Option[Row] = userAnswers.get(EoriConfirmationPage) map {
     answer =>
+      val consigneeName = userAnswers.get(ConsigneeNamePage).getOrElse("")
+      val messages      = msg"eoriConfirmation.checkYourAnswersLabel".withArgs(eoriNumber, consigneeName)
       Row(
-        key   = Key(msg"eoriConfirmation.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        key   = Key(messages, classes = Seq("govuk-!-width-one-half")),
         value = Value(yesOrNo(answer)),
         actions = List(
           Action(

@@ -22,7 +22,7 @@ import derivable.DeriveNumberOfEvents
 import handlers.ErrorHandler
 import models.GoodsLocation.BorderForceOffice
 import models.{GoodsLocation, Index, MovementReferenceNumber, UserAnswers}
-import pages.{AuthorisedLocationPage, GoodsLocationPage}
+import pages.{AuthorisedLocationPage, EoriConfirmationPage, GoodsLocationPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.Results.BadRequest
@@ -52,7 +52,7 @@ class CheckYourAnswersController @Inject()(override val messagesApi: MessagesApi
 
   def onPageLoad(mrn: MovementReferenceNumber): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
-      val answers: Seq[Section] = createSections(request.userAnswers)
+      val answers: Seq[Section] = createSections(request.userAnswers, request.eoriNumber)
 
       val json = Json.obj(
         "sections" -> Json.toJson(answers),
@@ -75,7 +75,7 @@ class CheckYourAnswersController @Inject()(override val messagesApi: MessagesApi
         }
     }
 
-  private def createSections(userAnswers: UserAnswers): Seq[Section] = {
+  private def createSections(userAnswers: UserAnswers, eori: String): Seq[Section] = {
     val helper = new CheckYourAnswersHelper(userAnswers)
 
     val mrn = Section(Seq(helper.movementReferenceNumber))
@@ -89,7 +89,7 @@ class CheckYourAnswersController @Inject()(override val messagesApi: MessagesApi
         case _ =>
           Section(
             msg"checkYourAnswers.section.goodsLocation",
-            Seq(helper.goodsLocation, helper.authorisedLocation, helper.presentationOffice).flatten
+            Seq(helper.goodsLocation, helper.authorisedLocation).flatten
           )
       }
     )
@@ -98,14 +98,14 @@ class CheckYourAnswersController @Inject()(override val messagesApi: MessagesApi
       Seq(
         helper.traderName,
         helper.traderEori,
-        helper.traderAddress
+        helper.traderAddress``
       ).flatten
     )
     val consigneeDetails = Section(
       msg"checkYourAnswers.section.consigneeDetails",
       Seq(
         helper.consigneeName,
-        helper.eoriConfirmation,
+        helper.eoriConfirmation(eori),
         helper.eoriNumber,
         helper.consigneeAddress
       ).flatten
@@ -119,6 +119,7 @@ class CheckYourAnswersController @Inject()(override val messagesApi: MessagesApi
     )
     val eventSeq = helper.incidentOnRoute.toSeq ++ eventList(userAnswers)
     val events   = Section(msg"checkYourAnswers.section.events", eventSeq)
+
     userAnswers.get(AuthorisedLocationPage) match {
       case Some("BorderForceOffice") => Seq(mrn, whereAreTheGoods, traderDetails, placeOfNotification, events)
       case _                         => Seq(mrn, whereAreTheGoods, consigneeDetails, events)

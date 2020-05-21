@@ -72,11 +72,11 @@ class Navigator @Inject()() {
 
   private val checkRouteMap: PartialFunction[Page, UserAnswers => Option[Call]] = {
     case GoodsLocationPage => goodsLocationCheckRoute
-    case AuthorisedLocationPage => ua => Some(routes.ConsigneeNameController.onPageLoad(ua.id, CheckMode))
-    case ConsigneeNamePage => ua => Some(routes.EoriConfirmationController.onPageLoad(ua.id, CheckMode))
+    case AuthorisedLocationPage => ua => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
+    case ConsigneeNamePage => ua => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
     case EoriConfirmationPage => ua => eoriConfirmationRoutes(ua, CheckMode)
-    case EoriNumberPage => ua => Some(routes.ConsigneeAddressController.onPageLoad(ua.id, CheckMode))
-    case ConsigneeAddressPage => ua => Some(routes.IncidentOnRouteController.onPageLoad(ua.id, CheckMode))
+    case EoriNumberPage => ua => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
+    case ConsigneeAddressPage => ua => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
     case EventCountryPage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
     case EventPlacePage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
     case IsTraderAddressPlaceOfNotificationPage => isTraderAddressPlaceOfNotificationCheckRoute
