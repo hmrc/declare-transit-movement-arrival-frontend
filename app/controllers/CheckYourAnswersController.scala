@@ -20,7 +20,7 @@ import com.google.inject.Inject
 import controllers.actions.{DataRequiredAction, DataRetrievalActionProvider, IdentifierAction}
 import derivable.DeriveNumberOfEvents
 import handlers.ErrorHandler
-import models.GoodsLocation.BorderForceOffice
+import models.GoodsLocation.{AuthorisedConsigneesLocation, BorderForceOffice}
 import models.{GoodsLocation, Index, MovementReferenceNumber, UserAnswers}
 import pages.{AuthorisedLocationPage, EoriConfirmationPage, GoodsLocationPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -79,14 +79,14 @@ class CheckYourAnswersController @Inject()(override val messagesApi: MessagesApi
     val helper = new CheckYourAnswersHelper(userAnswers)
     val mrn    = Section(Seq(helper.movementReferenceNumber))
 
-    val whereAreTheGoods = if (userAnswers.get(GoodsLocationPage) == BorderForceOffice) {
-      Section(
-        msg"checkYourAnswers.section.goodsLocation",
-        Seq(helper.goodsLocation, helper.authorisedLocation, helper.customsSubPlace, helper.presentationOffice).flatten
-      )
-    } else {
-      Section(msg"checkYourAnswers.section.goodsLocation", Seq(helper.goodsLocation, helper.authorisedLocation).flatten)
-    }
+    val whereAreTheGoods = Section(
+      msg"checkYourAnswers.section.goodsLocation",
+      (userAnswers.get(GoodsLocationPage) match {
+        case Some(AuthorisedConsigneesLocation) => Seq(helper.goodsLocation, helper.authorisedLocation)
+        case _                                  => Seq(helper.goodsLocation, helper.authorisedLocation, helper.customsSubPlace, helper.presentationOffice)
+
+      }).flatten
+    )
 
     val traderDetails = Section(
       msg"checkYourAnswers.section.traderDetails",
