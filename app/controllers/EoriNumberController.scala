@@ -80,10 +80,11 @@ class EoriNumberController @Inject()(
               formWithErrors => {
 
                 val json = Json.obj(
-                  "form"       -> formWithErrors,
-                  "mrn"        -> mrn,
-                  "mode"       -> mode,
-                  "eoriNumber" -> request.eoriNumber
+                  "form"          -> formWithErrors,
+                  "mrn"           -> mrn,
+                  "mode"          -> mode,
+                  "eoriNumber"    -> request.eoriNumber,
+                  "consigneeName" -> consigneeName
                 )
 
                 renderer.render("eoriNumber.njk", json).map(BadRequest(_))
