@@ -43,7 +43,7 @@ class GoodsLocationController @Inject()(override val messagesApi: MessagesApi,
                                         val controllerComponents: MessagesControllerComponents,
                                         renderer: Renderer,
                                         frontendAppConfig: FrontendAppConfig)(implicit ec: ExecutionContext)
-    extends FrontendBaseController
+  extends FrontendBaseController
     with I18nSupport
     with NunjucksSupport {
 
@@ -52,14 +52,14 @@ class GoodsLocationController @Inject()(override val messagesApi: MessagesApi,
   def onPageLoad(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn)).async {
     implicit request =>
       val preparedForm = request.userAnswers.getOrElse(UserAnswers(mrn)).get(GoodsLocationPage) match {
-        case None        => form
+        case None => form
         case Some(value) => form.fill(value)
       }
 
       val json = Json.obj(
-        "form"   -> preparedForm,
-        "mode"   -> mode,
-        "mrn"    -> mrn,
+        "form" -> preparedForm,
+        "mode" -> mode,
+        "mrn" -> mrn,
         "radios" -> GoodsLocation.radios(preparedForm)
       )
 
@@ -74,9 +74,9 @@ class GoodsLocationController @Inject()(override val messagesApi: MessagesApi,
           formWithErrors => {
 
             val json = Json.obj(
-              "form"   -> formWithErrors,
-              "mode"   -> mode,
-              "mrn"    -> mrn,
+              "form" -> formWithErrors,
+              "mode" -> mode,
+              "mrn" -> mrn,
               "radios" -> GoodsLocation.radios(formWithErrors)
             )
 
@@ -85,19 +85,14 @@ class GoodsLocationController @Inject()(override val messagesApi: MessagesApi,
           value =>
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(mrn)).set(GoodsLocationPage, value))
-              _              <- sessionRepository.set(updatedAnswers)
+              _ <- sessionRepository.set(updatedAnswers)
             } yield
-              if (frontendAppConfig.featureToggleSimplifiedJourney) {
-                value match {
-                  case BorderForceOffice            => Redirect(routes.CustomsSubPlaceController.onPageLoad(updatedAnswers.id, mode))
-                  case AuthorisedConsigneesLocation => Redirect(routes.AuthorisedLocationController.onPageLoad(updatedAnswers.id, mode))
-                }
-              } else {
-                value match {
-                  case BorderForceOffice            => Redirect(routes.CustomsSubPlaceController.onPageLoad(updatedAnswers.id, mode))
-                  case AuthorisedConsigneesLocation => Redirect(routes.UseDifferentServiceController.onPageLoad(updatedAnswers.id))
-                }
-            }
+              (value, frontendAppConfig.featureToggleSimplifiedJourney) match {
+                case (BorderForceOffice, _)                 => Redirect(routes.CustomsSubPlaceController.onPageLoad(updatedAnswers.id, mode))
+                case (AuthorisedConsigneesLocation, true)   => Redirect(routes.AuthorisedLocationController.onPageLoad(updatedAnswers.id, mode))
+                case (AuthorisedConsigneesLocation, false)  => Redirect(routes.UseDifferentServiceController.onPageLoad(updatedAnswers.id))
+
+              }
         )
   }
 }

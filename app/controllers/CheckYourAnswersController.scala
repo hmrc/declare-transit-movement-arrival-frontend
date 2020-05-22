@@ -77,22 +77,17 @@ class CheckYourAnswersController @Inject()(override val messagesApi: MessagesApi
 
   private def createSections(userAnswers: UserAnswers, eori: String): Seq[Section] = {
     val helper = new CheckYourAnswersHelper(userAnswers)
+    val mrn    = Section(Seq(helper.movementReferenceNumber))
 
-    val mrn = Section(Seq(helper.movementReferenceNumber))
-    val whereAreTheGoods: Section = (
-      userAnswers.get(GoodsLocationPage) match {
-        case Some(BorderForceOffice) =>
-          Section(
-            msg"checkYourAnswers.section.goodsLocation",
-            Seq(helper.goodsLocation, helper.authorisedLocation, helper.customsSubPlace, helper.presentationOffice).flatten
-          )
-        case _ =>
-          Section(
-            msg"checkYourAnswers.section.goodsLocation",
-            Seq(helper.goodsLocation, helper.authorisedLocation).flatten
-          )
-      }
-    )
+    val whereAreTheGoods = if (userAnswers.get(GoodsLocationPage) == BorderForceOffice) {
+      Section(
+        msg"checkYourAnswers.section.goodsLocation",
+        Seq(helper.goodsLocation, helper.authorisedLocation, helper.customsSubPlace, helper.presentationOffice).flatten
+      )
+    } else {
+      Section(msg"checkYourAnswers.section.goodsLocation", Seq(helper.goodsLocation, helper.authorisedLocation).flatten)
+    }
+
     val traderDetails = Section(
       msg"checkYourAnswers.section.traderDetails",
       Seq(
@@ -106,10 +101,7 @@ class CheckYourAnswersController @Inject()(override val messagesApi: MessagesApi
       Seq(
         helper.consigneeName,
         helper.eoriConfirmation(eori),
-        userAnswers.get(EoriConfirmationPage) match {
-          case Some(false) => helper.eoriNumber
-          case _           => None
-        },
+        helper.eoriNumber,
         helper.consigneeAddress
       ).flatten
     )

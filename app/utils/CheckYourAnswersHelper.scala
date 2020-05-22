@@ -45,7 +45,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswers
               )
             )
         }
-
+      case _ => None
     }
 
   def eoriConfirmation(eoriNumber: String): Option[Row] = userAnswers.get(EoriConfirmationPage) map {
