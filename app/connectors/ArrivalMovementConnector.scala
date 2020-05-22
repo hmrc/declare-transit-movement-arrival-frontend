@@ -38,12 +38,13 @@ class ArrivalMovementConnector @Inject()(val config: FrontendAppConfig, val http
   }
 
   def getSummary(arrivalId: ArrivalId)(implicit hc: HeaderCarrier): Future[MessagesSummary] = {
-    val serviceUrl = s"${config.destinationUrl}/movements/arrivals/${arrivalId.value}/messages/summary"
+
+    val serviceUrl: String = s"${config.destinationUrl}/movements/arrivals/${arrivalId.value}/messages/summary"
     http.GET[MessagesSummary](serviceUrl)
   }
 
   def getRejectionMessage(rejectionLocation: String)(implicit hc: HeaderCarrier): Future[Option[ArrivalNotificationRejectionMessage]] = {
-    val serviceUrl = s"${config.destinationUrl}$rejectionLocation"
+    val serviceUrl = s"${config.baseDestinationUrl}$rejectionLocation"
     http.GET[ResponseMovementMessage](serviceUrl) map {
       responseMessage =>
         XmlReader.of[ArrivalNotificationRejectionMessage].read(responseMessage.message).toOption

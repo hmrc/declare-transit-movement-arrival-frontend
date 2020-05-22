@@ -16,14 +16,14 @@
 
 package connectors
 
-import java.time.{LocalDate, LocalDateTime}
+import java.time.LocalDate
 
 import base.SpecBase
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import generators.MessagesModelGenerators
 import helper.WireMockServerHandler
-import models.messages.{ArrivalMovementRequest, ArrivalNotificationRejectionMessage, ErrorPointer, ErrorType, FunctionalError}
+import models.messages._
 import models.{ArrivalId, MessagesLocation, MessagesSummary}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
@@ -48,6 +48,7 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
   lazy val connector: ArrivalMovementConnector = app.injector.instanceOf[ArrivalMovementConnector]
 
   private val errorResponsesCodes: Gen[Int] = Gen.chooseNum(400, 599)
+  private val arrivalId = ArrivalId(1)
 
   "ArrivalMovementConnector" - {
 
@@ -78,7 +79,6 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
     "getSummary" - {
 
       "must be successful and return MessageActions" in {
-        val arrivalId = ArrivalId(1)
         val json = Json.obj(
           "arrivalId" -> arrivalId.value,
           "messages" -> Json.obj(
@@ -102,7 +102,7 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
 
       "must throw an exception when an error response is returned from getSummary" in {
         forAll(errorResponsesCodes) {
-          errorResponseCode =>
+          errorResponseCode: Int =>
             stubGetResponse(errorResponseCode, "/transit-movements-trader-at-destination/movements/arrivals/1/messages/summary")
 
             val result = connector.getSummary(ArrivalId(1))
@@ -115,8 +115,7 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
 
     "getRejectionMessage" - {
       "must return valid 'rejection message'" in {
-        val arrivalId             = ArrivalId(1)
-        val rejectionLocation     = s"/movements/arrivals/${arrivalId.value}/messages/summary"
+        val rejectionLocation     = s"/transit-movements-trader-at-destination/movements/arrivals/${arrivalId.value}/messages/1"
         val rejectionXml: NodeSeq = <CC008A>
           <HEAHEA><DocNumHEA5>19IT021300100075E9</DocNumHEA5>
             <ArrRejDatHEA142>20191018</ArrRejDatHEA142>
@@ -129,10 +128,10 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
         </FUNERRER1>
         </CC008A>
 
-        val json = Json.obj("location" -> "some location", "dateTime" -> LocalDateTime.now(), "messageType" -> "IE008", "message" -> rejectionXml.toString())
+        val json = Json.obj("message" -> rejectionXml.toString())
 
         server.stubFor(
-          get(urlEqualTo(s"/transit-movements-trader-at-destination$rejectionLocation"))
+          get(urlEqualTo(rejectionLocation))
             .willReturn(
               okJson(json.toString)
             )
@@ -148,11 +147,30 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
         connector.getRejectionMessage(rejectionLocation).futureValue mustBe expectedResult
       }
 
+      "must return None for malformed xml'" in {
+        val rejectionLocation     = s"/transit-movements-trader-at-destination/movements/arrivals/${arrivalId.value}/messages/1"
+        val rejectionXml: NodeSeq = <CC008A>
+          <HEAHEA><DocNumHEA5>19IT021300100075E9</DocNumHEA5>
+          </HEAHEA>
+        </CC008A>
+
+        val json = Json.obj("message" -> rejectionXml.toString())
+
+        server.stubFor(
+          get(urlEqualTo(rejectionLocation))
+            .willReturn(
+              okJson(json.toString)
+            )
+        )
+
+        connector.getRejectionMessage(rejectionLocation).futureValue mustBe None
+      }
+
       "must throw an exception when an error response is returned from getRejectionMessage" in {
-        val rejectionLocation: String = "/movements/arrivals/1/messages/1"
+        val rejectionLocation: String = "/transit-movements-trader-at-destination/movements/arrivals/1/messages/1"
         forAll(errorResponsesCodes) {
           errorResponseCode =>
-            stubGetResponse(errorResponseCode, "/transit-movements-trader-at-destination/movements/arrivals/1/messages/1")
+            stubGetResponse(errorResponseCode, rejectionLocation)
 
             val result = connector.getRejectionMessage(rejectionLocation)
 

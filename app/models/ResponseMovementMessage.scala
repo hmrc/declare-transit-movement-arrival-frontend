@@ -16,14 +16,12 @@
 
 package models
 
-import java.time.LocalDateTime
-
 import play.api.libs.json.{Json, Reads}
 import utils.NodeSeqFormat
 
 import scala.xml.NodeSeq
 
-case class ResponseMovementMessage(location: String, dateTime: LocalDateTime, messageType: String, message: NodeSeq)
+case class ResponseMovementMessage(message: NodeSeq)
 
 object ResponseMovementMessage extends NodeSeqFormat {
   implicit val reads: Reads[ResponseMovementMessage] = Json.reads[ResponseMovementMessage]

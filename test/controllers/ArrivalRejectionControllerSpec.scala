@@ -29,11 +29,11 @@ import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.Configuration
+import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import play.api.inject.bind
 
 import scala.concurrent.Future
 
@@ -92,12 +92,38 @@ class ArrivalRejectionControllerSpec extends SpecBase with MockitoSugar with Jso
       application.stop()
     }
 
-    "redirect to 'Technical difficulties' page if rejection message is missing" in {
+    "redirect to 'Technical difficulties' page when arrival rejection location is missing" in {
       val messageActions =
         MessagesSummary(arrivalId, MessagesLocation(s"/movements/arrivals/${arrivalId.value}/messages/3", None))
 
       when(mockArrivalMovementConnector.getSummary(any())(any()))
         .thenReturn(Future.successful(messageActions))
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .configure(Configuration("feature-toggles.arrivalRejection" -> true))
+        .overrides(
+          bind[ArrivalMovementConnector].toInstance(mockArrivalMovementConnector)
+        )
+        .build()
+      val request = FakeRequest(GET, routes.ArrivalRejectionController.onPageLoad(arrivalId).url)
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+
+      application.stop()
+    }
+
+    "redirect to 'Technical difficulties' page when arrival rejection message is malformed" in {
+      val messageActions =
+        MessagesSummary(arrivalId,
+                        MessagesLocation(s"/movements/arrivals/${arrivalId.value}/messages/3", Some(s"/movements/arrivals/${arrivalId.value}/messages/5")))
+
+      when(mockArrivalMovementConnector.getSummary(any())(any()))
+        .thenReturn(Future.successful(messageActions))
+
+      when(mockArrivalMovementConnector.getRejectionMessage(any())(any()))
+        .thenReturn(Future.successful(None))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .configure(Configuration("feature-toggles.arrivalRejection" -> true))
