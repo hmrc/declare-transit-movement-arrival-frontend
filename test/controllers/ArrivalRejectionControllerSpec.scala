@@ -63,8 +63,8 @@ class ArrivalRejectionControllerSpec extends SpecBase with MockitoSugar with Jso
       when(mockArrivalMovementConnector.getSummary(any())(any()))
         .thenReturn(Future.successful(messageActions))
 
-      when(mockArrivalMovementConnector.getRejectionMessage(any(), any())(any()))
-        .thenReturn(Future.successful(ArrivalNotificationRejectionMessage(mrn.toString, LocalDate.now, None, None, errors)))
+      when(mockArrivalMovementConnector.getRejectionMessage(any())(any()))
+        .thenReturn(Future.successful(Some(ArrivalNotificationRejectionMessage(mrn.toString, LocalDate.now, None, None, errors))))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .configure(Configuration("feature-toggles.arrivalRejection" -> true))
@@ -82,12 +82,34 @@ class ArrivalRejectionControllerSpec extends SpecBase with MockitoSugar with Jso
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
       verify(mockArrivalMovementConnector, times(1)).getSummary(eqTo(arrivalId))(any())
-      verify(mockArrivalMovementConnector, times(1)).getRejectionMessage(eqTo(arrivalId), eqTo(s"/movements/arrivals/${arrivalId.value}/messages/5"))(any())
+      verify(mockArrivalMovementConnector, times(1)).getRejectionMessage(eqTo(s"/movements/arrivals/${arrivalId.value}/messages/5"))(any())
 
       val expectedJson = Json.obj("mrn" -> mrn, "errors" -> errors)
 
       templateCaptor.getValue mustEqual "arrivalRejection.njk"
       jsonCaptor.getValue must containJson(expectedJson)
+
+      application.stop()
+    }
+
+    "redirect to 'Technical difficulties' page if rejection message is missing" in {
+      val messageActions =
+        MessagesSummary(arrivalId, MessagesLocation(s"/movements/arrivals/${arrivalId.value}/messages/3", None))
+
+      when(mockArrivalMovementConnector.getSummary(any())(any()))
+        .thenReturn(Future.successful(messageActions))
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .configure(Configuration("feature-toggles.arrivalRejection" -> true))
+        .overrides(
+          bind[ArrivalMovementConnector].toInstance(mockArrivalMovementConnector)
+        )
+        .build()
+      val request = FakeRequest(GET, routes.ArrivalRejectionController.onPageLoad(arrivalId).url)
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
 
       application.stop()
     }

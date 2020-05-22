@@ -21,7 +21,6 @@ import connectors.ArrivalMovementConnector
 import controllers.actions._
 import javax.inject.Inject
 import models.ArrivalId
-import models.messages.ArrivalNotificationRejectionMessage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -46,13 +45,14 @@ class ArrivalRejectionController @Inject()(
       if (frontendAppConfig.featureToggleArrivalRejection) {
         arrivalMovementConnector.getSummary(arrivalId) flatMap {
           summary =>
-            summary.messages.arrivalRejection match {
-              case Some(rejectionMessage) =>
-                arrivalMovementConnector.getRejectionMessage(arrivalId, rejectionMessage) flatMap {
-                  rejectionMessage: ArrivalNotificationRejectionMessage =>
+            summary.messagesLocation.arrivalRejection match {
+              case Some(rejectionMessageLocation) =>
+                arrivalMovementConnector.getRejectionMessage(rejectionMessageLocation).flatMap {
+                  case Some(rejectionMessage) =>
                     val json = Json.obj("mrn" -> rejectionMessage.movementReferenceNumber, "errors" -> rejectionMessage.errors)
-
                     renderer.render("arrivalRejection.njk", json).map(Ok(_))
+
+                  case _ => Future.successful(Redirect(routes.TechnicalDifficultiesController.onPageLoad()))
                 }
               case _ => Future.successful(Redirect(routes.TechnicalDifficultiesController.onPageLoad()))
             }

@@ -16,18 +16,15 @@
 
 package models
 
-import play.api.libs.json.Reads
-import play.api.libs.json._
+import java.time.LocalDateTime
 
-case class MessagesSummary(arrivalId: ArrivalId, messagesLocation: MessagesLocation)
+import play.api.libs.json.{Json, Reads}
+import utils.NodeSeqFormat
 
-object MessagesSummary {
+import scala.xml.NodeSeq
 
-  implicit lazy val reads: Reads[MessagesSummary] = {
-    import play.api.libs.functional.syntax._
-    (
-      (__ \ "arrivalId").read[ArrivalId] and
-        (__ \ "messages").read[MessagesLocation]
-    )(MessagesSummary.apply _)
-  }
+case class ResponseMovementMessage(location: String, dateTime: LocalDateTime, messageType: String, message: NodeSeq)
+
+object ResponseMovementMessage extends NodeSeqFormat {
+  implicit val reads: Reads[ResponseMovementMessage] = Json.reads[ResponseMovementMessage]
 }

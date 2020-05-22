@@ -16,23 +16,26 @@
 
 package connectors
 
+import java.time.{LocalDate, LocalDateTime}
+
 import base.SpecBase
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import generators.MessagesModelGenerators
 import helper.WireMockServerHandler
+import models.messages.{ArrivalMovementRequest, ArrivalNotificationRejectionMessage, ErrorPointer, ErrorType, FunctionalError}
 import models.{ArrivalId, MessagesLocation, MessagesSummary}
-import models.messages.ArrivalMovementRequest
+import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.Application
 import play.api.http.Status._
 import play.api.inject.guice.GuiceApplicationBuilder
-import uk.gov.hmrc.http.HttpResponse
-import org.scalacheck.Arbitrary.arbitrary
 import play.api.libs.json.Json
+import uk.gov.hmrc.http.HttpResponse
 
 import scala.concurrent.Future
+import scala.xml.NodeSeq
 
 class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler with MessagesModelGenerators with ScalaCheckPropertyChecks {
 
@@ -45,6 +48,7 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
   lazy val connector: ArrivalMovementConnector = app.injector.instanceOf[ArrivalMovementConnector]
 
   private val errorResponsesCodes: Gen[Int] = Gen.chooseNum(400, 599)
+
   "ArrivalMovementConnector" - {
 
     "submitArrivalMovement" - {
@@ -73,33 +77,33 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
 
     "getSummary" - {
 
-      val json = Json.obj("arrivalId" -> 1,
-                          "messages" -> Json.obj(
-                            "IE007" -> "/movements/arrivals/1/messages/3",
-                            "IE008" -> "/movements/arrivals/1/messages/5"
-                          ))
-
-      val messageAction = MessagesSummary(ArrivalId(1), MessagesLocation("/movements/arrivals/1/messages/3", Some("/movements/arrivals/1/messages/5")))
-
       "must be successful and return MessageActions" in {
+        val arrivalId = ArrivalId(1)
+        val json = Json.obj(
+          "arrivalId" -> arrivalId.value,
+          "messages" -> Json.obj(
+            "IE007" -> s"/movements/arrivals/${arrivalId.value}/messages/3",
+            "IE008" -> s"/movements/arrivals/${arrivalId.value}/messages/5"
+          )
+        )
+
+        val messageAction =
+          MessagesSummary(arrivalId,
+                          MessagesLocation(s"/movements/arrivals/${arrivalId.value}/messages/3", Some(s"/movements/arrivals/${arrivalId.value}/messages/5")))
+
         server.stubFor(
-          get(urlEqualTo("/transit-movements-trader-at-destination/movements/arrivals/1/messages/summary"))
+          get(urlEqualTo(s"/transit-movements-trader-at-destination/movements/arrivals/${arrivalId.value}/messages/summary"))
             .willReturn(
               okJson(json.toString)
             )
         )
-        connector.getSummary(ArrivalId(1)).futureValue mustBe messageAction
+        connector.getSummary(arrivalId).futureValue mustBe messageAction
       }
 
-      "must return an error status when an error response is returned from getSummary" in {
+      "must throw an exception when an error response is returned from getSummary" in {
         forAll(errorResponsesCodes) {
           errorResponseCode =>
-            server.stubFor(
-              get(urlEqualTo(s"/transit-movements-trader-at-destination/movements/arrivals/1/messages/summary"))
-                .willReturn(
-                  aResponse()
-                    .withStatus(errorResponseCode)
-                ))
+            stubGetResponse(errorResponseCode, "/transit-movements-trader-at-destination/movements/arrivals/1/messages/summary")
 
             val result = connector.getSummary(ArrivalId(1))
             whenReady(result.failed) {
@@ -108,7 +112,65 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
         }
       }
     }
+
+    "getRejectionMessage" - {
+      "must return valid 'rejection message'" in {
+        val arrivalId             = ArrivalId(1)
+        val rejectionLocation     = s"/movements/arrivals/${arrivalId.value}/messages/summary"
+        val rejectionXml: NodeSeq = <CC008A>
+          <HEAHEA><DocNumHEA5>19IT021300100075E9</DocNumHEA5>
+            <ArrRejDatHEA142>20191018</ArrRejDatHEA142>
+            <ArrRejReaHEA242>Invalid IE007 Message</ArrRejReaHEA242>
+          </HEAHEA>
+          <FUNERRER1>
+            <ErrTypER11>92</ErrTypER11>
+          <ErrPoiER12>Message type</ErrPoiER12>
+          <OriAttValER14>GB007A</OriAttValER14>
+        </FUNERRER1>
+        </CC008A>
+
+        val json = Json.obj("location" -> "some location", "dateTime" -> LocalDateTime.now(), "messageType" -> "IE008", "message" -> rejectionXml.toString())
+
+        server.stubFor(
+          get(urlEqualTo(s"/transit-movements-trader-at-destination$rejectionLocation"))
+            .willReturn(
+              okJson(json.toString)
+            )
+        )
+        val expectedResult = Some(
+          ArrivalNotificationRejectionMessage(
+            "19IT021300100075E9",
+            LocalDate.of(2019, 10, 18),
+            None,
+            Some("Invalid IE007 Message"),
+            List(FunctionalError(ErrorType(92), ErrorPointer("Message type"), None, Some("GB007A")))
+          ))
+        connector.getRejectionMessage(rejectionLocation).futureValue mustBe expectedResult
+      }
+
+      "must throw an exception when an error response is returned from getRejectionMessage" in {
+        val rejectionLocation: String = "/movements/arrivals/1/messages/1"
+        forAll(errorResponsesCodes) {
+          errorResponseCode =>
+            stubGetResponse(errorResponseCode, "/transit-movements-trader-at-destination/movements/arrivals/1/messages/1")
+
+            val result = connector.getRejectionMessage(rejectionLocation)
+
+            whenReady(result.failed) {
+              _ mustBe an[Exception]
+            }
+        }
+      }
+    }
   }
+
+  private def stubGetResponse(errorResponseCode: Int, serviceUrl: String) =
+    server.stubFor(
+      get(urlEqualTo(serviceUrl))
+        .willReturn(
+          aResponse()
+            .withStatus(errorResponseCode)
+        ))
 
   private def stubResponse(expectedStatus: Int): StubMapping =
     server.stubFor(
