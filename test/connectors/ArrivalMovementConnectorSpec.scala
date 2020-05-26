@@ -48,7 +48,7 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
   lazy val connector: ArrivalMovementConnector = app.injector.instanceOf[ArrivalMovementConnector]
 
   private val errorResponsesCodes: Gen[Int] = Gen.chooseNum(400, 599)
-  private val arrivalId = ArrivalId(1)
+  private val arrivalId                     = ArrivalId(1)
 
   "ArrivalMovementConnector" - {
 
