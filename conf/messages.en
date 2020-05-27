@@ -423,5 +423,11 @@ confirmRemoveEvent.title = Are you sure you want to remove the event {0}?
 confirmRemoveEvent.heading = Are you sure you want to remove the event {0}?
 confirmRemoveEvent.error.required = Select yes if you are sure you want to remove the event {0}
 
-arrivalRejection.title = There is an error in this arrival notification
-arrivalRejection.heading = There is an error in this arrival notification
+arrivalRejection.title = There is a problem with this arrival notification
+arrivalRejection.heading = There is a problem with this arrival notification
+arrivalRejection.you.can = You can:
+arrivalRejection.errorCode = Error code
+arrivalRejection.pointer = Pointer
+arrivalRejection.conflicting.information = There is conflicting information that must be fixed.
+arrivalRejection.contact = contact the New Computerised Transit System helpdesk to fix the information (opens in a new window or tab)
+arrivalRejection.create.arrival = create a new arrival notification

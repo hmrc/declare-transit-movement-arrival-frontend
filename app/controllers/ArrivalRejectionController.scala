@@ -34,6 +34,7 @@ class ArrivalRejectionController @Inject()(
   identify: IdentifierAction,
   val controllerComponents: MessagesControllerComponents,
   renderer: Renderer,
+  appConfig: FrontendAppConfig,
   arrivalRejectionService: ArrivalRejectionService,
   frontendAppConfig: FrontendAppConfig
 )(implicit ec: ExecutionContext)
@@ -45,7 +46,13 @@ class ArrivalRejectionController @Inject()(
       if (frontendAppConfig.featureToggleArrivalRejection) {
         arrivalRejectionService.arrivalRejectionMessage(arrivalId).flatMap {
           case Some(rejectionMessage) =>
-            val json = Json.obj("mrn" -> rejectionMessage.movementReferenceNumber, "errors" -> rejectionMessage.errors)
+            val json = Json.obj(
+              "mrn"              -> rejectionMessage.movementReferenceNumber,
+              "errors"           -> rejectionMessage.errors,
+              "contactUrl"       -> appConfig.nctsEnquiriesUrl,
+              "createArrivalUrl" -> routes.MovementReferenceNumberController.onPageLoad().url
+            )
+
             renderer.render("arrivalRejection.njk", json).map(Ok(_))
 
           case _ => Future.successful(Redirect(routes.TechnicalDifficultiesController.onPageLoad()))
