@@ -22,15 +22,15 @@ import play.api.mvc.PathBindable
 case class ArrivalId(value: Int)
 
 object ArrivalId {
-  implicit def pathBindable(implicit intBinder: PathBindable[Int]): PathBindable[ArrivalId] = new PathBindable[ArrivalId] {
+  implicit def pathBindable: PathBindable[ArrivalId] = new PathBindable[ArrivalId] {
     override def bind(key: String, value: String): Either[String, ArrivalId] =
-      intBinder.bind(key, value) match {
+      implicitly[PathBindable[Int]].bind(key, value) match {
         case Right(id) if id > 0 => Right(ArrivalId(id))
-        case _                   => Left("invalid Arrival Id")
+        case _                   => Left("Invalid Arrival Id")
       }
 
     override def unbind(key: String, value: ArrivalId): String =
-      intBinder.unbind(key, value.value)
+      implicitly[PathBindable[Int]].unbind(key, value.value)
   }
 
   implicit def reads: Reads[ArrivalId] = __.read[Int] map ArrivalId.apply

@@ -78,7 +78,7 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
 
     "getSummary" - {
 
-      "must be successful and return MessageActions" in {
+      "must be return summary of messages" in {
         val json = Json.obj(
           "arrivalId" -> arrivalId.value,
           "messages" -> Json.obj(
@@ -97,18 +97,15 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
               okJson(json.toString)
             )
         )
-        connector.getSummary(arrivalId).futureValue mustBe messageAction
+        connector.getSummary(arrivalId).futureValue mustBe Some(messageAction)
       }
 
-      "must throw an exception when an error response is returned from getSummary" in {
+      "must return 'None' when an error response is returned from getSummary" in {
         forAll(errorResponsesCodes) {
           errorResponseCode: Int =>
             stubGetResponse(errorResponseCode, "/transit-movements-trader-at-destination/movements/arrivals/1/messages/summary")
 
-            val result = connector.getSummary(ArrivalId(1))
-            whenReady(result.failed) {
-              _ mustBe an[Exception]
-            }
+            connector.getSummary(ArrivalId(1)).futureValue mustBe None
         }
       }
     }
@@ -166,17 +163,13 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
         connector.getRejectionMessage(rejectionLocation).futureValue mustBe None
       }
 
-      "must throw an exception when an error response is returned from getRejectionMessage" in {
+      "must return None when an error response is returned from getRejectionMessage" in {
         val rejectionLocation: String = "/transit-movements-trader-at-destination/movements/arrivals/1/messages/1"
         forAll(errorResponsesCodes) {
           errorResponseCode =>
             stubGetResponse(errorResponseCode, rejectionLocation)
 
-            val result = connector.getRejectionMessage(rejectionLocation)
-
-            whenReady(result.failed) {
-              _ mustBe an[Exception]
-            }
+            connector.getRejectionMessage(rejectionLocation).futureValue mustBe None
         }
       }
     }

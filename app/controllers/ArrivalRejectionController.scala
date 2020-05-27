@@ -17,7 +17,6 @@
 package controllers
 
 import config.FrontendAppConfig
-import connectors.ArrivalMovementConnector
 import controllers.actions._
 import javax.inject.Inject
 import models.ArrivalId
@@ -25,6 +24,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
+import services.ArrivalRejectionService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -34,7 +34,7 @@ class ArrivalRejectionController @Inject()(
   identify: IdentifierAction,
   val controllerComponents: MessagesControllerComponents,
   renderer: Renderer,
-  arrivalMovementConnector: ArrivalMovementConnector,
+  arrivalRejectionService: ArrivalRejectionService,
   frontendAppConfig: FrontendAppConfig
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
@@ -43,19 +43,12 @@ class ArrivalRejectionController @Inject()(
   def onPageLoad(arrivalId: ArrivalId): Action[AnyContent] = identify.async {
     implicit request =>
       if (frontendAppConfig.featureToggleArrivalRejection) {
-        arrivalMovementConnector.getSummary(arrivalId) flatMap {
-          summary =>
-            summary.messagesLocation.arrivalRejection match {
-              case Some(rejectionMessageLocation) =>
-                arrivalMovementConnector.getRejectionMessage(rejectionMessageLocation).flatMap {
-                  case Some(rejectionMessage) =>
-                    val json = Json.obj("mrn" -> rejectionMessage.movementReferenceNumber, "errors" -> rejectionMessage.errors)
-                    renderer.render("arrivalRejection.njk", json).map(Ok(_))
+        arrivalRejectionService.arrivalRejectionMessage(arrivalId).flatMap {
+          case Some(rejectionMessage) =>
+            val json = Json.obj("mrn" -> rejectionMessage.movementReferenceNumber, "errors" -> rejectionMessage.errors)
+            renderer.render("arrivalRejection.njk", json).map(Ok(_))
 
-                  case _ => Future.successful(Redirect(routes.TechnicalDifficultiesController.onPageLoad()))
-                }
-              case _ => Future.successful(Redirect(routes.TechnicalDifficultiesController.onPageLoad()))
-            }
+          case _ => Future.successful(Redirect(routes.TechnicalDifficultiesController.onPageLoad()))
         }
       } else {
         Future.successful(Redirect(routes.UnauthorisedController.onPageLoad()))
