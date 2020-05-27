@@ -16,17 +16,18 @@
 
 package connectors
 
+import com.lucidchart.open.xtract.XmlReader
 import config.FrontendAppConfig
 import javax.inject.Inject
 import models.XMLWrites._
 import models.messages.{ArrivalMovementRequest, ArrivalNotificationRejectionMessage}
-import models.{ArrivalId, MessageId}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
+import models.{ArrivalId, MessagesSummary, ResponseMovementMessage}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpErrorFunctions, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class ArrivalMovementConnector @Inject()(val config: FrontendAppConfig, val http: HttpClient)(implicit ec: ExecutionContext) {
+class ArrivalMovementConnector @Inject()(val config: FrontendAppConfig, val http: HttpClient)(implicit ec: ExecutionContext) extends HttpErrorFunctions {
 
   def submitArrivalMovement(arrivalMovement: ArrivalMovementRequest)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
 
@@ -36,5 +37,23 @@ class ArrivalMovementConnector @Inject()(val config: FrontendAppConfig, val http
     http.POSTString[HttpResponse](serviceUrl, arrivalMovement.toXml.toString, headers)
   }
 
-  def getRejectionMessage(arrivalId: ArrivalId, messageId: MessageId): Future[ArrivalNotificationRejectionMessage] = ???
+  def getSummary(arrivalId: ArrivalId)(implicit hc: HeaderCarrier): Future[Option[MessagesSummary]] = {
+
+    val serviceUrl: String = s"${config.destinationUrl}/movements/arrivals/${arrivalId.value}/messages/summary"
+    http.GET[HttpResponse](serviceUrl) map {
+      case responseMessage if is2xx(responseMessage.status) => Some(responseMessage.json.as[MessagesSummary])
+      case _                                                => None
+    }
+  }
+
+  def getRejectionMessage(rejectionLocation: String)(implicit hc: HeaderCarrier): Future[Option[ArrivalNotificationRejectionMessage]] = {
+    val serviceUrl = s"${config.baseDestinationUrl}$rejectionLocation"
+    http.GET[HttpResponse](serviceUrl) map {
+      case responseMessage if is2xx(responseMessage.status) =>
+        val message = responseMessage.json.as[ResponseMovementMessage].message
+        XmlReader.of[ArrivalNotificationRejectionMessage].read(message).toOption
+      case _ => None
+    }
+  }
+
 }

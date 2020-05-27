@@ -24,7 +24,7 @@ class ArrivalIdSpec extends FreeSpec with MustMatchers with EitherValues {
   "Arrival Id" - {
     "must bind from url" in {
       val pathBindable = implicitly[PathBindable[ArrivalId]]
-      val arrivalId    = ArrivalId("12")
+      val arrivalId    = ArrivalId(12)
 
       val bind: Either[String, ArrivalId] = pathBindable.bind("arrivalId", "12")
       bind.right.value mustBe arrivalId
@@ -32,9 +32,9 @@ class ArrivalIdSpec extends FreeSpec with MustMatchers with EitherValues {
 
     "unbind to path value" in {
       val pathBindable = implicitly[PathBindable[ArrivalId]]
-      val arrivalId    = ArrivalId("12")
+      val arrivalId    = ArrivalId(12)
 
-      val bindValue = pathBindable.unbind("messageId", arrivalId)
+      val bindValue = pathBindable.unbind("arrivalId", arrivalId)
       bindValue mustBe "12"
     }
   }

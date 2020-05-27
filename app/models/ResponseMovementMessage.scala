@@ -16,19 +16,13 @@
 
 package models
 
-import play.api.mvc.PathBindable
+import play.api.libs.json.{Json, Reads}
+import utils.NodeSeqFormat
 
-case class MessageId(value: Int)
+import scala.xml.NodeSeq
 
-object MessageId {
-  implicit def pathBindable(implicit intBinder: PathBindable[Int]): PathBindable[MessageId] = new PathBindable[MessageId] {
-    override def bind(key: String, value: String): Either[String, MessageId] =
-      intBinder.bind(key, value) match {
-        case Right(id) if id > 0 => Right(MessageId(id))
-        case _                   => Left("invalid Message Id")
-      }
+case class ResponseMovementMessage(message: NodeSeq)
 
-    override def unbind(key: String, value: MessageId): String =
-      intBinder.unbind(key, value.value)
-  }
+object ResponseMovementMessage extends NodeSeqFormat {
+  implicit val reads: Reads[ResponseMovementMessage] = Json.reads[ResponseMovementMessage]
 }
