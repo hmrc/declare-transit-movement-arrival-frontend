@@ -50,17 +50,18 @@ class ArrivalRejectionControllerSpec extends SpecBase with MockitoSugar with Jso
 
   "ArrivalRejection Controller" - {
 
-    Seq((90, "Unknown MRN"),(91, "duplicate MRN"), (93, "Invalid MRN")) foreach {
-
-      (errorCode, errorMessage) =>
-
-        "return OK and the correct mrnRejection view for a GET when 'arrivalRejection' feature toggle set to true" in {
-
+    Seq(
+      (90, "Unknown MRN", ""),
+      (91, "duplicate MRN", ""),
+      (93, "Invalid MRN", "")
+    ) foreach {
+      case (errorCode, errorPointer, message) =>
+        s"return OK and the correct $errorPointer Rejection view for a GET when 'arrivalRejection' feature toggle set to true" in {
 
           when(mockRenderer.render(any(), any())(any()))
             .thenReturn(Future.successful(Html("")))
 
-          val errors = Seq(FunctionalError(ErrorType(91), ErrorPointer("Duplicate MRN"), None, None))
+          val errors = Seq(FunctionalError(ErrorType(errorCode), ErrorPointer(errorPointer), None, None))
 
           when(mockArrivalRejectionService.arrivalRejectionMessage((any()))(any(), any()))
             .thenReturn(Future.successful(Some(ArrivalNotificationRejectionMessage(mrn.toString, LocalDate.now, None, None, errors))))
@@ -134,7 +135,6 @@ class ArrivalRejectionControllerSpec extends SpecBase with MockitoSugar with Jso
 
       application.stop()
     }
-
 
     "redirect to 'Technical difficulties' page when arrival rejection message is malformed" in {
 
