@@ -77,7 +77,12 @@ class ArrivalRejectionControllerSpec extends SpecBase with MockitoSugar with Jso
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
       verify(mockArrivalRejectionService, times(1)).arrivalRejectionMessage(eqTo(arrivalId))(any(), any())
 
-      val expectedJson = Json.obj("mrn" -> mrn, "errors" -> errors)
+      val expectedJson = Json.obj(
+        "mrn"              -> mrn,
+        "errors"           -> errors,
+        "contactUrl"       -> frontendAppConfig.nctsEnquiriesUrl,
+        "createArrivalUrl" -> routes.MovementReferenceNumberController.onPageLoad().url
+      )
 
       templateCaptor.getValue mustEqual "arrivalRejection.njk"
       jsonCaptor.getValue must containJson(expectedJson)
