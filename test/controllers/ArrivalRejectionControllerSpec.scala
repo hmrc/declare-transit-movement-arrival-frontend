@@ -50,12 +50,57 @@ class ArrivalRejectionControllerSpec extends SpecBase with MockitoSugar with Jso
 
   "ArrivalRejection Controller" - {
 
-    "return OK and the correct view for a GET when 'arrivalRejection' feature toggle set to true" in {
+    Seq((90, "Unknown MRN"),(91, "duplicate MRN"), (93, "Invalid MRN")) foreach {
+
+      (errorCode, errorMessage) =>
+
+        "return OK and the correct mrnRejection view for a GET when 'arrivalRejection' feature toggle set to true" in {
+
+
+          when(mockRenderer.render(any(), any())(any()))
+            .thenReturn(Future.successful(Html("")))
+
+          val errors = Seq(FunctionalError(ErrorType(91), ErrorPointer("Duplicate MRN"), None, None))
+
+          when(mockArrivalRejectionService.arrivalRejectionMessage((any()))(any(), any()))
+            .thenReturn(Future.successful(Some(ArrivalNotificationRejectionMessage(mrn.toString, LocalDate.now, None, None, errors))))
+
+          val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+            .configure(Configuration("feature-toggles.arrivalRejection" -> true))
+            .overrides(
+              bind[ArrivalRejectionService].toInstance(mockArrivalRejectionService)
+            )
+            .build()
+          val request        = FakeRequest(GET, routes.ArrivalRejectionController.onPageLoad(arrivalId).url)
+          val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+          val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+
+          val result = route(application, request).value
+
+          status(result) mustEqual OK
+
+          verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+          verify(mockArrivalRejectionService, times(1)).arrivalRejectionMessage(eqTo(arrivalId))(any(), any())
+
+          val expectedJson = Json.obj(
+            "mrn"                        -> mrn,
+            "contactUrl"                 -> frontendAppConfig.nctsEnquiriesUrl,
+            "movementReferenceNumberUrl" -> routes.MovementReferenceNumberController.onPageLoad().url
+          )
+
+          templateCaptor.getValue mustEqual "movementReferenceNumberRejection.njk"
+          jsonCaptor.getValue must containJson(expectedJson)
+
+          application.stop()
+        }
+    }
+
+    "return OK and the correct arrivalGeneralRejection view for a GET when 'arrivalRejection' feature toggle set to true" in {
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val errors = Seq(FunctionalError(ErrorType(91), ErrorPointer("Duplicate MRN"), None, None))
+      val errors = Seq(FunctionalError(ErrorType(12), ErrorPointer("TRD.TIN"), None, None))
 
       when(mockArrivalRejectionService.arrivalRejectionMessage((any()))(any(), any()))
         .thenReturn(Future.successful(Some(ArrivalNotificationRejectionMessage(mrn.toString, LocalDate.now, None, None, errors))))
@@ -84,11 +129,12 @@ class ArrivalRejectionControllerSpec extends SpecBase with MockitoSugar with Jso
         "createArrivalUrl" -> routes.MovementReferenceNumberController.onPageLoad().url
       )
 
-      templateCaptor.getValue mustEqual "arrivalRejection.njk"
+      templateCaptor.getValue mustEqual "arrivalGeneralRejection.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
     }
+
 
     "redirect to 'Technical difficulties' page when arrival rejection message is malformed" in {
 
