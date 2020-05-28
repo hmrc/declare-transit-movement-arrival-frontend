@@ -33,6 +33,7 @@ import play.api.http.Status._
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.HttpResponse
+import models.XMLWrites._
 
 import scala.concurrent.Future
 import scala.xml.NodeSeq
@@ -108,6 +109,29 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
             connector.getSummary(ArrivalId(1)).futureValue mustBe None
         }
       }
+    }
+
+    "getNotificationMessage" - {
+      "must return a valid arrival notification" in {
+        val arrivalNotificationLocation = s"/transit-movements-trader-at-destination/movements/arrivals/${arrivalId.value}/messages/1"
+
+        forAll(arbitrary[ArrivalMovementRequest]) {
+          arrivalMovementRequest =>
+            val notificationXml: NodeSeq = arrivalMovementRequest.toXml
+            val json                     = Json.obj("message" -> notificationXml.toString())
+
+            server.stubFor(
+              get(urlEqualTo(arrivalNotificationLocation))
+                .willReturn(
+                  okJson(json.toString)
+                )
+            )
+            println(connector.getNotificationMessage(arrivalNotificationLocation).futureValue.toString())
+            println(notificationXml.toString())
+            connector.getNotificationMessage(arrivalNotificationLocation).futureValue.toString() mustBe notificationXml.toString()
+        }
+      }
+
     }
 
     "getRejectionMessage" - {
