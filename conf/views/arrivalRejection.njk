@@ -1,8 +1,9 @@
 {% extends "includes/layout.njk" %}
 
-{% from "govuk/components/back-link/macro.njk"     import govukBackLink %}
-{% from "macros/title.njk"                         import title %}
-{% from "govuk/components/button/macro.njk"        import govukButton %}
+{% from "govuk/components/back-link/macro.njk"        import govukBackLink %}
+{% from "macros/title.njk"                            import title %}
+{% from "govuk/components/button/macro.njk"           import govukButton %}
+{% from "govuk/components/summary-list/macro.njk"     import govukSummaryList %}
 
 {% block pageTitle %}
   {{ title(messages("arrivalRejection.title")) }}
@@ -18,14 +19,12 @@
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-two-thirds">
 
-
         <h1 class="govuk-heading-xl">
           {{ messages("arrivalRejection.heading") }}
         </h1>
 
-        <p class="govuk-heading-body">{{ messages("arrivalRejection.conflicting.information") }}</p>
+        <p class="govuk-body">{{ messages("arrivalRejection.conflicting.information") }}</p>
 
-        <ul>
         {% for error in errors %}
 
           <dl class="govuk-summary-list">
@@ -34,7 +33,7 @@
                      {{ messages("arrivalRejection.errorCode") }}
                       </dt>
                       <dd class="govuk-summary-list__value">
-                      {{ error.pointer.value }}
+                      {{ error.errorType.value }}
                       </dd>
                   </div>
                   <div class="govuk-summary-list__row">
@@ -42,22 +41,19 @@
                      {{ messages("arrivalRejection.pointer") }}
                       </dt>
                       <dd class="govuk-summary-list__value">
-                      {{ error.errorType.value }}
+                      {{ error.pointer.value }}
                       </dd>
                   </div>
               </dl>
 
         {% endfor %}
-        </ul>
 
         <p class="govuk-body">{{ messages("arrivalRejection.you.can") }}</p>
             <ol class="govuk-list govuk-list--bullet">
-           <li>  <a class="govuk-link" href={{createArrivalUrl}} target="_blank">{{ messages("arrivalRejection.create.arrival") }}</a>.
-           <li>  <a class="govuk-link" href={{contactUrl}} target="_blank">{{ messages("arrivalRejection.contact") }}</a>.</li>
+           <li> <a class="govuk-link" href={{createArrivalUrl}} >{{ messages("arrivalRejection.create.arrival") }}</a>
+           <li> <a class="govuk-link" href={{contactUrl}} target="_blank">{{ messages("arrivalRejection.contact") }}</a> </li>
             </ol>
-
       </div>
     </div>
   </div>
-
 {% endblock %}
