@@ -111,7 +111,7 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
       }
     }
 
-    "getNotificationMessage" - {
+    "getArrivalNotificationMessage" - {
       "must return a valid arrival notification" in {
         val arrivalNotificationLocation = s"/transit-movements-trader-at-destination/movements/arrivals/${arrivalId.value}/messages/1"
 
@@ -128,6 +128,17 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
             )
 
             connector.getArrivalNotificationMessage(arrivalNotificationLocation).futureValue.value.toString mustBe notificationXml.toString
+        }
+      }
+
+      "must return None when an error response is returned from getArrivalNotificationMessage" in {
+        val arrivalNotificationLocation = s"/transit-movements-trader-at-destination/movements/arrivals/${arrivalId.value}/messages/1"
+
+        forAll(errorResponsesCodes) {
+          errorResponseCode =>
+            stubGetResponse(errorResponseCode, arrivalNotificationLocation)
+
+            connector.getArrivalNotificationMessage(arrivalNotificationLocation).futureValue mustBe None
         }
       }
 
