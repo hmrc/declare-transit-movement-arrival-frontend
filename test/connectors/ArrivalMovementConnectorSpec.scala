@@ -126,9 +126,8 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
                   okJson(json.toString)
                 )
             )
-            println(connector.getNotificationMessage(arrivalNotificationLocation).futureValue.toString())
-            println(notificationXml.toString())
-            connector.getNotificationMessage(arrivalNotificationLocation).futureValue.toString() mustBe notificationXml.toString()
+
+            connector.getArrivalNotificationMessage(arrivalNotificationLocation).futureValue.value.toString mustBe notificationXml.toString
         }
       }
 

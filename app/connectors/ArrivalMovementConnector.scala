@@ -57,12 +57,13 @@ class ArrivalMovementConnector @Inject()(val config: FrontendAppConfig, val http
     }
   }
 
-  def getNotificationMessage(location: String)(implicit hc: HeaderCarrier): Future[NodeSeq] = {
+  def getArrivalNotificationMessage(location: String)(implicit hc: HeaderCarrier): Future[Option[NodeSeq]] = {
     val serviceUrl = s"${config.baseDestinationUrl}$location"
-    http.GET[HttpResponse](serviceUrl) flatMap {
+    http.GET[HttpResponse](serviceUrl) map {
       case responseMessage if is2xx(responseMessage.status) =>
-        Future.successful(responseMessage.json.as[ResponseMovementMessage].message)
-      case _ => Future.failed(new Exception("Blah"))
+        Some(responseMessage.json.as[ResponseMovementMessage].message)
+      case _ =>
+        None
     }
 
   }
