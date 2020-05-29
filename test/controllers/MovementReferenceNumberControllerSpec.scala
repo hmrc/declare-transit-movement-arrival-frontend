@@ -19,17 +19,14 @@ package controllers
 import base.SpecBase
 import forms.MovementReferenceNumberFormProvider
 import matchers.JsonMatchers
-import navigation.FakeNavigator
-import navigation.Navigator
+import models.NormalMode
+import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
-import org.mockito.Mockito.times
-import org.mockito.Mockito.verify
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.inject.bind
-import play.api.libs.json.JsObject
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -46,7 +43,7 @@ class MovementReferenceNumberControllerSpec extends SpecBase with MockitoSugar w
   val formProvider = new MovementReferenceNumberFormProvider()
   val form         = formProvider()
 
-  lazy val movementReferenceNumberRoute = routes.MovementReferenceNumberController.onPageLoad().url
+  lazy val movementReferenceNumberRoute = routes.MovementReferenceNumberController.onPageLoad(NormalMode).url
 
   "MovementReferenceNumber Controller" - {
 

@@ -19,7 +19,7 @@ package controllers
 import controllers.actions._
 import forms.MovementReferenceNumberFormProvider
 import javax.inject.Inject
-import models.{NormalMode, UserAnswers}
+import models.{Mode, UserAnswers}
 import navigation.Navigator
 import pages.MovementReferenceNumberPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -43,14 +43,14 @@ class MovementReferenceNumberController @Inject()(override val messagesApi: Mess
 
   private val form = formProvider()
 
-  def onPageLoad(): Action[AnyContent] = identify.async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = identify.async {
     implicit request =>
       val json = Json.obj("form" -> form)
 
       renderer.render("movementReferenceNumber.njk", json).map(Ok(_))
   }
 
-  def onSubmit(): Action[AnyContent] = identify.async {
+  def onSubmit(mode: Mode): Action[AnyContent] = identify.async {
     implicit request =>
       form
         .bindFromRequest()
@@ -61,7 +61,7 @@ class MovementReferenceNumberController @Inject()(override val messagesApi: Mess
 
             renderer.render("movementReferenceNumber.njk", json).map(BadRequest(_))
           },
-          value => Future(Redirect(navigator.nextPage(MovementReferenceNumberPage, NormalMode, UserAnswers(value))))
+          value => Future(Redirect(navigator.nextPage(MovementReferenceNumberPage, mode, UserAnswers(value))))
         )
   }
 }

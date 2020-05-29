@@ -19,7 +19,7 @@ package controllers
 import config.FrontendAppConfig
 import controllers.actions._
 import javax.inject.Inject
-import models.ArrivalId
+import models.{ArrivalId, RejectionMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -50,7 +50,7 @@ class ArrivalRejectionController @Inject()(
               "mrn"              -> rejectionMessage.movementReferenceNumber,
               "errors"           -> rejectionMessage.errors,
               "contactUrl"       -> appConfig.nctsEnquiriesUrl,
-              "createArrivalUrl" -> routes.MovementReferenceNumberController.onPageLoad().url
+              "createArrivalUrl" -> routes.MovementReferenceNumberController.onPageLoad(RejectionMode).url
             )
 
             renderer.render("arrivalRejection.njk", json).map(Ok(_))
