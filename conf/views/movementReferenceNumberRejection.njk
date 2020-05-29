@@ -23,36 +23,28 @@
           {{ messages("arrivalRejection.heading") }}
         </h1>
 
-        <p class="govuk-body">{{ messages("arrivalRejection.conflicting.information") }}</p>
+        <p class="govuk-body">{{ messages(errorKey) }}</p>
 
-        {% for error in errors %}
-
-          <dl class="govuk-summary-list">
-                  <div class="govuk-summary-list__row">
-                      <dt class="govuk-summary-list__key">
-                     {{ messages("arrivalRejection.errorCode") }}
-                      </dt>
-                      <dd class="govuk-summary-list__value">
-                      {{ error.errorType.value }}
-                      </dd>
-                  </div>
-                  <div class="govuk-summary-list__row">
-                      <dt class="govuk-summary-list__key">
-                     {{ messages("arrivalRejection.pointer") }}
-                      </dt>
-                      <dd class="govuk-summary-list__value">
-                      {{ error.pointer.value }}
-                      </dd>
-                  </div>
+        <dl class="govuk-summary-list govuk-summary-list">
+                <div class="govuk-summary-list__row">
+                     <dt class="govuk-summary-list__key" style="width: 48%">
+                    {{ messages("site.movement.reference.number") }}
+                     </dt>
+                     <dd class="govuk-summary-list__value" style="width: 62%">
+                    {{ mrn }}
+                     </dd>
+                     <dd class="govuk-summary-list__actions">
+                            <a class="govuk-link" href={{movementReferenceNumberUrl}}> {{ messages("site.edit") }}
+                            <span class="govuk-visually-hidden">{{ messages("movementReferenceNumberRejection.change.hidden") }}</span>
+                            </a>
+                     </dd>
+                 </div>
               </dl>
 
-        {% endfor %}
+        <p class="govuk-body">{{ messages("movementReferenceNumberRejection.contact.message") }}
+        <a class="govuk-link" href={{contactUrl}} target="_blank">{{ messages("technicalDifficulties.contact.link") }}</a>
+        </p>
 
-        <p class="govuk-body">{{ messages("arrivalRejection.you.can") }}</p>
-            <ol class="govuk-list govuk-list--bullet">
-           <li> <a class="govuk-link" href={{createArrivalUrl}} >{{ messages("arrivalRejection.create.arrival") }}</a>
-           <li> <a class="govuk-link" href={{contactUrl}} target="_blank">{{ messages("arrivalRejection.contact") }}</a> </li>
-            </ol>
       </div>
     </div>
   </div>

@@ -46,10 +46,19 @@ class ArrivalRejectionController @Inject()(
       if (frontendAppConfig.featureToggleArrivalRejection) {
         arrivalRejectionService.arrivalRejectionMessage(arrivalId).flatMap {
           case Some(rejectionMessage) =>
-            if (rejectionMessage.errors.head.errorType.value == 91) {
+            val errorType = rejectionMessage.errors.head.errorType.value
+
+            if (errorType == 90 || errorType == 91 || errorType == 93) {
+
+              val errorKey = errorType match {
+                case 90 => "movementReferenceNumberRejection.error.unknown"
+                case 91 => "movementReferenceNumberRejection.error.duplicate"
+                case 93 => "movementReferenceNumberRejection.error.invalid"
+              }
 
               val json = Json.obj(
                 "mrn"                        -> rejectionMessage.movementReferenceNumber,
+                "errorKey"                   -> errorKey,
                 "contactUrl"                 -> appConfig.nctsEnquiriesUrl,
                 "movementReferenceNumberUrl" -> routes.MovementReferenceNumberController.onPageLoad().url
               )

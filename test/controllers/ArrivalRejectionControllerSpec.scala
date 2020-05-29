@@ -51,11 +51,11 @@ class ArrivalRejectionControllerSpec extends SpecBase with MockitoSugar with Jso
   "ArrivalRejection Controller" - {
 
     Seq(
-      (90, "Unknown MRN", ""),
-      (91, "duplicate MRN", ""),
-      (93, "Invalid MRN", "")
+      (90, "Unknown MRN", "movementReferenceNumberRejection.error.unknown"),
+      (91, "duplicate MRN", "movementReferenceNumberRejection.error.duplicate"),
+      (93, "Invalid MRN", "movementReferenceNumberRejection.error.invalid")
     ) foreach {
-      case (errorCode, errorPointer, message) =>
+      case (errorCode, errorPointer, errorKey) =>
         s"return OK and the correct $errorPointer Rejection view for a GET when 'arrivalRejection' feature toggle set to true" in {
 
           when(mockRenderer.render(any(), any())(any()))
@@ -85,6 +85,7 @@ class ArrivalRejectionControllerSpec extends SpecBase with MockitoSugar with Jso
 
           val expectedJson = Json.obj(
             "mrn"                        -> mrn,
+            "errorKey"                   -> errorKey,
             "contactUrl"                 -> frontendAppConfig.nctsEnquiriesUrl,
             "movementReferenceNumberUrl" -> routes.MovementReferenceNumberController.onPageLoad().url
           )
@@ -103,7 +104,7 @@ class ArrivalRejectionControllerSpec extends SpecBase with MockitoSugar with Jso
 
       val errors = Seq(FunctionalError(ErrorType(12), ErrorPointer("TRD.TIN"), None, None))
 
-      when(mockArrivalRejectionService.arrivalRejectionMessage((any()))(any(), any()))
+      when(mockArrivalRejectionService.arrivalRejectionMessage(any())(any(), any()))
         .thenReturn(Future.successful(Some(ArrivalNotificationRejectionMessage(mrn.toString, LocalDate.now, None, None, errors))))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
