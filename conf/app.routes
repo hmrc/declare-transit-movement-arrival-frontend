@@ -9,6 +9,9 @@ GET        /this-service-has-been-reset                      controllers.Session
 GET        /:mrn/check-your-answers-arrival                  controllers.CheckYourAnswersController.onPageLoad(mrn: MovementReferenceNumber)
 POST       /:mrn/check-your-answers-arrival                  controllers.CheckYourAnswersController.onPost(mrn: MovementReferenceNumber)
 
+GET        /:mrn/:arrivalId/check-your-answers-arrival-rejection        controllers.CheckYourAnswersRejectionsController.onPageLoad(mrn: MovementReferenceNumber, arrivalId: ArrivalId)
+POST       /:mrn/:arrivalId/check-your-answers-arrival-rejection        controllers.CheckYourAnswersRejectionsController.onPost(mrn: MovementReferenceNumber, arrivalId: ArrivalId)
+
 GET        /cannot-use-service-no-eori                       controllers.UnauthorisedController.onPageLoad
 
 GET        /technical-difficulties                           controllers.TechnicalDifficultiesController.onPageLoad

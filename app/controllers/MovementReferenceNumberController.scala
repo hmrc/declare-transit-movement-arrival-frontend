@@ -19,7 +19,7 @@ package controllers
 import controllers.actions._
 import forms.MovementReferenceNumberFormProvider
 import javax.inject.Inject
-import models.{Mode, UserAnswers}
+import models.{ArrivalId, Mode, RejectionMode, UserAnswers}
 import navigation.Navigator
 import pages.MovementReferenceNumberPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -43,14 +43,14 @@ class MovementReferenceNumberController @Inject()(override val messagesApi: Mess
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = identify.async {
+  def onPageLoad(mode: Mode, arrivalId: Option[ArrivalId]): Action[AnyContent] = identify.async {
     implicit request =>
       val json = Json.obj("form" -> form)
 
       renderer.render("movementReferenceNumber.njk", json).map(Ok(_))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = identify.async {
+  def onSubmit(mode: Mode, arrivalId: Option[ArrivalId]): Action[AnyContent] = identify.async {
     implicit request =>
       form
         .bindFromRequest()
@@ -61,7 +61,14 @@ class MovementReferenceNumberController @Inject()(override val messagesApi: Mess
 
             renderer.render("movementReferenceNumber.njk", json).map(BadRequest(_))
           },
-          value => Future(Redirect(navigator.nextPage(MovementReferenceNumberPage, mode, UserAnswers(value))))
-        )
+          value =>
+          mode match {
+            case RejectionMode =>
+              arrivalId match {
+                case Some(arrivalId) => Future(Redirect(routes.CheckYourAnswersRejectionsController.onPageLoad(value, arrivalId)))
+                case _ => Future(Redirect(routes.TechnicalDifficultiesController.onPageLoad()))
+              }
+            case _ => Future(Redirect(navigator.nextPage(MovementReferenceNumberPage, mode, UserAnswers(value))))
+          })
   }
 }
