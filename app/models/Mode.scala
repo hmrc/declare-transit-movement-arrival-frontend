@@ -25,17 +25,21 @@ case object CheckMode extends Mode
 
 case object NormalMode extends Mode
 
+case object RejectionMode extends Mode
+
 object Mode {
 
   implicit val jsLiteral: JavascriptLiteral[Mode] = new JavascriptLiteral[Mode] {
     override def to(value: Mode): String = value match {
-      case NormalMode => """"NormalMode""""
-      case CheckMode  => """"CheckMode""""
+      case NormalMode    => """"NormalMode""""
+      case CheckMode     => """"CheckMode""""
+      case RejectionMode => """"RejectionMode""""
     }
   }
 
   implicit val writes: Writes[Mode] = Writes {
-    case NormalMode => JsString("NormalMode")
-    case CheckMode  => JsString("CheckMode")
+    case NormalMode    => JsString("NormalMode")
+    case CheckMode     => JsString("CheckMode")
+    case RejectionMode => JsString("RejectionMode")
   }
 }
