@@ -26,6 +26,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpErrorFunctions, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.xml.NodeSeq
 
 class ArrivalMovementConnector @Inject()(val config: FrontendAppConfig, val http: HttpClient)(implicit ec: ExecutionContext) extends HttpErrorFunctions {
 
@@ -50,10 +51,21 @@ class ArrivalMovementConnector @Inject()(val config: FrontendAppConfig, val http
     val serviceUrl = s"${config.baseDestinationUrl}$rejectionLocation"
     http.GET[HttpResponse](serviceUrl) map {
       case responseMessage if is2xx(responseMessage.status) =>
-        val message = responseMessage.json.as[ResponseMovementMessage].message
+        val message: NodeSeq = responseMessage.json.as[ResponseMovementMessage].message
         XmlReader.of[ArrivalNotificationRejectionMessage].read(message).toOption
       case _ => None
     }
+  }
+
+  def getArrivalNotificationMessage(location: String)(implicit hc: HeaderCarrier): Future[Option[NodeSeq]] = {
+    val serviceUrl = s"${config.baseDestinationUrl}$location"
+    http.GET[HttpResponse](serviceUrl) map {
+      case responseMessage if is2xx(responseMessage.status) =>
+        Some(responseMessage.json.as[ResponseMovementMessage].message)
+      case _ =>
+        None
+    }
+
   }
 
 }
