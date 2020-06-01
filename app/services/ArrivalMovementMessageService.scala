@@ -18,7 +18,7 @@ package services
 
 import connectors.ArrivalMovementConnector
 import javax.inject.Inject
-import models.ArrivalId
+import models.{ArrivalId, MovementReferenceNumber}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -26,11 +26,11 @@ import scala.xml.NodeSeq
 
 class ArrivalMovementMessageService @Inject()(arrivalMovementConnector: ArrivalMovementConnector) {
 
-  def getArrivalNotificationMessage(arrivalId: ArrivalId)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[NodeSeq]] =
+  def getArrivalNotificationMessage(arrivalId: ArrivalId)(implicit hc: HeaderCarrier,
+                                                          ec: ExecutionContext): Future[Option[(NodeSeq, MovementReferenceNumber)]] =
     arrivalMovementConnector.getSummary(arrivalId) flatMap {
       case Some(summary) =>
         arrivalMovementConnector.getArrivalNotificationMessage(summary.messagesLocation.arrivalNotification)
       case _ => Future.successful(None)
     }
-
 }

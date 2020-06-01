@@ -19,7 +19,7 @@ package controllers
 import controllers.actions._
 import forms.UpdateRejectedMovementReferenceNumberFormProvider
 import javax.inject.Inject
-import models.{ArrivalId, MovementReferenceNumber}
+import models.ArrivalId
 import navigation.Navigator
 import pages.UpdateRejectedMovementReferenceNumberPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -31,7 +31,6 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.xml.NodeSeq
 
 class UpdateRejectedMovementReferenceNumberController @Inject()(override val messagesApi: MessagesApi,
                                                                 navigator: Navigator,
@@ -49,16 +48,9 @@ class UpdateRejectedMovementReferenceNumberController @Inject()(override val mes
   def onPageLoad(arrivalId: ArrivalId): Action[AnyContent] = identify.async {
     implicit request =>
       arrivalMovementMessageService.getArrivalNotificationMessage(arrivalId) flatMap {
-        case Some(xml: NodeSeq) if xml.\\("DocNumHEA5").nonEmpty =>
-          val mrn: NodeSeq = xml.\\("DocNumHEA5")
-
-          MovementReferenceNumber(mrn.text) match {
-            case Some(mrn) =>
-              val json = Json.obj("form" -> form.fill(mrn))
-              renderer.render("movementReferenceNumber.njk", json).map(Ok(_))
-
-            case _ => Future.successful(Redirect(routes.TechnicalDifficultiesController.onPageLoad()))
-          }
+        case Some((_, mrn)) =>
+          val json = Json.obj("form" -> form.fill(mrn))
+          renderer.render("movementReferenceNumber.njk", json).map(Ok(_))
         case _ => Future.successful(Redirect(routes.TechnicalDifficultiesController.onPageLoad()))
       }
   }

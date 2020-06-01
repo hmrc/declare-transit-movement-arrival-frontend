@@ -117,8 +117,9 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
 
         forAll(arbitrary[ArrivalMovementRequest]) {
           arrivalMovementRequest =>
-            val notificationXml: NodeSeq = arrivalMovementRequest.toXml
-            val json                     = Json.obj("message" -> notificationXml.toString())
+            val notificationXml: NodeSeq =
+              arrivalMovementRequest.copy(header = arrivalMovementRequest.header.copy(movementReferenceNumber = mrn.toString)).toXml
+            val json = Json.obj("message" -> notificationXml.toString())
 
             server.stubFor(
               get(urlEqualTo(arrivalNotificationLocation))
@@ -127,8 +128,26 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
                 )
             )
 
-            connector.getArrivalNotificationMessage(arrivalNotificationLocation).futureValue.value.toString mustBe notificationXml.toString
+            val (xml, movementReferenceNumber) = connector.getArrivalNotificationMessage(arrivalNotificationLocation).futureValue.value
+            xml.toString() mustBe notificationXml.toString
+            movementReferenceNumber mustBe mrn
         }
+      }
+
+      "must return None when an  invalid xml returned from getArrivalNotificationMessage" in {
+        val arrivalNotificationLocation = s"/transit-movements-trader-at-destination/movements/arrivals/${arrivalId.value}/messages/1"
+
+        val invalidXml = <test>xml</test>
+        val json       = Json.obj("message" -> invalidXml.toString())
+
+        server.stubFor(
+          get(urlEqualTo(arrivalNotificationLocation))
+            .willReturn(
+              okJson(json.toString)
+            )
+        )
+
+        connector.getArrivalNotificationMessage(arrivalNotificationLocation).futureValue mustBe None
       }
 
       "must return None when an error response is returned from getArrivalNotificationMessage" in {

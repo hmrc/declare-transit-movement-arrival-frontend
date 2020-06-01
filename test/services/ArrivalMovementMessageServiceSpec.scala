@@ -20,12 +20,11 @@ import base.SpecBase
 import connectors.ArrivalMovementConnector
 import models.{ArrivalId, MessagesLocation, MessagesSummary}
 import org.mockito.Matchers.any
-import org.mockito.Mockito._
+import org.mockito.Mockito.{reset, _}
 import play.api.inject.bind
-import org.mockito.Mockito.reset
 
-import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 import scala.xml.NodeSeq
 
 class ArrivalMovementMessageServiceSpec extends SpecBase {
@@ -46,7 +45,7 @@ class ArrivalMovementMessageServiceSpec extends SpecBase {
 
       when(mockConnector.getSummary(any())(any())).thenReturn(Future.successful(Some(messagesSummary)))
       when(mockConnector.getArrivalNotificationMessage(any())(any()))
-        .thenReturn(Future.successful(Some(NodeSeq.Empty)))
+        .thenReturn(Future.successful(Some((NodeSeq.Empty, mrn))))
 
       val application = applicationBuilder(Some(emptyUserAnswers))
         .overrides(bind[ArrivalMovementConnector].toInstance(mockConnector))
