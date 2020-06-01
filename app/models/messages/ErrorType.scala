@@ -16,15 +16,43 @@
 
 package models.messages
 
-import com.lucidchart.open.xtract.{__, XmlReader}
-import play.api.libs.json.{Json, OWrites}
+import com.lucidchart.open.xtract._
+import models.Enumerable
 
-case class ErrorType(value: Int)
+import scala.xml.NodeSeq
 
-object ErrorType {
+sealed trait ErrorType {
+  val code: Int
+}
 
-  implicit val writes: OWrites[ErrorType] = Json.writes[ErrorType]
+object ErrorType extends Enumerable.Implicits {
 
-  implicit val xmlReader: XmlReader[ErrorType] =
-    (__ \ "ErrTypER11").read[Int].map(apply)
+  sealed trait GenericError extends ErrorType
+  sealed trait MRNError     extends ErrorType
+
+  case object UnknownMrn   extends MRNError {val code: Int = 90}
+  case object DuplicateMrn extends MRNError {val code: Int = 91}
+  case object InvalidMrn   extends MRNError {val code: Int = 93}
+
+
+  val values = Seq(
+    UnknownMrn,
+    DuplicateMrn,
+    InvalidMrn
+  )
+
+  implicit val xmlDateReads: XmlReader[ErrorType] = {
+    new XmlReader[ErrorType] {
+      override def read(xml: NodeSeq): ParseResult[ErrorType] = {
+
+        case class ErrorTypeParseError(message: String) extends ParseError
+
+        values.find(x => x.code.toString == xml.text) match {
+          case Some(error) => ParseSuccess(error)
+          case None        => ParseFailure(ErrorTypeParseError(s"Invalid or missing ErrorType: ${xml.text}"))
+        }
+      }
+    }
+  }
+
 }
