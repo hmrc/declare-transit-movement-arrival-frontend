@@ -16,9 +16,26 @@
 
 package controllers
 
+/*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import base.SpecBase
 import forms.MovementReferenceNumberFormProvider
 import matchers.JsonMatchers
+import models.ArrivalId
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
@@ -35,14 +52,15 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class MovementReferenceNumberControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class UpdateRejectedMovementReferenceNumberControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
   def onwardRoute = Call("GET", "/foo")
 
-  val formProvider = new MovementReferenceNumberFormProvider()
-  val form         = formProvider()
+  val formProvider      = new MovementReferenceNumberFormProvider()
+  val form              = formProvider()
+  private val arrivalId = ArrivalId(1)
 
-  lazy val movementReferenceNumberRoute = routes.MovementReferenceNumberController.onPageLoad().url
+  lazy val movementReferenceNumberRoute = routes.UpdateRejectedMovementReferenceNumberController.onPageLoad(arrivalId).url
 
   "MovementReferenceNumber Controller" - {
 
@@ -50,6 +68,7 @@ class MovementReferenceNumberControllerSpec extends SpecBase with MockitoSugar w
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
+      when()
 
       val application    = applicationBuilder(userAnswers = None).build()
       val request        = FakeRequest(GET, movementReferenceNumberRoute)

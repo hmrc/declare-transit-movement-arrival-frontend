@@ -16,6 +16,4 @@
 
 package pages
 
-import play.api.libs.json.JsPath
-
 case object MovementReferenceNumberPage extends Page

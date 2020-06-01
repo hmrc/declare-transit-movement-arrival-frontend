@@ -90,7 +90,7 @@ class Navigator @Inject()() {
   def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = mode match {
     case NormalMode =>
       normalRoutes.lift(page) match {
-        case None => routes.MovementReferenceNumberController.onPageLoad(mode)
+        case None => routes.MovementReferenceNumberController.onPageLoad()
         case Some(call) =>
           call(userAnswers) match {
             case Some(onwardRoute) => onwardRoute

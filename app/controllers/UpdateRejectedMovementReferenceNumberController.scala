@@ -19,7 +19,7 @@ package controllers
 import controllers.actions._
 import forms.MovementReferenceNumberFormProvider
 import javax.inject.Inject
-import models.{NormalMode, UserAnswers}
+import models.{ArrivalId, RejectionMode, UserAnswers}
 import navigation.Navigator
 import pages.MovementReferenceNumberPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -31,26 +31,26 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class MovementReferenceNumberController @Inject()(override val messagesApi: MessagesApi,
-                                                  navigator: Navigator,
-                                                  identify: IdentifierAction,
-                                                  formProvider: MovementReferenceNumberFormProvider,
-                                                  val controllerComponents: MessagesControllerComponents,
-                                                  renderer: Renderer)(implicit ec: ExecutionContext)
+class UpdateRejectedMovementReferenceNumberController @Inject()(override val messagesApi: MessagesApi,
+                                                                navigator: Navigator,
+                                                                identify: IdentifierAction,
+                                                                formProvider: MovementReferenceNumberFormProvider,
+                                                                val controllerComponents: MessagesControllerComponents,
+                                                                renderer: Renderer)(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
     with NunjucksSupport {
 
   private val form = formProvider()
 
-  def onPageLoad(): Action[AnyContent] = identify.async {
+  def onPageLoad(arrivalId: ArrivalId): Action[AnyContent] = identify.async {
     implicit request =>
       val json = Json.obj("form" -> form)
 
       renderer.render("movementReferenceNumber.njk", json).map(Ok(_))
   }
 
-  def onSubmit(): Action[AnyContent] = identify.async {
+  def onSubmit(arrivalId: ArrivalId): Action[AnyContent] = identify.async {
     implicit request =>
       form
         .bindFromRequest()
@@ -61,7 +61,7 @@ class MovementReferenceNumberController @Inject()(override val messagesApi: Mess
 
             renderer.render("movementReferenceNumber.njk", json).map(BadRequest(_))
           },
-          value => Future(Redirect(navigator.nextPage(MovementReferenceNumberPage, NormalMode, UserAnswers(value))))
+          value => Future(Redirect(navigator.nextPage(MovementReferenceNumberPage, RejectionMode, UserAnswers(value))))
         )
   }
 }

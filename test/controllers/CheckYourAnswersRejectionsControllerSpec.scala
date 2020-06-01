@@ -18,6 +18,7 @@ package controllers
 
 import base.SpecBase
 import matchers.JsonMatchers
+import models.ArrivalId
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
@@ -39,7 +40,7 @@ class CheckYourAnswersRejectionsControllerSpec extends SpecBase with JsonMatcher
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
-      val request = FakeRequest(GET, routes.CheckYourAnswersRejectionsController.onPageLoad(mrn).url)
+      val request = FakeRequest(GET, routes.CheckYourAnswersRejectionsController.onPageLoad(mrn, ArrivalId(1)).url)
 
       val result = route(application, request).value
 

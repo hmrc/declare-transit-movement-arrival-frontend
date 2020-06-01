@@ -20,7 +20,7 @@ import java.time.LocalDate
 
 import base.SpecBase
 import matchers.JsonMatchers
-import models.{ArrivalId, RejectionMode}
+import models.ArrivalId
 import models.messages.{ArrivalNotificationRejectionMessage, ErrorPointer, ErrorType, FunctionalError}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.{any, eq => eqTo}
@@ -81,7 +81,7 @@ class ArrivalRejectionControllerSpec extends SpecBase with MockitoSugar with Jso
         "mrn"              -> mrn,
         "errors"           -> errors,
         "contactUrl"       -> frontendAppConfig.nctsEnquiriesUrl,
-        "createArrivalUrl" -> routes.MovementReferenceNumberController.onPageLoad(RejectionMode).url
+        "createArrivalUrl" -> routes.MovementReferenceNumberController.onPageLoad().url
       )
 
       templateCaptor.getValue mustEqual "arrivalRejection.njk"
