@@ -49,7 +49,7 @@ class UpdateRejectedMovementReferenceNumberController @Inject()(override val mes
   def onPageLoad(arrivalId: ArrivalId): Action[AnyContent] = identify.async {
     implicit request =>
       arrivalMovementMessageService.getArrivalNotificationMessage(arrivalId) flatMap {
-        case Some(xml: NodeSeq) =>
+        case Some(xml: NodeSeq) if xml.\\("DocNumHEA5").nonEmpty =>
           val mrn: NodeSeq = xml.\\("DocNumHEA5")
           val preparedForm = MovementReferenceNumber(mrn.text) match {
             case Some(mrn) => form.fill(mrn)

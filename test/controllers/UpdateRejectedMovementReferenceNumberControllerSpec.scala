@@ -37,6 +37,7 @@ import forms.MovementReferenceNumberFormProvider
 import generators.MessagesModelGenerators
 import matchers.JsonMatchers
 import models.ArrivalId
+import models.XMLWrites._
 import models.messages.ArrivalMovementRequest
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
@@ -53,7 +54,6 @@ import play.twirl.api.Html
 import repositories.SessionRepository
 import services.ArrivalMovementMessageService
 import uk.gov.hmrc.viewmodels.NunjucksSupport
-import models.XMLWrites._
 
 import scala.concurrent.Future
 
@@ -112,6 +112,29 @@ class UpdateRejectedMovementReferenceNumberControllerSpec
 
       templateCaptor.getValue mustEqual "movementReferenceNumber.njk"
       jsonCaptor.getValue must containJson(expectedJson)
+
+      application.stop()
+    }
+
+    "must redirect to TechnicalDifficulties page when getArrivalNotification's brings invalid xml" in {
+
+      val invalidXml = <node>test</node>
+      when(mockArrivalMovementMessageService.getArrivalNotificationMessage(any())(any(), any()))
+        .thenReturn(Future.successful(Some(invalidXml)))
+
+      val application =
+        applicationBuilder(userAnswers = None)
+          .overrides(
+            bind[ArrivalMovementMessageService].toInstance(mockArrivalMovementMessageService)
+          )
+          .build()
+      val request        = FakeRequest(GET, movementReferenceNumberRoute)
+      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
 
       application.stop()
     }
