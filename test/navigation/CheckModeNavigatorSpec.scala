@@ -110,8 +110,8 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
         }
 
         "'ConsigneeNameController' when no answer for 'ConsigneeNameController'" in {
-          forAll(arbitrary[UserAnswers], nonEmptyString, nonEmptyString) {
-            (answers, customsSubPlace, consigneeName) =>
+          forAll(arbitrary[UserAnswers], nonEmptyString) {
+            (answers, customsSubPlace) =>
               val updatedAnswers =
                 answers
                   .set(CustomsSubPlacePage, customsSubPlace).success.value
@@ -155,25 +155,25 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
       }
 
       "must go from 'ConsigneeEoriConfirmationController' to " - {
-        "'CheckYourAnswersController' when an answer for 'ConsigneeEoriConfirmationController' is true" in {
+        "'CheckYourAnswersController' when the answer is true" in {
           forAll(arbitrary[UserAnswers]) {
             answers =>
               val updatedAnswers =
                 answers
                   .set(ConsigneeEoriConfirmationPage, true).success.value
-                  .set(ConsigneeAddressPage, traderAddress).success.value
               navigator
                 .nextPage(ConsigneeEoriConfirmationPage, CheckMode, updatedAnswers)
                 .mustBe(routes.CheckYourAnswersController.onPageLoad(answers.id))
           }
         }
 
-        "'CheckYourAnswersController' when an answer for false" in {
+        "'CheckYourAnswersController' when the answer is false and the consigneeEoriNumber is populated" in {
           forAll(arbitrary[UserAnswers]) {
             answers =>
               val updatedAnswers =
                 answers
                   .set(ConsigneeEoriConfirmationPage, false).success.value
+                  .set(ConsigneeEoriNumberPage, eoriNumber).success.value
               navigator
                 .nextPage(ConsigneeEoriConfirmationPage, CheckMode, updatedAnswers)
                 .mustBe(routes.CheckYourAnswersController.onPageLoad(answers.id))
@@ -181,16 +181,44 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
         }
 
 
-        "'ConsigneeConfirmEori' when no answer for 'ConsigneeEoriConfirmationController'" in {
+        "'ConsigneeEoriNumberController' false and no answer for 'consigneeEoriNumber'" in {
           forAll(arbitrary[UserAnswers] ) {
             answers =>
               val updatedAnswers =
                 answers
-                  .set(ConsigneeEoriConfirmationPage, true).success.value
-                    .remove(ConsigneeAddressPage).success.value
+                  .set(ConsigneeEoriConfirmationPage, false).success.value
+                    .remove(ConsigneeEoriNumberPage).success.value
 
               navigator
                 .nextPage(ConsigneeEoriConfirmationPage, CheckMode, updatedAnswers)
+                .mustBe(routes.ConsigneeEoriNumberController.onPageLoad(answers.id, CheckMode))
+          }
+        }
+      }
+
+      "must go from 'ConsigneeEoriNumberController' to " - {
+        "'CheckYourAnswersController' when 'ConsigneeAddress' is populated" in {
+          forAll(arbitrary[UserAnswers] ) {
+            answers =>
+              val updatedAnswers =
+                answers
+                  .set(ConsigneeAddressPage, traderAddress).success.value
+
+              navigator
+                .nextPage(ConsigneeEoriNumberPage, CheckMode, updatedAnswers)
+                .mustBe(routes.CheckYourAnswersController.onPageLoad(answers.id))
+          }
+        }
+
+        "'ConsigneeAddressController' when 'ConsigneeAddress is not populated'" in {
+          forAll(arbitrary[UserAnswers] ) {
+            answers =>
+              val updatedAnswers =
+                answers
+                  .remove(ConsigneeAddressPage).success.value
+
+              navigator
+                .nextPage(ConsigneeEoriNumberPage, CheckMode, updatedAnswers)
                 .mustBe(routes.ConsigneeAddressController.onPageLoad(answers.id, CheckMode))
           }
         }

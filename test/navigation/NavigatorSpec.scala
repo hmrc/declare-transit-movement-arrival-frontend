@@ -91,16 +91,24 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
               .mustBe(routes.ConsigneeEoriConfirmationController.onPageLoad(answers.id, NormalMode))
         }
       }
+
       "must go from'eoriConfirmation page to eoriNumber page when 'No' is selcted" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
-            val updatedAnswers = answers.set(ConsigneeEoriConfirmationPage, false).success.value
+            val updatedAnswers = answers
+              .set(ConsigneeNamePage, consigneeName)
+              .success
+              .value
+              .set(ConsigneeEoriConfirmationPage, false)
+              .success
+              .value
 
             navigator
               .nextPage(ConsigneeEoriConfirmationPage, NormalMode, updatedAnswers)
               .mustBe(routes.ConsigneeEoriNumberController.onPageLoad(answers.id, NormalMode))
         }
       }
+
       "must go from'eoriConfirmation page to consigneeAddress page when 'Yes' is selcted" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
