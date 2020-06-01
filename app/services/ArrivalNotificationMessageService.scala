@@ -24,7 +24,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.{ExecutionContext, Future}
 import scala.xml.NodeSeq
 
-class ArrivalMovementMessageService @Inject()(arrivalMovementConnector: ArrivalMovementConnector) {
+class ArrivalNotificationMessageService @Inject()(arrivalMovementConnector: ArrivalMovementConnector) {
 
   def getArrivalNotificationMessage(arrivalId: ArrivalId)(implicit hc: HeaderCarrier,
                                                           ec: ExecutionContext): Future[Option[(NodeSeq, MovementReferenceNumber)]] =

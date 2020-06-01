@@ -26,19 +26,19 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
-import services.ArrivalMovementMessageService
+import services.ArrivalNotificationMessageService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class UpdateRejectedMovementReferenceNumberController @Inject()(override val messagesApi: MessagesApi,
-                                                                navigator: Navigator,
-                                                                identify: IdentifierAction,
-                                                                formProvider: UpdateRejectedMovementReferenceNumberFormProvider,
-                                                                arrivalMovementMessageService: ArrivalMovementMessageService,
-                                                                val controllerComponents: MessagesControllerComponents,
-                                                                renderer: Renderer)(implicit ec: ExecutionContext)
+class UpdateRejectedMRNController @Inject()(override val messagesApi: MessagesApi,
+                                            navigator: Navigator,
+                                            identify: IdentifierAction,
+                                            formProvider: UpdateRejectedMovementReferenceNumberFormProvider,
+                                            arrivalMovementMessageService: ArrivalNotificationMessageService,
+                                            val controllerComponents: MessagesControllerComponents,
+                                            renderer: Renderer)(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
     with NunjucksSupport {

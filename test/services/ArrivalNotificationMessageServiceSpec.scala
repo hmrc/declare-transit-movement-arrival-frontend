@@ -27,7 +27,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.xml.NodeSeq
 
-class ArrivalMovementMessageServiceSpec extends SpecBase {
+class ArrivalNotificationMessageServiceSpec extends SpecBase {
 
   val mockConnector: ArrivalMovementConnector = mock[ArrivalMovementConnector]
 
@@ -38,7 +38,7 @@ class ArrivalMovementMessageServiceSpec extends SpecBase {
 
   private val arrivalId = ArrivalId(1)
 
-  "ArrivalMovementMessageService" - {
+  "ArrivalNotificationMessageService" - {
     "must return NodeSeq for the input arrivalId" in {
       val messagesSummary =
         MessagesSummary(arrivalId, MessagesLocation(s"/movements/arrivals/${arrivalId.value}/messages/3", Some("/movements/arrivals/1234/messages/5")))
@@ -50,9 +50,9 @@ class ArrivalMovementMessageServiceSpec extends SpecBase {
       val application = applicationBuilder(Some(emptyUserAnswers))
         .overrides(bind[ArrivalMovementConnector].toInstance(mockConnector))
         .build()
-      val arrivalMovementMessageService = application.injector.instanceOf[ArrivalMovementMessageService]
+      val arrivalMovementMessageService = application.injector.instanceOf[ArrivalNotificationMessageService]
 
-      arrivalMovementMessageService.getArrivalNotificationMessage(arrivalId).futureValue mustBe Some(NodeSeq.Empty)
+      arrivalMovementMessageService.getArrivalNotificationMessage(arrivalId).futureValue mustBe Some((NodeSeq.Empty, mrn))
 
     }
 

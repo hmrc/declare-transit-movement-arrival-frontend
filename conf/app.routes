@@ -23,8 +23,8 @@ POST       /movement-reference-number                        controllers.Movemen
 GET        /change-movement-reference-number                 controllers.MovementReferenceNumberController.onPageLoad()
 POST       /change-movement-reference-number                 controllers.MovementReferenceNumberController.onSubmit()
 
-GET        /:arrivalId/update-movement-reference-number      controllers.UpdateRejectedMovementReferenceNumberController.onPageLoad(arrivalId: ArrivalId)
-POST       /:arrivalId/update-movement-reference-number      controllers.UpdateRejectedMovementReferenceNumberController.onSubmit(arrivalId: ArrivalId)
+GET        /:arrivalId/update-movement-reference-number      controllers.UpdateRejectedMRNController.onPageLoad(arrivalId: ArrivalId)
+POST       /:arrivalId/update-movement-reference-number      controllers.UpdateRejectedMRNController.onSubmit(arrivalId: ArrivalId)
 
 GET        /:mrn/where-are-goods                             controllers.GoodsLocationController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
 POST       /:mrn/where-are-goods                             controllers.GoodsLocationController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)

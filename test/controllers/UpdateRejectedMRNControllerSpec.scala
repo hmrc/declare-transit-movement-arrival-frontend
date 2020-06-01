@@ -52,26 +52,21 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import repositories.SessionRepository
-import services.ArrivalMovementMessageService
+import services.ArrivalNotificationMessageService
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class UpdateRejectedMovementReferenceNumberControllerSpec
-    extends SpecBase
-    with MessagesModelGenerators
-    with MockitoSugar
-    with NunjucksSupport
-    with JsonMatchers {
+class UpdateRejectedMRNControllerSpec extends SpecBase with MessagesModelGenerators with MockitoSugar with NunjucksSupport with JsonMatchers {
 
   def onwardRoute = Call("GET", "/foo")
 
   val formProvider                              = new MovementReferenceNumberFormProvider()
   val form                                      = formProvider()
-  private val mockArrivalMovementMessageService = mock[ArrivalMovementMessageService]
+  private val mockArrivalMovementMessageService = mock[ArrivalNotificationMessageService]
   private val arrivalId                         = ArrivalId(1)
 
-  lazy val movementReferenceNumberRoute = routes.UpdateRejectedMovementReferenceNumberController.onPageLoad(arrivalId).url
+  lazy val movementReferenceNumberRoute = routes.UpdateRejectedMRNController.onPageLoad(arrivalId).url
 
   override def beforeEach: Unit = {
     super.beforeEach()
@@ -91,7 +86,7 @@ class UpdateRejectedMovementReferenceNumberControllerSpec
       val application =
         applicationBuilder(userAnswers = None)
           .overrides(
-            bind[ArrivalMovementMessageService].toInstance(mockArrivalMovementMessageService)
+            bind[ArrivalNotificationMessageService].toInstance(mockArrivalMovementMessageService)
           )
           .build()
       val request        = FakeRequest(GET, movementReferenceNumberRoute)
@@ -124,7 +119,7 @@ class UpdateRejectedMovementReferenceNumberControllerSpec
       val application =
         applicationBuilder(userAnswers = None)
           .overrides(
-            bind[ArrivalMovementMessageService].toInstance(mockArrivalMovementMessageService)
+            bind[ArrivalNotificationMessageService].toInstance(mockArrivalMovementMessageService)
           )
           .build()
       val request        = FakeRequest(GET, movementReferenceNumberRoute)
