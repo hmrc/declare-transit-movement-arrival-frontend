@@ -22,7 +22,7 @@ import derivable.DeriveNumberOfEvents
 import handlers.ErrorHandler
 import models.GoodsLocation.BorderForceOffice
 import models.{GoodsLocation, Index, MovementReferenceNumber, UserAnswers}
-import pages.{AuthorisedLocationPage, EoriConfirmationPage, GoodsLocationPage}
+import pages.{AuthorisedLocationPage, ConsigneeEoriConfirmationPage, GoodsLocationPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.Results.BadRequest
@@ -106,7 +106,7 @@ class CheckYourAnswersController @Inject()(override val messagesApi: MessagesApi
       Seq(
         helper.consigneeName,
         helper.eoriConfirmation(eori),
-        userAnswers.get(EoriConfirmationPage) match {
+        userAnswers.get(ConsigneeEoriConfirmationPage) match {
           case Some(false) => helper.eoriNumber
           case _           => None
         },

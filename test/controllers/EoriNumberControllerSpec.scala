@@ -25,7 +25,7 @@ import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.{AuthorisedLocationPage, ConsigneeNamePage, EoriConfirmationPage, EoriNumberPage}
+import pages.{AuthorisedLocationPage, ConsigneeEoriConfirmationPage, ConsigneeEoriNumberPage, ConsigneeNamePage}
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, JsString, Json}
 import play.api.mvc.Call
@@ -44,7 +44,7 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar with NunjucksS
   val formProvider = new EoriNumberFormProvider()
   val form         = formProvider(traderName)
 
-  lazy val eoriNumberRoute = routes.EoriNumberController.onPageLoad(mrn, NormalMode).url
+  lazy val eoriNumberRoute = routes.ConsigneeEoriNumberController.onPageLoad(mrn, NormalMode).url
 
   "EoriNumber Controller" - {
 
@@ -53,7 +53,7 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar with NunjucksS
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
       val userAnswers = UserAnswers(mrn)
-        .set(EoriConfirmationPage, true)
+        .set(ConsigneeEoriConfirmationPage, true)
         .success
         .value
         .set(ConsigneeNamePage, "Fred")
@@ -88,13 +88,13 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar with NunjucksS
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
       val userAnswers = UserAnswers(mrn)
-        .set(EoriConfirmationPage, false)
+        .set(ConsigneeEoriConfirmationPage, false)
         .success
         .value
         .set(ConsigneeNamePage, traderName)
         .success
         .value
-        .set(EoriNumberPage, eoriNumber)
+        .set(ConsigneeEoriNumberPage, eoriNumber)
         .success
         .value
 
@@ -131,7 +131,7 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar with NunjucksS
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
       val userAnswers = UserAnswers(mrn)
-        .set(EoriConfirmationPage, false)
+        .set(ConsigneeEoriConfirmationPage, false)
         .success
         .value
         .set(ConsigneeNamePage, traderName)
@@ -162,7 +162,7 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar with NunjucksS
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
       val userAnswers = UserAnswers(mrn)
-        .set(EoriConfirmationPage, false)
+        .set(ConsigneeEoriConfirmationPage, false)
         .success
         .value
         .set(ConsigneeNamePage, traderName)

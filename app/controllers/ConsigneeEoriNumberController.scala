@@ -17,29 +17,29 @@
 package controllers
 
 import controllers.actions._
-import forms.EoriConfirmationFormProvider
+import forms.EoriNumberFormProvider
 import javax.inject.Inject
 import models.{Mode, MovementReferenceNumber}
 import navigation.Navigator
-import pages.{ConsigneeNamePage, EoriConfirmationPage}
+import pages.{ConsigneeAddressPage, ConsigneeEoriConfirmationPage, ConsigneeEoriNumberPage, ConsigneeNamePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
-import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
+import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class EoriConfirmationController @Inject()(
+class ConsigneeEoriNumberController @Inject()(
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
   navigator: Navigator,
   identify: IdentifierAction,
   getData: DataRetrievalActionProvider,
   requireData: DataRequiredAction,
-  formProvider: EoriConfirmationFormProvider,
+  formProvider: EoriNumberFormProvider,
   val controllerComponents: MessagesControllerComponents,
   renderer: Renderer
 )(implicit ec: ExecutionContext)
@@ -51,22 +51,22 @@ class EoriConfirmationController @Inject()(
     implicit request =>
       request.userAnswers.get(ConsigneeNamePage) match {
         case Some(consigneeName) =>
-          val preparedForm = request.userAnswers.get(EoriConfirmationPage) match {
+          val preparedForm = request.userAnswers.get(ConsigneeEoriNumberPage) match {
             case None        => formProvider(consigneeName)
             case Some(value) => formProvider(consigneeName).fill(value)
           }
-
           val json = Json.obj(
             "form"          -> preparedForm,
-            "mode"          -> mode,
             "mrn"           -> mrn,
-            "radios"        -> Radios.yesNo(preparedForm("value")),
-            "consigneeName" -> consigneeName,
-            "eoriNumber"    -> request.eoriNumber
+            "mode"          -> mode,
+            "eoriNumber"    -> request.eoriNumber,
+            "consigneeName" -> consigneeName
           )
 
-          renderer.render("eoriConfirmation.njk", json).map(Ok(_))
+          renderer.render("eoriNumber.njk", json).map(Ok(_))
+
         case _ => Future.successful(Redirect(routes.SessionExpiredController.onPageLoad()))
+
       }
   }
 
@@ -80,23 +80,22 @@ class EoriConfirmationController @Inject()(
               formWithErrors => {
 
                 val json = Json.obj(
-                  "form"          -> formWithErrors,
-                  "mode"          -> mode,
-                  "mrn"           -> mrn,
-                  "radios"        -> Radios.yesNo(formWithErrors("value")),
-                  "consigneeName" -> consigneeName,
-                  "eoriNumber"    -> request.eoriNumber
+                  "form"       -> formWithErrors,
+                  "mrn"        -> mrn,
+                  "mode"       -> mode,
+                  "eoriNumber" -> request.eoriNumber
                 )
 
-                renderer.render("eoriConfirmation.njk", json).map(BadRequest(_))
+                renderer.render("eoriNumber.njk", json).map(BadRequest(_))
               },
               value =>
                 for {
-                  updatedAnswers <- Future.fromTry(request.userAnswers.set(EoriConfirmationPage, value))
+                  updatedAnswers <- Future.fromTry(request.userAnswers.set(ConsigneeEoriNumberPage, value))
                   _              <- sessionRepository.set(updatedAnswers)
-                } yield Redirect(navigator.nextPage(EoriConfirmationPage, mode, updatedAnswers))
+                } yield Redirect(navigator.nextPage(ConsigneeEoriNumberPage, mode, updatedAnswers))
             )
         case _ => Future.successful(Redirect(routes.SessionExpiredController.onPageLoad()))
+
       }
   }
 }

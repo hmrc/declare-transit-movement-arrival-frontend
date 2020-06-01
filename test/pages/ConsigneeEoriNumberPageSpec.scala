@@ -18,14 +18,14 @@ package pages
 
 import pages.behaviours.PageBehaviours
 
-class EoriNumberPageSpec extends PageBehaviours {
+class ConsigneeEoriNumberPageSpec extends PageBehaviours {
 
   "EoriNumberPage" - {
 
-    beRetrievable[String](EoriNumberPage)
+    beRetrievable[String](ConsigneeEoriNumberPage)
 
-    beSettable[String](EoriNumberPage)
+    beSettable[String](ConsigneeEoriNumberPage)
 
-    beRemovable[String](EoriNumberPage)
+    beRemovable[String](ConsigneeEoriNumberPage)
   }
 }

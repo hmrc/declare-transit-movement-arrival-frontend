@@ -37,18 +37,18 @@ trait UserAnswersEntryGenerators extends PageGenerators {
       } yield (page, value)
     }
 
-  implicit lazy val arbitraryEoriNumberUserAnswersEntry: Arbitrary[(EoriNumberPage.type, JsValue)] =
+  implicit lazy val arbitraryEoriNumberUserAnswersEntry: Arbitrary[(ConsigneeEoriNumberPage.type, JsValue)] =
     Arbitrary {
       for {
-        page  <- arbitrary[EoriNumberPage.type]
+        page  <- arbitrary[ConsigneeEoriNumberPage.type]
         value <- arbitrary[String].suchThat(_.nonEmpty).map(Json.toJson(_))
       } yield (page, value)
     }
 
-  implicit lazy val arbitraryEoriConfirmationUserAnswersEntry: Arbitrary[(EoriConfirmationPage.type, JsValue)] =
+  implicit lazy val arbitraryEoriConfirmationUserAnswersEntry: Arbitrary[(ConsigneeEoriConfirmationPage.type, JsValue)] =
     Arbitrary {
       for {
-        page  <- arbitrary[EoriConfirmationPage.type]
+        page  <- arbitrary[ConsigneeEoriConfirmationPage.type]
         value <- arbitrary[Boolean].map(Json.toJson(_))
       } yield (page, value)
     }

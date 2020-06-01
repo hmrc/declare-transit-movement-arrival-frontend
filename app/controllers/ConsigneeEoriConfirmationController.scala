@@ -17,29 +17,29 @@
 package controllers
 
 import controllers.actions._
-import forms.EoriNumberFormProvider
+import forms.EoriConfirmationFormProvider
 import javax.inject.Inject
 import models.{Mode, MovementReferenceNumber}
 import navigation.Navigator
-import pages.{ConsigneeAddressPage, ConsigneeNamePage, EoriConfirmationPage, EoriNumberPage}
+import pages.{ConsigneeEoriConfirmationPage, ConsigneeNamePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
-import uk.gov.hmrc.viewmodels.NunjucksSupport
+import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class EoriNumberController @Inject()(
+class ConsigneeEoriConfirmationController @Inject()(
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
   navigator: Navigator,
   identify: IdentifierAction,
   getData: DataRetrievalActionProvider,
   requireData: DataRequiredAction,
-  formProvider: EoriNumberFormProvider,
+  formProvider: EoriConfirmationFormProvider,
   val controllerComponents: MessagesControllerComponents,
   renderer: Renderer
 )(implicit ec: ExecutionContext)
@@ -51,22 +51,22 @@ class EoriNumberController @Inject()(
     implicit request =>
       request.userAnswers.get(ConsigneeNamePage) match {
         case Some(consigneeName) =>
-          val preparedForm = request.userAnswers.get(EoriNumberPage) match {
+          val preparedForm = request.userAnswers.get(ConsigneeEoriConfirmationPage) match {
             case None        => formProvider(consigneeName)
             case Some(value) => formProvider(consigneeName).fill(value)
           }
+
           val json = Json.obj(
             "form"          -> preparedForm,
-            "mrn"           -> mrn,
             "mode"          -> mode,
-            "eoriNumber"    -> request.eoriNumber,
-            "consigneeName" -> consigneeName
+            "mrn"           -> mrn,
+            "radios"        -> Radios.yesNo(preparedForm("value")),
+            "consigneeName" -> consigneeName,
+            "eoriNumber"    -> request.eoriNumber
           )
 
-          renderer.render("eoriNumber.njk", json).map(Ok(_))
-
+          renderer.render("eoriConfirmation.njk", json).map(Ok(_))
         case _ => Future.successful(Redirect(routes.SessionExpiredController.onPageLoad()))
-
       }
   }
 
@@ -80,22 +80,23 @@ class EoriNumberController @Inject()(
               formWithErrors => {
 
                 val json = Json.obj(
-                  "form"       -> formWithErrors,
-                  "mrn"        -> mrn,
-                  "mode"       -> mode,
-                  "eoriNumber" -> request.eoriNumber
+                  "form"          -> formWithErrors,
+                  "mode"          -> mode,
+                  "mrn"           -> mrn,
+                  "radios"        -> Radios.yesNo(formWithErrors("value")),
+                  "consigneeName" -> consigneeName,
+                  "eoriNumber"    -> request.eoriNumber
                 )
 
-                renderer.render("eoriNumber.njk", json).map(BadRequest(_))
+                renderer.render("eoriConfirmation.njk", json).map(BadRequest(_))
               },
               value =>
                 for {
-                  updatedAnswers <- Future.fromTry(request.userAnswers.set(EoriNumberPage, value))
+                  updatedAnswers <- Future.fromTry(request.userAnswers.set(ConsigneeEoriConfirmationPage, value))
                   _              <- sessionRepository.set(updatedAnswers)
-                } yield Redirect(navigator.nextPage(EoriNumberPage, mode, updatedAnswers))
+                } yield Redirect(navigator.nextPage(ConsigneeEoriConfirmationPage, mode, updatedAnswers))
             )
         case _ => Future.successful(Redirect(routes.SessionExpiredController.onPageLoad()))
-
       }
   }
 }

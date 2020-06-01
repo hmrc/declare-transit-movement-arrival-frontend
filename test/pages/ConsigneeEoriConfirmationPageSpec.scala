@@ -16,11 +16,16 @@
 
 package pages
 
-import play.api.libs.json.JsPath
+import pages.behaviours.PageBehaviours
 
-case object EoriConfirmationPage extends QuestionPage[Boolean] {
+class ConsigneeEoriConfirmationPageSpec extends PageBehaviours {
 
-  override def path: JsPath = JsPath \ toString
+  "EoriConfirmationPage" - {
 
-  override def toString: String = "eoriConfirmation"
+    beRetrievable[Boolean](ConsigneeEoriConfirmationPage)
+
+    beSettable[Boolean](ConsigneeEoriConfirmationPage)
+
+    beRemovable[Boolean](ConsigneeEoriConfirmationPage)
+  }
 }

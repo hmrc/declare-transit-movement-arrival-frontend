@@ -88,26 +88,26 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
             navigator
               .nextPage(ConsigneeNamePage, NormalMode, answers)
-              .mustBe(routes.EoriConfirmationController.onPageLoad(answers.id, NormalMode))
+              .mustBe(routes.ConsigneeEoriConfirmationController.onPageLoad(answers.id, NormalMode))
         }
       }
       "must go from'eoriConfirmation page to eoriNumber page when 'No' is selcted" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
-            val updatedAnswers = answers.set(EoriConfirmationPage, false).success.value
+            val updatedAnswers = answers.set(ConsigneeEoriConfirmationPage, false).success.value
 
             navigator
-              .nextPage(EoriConfirmationPage, NormalMode, updatedAnswers)
-              .mustBe(routes.EoriNumberController.onPageLoad(answers.id, NormalMode))
+              .nextPage(ConsigneeEoriConfirmationPage, NormalMode, updatedAnswers)
+              .mustBe(routes.ConsigneeEoriNumberController.onPageLoad(answers.id, NormalMode))
         }
       }
       "must go from'eoriConfirmation page to consigneeAddress page when 'Yes' is selcted" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
-            val updatedAnswers = answers.set(EoriConfirmationPage, true).success.value
+            val updatedAnswers = answers.set(ConsigneeEoriConfirmationPage, true).success.value
 
             navigator
-              .nextPage(EoriConfirmationPage, NormalMode, updatedAnswers)
+              .nextPage(ConsigneeEoriConfirmationPage, NormalMode, updatedAnswers)
               .mustBe(routes.ConsigneeAddressController.onPageLoad(answers.id, NormalMode))
         }
       }
@@ -115,11 +115,11 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         forAll(arbitrary[UserAnswers]) {
           answers =>
             navigator
-              .nextPage(EoriNumberPage, NormalMode, answers)
+              .nextPage(ConsigneeEoriNumberPage, NormalMode, answers)
               .mustBe(routes.ConsigneeAddressController.onPageLoad(answers.id, NormalMode))
         }
       }
-      "must go from consigneeAddress page to Incident On routwe page" in {
+      "must go from consigneeAddress page to Incident On route page" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
             navigator
