@@ -23,6 +23,7 @@ import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import generators.MessagesModelGenerators
 import helper.WireMockServerHandler
+import models.messages.ErrorType.DuplicateMrn
 import models.messages._
 import models.{ArrivalId, MessagesLocation, MessagesSummary}
 import org.scalacheck.Arbitrary.arbitrary
@@ -139,7 +140,7 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
             LocalDate.of(2019, 10, 18),
             None,
             Some("Invalid IE007 Message"),
-            List(FunctionalError(ErrorType(92), ErrorPointer("Message type"), None, Some("GB007A")))
+            List(FunctionalError(DuplicateMrn, ErrorPointer("Message type"), None, Some("GB007A")))
           ))
         connector.getRejectionMessage(rejectionLocation).futureValue mustBe expectedResult
       }

@@ -47,7 +47,7 @@ class ArrivalNotificationRejectionMessageSpec extends SpecBase with ScalaCheckDr
                 <ArrRejDatHEA142>{dateFormatted(minimalRejectionMessage.rejectionDate)}</ArrRejDatHEA142>
               </HEAHEA>
               <FUNERRER1>
-                <ErrTypER11>{functionalError.errorType.value}</ErrTypER11>
+                <ErrTypER11>{functionalError.errorType}</ErrTypER11>
                 <ErrPoiER12>{functionalError.pointer.value}</ErrPoiER12>
               </FUNERRER1>
             </CC008A>
@@ -82,7 +82,7 @@ class ArrivalNotificationRejectionMessageSpec extends SpecBase with ScalaCheckDr
                 <ArrRejReaHEA242>{fullRejectionMessage.reason.value}</ArrRejReaHEA242>
               </HEAHEA>
               <FUNERRER1>
-                <ErrTypER11>{fullFunctionalError.errorType.value}</ErrTypER11>
+                <ErrTypER11>{fullFunctionalError.errorType}</ErrTypER11>
                 <ErrPoiER12>{fullFunctionalError.pointer.value}</ErrPoiER12>
                 <ErrReaER13>{fullFunctionalError.reason.value}</ErrReaER13>
                 <OriAttValER14>{fullFunctionalError.originalAttributeValue.value}</OriAttValER14>

@@ -16,26 +16,15 @@
 
 package models.messages
 
-import cats.syntax.all._
-import com.lucidchart.open.xtract.{__, XmlReader}
-import play.api.libs.json.{Json, OWrites}
-import models.messages.ErrorType._
+import org.scalatest.{FreeSpec, MustMatchers}
 
-final case class FunctionalError(
-  errorType: ErrorType,
-  pointer: ErrorPointer,
-  reason: Option[String],
-  originalAttributeValue: Option[String]
-)
+class ErrorTypeSpec extends FreeSpec with MustMatchers {
 
-object FunctionalError {
+  "ErrorType" - {
+    "read integer as object" in {
+      val xml = <ErrTypER11>90</ErrTypER11>
+      ErrorType.xmlDateReads.read(xml) mustBe " "
+    }
+  }
 
-  implicit val writes: OWrites[FunctionalError] = Json.writes[FunctionalError]
-
-  implicit val xmlReader: XmlReader[FunctionalError] = (
-    __.read[ErrorType],
-    __.read[ErrorPointer],
-    (__ \ "ErrReaER13").read[String].optional,
-    (__ \ "OriAttValER14").read[String].optional
-  ).mapN(apply)
 }

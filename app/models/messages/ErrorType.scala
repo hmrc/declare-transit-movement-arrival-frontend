@@ -18,6 +18,7 @@ package models.messages
 
 import com.lucidchart.open.xtract._
 import models.Enumerable
+import play.api.libs.json.{JsNumber, Writes}
 
 import scala.xml.NodeSeq
 
@@ -27,13 +28,21 @@ sealed trait ErrorType {
 
 object ErrorType extends Enumerable.Implicits {
 
+  implicit val writes: Writes[ErrorType] = Writes[ErrorType] {
+    case genericError: GenericError => JsNumber(genericError.code)
+    case mrnError: MRNError         => JsNumber(mrnError.code)
+  }
+
   sealed trait GenericError extends ErrorType
-  sealed trait MRNError     extends ErrorType
+  sealed trait MRNError extends ErrorType
 
-  case object UnknownMrn   extends MRNError {val code: Int = 90}
-  case object DuplicateMrn extends MRNError {val code: Int = 91}
-  case object InvalidMrn   extends MRNError {val code: Int = 93}
+  case object IncorrectValue extends GenericError { val code: Int = 12 }
+  case object Missingvalue extends GenericError { val code: Int   = 13 }
+  case object InvalidDecimal extends MRNError { val code: Int     = 19 }
 
+  case object UnknownMrn extends MRNError { val code: Int   = 90 }
+  case object DuplicateMrn extends MRNError { val code: Int = 91 }
+  case object InvalidMrn extends MRNError { val code: Int   = 93 }
 
   val values = Seq(
     UnknownMrn,

@@ -46,7 +46,7 @@ class ArrivalRejectionController @Inject()(
       if (frontendAppConfig.featureToggleArrivalRejection) {
         arrivalRejectionService.arrivalRejectionMessage(arrivalId).flatMap {
           case Some(rejectionMessage) =>
-            val errorType = rejectionMessage.errors.head.errorType.value
+            val errorType = rejectionMessage.errors.head.errorType.code
 
             if (errorType == 90 || errorType == 91 || errorType == 93) {
 
