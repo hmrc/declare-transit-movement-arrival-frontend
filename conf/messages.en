@@ -462,3 +462,12 @@ consigneeAddress.error.buildingAndStreet.length = Building and street must be 35
 consigneeAddress.error.city.length = Town or city must be 35 characters or less
 consigneeAddress.error.postcode.length = Postcode must be 9 characters or less
 consigneeAddress.change.hidden = address of consignee
+
+arrivalRejection.title = There is a problem with this arrival notification
+arrivalRejection.heading = There is a problem with this arrival notification
+arrivalRejection.you.can = You can:
+arrivalRejection.errorCode = Error code
+arrivalRejection.pointer = Pointer
+arrivalRejection.conflicting.information = There is conflicting information that must be fixed.
+arrivalRejection.contact = contact the New Computerised Transit System helpdesk to fix the information (opens in a new window or tab)
+arrivalRejection.create.arrival = create a new arrival notification

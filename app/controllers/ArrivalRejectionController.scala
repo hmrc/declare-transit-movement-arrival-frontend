@@ -17,15 +17,14 @@
 package controllers
 
 import config.FrontendAppConfig
-import connectors.ArrivalMovementConnector
 import controllers.actions._
 import javax.inject.Inject
-import models.messages.ArrivalNotificationRejectionMessage
-import models.{ArrivalId, MessageId}
+import models.ArrivalId
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
+import services.ArrivalRejectionService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -35,20 +34,28 @@ class ArrivalRejectionController @Inject()(
   identify: IdentifierAction,
   val controllerComponents: MessagesControllerComponents,
   renderer: Renderer,
-  arrivalMovementConnector: ArrivalMovementConnector,
+  appConfig: FrontendAppConfig,
+  arrivalRejectionService: ArrivalRejectionService,
   frontendAppConfig: FrontendAppConfig
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(arrivalId: ArrivalId, messageId: MessageId): Action[AnyContent] = identify.async {
+  def onPageLoad(arrivalId: ArrivalId): Action[AnyContent] = identify.async {
     implicit request =>
       if (frontendAppConfig.featureToggleArrivalRejection) {
-        arrivalMovementConnector.getRejectionMessage(arrivalId, messageId) flatMap {
-          rejectionMessage: ArrivalNotificationRejectionMessage =>
-            val json = Json.obj("mrn" -> rejectionMessage.movementReferenceNumber, "errors" -> rejectionMessage.errors)
+        arrivalRejectionService.arrivalRejectionMessage(arrivalId).flatMap {
+          case Some(rejectionMessage) =>
+            val json = Json.obj(
+              "mrn"              -> rejectionMessage.movementReferenceNumber,
+              "errors"           -> rejectionMessage.errors,
+              "contactUrl"       -> appConfig.nctsEnquiriesUrl,
+              "createArrivalUrl" -> routes.MovementReferenceNumberController.onPageLoad().url
+            )
 
             renderer.render("arrivalRejection.njk", json).map(Ok(_))
+
+          case _ => Future.successful(Redirect(routes.TechnicalDifficultiesController.onPageLoad()))
         }
       } else {
         Future.successful(Redirect(routes.UnauthorisedController.onPageLoad()))

@@ -1,13 +1,19 @@
 {% extends "includes/layout.njk" %}
 
-{% from "macros/title.njk"                         import title %}
-{% from "govuk/components/button/macro.njk"        import govukButton %}
+{% from "govuk/components/back-link/macro.njk"        import govukBackLink %}
+{% from "macros/title.njk"                            import title %}
+{% from "govuk/components/button/macro.njk"           import govukButton %}
+{% from "govuk/components/summary-list/macro.njk"     import govukSummaryList %}
 
 {% block pageTitle %}
   {{ title(messages("arrivalRejection.title")) }}
 {% endblock %}
 
 {% block mainContent %}
+
+{{ govukBackLink({
+    text: messages("site.back")
+  }) }}
 
   <div class="govuk-main-wrapper">
     <div class="govuk-grid-row">
@@ -17,31 +23,37 @@
           {{ messages("arrivalRejection.heading") }}
         </h1>
 
-        <dl class="govuk-summary-list govuk-summary-list">
-          <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key" style="width: 48%">
-              {{ messages("site.movement.reference.number") }}
-            </dt>
-            <dd class="govuk-summary-list__value" style="width: 62%">
-              {{ mrn }}
-            </dd>
-          </div>
-        </dl>
-        <ul>
+        <p class="govuk-body">{{ messages("arrivalRejection.conflicting.information") }}</p>
+
         {% for error in errors %}
-          <li> <p class="govuk-body"> {{ error.pointer.value }} </p></li>
-        {% else %}
-          <li>This would display if the 'item' collection were empty</li>
+
+          <dl class="govuk-summary-list">
+                  <div class="govuk-summary-list__row">
+                      <dt class="govuk-summary-list__key">
+                     {{ messages("arrivalRejection.errorCode") }}
+                      </dt>
+                      <dd class="govuk-summary-list__value">
+                      {{ error.errorType.value }}
+                      </dd>
+                  </div>
+                  <div class="govuk-summary-list__row">
+                      <dt class="govuk-summary-list__key">
+                     {{ messages("arrivalRejection.pointer") }}
+                      </dt>
+                      <dd class="govuk-summary-list__value">
+                      {{ error.pointer.value }}
+                      </dd>
+                  </div>
+              </dl>
+
         {% endfor %}
-        </ul>
 
-        {{ govukButton({
-                    text: messages("site.continue"),
-                    attributes: {id:"submit"}
-                  }) }}
-
+        <p class="govuk-body">{{ messages("arrivalRejection.you.can") }}</p>
+            <ol class="govuk-list govuk-list--bullet">
+           <li> <a class="govuk-link" href={{createArrivalUrl}} >{{ messages("arrivalRejection.create.arrival") }}</a>
+           <li> <a class="govuk-link" href={{contactUrl}} target="_blank">{{ messages("arrivalRejection.contact") }}</a> </li>
+            </ol>
       </div>
     </div>
   </div>
-
 {% endblock %}

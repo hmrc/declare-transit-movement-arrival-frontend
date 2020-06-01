@@ -18,8 +18,8 @@ package generators
 
 import java.time.{LocalDate, LocalTime}
 
-import models.messages._
 import models._
+import models.messages._
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 
@@ -137,7 +137,7 @@ trait MessagesModelGenerators extends Generators {
         countryCode   <- stringsWithMaxLength(EnRouteEvent.Constants.countryCodeLength)
         alreadyInNcts <- arbitrary[Boolean]
         eventDetails  <- arbitrary[Option[EventDetails]]
-        seals         <- arbitrary[Seq[Seal]]
+        seals         <- listWithMaxLength[Seal](1)
       } yield {
 
         val removeEmptySealsList = seals match {
@@ -302,7 +302,7 @@ trait MessagesModelGenerators extends Generators {
         procedureTypeFlag        <- arbitrary[ProcedureTypeFlag]
         notificationDate         <- arbitrary[LocalDate]
         presentationOfficeId     <- stringsWithMaxLength(CustomsOfficeOfPresentation.Constants.presentationOfficeLength)
-        presentationOfficeName   <- arbitrary[String]
+        presentationOfficeName   <- nonEmptyString
       } yield
         Header(movementReferenceNumber,
                customsSubPlace,
@@ -322,7 +322,7 @@ trait MessagesModelGenerators extends Generators {
         header            <- arbitrary[Header].map(_.copy(notificationDate = meta.dateOfPreparation))
         traderDestination <- arbitrary[TraderDestination]
         customsOffice     <- arbitrary[CustomsOfficeOfPresentation].map(_.copy(presentationOffice = header.presentationOfficeId))
-        enRouteEvents     <- Gen.option(listWithMaxLength[EnRouteEvent](2))
+        enRouteEvents     <- Gen.option(listWithMaxLength[EnRouteEvent](1))
       } yield ArrivalMovementRequest(meta, header, traderDestination, customsOffice, enRouteEvents)
     }
   }

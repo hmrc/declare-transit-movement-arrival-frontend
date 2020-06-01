@@ -16,16 +16,22 @@
 
 package models
 
+import play.api.libs.json.{__, Reads}
 import play.api.mvc.PathBindable
 
-case class ArrivalId(value: String)
+case class ArrivalId(value: Int)
 
 object ArrivalId {
   implicit def pathBindable: PathBindable[ArrivalId] = new PathBindable[ArrivalId] {
     override def bind(key: String, value: String): Either[String, ArrivalId] =
-      if (value.nonEmpty) Right(ArrivalId(value)) else Left("Invalid Arrival Id")
+      implicitly[PathBindable[Int]].bind(key, value) match {
+        case Right(id) if id > 0 => Right(ArrivalId(id))
+        case _                   => Left("Invalid Arrival Id")
+      }
 
     override def unbind(key: String, value: ArrivalId): String =
-      value.value
+      implicitly[PathBindable[Int]].unbind(key, value.value)
   }
+
+  implicit def reads: Reads[ArrivalId] = __.read[Int] map ArrivalId.apply
 }
