@@ -17,11 +17,11 @@
 package controllers
 
 import controllers.actions._
-import forms.MovementReferenceNumberFormProvider
+import forms.UpdateRejectedMovementReferenceNumberFormProvider
 import javax.inject.Inject
 import models.{ArrivalId, RejectionMode, UserAnswers}
 import navigation.Navigator
-import pages.MovementReferenceNumberPage
+import pages.{MovementReferenceNumberPage, UpdateRejectedMovementReferenceNumberPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -34,7 +34,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class UpdateRejectedMovementReferenceNumberController @Inject()(override val messagesApi: MessagesApi,
                                                                 navigator: Navigator,
                                                                 identify: IdentifierAction,
-                                                                formProvider: MovementReferenceNumberFormProvider,
+                                                                formProvider: UpdateRejectedMovementReferenceNumberFormProvider,
                                                                 val controllerComponents: MessagesControllerComponents,
                                                                 renderer: Renderer)(implicit ec: ExecutionContext)
     extends FrontendBaseController
@@ -61,7 +61,7 @@ class UpdateRejectedMovementReferenceNumberController @Inject()(override val mes
 
             renderer.render("movementReferenceNumber.njk", json).map(BadRequest(_))
           },
-          value => Future(Redirect(navigator.nextPage(MovementReferenceNumberPage, RejectionMode, UserAnswers(value))))
+          value => Future(Redirect(navigator.nextRejectionPage(UpdateRejectedMovementReferenceNumberPage, value, arrivalId)))
         )
   }
 }

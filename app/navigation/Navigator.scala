@@ -24,7 +24,7 @@ import controllers.routes
 import derivable.{DeriveNumberOfContainers, DeriveNumberOfEvents, DeriveNumberOfSeals}
 import models.GoodsLocation._
 import models.TranshipmentType.{DifferentContainer, DifferentContainerAndVehicle, DifferentVehicle}
-import models.{CheckMode, Index, Mode, NormalMode, UserAnswers}
+import models.{ArrivalId, CheckMode, Index, Mode, MovementReferenceNumber, NormalMode, RejectionMode, UserAnswers}
 import pages._
 import pages.events._
 import pages.events.seals._
@@ -108,6 +108,12 @@ class Navigator @Inject()() {
       }
   }
 
+  def nextRejectionPage(page: Page, mrn: MovementReferenceNumber, arrivalId: ArrivalId): Call = 
+    page match {
+      case UpdateRejectedMovementReferenceNumberPage => routes.CheckYourAnswersRejectionsController.onPageLoad(mrn, arrivalId)
+      case _ => routes.TechnicalDifficultiesController.onPageLoad()
+    }
+  
   // format: on
 
   private def transportIdentity(eventIndex: Index)(ua: UserAnswers): Option[Call] =

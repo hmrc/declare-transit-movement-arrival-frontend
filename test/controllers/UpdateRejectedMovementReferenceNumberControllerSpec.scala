@@ -68,7 +68,6 @@ class UpdateRejectedMovementReferenceNumberControllerSpec extends SpecBase with 
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
-      when()
 
       val application    = applicationBuilder(userAnswers = None).build()
       val request        = FakeRequest(GET, movementReferenceNumberRoute)

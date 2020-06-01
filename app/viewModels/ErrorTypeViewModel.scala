@@ -14,17 +14,6 @@
  * limitations under the License.
  */
 
-package navigation
+package viewModels
 
-import play.api.mvc.Call
-import pages._
-import models.{ArrivalId, Mode, MovementReferenceNumber, NormalMode, UserAnswers}
-
-class FakeNavigator(desiredRoute: Call, mode: Mode = NormalMode) extends Navigator {
-
-  override def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call =
-    desiredRoute
-
-  override def nextRejectionPage(page: Page, mrn: MovementReferenceNumber, arrivalId: ArrivalId): Call =
-    desiredRoute
-}
+class ErrorTypeViewModel {}
