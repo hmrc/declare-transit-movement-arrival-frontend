@@ -19,6 +19,7 @@ package models.messages
 import base.SpecBase
 import com.lucidchart.open.xtract.XmlReader
 import generators.MessagesModelGenerators
+import models.messages.ErrorType.{InvalidMrn, UnknownMrn}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import utils.Format._
@@ -48,7 +49,7 @@ class ArrivalNotificationRejectionMessageSpec extends SpecBase with ScalaCheckDr
               </HEAHEA>
               <FUNERRER1>
                 <ErrTypER11>{functionalError.errorType}</ErrTypER11>
-                <ErrPoiER12>{functionalError.pointer.value}</ErrPoiER12>
+                <ErrPoiER12>{functionalError.pointer}</ErrPoiER12>
               </FUNERRER1>
             </CC008A>
           }
