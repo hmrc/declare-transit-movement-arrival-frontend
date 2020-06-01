@@ -34,12 +34,15 @@ package controllers
 
 import base.SpecBase
 import forms.MovementReferenceNumberFormProvider
+import generators.MessagesModelGenerators
 import matchers.JsonMatchers
 import models.ArrivalId
+import models.messages.ArrivalMovementRequest
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
-import org.mockito.Mockito.{times, verify, when}
+import org.mockito.Mockito._
+import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
@@ -48,28 +51,49 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import repositories.SessionRepository
+import services.ArrivalMovementMessageService
 import uk.gov.hmrc.viewmodels.NunjucksSupport
+import models.XMLWrites._
 
 import scala.concurrent.Future
 
-class UpdateRejectedMovementReferenceNumberControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class UpdateRejectedMovementReferenceNumberControllerSpec
+    extends SpecBase
+    with MessagesModelGenerators
+    with MockitoSugar
+    with NunjucksSupport
+    with JsonMatchers {
 
   def onwardRoute = Call("GET", "/foo")
 
-  val formProvider      = new MovementReferenceNumberFormProvider()
-  val form              = formProvider()
-  private val arrivalId = ArrivalId(1)
+  val formProvider                              = new MovementReferenceNumberFormProvider()
+  val form                                      = formProvider()
+  private val mockArrivalMovementMessageService = mock[ArrivalMovementMessageService]
+  private val arrivalId                         = ArrivalId(1)
 
   lazy val movementReferenceNumberRoute = routes.UpdateRejectedMovementReferenceNumberController.onPageLoad(arrivalId).url
 
+  override def beforeEach: Unit = {
+    super.beforeEach()
+    reset(mockArrivalMovementMessageService)
+  }
+
   "MovementReferenceNumber Controller" - {
 
-    "must return OK and the correct view for a GET" in {
+    "must return OK and the correct view with pre-populated MRN for a GET" in {
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
+      val arrivalMovementRequest: ArrivalMovementRequest = arbitrary[ArrivalMovementRequest].sample.value
+      when(mockArrivalMovementMessageService.getArrivalNotificationMessage(any())(any(), any()))
+        .thenReturn(Future.successful(Some(arrivalMovementRequest.toXml)))
 
-      val application    = applicationBuilder(userAnswers = None).build()
+      val application =
+        applicationBuilder(userAnswers = None)
+          .overrides(
+            bind[ArrivalMovementMessageService].toInstance(mockArrivalMovementMessageService)
+          )
+          .build()
       val request        = FakeRequest(GET, movementReferenceNumberRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
@@ -80,12 +104,36 @@ class UpdateRejectedMovementReferenceNumberControllerSpec extends SpecBase with 
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
+      val filledForm = form.bind(Map("value" -> arrivalMovementRequest.header.movementReferenceNumber))
+
       val expectedJson = Json.obj(
-        "form" -> form
+        "form" -> filledForm
       )
 
       templateCaptor.getValue mustEqual "movementReferenceNumber.njk"
       jsonCaptor.getValue must containJson(expectedJson)
+
+      application.stop()
+    }
+
+    "must redirect to TechnicalDifficulties page when getArrivalNotification returns None" in {
+
+      when(mockArrivalMovementMessageService.getArrivalNotificationMessage(any())(any(), any()))
+        .thenReturn(Future.successful(None))
+
+      val application =
+        applicationBuilder(userAnswers = None)
+          .overrides(
+            bind[ArrivalMovementMessageService].toInstance(mockArrivalMovementMessageService)
+          )
+          .build()
+      val request        = FakeRequest(GET, movementReferenceNumberRoute)
+      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
 
       application.stop()
     }

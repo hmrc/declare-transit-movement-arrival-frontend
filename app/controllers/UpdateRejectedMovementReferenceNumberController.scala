@@ -19,22 +19,25 @@ package controllers
 import controllers.actions._
 import forms.UpdateRejectedMovementReferenceNumberFormProvider
 import javax.inject.Inject
-import models.{ArrivalId, RejectionMode, UserAnswers}
+import models.{ArrivalId, MovementReferenceNumber}
 import navigation.Navigator
-import pages.{MovementReferenceNumberPage, UpdateRejectedMovementReferenceNumberPage}
+import pages.UpdateRejectedMovementReferenceNumberPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
+import services.ArrivalMovementMessageService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.xml.NodeSeq
 
 class UpdateRejectedMovementReferenceNumberController @Inject()(override val messagesApi: MessagesApi,
                                                                 navigator: Navigator,
                                                                 identify: IdentifierAction,
                                                                 formProvider: UpdateRejectedMovementReferenceNumberFormProvider,
+                                                                arrivalMovementMessageService: ArrivalMovementMessageService,
                                                                 val controllerComponents: MessagesControllerComponents,
                                                                 renderer: Renderer)(implicit ec: ExecutionContext)
     extends FrontendBaseController
@@ -45,9 +48,18 @@ class UpdateRejectedMovementReferenceNumberController @Inject()(override val mes
 
   def onPageLoad(arrivalId: ArrivalId): Action[AnyContent] = identify.async {
     implicit request =>
-      val json = Json.obj("form" -> form)
+      arrivalMovementMessageService.getArrivalNotificationMessage(arrivalId) flatMap {
+        case Some(xml: NodeSeq) =>
+          val mrn: NodeSeq = xml.\\("DocNumHEA5")
+          val preparedForm = MovementReferenceNumber(mrn.text) match {
+            case Some(mrn) => form.fill(mrn)
+            case _         => form
+          }
+          val json = Json.obj("form" -> preparedForm)
 
-      renderer.render("movementReferenceNumber.njk", json).map(Ok(_))
+          renderer.render("movementReferenceNumber.njk", json).map(Ok(_))
+        case _ => Future.successful(Redirect(routes.TechnicalDifficultiesController.onPageLoad()))
+      }
   }
 
   def onSubmit(arrivalId: ArrivalId): Action[AnyContent] = identify.async {
