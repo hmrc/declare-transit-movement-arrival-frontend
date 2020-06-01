@@ -51,13 +51,14 @@ class UpdateRejectedMovementReferenceNumberController @Inject()(override val mes
       arrivalMovementMessageService.getArrivalNotificationMessage(arrivalId) flatMap {
         case Some(xml: NodeSeq) if xml.\\("DocNumHEA5").nonEmpty =>
           val mrn: NodeSeq = xml.\\("DocNumHEA5")
-          val preparedForm = MovementReferenceNumber(mrn.text) match {
-            case Some(mrn) => form.fill(mrn)
-            case _         => form
-          }
-          val json = Json.obj("form" -> preparedForm)
 
-          renderer.render("movementReferenceNumber.njk", json).map(Ok(_))
+          MovementReferenceNumber(mrn.text) match {
+            case Some(mrn) =>
+              val json = Json.obj("form" -> form.fill(mrn))
+              renderer.render("movementReferenceNumber.njk", json).map(Ok(_))
+
+            case _ => Future.successful(Redirect(routes.TechnicalDifficultiesController.onPageLoad()))
+          }
         case _ => Future.successful(Redirect(routes.TechnicalDifficultiesController.onPageLoad()))
       }
   }

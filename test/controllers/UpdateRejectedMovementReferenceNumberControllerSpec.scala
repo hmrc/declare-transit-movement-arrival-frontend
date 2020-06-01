@@ -116,7 +116,7 @@ class UpdateRejectedMovementReferenceNumberControllerSpec
       application.stop()
     }
 
-    "must redirect to TechnicalDifficulties page when getArrivalNotification's brings invalid xml" in {
+    "must redirect to TechnicalDifficulties page when getArrivalNotification's returns invalid xml" in {
 
       val invalidXml = <node>test</node>
       when(mockArrivalMovementMessageService.getArrivalNotificationMessage(any())(any(), any()))
@@ -131,6 +131,28 @@ class UpdateRejectedMovementReferenceNumberControllerSpec
       val request        = FakeRequest(GET, movementReferenceNumberRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+
+      application.stop()
+    }
+
+    "must redirect to TechnicalDifficulties page when getArrivalNotification's returns xml with invalid mrn" in {
+
+      val arrivalMovementRequest: ArrivalMovementRequest = arbitrary[ArrivalMovementRequest].sample.value
+
+      when(mockArrivalMovementMessageService.getArrivalNotificationMessage(any())(any(), any()))
+        .thenReturn(Future.successful(Some(arrivalMovementRequest.copy(header = arrivalMovementRequest.header.copy(movementReferenceNumber = "mrn")).toXml)))
+
+      val application =
+        applicationBuilder(userAnswers = None)
+          .overrides(
+            bind[ArrivalMovementMessageService].toInstance(mockArrivalMovementMessageService)
+          )
+          .build()
+      val request        = FakeRequest(GET, movementReferenceNumberRoute)
 
       val result = route(application, request).value
 
