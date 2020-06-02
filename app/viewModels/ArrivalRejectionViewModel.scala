@@ -17,6 +17,7 @@
 package viewModels
 
 import controllers.routes
+import models.ArrivalId
 import models.messages.ArrivalNotificationRejectionMessage
 import models.messages.ErrorType.{DuplicateMrn, GenericError, InvalidMrn, MRNError, UnknownMrn}
 import play.api.libs.json.{JsObject, Json}
@@ -25,14 +26,14 @@ case class ArrivalRejectionViewModel(page: String, json: JsObject)
 
 object ArrivalRejectionViewModel {
 
-  def apply(rejectionMessage: ArrivalNotificationRejectionMessage, enquiriesUrl: String): ArrivalRejectionViewModel = {
+  def apply(rejectionMessage: ArrivalNotificationRejectionMessage, enquiriesUrl: String, arrivalId: ArrivalId): ArrivalRejectionViewModel = {
 
     def mrnJson(mrnError: MRNError): JsObject =
       Json.obj(
         "mrn"                        -> rejectionMessage.movementReferenceNumber,
         "errorKey"                   -> mrnMessage(mrnError),
         "contactUrl"                 -> enquiriesUrl,
-        "movementReferenceNumberUrl" -> routes.MovementReferenceNumberController.onPageLoad().url
+        "movementReferenceNumberUrl" -> routes.UpdateRejectedMRNController.onPageLoad(arrivalId).url
       )
 
     def genericJson: JsObject =

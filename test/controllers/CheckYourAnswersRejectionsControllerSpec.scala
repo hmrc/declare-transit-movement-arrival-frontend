@@ -101,5 +101,25 @@ class CheckYourAnswersRejectionsControllerSpec extends SpecBase with JsonMatcher
 
       application.stop()
     }
+
+    "must redirect to 'Technical Difficulties' page on internal server error" in {
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .overrides(bind[ArrivalNotificationService].toInstance(mockArrivalNotificationService))
+        .build()
+
+      when(mockArrivalNotificationService.update(any(), any())(any()))
+        .thenReturn(Future.successful(Some(HttpResponse(INTERNAL_SERVER_ERROR))))
+
+      val request = FakeRequest(POST, routes.CheckYourAnswersRejectionsController.onPost(mrn, ArrivalId(1)).url)
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+
+      redirectLocation(result).value mustEqual routes.TechnicalDifficultiesController.onPageLoad().url
+
+      application.stop()
+    }
   }
 }
