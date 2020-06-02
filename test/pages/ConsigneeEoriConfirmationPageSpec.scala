@@ -16,9 +16,12 @@
 
 package pages
 
+import base.SpecBase
+import models.UserAnswers
 import pages.behaviours.PageBehaviours
+import org.scalacheck.Arbitrary.arbitrary
 
-class ConsigneeEoriConfirmationPageSpec extends PageBehaviours {
+class ConsigneeEoriConfirmationPageSpec extends PageBehaviours with SpecBase {
 
   "EoriConfirmationPage" - {
 
@@ -27,5 +30,40 @@ class ConsigneeEoriConfirmationPageSpec extends PageBehaviours {
     beSettable[Boolean](ConsigneeEoriConfirmationPage)
 
     beRemovable[Boolean](ConsigneeEoriConfirmationPage)
+
+    "cleanup" - {
+      "remove EoriNumberPage when true" in {
+        forAll(arbitrary[UserAnswers]) {
+          userAnswers =>
+            val result = userAnswers
+              .set(ConsigneeEoriConfirmationPage, false)
+              .success
+              .value
+              .set(ConsigneeEoriNumberPage, eoriNumber)
+              .success
+              .value
+              .set(ConsigneeEoriConfirmationPage, true)
+              .success
+              .value
+            result.get(ConsigneeEoriNumberPage) must not be defined
+        }
+      }
+      "not remove EoriNumberPage when false" in {
+        forAll(arbitrary[UserAnswers]) {
+          userAnswers =>
+            val result = userAnswers
+              .set(ConsigneeEoriConfirmationPage, true)
+              .success
+              .value
+              .set(ConsigneeEoriNumberPage, eoriNumber)
+              .success
+              .value
+              .set(ConsigneeEoriConfirmationPage, false)
+              .success
+              .value
+            result.get(ConsigneeEoriNumberPage) mustBe defined
+        }
+      }
+    }
   }
 }
