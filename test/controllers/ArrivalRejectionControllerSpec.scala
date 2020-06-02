@@ -21,6 +21,7 @@ import java.time.LocalDate
 import base.SpecBase
 import matchers.JsonMatchers
 import models.ArrivalId
+import models.messages.ErrorType.{DuplicateMrn, IncorrectValue, InvalidMrn, UnknownMrn}
 import models.messages.{ArrivalNotificationRejectionMessage, ErrorPointer, ErrorType, FunctionalError}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.{any, eq => eqTo}
@@ -51,17 +52,17 @@ class ArrivalRejectionControllerSpec extends SpecBase with MockitoSugar with Jso
   "ArrivalRejection Controller" - {
 
     Seq(
-      (90, "Unknown MRN", "movementReferenceNumberRejection.error.unknown"),
-      (91, "duplicate MRN", "movementReferenceNumberRejection.error.duplicate"),
-      (93, "Invalid MRN", "movementReferenceNumberRejection.error.invalid")
+      (UnknownMrn, "Unknown MRN", "movementReferenceNumberRejection.error.unknown"),
+      (DuplicateMrn, "duplicate MRN", "movementReferenceNumberRejection.error.duplicate"),
+      (InvalidMrn, "Invalid MRN", "movementReferenceNumberRejection.error.invalid")
     ) foreach {
-      case (errorCode, errorPointer, errorKey) =>
+      case (errorType, errorPointer, errorKey) =>
         s"return OK and the correct $errorPointer Rejection view for a GET when 'arrivalRejection' feature toggle set to true" in {
 
           when(mockRenderer.render(any(), any())(any()))
             .thenReturn(Future.successful(Html("")))
 
-          val errors = Seq(FunctionalError(ErrorType(errorCode), ErrorPointer(errorPointer), None, None))
+          val errors = Seq(FunctionalError(errorType, ErrorPointer(errorPointer), None, None))
 
           when(mockArrivalRejectionService.arrivalRejectionMessage((any()))(any(), any()))
             .thenReturn(Future.successful(Some(ArrivalNotificationRejectionMessage(mrn.toString, LocalDate.now, None, None, errors))))
@@ -102,7 +103,7 @@ class ArrivalRejectionControllerSpec extends SpecBase with MockitoSugar with Jso
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val errors = Seq(FunctionalError(ErrorType(12), ErrorPointer("TRD.TIN"), None, None))
+      val errors = Seq(FunctionalError(IncorrectValue, ErrorPointer("TRD.TIN"), None, None))
 
       when(mockArrivalRejectionService.arrivalRejectionMessage(any())(any(), any()))
         .thenReturn(Future.successful(Some(ArrivalNotificationRejectionMessage(mrn.toString, LocalDate.now, None, None, errors))))

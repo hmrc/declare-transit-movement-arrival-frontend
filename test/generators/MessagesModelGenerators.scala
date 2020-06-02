@@ -19,6 +19,7 @@ package generators
 import java.time.{LocalDate, LocalTime}
 
 import models._
+import models.messages.ErrorType.{GenericError, MRNError}
 import models.messages._
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
@@ -370,14 +371,33 @@ trait MessagesModelGenerators extends Generators {
     }
   }
 
+  implicit lazy val mrnErrorType: Arbitrary[MRNError] =
+    Arbitrary {
+      Gen.oneOf(ErrorType.mrnValues)
+    }
+
+  implicit lazy val genericErrorType: Arbitrary[GenericError] =
+    Arbitrary {
+      Gen.oneOf(ErrorType.genericValues)
+    }
+
+  implicit lazy val arbitraryErrorType: Arbitrary[ErrorType] =
+    Arbitrary {
+      for {
+        genericError      <- arbitrary[GenericError]
+        mrnRejectionError <- arbitrary[MRNError]
+        errorType         <- Gen.oneOf(Seq(genericError, mrnRejectionError))
+      } yield errorType
+    }
+
   implicit lazy val arbitraryRejectionError: Arbitrary[FunctionalError] =
     Arbitrary {
 
       for {
-        errorType     <- arbitrary[Int]
+        errorType     <- arbitrary[ErrorType]
         pointer       <- arbitrary[String]
         reason        <- arbitrary[Option[String]]
         originalValue <- arbitrary[Option[String]]
-      } yield FunctionalError(ErrorType(errorType), ErrorPointer(pointer), reason, originalValue)
+      } yield FunctionalError(errorType, ErrorPointer(pointer), reason, originalValue)
     }
 }
