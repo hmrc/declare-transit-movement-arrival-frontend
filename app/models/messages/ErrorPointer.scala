@@ -26,5 +26,5 @@ object ErrorPointer {
   implicit val writes: OWrites[ErrorPointer] = Json.writes[ErrorPointer]
 
   implicit val xmlReader: XmlReader[ErrorPointer] =
-    (__ \ "ErrPoiER12").read[String].map(apply)
+    __.read[String].map(apply)
 }
