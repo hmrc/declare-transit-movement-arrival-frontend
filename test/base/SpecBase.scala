@@ -64,7 +64,7 @@ trait SpecBase
   val seal: Seal           = Seal("sealNumber")
   val container: Container = Container("containerNumber")
 
-  val eoriNumber: String    = "EoriNumber"
+  val eoriNumber: String    = "EOriNumber"
   val traderName: String    = "traderName"
   val consigneeName: String = "consigneeName"
 
