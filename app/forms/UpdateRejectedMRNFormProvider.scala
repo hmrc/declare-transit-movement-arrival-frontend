@@ -21,7 +21,7 @@ import javax.inject.Inject
 import models.MovementReferenceNumber
 import play.api.data.Form
 
-class UpdateRejectedMovementReferenceNumberFormProvider @Inject() extends Mappings {
+class UpdateRejectedMRNFormProvider @Inject() extends Mappings {
 
   def apply(): Form[MovementReferenceNumber] =
     Form(

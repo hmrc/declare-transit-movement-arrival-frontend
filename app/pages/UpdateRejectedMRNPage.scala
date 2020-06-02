@@ -16,4 +16,4 @@
 
 package pages
 
-case object UpdateRejectedMovementReferenceNumberPage extends Page
+case object UpdateRejectedMRNPage extends Page

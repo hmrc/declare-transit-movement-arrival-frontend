@@ -17,11 +17,11 @@
 package controllers
 
 import controllers.actions._
-import forms.UpdateRejectedMovementReferenceNumberFormProvider
+import forms.UpdateRejectedMRNFormProvider
 import javax.inject.Inject
 import models.ArrivalId
 import navigation.Navigator
-import pages.UpdateRejectedMovementReferenceNumberPage
+import pages.UpdateRejectedMRNPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -35,7 +35,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class UpdateRejectedMRNController @Inject()(override val messagesApi: MessagesApi,
                                             navigator: Navigator,
                                             identify: IdentifierAction,
-                                            formProvider: UpdateRejectedMovementReferenceNumberFormProvider,
+                                            formProvider: UpdateRejectedMRNFormProvider,
                                             arrivalMovementMessageService: ArrivalNotificationMessageService,
                                             val controllerComponents: MessagesControllerComponents,
                                             renderer: Renderer)(implicit ec: ExecutionContext)
@@ -50,7 +50,7 @@ class UpdateRejectedMRNController @Inject()(override val messagesApi: MessagesAp
       arrivalMovementMessageService.getArrivalNotificationMessage(arrivalId) flatMap {
         case Some((_, mrn)) =>
           val json = Json.obj("form" -> form.fill(mrn))
-          renderer.render("movementReferenceNumber.njk", json).map(Ok(_))
+          renderer.render("updateMovementReferenceNumber.njk", json).map(Ok(_))
         case _ => Future.successful(Redirect(routes.TechnicalDifficultiesController.onPageLoad()))
       }
   }
@@ -64,9 +64,9 @@ class UpdateRejectedMRNController @Inject()(override val messagesApi: MessagesAp
 
             val json = Json.obj("form" -> formWithErrors)
 
-            renderer.render("movementReferenceNumber.njk", json).map(BadRequest(_))
+            renderer.render("updateMovementReferenceNumber.njk", json).map(BadRequest(_))
           },
-          value => Future(Redirect(navigator.nextRejectionPage(UpdateRejectedMovementReferenceNumberPage, value, arrivalId)))
+          value => Future(Redirect(navigator.nextRejectionPage(UpdateRejectedMRNPage, value, arrivalId)))
         )
   }
 }
