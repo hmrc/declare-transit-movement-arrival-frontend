@@ -21,7 +21,7 @@ import config.FrontendAppConfig
 import javax.inject.Inject
 import models.XMLWrites._
 import models.messages.{ArrivalMovementRequest, ArrivalNotificationRejectionMessage}
-import models.{ArrivalId, MessagesSummary, ResponseMovementMessage}
+import models.{ArrivalId, MessagesSummary, MovementReferenceNumber, ResponseMovementMessage}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpErrorFunctions, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
@@ -57,15 +57,19 @@ class ArrivalMovementConnector @Inject()(val config: FrontendAppConfig, val http
     }
   }
 
-  def getArrivalNotificationMessage(location: String)(implicit hc: HeaderCarrier): Future[Option[NodeSeq]] = {
+  //TODO MovementReferenceNumber will be removed when we implement xml reads for ArrivalMovementRequest
+  def getArrivalNotificationMessage(location: String)(implicit hc: HeaderCarrier): Future[Option[(NodeSeq, MovementReferenceNumber)]] = {
     val serviceUrl = s"${config.baseDestinationUrl}$location"
     http.GET[HttpResponse](serviceUrl) map {
       case responseMessage if is2xx(responseMessage.status) =>
-        Some(responseMessage.json.as[ResponseMovementMessage].message)
+        val xml = responseMessage.json.as[ResponseMovementMessage].message
+
+        MovementReferenceNumber(xml.\\("DocNumHEA5").text) map {
+          mrn =>
+            (responseMessage.json.as[ResponseMovementMessage].message, mrn)
+        }
       case _ =>
         None
     }
-
   }
-
 }

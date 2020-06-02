@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package navigation
+package forms
 
-import play.api.mvc.Call
-import pages._
-import models.{ArrivalId, Mode, MovementReferenceNumber, NormalMode, UserAnswers}
+import forms.mappings.Mappings
+import javax.inject.Inject
+import models.MovementReferenceNumber
+import play.api.data.Form
 
-class FakeNavigator(desiredRoute: Call, mode: Mode = NormalMode) extends Navigator {
+class UpdateRejectedMRNFormProvider @Inject() extends Mappings {
 
-  override def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call =
-    desiredRoute
-
-  override def nextRejectionPage(page: Page, mrn: MovementReferenceNumber, arrivalId: ArrivalId): Call =
-    desiredRoute
+  def apply(): Form[MovementReferenceNumber] =
+    Form(
+      "value" -> mrn("movementReferenceNumber.error.required", "movementReferenceNumber.error.invalid")
+    )
 }
