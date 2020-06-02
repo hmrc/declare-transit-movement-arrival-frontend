@@ -47,8 +47,8 @@ class ArrivalRejectionController @Inject()(
       if (frontendAppConfig.featureToggleArrivalRejection) {
         arrivalRejectionService.arrivalRejectionMessage(arrivalId).flatMap {
           case Some(rejectionMessage) =>
-            val rejectionViewModel = ArrivalRejectionViewModel(rejectionMessage, appConfig.nctsEnquiriesUrl)
-            renderer.render(rejectionViewModel.page, rejectionViewModel.json).map(Ok(_))
+            val ArrivalRejectionViewModel(page, json) = ArrivalRejectionViewModel(rejectionMessage, appConfig.nctsEnquiriesUrl)
+            renderer.render(page, json).map(Ok(_))
           case _ => Future.successful(Redirect(routes.TechnicalDifficultiesController.onPageLoad()))
         }
       } else {

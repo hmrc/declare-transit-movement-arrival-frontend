@@ -21,7 +21,7 @@ import models.messages.ArrivalNotificationRejectionMessage
 import models.messages.ErrorType.{DuplicateMrn, GenericError, InvalidMrn, MRNError, UnknownMrn}
 import play.api.libs.json.{JsObject, Json}
 
-case class ArrivalRejectionViewModel(json: JsObject, page: String)
+case class ArrivalRejectionViewModel(page: String, json: JsObject)
 
 object ArrivalRejectionViewModel {
 
@@ -47,8 +47,8 @@ object ArrivalRejectionViewModel {
     val genericRejectionPage = "arrivalGeneralRejection.njk"
 
     rejectionMessage.errors.head.errorType match {
-      case mrnError: MRNError => new ArrivalRejectionViewModel(mrnJson(mrnError), mrnRejectionPage)
-      case _: GenericError    => new ArrivalRejectionViewModel(genericJson, genericRejectionPage)
+      case mrnError: MRNError => new ArrivalRejectionViewModel(mrnRejectionPage, mrnJson(mrnError))
+      case _: GenericError    => new ArrivalRejectionViewModel(genericRejectionPage, genericJson)
     }
   }
 
