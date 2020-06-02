@@ -33,8 +33,8 @@ object FunctionalError {
   implicit val writes: OWrites[FunctionalError] = Json.writes[FunctionalError]
 
   implicit val xmlReader: XmlReader[FunctionalError] = (
-    __.read[ErrorType],
-    __.read[ErrorPointer],
+    (__ \ "ErrTypER11").read[ErrorType],
+    (__ \ "ErrPoiER12").read[ErrorPointer],
     (__ \ "ErrReaER13").read[String].optional,
     (__ \ "OriAttValER14").read[String].optional
   ).mapN(apply)

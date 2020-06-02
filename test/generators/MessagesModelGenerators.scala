@@ -371,7 +371,7 @@ trait MessagesModelGenerators extends Generators {
     }
   }
 
-  implicit lazy val mrnRejectionErrorType: Arbitrary[MRNError] =
+  implicit lazy val mrnErrorType: Arbitrary[MRNError] =
     Arbitrary {
       Gen.oneOf(ErrorType.mrnValues)
     }

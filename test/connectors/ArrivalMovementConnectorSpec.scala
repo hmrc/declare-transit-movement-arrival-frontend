@@ -114,15 +114,16 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
     "getRejectionMessage" - {
       "must return valid 'rejection message'" in {
         val rejectionLocation     = s"/transit-movements-trader-at-destination/movements/arrivals/${arrivalId.value}/messages/1"
+        val genRejectionError     = arbitrary[ErrorType].sample.value
         val rejectionXml: NodeSeq = <CC008A>
           <HEAHEA><DocNumHEA5>19IT021300100075E9</DocNumHEA5>
             <ArrRejDatHEA142>20191018</ArrRejDatHEA142>
             <ArrRejReaHEA242>Invalid IE007 Message</ArrRejReaHEA242>
           </HEAHEA>
           <FUNERRER1>
-            <ErrTypER11>92</ErrTypER11>
-          <ErrPoiER12>Message type</ErrPoiER12>
-          <OriAttValER14>GB007A</OriAttValER14>
+            <ErrTypER11>{genRejectionError.code}</ErrTypER11>
+            <ErrPoiER12>Message type</ErrPoiER12>
+            <OriAttValER14>GB007A</OriAttValER14>
         </FUNERRER1>
         </CC008A>
 
@@ -140,7 +141,7 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
             LocalDate.of(2019, 10, 18),
             None,
             Some("Invalid IE007 Message"),
-            List(FunctionalError(DuplicateMrn, ErrorPointer("Message type"), None, Some("GB007A")))
+            List(FunctionalError(genRejectionError, ErrorPointer("Message type"), None, Some("GB007A")))
           ))
         connector.getRejectionMessage(rejectionLocation).futureValue mustBe expectedResult
       }

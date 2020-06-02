@@ -30,8 +30,8 @@ class FunctionalErrorSpec extends SpecBase with ScalaCheckDrivenPropertyChecks w
         functionalError =>
           val xml = {
             <FUNERRER1>
-              <ErrTypER11>{functionalError.errorType}</ErrTypER11>
-              <ErrPoiER12>{functionalError.pointer.value}</ErrPoiER12> ++
+              <ErrTypER11>{functionalError.errorType.code}</ErrTypER11>
+              <ErrPoiER12>{functionalError.pointer.value}</ErrPoiER12>
               {
                 functionalError.reason.map {
                   reason => <ErrReaER13>{reason}</ErrReaER13>

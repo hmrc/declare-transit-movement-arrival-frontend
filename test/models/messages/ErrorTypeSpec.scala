@@ -16,14 +16,22 @@
 
 package models.messages
 
+import com.lucidchart.open.xtract.ParseSuccess
+import generators.MessagesModelGenerators
 import org.scalatest.{FreeSpec, MustMatchers}
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import org.scalacheck.Arbitrary.arbitrary
 
-class ErrorTypeSpec extends FreeSpec with MustMatchers {
+class ErrorTypeSpec extends FreeSpec with ScalaCheckPropertyChecks with MustMatchers with MessagesModelGenerators {
 
   "ErrorType" - {
     "read integer as object" in {
-      val xml = <ErrTypER11>90</ErrTypER11>
-      ErrorType.xmlDateReads.read(xml) mustBe " "
+
+      forAll(arbitrary[ErrorType]) {
+        errorType =>
+          val xml = <ErrTypER11>{errorType.code}</ErrTypER11>
+          ErrorType.xmlErrorTypeReads.read(xml) mustBe ParseSuccess(errorType)
+      }
     }
   }
 

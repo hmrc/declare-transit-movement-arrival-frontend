@@ -28,11 +28,6 @@ sealed trait ErrorType {
 
 object ErrorType extends Enumerable.Implicits {
 
-  implicit val writes: Writes[ErrorType] = Writes[ErrorType] {
-    case genericError: GenericError => JsNumber(genericError.code)
-    case mrnError: MRNError         => JsNumber(mrnError.code)
-  }
-
   sealed trait GenericError extends ErrorType
   sealed trait MRNError extends ErrorType
 
@@ -56,7 +51,12 @@ object ErrorType extends Enumerable.Implicits {
     InvalidDecimal
   )
 
-  implicit val xmlDateReads: XmlReader[ErrorType] = {
+  implicit val writes: Writes[ErrorType] = Writes[ErrorType] {
+    case genericError: GenericError => JsNumber(genericError.code)
+    case mrnError: MRNError         => JsNumber(mrnError.code)
+  }
+
+  implicit val xmlErrorTypeReads: XmlReader[ErrorType] = {
     new XmlReader[ErrorType] {
       override def read(xml: NodeSeq): ParseResult[ErrorType] = {
 
