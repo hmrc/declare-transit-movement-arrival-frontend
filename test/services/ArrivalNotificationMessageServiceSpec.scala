@@ -39,7 +39,7 @@ class ArrivalNotificationMessageServiceSpec extends SpecBase {
   private val arrivalId = ArrivalId(1)
 
   "ArrivalNotificationMessageService" - {
-    "must return NodeSeq for the input arrivalId" in {
+    "must return NodeSeq and MRN for the input arrivalId" in {
       val messagesSummary =
         MessagesSummary(arrivalId, MessagesLocation(s"/movements/arrivals/${arrivalId.value}/messages/3", Some("/movements/arrivals/1234/messages/5")))
 
@@ -57,8 +57,6 @@ class ArrivalNotificationMessageServiceSpec extends SpecBase {
     }
 
     "must return None when getSummary call fails to get MessagesSummary" in {
-      val messagesSummary =
-        MessagesSummary(arrivalId, MessagesLocation(s"/movements/arrivals/${arrivalId.value}/messages/3", None))
       when(mockConnector.getSummary(any())(any())).thenReturn(Future.successful(None))
 
       val application = applicationBuilder(Some(emptyUserAnswers))
