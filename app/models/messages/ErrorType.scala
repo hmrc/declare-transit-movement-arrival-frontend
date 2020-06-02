@@ -31,9 +31,17 @@ object ErrorType extends Enumerable.Implicits {
   sealed trait GenericError extends ErrorType
   sealed trait MRNError extends ErrorType
 
-  case object IncorrectValue extends GenericError { val code: Int = 12 }
-  case object MissingValue extends GenericError { val code: Int   = 13 }
-  case object InvalidDecimal extends GenericError { val code: Int = 19 }
+  case object IncorrectValue extends GenericError { val code: Int        = 12 }
+  case object MissingValue extends GenericError { val code: Int          = 13 }
+  case object ValueNotSupported extends GenericError { val code: Int     = 14 }
+  case object NotSupportedPosition extends GenericError { val code: Int  = 15 }
+  case object InvalidDecimal extends GenericError { val code: Int        = 19 }
+  case object DuplicateDetected extends GenericError { val code: Int     = 26 }
+  case object TooManyRepetitions extends GenericError { val code: Int    = 35 }
+  case object InvalidTypeCharacters extends GenericError { val code: Int = 37 }
+  case object MissingDigit extends GenericError { val code: Int          = 38 }
+  case object ElementTooLong extends GenericError { val code: Int        = 39 }
+  case object ElementTooShort extends GenericError { val code: Int       = 40 }
 
   case object UnknownMrn extends MRNError { val code: Int   = 90 }
   case object DuplicateMrn extends MRNError { val code: Int = 91 }
