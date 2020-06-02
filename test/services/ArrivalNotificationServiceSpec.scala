@@ -122,13 +122,15 @@ class ArrivalNotificationServiceSpec extends SpecBase with MockitoSugar with Mes
         when(mockArrivalNotificationMessageService.getArrivalNotificationMessage(any())(any(), any()))
           .thenReturn(
             Future.successful(Some((arrivalMovementRequest.toXml, MovementReferenceNumber(arrivalMovementRequest.header.movementReferenceNumber).get))))
+        when(mockArrivalMovementConnector.updateArrivalMovement(any(), any())(any())).thenReturn(Future.successful(HttpResponse(ACCEPTED)))
 
         val application = applicationBuilder(Some(emptyUserAnswers))
           .overrides(bind[ArrivalNotificationMessageService].toInstance(mockArrivalNotificationMessageService))
+          .overrides(bind[ArrivalMovementConnector].toInstance(mockArrivalMovementConnector))
           .build()
 
         val arrivalNotificationService = application.injector.instanceOf[ArrivalNotificationService]
-        val response                   = arrivalNotificationService.update(arrivalId).futureValue
+        val response                   = arrivalNotificationService.update(arrivalId, mrn).futureValue.value
         response.status mustBe ACCEPTED
       }
 

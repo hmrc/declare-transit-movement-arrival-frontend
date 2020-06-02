@@ -31,8 +31,6 @@ import utils.CheckYourAnswersHelper
 import viewModels.sections.Section
 
 import scala.concurrent.ExecutionContext
-import scala.xml.{Elem, Node, Text}
-import scala.xml.transform.{RewriteRule, RuleTransformer}
 
 class CheckYourAnswersRejectionsController @Inject()(override val messagesApi: MessagesApi,
                                                      identify: IdentifierAction,
@@ -55,30 +53,9 @@ class CheckYourAnswersRejectionsController @Inject()(override val messagesApi: M
       renderer.render("check-your-answers-rejections.njk", json).map(Ok(_))
   }
 
-  object RuleFactory {
-
-    def createRuleTransformer(key: String, value: String): RuleTransformer =
-      new RuleTransformer(new RewriteRule {
-        override def transform(n: Node): Seq[Node] = n match {
-          case elem @ Elem(prefix, label, attributes, scope, _) if elem.label.equalsIgnoreCase(key) =>
-            Elem(prefix, label, attributes, scope, false, Text(value))
-          case other => other
-        }
-      })
-
-  }
-
   def onPost(mrn: MovementReferenceNumber, arrivalId: ArrivalId): Action[AnyContent] = (identify andThen getData(mrn)).async {
     implicit request =>
-      arrivalNotificationMessageService.getArrivalNotificationMessage(arrivalId) map {
-        case Some((xml, _)) =>
-          val xmlTransformer   = RuleFactory.createRuleTransformer("DocNumHEA5", mrn.toString)
-          val updatedXml: Node = xmlTransformer(xml.head)
-          println(updatedXml)
-
-          Redirect(routes.TechnicalDifficultiesController.onPageLoad())
-      }
-
+      ???
   }
 
 }

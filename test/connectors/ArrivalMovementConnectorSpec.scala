@@ -85,7 +85,7 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
 
         forAll(arbitrary[ArrivalMovementRequest]) {
           arrivalMovementRequest =>
-            val result: Future[HttpResponse] = connector.updateArrivalMovement(ArrivalId(1), arrivalMovementRequest)
+            val result: Future[HttpResponse] = connector.updateArrivalMovement(ArrivalId(1), arrivalMovementRequest.toXml)
             result.futureValue.status mustBe ACCEPTED
         }
       }
@@ -95,7 +95,7 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
           (arrivalMovementRequest, errorResponseCode) =>
             stubPutResponse(errorResponseCode)
 
-            val result = connector.updateArrivalMovement(ArrivalId(1), arrivalMovementRequest)
+            val result = connector.updateArrivalMovement(ArrivalId(1), arrivalMovementRequest.toXml)
             result.futureValue.status mustBe errorResponseCode
         }
       }
