@@ -96,6 +96,10 @@ class Navigator @Inject()() {
     case HaveSealsChangedPage(index) => haveSealsChanged(index, CheckMode)
     case ConfirmRemoveSealPage(eventIndex) => removeSeal(eventIndex, CheckMode)
     case AddSealPage(eventIndex) => addSeal(eventIndex, CheckMode)
+    case PresentationOfficePage =>  presentationOfficeRoute(CheckMode)
+    case TraderNamePage =>  traderNameRoute(CheckMode)
+
+
   }
 
   def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = mode match {
@@ -143,6 +147,17 @@ class Navigator @Inject()() {
     (ua.get(ConsigneeEoriConfirmationPage), mode) match {
       case (Some(_), CheckMode) => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
       case _                    => Some(routes.ConsigneeEoriConfirmationController.onPageLoad(ua.id, mode))
+    }
+
+  private def presentationOfficeRoute(mode: Mode)(ua: UserAnswers): Option[Call] =
+    (ua.get(TraderNamePage), mode) match {
+      case (Some(_), CheckMode) => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
+      case _                    => Some(routes.TraderNameController.onPageLoad(ua.id, mode))
+    }
+  private def traderNameRoute(mode: Mode)(ua: UserAnswers): Option[Call] =
+    (ua.get(TraderEoriPage), mode) match {
+      case (Some(_), CheckMode) => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
+      case _                    => Some(routes.TraderEoriController.onPageLoad(ua.id, mode))
     }
 
   private def customsSubPlaceRoute(mode: Mode)(ua: UserAnswers): Option[Call] =

@@ -64,9 +64,10 @@ trait SpecBase
   val seal: Seal           = Seal("sealNumber")
   val container: Container = Container("containerNumber")
 
-  val eoriNumber: String    = "EOriNumber"
-  val traderName: String    = "traderName"
-  val consigneeName: String = "consigneeName"
+  val eoriNumber: String         = "EOriNumber"
+  val traderName: String         = "traderName"
+  val consigneeName: String      = "consigneeName"
+  val presentationOffice: String = "presentationOffice"
 
   val traderAddress: Address = Address("buildingAndStreet", "city", "NE99 1XN")
   val configKey              = "config"
