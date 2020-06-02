@@ -21,11 +21,12 @@ import controllers.actions._
 import javax.inject.Inject
 import models.ArrivalId
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import services.ArrivalRejectionService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
+import viewModels.ArrivalRejectionViewModel
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -46,37 +47,8 @@ class ArrivalRejectionController @Inject()(
       if (frontendAppConfig.featureToggleArrivalRejection) {
         arrivalRejectionService.arrivalRejectionMessage(arrivalId).flatMap {
           case Some(rejectionMessage) =>
-            val errorType = rejectionMessage.errors.head.errorType.code
-
-            if (errorType == 90 || errorType == 91 || errorType == 93) {
-
-              val errorKey = errorType match {
-                case 90 => "movementReferenceNumberRejection.error.unknown"
-                case 91 => "movementReferenceNumberRejection.error.duplicate"
-                case 93 => "movementReferenceNumberRejection.error.invalid"
-              }
-
-              val json = Json.obj(
-                "mrn"                        -> rejectionMessage.movementReferenceNumber,
-                "errorKey"                   -> errorKey,
-                "contactUrl"                 -> appConfig.nctsEnquiriesUrl,
-                "movementReferenceNumberUrl" -> routes.MovementReferenceNumberController.onPageLoad().url
-              )
-
-              renderer.render("movementReferenceNumberRejection.njk", json).map(Ok(_))
-
-            } else {
-              val json = Json.obj(
-                "mrn"              -> rejectionMessage.movementReferenceNumber,
-                "errors"           -> rejectionMessage.errors,
-                "contactUrl"       -> appConfig.nctsEnquiriesUrl,
-                "createArrivalUrl" -> routes.MovementReferenceNumberController.onPageLoad().url
-              )
-
-              renderer.render("arrivalGeneralRejection.njk", json).map(Ok(_))
-
-            }
-
+            val rejectionViewModel = ArrivalRejectionViewModel(rejectionMessage, appConfig.nctsEnquiriesUrl)
+            renderer.render(rejectionViewModel.page, rejectionViewModel.json).map(Ok(_))
           case _ => Future.successful(Redirect(routes.TechnicalDifficultiesController.onPageLoad()))
         }
       } else {
