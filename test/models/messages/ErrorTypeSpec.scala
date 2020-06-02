@@ -16,7 +16,7 @@
 
 package models.messages
 
-import com.lucidchart.open.xtract.ParseSuccess
+import com.lucidchart.open.xtract.{ParseFailure, ParseSuccess}
 import generators.MessagesModelGenerators
 import org.scalatest.{FreeSpec, MustMatchers}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -32,6 +32,12 @@ class ErrorTypeSpec extends FreeSpec with ScalaCheckPropertyChecks with MustMatc
           val xml = <ErrTypER11>{errorType.code}</ErrTypER11>
           ErrorType.xmlErrorTypeReads.read(xml) mustBe ParseSuccess(errorType)
       }
+    }
+
+    "return ParseFailureError for invalid value" in {
+
+      val xml = <ErrTypER11>Invalid</ErrTypER11>
+      ErrorType.xmlErrorTypeReads.read(xml) mustBe an[ParseFailure]
     }
   }
 
