@@ -31,13 +31,13 @@ import play.api.libs.json.JsObject
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import services.ArrivalNotificationMessageService
+import services.ArrivalNotificationService
 
 import scala.concurrent.Future
 
 class CheckYourAnswersRejectionsControllerSpec extends SpecBase with JsonMatchers with MessagesModelGenerators {
 
-  val mockArrivalNotificationMessageService = mock[ArrivalNotificationMessageService]
+  val mockArrivalNotificationService = mock[ArrivalNotificationService]
 
   "Check Your Answers Rejections Controller" - {
 
@@ -67,13 +67,11 @@ class CheckYourAnswersRejectionsControllerSpec extends SpecBase with JsonMatcher
     "must redirect to 'Application Complete' page on valid submission" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .overrides(bind[ArrivalNotificationMessageService].toInstance(mockArrivalNotificationMessageService))
+        .overrides(bind[ArrivalNotificationService].toInstance(mockArrivalNotificationService))
         .build()
 
-      val arrivalMovementRequest: ArrivalMovementRequest = arbitrary[ArrivalMovementRequest].sample.value
-
-      when(mockArrivalNotificationMessageService.getArrivalNotificationMessage(any())(any(), any()))
-        .thenReturn(Future.successful(Some((arrivalMovementRequest.toXml, MovementReferenceNumber(arrivalMovementRequest.header.movementReferenceNumber).get))))
+      when(mockArrivalNotificationService.update(any(), any())(any()))
+        .thenReturn(Future.successful(Some(())))
 
       val request = FakeRequest(POST, routes.CheckYourAnswersRejectionsController.onPost(mrn, ArrivalId(1)).url)
 

@@ -18,24 +18,26 @@ package controllers
 
 import com.google.inject.Inject
 import controllers.actions.{DataRetrievalActionProvider, IdentifierAction}
+import handlers.ErrorHandler
 import models.{ArrivalId, MovementReferenceNumber, UserAnswers}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
-import services.ArrivalNotificationMessageService
+import services.ArrivalNotificationService
 import uk.gov.hmrc.http.HttpErrorFunctions
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 import utils.CheckYourAnswersHelper
 import viewModels.sections.Section
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class CheckYourAnswersRejectionsController @Inject()(override val messagesApi: MessagesApi,
                                                      identify: IdentifierAction,
                                                      getData: DataRetrievalActionProvider,
-                                                     arrivalNotificationMessageService: ArrivalNotificationMessageService,
+                                                     arrivalNotificationService: ArrivalNotificationService,
+                                                     errorHandler: ErrorHandler,
                                                      val controllerComponents: MessagesControllerComponents,
                                                      renderer: Renderer)(implicit ec: ExecutionContext)
     extends FrontendBaseController
@@ -55,7 +57,16 @@ class CheckYourAnswersRejectionsController @Inject()(override val messagesApi: M
 
   def onPost(mrn: MovementReferenceNumber, arrivalId: ArrivalId): Action[AnyContent] = (identify andThen getData(mrn)).async {
     implicit request =>
-      ???
+      arrivalNotificationService.update(arrivalId, mrn) flatMap {
+        case Some(result) =>
+          result.status match {
+            case status if is2xx(status) => Future.successful(Redirect(routes.ConfirmationController.onPageLoad(mrn)))
+            case status if is4xx(status) => errorHandler.onClientError(request, status)
+            case _                       => Future.successful(Redirect(routes.TechnicalDifficultiesController.onPageLoad()))
+          }
+        case None => errorHandler.onClientError(request, BAD_REQUEST)
+      }
+
   }
 
 }
