@@ -64,7 +64,7 @@ class CheckYourAnswersRejectionsController @Inject()(override val messagesApi: M
             case status if is4xx(status) => errorHandler.onClientError(request, status)
             case _                       => Future.successful(Redirect(routes.TechnicalDifficultiesController.onPageLoad()))
           }
-        case None => errorHandler.onClientError(request, BAD_REQUEST)
+        case None => Future.successful(Redirect(routes.TechnicalDifficultiesController.onPageLoad()))
       }
 
   }

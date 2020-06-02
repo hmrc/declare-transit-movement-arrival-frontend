@@ -19,19 +19,17 @@ package controllers
 import base.SpecBase
 import generators.MessagesModelGenerators
 import matchers.JsonMatchers
-import models.{ArrivalId, MovementReferenceNumber}
-import models.messages.ArrivalMovementRequest
-import models.XMLWrites._
+import models.ArrivalId
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
-import org.scalacheck.Arbitrary.arbitrary
 import play.api.inject.bind
 import play.api.libs.json.JsObject
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import services.ArrivalNotificationService
+import uk.gov.hmrc.http.HttpResponse
 
 import scala.concurrent.Future
 
@@ -71,7 +69,7 @@ class CheckYourAnswersRejectionsControllerSpec extends SpecBase with JsonMatcher
         .build()
 
       when(mockArrivalNotificationService.update(any(), any())(any()))
-        .thenReturn(Future.successful(Some(())))
+        .thenReturn(Future.successful(Some(HttpResponse(ACCEPTED))))
 
       val request = FakeRequest(POST, routes.CheckYourAnswersRejectionsController.onPost(mrn, ArrivalId(1)).url)
 
@@ -80,6 +78,26 @@ class CheckYourAnswersRejectionsControllerSpec extends SpecBase with JsonMatcher
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual routes.ConfirmationController.onPageLoad(mrn).url
+
+      application.stop()
+    }
+
+    "must redirect to 'Technical Difficulties' page for any service failures" in {
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .overrides(bind[ArrivalNotificationService].toInstance(mockArrivalNotificationService))
+        .build()
+
+      when(mockArrivalNotificationService.update(any(), any())(any()))
+        .thenReturn(Future.successful(None))
+
+      val request = FakeRequest(POST, routes.CheckYourAnswersRejectionsController.onPost(mrn, ArrivalId(1)).url)
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+
+      redirectLocation(result).value mustEqual routes.TechnicalDifficultiesController.onPageLoad().url
 
       application.stop()
     }
