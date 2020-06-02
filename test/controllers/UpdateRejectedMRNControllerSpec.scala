@@ -105,7 +105,7 @@ class UpdateRejectedMRNControllerSpec extends SpecBase with MessagesModelGenerat
         "form" -> filledForm
       )
 
-      templateCaptor.getValue mustEqual "movementReferenceNumber.njk"
+      templateCaptor.getValue mustEqual "updateMovementReferenceNumber.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -122,9 +122,7 @@ class UpdateRejectedMRNControllerSpec extends SpecBase with MessagesModelGenerat
             bind[ArrivalNotificationMessageService].toInstance(mockArrivalMovementMessageService)
           )
           .build()
-      val request        = FakeRequest(GET, movementReferenceNumberRoute)
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+      val request = FakeRequest(GET, movementReferenceNumberRoute)
 
       val result = route(application, request).value
 
@@ -180,7 +178,7 @@ class UpdateRejectedMRNControllerSpec extends SpecBase with MessagesModelGenerat
         "form" -> boundForm
       )
 
-      templateCaptor.getValue mustEqual "movementReferenceNumber.njk"
+      templateCaptor.getValue mustEqual "updateMovementReferenceNumber.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
