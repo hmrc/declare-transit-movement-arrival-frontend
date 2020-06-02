@@ -19,12 +19,14 @@ package forms
 import forms.mappings.Mappings
 import javax.inject.Inject
 import play.api.data.Form
+import models.messages.TraderWithEori.Constants.eoriLength
+import models.messages.TraderWithEori.eoriRegex
 
 class EoriNumberFormProvider @Inject() extends Mappings {
 
   def apply(consigneeName: String): Form[String] =
     Form(
       "value" -> text("eoriNumber.error.required", args = Seq(consigneeName))
-        .verifying(maxLength(17, "eoriNumber.error.length"))
+        .verifying(maxLength(eoriLength, "eoriNumber.error.length"), regexp(eoriRegex, "eoriNumber.error.invalid"))
     )
 }

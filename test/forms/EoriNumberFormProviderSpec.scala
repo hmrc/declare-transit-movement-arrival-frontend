@@ -18,12 +18,15 @@ package forms
 
 import base.SpecBase
 import forms.behaviours.StringFieldBehaviours
-import play.api.data.FormError
+import org.scalacheck.Gen
+import play.api.data.{Field, FormError}
+import models.messages.TraderWithEori.Constants.eoriLength
+import models.messages.TraderWithEori.eoriRegex
 
 class EoriNumberFormProviderSpec extends StringFieldBehaviours with SpecBase {
-  val requiredKey = "eoriNumber.error.required"
-  val lengthKey   = "eoriNumber.error.length"
-  val maxLength   = 17
+  private val requiredKey = "eoriNumber.error.required"
+  private val lengthKey   = "eoriNumber.error.length"
+  private val invalidKey  = "eoriNumber.error.invalid"
 
   val form = new EoriNumberFormProvider()(traderName)
 
@@ -34,14 +37,7 @@ class EoriNumberFormProviderSpec extends StringFieldBehaviours with SpecBase {
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      stringsWithMaxLength(maxLength)
-    )
-
-    behave like fieldWithMaxLength(
-      form,
-      fieldName,
-      maxLength   = maxLength,
-      lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
+      stringsWithMaxLength(eoriLength)
     )
 
     behave like mandatoryField(
@@ -49,5 +45,32 @@ class EoriNumberFormProviderSpec extends StringFieldBehaviours with SpecBase {
       fieldName,
       requiredError = FormError(fieldName, requiredKey, Seq(traderName))
     )
+
+    "must not bind strings longer than TraderWithEori.Constants.eoriLength characters" in {
+
+      val expectedError = FormError(fieldName, lengthKey, Seq(eoriLength))
+
+      forAll(stringsLongerThan(eoriLength + 1)) {
+        string =>
+          val result = form.bind(Map(fieldName -> string)).apply(fieldName)
+          result.errors must contain(expectedError)
+      }
+    }
+
+    "must not bind strings that do not match regex" in {
+
+      val validRegex    = "[A-Z]{2}[^\n\r]{1,}"
+      val expectedError = FormError(fieldName, invalidKey, Seq(validRegex))
+
+      val genInvalidString: Gen[String] = {
+        stringsWithMaxLength(eoriLength) suchThat (!_.matches("[A-Z]{2}[^\n\r]{1,}"))
+      }
+
+      forAll(genInvalidString) {
+        invalidString =>
+          val result: Field = form.bind(Map(fieldName -> invalidString)).apply(fieldName)
+          result.errors must contain(expectedError)
+      }
+    }
   }
 }

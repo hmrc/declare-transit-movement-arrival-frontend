@@ -21,7 +21,7 @@ import forms.EoriConfirmationFormProvider
 import javax.inject.Inject
 import models.{Mode, MovementReferenceNumber}
 import navigation.Navigator
-import pages.{ConsigneeNamePage, EoriConfirmationPage}
+import pages.{ConsigneeEoriConfirmationPage, ConsigneeNamePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -32,7 +32,7 @@ import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class EoriConfirmationController @Inject()(
+class ConsigneeEoriConfirmationController @Inject()(
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
   navigator: Navigator,
@@ -51,7 +51,7 @@ class EoriConfirmationController @Inject()(
     implicit request =>
       request.userAnswers.get(ConsigneeNamePage) match {
         case Some(consigneeName) =>
-          val preparedForm = request.userAnswers.get(EoriConfirmationPage) match {
+          val preparedForm = request.userAnswers.get(ConsigneeEoriConfirmationPage) match {
             case None        => formProvider(consigneeName)
             case Some(value) => formProvider(consigneeName).fill(value)
           }
@@ -92,9 +92,9 @@ class EoriConfirmationController @Inject()(
               },
               value =>
                 for {
-                  updatedAnswers <- Future.fromTry(request.userAnswers.set(EoriConfirmationPage, value))
+                  updatedAnswers <- Future.fromTry(request.userAnswers.set(ConsigneeEoriConfirmationPage, value))
                   _              <- sessionRepository.set(updatedAnswers)
-                } yield Redirect(navigator.nextPage(EoriConfirmationPage, mode, updatedAnswers))
+                } yield Redirect(navigator.nextPage(ConsigneeEoriConfirmationPage, mode, updatedAnswers))
             )
         case _ => Future.successful(Redirect(routes.SessionExpiredController.onPageLoad()))
       }

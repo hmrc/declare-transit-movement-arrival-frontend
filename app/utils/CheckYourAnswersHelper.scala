@@ -27,9 +27,9 @@ import uk.gov.hmrc.viewmodels._
 class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswersHelper(userAnswers) {
 
   def eoriNumber: Option[Row] =
-    userAnswers.get(EoriConfirmationPage) match {
+    userAnswers.get(ConsigneeEoriConfirmationPage) match {
       case Some(false) =>
-        userAnswers.get(EoriNumberPage) map {
+        userAnswers.get(ConsigneeEoriNumberPage) map {
           answer =>
             val consigneeName = userAnswers.get(ConsigneeNamePage).getOrElse("")
             val messages      = msg"eoriNumber.checkYourAnswersLabel".withArgs(consigneeName)
@@ -39,8 +39,9 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswers
               actions = List(
                 Action(
                   content            = msg"site.edit",
-                  href               = routes.EoriNumberController.onPageLoad(mrn, CheckMode).url,
-                  visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"eoriNumber.checkYourAnswersLabel"))
+                  href               = routes.ConsigneeEoriNumberController.onPageLoad(mrn, CheckMode).url,
+                  visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"eoriNumber.checkYourAnswersLabel")),
+                  attributes         = Map("id" -> s"""change-eori-number""")
                 )
               )
             )
@@ -48,7 +49,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswers
       case _ => None
     }
 
-  def eoriConfirmation(eoriNumber: String): Option[Row] = userAnswers.get(EoriConfirmationPage) map {
+  def eoriConfirmation(eoriNumber: String): Option[Row] = userAnswers.get(ConsigneeEoriConfirmationPage) map {
     answer =>
       val consigneeName = userAnswers.get(ConsigneeNamePage).getOrElse("")
       val messages      = msg"eoriConfirmation.checkYourAnswersLabel".withArgs(eoriNumber, consigneeName)
@@ -58,8 +59,9 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswers
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = routes.EoriConfirmationController.onPageLoad(mrn, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"eoriConfirmation.checkYourAnswersLabel"))
+            href               = routes.ConsigneeEoriConfirmationController.onPageLoad(mrn, CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"eoriConfirmation.checkYourAnswersLabel")),
+            attributes         = Map("id" -> s"""change-eori-confirmation""")
           )
         )
       )
@@ -74,7 +76,8 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswers
           Action(
             content            = msg"site.edit",
             href               = routes.ConsigneeNameController.onPageLoad(mrn, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"consigneeName.checkYourAnswersLabel"))
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"consigneeName.checkYourAnswersLabel")),
+            attributes         = Map("id" -> s"""change-consignee-name""")
           )
         )
       )

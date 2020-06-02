@@ -21,7 +21,7 @@ import forms.EoriNumberFormProvider
 import javax.inject.Inject
 import models.{Mode, MovementReferenceNumber}
 import navigation.Navigator
-import pages.{ConsigneeAddressPage, ConsigneeNamePage, EoriConfirmationPage, EoriNumberPage}
+import pages.{ConsigneeAddressPage, ConsigneeEoriConfirmationPage, ConsigneeEoriNumberPage, ConsigneeNamePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -32,7 +32,7 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class EoriNumberController @Inject()(
+class ConsigneeEoriNumberController @Inject()(
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
   navigator: Navigator,
@@ -51,7 +51,7 @@ class EoriNumberController @Inject()(
     implicit request =>
       request.userAnswers.get(ConsigneeNamePage) match {
         case Some(consigneeName) =>
-          val preparedForm = request.userAnswers.get(EoriNumberPage) match {
+          val preparedForm = request.userAnswers.get(ConsigneeEoriNumberPage) match {
             case None        => formProvider(consigneeName)
             case Some(value) => formProvider(consigneeName).fill(value)
           }
@@ -91,9 +91,9 @@ class EoriNumberController @Inject()(
               },
               value =>
                 for {
-                  updatedAnswers <- Future.fromTry(request.userAnswers.set(EoriNumberPage, value))
+                  updatedAnswers <- Future.fromTry(request.userAnswers.set(ConsigneeEoriNumberPage, value))
                   _              <- sessionRepository.set(updatedAnswers)
-                } yield Redirect(navigator.nextPage(EoriNumberPage, mode, updatedAnswers))
+                } yield Redirect(navigator.nextPage(ConsigneeEoriNumberPage, mode, updatedAnswers))
             )
         case _ => Future.successful(Redirect(routes.SessionExpiredController.onPageLoad()))
 
