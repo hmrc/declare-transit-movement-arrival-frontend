@@ -28,24 +28,24 @@ sealed trait ErrorType {
 
 object ErrorType extends Enumerable.Implicits {
 
-  sealed trait GenericError extends ErrorType
-  sealed trait MRNError extends ErrorType
+  sealed abstract class GenericError(val code: Int) extends ErrorType
+  sealed abstract class MRNError(val code: Int) extends ErrorType
 
-  case object IncorrectValue extends GenericError { val code: Int        = 12 }
-  case object MissingValue extends GenericError { val code: Int          = 13 }
-  case object ValueNotSupported extends GenericError { val code: Int     = 14 }
-  case object NotSupportedPosition extends GenericError { val code: Int  = 15 }
-  case object InvalidDecimal extends GenericError { val code: Int        = 19 }
-  case object DuplicateDetected extends GenericError { val code: Int     = 26 }
-  case object TooManyRepetitions extends GenericError { val code: Int    = 35 }
-  case object InvalidTypeCharacters extends GenericError { val code: Int = 37 }
-  case object MissingDigit extends GenericError { val code: Int          = 38 }
-  case object ElementTooLong extends GenericError { val code: Int        = 39 }
-  case object ElementTooShort extends GenericError { val code: Int       = 40 }
+  case object IncorrectValue extends GenericError(12)
+  case object MissingValue extends GenericError(13)
+  case object ValueNotSupported extends GenericError(14)
+  case object NotSupportedPosition extends GenericError(15)
+  case object InvalidDecimal extends GenericError(19)
+  case object DuplicateDetected extends GenericError(26)
+  case object TooManyRepetitions extends GenericError(35)
+  case object InvalidTypeCharacters extends GenericError(37)
+  case object MissingDigit extends GenericError(38)
+  case object ElementTooLong extends GenericError(39)
+  case object ElementTooShort extends GenericError(40)
 
-  case object UnknownMrn extends MRNError { val code: Int   = 90 }
-  case object DuplicateMrn extends MRNError { val code: Int = 91 }
-  case object InvalidMrn extends MRNError { val code: Int   = 93 }
+  case object UnknownMrn extends MRNError(90)
+  case object DuplicateMrn extends MRNError(91)
+  case object InvalidMrn extends MRNError(93)
 
   val mrnValues = Seq(
     UnknownMrn,
