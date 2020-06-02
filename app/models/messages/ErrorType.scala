@@ -56,7 +56,15 @@ object ErrorType extends Enumerable.Implicits {
   val genericValues = Seq(
     IncorrectValue,
     MissingValue,
-    InvalidDecimal
+    ValueNotSupported,
+    NotSupportedPosition,
+    InvalidDecimal,
+    DuplicateDetected,
+    TooManyRepetitions,
+    InvalidTypeCharacters,
+    MissingDigit,
+    ElementTooLong,
+    ElementTooShort
   )
 
   implicit val writes: Writes[ErrorType] = Writes[ErrorType] {
