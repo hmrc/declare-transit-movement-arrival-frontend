@@ -72,4 +72,11 @@ class ArrivalMovementConnector @Inject()(val config: FrontendAppConfig, val http
         None
     }
   }
+
+  def updateArrivalMovement(arrivalId: ArrivalId, arrivalMovement: ArrivalMovementRequest)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
+    val serviceUrl = s"${config.destinationUrl}/movements/arrivals/${arrivalId.value}"
+    val headers    = Seq(("Content-Type", "application/xml"))
+
+    http.PUTString[HttpResponse](serviceUrl, arrivalMovement.toXml.toString, headers)
+  }
 }

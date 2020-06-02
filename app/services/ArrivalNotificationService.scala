@@ -21,7 +21,7 @@ import java.time.LocalTime
 import config.FrontendAppConfig
 import connectors.ArrivalMovementConnector
 import javax.inject.Inject
-import models.UserAnswers
+import models.{ArrivalId, UserAnswers}
 import models.messages.MessageSender
 import play.api.Logger
 import repositories.InterchangeControlReferenceIdRepository
@@ -35,6 +35,7 @@ class ArrivalNotificationService @Inject()(
   connector: ArrivalMovementConnector,
   appConfig: FrontendAppConfig,
   submissionModelService: SubmissionModelService,
+  arrivalNotificationMessageService: ArrivalNotificationMessageService,
   interchangeControlReferenceIdRepository: InterchangeControlReferenceIdRepository
 )(implicit ec: ExecutionContext) {
 
@@ -66,5 +67,8 @@ class ArrivalNotificationService @Inject()(
 
       case None => Future.successful(None)
     }
+
+  def update(arrivalId: ArrivalId)(implicit hc: HeaderCarrier): Future[HttpResponse] = ???
+
 
 }

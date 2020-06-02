@@ -77,6 +77,30 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
       }
     }
 
+    "updateArrivalMovement" - {
+
+      "must return status as ACCEPTED for updating the valid arrival movement" in {
+
+        stubPutResponse(ACCEPTED)
+
+        forAll(arbitrary[ArrivalMovementRequest]) {
+          arrivalMovementRequest =>
+            val result: Future[HttpResponse] = connector.updateArrivalMovement(ArrivalId(1), arrivalMovementRequest)
+            result.futureValue.status mustBe ACCEPTED
+        }
+      }
+
+      "must return an error status when an error response is returned from updateArrivalNotification" in {
+        forAll(arbitrary[ArrivalMovementRequest], errorResponsesCodes) {
+          (arrivalMovementRequest, errorResponseCode) =>
+            stubPutResponse(errorResponseCode)
+
+            val result = connector.updateArrivalMovement(ArrivalId(1), arrivalMovementRequest)
+            result.futureValue.status mustBe errorResponseCode
+        }
+      }
+    }
+
     "getSummary" - {
 
       "must be return summary of messages" in {
@@ -239,6 +263,15 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
   private def stubResponse(expectedStatus: Int): StubMapping =
     server.stubFor(
       post(urlEqualTo("/transit-movements-trader-at-destination/movements/arrivals"))
+        .willReturn(
+          aResponse()
+            .withStatus(expectedStatus)
+        )
+    )
+
+  private def stubPutResponse(expectedStatus: Int): StubMapping =
+    server.stubFor(
+      put(urlEqualTo("/transit-movements-trader-at-destination/movements/arrivals/1"))
         .willReturn(
           aResponse()
             .withStatus(expectedStatus)
