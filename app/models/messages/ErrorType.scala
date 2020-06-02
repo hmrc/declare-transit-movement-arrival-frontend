@@ -79,8 +79,8 @@ object ErrorType extends Enumerable.Implicits {
         case class ErrorTypeParseError(message: String) extends ParseError
 
         (mrnValues ++ genericValues).find(x => x.code.toString == xml.text) match {
-          case Some(error) => ParseSuccess(error)
-          case None        => ParseFailure(ErrorTypeParseError(s"Invalid or missing ErrorType: ${xml.text}"))
+          case Some(errorType) => ParseSuccess(errorType)
+          case None            => ParseFailure(ErrorTypeParseError(s"Invalid or missing ErrorType: ${xml.text}"))
         }
       }
     }

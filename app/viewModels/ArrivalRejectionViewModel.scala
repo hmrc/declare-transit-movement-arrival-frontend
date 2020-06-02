@@ -52,11 +52,11 @@ object ArrivalRejectionViewModel {
     }
   }
 
-  private def mrnMessage(mrnError: MRNError): String =
-    mrnError match {
-      case UnknownMrn   => "movementReferenceNumberRejection.error.unknown"
-      case DuplicateMrn => "movementReferenceNumberRejection.error.duplicate"
-      case InvalidMrn   => "movementReferenceNumberRejection.error.invalid"
-    }
+  val mrnMessage: Map[MRNError, String] =
+    Map(
+      UnknownMrn   -> "movementReferenceNumberRejection.error.unknown",
+      DuplicateMrn -> "movementReferenceNumberRejection.error.duplicate",
+      InvalidMrn   -> "movementReferenceNumberRejection.error.invalid"
+    )
 
 }
