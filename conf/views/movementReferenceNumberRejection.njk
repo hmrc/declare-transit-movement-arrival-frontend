@@ -1,0 +1,51 @@
+{% extends "includes/layout.njk" %}
+
+{% from "govuk/components/back-link/macro.njk"        import govukBackLink %}
+{% from "macros/title.njk"                            import title %}
+{% from "govuk/components/button/macro.njk"           import govukButton %}
+{% from "govuk/components/summary-list/macro.njk"     import govukSummaryList %}
+
+{% block pageTitle %}
+  {{ title(messages("arrivalRejection.title")) }}
+{% endblock %}
+
+{% block mainContent %}
+
+{{ govukBackLink({
+    text: messages("site.back")
+  }) }}
+
+  <div class="govuk-main-wrapper">
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+
+        <h1 class="govuk-heading-xl">
+          {{ messages("arrivalRejection.heading") }}
+        </h1>
+
+        <p class="govuk-body">{{ messages(errorKey) }}</p>
+
+        <dl class="govuk-summary-list govuk-summary-list">
+                <div class="govuk-summary-list__row">
+                     <dt class="govuk-summary-list__key" style="width: 48%">
+                    {{ messages("site.movement.reference.number") }}
+                     </dt>
+                     <dd class="govuk-summary-list__value" style="width: 62%">
+                    {{ mrn }}
+                     </dd>
+                     <dd class="govuk-summary-list__actions">
+                            <a class="govuk-link" href={{movementReferenceNumberUrl}}> {{ messages("site.edit") }}
+                            <span class="govuk-visually-hidden">{{ messages("movementReferenceNumberRejection.change.hidden") }}</span>
+                            </a>
+                     </dd>
+                 </div>
+              </dl>
+
+        <p class="govuk-body">{{ messages("movementReferenceNumberRejection.contact.message") }}
+        <a class="govuk-link" href={{contactUrl}} target="_blank">{{ messages("technicalDifficulties.contact.link") }}</a>
+        </p>
+
+      </div>
+    </div>
+  </div>
+{% endblock %}

@@ -20,6 +20,7 @@ import java.time.LocalDate
 
 import base.SpecBase
 import connectors.ArrivalMovementConnector
+import models.messages.ErrorType.DuplicateMrn
 import models.messages.{ArrivalNotificationRejectionMessage, ErrorPointer, ErrorType, FunctionalError}
 import models.{ArrivalId, MessagesLocation, MessagesSummary}
 import org.mockito.Matchers.any
@@ -42,7 +43,7 @@ class ArrivalRejectionServiceSpec extends SpecBase {
 
   "ArrivalRejectionService" - {
     "must return ArrivalNotificationRejectionMessage for the input arrivalId" in {
-      val errors              = Seq(FunctionalError(ErrorType(91), ErrorPointer("Duplicate MRN"), None, None))
+      val errors              = Seq(FunctionalError(DuplicateMrn, ErrorPointer("Duplicate MRN"), None, None))
       val notificationMessage = ArrivalNotificationRejectionMessage(mrn.toString, LocalDate.now, None, None, errors)
       val messagesSummary =
         MessagesSummary(arrivalId, MessagesLocation(s"/movements/arrivals/${arrivalId.value}/messages/3", Some("/movements/arrivals/1234/messages/5")))

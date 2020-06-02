@@ -16,15 +16,74 @@
 
 package models.messages
 
-import com.lucidchart.open.xtract.{__, XmlReader}
-import play.api.libs.json.{Json, OWrites}
+import com.lucidchart.open.xtract._
+import models.Enumerable
+import play.api.libs.json.{JsNumber, Writes}
 
-case class ErrorType(value: Int)
+import scala.xml.NodeSeq
 
-object ErrorType {
+sealed trait ErrorType {
+  val code: Int
+}
 
-  implicit val writes: OWrites[ErrorType] = Json.writes[ErrorType]
+object ErrorType extends Enumerable.Implicits {
 
-  implicit val xmlReader: XmlReader[ErrorType] =
-    (__ \ "ErrTypER11").read[Int].map(apply)
+  sealed abstract class GenericError(val code: Int) extends ErrorType
+  sealed abstract class MRNError(val code: Int) extends ErrorType
+
+  case object IncorrectValue extends GenericError(12)
+  case object MissingValue extends GenericError(13)
+  case object ValueNotSupported extends GenericError(14)
+  case object NotSupportedPosition extends GenericError(15)
+  case object InvalidDecimal extends GenericError(19)
+  case object DuplicateDetected extends GenericError(26)
+  case object TooManyRepetitions extends GenericError(35)
+  case object InvalidTypeCharacters extends GenericError(37)
+  case object MissingDigit extends GenericError(38)
+  case object ElementTooLong extends GenericError(39)
+  case object ElementTooShort extends GenericError(40)
+
+  case object UnknownMrn extends MRNError(90)
+  case object DuplicateMrn extends MRNError(91)
+  case object InvalidMrn extends MRNError(93)
+
+  val mrnValues = Seq(
+    UnknownMrn,
+    DuplicateMrn,
+    InvalidMrn
+  )
+
+  val genericValues = Seq(
+    IncorrectValue,
+    MissingValue,
+    ValueNotSupported,
+    NotSupportedPosition,
+    InvalidDecimal,
+    DuplicateDetected,
+    TooManyRepetitions,
+    InvalidTypeCharacters,
+    MissingDigit,
+    ElementTooLong,
+    ElementTooShort
+  )
+
+  implicit val writes: Writes[ErrorType] = Writes[ErrorType] {
+    case genericError: GenericError => JsNumber(genericError.code)
+    case mrnError: MRNError         => JsNumber(mrnError.code)
+  }
+
+  implicit val xmlErrorTypeReads: XmlReader[ErrorType] = {
+    new XmlReader[ErrorType] {
+      override def read(xml: NodeSeq): ParseResult[ErrorType] = {
+
+        case class ErrorTypeParseError(message: String) extends ParseError
+
+        (mrnValues ++ genericValues).find(x => x.code.toString == xml.text) match {
+          case Some(errorType) => ParseSuccess(errorType)
+          case None            => ParseFailure(ErrorTypeParseError(s"Invalid or missing ErrorType: ${xml.text}"))
+        }
+      }
+    }
+  }
+
 }

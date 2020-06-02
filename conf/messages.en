@@ -431,3 +431,10 @@ arrivalRejection.pointer = Pointer
 arrivalRejection.conflicting.information = There is conflicting information that must be fixed.
 arrivalRejection.contact = contact the New Computerised Transit System helpdesk to fix the information (opens in a new window or tab)
 arrivalRejection.create.arrival = create a new arrival notification
+
+movementReferenceNumberRejection.error.unknown = The movement reference number cannot be found.
+movementReferenceNumberRejection.error.duplicate = The movement reference number is already in use.
+movementReferenceNumberRejection.error.invalid = The movement reference number is not real.
+movementReferenceNumberRejection.contact.message = If this information is correct, you will need to
+movementReferenceNumberRejection.change.hidden = Change - movement reference number
+
