@@ -120,15 +120,16 @@ class Navigator @Inject()() {
   }
 
   // format: on
-
+//TODO refactor case matching
   private def consigneeEoriConfirmationRoute(mode: Mode)(ua: UserAnswers) =
-    (ua.get(ConsigneeEoriConfirmationPage), mode, ua.get(ConsigneeEoriNumberPage)) match {
-      case (Some(true), NormalMode, _)       => Some(routes.ConsigneeAddressController.onPageLoad(ua.id, mode))
-      case (Some(true), CheckMode, _)        => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
-      case (Some(false), CheckMode, Some(_)) => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
-      case (Some(false), NormalMode, _)      => Some(routes.ConsigneeEoriNumberController.onPageLoad(ua.id, mode))
-      case (Some(false), CheckMode, None)    => Some(routes.ConsigneeEoriNumberController.onPageLoad(ua.id, mode))
-      case _                                 => None
+    (ua.get(ConsigneeEoriConfirmationPage), mode, ua.get(ConsigneeEoriNumberPage), ua.get(ConsigneeAddressPage)) match {
+      case (Some(true), NormalMode, _, _)       => Some(routes.ConsigneeAddressController.onPageLoad(ua.id, mode))
+      case (Some(true), CheckMode, _, None)     => Some(routes.ConsigneeAddressController.onPageLoad(ua.id, mode))
+      case (Some(true), CheckMode, _, _)        => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
+      case (Some(false), CheckMode, Some(_), _) => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
+      case (Some(false), NormalMode, _, _)      => Some(routes.ConsigneeEoriNumberController.onPageLoad(ua.id, mode))
+      case (Some(false), CheckMode, None, _)    => Some(routes.ConsigneeEoriNumberController.onPageLoad(ua.id, mode))
+      case _                                    => None
     }
 
   private def consigneeEoriNumberRoute(mode: Mode)(ua: UserAnswers) =
@@ -145,11 +146,10 @@ class Navigator @Inject()() {
     }
 
   private def customsSubPlaceRoute(mode: Mode)(ua: UserAnswers): Option[Call] =
-    (ua.get(ConsigneeNamePage), mode) match {
+    (ua.get(PresentationOfficePage), mode) match {
       case (Some(_), CheckMode) => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
-      case _                    => Some(routes.ConsigneeNameController.onPageLoad(ua.id, mode))
+      case _                    => Some(routes.PresentationOfficeController.onPageLoad(ua.id, mode))
     }
-
   private def transportIdentity(eventIndex: Index)(ua: UserAnswers): Option[Call] =
     (ua.get(TransportIdentityPage(eventIndex)), ua.get(TransportNationalityPage(eventIndex))) match {
       case (Some(_), Some(_)) => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, eventIndex))
