@@ -179,6 +179,37 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
             }
           }
         }
+        "from trader eori page to" - {
+          "CheckYourAnswersPage when trader address has previously been answered " in {
+            forAll(arbitrary[UserAnswers],arbitrary[String], arbitrary[Address]) {
+              (answers,traderEori, traderAddress) =>
+                val updatedAnswers =
+                  answers
+                    .set(TraderEoriPage, traderEori).success.value
+                    .set(TraderAddressPage, traderAddress).success.value
+
+                navigator
+                  .nextPage(TraderEoriPage, CheckMode, updatedAnswers)
+                  .mustBe(routes.CheckYourAnswersController.onPageLoad(answers.id))
+
+            }
+          }
+          "TraderAddressPage when trader address has not previously been answered " in {
+            forAll(arbitrary[UserAnswers],arbitrary[String]) {
+              (answers, traderEori) =>
+                val updatedAnswers =
+                  answers
+                    .set(TraderEoriPage, traderEori).success.value
+                    .remove(TraderAddressPage).success.value
+
+                navigator
+                  .nextPage(TraderEoriPage, CheckMode, updatedAnswers)
+                  .mustBe(routes.TraderAddressController.onPageLoad(answers.id, CheckMode))
+
+            }
+          }
+        }
+
 
         "must go from 'TraderAddressController' to " - {
           "'IsTraderAddressPlaceOfNotifcationController' when this is not answered" in {

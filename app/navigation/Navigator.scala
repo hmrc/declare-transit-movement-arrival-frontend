@@ -99,6 +99,7 @@ class Navigator @Inject()() {
     case AddSealPage(eventIndex) => addSeal(eventIndex, CheckMode)
     case PresentationOfficePage =>  presentationOfficeRoute(CheckMode)
     case TraderNamePage =>  traderNameRoute(CheckMode)
+    case TraderEoriPage =>  traderEoriRoute(CheckMode)
 
 
   }
@@ -167,7 +168,11 @@ class Navigator @Inject()() {
       case (Some(_), CheckMode) => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
       case _                    => Some(routes.TraderEoriController.onPageLoad(ua.id, mode))
     }
-
+  private def traderEoriRoute(mode: Mode)(ua: UserAnswers): Option[Call] =
+    (ua.get(TraderAddressPage), mode) match {
+      case (Some(_), CheckMode) => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
+      case _                    => Some(routes.TraderAddressController.onPageLoad(ua.id, mode))
+    }
   private def customsSubPlaceRoute(mode: Mode)(ua: UserAnswers): Option[Call] =
     (ua.get(PresentationOfficePage), mode) match {
       case (Some(_), CheckMode) => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
