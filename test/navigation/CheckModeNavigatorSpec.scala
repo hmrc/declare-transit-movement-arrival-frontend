@@ -78,6 +78,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
           }
         }
       }
+
       "to Customs Sub Place" - {
         "when the user answers Border Force Office and had not answered Customs Sub Place" in {
           forAll(arbitrary[UserAnswers]) {
@@ -175,6 +176,84 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
                   .nextPage(TraderNamePage, CheckMode, updatedAnswers)
                   .mustBe(routes.TraderEoriController.onPageLoad(answers.id, CheckMode))
 
+            }
+          }
+        }
+
+        "must go from 'TraderAddressController' to " - {
+          "'IsTraderAddressPlaceOfNotifcationController' when this is not answered" in {
+            forAll(arbitrary[UserAnswers]) {
+              answers =>
+                val userAnswers = answers
+                  .remove(IsTraderAddressPlaceOfNotificationPage).success.value
+
+              navigator
+                  .nextPage(TraderAddressPage, CheckMode, userAnswers)
+                  .mustBe(routes.IsTraderAddressPlaceOfNotificationController.onPageLoad(userAnswers.id, CheckMode))
+            }
+          }
+
+          "'CheckYourAnswersController' when 'IsTraderAddressPlaceOfNotification' has been answered" in {
+            forAll(arbitrary[UserAnswers], arbitrary[Boolean]) {
+              (answers, isTraderAddressPlaceOfNotification) =>
+                val userAnswers = answers
+                  .set(IsTraderAddressPlaceOfNotificationPage, isTraderAddressPlaceOfNotification).success.value
+
+                navigator
+                  .nextPage(TraderAddressPage, CheckMode, userAnswers)
+                  .mustBe(routes.CheckYourAnswersController.onPageLoad(userAnswers.id))
+            }
+
+          }
+        }
+
+        "must go from 'IsTraderAddressPlaceOfNotificationController' to " - {
+          "'PlaceOfNotificationController' when the answer is false and it has not been answered" in {
+            forAll(arbitrary[UserAnswers]) {
+              answers =>
+                val userAnswers = answers
+                  .set(IsTraderAddressPlaceOfNotificationPage, false).success.value
+                  .remove(PlaceOfNotificationPage).success.value
+                navigator
+                  .nextPage(IsTraderAddressPlaceOfNotificationPage, CheckMode, userAnswers)
+                  .mustBe(routes.PlaceOfNotificationController.onPageLoad(userAnswers.id, CheckMode))
+            }
+          }
+
+          "'CheckYourAnswersController' when the answer is true" in {
+            forAll(arbitrary[UserAnswers]) {
+              answers =>
+              val userAnswers = answers
+                .set(IsTraderAddressPlaceOfNotificationPage, true).success.value
+
+                navigator
+                  .nextPage(IsTraderAddressPlaceOfNotificationPage, CheckMode, userAnswers)
+                  .mustBe(routes.CheckYourAnswersController.onPageLoad(answers.id))
+            }
+          }
+
+          "'CheckYourAnswersController' when the answer is false when PlaceOfNotification has been answered" in {
+            forAll(arbitrary[UserAnswers], nonEmptyString) {
+              (answers, placeOfNotification) =>
+              val userAnswers = answers
+                .set(IsTraderAddressPlaceOfNotificationPage, false).success.value
+                .set(PlaceOfNotificationPage, placeOfNotification).success.value
+
+                navigator
+                  .nextPage(IsTraderAddressPlaceOfNotificationPage, CheckMode, userAnswers)
+                  .mustBe(routes.CheckYourAnswersController.onPageLoad(answers.id))
+            }
+          }
+
+        }
+
+        "must go from 'PlaceOfNotification' to " - {
+          "'CheckYourAnswersController'" in {
+            forAll(arbitrary[UserAnswers]) {
+              answers =>
+                navigator
+                  .nextPage(PlaceOfNotificationPage, CheckMode, answers)
+                  .mustBe(routes.CheckYourAnswersController.onPageLoad(answers.id))
             }
           }
         }

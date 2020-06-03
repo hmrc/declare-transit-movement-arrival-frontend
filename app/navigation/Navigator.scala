@@ -80,6 +80,7 @@ class Navigator @Inject()() {
     case ConsigneeAddressPage => ua => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
     case EventCountryPage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
     case EventPlacePage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
+    case TraderAddressPage => traderAddressRoute(CheckMode)
     case IsTraderAddressPlaceOfNotificationPage => isTraderAddressPlaceOfNotificationCheckRoute
     case IsTranshipmentPage(index) => isTranshipmentCheckRoute(index)
     case IncidentInformationPage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
@@ -124,6 +125,13 @@ class Navigator @Inject()() {
   }
 
   // format: on
+
+  private def traderAddressRoute(mode: Mode)(ua: UserAnswers) =
+    (ua.get(IsTraderAddressPlaceOfNotificationPage), mode) match {
+      case (Some(_), CheckMode) => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
+      case (None, _)            => Some(routes.IsTraderAddressPlaceOfNotificationController.onPageLoad(ua.id, mode))
+    }
+
 //TODO refactor case matching
   private def consigneeEoriConfirmationRoute(mode: Mode)(ua: UserAnswers) =
     (ua.get(ConsigneeEoriConfirmationPage), mode, ua.get(ConsigneeEoriNumberPage), ua.get(ConsigneeAddressPage)) match {
