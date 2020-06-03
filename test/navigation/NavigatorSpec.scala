@@ -92,7 +92,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         }
       }
 
-      "must go from'eoriConfirmation page to eoriNumber page when 'No' is selcted" in {
+      "must go from'eoriConfirmation page to eoriNumber page when 'No' is selected" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
             val updatedAnswers = answers
@@ -109,7 +109,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         }
       }
 
-      "must go from'eoriConfirmation page to consigneeAddress page when 'Yes' is selcted" in {
+      "must go from'eoriConfirmation page to consigneeAddress page when 'Yes' is selected" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
             val updatedAnswers = answers.set(ConsigneeEoriConfirmationPage, true).success.value
