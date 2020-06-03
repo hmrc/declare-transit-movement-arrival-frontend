@@ -288,6 +288,35 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
             }
           }
         }
+        "must go from 'AuthorisedLocationController' to " - {
+          "'CheckYourAnswersController' when an answer for 'ConsigneeName'" in {
+            forAll(arbitrary[UserAnswers], nonEmptyString, nonEmptyString) {
+              (answers, authorisedLocation, consigneeName) =>
+                val updatedAnswers =
+                  answers
+                    .set(AuthorisedLocationPage, authorisedLocation).success.value
+                    .set(ConsigneeNamePage, consigneeName).success.value
+
+                navigator
+                  .nextPage(AuthorisedLocationPage, CheckMode, updatedAnswers)
+                  .mustBe(routes.CheckYourAnswersController.onPageLoad(answers.id))
+            }
+          }
+
+          "'ConsigneeConfirmEori' when no answer for 'ConsigneeConfirmEori'" in {
+            forAll(arbitrary[UserAnswers], nonEmptyString) {
+              (answers, authorisedLocation) =>
+                val updatedAnswers =
+                  answers
+                    .set(AuthorisedLocationPage, authorisedLocation).success.value
+                    .remove(ConsigneeNamePage).success.value
+
+                navigator
+                  .nextPage(AuthorisedLocationPage, CheckMode, updatedAnswers)
+                  .mustBe(routes.ConsigneeNameController.onPageLoad(answers.id, CheckMode))
+            }
+          }
+        }
 
         "must go from 'ConsigneeNameController' to " - {
           "'CheckYourAnswersController' when an answer for 'ConsigneeConfirmEori'" in {

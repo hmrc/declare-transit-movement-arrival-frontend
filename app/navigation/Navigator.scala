@@ -72,7 +72,7 @@ class Navigator @Inject()() {
 
   private val checkRouteMap: PartialFunction[Page, UserAnswers => Option[Call]] = {
     case GoodsLocationPage => goodsLocationCheckRoute
-    case AuthorisedLocationPage => ua => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
+    case AuthorisedLocationPage  => authorisedLocationRoute(CheckMode)
     case CustomsSubPlacePage => customsSubPlaceRoute(CheckMode)
     case ConsigneeNamePage => consigneeNameRoute(CheckMode)
     case ConsigneeEoriConfirmationPage => consigneeEoriConfirmationRoute(CheckMode)
@@ -177,6 +177,11 @@ class Navigator @Inject()() {
     (ua.get(PresentationOfficePage), mode) match {
       case (Some(_), CheckMode) => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
       case _                    => Some(routes.PresentationOfficeController.onPageLoad(ua.id, mode))
+    }
+  private def authorisedLocationRoute(mode: Mode)(ua: UserAnswers): Option[Call] =
+    (ua.get(ConsigneeNamePage), mode) match {
+      case (Some(_), CheckMode) => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
+      case _                    => Some(routes.ConsigneeNameController.onPageLoad(ua.id, mode))
     }
   private def transportIdentity(eventIndex: Index)(ua: UserAnswers): Option[Call] =
     (ua.get(TransportIdentityPage(eventIndex)), ua.get(TransportNationalityPage(eventIndex))) match {
