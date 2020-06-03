@@ -119,12 +119,13 @@ class MetaSpec extends SpecBase with ScalaCheckPropertyChecks with MessagesModel
 
     "must deserialize to xml" in {
 
-      forAll(arbitrary[Meta]) {
-        meta =>
-          val xml    = meta.toXml
-          val result = XmlReader.of[Meta].read(xml).toOption.value
+      forAll(arbitrary[ArrivalMovementRequest]) {
+        arrivalMovementRequest =>
 
-          result mustBe meta
+          val xml    = arrivalMovementRequest.toXml
+          val result = XmlReader.of[Meta].read(xml)
+
+          result mustBe arrivalMovementRequest.meta
       }
     }
   }

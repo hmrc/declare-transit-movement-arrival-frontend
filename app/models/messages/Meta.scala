@@ -22,6 +22,8 @@ import com.lucidchart.open.xtract.{__, XmlReader}
 import models.XMLWrites
 import models.XMLWrites._
 import utils.Format
+import models.XMLReads._
+import cats.syntax.all._
 
 import scala.xml.NodeSeq
 
@@ -116,6 +118,21 @@ object Meta {
           }
       })
 
-  implicit val reads: XmlReader[Meta] = ???
+  implicit val reads: XmlReader[Meta] = (
+    (__ \ "MesSenMES3").read[MessageSender],
+    (__ \ "IntConRefMES11").read[InterchangeControlReference],
+    (__ \ "DatOfPreMES9").read[LocalDate],
+    (__ \ "TimOfPreMES10").read[LocalTime],
+    (__ \ "SenIdeCodQuaMES4").read[String].optional,
+    (__ \ "RecIdeCodQuaMES7").read[String].optional,
+    (__ \ "RecRefMES12").read[String].optional,
+    (__ \ "RecRefQuaMES13").read[String].optional,
+    (__ \ "PriMES15").read[String].optional,
+    (__ \ "AckReqMES16").read[String].optional,
+    (__ \ "ComAgrIdMES17").read[String].optional,
+    (__ \ "ComAccRefMES21").read[String].optional,
+    (__ \ "MesSeqNumMES22").read[String].optional,
+    (__ \ "FirAndLasTraMES23").read[String].optional
+  ).mapN(apply)
 
 }

@@ -34,7 +34,7 @@ object InterchangeControlReference {
         <IntConRefMES11>{escapeXml(s"$prefix${a.date}${a.index}")}</IntConRefMES11>
     }
 
-  implicit val reads: XmlReader[InterchangeControlReference] = {
+  implicit val interchangeControlReferenceXmlReads: XmlReader[InterchangeControlReference] = {
     new XmlReader[InterchangeControlReference] {
       override def read(xml: NodeSeq): ParseResult[InterchangeControlReference] = {
 
