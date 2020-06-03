@@ -40,7 +40,7 @@ object InterchangeControlReference {
 
         case class InterchangeControlReferenceParseFailure(message: String) extends ParseError
 
-        val controlReferenceFormat: Regex = """AF(\d{8})(\d*)""".r
+        val controlReferenceFormat: Regex = (prefix + """(\d{8})(\d*)""").r
 
         xml.text match {
           case controlReferenceFormat(date, index) =>
