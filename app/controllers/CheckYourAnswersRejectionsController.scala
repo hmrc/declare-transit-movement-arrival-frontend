@@ -62,7 +62,7 @@ class CheckYourAnswersRejectionsController @Inject()(override val messagesApi: M
       arrivalNotificationService.update(arrivalId, mrn) flatMap {
         case Some(result) =>
           result.status match {
-            case status if is2xx(status) => Future.successful(Redirect(routes.ConfirmationController.onPageLoad(mrn)))
+            case status if is2xx(status) => Future.successful(Redirect(routes.RejectionConfirmationController.onPageLoad(mrn)))
             case status if is4xx(status) => errorHandler.onClientError(request, status)
             case _                       => Future.successful(Redirect(routes.TechnicalDifficultiesController.onPageLoad()))
           }

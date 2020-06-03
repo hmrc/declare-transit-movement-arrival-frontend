@@ -65,6 +65,8 @@ GET        /:mrn/use-ncts-service                            controllers.UseDiff
 
 GET        /:mrn/arrival-notification-sent                   controllers.ConfirmationController.onPageLoad(mrn: MovementReferenceNumber)
 
+GET        /:mrn/arrival-notification-sent-rejection         controllers.RejectionConfirmationController.onPageLoad(mrn: MovementReferenceNumber)
+
 GET        /:mrn/event-on-journey                            controllers.IncidentOnRouteController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
 POST       /:mrn/event-on-journey                            controllers.IncidentOnRouteController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
 GET        /:mrn/change-event-on-journey                     controllers.IncidentOnRouteController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)

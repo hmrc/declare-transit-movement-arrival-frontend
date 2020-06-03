@@ -77,7 +77,7 @@ class CheckYourAnswersRejectionsControllerSpec extends SpecBase with JsonMatcher
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual routes.ConfirmationController.onPageLoad(mrn).url
+      redirectLocation(result).value mustEqual routes.RejectionConfirmationController.onPageLoad(mrn).url
 
       application.stop()
     }
