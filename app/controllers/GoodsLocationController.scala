@@ -16,10 +16,12 @@
 
 package controllers
 
+import config.FrontendAppConfig
 import controllers.actions._
 import forms.GoodsLocationFormProvider
 import javax.inject.Inject
-import models.{GoodsLocation, Mode, MovementReferenceNumber, UserAnswers}
+import models.GoodsLocation.{AuthorisedConsigneesLocation, BorderForceOffice}
+import models.{GoodsLocation, Mode, MovementReferenceNumber, NormalMode, UserAnswers}
 import navigation.Navigator
 import pages.GoodsLocationPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -39,7 +41,8 @@ class GoodsLocationController @Inject()(override val messagesApi: MessagesApi,
                                         getData: DataRetrievalActionProvider,
                                         formProvider: GoodsLocationFormProvider,
                                         val controllerComponents: MessagesControllerComponents,
-                                        renderer: Renderer)(implicit ec: ExecutionContext)
+                                        renderer: Renderer,
+                                        frontendAppConfig: FrontendAppConfig)(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
     with NunjucksSupport {
@@ -83,7 +86,13 @@ class GoodsLocationController @Inject()(override val messagesApi: MessagesApi,
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(mrn)).set(GoodsLocationPage, value))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(GoodsLocationPage, mode, updatedAnswers))
+            } yield
+              (value, frontendAppConfig.featureToggleSimplifiedJourney) match {
+                case (BorderForceOffice, _)                => Redirect(routes.CustomsSubPlaceController.onPageLoad(updatedAnswers.id, mode))
+                case (AuthorisedConsigneesLocation, true)  => Redirect(routes.AuthorisedLocationController.onPageLoad(updatedAnswers.id, mode))
+                case (AuthorisedConsigneesLocation, false) => Redirect(routes.UseDifferentServiceController.onPageLoad(updatedAnswers.id))
+
+            }
         )
   }
 }

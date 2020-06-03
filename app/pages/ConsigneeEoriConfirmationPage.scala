@@ -14,19 +14,22 @@
  * limitations under the License.
  */
 
-package models
+package pages
 
-import play.api.libs.json._
+import models.UserAnswers
+import play.api.libs.json.JsPath
 
-case class TraderAddress(buildingAndStreet: String, city: String, postcode: String)
+import scala.util.Try
 
-object TraderAddress {
+case object ConsigneeEoriConfirmationPage extends QuestionPage[Boolean] {
 
-  object Constants {
-    val buildingAndStreetLength = 35
-    val cityLength              = 35
-    val postcodeLength          = 9
-  }
+  override def path: JsPath = JsPath \ toString
 
-  implicit val format = Json.format[TraderAddress]
+  override def toString: String = "eoriConfirmation"
+
+  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
+    value match {
+      case Some(true) => userAnswers.remove(ConsigneeEoriNumberPage)
+      case _          => super.cleanup(value, userAnswers)
+    }
 }

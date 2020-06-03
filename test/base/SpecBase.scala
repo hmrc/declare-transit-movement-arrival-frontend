@@ -19,7 +19,7 @@ package base
 import config.FrontendAppConfig
 import controllers.actions._
 import models.messages.{Container, Seal}
-import models.{Index, MovementReferenceNumber, TraderAddress, UserAnswers}
+import models.{Address, Index, MovementReferenceNumber, UserAnswers}
 import org.mockito.Mockito
 import org.scalatest._
 import org.scalatest.concurrent.IntegrationPatience
@@ -53,19 +53,24 @@ trait SpecBase
     Mockito.reset(mockRenderer)
   }
 
-  val mrn = MovementReferenceNumber("19", "GB", "1234567890123")
+  val mrn: MovementReferenceNumber = MovementReferenceNumber("19", "GB", "1234567890123")
 
-  val emptyUserAnswers = UserAnswers(mrn, Json.obj())
+  val emptyUserAnswers: UserAnswers = UserAnswers(mrn, Json.obj())
 
-  val eventIndex     = Index(0)
-  val containerIndex = Index(0)
-  val sealIndex      = Index(0)
+  val eventIndex: Index     = Index(0)
+  val containerIndex: Index = Index(0)
+  val sealIndex: Index      = Index(0)
 
-  val seal      = Seal("sealNumber")
-  val container = Container("containerNumber")
+  val seal: Seal           = Seal("sealNumber")
+  val container: Container = Container("containerNumber")
 
-  val traderAddress = TraderAddress("", "", "NE99 1XN")
-  val configKey     = "config"
+  val eoriNumber: String         = "EOriNumber"
+  val traderName: String         = "traderName"
+  val consigneeName: String      = "consigneeName"
+  val presentationOffice: String = "presentationOffice"
+
+  val traderAddress: Address = Address("buildingAndStreet", "city", "NE99 1XN")
+  val configKey              = "config"
 
   def injector: Injector = app.injector
 

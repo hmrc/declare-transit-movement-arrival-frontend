@@ -20,7 +20,9 @@ import com.google.inject.Inject
 import controllers.actions.{DataRequiredAction, DataRetrievalActionProvider, IdentifierAction}
 import derivable.DeriveNumberOfEvents
 import handlers.ErrorHandler
-import models.{Index, MovementReferenceNumber, UserAnswers}
+import models.GoodsLocation.{AuthorisedConsigneesLocation, BorderForceOffice}
+import models.{GoodsLocation, Index, MovementReferenceNumber, UserAnswers}
+import pages.{AuthorisedLocationPage, ConsigneeEoriConfirmationPage, GoodsLocationPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.Results.BadRequest
@@ -50,7 +52,7 @@ class CheckYourAnswersController @Inject()(override val messagesApi: MessagesApi
 
   def onPageLoad(mrn: MovementReferenceNumber): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
-      val answers: Seq[Section] = createSections(request.userAnswers)
+      val answers: Seq[Section] = createSections(request.userAnswers, request.eoriNumber)
 
       val json = Json.obj(
         "sections" -> Json.toJson(answers),
@@ -73,21 +75,37 @@ class CheckYourAnswersController @Inject()(override val messagesApi: MessagesApi
         }
     }
 
-  private def createSections(userAnswers: UserAnswers): Seq[Section] = {
+  private def createSections(userAnswers: UserAnswers, eori: String): Seq[Section] = {
     val helper = new CheckYourAnswersHelper(userAnswers)
+    val mrn    = Section(Seq(helper.movementReferenceNumber))
 
-    val mrn = Section(Seq(helper.movementReferenceNumber))
-    val whereAreTheGoods =
-      Section(
-        msg"checkYourAnswers.section.goodsLocation",
-        Seq(helper.goodsLocation, helper.authorisedLocation, helper.customsSubPlace, helper.presentationOffice).flatten
-      )
+    val whereAreTheGoods = Section(
+      msg"checkYourAnswers.section.goodsLocation",
+      (userAnswers.get(GoodsLocationPage) match {
+        case Some(AuthorisedConsigneesLocation) => Seq(helper.goodsLocation, helper.authorisedLocation)
+        case _                                  => Seq(helper.goodsLocation, helper.authorisedLocation, helper.customsSubPlace, helper.presentationOffice)
+
+      }).flatten
+    )
+
     val traderDetails = Section(
       msg"checkYourAnswers.section.traderDetails",
       Seq(
         helper.traderName,
         helper.traderEori,
         helper.traderAddress
+      ).flatten
+    )
+    val consigneeDetails = Section(
+      msg"checkYourAnswers.section.consigneeDetails",
+      Seq(
+        helper.consigneeName,
+        helper.eoriConfirmation(eori),
+        userAnswers.get(ConsigneeEoriConfirmationPage) match {
+          case Some(false) => helper.eoriNumber
+          case _           => None
+        },
+        helper.consigneeAddress
       ).flatten
     )
     val placeOfNotification = Section(
@@ -97,12 +115,14 @@ class CheckYourAnswersController @Inject()(override val messagesApi: MessagesApi
         helper.placeOfNotification
       ).flatten
     )
-
     val eventSeq = helper.incidentOnRoute.toSeq ++ eventList(userAnswers)
     val events   = Section(msg"checkYourAnswers.section.events", eventSeq)
-    Seq(mrn, whereAreTheGoods, traderDetails, placeOfNotification, events)
-  }
 
+    userAnswers.get(GoodsLocationPage) match {
+      case Some(BorderForceOffice) => Seq(mrn, whereAreTheGoods, traderDetails, placeOfNotification, events)
+      case _                       => Seq(mrn, whereAreTheGoods, consigneeDetails, events)
+    }
+  }
   private def eventList(userAnswers: UserAnswers): Seq[SummaryList.Row] = {
     val numberOfEvents = userAnswers.get(DeriveNumberOfEvents).getOrElse(0)
     val cyaHelper      = new AddEventsHelper(userAnswers)

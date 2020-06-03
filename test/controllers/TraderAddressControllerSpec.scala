@@ -20,7 +20,7 @@ import base.SpecBase
 import forms.TraderAddressFormProvider
 import matchers.JsonMatchers
 import models.NormalMode
-import models.TraderAddress
+import models.Address
 import models.UserAnswers
 import navigation.FakeNavigator
 import navigation.Navigator
@@ -63,7 +63,7 @@ class TraderAddressControllerSpec extends SpecBase with MockitoSugar with Nunjuc
     )
   )
 
-  "TraderAddress Controller" - {
+  "Address Controller" - {
 
     "must return OK and the correct view for a GET" in {
 

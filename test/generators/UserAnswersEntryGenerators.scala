@@ -29,6 +29,38 @@ import play.api.libs.json.Json
 trait UserAnswersEntryGenerators extends PageGenerators {
   self: Generators =>
 
+  implicit lazy val arbitraryConsigneeAddressUserAnswersEntry: Arbitrary[(ConsigneeAddressPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[ConsigneeAddressPage.type]
+        value <- arbitrary[String].suchThat(_.nonEmpty).map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryEoriNumberUserAnswersEntry: Arbitrary[(ConsigneeEoriNumberPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[ConsigneeEoriNumberPage.type]
+        value <- arbitrary[String].suchThat(_.nonEmpty).map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryEoriConfirmationUserAnswersEntry: Arbitrary[(ConsigneeEoriConfirmationPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[ConsigneeEoriConfirmationPage.type]
+        value <- arbitrary[Boolean].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryConsigneeNameUserAnswersEntry: Arbitrary[(ConsigneeNamePage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[ConsigneeNamePage.type]
+        value <- arbitrary[String].suchThat(_.nonEmpty).map(Json.toJson(_))
+      } yield (page, value)
+    }
+
   implicit lazy val arbitraryHaveSealsChangedUserAnswersEntry: Arbitrary[(HaveSealsChangedPage, JsValue)] =
     Arbitrary {
       for {
@@ -185,7 +217,7 @@ trait UserAnswersEntryGenerators extends PageGenerators {
     Arbitrary {
       for {
         page  <- arbitrary[TraderAddressPage.type]
-        value <- arbitrary[TraderAddress].map(Json.toJson(_))
+        value <- arbitrary[Address].map(Json.toJson(_))
       } yield (page, value)
     }
 

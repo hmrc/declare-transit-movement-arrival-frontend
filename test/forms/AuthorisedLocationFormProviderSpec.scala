@@ -17,37 +17,42 @@
 package forms
 
 import forms.behaviours.StringFieldBehaviours
-import play.api.data.FormError
+import org.scalacheck.Gen
+import play.api.data.{Field, FormError}
+import wolfendale.scalacheck.regexp.RegexpGen
 
 class AuthorisedLocationFormProviderSpec extends StringFieldBehaviours {
 
-  val requiredKey = "authorisedLocation.error.required"
-  val lengthKey   = "authorisedLocation.error.length"
-  val maxLength   = 17
+  private val requiredKey = "authorisedLocation.error.required"
+  private val invalidKey  = "authorisedLocation.error.invalid"
+  private val maxLength   = 17
 
-  val form = new AuthorisedLocationFormProvider()()
+  private val form      = new AuthorisedLocationFormProvider()()
+  private val fieldName = "value"
 
   ".value" - {
-
-    val fieldName = "value"
 
     behave like fieldThatBindsValidData(
       form,
       fieldName,
       stringsWithMaxLength(maxLength)
     )
-
-    behave like fieldWithMaxLength(
-      form,
-      fieldName,
-      maxLength   = maxLength,
-      lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
-    )
-
     behave like mandatoryField(
       form,
       fieldName,
       requiredError = FormError(fieldName, requiredKey)
     )
+  }
+  "must not bind strings that do not match regex" in {
+    val generator: Gen[String] = RegexpGen.from("[^a-zA-Z0-9]\n{2}[^\n\r]{1,15}")
+
+    val validRegex    = "^[a-zA-Z0-9]*$"
+    val expectedError = FormError(fieldName, invalidKey, Seq(validRegex))
+
+    forAll(generator) {
+      invalidString =>
+        val result: Field = form.bind(Map(fieldName -> invalidString)).apply(fieldName)
+        result.errors must contain(expectedError)
+    }
   }
 }
