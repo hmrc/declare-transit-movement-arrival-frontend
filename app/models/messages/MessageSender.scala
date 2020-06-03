@@ -30,10 +30,11 @@ object MessageSender {
       a => <MesSenMES3>{escapeXml(s"${a.environment}-${a.eori}")}</MesSenMES3>
     )
 
-  case class MessageSenderParseFailure(message: String) extends ParseError
-
   implicit val xmlMessageSenderReads: XmlReader[MessageSender] = {
     new XmlReader[MessageSender] {
+
+      case class MessageSenderParseFailure(message: String) extends ParseError
+
       override def read(xml: NodeSeq): ParseResult[MessageSender] =
         xml.text.split("-") match {
           case Array(environment, eori) => ParseSuccess(MessageSender(environment, eori))

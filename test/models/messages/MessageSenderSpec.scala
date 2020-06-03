@@ -17,11 +17,11 @@
 package models.messages
 
 import base.SpecBase
-import com.lucidchart.open.xtract.XmlReader
+import com.lucidchart.open.xtract.{ParseFailure, XmlReader}
 import generators.MessagesModelGenerators
 import models.XMLWrites._
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalatest.{FreeSpec, MustMatchers, StreamlinedXmlEquality}
+import org.scalatest.StreamlinedXmlEquality
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
 import scala.xml.NodeSeq
@@ -50,5 +50,14 @@ class MessageSenderSpec extends SpecBase with ScalaCheckPropertyChecks with Stre
           result mustBe messageSender
       }
     }
+
+    "must fail to deserialize from xml if invalid format" in {
+
+      val invalidXml = <MesSenMES3>Invalid format</MesSenMES3>
+      val result     = XmlReader.of[MessageSender].read(invalidXml)
+
+      result mustBe an[ParseFailure]
+    }
   }
+
 }

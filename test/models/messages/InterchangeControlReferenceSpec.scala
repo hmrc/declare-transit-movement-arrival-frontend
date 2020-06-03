@@ -16,26 +16,49 @@
 
 package models.messages
 
+import base.SpecBase
+import com.lucidchart.open.xtract.{ParseFailure, XmlReader}
+import generators.MessagesModelGenerators
 import models.XMLWrites._
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalatest.{FreeSpec, MustMatchers, StreamlinedXmlEquality}
+import org.scalatest.StreamlinedXmlEquality
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
 import scala.xml.NodeSeq
 
-class InterchangeControlReferenceSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with StreamlinedXmlEquality {
+class InterchangeControlReferenceSpec extends SpecBase with ScalaCheckPropertyChecks with StreamlinedXmlEquality with MessagesModelGenerators {
 
   "InterchangeControlReference" - {
     "must convert to xml and convert to correct format" in {
-      forAll(arbitrary[String], arbitrary[Int]) {
-        (date, index) =>
-          val expectedResult: NodeSeq = <IntConRefMES11>{s"AF${escapeXml(date)}$index"}</IntConRefMES11>
 
-          val interchangeControlReference = InterchangeControlReference(date, index)
-          val result                      = interchangeControlReference.toXml
+      forAll(arbitrary[InterchangeControlReference]) {
+        interchangeControlReference =>
+          val expectedResult: NodeSeq =
+            <IntConRefMES11>{s"AF${escapeXml(interchangeControlReference.date)}${interchangeControlReference.index}"}</IntConRefMES11>
+          val result: NodeSeq = interchangeControlReference.toXml
 
           result mustEqual expectedResult
       }
     }
+
+    "must deserialize from xml" in {
+
+      forAll(arbitrary[InterchangeControlReference]) {
+        interchangeControlReference =>
+          val xml    = interchangeControlReference.toXml
+          val result = XmlReader.of[InterchangeControlReference].read(xml).toOption.value
+
+          result mustBe interchangeControlReference
+      }
+    }
+
+    "must fail to deserialize from xml if invalid format" in {
+
+      val invalidXml = <IntConRefMES11>Invalid format</IntConRefMES11>
+      val result     = XmlReader.of[InterchangeControlReference].read(invalidXml)
+
+      result mustBe an[ParseFailure]
+    }
   }
+
 }

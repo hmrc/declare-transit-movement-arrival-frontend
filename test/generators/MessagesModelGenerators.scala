@@ -23,6 +23,7 @@ import models.messages.ErrorType.{GenericError, MRNError}
 import models.messages._
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
+import utils.Format._
 
 trait MessagesModelGenerators extends Generators {
 
@@ -253,9 +254,9 @@ trait MessagesModelGenerators extends Generators {
   implicit lazy val arbitraryInterchangeControlReference: Arbitrary[InterchangeControlReference] = {
     Arbitrary {
       for {
-        dateTime <- arbitrary[String]
-        index    <- arbitrary[Int]
-      } yield InterchangeControlReference(dateTime, index)
+        date  <- localDateGen
+        index <- Gen.posNum[Int]
+      } yield InterchangeControlReference(dateFormatted(date), index)
     }
   }
 
