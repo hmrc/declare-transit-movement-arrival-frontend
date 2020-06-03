@@ -101,7 +101,6 @@ class CheckYourAnswersController @Inject()(override val messagesApi: MessagesApi
       Seq(
         helper.consigneeName,
         helper.eoriConfirmation(eori),
-        helper.eoriNumber,
         userAnswers.get(ConsigneeEoriConfirmationPage) match {
           case Some(false) => helper.eoriNumber
           case _           => None
