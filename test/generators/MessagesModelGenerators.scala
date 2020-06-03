@@ -245,7 +245,7 @@ trait MessagesModelGenerators extends Generators {
     Arbitrary {
       for {
         environment <- Gen.oneOf(Seq("LOCAL", "QA", "STAGING", "PRODUCTION"))
-        eori        <- arbitrary[String]
+        eori        <- stringsWithMaxLength(TraderDestination.Constants.eoriLength)
       } yield MessageSender(environment, eori)
     }
   }

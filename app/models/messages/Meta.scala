@@ -18,6 +18,7 @@ package models.messages
 
 import java.time.{LocalDate, LocalTime}
 
+import com.lucidchart.open.xtract.{__, XmlReader}
 import models.XMLWrites
 import models.XMLWrites._
 import utils.Format
@@ -114,5 +115,7 @@ object Meta {
               <FirAndLasTraMES23>{escapeXml(firstAndLastTransfer)}</FirAndLasTraMES23>
           }
       })
+
+  implicit val reads: XmlReader[Meta] = ???
 
 }

@@ -16,6 +16,8 @@
 
 package models.messages
 
+import base.SpecBase
+import com.lucidchart.open.xtract.XmlReader
 import generators.MessagesModelGenerators
 import models.XMLWrites._
 import org.scalacheck.Arbitrary.arbitrary
@@ -25,7 +27,7 @@ import utils.Format
 
 import scala.xml.NodeSeq
 
-class MetaSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with MessagesModelGenerators with StreamlinedXmlEquality {
+class MetaSpec extends SpecBase with ScalaCheckPropertyChecks with MessagesModelGenerators with StreamlinedXmlEquality {
 
   //format off
   "Meta" - {
@@ -112,6 +114,17 @@ class MetaSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks 
           }
 
           meta.toXml mustEqual expectedResult
+      }
+    }
+
+    "must deserialize to xml" in {
+
+      forAll(arbitrary[Meta]) {
+        meta =>
+          val xml    = meta.toXml
+          val result = XmlReader.of[Meta].read(xml).toOption.value
+
+          result mustBe meta
       }
     }
   }

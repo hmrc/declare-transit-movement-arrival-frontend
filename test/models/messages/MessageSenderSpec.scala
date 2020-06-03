@@ -16,6 +16,8 @@
 
 package models.messages
 
+import base.SpecBase
+import com.lucidchart.open.xtract.XmlReader
 import generators.MessagesModelGenerators
 import models.XMLWrites._
 import org.scalacheck.Arbitrary.arbitrary
@@ -24,7 +26,7 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
 import scala.xml.NodeSeq
 
-class MessageSenderSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with StreamlinedXmlEquality with MessagesModelGenerators {
+class MessageSenderSpec extends SpecBase with ScalaCheckPropertyChecks with StreamlinedXmlEquality with MessagesModelGenerators {
 
   "MessageSender" - {
 
@@ -35,6 +37,17 @@ class MessageSenderSpec extends FreeSpec with MustMatchers with ScalaCheckProper
             <MesSenMES3>{escapeXml(s"${messageSender.environment}-${messageSender.eori}")}</MesSenMES3>
 
           messageSender.toXml mustEqual expectedResult
+      }
+    }
+
+    "must deserialize from xml" in {
+
+      forAll(arbitrary[MessageSender]) {
+        messageSender =>
+          val xml    = messageSender.toXml
+          val result = XmlReader.of[MessageSender].read(xml).toOption.value
+
+          result mustBe messageSender
       }
     }
   }
