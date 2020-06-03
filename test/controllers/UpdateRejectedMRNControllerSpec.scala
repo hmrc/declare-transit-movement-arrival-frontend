@@ -102,7 +102,8 @@ class UpdateRejectedMRNControllerSpec extends SpecBase with MessagesModelGenerat
       val filledForm = form.bind(Map("value" -> arrivalMovementRequest.header.movementReferenceNumber))
 
       val expectedJson = Json.obj(
-        "form" -> filledForm
+        "form"      -> filledForm,
+        "arrivalId" -> arrivalId.value
       )
 
       templateCaptor.getValue mustEqual "updateMovementReferenceNumber.njk"
