@@ -78,6 +78,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
           }
         }
       }
+
       "to Customs Sub Place" - {
         "when the user answers Border Force Office and had not answered Customs Sub Place" in {
           forAll(arbitrary[UserAnswers]) {
@@ -140,6 +141,211 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
         }
         "trader name when trader name has not  previously been answered " in {
           forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val updatedAnswers =
+                answers.remove(TraderNamePage).success.value
+
+              navigator
+                .nextPage(PresentationOfficePage, CheckMode, updatedAnswers)
+                .mustBe(routes.TraderNameController.onPageLoad(answers.id, CheckMode))
+
+          }
+        }
+        "from trader name page to" - {
+          "CheckYourAnswersPage when trader eori has previously been answered " in {
+            forAll(arbitrary[UserAnswers], arbitrary[String]) {
+              (answers, traderEori) =>
+                val updatedAnswers =
+                  answers
+                    .set(TraderNamePage, traderName).success.value
+                    .set(TraderEoriPage, traderEori).success.value
+
+                navigator
+                  .nextPage(TraderNamePage, CheckMode, updatedAnswers)
+                  .mustBe(routes.CheckYourAnswersController.onPageLoad(answers.id))
+
+            }
+          }
+          "TraderEoriPage when trader eori has not previously been answered " in {
+            forAll(arbitrary[UserAnswers]) {
+              answers =>
+                val updatedAnswers =
+                  answers.remove(TraderEoriPage).success.value
+
+                navigator
+                  .nextPage(TraderNamePage, CheckMode, updatedAnswers)
+                  .mustBe(routes.TraderEoriController.onPageLoad(answers.id, CheckMode))
+
+            }
+          }
+        }
+
+        "must go from 'TraderAddressController' to " - {
+          "'IsTraderAddressPlaceOfNotifcationController' when this is not answered" in {
+            forAll(arbitrary[UserAnswers]) {
+              answers =>
+                val userAnswers = answers
+                  .remove(IsTraderAddressPlaceOfNotificationPage).success.value
+
+              navigator
+                  .nextPage(TraderAddressPage, CheckMode, userAnswers)
+                  .mustBe(routes.IsTraderAddressPlaceOfNotificationController.onPageLoad(userAnswers.id, CheckMode))
+            }
+          }
+
+          "'CheckYourAnswersController' when 'IsTraderAddressPlaceOfNotification' has been answered" in {
+            forAll(arbitrary[UserAnswers], arbitrary[Boolean]) {
+              (answers, isTraderAddressPlaceOfNotification) =>
+                val userAnswers = answers
+                  .set(IsTraderAddressPlaceOfNotificationPage, isTraderAddressPlaceOfNotification).success.value
+
+                navigator
+                  .nextPage(TraderAddressPage, CheckMode, userAnswers)
+                  .mustBe(routes.CheckYourAnswersController.onPageLoad(userAnswers.id))
+            }
+
+          }
+        }
+
+        "must go from 'IsTraderAddressPlaceOfNotificationController' to " - {
+          "'PlaceOfNotificationController' when the answer is false and it has not been answered" in {
+            forAll(arbitrary[UserAnswers]) {
+              answers =>
+                val userAnswers = answers
+                  .set(IsTraderAddressPlaceOfNotificationPage, false).success.value
+                  .remove(PlaceOfNotificationPage).success.value
+                navigator
+                  .nextPage(IsTraderAddressPlaceOfNotificationPage, CheckMode, userAnswers)
+                  .mustBe(routes.PlaceOfNotificationController.onPageLoad(userAnswers.id, CheckMode))
+            }
+          }
+
+          "'CheckYourAnswersController' when the answer is true" in {
+            forAll(arbitrary[UserAnswers]) {
+              answers =>
+              val userAnswers = answers
+                .set(IsTraderAddressPlaceOfNotificationPage, true).success.value
+
+                navigator
+                  .nextPage(IsTraderAddressPlaceOfNotificationPage, CheckMode, userAnswers)
+                  .mustBe(routes.CheckYourAnswersController.onPageLoad(answers.id))
+            }
+          }
+
+          "'CheckYourAnswersController' when the answer is false when PlaceOfNotification has been answered" in {
+            forAll(arbitrary[UserAnswers], nonEmptyString) {
+              (answers, placeOfNotification) =>
+              val userAnswers = answers
+                .set(IsTraderAddressPlaceOfNotificationPage, false).success.value
+                .set(PlaceOfNotificationPage, placeOfNotification).success.value
+
+                navigator
+                  .nextPage(IsTraderAddressPlaceOfNotificationPage, CheckMode, userAnswers)
+                  .mustBe(routes.CheckYourAnswersController.onPageLoad(answers.id))
+            }
+          }
+
+        }
+
+        "must go from 'PlaceOfNotification' to " - {
+          "'CheckYourAnswersController'" in {
+            forAll(arbitrary[UserAnswers]) {
+              answers =>
+                navigator
+                  .nextPage(PlaceOfNotificationPage, CheckMode, answers)
+                  .mustBe(routes.CheckYourAnswersController.onPageLoad(answers.id))
+            }
+          }
+        }
+
+        "must go from 'ConsigneeNameController' to " - {
+          "'CheckYourAnswersController' when an answer for 'ConsigneeConfirmEori'" in {
+            forAll(arbitrary[UserAnswers], nonEmptyString, arbitrary[Boolean]) {
+              (answers, consigneeName, eoriConfirmation) =>
+                val updatedAnswers =
+                  answers
+                    .set(ConsigneeNamePage, consigneeName).success.value
+                    .set(ConsigneeEoriConfirmationPage, eoriConfirmation).success.value
+
+                navigator
+                  .nextPage(ConsigneeNamePage, CheckMode, updatedAnswers)
+                  .mustBe(routes.CheckYourAnswersController.onPageLoad(answers.id))
+            }
+          }
+
+          "'ConsigneeConfirmEori' when no answer for 'ConsigneeConfirmEori'" in {
+            forAll(arbitrary[UserAnswers], nonEmptyString) {
+              (answers, consigneeName) =>
+                val updatedAnswers =
+                  answers
+                    .set(ConsigneeNamePage, consigneeName).success.value
+                    .remove(ConsigneeEoriConfirmationPage).success.value
+
+                navigator
+                  .nextPage(ConsigneeNamePage, CheckMode, updatedAnswers)
+                  .mustBe(routes.ConsigneeEoriConfirmationController.onPageLoad(answers.id, CheckMode))
+            }
+          }
+        }
+
+        "must go from 'ConsigneeEoriConfirmationController' to " - {
+          "'ConsigneeAddressController' when the answer is true and there was no previous answer" in {
+            forAll(arbitrary[UserAnswers]) {
+              answers =>
+                val updatedAnswers =
+                  answers
+                    .set(ConsigneeEoriConfirmationPage, true).success.value
+                navigator
+                  .nextPage(ConsigneeEoriConfirmationPage, CheckMode, updatedAnswers)
+                  .mustBe(routes.ConsigneeAddressController.onPageLoad(answers.id, CheckMode))
+            }
+          }
+
+          "'CheckYourAnswersController' when the answer is false and the consigneeEoriNumber is populated" in {
+            forAll(arbitrary[UserAnswers]) {
+              answers =>
+                val updatedAnswers =
+                  answers
+                    .set(ConsigneeEoriConfirmationPage, false).success.value
+                    .set(ConsigneeEoriNumberPage, eoriNumber).success.value
+                navigator
+                  .nextPage(ConsigneeEoriConfirmationPage, CheckMode, updatedAnswers)
+                  .mustBe(routes.CheckYourAnswersController.onPageLoad(answers.id))
+            }
+          }
+
+
+          "'ConsigneeEoriNumberController' false and no answer for 'consigneeEoriNumber'" in {
+            forAll(arbitrary[UserAnswers]) {
+              answers =>
+                val updatedAnswers =
+                  answers
+                    .set(ConsigneeEoriConfirmationPage, false).success.value
+                    .remove(ConsigneeEoriNumberPage).success.value
+
+                navigator
+                  .nextPage(ConsigneeEoriConfirmationPage, CheckMode, updatedAnswers)
+                  .mustBe(routes.ConsigneeEoriNumberController.onPageLoad(answers.id, CheckMode))
+            }
+          }
+        }
+
+        "must go from 'ConsigneeEoriNumberController' to " - {
+          "'CheckYourAnswersController' when 'ConsigneeAddress' is populated" in {
+            forAll(arbitrary[UserAnswers]) {
+              answers =>
+                val updatedAnswers =
+                  answers
+                    .set(ConsigneeAddressPage, traderAddress).success.value
+
+                navigator
+                  .nextPage(ConsigneeEoriNumberPage, CheckMode, updatedAnswers)
+                  .mustBe(routes.CheckYourAnswersController.onPageLoad(answers.id))
+            }
+          }
+
+          "'ConsigneeAddressController' when 'ConsigneeAddress is not populated'" in {
+            forAll(arbitrary[UserAnswers]) {
               answers =>
                 val updatedAnswers =
                   answers
@@ -728,5 +934,5 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
         }
       }
     }
-  
+  }
 }
