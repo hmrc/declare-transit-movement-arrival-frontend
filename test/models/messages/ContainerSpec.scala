@@ -65,16 +65,9 @@ class ContainerSpec
     "must read and write xml" in {
       forAll(arbitrary[Container]) {
         container =>
-        val xml = container.toXml
-
-          println("-------"+xml)
           val result = XmlReader.of[Container].read(container.toXml).toOption.value
-
-          println("")
           result mustEqual container
-
       }
-
 
     }
   }

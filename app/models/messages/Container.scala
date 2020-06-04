@@ -37,7 +37,7 @@ object Container {
   implicit def xmlWrites: XMLWrites[Container] = XMLWrites[Container] {
     container =>
       <CONNR3>
-          <ConNumNR31> {escapeXml(container.containerNumber)} </ConNumNR31>
+          <ConNumNR31>{escapeXml(container.containerNumber)}</ConNumNR31>
       </CONNR3>
   }
 
