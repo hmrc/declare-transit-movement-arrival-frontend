@@ -16,8 +16,11 @@
 
 package utils
 
-import scala.xml.{Elem, Node, NodeSeq, Text}
+import play.api.Logger
+import uk.gov.hmrc.http.NotFoundException
+
 import scala.xml.transform.{RewriteRule, RuleTransformer}
+import scala.xml.{Elem, Node, NodeSeq, Text}
 
 object XMLTransformer {
 
@@ -26,10 +29,17 @@ object XMLTransformer {
       override def transform(n: Node): Seq[Node] = n match {
         case elem: Elem if elem.label.equalsIgnoreCase(key) =>
           elem.copy(child = Text(value))
-        case other => other
+        case _ => throw new NotFoundException(s"$n node is missing in the xml")
       }
     })
 
-  def updateXmlNode(key: String, value: String, inputXml: NodeSeq): NodeSeq =
-    createRuleTransformer(key, value).transform(inputXml.head)
+  def updateXmlNode(key: String, value: String, inputXml: NodeSeq): Option[NodeSeq] =
+    try {
+      Some(createRuleTransformer(key, value).transform(inputXml.head))
+    } catch {
+      case nfe: NotFoundException =>
+        Logger.error(s"XMLTransformer:updateXmlNode: ${nfe.message}")
+        None
+    }
+
 }

@@ -73,9 +73,11 @@ class ArrivalNotificationService @Inject()(
   def update(arrivalId: ArrivalId, mrn: MovementReferenceNumber)(implicit hc: HeaderCarrier): Future[Option[HttpResponse]] =
     arrivalNotificationMessageService.getArrivalNotificationMessage(arrivalId) flatMap {
       case Some((xml, _)) =>
-        val updatedXml = XMLTransformer.updateXmlNode("DocNumHEA5", mrn.toString, xml)
-        connector.updateArrivalMovement(arrivalId, updatedXml).map(Some(_))
-
+        XMLTransformer.updateXmlNode("DocNumHEA5", mrn.toString, xml) match {
+          case Some(updatedXml) =>
+            connector.updateArrivalMovement(arrivalId, updatedXml).map(Some(_))
+          case _ => Future.successful(None)
+        }
       case _ => Future.successful(None)
     }
 
