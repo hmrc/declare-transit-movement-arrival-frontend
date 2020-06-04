@@ -46,7 +46,7 @@ object InterchangeControlReference {
           case controlReferenceFormat(date, index) =>
             ParseSuccess(InterchangeControlReference(date, index.toInt))
           case _ =>
-            ParseFailure(InterchangeControlReferenceParseFailure(s"Failed to parse the following xml to InterchangeControlReference: ${xml.text}"))
+            ParseFailure(InterchangeControlReferenceParseFailure(s"Failed to parse the following value to InterchangeControlReference: ${xml.text}"))
         }
       }
     }

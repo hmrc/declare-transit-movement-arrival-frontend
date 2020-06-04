@@ -16,14 +16,17 @@
 
 package models.messages
 
+import java.time.LocalTime
+
 import base.SpecBase
 import com.lucidchart.open.xtract.XmlReader
 import generators.MessagesModelGenerators
 import models.XMLWrites._
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalatest.{FreeSpec, MustMatchers, StreamlinedXmlEquality}
+import org.scalatest.StreamlinedXmlEquality
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import utils.Format
+import utils.Format.timeFormatter
 
 import scala.xml.NodeSeq
 
@@ -117,15 +120,16 @@ class MetaSpec extends SpecBase with ScalaCheckPropertyChecks with MessagesModel
       }
     }
 
-    "must deserialize to xml" in {
-
+    "must deserialize from xml" in {
       forAll(arbitrary[ArrivalMovementRequest]) {
         arrivalMovementRequest =>
-
           val xml    = arrivalMovementRequest.toXml
-          val result = XmlReader.of[Meta].read(xml)
+          val result = XmlReader.of[Meta].read(xml).toOption.value
 
-          result mustBe arrivalMovementRequest.meta
+          val formattedTimeOfPrep = Format.timeFormatted(arrivalMovementRequest.meta.timeOfPreparation)
+          val formatMeta          = arrivalMovementRequest.meta.copy(timeOfPreparation = LocalTime.parse(formattedTimeOfPrep, timeFormatter))
+
+          result mustBe formatMeta
       }
     }
   }

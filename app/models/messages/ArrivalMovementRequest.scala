@@ -45,6 +45,4 @@ object ArrivalMovementRequest {
 
       Elem(parentNode.prefix, parentNode.label, parentNode.attributes, parentNode.scope, parentNode.child.isEmpty, parentNode.child ++ childNodes: _*)
   }
-
-  implicit val xmlReads: XmlReader[ArrivalMovementRequest] = ???
 }

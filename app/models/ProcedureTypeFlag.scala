@@ -16,6 +16,10 @@
 
 package models
 
+import com.lucidchart.open.xtract.{ParseError, ParseFailure, ParseResult, ParseSuccess, XmlReader}
+
+import scala.xml.NodeSeq
+
 sealed trait ProcedureTypeFlag {
   val code: String
 }
@@ -26,4 +30,23 @@ case object SimplifiedProcedureFlag extends ProcedureTypeFlag {
 
 case object NormalProcedureFlag extends ProcedureTypeFlag {
   val code: String = "0"
+}
+
+object ProcedureTypeFlag {
+
+  implicit val procedureTypeFlagXmlReads: XmlReader[ProcedureTypeFlag] =
+    new XmlReader[ProcedureTypeFlag] {
+      override def read(xml: NodeSeq): ParseResult[ProcedureTypeFlag] = {
+
+        case class ProcedureTypeFlagParseFailure(message: String) extends ParseError
+
+        xml.text match {
+          case NormalProcedureFlag.code     => ParseSuccess(NormalProcedureFlag)
+          case SimplifiedProcedureFlag.code => ParseSuccess(SimplifiedProcedureFlag)
+          case _ =>
+            ParseFailure(ProcedureTypeFlagParseFailure(s"Failed to parse the following value to ProcedureTypeFlag: ${xml.text}"))
+        }
+      }
+    }
+
 }
