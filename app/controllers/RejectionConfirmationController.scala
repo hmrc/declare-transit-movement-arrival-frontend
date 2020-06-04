@@ -20,7 +20,6 @@ import config.FrontendAppConfig
 import controllers.actions._
 import javax.inject.Inject
 import models.MovementReferenceNumber
-import pages.PresentationOfficePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -29,7 +28,7 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class RejectionConfirmationController @Inject()(override val messagesApi: MessagesApi,
                                                 appConfig: FrontendAppConfig,
@@ -44,11 +43,14 @@ class RejectionConfirmationController @Inject()(override val messagesApi: Messag
 
   def onPageLoad(mrn: MovementReferenceNumber): Action[AnyContent] = (identify andThen getData(mrn)).async {
     implicit request =>
-      val json = Json.obj(
-        "mrn"                       -> mrn,
-        "manageTransitMovementsUrl" -> appConfig.manageTransitMovementsUrl
-      )
-      sessionRepository.remove(mrn.toString)
-      renderer.render("rejectedArrivalComplete.njk", json).map(Ok(_))
+      sessionRepository.remove(mrn.toString) flatMap {
+        _ =>
+          val json = Json.obj(
+            "mrn"                       -> mrn,
+            "manageTransitMovementsUrl" -> appConfig.manageTransitMovementsUrl
+          )
+
+          renderer.render("rejectedArrivalComplete.njk", json).map(Ok(_))
+      }
   }
 }

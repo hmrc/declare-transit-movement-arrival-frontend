@@ -18,19 +18,17 @@ package controllers
 
 import base.SpecBase
 import matchers.JsonMatchers
-import models.reference.CustomsOffice
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.PresentationOfficePage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import repositories.SessionRepository
-import uk.gov.hmrc.viewmodels.{NunjucksSupport, Text}
+import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
@@ -44,6 +42,8 @@ class RejectionConfirmationControllerSpec extends SpecBase with MockitoSugar wit
         .thenReturn(Future.successful(Html("")))
 
       val mockSessionRepository = mock[SessionRepository]
+      when(mockSessionRepository.remove(any())).thenReturn(Future.successful(()))
+
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
