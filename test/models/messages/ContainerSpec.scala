@@ -16,16 +16,24 @@
 
 package models.messages
 
+import com.lucidchart.open.xtract.XmlReader
 import generators.ModelGenerators
 import models.XMLWrites._
 import models.messages.behaviours.JsonBehaviours
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalatest.{FreeSpec, MustMatchers, StreamlinedXmlEquality}
+import org.scalatest.{FreeSpec, MustMatchers, OptionValues, StreamlinedXmlEquality}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
 import scala.xml.Node
 
-class ContainerSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with ModelGenerators with JsonBehaviours with StreamlinedXmlEquality {
+class ContainerSpec
+    extends FreeSpec
+    with MustMatchers
+    with ScalaCheckPropertyChecks
+    with ModelGenerators
+    with JsonBehaviours
+    with StreamlinedXmlEquality
+    with OptionValues {
 
   "Container" - {
     "must create valid xml" in {
@@ -39,6 +47,35 @@ class ContainerSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyCh
 
           container.toXml mustEqual expectedXml
       }
+    }
+
+    "must read xml as Container" in {
+      forAll(arbitrary[Container]) {
+        container =>
+          val xml: Node =
+            <CONNR3>
+              <ConNumNR31>{container.containerNumber}</ConNumNR31>
+            </CONNR3>
+
+          val result = XmlReader.of[Container].read(xml).toOption.value
+          result mustEqual container
+      }
+    }
+
+    "must read and write xml" in {
+      forAll(arbitrary[Container]) {
+        container =>
+        val xml = container.toXml
+
+          println("-------"+xml)
+          val result = XmlReader.of[Container].read(container.toXml).toOption.value
+
+          println("")
+          result mustEqual container
+
+      }
+
+
     }
   }
 

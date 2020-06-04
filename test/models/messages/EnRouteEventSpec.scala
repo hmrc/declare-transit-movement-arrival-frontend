@@ -21,11 +21,9 @@ import models.LanguageCodeEnglish
 import models.XMLWrites._
 import models.messages.behaviours.JsonBehaviours
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalatest.{FreeSpec, MustMatchers, StreamlinedXmlEquality}
+import org.scalatest.{FreeSpec, MustMatchers, OptionValues, StreamlinedXmlEquality}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.{JsObject, JsSuccess, Json}
-
-import scala.xml.Utility.trim
 
 class EnRouteEventSpec
     extends FreeSpec
@@ -33,6 +31,7 @@ class EnRouteEventSpec
     with ScalaCheckPropertyChecks
     with MessagesModelGenerators
     with JsonBehaviours
+    with OptionValues
     with StreamlinedXmlEquality {
 
   "EnRouteEvent" - {
@@ -142,6 +141,45 @@ class EnRouteEventSpec
           val json = createEnRouteEventJson(enRouteEvent)
           Json.toJson(enRouteEvent) mustEqual json
       }
+    }
+
+    "XML reader" - {
+
+      "must read xml with vehicular transhipment with seal" in {
+
+        forAll(arbitrary[EnRouteEvent], arbitrary[Seal], arbitrary[VehicularTranshipment]) {
+          (enRouteEvent, seal, vehicularTranshipment) =>
+            val enRouteEventWithVehicle = enRouteEvent.copy(seals = Some(Seq(seal)), eventDetails = Some(vehicularTranshipment))
+
+            val xml = {
+              <ENROUEVETEV>
+                <PlaTEV10>
+                  {enRouteEventWithVehicle.place}
+                </PlaTEV10>
+                <PlaTEV10LNG>
+                  {LanguageCodeEnglish.code}
+                </PlaTEV10LNG>
+                <CouTEV13>
+                  {enRouteEventWithVehicle.countryCode}
+                </CouTEV13>
+                <CTLCTL>
+                  <AlrInNCTCTL29>
+                    {if (enRouteEventWithVehicle.alreadyInNcts) 1 else 0}
+                  </AlrInNCTCTL29>
+                </CTLCTL>
+                <SEAINFSF1>
+                  <SeaNumSF12>1</SeaNumSF12>{seal.toXml}
+                </SEAINFSF1>{vehicularTranshipment.toXml}
+              </ENROUEVETEV>
+            }
+
+          /* val result = XmlReader.of[EnRouteEvent].read(xml).toOption.value
+
+            result mustEqual enRouteEventWithVehicle*/
+
+        }
+      }
+
     }
   }
 

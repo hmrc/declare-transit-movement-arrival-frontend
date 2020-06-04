@@ -16,6 +16,7 @@
 
 package models.messages
 
+import com.lucidchart.open.xtract.XmlReader
 import models.XMLWrites._
 import models.{LanguageCodeEnglish, XMLWrites}
 import play.api.libs.json._
@@ -92,4 +93,15 @@ object EnRouteEvent {
         }
       </ENROUEVETEV>
   }
+
+  implicit val xmlReader: XmlReader[EnRouteEvent] = ???
+
+  /*  implicit val xmlReader: XmlReader[EnRouteEvent] = (
+    (path \ "PlaTEV10").read[String],
+    (path \ "PlaTEV10LNG").read[String],
+    (path \ "CouTEV13").read[String],
+    (path \ "CTLCTL" \ "AlrInNCTCTL29").read[Boolean],
+    (path \ "CouTEV13").read[String].optional,
+    (path \ "MesSenMES3").read[String]
+  ).mapN(apply)*/
 }

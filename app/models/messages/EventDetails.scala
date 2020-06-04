@@ -18,6 +18,10 @@ package models.messages
 
 import java.time.LocalDate
 
+import cats.syntax.all._
+import com.lucidchart.open.xtract.XmlReader._
+import com.lucidchart.open.xtract.{XmlReader, __ => xmlPath}
+import models.XMLReads._
 import models.XMLWrites
 import models.XMLWrites._
 import play.api.libs.json._
@@ -102,6 +106,16 @@ object Incident {
       }
     </INCINC>
   }
+
+  implicit val xmlReader: XmlReader[Incident] =
+    (
+      (xmlPath \ "IncInfINC4").read[String].optional,
+      (xmlPath \ "EndDatINC6").read[LocalDate].optional,
+      (xmlPath \ "EndAutINC7").read[String].optional,
+      (xmlPath \ "EndPlaINC10").read[String].optional,
+      (xmlPath \ "EndCouINC12").read[String].optional
+    ).mapN(apply)
+
 }
 
 sealed trait Transhipment extends EventDetails
@@ -211,6 +225,8 @@ object VehicularTranshipment {
         }
       </TRASHP>
   }
+
+  implicit lazy val xmlReader: XmlReader[VehicularTranshipment] = ???
 }
 
 final case class ContainerTranshipment(
@@ -253,4 +269,12 @@ object ContainerTranshipment {
       }
       </TRASHP>
   }
+
+  implicit lazy val xmlReader: XmlReader[ContainerTranshipment] = (
+    (xmlPath \ "EndDatSHP60").read[LocalDate].optional,
+    (xmlPath \ "EndAutSHP61").read[String].optional,
+    (xmlPath \ "EndPlaSHP63").read[String].optional,
+    (xmlPath \ "EndCouSHP65").read[String].optional,
+    (xmlPath \ "CONNR3").read(seq[Container])
+  ).mapN(apply)
 }

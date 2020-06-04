@@ -121,7 +121,6 @@ class MetaSpec extends SpecBase with ScalaCheckPropertyChecks with MessagesModel
 
       forAll(arbitrary[ArrivalMovementRequest]) {
         arrivalMovementRequest =>
-
           val xml    = arrivalMovementRequest.toXml
           val result = XmlReader.of[Meta].read(xml)
 
