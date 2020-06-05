@@ -17,19 +17,18 @@
 package controllers
 
 import com.google.inject.Inject
-import controllers.actions.{DataRequiredAction, DataRetrievalActionProvider, IdentifierAction}
-import derivable.DeriveNumberOfEvents
+import controllers.actions.{DataRetrievalActionProvider, IdentifierAction}
 import handlers.ErrorHandler
-import models.{ArrivalId, Index, MovementReferenceNumber, UserAnswers}
+import models.{ArrivalId, MovementReferenceNumber, UserAnswers}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
-import services.ArrivalNotificationService
+import services.ArrivalSubmissionService
 import uk.gov.hmrc.http.HttpErrorFunctions
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
-import uk.gov.hmrc.viewmodels.{NunjucksSupport, SummaryList}
-import utils.{AddEventsHelper, CheckYourAnswersHelper}
+import uk.gov.hmrc.viewmodels.NunjucksSupport
+import utils.CheckYourAnswersHelper
 import viewModels.sections.Section
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -37,6 +36,8 @@ import scala.concurrent.{ExecutionContext, Future}
 class CheckYourAnswersRejectionsController @Inject()(override val messagesApi: MessagesApi,
                                                      identify: IdentifierAction,
                                                      getData: DataRetrievalActionProvider,
+                                                     arrivalNotificationService: ArrivalSubmissionService,
+                                                     errorHandler: ErrorHandler,
                                                      val controllerComponents: MessagesControllerComponents,
                                                      renderer: Renderer)(implicit ec: ExecutionContext)
     extends FrontendBaseController
@@ -49,11 +50,25 @@ class CheckYourAnswersRejectionsController @Inject()(override val messagesApi: M
       val helper = new CheckYourAnswersHelper(UserAnswers(mrn))
 
       val json = Json.obj(
-        "sections" -> Json.toJson(Seq(Section(Seq(helper.movementReferenceNumber))))
+        "arrivalId" -> arrivalId.value,
+        "mrn"       -> mrn,
+        "sections"  -> Json.toJson(Seq(Section(Seq(helper.movementReferenceNumber))))
       )
-      renderer.render("check-your-answers.njk", json).map(Ok(_))
+      renderer.render("check-your-answers-rejections.njk", json).map(Ok(_))
   }
 
-  def onPost(mrn: MovementReferenceNumber, arrivalId: ArrivalId): Action[AnyContent] = ???
+  def onPost(mrn: MovementReferenceNumber, arrivalId: ArrivalId): Action[AnyContent] = (identify andThen getData(mrn)).async {
+    implicit request =>
+      arrivalNotificationService.update(arrivalId, mrn) flatMap {
+        case Some(result) =>
+          result.status match {
+            case status if is2xx(status) => Future.successful(Redirect(routes.RejectionConfirmationController.onPageLoad(mrn)))
+            case status if is4xx(status) => errorHandler.onClientError(request, status)
+            case _                       => Future.successful(Redirect(routes.TechnicalDifficultiesController.onPageLoad()))
+          }
+        case None => Future.successful(Redirect(routes.TechnicalDifficultiesController.onPageLoad()))
+      }
+
+  }
 
 }

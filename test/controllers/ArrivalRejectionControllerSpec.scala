@@ -88,7 +88,7 @@ class ArrivalRejectionControllerSpec extends SpecBase with MockitoSugar with Jso
             "mrn"                        -> mrn,
             "errorKey"                   -> errorKey,
             "contactUrl"                 -> frontendAppConfig.nctsEnquiriesUrl,
-            "movementReferenceNumberUrl" -> routes.MovementReferenceNumberController.onPageLoad().url
+            "movementReferenceNumberUrl" -> routes.UpdateRejectedMRNController.onPageLoad(arrivalId).url
           )
 
           templateCaptor.getValue mustEqual "movementReferenceNumberRejection.njk"
