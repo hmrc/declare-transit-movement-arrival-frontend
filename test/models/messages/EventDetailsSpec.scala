@@ -147,6 +147,14 @@ class EventDetailsSpec
       }
     }
 
+    "must write to xml and read xml as Incident" in {
+      forAll(arbitrary[Incident]) {
+        incident =>
+          val result = XmlReader.of[Incident].read(incident.toXml).toOption.value
+          result mustEqual incident
+      }
+    }
+
     "must deserialise" in {
 
       forAll(arbitrary[Incident]) {
@@ -266,6 +274,14 @@ class EventDetailsSpec
               </CONNR3>
             </TRASHP>
           val result = XmlReader.of[ContainerTranshipment].read(xml).toOption.value
+          result mustEqual containerTranshipment
+      }
+    }
+
+    "must write to xml and read xml as Container Transshipment" in {
+      forAll(arbitrary[ContainerTranshipment]) {
+        containerTranshipment =>
+          val result = XmlReader.of[ContainerTranshipment].read(containerTranshipment.toXml).toOption.value
           result mustEqual containerTranshipment
       }
     }
@@ -492,7 +508,7 @@ class EventDetailsSpec
       }
     }
 
-    "must write and read xml as Vehicular transhipment" in {
+    "must write to xml and read xml as Vehicular transhipment" in {
       forAll(arbitrary[VehicularTranshipment]) {
         vehicularTranshipment =>
           val result = XmlReader.of[VehicularTranshipment].read(vehicularTranshipment.toXml).toOption.value
