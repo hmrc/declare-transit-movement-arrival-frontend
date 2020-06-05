@@ -120,10 +120,20 @@ class TraderDestinationSpec extends FreeSpec with MustMatchers with ScalaCheckPr
 
           val result = XmlReader.of[TraderDestination].read(inputXml).toOption.value
 
-          result mustEqual TraderDestination
+          result mustEqual traderDestination
 
       }
 
+    }
+
+    "must write to xml and read xml as trader destination" in {
+      forAll(arbitrary[TraderDestination]) {
+        traderDestination =>
+          val result = XmlReader.of[TraderDestination].read(traderDestination.toXml).toOption.value
+
+          result mustEqual traderDestination
+
+      }
     }
 
   }

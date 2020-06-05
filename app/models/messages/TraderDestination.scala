@@ -75,7 +75,7 @@ object TraderDestination {
       (xmlPath \ "PosCodTRD23").read[String].optional,
       (xmlPath \ "CitTRD24").read[String].optional,
       (xmlPath \ "CouTRD25").read[String].optional,
-      (xmlPath \ "NADLNGRD").read[String].optional
+      (xmlPath \ "TINTRD59").read[String].optional
     ).mapN(apply)
 
   object Constants {
