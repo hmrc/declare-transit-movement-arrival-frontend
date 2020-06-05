@@ -24,7 +24,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
-import services.ArrivalNotificationService
+import services.ArrivalSubmissionService
 import uk.gov.hmrc.http.HttpErrorFunctions
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
@@ -36,7 +36,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class CheckYourAnswersRejectionsController @Inject()(override val messagesApi: MessagesApi,
                                                      identify: IdentifierAction,
                                                      getData: DataRetrievalActionProvider,
-                                                     arrivalNotificationService: ArrivalNotificationService,
+                                                     arrivalNotificationService: ArrivalSubmissionService,
                                                      errorHandler: ErrorHandler,
                                                      val controllerComponents: MessagesControllerComponents,
                                                      renderer: Renderer)(implicit ec: ExecutionContext)

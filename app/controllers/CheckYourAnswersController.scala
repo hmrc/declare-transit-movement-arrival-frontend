@@ -26,7 +26,7 @@ import play.api.libs.json.Json
 import play.api.mvc.Results.BadRequest
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
-import services.ArrivalNotificationService
+import services.ArrivalSubmissionService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, SummaryList}
 import utils.{AddEventsHelper, CheckYourAnswersHelper}
@@ -39,7 +39,7 @@ class CheckYourAnswersController @Inject()(override val messagesApi: MessagesApi
                                            identify: IdentifierAction,
                                            getData: DataRetrievalActionProvider,
                                            requireData: DataRequiredAction,
-                                           service: ArrivalNotificationService,
+                                           service: ArrivalSubmissionService,
                                            errorHandler: ErrorHandler,
                                            val controllerComponents: MessagesControllerComponents,
                                            renderer: Renderer)(implicit ec: ExecutionContext)

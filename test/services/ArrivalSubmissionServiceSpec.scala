@@ -37,7 +37,7 @@ import uk.gov.hmrc.http.HttpResponse
 
 import scala.concurrent.Future
 
-class ArrivalNotificationServiceSpec extends SpecBase with MockitoSugar with MessagesModelGenerators {
+class ArrivalSubmissionServiceSpec extends SpecBase with MessagesModelGenerators {
 
   private val mockConverterService                  = mock[ArrivalNotificationConversionService]
   private val mockArrivalMovementConnector          = mock[ArrivalMovementConnector]
@@ -57,7 +57,7 @@ class ArrivalNotificationServiceSpec extends SpecBase with MockitoSugar with Mes
     reset(mockConverterService)
   }
 
-  "ArrivalNotificationService" - {
+  "ArrivalSubmissionService" - {
 
     "submit" - {
 
@@ -70,7 +70,7 @@ class ArrivalNotificationServiceSpec extends SpecBase with MockitoSugar with Mes
           .overrides(bind[ArrivalNotificationConversionService].toInstance(mockConverterService))
           .build()
 
-        val arrivalNotificationService = application.injector.instanceOf[ArrivalNotificationService]
+        val arrivalNotificationService = application.injector.instanceOf[ArrivalSubmissionService]
 
         arrivalNotificationService.submit(emptyUserAnswers, userEoriNumber).futureValue mustBe None
       }
@@ -93,7 +93,7 @@ class ArrivalNotificationServiceSpec extends SpecBase with MockitoSugar with Mes
           .overrides(bind[ArrivalMovementConnector].toInstance(mockArrivalMovementConnector))
           .build()
 
-        val arrivalNotificationService = application.injector.instanceOf[ArrivalNotificationService]
+        val arrivalNotificationService = application.injector.instanceOf[ArrivalSubmissionService]
 
         val response = arrivalNotificationService.submit(emptyUserAnswers, userEoriNumber).futureValue.get
         response.status mustBe ACCEPTED
@@ -114,7 +114,7 @@ class ArrivalNotificationServiceSpec extends SpecBase with MockitoSugar with Mes
           .overrides(bind[ArrivalMovementConnector].toInstance(mockArrivalMovementConnector))
           .build()
 
-        val arrivalNotificationService = application.injector.instanceOf[ArrivalNotificationService]
+        val arrivalNotificationService = application.injector.instanceOf[ArrivalSubmissionService]
 
         arrivalNotificationService.submit(emptyUserAnswers, userEoriNumber).futureValue mustBe None
 
@@ -137,7 +137,7 @@ class ArrivalNotificationServiceSpec extends SpecBase with MockitoSugar with Mes
           .overrides(bind[ArrivalMovementConnector].toInstance(mockArrivalMovementConnector))
           .build()
 
-        val arrivalNotificationService = application.injector.instanceOf[ArrivalNotificationService]
+        val arrivalNotificationService = application.injector.instanceOf[ArrivalSubmissionService]
         val response                   = arrivalNotificationService.update(arrivalId, mrn).futureValue.value
         response.status mustBe ACCEPTED
 
@@ -156,7 +156,7 @@ class ArrivalNotificationServiceSpec extends SpecBase with MockitoSugar with Mes
           .overrides(bind[ArrivalMovementConnector].toInstance(mockArrivalMovementConnector))
           .build()
 
-        val arrivalNotificationService = application.injector.instanceOf[ArrivalNotificationService]
+        val arrivalNotificationService = application.injector.instanceOf[ArrivalSubmissionService]
         val response                   = arrivalNotificationService.update(arrivalId, mrn).futureValue
         response mustBe None
 

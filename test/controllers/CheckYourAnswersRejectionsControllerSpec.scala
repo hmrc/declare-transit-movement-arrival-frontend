@@ -28,14 +28,14 @@ import play.api.libs.json.JsObject
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import services.ArrivalNotificationService
+import services.ArrivalSubmissionService
 import uk.gov.hmrc.http.HttpResponse
 
 import scala.concurrent.Future
 
 class CheckYourAnswersRejectionsControllerSpec extends SpecBase with JsonMatchers with MessagesModelGenerators {
 
-  val mockArrivalNotificationService = mock[ArrivalNotificationService]
+  val mockArrivalNotificationService = mock[ArrivalSubmissionService]
 
   "Check Your Answers Rejections Controller" - {
 
@@ -65,7 +65,7 @@ class CheckYourAnswersRejectionsControllerSpec extends SpecBase with JsonMatcher
     "must redirect to 'Application Complete' page on valid submission" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .overrides(bind[ArrivalNotificationService].toInstance(mockArrivalNotificationService))
+        .overrides(bind[ArrivalSubmissionService].toInstance(mockArrivalNotificationService))
         .build()
 
       when(mockArrivalNotificationService.update(any(), any())(any()))
@@ -85,7 +85,7 @@ class CheckYourAnswersRejectionsControllerSpec extends SpecBase with JsonMatcher
     "must redirect to 'Technical Difficulties' page for any service failures" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .overrides(bind[ArrivalNotificationService].toInstance(mockArrivalNotificationService))
+        .overrides(bind[ArrivalSubmissionService].toInstance(mockArrivalNotificationService))
         .build()
 
       when(mockArrivalNotificationService.update(any(), any())(any()))
@@ -105,7 +105,7 @@ class CheckYourAnswersRejectionsControllerSpec extends SpecBase with JsonMatcher
     "must redirect to 'Technical Difficulties' page on internal server error" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .overrides(bind[ArrivalNotificationService].toInstance(mockArrivalNotificationService))
+        .overrides(bind[ArrivalSubmissionService].toInstance(mockArrivalNotificationService))
         .build()
 
       when(mockArrivalNotificationService.update(any(), any())(any()))

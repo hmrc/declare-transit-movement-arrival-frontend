@@ -31,7 +31,7 @@ import utils.XMLTransformer
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class ArrivalNotificationService @Inject()(
+class ArrivalSubmissionService @Inject()(
   converterService: ArrivalNotificationConversionService,
   connector: ArrivalMovementConnector,
   appConfig: FrontendAppConfig,
