@@ -16,8 +16,11 @@
 
 package models.messages
 
-import com.lucidchart.open.xtract.XmlReader
+import com.lucidchart.open.xtract.{XmlReader, __ => xmlPath}
+import com.lucidchart.open.xtract.XmlReader._
 import models.XMLWrites._
+import models.XMLReads._
+import cats.syntax.all._
 import models.{LanguageCodeEnglish, XMLWrites}
 import play.api.libs.json._
 
@@ -94,14 +97,11 @@ object EnRouteEvent {
       </ENROUEVETEV>
   }
 
-  implicit val xmlReader: XmlReader[EnRouteEvent] = ???
-
-  /*  implicit val xmlReader: XmlReader[EnRouteEvent] = (
-    (path \ "PlaTEV10").read[String],
-    (path \ "PlaTEV10LNG").read[String],
-    (path \ "CouTEV13").read[String],
-    (path \ "CTLCTL" \ "AlrInNCTCTL29").read[Boolean],
-    (path \ "CouTEV13").read[String].optional,
-    (path \ "MesSenMES3").read[String]
-  ).mapN(apply)*/
+  implicit lazy val xmlReader: XmlReader[EnRouteEvent] = (
+    (xmlPath \ "PlaTEV10").read[String],
+    (xmlPath \ "CouTEV13").read[String],
+    (xmlPath \ "CTLCTL" \ "AlrInNCTCTL29").read(intReader) map (x => if (x == 1) true else false),
+    xmlPath.read[EventDetails].optional,
+    (xmlPath \ "SEAINFSF1").read(strictReadOptionSeq[Seal])
+  ).mapN(apply)
 }

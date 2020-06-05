@@ -59,6 +59,10 @@ object EventDetails {
     case i: Incident     => Json.toJson(i)(Incident.format)
     case t: Transhipment => Json.toJson(t)(Transhipment.writes)
   }
+
+  implicit lazy val xmlReader: XmlReader[EventDetails] = {
+    (xmlPath \ "TRASHP").read(Transhipment.xmlReader) orElse (xmlPath \ "INCINC").read(Incident.xmlReader)
+  }
 }
 
 final case class Incident(
@@ -146,6 +150,8 @@ object Transhipment {
     case t: VehicularTranshipment => Json.toJson(t)(VehicularTranshipment.writes)
     case t: ContainerTranshipment => Json.toJson(t)(ContainerTranshipment.format)
   }
+
+  implicit lazy val xmlReader: XmlReader[Transhipment] = VehicularTranshipment.xmlReader or ContainerTranshipment.xmlReader
 }
 
 final case class VehicularTranshipment(

@@ -16,6 +16,7 @@
 
 package models.messages
 
+import com.lucidchart.open.xtract.XmlReader
 import generators.MessagesModelGenerators
 import models.LanguageCodeEnglish
 import models.XMLWrites._
@@ -150,33 +151,85 @@ class EnRouteEventSpec
         forAll(arbitrary[EnRouteEvent], arbitrary[Seal], arbitrary[VehicularTranshipment]) {
           (enRouteEvent, seal, vehicularTranshipment) =>
             val enRouteEventWithVehicle = enRouteEvent.copy(seals = Some(Seq(seal)), eventDetails = Some(vehicularTranshipment))
-
+            val alreadyInNcts: Int      = if (enRouteEventWithVehicle.alreadyInNcts) 1 else 0
             val xml = {
               <ENROUEVETEV>
-                <PlaTEV10>
-                  {enRouteEventWithVehicle.place}
-                </PlaTEV10>
-                <PlaTEV10LNG>
-                  {LanguageCodeEnglish.code}
-                </PlaTEV10LNG>
-                <CouTEV13>
-                  {enRouteEventWithVehicle.countryCode}
-                </CouTEV13>
-                <CTLCTL>
-                  <AlrInNCTCTL29>
-                    {if (enRouteEventWithVehicle.alreadyInNcts) 1 else 0}
-                  </AlrInNCTCTL29>
-                </CTLCTL>
+                <PlaTEV10>{enRouteEventWithVehicle.place}</PlaTEV10>
+                <PlaTEV10LNG>{LanguageCodeEnglish.code}</PlaTEV10LNG>
+                <CouTEV13>{enRouteEventWithVehicle.countryCode}</CouTEV13>
+                <CTLCTL><AlrInNCTCTL29>{alreadyInNcts}</AlrInNCTCTL29></CTLCTL>
                 <SEAINFSF1>
                   <SeaNumSF12>1</SeaNumSF12>{seal.toXml}
                 </SEAINFSF1>{vehicularTranshipment.toXml}
               </ENROUEVETEV>
             }
+            val result = XmlReader.of[EnRouteEvent].read(xml).toOption.value
 
-          /* val result = XmlReader.of[EnRouteEvent].read(xml).toOption.value
+            result mustEqual enRouteEventWithVehicle
+        }
+      }
 
-            result mustEqual enRouteEventWithVehicle*/
+      "must read xml as container transhipment and seal" in {
 
+        forAll(arbitrary[EnRouteEvent], arbitrary[Seal], arbitrary[ContainerTranshipment]) {
+          (enRouteEvent, seal, containerTranshipment) =>
+            val enRouteEventWithContainer = enRouteEvent.copy(seals = Some(Seq(seal)), eventDetails = Some(containerTranshipment))
+
+            val xml = {
+              <ENROUEVETEV>
+                <PlaTEV10>{enRouteEventWithContainer.place}</PlaTEV10>
+                <PlaTEV10LNG>{LanguageCodeEnglish.code}</PlaTEV10LNG>
+                <CouTEV13>{enRouteEventWithContainer.countryCode}</CouTEV13>
+                <CTLCTL>
+                  <AlrInNCTCTL29>{if (enRouteEventWithContainer.alreadyInNcts) 1 else 0}</AlrInNCTCTL29>
+                </CTLCTL>
+                <SEAINFSF1>
+                  <SeaNumSF12>1</SeaNumSF12>
+                  {
+                  seal.toXml
+                  }
+                </SEAINFSF1>
+                {
+                containerTranshipment.toXml
+                }
+              </ENROUEVETEV>
+            }
+
+            val result = XmlReader.of[EnRouteEvent].read(xml).toOption.value
+
+            result mustBe enRouteEventWithContainer
+        }
+      }
+
+      "must read xml as Incident and seal" in {
+
+        forAll(arbitrary[EnRouteEvent], arbitrary[Seal], arbitrary[Incident]) {
+          (enRouteEvent, seal, incident) =>
+            val enRouteEventWithSealAndIncident = enRouteEvent.copy(seals = Some(Seq(seal)), eventDetails = Some(incident))
+
+            val xml = {
+              <ENROUEVETEV>
+                <PlaTEV10>{enRouteEventWithSealAndIncident.place}</PlaTEV10>
+                <PlaTEV10LNG>{LanguageCodeEnglish.code}</PlaTEV10LNG>
+                <CouTEV13>{enRouteEventWithSealAndIncident.countryCode}</CouTEV13>
+                <CTLCTL>
+                  <AlrInNCTCTL29>{if (enRouteEventWithSealAndIncident.alreadyInNcts) 1 else 0}</AlrInNCTCTL29>
+                </CTLCTL>
+                {
+                incident.toXml
+                }
+                <SEAINFSF1>
+                  <SeaNumSF12>1</SeaNumSF12>
+                  {
+                  seal.toXml
+                  }
+                </SEAINFSF1>
+              </ENROUEVETEV>
+            }
+
+            val result = XmlReader.of[EnRouteEvent].read(xml).toOption.value
+
+            result mustBe enRouteEventWithSealAndIncident
         }
       }
 
