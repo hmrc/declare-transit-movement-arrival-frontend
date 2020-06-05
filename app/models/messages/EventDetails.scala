@@ -84,24 +84,24 @@ object Incident {
       {
       incident.information.map(
         information =>
-        <IncInfINC4> {escapeXml(information)} </IncInfINC4>
+        <IncInfINC4>{escapeXml(information)}</IncInfINC4>
       ).getOrElse(
         <IncFlaINC3>1</IncFlaINC3>
       ) ++
-        <IncInfINC4LNG> {Header.Constants.languageCode.code} </IncInfINC4LNG> ++
+        <IncInfINC4LNG>{Header.Constants.languageCode.code}</IncInfINC4LNG> ++
         incident.date.fold[NodeSeq](NodeSeq.Empty)(date =>
-          <EndDatINC6> {Format.dateFormatted(date)} </EndDatINC6>
+          <EndDatINC6>{Format.dateFormatted(date)}</EndDatINC6>
         ) ++
         incident.authority.fold[NodeSeq](NodeSeq.Empty)(authority =>
-          <EndAutINC7> {escapeXml(authority)} </EndAutINC7>
+          <EndAutINC7>{escapeXml(authority)}</EndAutINC7>
         ) ++
         <EndAutINC7LNG>{Header.Constants.languageCode.code}</EndAutINC7LNG> ++
         incident.place.fold(NodeSeq.Empty)(place =>
-          <EndPlaINC10> {escapeXml(place)}</EndPlaINC10>
+          <EndPlaINC10>{escapeXml(place)}</EndPlaINC10>
         ) ++
         <EndPlaINC10LNG>{Header.Constants.languageCode.code}</EndPlaINC10LNG> ++
         incident.country.fold(NodeSeq.Empty)(country =>
-          <EndCouINC12> {escapeXml(country)} </EndCouINC12>
+          <EndCouINC12>{escapeXml(country)}</EndCouINC12>
         )
       }
     </INCINC>
@@ -201,9 +201,9 @@ object VehicularTranshipment {
     transhipment =>
       <TRASHP>
         {
-          <NewTraMeaIdeSHP26> {escapeXml(transhipment.transportIdentity)} </NewTraMeaIdeSHP26> ++
-            <NewTraMeaIdeSHP26LNG> {Header.Constants.languageCode.code} </NewTraMeaIdeSHP26LNG> ++
-            <NewTraMeaNatSHP54> {escapeXml(transhipment.transportCountry)} </NewTraMeaNatSHP54> ++ {
+          <NewTraMeaIdeSHP26>{escapeXml(transhipment.transportIdentity)}</NewTraMeaIdeSHP26> ++
+            <NewTraMeaIdeSHP26LNG>{Header.Constants.languageCode.code}</NewTraMeaIdeSHP26LNG> ++
+            <NewTraMeaNatSHP54>{escapeXml(transhipment.transportCountry)}</NewTraMeaNatSHP54> ++ {
             transhipment.date.fold(NodeSeq.Empty)(date =>
               <EndDatSHP60> {Format.dateFormatted(date)} </EndDatSHP60>
             )
@@ -226,7 +226,15 @@ object VehicularTranshipment {
       </TRASHP>
   }
 
-  implicit lazy val xmlReader: XmlReader[VehicularTranshipment] = ???
+  implicit lazy val xmlReader: XmlReader[VehicularTranshipment] = (
+    (xmlPath \ "NewTraMeaIdeSHP26").read[String],
+    (xmlPath \ "NewTraMeaNatSHP54").read[String],
+    (xmlPath \ "EndDatSHP60").read[LocalDate].optional,
+    (xmlPath \ "EndAutSHP61").read[String].optional,
+    (xmlPath \ "EndPlaSHP63").read[String].optional,
+    (xmlPath \ "EndCouSHP65").read[String].optional,
+    (xmlPath \ "CONNR3").read(strictReadOptionSeq[Container])
+  ).mapN(apply)
 }
 
 final case class ContainerTranshipment(
@@ -275,6 +283,6 @@ object ContainerTranshipment {
     (xmlPath \ "EndAutSHP61").read[String].optional,
     (xmlPath \ "EndPlaSHP63").read[String].optional,
     (xmlPath \ "EndCouSHP65").read[String].optional,
-    (xmlPath \ "CONNR3").read(seq[Container])
+    (xmlPath \ "CONNR3").read(strictReadSeq[Container])
   ).mapN(apply)
 }

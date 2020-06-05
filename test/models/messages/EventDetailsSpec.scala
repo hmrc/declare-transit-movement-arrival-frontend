@@ -147,6 +147,14 @@ class EventDetailsSpec
       }
     }
 
+    "must write to xml and read xml as Incident" in {
+      forAll(arbitrary[Incident]) {
+        incident =>
+          val result = XmlReader.of[Incident].read(incident.toXml).toOption.value
+          result mustEqual incident
+      }
+    }
+
     "must deserialise" in {
 
       forAll(arbitrary[Incident]) {
@@ -270,6 +278,14 @@ class EventDetailsSpec
       }
     }
 
+    "must write to xml and read xml as Container Transshipment" in {
+      forAll(arbitrary[ContainerTranshipment]) {
+        containerTranshipment =>
+          val result = XmlReader.of[ContainerTranshipment].read(containerTranshipment.toXml).toOption.value
+          result mustEqual containerTranshipment
+      }
+    }
+
     "must fail to construct when given an empty sequence of containers" in {
 
       intercept[IllegalArgumentException] {
@@ -343,6 +359,52 @@ class EventDetailsSpec
       }
     }
 
+    "must read xml as Vehicular transhipment without containers" in {
+      forAll(arbitrary[VehicularTranshipment]) {
+        transhipment =>
+          val vehicularTranshipment = transhipment.copy(containers = None)
+
+          val endorsementDateNode = vehicularTranshipment.date.map {
+            date =>
+              <EndDatSHP60>{Format.dateFormatted(date)}</EndDatSHP60>
+          }
+          val endorsementAuthority = vehicularTranshipment.authority.map {
+            authority =>
+              <EndAutSHP61>{authority}</EndAutSHP61>
+          }
+          val endorsementPlace = vehicularTranshipment.place.map {
+            place =>
+              <EndPlaSHP63>{place}</EndPlaSHP63>
+          }
+          val endorsementCountry = vehicularTranshipment.country.map {
+            country =>
+              <EndCouSHP65>{country}</EndCouSHP65>
+          }
+
+          val xml =
+            <TRASHP>
+              <NewTraMeaIdeSHP26>{vehicularTranshipment.transportIdentity}</NewTraMeaIdeSHP26>
+              <NewTraMeaIdeSHP26LNG>{LanguageCodeEnglish.code}</NewTraMeaIdeSHP26LNG>
+              <NewTraMeaNatSHP54>{vehicularTranshipment.transportCountry}</NewTraMeaNatSHP54>
+              {
+              endorsementDateNode.getOrElse(NodeSeq.Empty) ++
+                endorsementAuthority.getOrElse(NodeSeq.Empty)
+              }
+              <EndAutSHP61LNG>{LanguageCodeEnglish.code}</EndAutSHP61LNG>
+              {
+              endorsementPlace.getOrElse(NodeSeq.Empty)
+              }
+              <EndPlaSHP63LNG>{LanguageCodeEnglish.code}</EndPlaSHP63LNG>
+              {
+              endorsementCountry.getOrElse(NodeSeq.Empty)
+              }
+            </TRASHP>
+
+          val result = XmlReader.of[VehicularTranshipment].read(xml).toOption.value
+          result mustEqual vehicularTranshipment
+      }
+    }
+
     "must create valid xml with containers" in {
       forAll(arbitrary[VehicularTranshipment], arbitrary[Container], arbitrary[Container]) {
         (transhipment, container1, container2) =>
@@ -394,7 +456,7 @@ class EventDetailsSpec
       }
     }
 
-    "must reade xml with Vehicular transhipment with containers" in {
+    "must reade xml as Vehicular transhipment with containers" in {
       forAll(arbitrary[VehicularTranshipment], arbitrary[Container], arbitrary[Container]) {
         (transhipment, container1, container2) =>
           val vehicularTranshipment = transhipment.copy(containers = Some(Seq(container1, container2)))
@@ -442,8 +504,15 @@ class EventDetailsSpec
             </TRASHP>
 
           val result = XmlReader.of[VehicularTranshipment].read(xml).toOption.value
-          result mustEqual
-            vehicularTranshipment.toXml mustEqual vehicularTranshipment
+          result mustEqual vehicularTranshipment
+      }
+    }
+
+    "must write to xml and read xml as Vehicular transhipment" in {
+      forAll(arbitrary[VehicularTranshipment]) {
+        vehicularTranshipment =>
+          val result = XmlReader.of[VehicularTranshipment].read(vehicularTranshipment.toXml).toOption.value
+          result mustEqual vehicularTranshipment
       }
     }
 
