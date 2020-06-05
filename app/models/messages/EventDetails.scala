@@ -200,33 +200,39 @@ object VehicularTranshipment {
   implicit def xmlWrites: XMLWrites[VehicularTranshipment] = XMLWrites[VehicularTranshipment] {
     transhipment =>
       <TRASHP>
-        {
-          <NewTraMeaIdeSHP26> {escapeXml(transhipment.transportIdentity)} </NewTraMeaIdeSHP26> ++
-            <NewTraMeaIdeSHP26LNG> {Header.Constants.languageCode.code} </NewTraMeaIdeSHP26LNG> ++
-            <NewTraMeaNatSHP54> {escapeXml(transhipment.transportCountry)} </NewTraMeaNatSHP54> ++ {
-            transhipment.date.fold(NodeSeq.Empty)(date =>
-              <EndDatSHP60> {Format.dateFormatted(date)} </EndDatSHP60>
-            )
-          } ++ {
-            transhipment.authority.fold(NodeSeq.Empty)(authority =>
-              <EndAutSHP61> {escapeXml(authority)} </EndAutSHP61>
-            )
-          } ++
-            <EndAutSHP61LNG> {Header.Constants.languageCode.code} </EndAutSHP61LNG> ++ {
+          <NewTraMeaIdeSHP26>{escapeXml(transhipment.transportIdentity)}</NewTraMeaIdeSHP26>
+            <NewTraMeaIdeSHP26LNG>{Header.Constants.languageCode.code}</NewTraMeaIdeSHP26LNG>
+            <NewTraMeaNatSHP54>{escapeXml(transhipment.transportCountry)}</NewTraMeaNatSHP54>
+            {
+              transhipment.date.fold(NodeSeq.Empty)(date =>
+                <EndDatSHP60>{Format.dateFormatted(date)}</EndDatSHP60>
+              )
+              transhipment.authority.fold(NodeSeq.Empty)(authority =>
+                <EndAutSHP61>{escapeXml(authority)}</EndAutSHP61>
+              )
+            }
+           <EndAutSHP61LNG>{Header.Constants.languageCode.code}</EndAutSHP61LNG> {
             transhipment.place.fold(NodeSeq.Empty)(place =>
-              <EndPlaSHP63> {escapeXml(place)} </EndPlaSHP63>
+              <EndPlaSHP63>{escapeXml(place)}</EndPlaSHP63>
             )
-          } ++
-            <EndPlaSHP63LNG> {Header.Constants.languageCode.code} </EndPlaSHP63LNG> ++ {
+           }
+            <EndPlaSHP63LNG>{Header.Constants.languageCode.code}</EndPlaSHP63LNG> {
             transhipment.country.fold(NodeSeq.Empty)(country =>
-              <EndCouSHP65> {escapeXml(country)} </EndCouSHP65>
+              <EndCouSHP65>{escapeXml(country)}</EndCouSHP65>
             )
-          } ++ transhipment.containers.fold(NodeSeq.Empty)(_.flatMap(_.toXml))
-        }
+          } {transhipment.containers.fold(NodeSeq.Empty)(_.flatMap(_.toXml))}
       </TRASHP>
   }
 
-  implicit lazy val xmlReader: XmlReader[VehicularTranshipment] = ???
+  implicit lazy val xmlReader: XmlReader[VehicularTranshipment] = (
+    (xmlPath \ "NewTraMeaIdeSHP26").read[String],
+    (xmlPath \ "NewTraMeaNatSHP54").read[String],
+    (xmlPath \ "EndDatSHP60").read[LocalDate].optional,
+    (xmlPath \ "EndAutSHP61").read[String].optional,
+    (xmlPath \ "EndPlaSHP63").read[String].optional,
+    (xmlPath \ "EndCouSHP65").read[String].optional,
+    (xmlPath \ "CONNR3").read(strictReadOptionSeq[Container])
+  ).mapN(apply)
 }
 
 final case class ContainerTranshipment(
@@ -275,6 +281,6 @@ object ContainerTranshipment {
     (xmlPath \ "EndAutSHP61").read[String].optional,
     (xmlPath \ "EndPlaSHP63").read[String].optional,
     (xmlPath \ "EndCouSHP65").read[String].optional,
-    (xmlPath \ "CONNR3").read(seq[Container])
+    (xmlPath \ "CONNR3").read(strictReadSeq[Container])
   ).mapN(apply)
 }

@@ -48,4 +48,19 @@ object XMLReads {
         }
     }
   }
+
+  def strictReadOptionSeq[A](implicit reader: XmlReader[A]): XmlReader[Option[List[A]]] =
+    XmlReader {
+      xml =>
+        xml.reverse.foldLeft[ParseResult[List[A]]](ParseSuccess[List[A]](Nil)) {
+          (result, node) =>
+            for {
+              l <- result
+              v <- reader.read(node)
+            } yield v :: l
+        } match {
+          case ParseSuccess(x) if x.nonEmpty => ParseSuccess(x)
+          case _                             => ParseFailure()
+        }
+    }.optional
 }
