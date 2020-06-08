@@ -62,10 +62,13 @@ object EventDetails {
 
   implicit def xmlReader: XmlReader[EventDetails] = XmlReader {
     xml =>
-      if ((xmlPath \ "TRASHP")(xml).nonEmpty)
-        (xmlPath \ "TRASHP").read(Transhipment.xmlReader).read(xml)
-      else if ((xmlPath \ "INCINC")(xml).nonEmpty)
-        (xmlPath \ "INCINC").read(Incident.xmlReader).read(xml)
+      val transhipmentPath = (xmlPath \ "TRASHP")
+      val incidentPath     = (xmlPath \ "INCINC")
+
+      if (transhipmentPath(xml).nonEmpty)
+        transhipmentPath.read(Transhipment.xmlReader).read(xml)
+      else if (incidentPath(xml).nonEmpty)
+        incidentPath.read(Incident.xmlReader).read(xml)
       else ParseFailure()
   }
 }

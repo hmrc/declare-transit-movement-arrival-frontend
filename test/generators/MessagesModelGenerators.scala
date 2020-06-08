@@ -147,7 +147,7 @@ trait MessagesModelGenerators extends Generators {
           case _                       => None
         }
 
-        EnRouteEvent(place, countryCode, alreadyInNcts, eventDetails, removeEmptySealsList)
+        EnRouteEvent(place, countryCode, alreadyInNcts, eventDetails, if (eventDetails.isDefined) removeEmptySealsList else None)
       }
     }
 

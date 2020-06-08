@@ -16,6 +16,9 @@
 
 package models.messages
 
+import java.time.LocalTime
+
+import com.lucidchart.open.xtract.XmlReader
 import generators.MessagesModelGenerators
 import models.NormalProcedureFlag
 import models.XMLWrites._
@@ -23,8 +26,9 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.{FreeSpec, MustMatchers, OptionValues, StreamlinedXmlEquality}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
+import utils.Format
+import utils.Format.timeFormatter
 
-import scala.xml.Utility.trim
 import scala.xml.{Node, NodeSeq}
 
 class ArrivalMovementRequestSpec
@@ -52,6 +56,43 @@ class ArrivalMovementRequestSpec
               </CC007A>
 
             arrivalMovementRequest.toXml mustEqual validXml
+          }
+      }
+    }
+
+    "must read xml as ArrivalMovementRequest" in {
+      forAll(arbitrary[ArrivalMovementRequest]) {
+        arrivalMovementRequest =>
+          whenever(hasEoriWithNormalProcedure(arrivalMovementRequest)) {
+
+            val localTime: LocalTime          = LocalTime.parse(Format.timeFormatted(arrivalMovementRequest.meta.timeOfPreparation), timeFormatter)
+            val updatedArrivalMovementRequest = arrivalMovementRequest.copy(meta = arrivalMovementRequest.meta.copy(timeOfPreparation = localTime))
+
+            val xml: Node =
+              <CC007A>
+                {updatedArrivalMovementRequest.meta.toXml ++
+                updatedArrivalMovementRequest.header.toXml ++
+                updatedArrivalMovementRequest.traderDestination.toXml ++
+                updatedArrivalMovementRequest.customsOfficeOfPresentation.toXml ++
+                updatedArrivalMovementRequest.enRouteEvents.map(_.flatMap(_.toXml)).getOrElse(NodeSeq.Empty)}
+              </CC007A>
+
+            val result = XmlReader.of[ArrivalMovementRequest].read(xml).toOption.value
+            result mustBe updatedArrivalMovementRequest
+          }
+      }
+    }
+
+    "must write and read xml as ArrivalMovementRequest" in {
+      forAll(arbitrary[ArrivalMovementRequest]) {
+        arrivalMovementRequest =>
+          whenever(hasEoriWithNormalProcedure(arrivalMovementRequest)) {
+
+            val localTime: LocalTime          = LocalTime.parse(Format.timeFormatted(arrivalMovementRequest.meta.timeOfPreparation), timeFormatter)
+            val updatedArrivalMovementRequest = arrivalMovementRequest.copy(meta = arrivalMovementRequest.meta.copy(timeOfPreparation = localTime))
+
+            val result = XmlReader.of[ArrivalMovementRequest].read(updatedArrivalMovementRequest.toXml).toOption.value
+            result mustBe updatedArrivalMovementRequest
           }
       }
     }
