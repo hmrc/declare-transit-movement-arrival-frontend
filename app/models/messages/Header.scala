@@ -34,6 +34,9 @@ package models.messages
 
 import java.time.LocalDate
 
+import cats.syntax.all._
+import com.lucidchart.open.xtract.{__, XmlReader}
+import models.XMLReads._
 import models.{LanguageCode, LanguageCodeEnglish, ProcedureTypeFlag, XMLWrites}
 import utils.Format
 
@@ -79,4 +82,16 @@ object Header {
           <ArrNotDatHEA141>{Format.dateFormatted(header.notificationDate)}</ArrNotDatHEA141>
       </HEAHEA>
   }
+
+  implicit val reads: XmlReader[Header] = (
+    (__ \ "DocNumHEA5").read[String],
+    (__ \ "CusSubPlaHEA66").read[String].optional,
+    (__ \ "ArrNotPlaHEA60").read[String],
+    (__ \ "ArrAgrLocCodHEA62").read[String],
+    (__ \ "ArrAgrLocOfGooHEA63").read[String],
+    (__ \ "ArrAutLocOfGooHEA65").read[String].optional,
+    (__ \ "SimProFlaHEA132").read[ProcedureTypeFlag],
+    (__ \ "ArrNotDatHEA141").read[LocalDate]
+  ).mapN(apply)
+
 }

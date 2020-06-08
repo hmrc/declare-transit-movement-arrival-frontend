@@ -16,10 +16,10 @@
 
 package models
 
-import java.time.LocalDate
+import java.time.{LocalDate, LocalTime}
 
 import com.lucidchart.open.xtract.{ParseError, ParseFailure, ParseResult, ParseSuccess, XmlReader}
-import utils.Format.dateFormatter
+import utils.Format.{dateFormatter, timeFormatter}
 
 import scala.util.{Failure, Success, Try}
 import scala.xml.NodeSeq
@@ -27,6 +27,7 @@ import scala.xml.NodeSeq
 object XMLReads {
 
   case class LocalDateParseFailure(message: String) extends ParseError
+  case class LocalTimeParseFailure(message: String) extends ParseError
 
   implicit val xmlDateReads: XmlReader[LocalDate] = {
     new XmlReader[LocalDate] {
@@ -34,6 +35,16 @@ object XMLReads {
         Try(LocalDate.parse(xml.text, dateFormatter)) match {
           case Success(value) => ParseSuccess(value)
           case Failure(e)     => ParseFailure(LocalDateParseFailure(e.getMessage))
+        }
+    }
+  }
+
+  implicit val xmlTimeReads: XmlReader[LocalTime] = {
+    new XmlReader[LocalTime] {
+      override def read(xml: NodeSeq): ParseResult[LocalTime] =
+        Try(LocalTime.parse(xml.text, timeFormatter)) match {
+          case Success(value) => ParseSuccess(value)
+          case Failure(e)     => ParseFailure(LocalTimeParseFailure(e.getMessage))
         }
     }
   }

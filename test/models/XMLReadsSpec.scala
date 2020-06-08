@@ -16,7 +16,7 @@
 
 package models
 
-import java.time.LocalDate
+import java.time.{LocalDate, LocalTime}
 
 import base.SpecBase
 import com.lucidchart.open.xtract.{ParseFailure, XmlReader}
@@ -24,29 +24,59 @@ import generators.Generators
 import models.XMLReads._
 import org.scalacheck.Arbitrary.arbitrary
 import utils.Format
+import utils.Format.timeFormatter
 
 class XMLReadsSpec extends SpecBase with Generators {
 
   "XMLReads" - {
 
-    "must deserialize XML to LocalDate with correct format" in {
+    "xmlDateReads" - {
 
-      val date = arbitrary[LocalDate].sample.value
+      "must deserialize XML to LocalDate with correct format" in {
 
-      val xml = <testXml>{Format.dateFormatted(date)}</testXml>
+        val date = arbitrary[LocalDate].sample.value
 
-      val result = XmlReader.of[LocalDate].read(xml).toOption.value
+        val xml = <testXml>{Format.dateFormatted(date)}</testXml>
 
-      result mustBe date
+        val result = XmlReader.of[LocalDate].read(xml).toOption.value
+
+        result mustBe date
+      }
+
+      "must return ParseFailure when failing to deserialize XML to LocalDate" in {
+
+        val xml = <testXml>Invalid Date</testXml>
+
+        val result = XmlReader.of[LocalDate].read(xml)
+
+        result mustBe an[ParseFailure]
+      }
     }
 
-    "must return ParseFailure when failing to deserialize XML to LocalDate" in {
+    "xmlTimeReads" - {
 
-      val xml = <testXml>Invalid Date</testXml>
+      "must deserialize XML to LocalTime with correct format" in {
 
-      val result = XmlReader.of[LocalDate].read(xml)
+        val time                = arbitrary[LocalTime].sample.value
+        val timeFormatted       = Format.timeFormatted(time)
+        val timeFormattedParsed = LocalTime.parse(timeFormatted, timeFormatter)
 
-      result mustBe an[ParseFailure]
+        val xml = <testXml>{timeFormatted}</testXml>
+
+        val result = XmlReader.of[LocalTime].read(xml).toOption.value
+
+        result mustBe timeFormattedParsed
+      }
+
+      "must return ParseFailure when failing to deserialize XML to LocalTime" in {
+
+        val xml = <testXml>Invalid Date</testXml>
+
+        val result = XmlReader.of[LocalTime].read(xml)
+
+        result mustBe an[ParseFailure]
+      }
+
     }
   }
 

@@ -16,6 +16,7 @@
 
 package models.messages
 
+import com.lucidchart.open.xtract.XmlReader
 import models.XMLWrites
 import models.XMLWrites._
 

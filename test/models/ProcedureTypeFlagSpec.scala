@@ -14,50 +14,38 @@
  * limitations under the License.
  */
 
-package models.messages
+package models
 
 import base.SpecBase
 import com.lucidchart.open.xtract.{ParseFailure, XmlReader}
 import generators.MessagesModelGenerators
-import models.XMLWrites._
+import models.messages.Meta
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.StreamlinedXmlEquality
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
-import scala.xml.NodeSeq
+class ProcedureTypeFlagSpec extends SpecBase with ScalaCheckPropertyChecks with MessagesModelGenerators with StreamlinedXmlEquality {
 
-class MessageSenderSpec extends SpecBase with ScalaCheckPropertyChecks with StreamlinedXmlEquality with MessagesModelGenerators {
-
-  "MessageSender" - {
-
-    "must convert to xml and convert to correct format" in {
-      forAll(arbitrary[MessageSender]) {
-        messageSender =>
-          val expectedResult: NodeSeq =
-            <MesSenMES3>{escapeXml(s"${messageSender.environment}-${messageSender.eori}")}</MesSenMES3>
-
-          messageSender.toXml mustEqual expectedResult
-      }
-    }
+  //format off
+  "ProcedureTypeFlag" - {
 
     "must deserialize from xml" in {
+      forAll(arbitrary[ProcedureTypeFlag]) {
+        flag =>
+          val xml    = <testXml>{flag.code}</testXml>
+          val result = XmlReader.of[ProcedureTypeFlag].read(xml).toOption.value
 
-      forAll(arbitrary[MessageSender]) {
-        messageSender =>
-          val xml    = messageSender.toXml
-          val result = XmlReader.of[MessageSender].read(xml).toOption.value
-
-          result mustBe messageSender
+          result mustBe flag
       }
     }
 
     "must fail to deserialize from xml if invalid format" in {
 
-      val invalidXml = <MesSenMES3>Invalid format</MesSenMES3>
-      val result     = XmlReader.of[MessageSender].read(invalidXml)
+      val invalidXml = <testXml>Invalid format</testXml>
+      val result     = XmlReader.of[ProcedureTypeFlag].read(invalidXml)
 
       result mustBe an[ParseFailure]
     }
   }
-
+  // format: on
 }

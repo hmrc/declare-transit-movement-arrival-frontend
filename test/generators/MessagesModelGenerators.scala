@@ -23,6 +23,7 @@ import models.messages.ErrorType.{GenericError, MRNError}
 import models.messages._
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
+import utils.Format._
 
 trait MessagesModelGenerators extends Generators {
 
@@ -245,7 +246,7 @@ trait MessagesModelGenerators extends Generators {
     Arbitrary {
       for {
         environment <- Gen.oneOf(Seq("LOCAL", "QA", "STAGING", "PRODUCTION"))
-        eori        <- arbitrary[String]
+        eori        <- stringsWithMaxLength(TraderDestination.Constants.eoriLength)
       } yield MessageSender(environment, eori)
     }
   }
@@ -253,9 +254,9 @@ trait MessagesModelGenerators extends Generators {
   implicit lazy val arbitraryInterchangeControlReference: Arbitrary[InterchangeControlReference] = {
     Arbitrary {
       for {
-        dateTime <- arbitrary[String]
-        index    <- arbitrary[Int]
-      } yield InterchangeControlReference(dateTime, index)
+        date  <- localDateGen
+        index <- Gen.posNum[Int]
+      } yield InterchangeControlReference(dateFormatted(date), index)
     }
   }
 
@@ -303,7 +304,7 @@ trait MessagesModelGenerators extends Generators {
         procedureTypeFlag        <- arbitrary[ProcedureTypeFlag]
         notificationDate         <- arbitrary[LocalDate]
         presentationOfficeId     <- stringsWithMaxLength(CustomsOfficeOfPresentation.Constants.presentationOfficeLength)
-        presentationOfficeName   <- nonEmptyString
+        presentationOfficeName   <- stringsWithMaxLength(35)
       } yield
         Header(movementReferenceNumber,
                customsSubPlace,

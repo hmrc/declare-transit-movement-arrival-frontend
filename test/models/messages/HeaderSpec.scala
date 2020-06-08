@@ -18,17 +18,19 @@ package models.messages
 
 import java.time.LocalDate
 
+import base.SpecBase
+import com.lucidchart.open.xtract.XmlReader
 import generators.MessagesModelGenerators
 import models.LanguageCodeEnglish
 import models.XMLWrites._
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalatest.{FreeSpec, MustMatchers, StreamlinedXmlEquality}
+import org.scalatest.StreamlinedXmlEquality
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import utils.Format
 
 import scala.xml.NodeSeq
 
-class HeaderSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with MessagesModelGenerators with StreamlinedXmlEquality {
+class HeaderSpec extends SpecBase with ScalaCheckPropertyChecks with MessagesModelGenerators with StreamlinedXmlEquality {
 
   "Header" - {
     "must create minimal valid xml" in {
@@ -61,6 +63,7 @@ class HeaderSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyCheck
     }
 
     "must create valid xml" in {
+
       forAll(arbitrary[Header]) {
         header =>
           val customsSubPlaceNode = header.customsSubPlace.map(
@@ -86,6 +89,16 @@ class HeaderSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyCheck
             </HEAHEA>
 
           header.toXml mustEqual expectedResult
+      }
+    }
+
+    "must deserialize from xml" in {
+      forAll(arbitrary[Header]) {
+        header =>
+          val xml    = header.toXml
+          val result = XmlReader.of[Header].read(xml).toOption.value
+
+          result mustBe header
       }
     }
   }
