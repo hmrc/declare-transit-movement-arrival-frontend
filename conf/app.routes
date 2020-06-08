@@ -65,6 +65,8 @@ GET        /:mrn/use-ncts-service                            controllers.UseDiff
 
 GET        /:mrn/arrival-notification-sent                   controllers.ConfirmationController.onPageLoad(mrn: MovementReferenceNumber)
 
+GET        /:mrn/arrival-notification-sent-rejection         controllers.RejectionConfirmationController.onPageLoad(mrn: MovementReferenceNumber)
+
 GET        /:mrn/event-on-journey                            controllers.IncidentOnRouteController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
 POST       /:mrn/event-on-journey                            controllers.IncidentOnRouteController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
 GET        /:mrn/change-event-on-journey                     controllers.IncidentOnRouteController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
@@ -169,3 +171,23 @@ GET        /:mrn/event/:eventIndex/change-confirm-remove-event                  
 POST       /:mrn/event/:eventIndex/change-confirm-remove-event                                  controllers.events.ConfirmRemoveEventController.onSubmit(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode = CheckMode)
 
 GET        /:arrivalId/arrival-rejection                                             controllers.ArrivalRejectionController.onPageLoad(arrivalId: ArrivalId)
+
+GET        /:mrn/consignee-name                        controllers.ConsigneeNameController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
+POST       /:mrn/consignee-name                        controllers.ConsigneeNameController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
+GET        /:mrn/change-consignee-name                  controllers.ConsigneeNameController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
+POST       /:mrn/change-consignee-name                  controllers.ConsigneeNameController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
+
+GET        /:mrn/eori-confirmation                        controllers.ConsigneeEoriConfirmationController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
+POST       /:mrn/eori-confirmation                        controllers.ConsigneeEoriConfirmationController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
+GET        /:mrn/change-eori-confirmation                  controllers.ConsigneeEoriConfirmationController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
+POST       /:mrn/change-eori-confirmation                  controllers.ConsigneeEoriConfirmationController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
+
+GET        /:mrn/eori-number                        controllers.ConsigneeEoriNumberController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
+POST       /:mrn/eori-number                        controllers.ConsigneeEoriNumberController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
+GET        /:mrn/change-eori-number                  controllers.ConsigneeEoriNumberController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
+POST       /:mrn/change-eori-number                  controllers.ConsigneeEoriNumberController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
+
+GET        /:mrn/consignee-address                        controllers.ConsigneeAddressController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
+POST       /:mrn/consignee-address                        controllers.ConsigneeAddressController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
+GET        /:mrn/change-consignee-address                  controllers.ConsigneeAddressController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
+POST       /:mrn/change-consignee-address                  controllers.ConsigneeAddressController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)

@@ -304,7 +304,7 @@ trait MessagesModelGenerators extends Generators {
         procedureTypeFlag        <- arbitrary[ProcedureTypeFlag]
         notificationDate         <- arbitrary[LocalDate]
         presentationOfficeId     <- stringsWithMaxLength(CustomsOfficeOfPresentation.Constants.presentationOfficeLength)
-        presentationOfficeName   <- nonEmptyString
+        presentationOfficeName   <- stringsWithMaxLength(35)
       } yield
         Header(movementReferenceNumber,
                customsSubPlace,

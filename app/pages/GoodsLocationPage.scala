@@ -29,8 +29,24 @@ case object GoodsLocationPage extends QuestionPage[GoodsLocation] {
 
   override def cleanup(value: Option[GoodsLocation], userAnswers: UserAnswers): Try[UserAnswers] =
     value match {
-      case Some(GoodsLocation.AuthorisedConsigneesLocation) => userAnswers.remove(CustomsSubPlacePage)
-      case Some(GoodsLocation.BorderForceOffice)            => userAnswers.remove(AuthorisedLocationPage)
-      case None                                             => super.cleanup(value, userAnswers)
+      case Some(GoodsLocation.AuthorisedConsigneesLocation) =>
+        userAnswers
+          .remove(CustomsSubPlacePage)
+          .flatMap(_.remove(PresentationOfficePage))
+          .flatMap(_.remove(TraderNamePage))
+          .flatMap(_.remove(TraderEoriPage))
+          .flatMap(_.remove(TraderAddressPage))
+          .flatMap(_.remove(IsTraderAddressPlaceOfNotificationPage))
+          .flatMap(_.remove(PlaceOfNotificationPage))
+
+      case Some(GoodsLocation.BorderForceOffice) =>
+        userAnswers
+          .remove(AuthorisedLocationPage)
+          .flatMap(_.remove(ConsigneeNamePage))
+          .flatMap(_.remove(ConsigneeEoriConfirmationPage))
+          .flatMap(_.remove(ConsigneeEoriNumberPage))
+          .flatMap(_.remove(ConsigneeAddressPage))
+
+      case None => super.cleanup(value, userAnswers)
     }
 }

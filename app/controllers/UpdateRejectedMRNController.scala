@@ -49,7 +49,7 @@ class UpdateRejectedMRNController @Inject()(override val messagesApi: MessagesAp
     implicit request =>
       arrivalMovementMessageService.getArrivalNotificationMessage(arrivalId) flatMap {
         case Some((_, mrn)) =>
-          val json = Json.obj("form" -> form.fill(mrn))
+          val json = Json.obj("form" -> form.fill(mrn), "arrivalId" -> arrivalId.value)
           renderer.render("updateMovementReferenceNumber.njk", json).map(Ok(_))
         case _ => Future.successful(Redirect(routes.TechnicalDifficultiesController.onPageLoad()))
       }

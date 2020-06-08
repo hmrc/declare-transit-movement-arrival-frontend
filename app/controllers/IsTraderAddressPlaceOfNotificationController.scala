@@ -94,7 +94,7 @@ class IsTraderAddressPlaceOfNotificationController @Inject()(override val messag
         }
     }
 
-  private def renderPage(form: Form[Boolean], traderAddress: TraderAddress, mode: Mode)(implicit request: DataRequest[AnyContent]): Future[Html] = {
+  private def renderPage(form: Form[Boolean], traderAddress: Address, mode: Mode)(implicit request: DataRequest[AnyContent]): Future[Html] = {
     val addressLine1    = traderAddress.buildingAndStreet
     val addressTown     = traderAddress.city
     val addressPostcode = traderAddress.postcode

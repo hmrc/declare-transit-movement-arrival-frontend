@@ -54,6 +54,7 @@ checkYourAnswers.title = Check your answers before sending this arrival notifica
 checkYourAnswers.heading = Check your answers before sending this arrival notification
 checkYourAnswers.section.goodsLocation = Goods details
 checkYourAnswers.section.traderDetails = Trader’s details
+checkYourAnswers.section.consigneeDetails = Consignee’s details
 checkYourAnswers.section.placeOfNotificationDetails = Place where this was completed
 checkYourAnswers.section.events = Events
 checkYourAnswers.confirmation.heading = Now send your arrival notification
@@ -199,6 +200,7 @@ authorisedLocation.heading = What is the authorised location code?
 authorisedLocation.checkYourAnswersLabel = Authorised location
 authorisedLocation.error.required = Enter authorised location code
 authorisedLocation.error.length = Authorised location code must be 17 characters or less
+authorisedLocation.error.invalid = Authorised location code must only contain letters a to z or numbers 0 to 9
 
 traderAddress.title = What is the address of the trader at the destination?
 traderAddress.heading = What is the address of the trader at the destination?
@@ -259,7 +261,7 @@ incidentOnRoute.hintText.bullet.4 = goods moved to a different vehicle
 incidentOnRoute.hintText.bullet.5 = goods moved to a different type of transport
 incidentOnRoute.hintText.bullet.6 = the planned route changed
 incidentOnRoute.checkYourAnswersLabel = Did any events happen on the journey?
-incidentOnRoute.error.required = Select yes if there were events on the journey
+incidentOnRoute.error.required = Select yes if there was an event on the journey
 incidentOnRoute.change.hidden = if there was an event on the journey
 
 eventCountry.title = Which country were the goods in when the event happened?
@@ -422,6 +424,44 @@ confirmRemoveSeal.error.required = Select yes if you are sure you want to remove
 confirmRemoveEvent.title = Are you sure you want to remove the event {0}?
 confirmRemoveEvent.heading = Are you sure you want to remove the event {0}?
 confirmRemoveEvent.error.required = Select yes if you are sure you want to remove the event {0}
+
+arrivalRejection.title = There is an error in this arrival notification
+arrivalRejection.heading = There is an error in this arrival notification
+
+consigneeName.title = What is the name of the authorised consignee?
+consigneeName.heading = What is the name of the authorised consignee?
+consigneeName.checkYourAnswersLabel =What is the name of the authorised consignee?
+consigneeName.error.required = Enter the name of the authorised consignee
+consigneeName.error.length = Authorised consignee name must be 35 characters or less
+
+eoriConfirmation.title = Is this the EORI number for the trader?
+eoriConfirmation.heading = Is {0} the EORI number for {1}?
+eoriConfirmation.checkYourAnswersLabel = Is {0} the EORI number for {1}?
+eoriConfirmation.error.required = Select yes if this is the correct EORI number for {0}
+
+eoriNumber.title =What is the EORI number of the authorised consignee?
+eoriNumber.heading =  What is the EORI number for {0}?
+eoriNumber.checkYourAnswersLabel =   What is the EORI number for {0}?
+eoriNumber.error.required = Enter the EORI number for {0}
+eoriNumber.error.length =  EORI mumber must be 35 characters or less
+
+consigneeAddress.title = What is the address of the authorised consignee
+consigneeAddress.heading =  What is the address for {0}?
+consigneeAddress.checkYourAnswersLabel =  What is the address for {0}?
+consigneeAddress.error.required = Enter {0}'s Address
+consigneeAddress.error.length = The address for {0} must be 100 characters or less
+
+consigneeAddress.buildingAndStreet = Building and street
+consigneeAddress.city = Town or city
+consigneeAddress.postcode = Postcode
+consigneeAddress.checkYourAnswersLabel = Address
+consigneeAddress.error.buildingAndStreet.required = Enter the building and street
+consigneeAddress.error.city.required = Enter the town or city
+consigneeAddress.error.postcode.required = Enter the postcode
+consigneeAddress.error.buildingAndStreet.length = Building and street must be 35 characters or less
+consigneeAddress.error.city.length = Town or city must be 35 characters or less
+consigneeAddress.error.postcode.length = Postcode must be 9 characters or less
+consigneeAddress.change.hidden = address of consignee
 
 arrivalRejection.title = There is a problem with this arrival notification
 arrivalRejection.heading = There is a problem with this arrival notification

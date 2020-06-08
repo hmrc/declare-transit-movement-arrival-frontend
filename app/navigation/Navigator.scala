@@ -37,7 +37,12 @@ class Navigator @Inject()() {
   // format: off
   private val normalRoutes: PartialFunction[Page, UserAnswers => Option[Call]] = {
     case MovementReferenceNumberPage => ua => Some(routes.GoodsLocationController.onPageLoad(ua.id, NormalMode))
-    case GoodsLocationPage => goodsLocationPageRoutes
+    case GoodsLocationPage => ua => Some(routes.CustomsSubPlaceController.onPageLoad(ua.id, NormalMode))
+    case AuthorisedLocationPage => ua => Some(routes.ConsigneeNameController.onPageLoad(ua.id, NormalMode))
+    case ConsigneeNamePage => ua => Some(routes.ConsigneeEoriConfirmationController.onPageLoad(ua.id, NormalMode))
+    case ConsigneeEoriConfirmationPage => consigneeEoriConfirmationRoute(NormalMode)
+    case ConsigneeEoriNumberPage => ua => Some(routes.ConsigneeAddressController.onPageLoad(ua.id, NormalMode))
+    case ConsigneeAddressPage => ua => Some(routes.IncidentOnRouteController.onPageLoad(ua.id, NormalMode))
     case PresentationOfficePage => ua => Some(routes.TraderNameController.onPageLoad(ua.id, NormalMode))
     case CustomsSubPlacePage => ua => Some(routes.PresentationOfficeController.onPageLoad(ua.id, NormalMode))
     case TraderNamePage => ua => Some(routes.TraderEoriController.onPageLoad(ua.id, NormalMode))
@@ -58,7 +63,7 @@ class Navigator @Inject()() {
     case ContainerNumberPage(eventIndex, _) => ua => Some(transhipmentRoutes.AddContainerController.onPageLoad(ua.id, eventIndex, NormalMode))
     case AddContainerPage(eventIndex) => addContainer(eventIndex)
     case ConfirmRemoveContainerPage(eventIndex) => confirmRemoveContainerRoute(eventIndex, NormalMode)
-    case ConfirmRemoveEventPage(eventIndex)=> confirmRemoveEventRoute(eventIndex, NormalMode)
+    case ConfirmRemoveEventPage(eventIndex) => confirmRemoveEventRoute(eventIndex, NormalMode)
     case HaveSealsChangedPage(eventIndex) => haveSealsChanged(eventIndex, NormalMode)
     case SealIdentityPage(eventIndex, _) => ua => Some(sealRoutes.AddSealController.onPageLoad(ua.id, eventIndex, NormalMode))
     case AddSealPage(eventIndex) => addSeal(eventIndex, NormalMode)
@@ -67,8 +72,15 @@ class Navigator @Inject()() {
 
   private val checkRouteMap: PartialFunction[Page, UserAnswers => Option[Call]] = {
     case GoodsLocationPage => goodsLocationCheckRoute
+    case AuthorisedLocationPage  => authorisedLocationRoute(CheckMode)
+    case CustomsSubPlacePage => customsSubPlaceRoute(CheckMode)
+    case ConsigneeNamePage => consigneeNameRoute(CheckMode)
+    case ConsigneeEoriConfirmationPage => consigneeEoriConfirmationRoute(CheckMode)
+    case ConsigneeEoriNumberPage => consigneeEoriNumberRoute(CheckMode)
+    case ConsigneeAddressPage => ua => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
     case EventCountryPage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
     case EventPlacePage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
+    case TraderAddressPage => traderAddressRoute(CheckMode)
     case IsTraderAddressPlaceOfNotificationPage => isTraderAddressPlaceOfNotificationCheckRoute
     case IsTranshipmentPage(index) => isTranshipmentCheckRoute(index)
     case IncidentInformationPage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
@@ -79,12 +91,17 @@ class Navigator @Inject()() {
     case AddContainerPage(index) => addContainerCheckRoute(index)
     case EventReportedPage(index) => eventReportedCheckRoute(index)
     case ConfirmRemoveContainerPage(index) => confirmRemoveContainerRoute(index, CheckMode)
-    case ConfirmRemoveEventPage(index)=> confirmRemoveEventRoute(index, CheckMode)
+    case ConfirmRemoveEventPage(index) => confirmRemoveEventRoute(index, CheckMode)
     case IncidentOnRoutePage => incidentOnRoute
     case SealIdentityPage(index, _) => ua => Some(sealRoutes.AddSealController.onPageLoad(ua.id, index, CheckMode))
     case HaveSealsChangedPage(index) => haveSealsChanged(index, CheckMode)
     case ConfirmRemoveSealPage(eventIndex) => removeSeal(eventIndex, CheckMode)
     case AddSealPage(eventIndex) => addSeal(eventIndex, CheckMode)
+    case PresentationOfficePage =>  presentationOfficeRoute(CheckMode)
+    case TraderNamePage =>  traderNameRoute(CheckMode)
+    case TraderEoriPage =>  traderEoriRoute(CheckMode)
+
+
   }
 
   def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = mode match {
@@ -94,7 +111,7 @@ class Navigator @Inject()() {
         case Some(call) =>
           call(userAnswers) match {
             case Some(onwardRoute) => onwardRoute
-            case None              => routes.SessionExpiredController.onPageLoad()
+            case None => routes.SessionExpiredController.onPageLoad()
           }
       }
     case CheckMode =>
@@ -103,7 +120,7 @@ class Navigator @Inject()() {
         case Some(call) =>
           call(userAnswers) match {
             case Some(onwardRoute) => onwardRoute
-            case None              => routes.SessionExpiredController.onPageLoad()
+            case None => routes.SessionExpiredController.onPageLoad()
           }
       }
   }
@@ -116,11 +133,64 @@ class Navigator @Inject()() {
   
   // format: on
 
+  private def traderAddressRoute(mode: Mode)(ua: UserAnswers) =
+    (ua.get(IsTraderAddressPlaceOfNotificationPage), mode) match {
+      case (Some(_), CheckMode) => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
+      case (None, _)            => Some(routes.IsTraderAddressPlaceOfNotificationController.onPageLoad(ua.id, mode))
+    }
+
+//TODO refactor case matching
+  private def consigneeEoriConfirmationRoute(mode: Mode)(ua: UserAnswers) =
+    (ua.get(ConsigneeEoriConfirmationPage), mode, ua.get(ConsigneeEoriNumberPage), ua.get(ConsigneeAddressPage)) match {
+      case (Some(true), NormalMode, _, _)       => Some(routes.ConsigneeAddressController.onPageLoad(ua.id, mode))
+      case (Some(true), CheckMode, _, None)     => Some(routes.ConsigneeAddressController.onPageLoad(ua.id, mode))
+      case (Some(true), CheckMode, _, _)        => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
+      case (Some(false), CheckMode, Some(_), _) => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
+      case (Some(false), _, _, _)               => Some(routes.ConsigneeEoriNumberController.onPageLoad(ua.id, mode))
+      case _                                    => None
+    }
+
+  private def consigneeEoriNumberRoute(mode: Mode)(ua: UserAnswers) =
+    (mode, ua.get(ConsigneeAddressPage)) match {
+      case (CheckMode, Some(_)) => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
+      case _                    => Some(routes.ConsigneeAddressController.onPageLoad(ua.id, mode))
+    }
+
+  private def consigneeNameRoute(mode: Mode)(ua: UserAnswers): Option[Call] =
+    (ua.get(ConsigneeEoriConfirmationPage), mode) match {
+      case (Some(_), CheckMode) => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
+      case _                    => Some(routes.ConsigneeEoriConfirmationController.onPageLoad(ua.id, mode))
+    }
+
+  private def presentationOfficeRoute(mode: Mode)(ua: UserAnswers): Option[Call] =
+    (ua.get(TraderNamePage), mode) match {
+      case (Some(_), CheckMode) => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
+      case _                    => Some(routes.TraderNameController.onPageLoad(ua.id, mode))
+    }
+  private def traderNameRoute(mode: Mode)(ua: UserAnswers): Option[Call] =
+    (ua.get(TraderEoriPage), mode) match {
+      case (Some(_), CheckMode) => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
+      case _                    => Some(routes.TraderEoriController.onPageLoad(ua.id, mode))
+    }
+  private def traderEoriRoute(mode: Mode)(ua: UserAnswers): Option[Call] =
+    (ua.get(TraderAddressPage), mode) match {
+      case (Some(_), CheckMode) => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
+      case _                    => Some(routes.TraderAddressController.onPageLoad(ua.id, mode))
+    }
+  private def customsSubPlaceRoute(mode: Mode)(ua: UserAnswers): Option[Call] =
+    (ua.get(PresentationOfficePage), mode) match {
+      case (Some(_), CheckMode) => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
+      case _                    => Some(routes.PresentationOfficeController.onPageLoad(ua.id, mode))
+    }
+  private def authorisedLocationRoute(mode: Mode)(ua: UserAnswers): Option[Call] =
+    (ua.get(ConsigneeNamePage), mode) match {
+      case (Some(_), CheckMode) => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
+      case _                    => Some(routes.ConsigneeNameController.onPageLoad(ua.id, mode))
+    }
   private def transportIdentity(eventIndex: Index)(ua: UserAnswers): Option[Call] =
-    (ua.get(TransportIdentityPage(eventIndex)), ua.get(TransportNationalityPage(eventIndex))) match {
-      case (Some(_), Some(_)) => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, eventIndex))
-      case (Some(_), None)    => Some(transhipmentRoutes.TransportNationalityController.onPageLoad(ua.id, eventIndex, CheckMode))
-      case _                  => None
+    ua.get(TransportNationalityPage(eventIndex)) match {
+      case (Some(_)) => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, eventIndex))
+      case _         => Some(transhipmentRoutes.TransportNationalityController.onPageLoad(ua.id, eventIndex, CheckMode))
     }
 
   private def removeSeal(eventIndex: Index, mode: Mode)(ua: UserAnswers) =
@@ -200,12 +270,6 @@ class Navigator @Inject()() {
         Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, eventIndex))
     }
 
-  private def goodsLocationPageRoutes(ua: UserAnswers): Option[Call] =
-    ua.get(GoodsLocationPage) map {
-      case BorderForceOffice            => routes.CustomsSubPlaceController.onPageLoad(ua.id, NormalMode)
-      case AuthorisedConsigneesLocation => routes.UseDifferentServiceController.onPageLoad(ua.id)
-    }
-
   private def incidentOnRoute(ua: UserAnswers): Option[Call] =
     (ua.get(IncidentOnRoutePage), ua.get(DeriveNumberOfEvents)) match {
       case (Some(true), None | Some(0)) => Some(eventRoutes.EventCountryController.onPageLoad(ua.id, Index(0), NormalMode))
@@ -271,8 +335,7 @@ class Navigator @Inject()() {
   private def eventReportedCheckRoute(eventIndex: Index)(userAnswers: UserAnswers): Option[Call] =
     (userAnswers.get(EventReportedPage(eventIndex)), userAnswers.get(IsTranshipmentPage(eventIndex))) match {
       case (Some(false), Some(false)) => Some(eventRoutes.IncidentInformationController.onPageLoad(userAnswers.id, eventIndex, CheckMode))
-      case (Some(_), _)               => Some(eventRoutes.CheckEventAnswersController.onPageLoad(userAnswers.id, eventIndex))
-      case _                          => None
+      case _                          => Some(eventRoutes.CheckEventAnswersController.onPageLoad(userAnswers.id, eventIndex))
     }
 
   private def haveSealsChanged(eventIndex: Index, mode: Mode)(userAnswers: UserAnswers): Option[Call] =

@@ -26,6 +26,63 @@ import uk.gov.hmrc.viewmodels._
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswersHelper(userAnswers) {
 
+  def eoriNumber: Option[Row] =
+    userAnswers.get(ConsigneeEoriConfirmationPage) match {
+      case Some(false) =>
+        userAnswers.get(ConsigneeEoriNumberPage) map {
+          answer =>
+            val consigneeName = userAnswers.get(ConsigneeNamePage).getOrElse("")
+            val messages      = msg"eoriNumber.checkYourAnswersLabel".withArgs(consigneeName)
+            Row(
+              key   = Key(messages, classes = Seq("govuk-!-width-one-half")),
+              value = Value(lit"$answer"),
+              actions = List(
+                Action(
+                  content            = msg"site.edit",
+                  href               = routes.ConsigneeEoriNumberController.onPageLoad(mrn, CheckMode).url,
+                  visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"eoriNumber.checkYourAnswersLabel")),
+                  attributes         = Map("id" -> s"""change-eori-number""")
+                )
+              )
+            )
+        }
+      case _ => None
+    }
+
+  def eoriConfirmation(eoriNumber: String): Option[Row] = userAnswers.get(ConsigneeEoriConfirmationPage) map {
+    answer =>
+      val consigneeName = userAnswers.get(ConsigneeNamePage).getOrElse("")
+      val messages      = msg"eoriConfirmation.checkYourAnswersLabel".withArgs(eoriNumber, consigneeName)
+      Row(
+        key   = Key(messages, classes = Seq("govuk-!-width-one-half")),
+        value = Value(yesOrNo(answer)),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = routes.ConsigneeEoriConfirmationController.onPageLoad(mrn, CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"eoriConfirmation.checkYourAnswersLabel")),
+            attributes         = Map("id" -> s"""change-eori-confirmation""")
+          )
+        )
+      )
+  }
+
+  def consigneeName: Option[Row] = userAnswers.get(ConsigneeNamePage) map {
+    answer =>
+      Row(
+        key   = Key(msg"consigneeName.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value = Value(lit"$answer"),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = routes.ConsigneeNameController.onPageLoad(mrn, CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"consigneeName.checkYourAnswersLabel")),
+            attributes         = Map("id" -> s"""change-consignee-name""")
+          )
+        )
+      )
+  }
+
   def placeOfNotification: Option[Row] = userAnswers.get(PlaceOfNotificationPage) map {
     answer =>
       Row(
@@ -119,6 +176,22 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswers
             href               = routes.TraderAddressController.onPageLoad(mrn, CheckMode).url,
             visuallyHiddenText = Some(msg"traderAddress.change.hidden"),
             attributes         = Map("id" -> s"""change-trader-address""")
+          )
+        )
+      )
+  }
+
+  def consigneeAddress: Option[Row] = userAnswers.get(ConsigneeAddressPage) map {
+    answer =>
+      Row(
+        key   = Key(msg"consigneeAddress.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value = Value(addressHtml(answer)),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = routes.ConsigneeAddressController.onPageLoad(mrn, CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"consigneeAddress.checkYourAnswersLabel")),
+            attributes         = Map("id" -> s"""change-consignee-address""")
           )
         )
       )

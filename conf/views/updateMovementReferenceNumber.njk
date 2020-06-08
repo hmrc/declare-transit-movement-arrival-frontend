@@ -27,7 +27,7 @@
           }) }}
         {% endif %}
 
-        <form action="{{ routes.controllers.MovementReferenceNumberController.onSubmit(mode).url }}" method="post">
+        <form action="{{ routes.controllers.UpdateRejectedMRNController.onSubmit(arrivalId).url }}" method="post">
 
           {{ csrf() | safe }}
 

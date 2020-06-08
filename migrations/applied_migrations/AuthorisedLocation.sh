@@ -19,6 +19,7 @@ echo "authorisedLocation.heading = authorisedLocation" >> ../conf/messages.en
 echo "authorisedLocation.checkYourAnswersLabel = authorisedLocation" >> ../conf/messages.en
 echo "authorisedLocation.error.required = Enter authorisedLocation" >> ../conf/messages.en
 echo "authorisedLocation.error.length = AuthorisedLocation must be 8 characters or less" >> ../conf/messages.en
+echo "authorisedLocation.error.invalid =  Authorised location code must only contain letters a to z or numbers 0 to 9" >> ../conf/messages.en
 
 echo "Adding to UserAnswersEntryGenerators"
 awk '/trait UserAnswersEntryGenerators/ {\

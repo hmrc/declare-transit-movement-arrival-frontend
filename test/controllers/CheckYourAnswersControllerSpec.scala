@@ -29,14 +29,14 @@ import play.api.libs.json.JsObject
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import services.ArrivalNotificationService
+import services.ArrivalSubmissionService
 import uk.gov.hmrc.http.HttpResponse
 
 import scala.concurrent.Future
 
 class CheckYourAnswersControllerSpec extends SpecBase with JsonMatchers {
 
-  val mockService: ArrivalNotificationService = mock[ArrivalNotificationService]
+  val mockService: ArrivalSubmissionService = mock[ArrivalSubmissionService]
 
   "Check Your Answers Controller" - {
 
@@ -81,7 +81,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with JsonMatchers {
     "must redirect to 'Application Complete' page on valid submission" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .overrides(bind[ArrivalNotificationService].toInstance(mockService))
+        .overrides(bind[ArrivalSubmissionService].toInstance(mockService))
         .build()
 
       when(mockService.submit(any(), any())(any())).thenReturn(Future.successful(Some(HttpResponse(ACCEPTED))))
@@ -100,7 +100,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with JsonMatchers {
     "must fail with bad request error on invalid submission" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .overrides(bind[ArrivalNotificationService].toInstance(mockService))
+        .overrides(bind[ArrivalSubmissionService].toInstance(mockService))
         .build()
 
       when(mockRenderer.render(any(), any())(any())).thenReturn(Future.successful(Html("")))
@@ -124,7 +124,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with JsonMatchers {
     "must fail with an Unauthorised error when backend returns 401" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .overrides(bind[ArrivalNotificationService].toInstance(mockService))
+        .overrides(bind[ArrivalSubmissionService].toInstance(mockService))
         .build()
 
       when(mockRenderer.render(any(), any())(any())).thenReturn(Future.successful(Html("")))
@@ -150,7 +150,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with JsonMatchers {
       val genServerError = Gen.chooseNum(500, 599).sample.value
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .overrides(bind[ArrivalNotificationService].toInstance(mockService))
+        .overrides(bind[ArrivalSubmissionService].toInstance(mockService))
         .build()
 
       when(mockService.submit(any(), any())(any())).thenReturn(Future.successful(Some(HttpResponse(genServerError))))
@@ -167,7 +167,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with JsonMatchers {
     "must fail with internal server error when service fails" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .overrides(bind[ArrivalNotificationService].toInstance(mockService))
+        .overrides(bind[ArrivalSubmissionService].toInstance(mockService))
         .build()
 
       when(mockRenderer.render(any(), any())(any())).thenReturn(Future.successful(Html("")))
