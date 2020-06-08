@@ -45,6 +45,6 @@ object Seal {
       </SEAIDSI1>
   }
 
-  implicit lazy val xmlReader: XmlReader[Seal] = (__ \ "SEAIDSI1" \ "SeaIdeSI11").read[String] map apply
+  implicit lazy val xmlReader: XmlReader[Seal] = (__ \ "SeaIdeSI11").read[String] map apply
 
 }

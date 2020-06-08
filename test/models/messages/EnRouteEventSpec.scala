@@ -233,6 +233,15 @@ class EnRouteEventSpec
         }
       }
 
+      "must write and read xml as EnRouteEvent" in {
+        forAll(arbitrary[EnRouteEvent]) {
+          enRouteEvent =>
+            val updatedEnRouteEvent = if (enRouteEvent.eventDetails.isEmpty) enRouteEvent.copy(seals = None) else enRouteEvent
+
+            val result = XmlReader.of[EnRouteEvent].read(updatedEnRouteEvent.toXml).toOption.value
+            result mustBe updatedEnRouteEvent
+        }
+      }
     }
   }
 

@@ -78,13 +78,13 @@ object EnRouteEvent {
 
       <ENROUEVETEV>
         {
-          <PlaTEV10> { escapeXml(enRouteEvent.place)} </PlaTEV10> ++
-          <PlaTEV10LNG> { LanguageCodeEnglish.code} </PlaTEV10LNG> ++
-          <CouTEV13> { enRouteEvent.countryCode } </CouTEV13>
+          <PlaTEV10>{ escapeXml(enRouteEvent.place)}</PlaTEV10> ++
+          <PlaTEV10LNG>{ LanguageCodeEnglish.code}</PlaTEV10LNG> ++
+          <CouTEV13>{ enRouteEvent.countryCode }</CouTEV13>
         }
         <CTLCTL>
           {
-            <AlrInNCTCTL29> {booleanToInt(enRouteEvent.alreadyInNcts)} </AlrInNCTCTL29>
+            <AlrInNCTCTL29>{booleanToInt(enRouteEvent.alreadyInNcts)}</AlrInNCTCTL29>
           }
         </CTLCTL>
         {
@@ -100,8 +100,8 @@ object EnRouteEvent {
   implicit lazy val xmlReader: XmlReader[EnRouteEvent] = (
     (xmlPath \ "PlaTEV10").read[String],
     (xmlPath \ "CouTEV13").read[String],
-    (xmlPath \ "CTLCTL" \ "AlrInNCTCTL29").read(intReader) map (x => if (x == 1) true else false),
+    (xmlPath \ "CTLCTL" \ "AlrInNCTCTL29").read(intReader) map (intValue => if (intValue == 1) true else false),
     xmlPath.read[EventDetails].optional,
-    (xmlPath \ "SEAINFSF1").read(strictReadOptionSeq[Seal])
+    (xmlPath \ "SEAINFSF1" \ "SEAIDSI1").read(strictReadOptionSeq[Seal])
   ).mapN(apply)
 }

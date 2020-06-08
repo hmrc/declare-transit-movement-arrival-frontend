@@ -20,7 +20,7 @@ import java.time.LocalDate
 
 import cats.syntax.all._
 import com.lucidchart.open.xtract.XmlReader._
-import com.lucidchart.open.xtract.{XmlReader, __ => xmlPath}
+import com.lucidchart.open.xtract.{ParseFailure, XmlReader, __ => xmlPath}
 import models.XMLReads._
 import models.XMLWrites
 import models.XMLWrites._
@@ -60,8 +60,13 @@ object EventDetails {
     case t: Transhipment => Json.toJson(t)(Transhipment.writes)
   }
 
-  implicit lazy val xmlReader: XmlReader[EventDetails] = {
-    (xmlPath \ "TRASHP").read(Transhipment.xmlReader) orElse (xmlPath \ "INCINC").read(Incident.xmlReader)
+  implicit def xmlReader: XmlReader[EventDetails] = XmlReader {
+    xml =>
+      if ((xmlPath \ "TRASHP")(xml).nonEmpty)
+        (xmlPath \ "TRASHP").read(Transhipment.xmlReader).read(xml)
+      else if ((xmlPath \ "INCINC")(xml).nonEmpty)
+        (xmlPath \ "INCINC").read(Incident.xmlReader).read(xml)
+      else ParseFailure()
   }
 }
 
