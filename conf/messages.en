@@ -252,7 +252,7 @@ arrivalComplete.linkText = manage transit movements
 
 incidentOnRoute.title = Did any events happen on the journey?
 incidentOnRoute.heading = Did any events happen on the journey?
-incidentOnRoute.hintText.tad = It should be recorded on the transit accompanying document (TAD).
+incidentOnRoute.hintText.tad =  Events should be recorded on the transit accompanying document (TAD) in box 55.
 incidentOnRoute.hintText.tellUs = Tell us if:
 incidentOnRoute.hintText.bullet.1 = there was an accident
 incidentOnRoute.hintText.bullet.2 = seals were damaged
