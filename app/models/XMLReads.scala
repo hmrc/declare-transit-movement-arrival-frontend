@@ -18,7 +18,8 @@ package models
 
 import java.time.{LocalDate, LocalTime}
 
-import com.lucidchart.open.xtract.{ParseError, ParseFailure, ParseResult, ParseSuccess, XmlReader}
+import com.lucidchart.open.xtract._
+import com.lucidchart.open.xtract.XmlReader._
 import utils.Format.{dateFormatter, timeFormatter}
 
 import scala.util.{Failure, Success, Try}
@@ -48,4 +49,15 @@ object XMLReads {
         }
     }
   }
+
+  implicit val booleanFromIntReader: XmlReader[Boolean] = intReader.map(intValue => if (intValue == 1) true else false)
+
+  implicit def strictReadOptionSeq[A](implicit reader: XmlReader[A]): XmlReader[Option[Seq[A]]] =
+    XmlReader {
+      xml =>
+        strictReadSeq[A].read(xml) match {
+          case ParseSuccess(x) if x.nonEmpty => ParseSuccess(x)
+          case _                             => ParseFailure()
+        }
+    }.optional
 }

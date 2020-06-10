@@ -16,6 +16,9 @@
 
 package models.messages
 
+import cats.syntax.all._
+import com.lucidchart.open.xtract.XmlReader._
+import com.lucidchart.open.xtract.{XmlReader, __ => xmlPath}
 import models.{LanguageCodeEnglish, XMLWrites}
 
 import scala.xml.NodeSeq
@@ -65,6 +68,15 @@ object TraderDestination {
         }
       </TRADESTRD>)
   }
+  implicit val XmlReader: XmlReader[TraderDestination] =
+    (
+      (xmlPath \ "NamTRD7").read[String].optional,
+      (xmlPath \ "StrAndNumTRD22").read[String].optional,
+      (xmlPath \ "PosCodTRD23").read[String].optional,
+      (xmlPath \ "CitTRD24").read[String].optional,
+      (xmlPath \ "CouTRD25").read[String].optional,
+      (xmlPath \ "TINTRD59").read[String].optional
+    ).mapN(apply)
 
   object Constants {
     val eoriLength            = 17

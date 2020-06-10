@@ -16,7 +16,11 @@
 
 package models.messages
 
+import com.lucidchart.open.xtract.{XmlReader, __ => xmlPath}
+import com.lucidchart.open.xtract.XmlReader._
 import models.XMLWrites._
+import models.XMLReads._
+import cats.syntax.all._
 import models.{LanguageCodeEnglish, XMLWrites}
 import play.api.libs.json._
 
@@ -74,13 +78,13 @@ object EnRouteEvent {
 
       <ENROUEVETEV>
         {
-          <PlaTEV10> { escapeXml(enRouteEvent.place)} </PlaTEV10> ++
-          <PlaTEV10LNG> { LanguageCodeEnglish.code} </PlaTEV10LNG> ++
-          <CouTEV13> { enRouteEvent.countryCode } </CouTEV13>
+          <PlaTEV10>{ escapeXml(enRouteEvent.place)}</PlaTEV10> ++
+          <PlaTEV10LNG>{ LanguageCodeEnglish.code}</PlaTEV10LNG> ++
+          <CouTEV13>{ enRouteEvent.countryCode }</CouTEV13>
         }
         <CTLCTL>
           {
-            <AlrInNCTCTL29> {booleanToInt(enRouteEvent.alreadyInNcts)} </AlrInNCTCTL29>
+            <AlrInNCTCTL29>{booleanToInt(enRouteEvent.alreadyInNcts)}</AlrInNCTCTL29>
           }
         </CTLCTL>
         {
@@ -92,4 +96,12 @@ object EnRouteEvent {
         }
       </ENROUEVETEV>
   }
+
+  implicit lazy val xmlReader: XmlReader[EnRouteEvent] = (
+    (xmlPath \ "PlaTEV10").read[String],
+    (xmlPath \ "CouTEV13").read[String],
+    (xmlPath \ "CTLCTL" \ "AlrInNCTCTL29").read(booleanFromIntReader),
+    xmlPath.read[EventDetails].optional,
+    (xmlPath \ "SEAINFSF1" \ "SEAIDSI1").read(strictReadOptionSeq[Seal])
+  ).mapN(apply)
 }

@@ -26,7 +26,7 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
 import scala.xml.Node
 
-class ContainerSpec
+class SealSpec
     extends FreeSpec
     with MustMatchers
     with ScalaCheckPropertyChecks
@@ -38,38 +38,43 @@ class ContainerSpec
   "Container" - {
     "must create valid xml" in {
 
-      forAll(arbitrary[Container]) {
-        container =>
+      forAll(arbitrary[Seal]) {
+        seal =>
           val expectedXml: Node =
-            <CONNR3>
-              <ConNumNR31>{container.containerNumber}</ConNumNR31>
-            </CONNR3>
+            <SEAIDSI1>
+              <SeaIdeSI11>
+                {seal.numberOrMark}
+              </SeaIdeSI11>
+              <SeaIdeSI11LNG>
+                {Seal.Constants.languageCode.code}
+              </SeaIdeSI11LNG>
+            </SEAIDSI1>
 
-          container.toXml mustEqual expectedXml
+          seal.toXml mustEqual expectedXml
       }
     }
 
-    "must read xml as Container" in {
-      forAll(arbitrary[Container]) {
-        container =>
+    "must read xml as Seal" in {
+      forAll(arbitrary[Seal]) {
+        seal =>
           val xml: Node =
-            <CONNR3>
-              <ConNumNR31>{container.containerNumber}</ConNumNR31>
-            </CONNR3>
+            <SEAIDSI1>
+              <SeaIdeSI11>{seal.numberOrMark}</SeaIdeSI11>
+              <SeaIdeSI11LNG>{Seal.Constants.languageCode.code}</SeaIdeSI11LNG>
+            </SEAIDSI1>
 
-          val result = XmlReader.of[Container].read(xml).toOption.value
-          result mustEqual container
+          val result = XmlReader.of[Seal].read(xml).toOption.value
+          result mustEqual seal
       }
     }
 
     "must read and write xml" in {
-      forAll(arbitrary[Container]) {
-        container =>
-          val result = XmlReader.of[Container].read(container.toXml).toOption.value
-          result mustEqual container
+      forAll(arbitrary[Seal]) {
+        seal =>
+          val result = XmlReader.of[Seal].read(seal.toXml).toOption.value
+          result mustEqual seal
       }
 
     }
   }
-
 }

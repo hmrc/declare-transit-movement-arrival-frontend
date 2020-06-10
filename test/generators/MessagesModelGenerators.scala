@@ -142,12 +142,9 @@ trait MessagesModelGenerators extends Generators {
         seals         <- listWithMaxLength[Seal](1)
       } yield {
 
-        val removeEmptySealsList = seals match {
-          case seals if seals.nonEmpty => Some(seals)
-          case _                       => None
-        }
+        val sealsOpt = if (eventDetails.isDefined) Some(seals) else None
 
-        EnRouteEvent(place, countryCode, alreadyInNcts, eventDetails, removeEmptySealsList)
+        EnRouteEvent(place, countryCode, alreadyInNcts, eventDetails, sealsOpt)
       }
     }
 

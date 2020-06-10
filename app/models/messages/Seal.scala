@@ -16,6 +16,7 @@
 
 package models.messages
 
+import com.lucidchart.open.xtract.{__, XmlReader}
 import forms.mappings.StringEquivalence
 import models.{LanguageCode, LanguageCodeEnglish, XMLWrites}
 import play.api.libs.json.{Json, OFormat}
@@ -38,9 +39,12 @@ object Seal {
     seal =>
       <SEAIDSI1>
         {
-          <SeaIdeSI11> { escapeXml(seal.numberOrMark) } </SeaIdeSI11> ++
-          <SeaIdeSI11LNG> { Seal.Constants.languageCode.code } </SeaIdeSI11LNG>
+          <SeaIdeSI11>{ escapeXml(seal.numberOrMark) }</SeaIdeSI11> ++
+          <SeaIdeSI11LNG>{ Seal.Constants.languageCode.code }</SeaIdeSI11LNG>
         }
       </SEAIDSI1>
   }
+
+  implicit lazy val xmlReader: XmlReader[Seal] = (__ \ "SeaIdeSI11").read[String] map apply
+
 }

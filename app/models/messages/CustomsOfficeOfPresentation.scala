@@ -16,6 +16,7 @@
 
 package models.messages
 
+import com.lucidchart.open.xtract.{__, XmlReader}
 import models.XMLWrites
 
 case class CustomsOfficeOfPresentation(presentationOffice: String)
@@ -24,9 +25,11 @@ object CustomsOfficeOfPresentation {
 
   implicit val writes: XMLWrites[CustomsOfficeOfPresentation] = {
     XMLWrites(a => <CUSOFFPREOFFRES>
-        <RefNumRES1>{a.presentationOffice}</RefNumRES1>
-      </CUSOFFPREOFFRES>)
+      <RefNumRES1>{a.presentationOffice}</RefNumRES1>
+    </CUSOFFPREOFFRES>)
   }
+
+  implicit lazy val xmlReader: XmlReader[CustomsOfficeOfPresentation] = (__ \ "RefNumRES1").read[String].map(apply)
 
   object Constants {
     val presentationOfficeLength = 8

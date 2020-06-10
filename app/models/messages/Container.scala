@@ -16,6 +16,7 @@
 
 package models.messages
 
+import com.lucidchart.open.xtract.{__, XmlReader}
 import forms.mappings.StringEquivalence
 import models.XMLWrites
 import play.api.libs.json.{Json, OFormat}
@@ -36,7 +37,9 @@ object Container {
   implicit def xmlWrites: XMLWrites[Container] = XMLWrites[Container] {
     container =>
       <CONNR3>
-          <ConNumNR31> {escapeXml(container.containerNumber)} </ConNumNR31>
+          <ConNumNR31>{escapeXml(container.containerNumber)}</ConNumNR31>
       </CONNR3>
   }
+
+  implicit lazy val xmlReader: XmlReader[Container] = (__ \ "ConNumNR31").read[String].map(apply)
 }

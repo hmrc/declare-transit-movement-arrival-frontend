@@ -16,14 +16,15 @@
 
 package models.messages
 
+import com.lucidchart.open.xtract.XmlReader
 import generators.MessagesModelGenerators
 import models.XMLWrites._
 import org.scalacheck.Arbitrary.arbitrary
+import org.scalatest.OptionValues._
 import org.scalatest.{FreeSpec, MustMatchers, StreamlinedXmlEquality}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
-import scala.xml.{Node, NodeSeq}
-import scala.xml.Utility.trim
+import scala.xml.NodeSeq
 
 class CustomsOfficeOfPresentationSpec
     extends FreeSpec
@@ -44,7 +45,30 @@ class CustomsOfficeOfPresentationSpec
 
           customsOfficeOfPresentation.toXml mustEqual expectedResult
       }
+
+    }
+
+    "must read xml as customs office of presentation" in {
+      forAll(arbitrary[CustomsOfficeOfPresentation]) {
+        customsOfficeOfPresentation =>
+          val xml: NodeSeq =
+            <CUSOFFPREOFFRES>
+              <RefNumRES1>{customsOfficeOfPresentation.presentationOffice}</RefNumRES1>
+            </CUSOFFPREOFFRES>
+
+          val result = XmlReader.of[CustomsOfficeOfPresentation].read(xml).toOption.value
+          result mustEqual customsOfficeOfPresentation
+      }
+
+    }
+
+    "must read and write xml as customs office of presentation" in {
+      forAll(arbitrary[CustomsOfficeOfPresentation]) {
+        customsOfficeOfPresentation =>
+          val result = XmlReader.of[CustomsOfficeOfPresentation].read(customsOfficeOfPresentation.toXml).toOption.value
+          result mustEqual customsOfficeOfPresentation
+      }
+
     }
   }
-
 }

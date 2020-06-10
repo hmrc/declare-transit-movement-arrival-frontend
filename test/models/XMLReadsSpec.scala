@@ -19,12 +19,14 @@ package models
 import java.time.{LocalDate, LocalTime}
 
 import base.SpecBase
-import com.lucidchart.open.xtract.{ParseFailure, XmlReader}
+import com.lucidchart.open.xtract.{ParseFailure, ParseSuccess, XmlReader}
 import generators.Generators
 import models.XMLReads._
 import org.scalacheck.Arbitrary.arbitrary
 import utils.Format
 import utils.Format.timeFormatter
+
+import scala.xml.NodeSeq
 
 class XMLReadsSpec extends SpecBase with Generators {
 
@@ -77,6 +79,19 @@ class XMLReadsSpec extends SpecBase with Generators {
         result mustBe an[ParseFailure]
       }
 
+      "must return ParseSuccess(Some(_)) for valid xml sequence" in {
+        val xml = NodeSeq.fromSeq(
+          <xml>a</xml>
+            <xml>b</xml>
+            <xml>c</xml>
+        )
+        strictReadOptionSeq[String].read(xml) mustBe ParseSuccess(Some(List("a", "b", "c")))
+      }
+
+      "must return ParseSuccess('None') for empty Sequence" in {
+        val xml = NodeSeq.Empty
+        strictReadOptionSeq[String].read(xml) mustBe ParseSuccess(None)
+      }
     }
   }
 

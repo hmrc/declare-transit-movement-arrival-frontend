@@ -17,8 +17,11 @@
 package models.messages
 
 import com.lucidchart.open.xtract.XmlReader
+import com.lucidchart.open.xtract.__
 import models.XMLWrites
 import models.XMLWrites._
+import models.XMLReads._
+import cats.syntax.all._
 
 import scala.xml.{Elem, Node, NodeSeq}
 
@@ -45,4 +48,12 @@ object ArrivalMovementRequest {
 
       Elem(parentNode.prefix, parentNode.label, parentNode.attributes, parentNode.scope, parentNode.child.isEmpty, parentNode.child ++ childNodes: _*)
   }
+
+  implicit val xmlReads: XmlReader[ArrivalMovementRequest] = (
+    __.read[Meta],
+    (__ \ "HEAHEA").read[Header],
+    (__ \ "TRADESTRD").read[TraderDestination],
+    (__ \ "CUSOFFPREOFFRES").read[CustomsOfficeOfPresentation],
+    (__ \ "ENROUEVETEV").read(strictReadOptionSeq[EnRouteEvent])
+  ) mapN apply
 }
