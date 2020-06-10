@@ -19,8 +19,9 @@ package services.conversion
 import base.SpecBase
 import generators.MessagesModelGenerators
 import models.MovementReferenceNumber
-import models.messages.{ArrivalMovementRequest, NormalNotification, TraderWithEori}
+import models.messages.{ArrivalMovementRequest, Header, NormalNotification, TraderWithEori, TraderWithoutEori}
 import org.scalacheck.Gen
+import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
 class ArrivalMovementRequestConversionServiceSpec extends SpecBase with MessagesModelGenerators with ScalaCheckPropertyChecks {
@@ -28,6 +29,16 @@ class ArrivalMovementRequestConversionServiceSpec extends SpecBase with Messages
   val arrivalMovementRequestConversionService: ArrivalMovementRequestConversionService = app.injector.instanceOf[ArrivalMovementRequestConversionService]
 
   "ArrivalMovementRequest" - {
+
+    "must return None if MRN is malformed" in {
+      val arrivalMovementRequest: ArrivalMovementRequest = arbitrary[ArrivalMovementRequest].sample.value
+
+      val header: Header = arrivalMovementRequest.header.copy(movementReferenceNumber = "FRANK")
+
+      val arrivalMovementRequestWithMalformedMrn: ArrivalMovementRequest = arrivalMovementRequest.copy(header = header)
+
+      arrivalMovementRequestConversionService.convertToArrivalNotification(arrivalMovementRequestWithMalformedMrn) mustBe None
+    }
 
     "must convert ArrivalMovementRequest to NormalNotification for traders with Eori" in {
       val notifications: Gen[(ArrivalMovementRequest, NormalNotification)] = {
@@ -48,6 +59,42 @@ class ArrivalMovementRequestConversionServiceSpec extends SpecBase with Messages
                 city            = arrivalNotificationRequest.traderDestination.city,
                 countryCode     = arrivalNotificationRequest.traderDestination.countryCode,
                 eori            = arrivalNotificationRequest.traderDestination.eori.value
+              ),
+              presentationOfficeId   = arrivalNotificationRequest.header.presentationOfficeId,
+              presentationOfficeName = arrivalNotificationRequest.header.presentationOfficeName,
+              enRouteEvents          = arrivalNotificationRequest.enRouteEvents
+            )
+          }
+
+          (arrivalNotificationRequest, normalNotification)
+        }
+      }
+
+      forAll(notifications) {
+
+        case (arrivalNotificationRequest, normalNotification) =>
+          arrivalMovementRequestConversionService.convertToArrivalNotification(arrivalNotificationRequest) mustBe Some(normalNotification)
+      }
+    }
+
+    "must convert ArrivalMovementRequest to NormalNotification for traders without Eori" in {
+      val notifications: Gen[(ArrivalMovementRequest, NormalNotification)] = {
+        for {
+          arrivalNotificationRequest <- arbitraryArrivalMovementRequestWithoutEori
+        } yield {
+
+          val normalNotification: NormalNotification = {
+            NormalNotification(
+              movementReferenceNumber = MovementReferenceNumber(arrivalNotificationRequest.header.movementReferenceNumber).get,
+              notificationPlace       = arrivalNotificationRequest.header.arrivalNotificationPlace,
+              notificationDate        = arrivalNotificationRequest.header.notificationDate,
+              customsSubPlace         = arrivalNotificationRequest.header.customsSubPlace,
+              trader = TraderWithoutEori(
+                name            = arrivalNotificationRequest.traderDestination.name.value,
+                streetAndNumber = arrivalNotificationRequest.traderDestination.streetAndNumber.value,
+                postCode        = arrivalNotificationRequest.traderDestination.postCode.value,
+                city            = arrivalNotificationRequest.traderDestination.city.value,
+                countryCode     = arrivalNotificationRequest.traderDestination.countryCode.value
               ),
               presentationOfficeId   = arrivalNotificationRequest.header.presentationOfficeId,
               presentationOfficeName = arrivalNotificationRequest.header.presentationOfficeName,
