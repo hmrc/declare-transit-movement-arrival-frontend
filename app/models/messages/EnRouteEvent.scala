@@ -100,7 +100,7 @@ object EnRouteEvent {
   implicit lazy val xmlReader: XmlReader[EnRouteEvent] = (
     (xmlPath \ "PlaTEV10").read[String],
     (xmlPath \ "CouTEV13").read[String],
-    (xmlPath \ "CTLCTL" \ "AlrInNCTCTL29").read(intReader) map (intValue => if (intValue == 1) true else false),
+    (xmlPath \ "CTLCTL" \ "AlrInNCTCTL29").read(booleanFromIntReader),
     xmlPath.read[EventDetails].optional,
     (xmlPath \ "SEAINFSF1" \ "SEAIDSI1").read(strictReadOptionSeq[Seal])
   ).mapN(apply)
