@@ -20,8 +20,7 @@ import base.SpecBase
 import forms.behaviours.StringFieldBehaviours
 import org.scalacheck.Gen
 import play.api.data.{Field, FormError}
-import models.messages.TraderWithEori.Constants.eoriLength
-import models.messages.TraderWithEori.eoriRegex
+import models.messages.Trader.Constants.eoriLength
 
 class EoriNumberFormProviderSpec extends StringFieldBehaviours with SpecBase {
   private val requiredKey = "eoriNumber.error.required"

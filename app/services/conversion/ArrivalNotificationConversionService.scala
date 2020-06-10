@@ -99,13 +99,13 @@ class ArrivalNotificationConversionService {
     }
 
   // TODO: Move this to the Trader model as a constructor?
-  private def traderAddress(traderAddress: Address, traderEori: String, traderName: String): TraderWithEori =
-    TraderWithEori(
+  private def traderAddress(traderAddress: Address, traderEori: String, traderName: String): Trader =
+    Trader(
       eori            = traderEori,
-      name            = Some(traderName),
-      streetAndNumber = Some(traderAddress.buildingAndStreet),
-      postCode        = Some(traderAddress.postcode),
-      city            = Some(traderAddress.city),
-      countryCode     = Some(countryCode_GB)
+      name            = traderName,
+      streetAndNumber = traderAddress.buildingAndStreet,
+      postCode        = traderAddress.postcode,
+      city            = traderAddress.city,
+      countryCode     = countryCode_GB
     )
 }

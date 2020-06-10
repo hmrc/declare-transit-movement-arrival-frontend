@@ -58,26 +58,15 @@ class SubmissionModelService @Inject()() {
       notificationDate         = arrivalNotification.notificationDate
     )
 
-  private def buildTrader(trader: Trader): TraderDestination = trader match {
-    case traderWithEori: TraderWithEori =>
-      TraderDestination(
-        name            = traderWithEori.name,
-        streetAndNumber = traderWithEori.streetAndNumber,
-        postCode        = traderWithEori.postCode,
-        city            = traderWithEori.city,
-        countryCode     = traderWithEori.countryCode,
-        eori            = Some(traderWithEori.eori)
-      )
-    case traderWithoutEori: TraderWithoutEori =>
-      TraderDestination(
-        name            = Some(traderWithoutEori.name),
-        streetAndNumber = Some(traderWithoutEori.streetAndNumber),
-        postCode        = Some(traderWithoutEori.postCode),
-        city            = Some(traderWithoutEori.city),
-        countryCode     = Some(traderWithoutEori.countryCode),
-        eori            = None
-      )
-  }
+  private def buildTrader(trader: Trader): Trader =
+    Trader(
+      name            = trader.name,
+      streetAndNumber = trader.streetAndNumber,
+      postCode        = trader.postCode,
+      city            = trader.city,
+      countryCode     = trader.countryCode,
+      eori            = trader.eori
+    )
 
 }
 
