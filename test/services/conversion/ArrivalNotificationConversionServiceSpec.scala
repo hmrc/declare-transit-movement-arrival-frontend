@@ -64,6 +64,7 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
     vehicularTranshipment     <- arbitrary[VehicularTranshipment]
   } yield (enRouteEvent.copy(eventDetails = Some(vehicularTranshipment)), vehicularTranshipment)
 
+
   "ArrivalNotificationConversionService" - {
     "must return 'Normal Arrival Notification' message when there are no EventDetails on route" in {
       forAll(arrivalNotificationWithSubplace) {

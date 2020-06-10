@@ -22,7 +22,7 @@ import com.lucidchart.open.xtract.XmlReader._
 import com.lucidchart.open.xtract.{XmlReader, __ => xmlPath}
 import models.{LanguageCodeEnglish, XMLWrites}
 
-final case class Trader(eori: String, name: String, streetAndNumber: String, postCode: String, city: String, countryCode: String)
+final case class Trader(name: String, streetAndNumber: String, city: String, postCode: String, countryCode: String, eori: String)
 
 object Trader {
 
@@ -44,9 +44,9 @@ object Trader {
     XMLWrites(trader => <TRADESTRD>
       <NamTRD7>{trader.name}</NamTRD7>
       <StrAndNumTRD22>{trader.streetAndNumber}</StrAndNumTRD22>
-        <PosCodTRD23>{trader.postCode}</PosCodTRD23>
         <CitTRD24>{trader.city}</CitTRD24>
-        <CouTRD25>{trader.countryCode}</CouTRD25>
+      <PosCodTRD23>{trader.postCode}</PosCodTRD23>
+      <CouTRD25>{trader.countryCode}</CouTRD25>
         <NADLNGRD>{LanguageCodeEnglish.code}</NADLNGRD>
         <TINTRD59>{trader.eori}</TINTRD59>
     </TRADESTRD>)
@@ -55,8 +55,8 @@ object Trader {
     (
       (xmlPath \ "NamTRD7").read[String],
       (xmlPath \ "StrAndNumTRD22").read[String],
-      (xmlPath \ "PosCodTRD23").read[String],
       (xmlPath \ "CitTRD24").read[String],
+      (xmlPath \ "PosCodTRD23").read[String],
       (xmlPath \ "CouTRD25").read[String],
       (xmlPath \ "TINTRD59").read[String]
     ).mapN(apply)
