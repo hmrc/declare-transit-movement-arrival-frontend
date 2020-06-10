@@ -16,10 +16,46 @@
 
 package services.conversion
 
-import models.messages.{ArrivalMovementRequest, ArrivalNotification}
+import models.MovementReferenceNumber
+import models.messages.{ArrivalMovementRequest, ArrivalNotification, NormalNotification, Trader, TraderDestination, TraderWithEori, TraderWithoutEori}
 
 class ArrivalMovementRequestConversionService {
 
-  def convertToArrivalNotification(arrivalMovementRequest: ArrivalMovementRequest): Option[ArrivalNotification] = ???
+  def convertToArrivalNotification(arrivalMovementRequest: ArrivalMovementRequest): Option[ArrivalNotification] =
+    MovementReferenceNumber(arrivalMovementRequest.header.movementReferenceNumber) map {
+      mrn =>
+        NormalNotification(
+          mrn,
+          arrivalMovementRequest.header.arrivalNotificationPlace,
+          arrivalMovementRequest.header.notificationDate,
+          arrivalMovementRequest.header.customsSubPlace,
+          trader(arrivalMovementRequest.traderDestination),
+          arrivalMovementRequest.header.presentationOfficeId,
+          arrivalMovementRequest.header.presentationOfficeName,
+          arrivalMovementRequest.enRouteEvents
+        )
+
+    }
+
+  def trader(traderDestination: TraderDestination): Trader =
+    traderDestination.eori match {
+      case Some(eori) =>
+        TraderWithEori(
+          eori            = eori,
+          name            = traderDestination.name,
+          streetAndNumber = traderDestination.streetAndNumber,
+          postCode        = traderDestination.postCode,
+          city            = traderDestination.city,
+          countryCode     = traderDestination.countryCode
+        )
+      case _ =>
+        TraderWithoutEori(
+          name            = traderDestination.name.getOrElse(""),
+          streetAndNumber = traderDestination.streetAndNumber.getOrElse(""),
+          postCode        = traderDestination.postCode.getOrElse(""),
+          city            = traderDestination.city.getOrElse(""),
+          countryCode     = traderDestination.countryCode.getOrElse("")
+        )
+    }
 
 }

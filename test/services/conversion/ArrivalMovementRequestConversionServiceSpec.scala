@@ -62,7 +62,7 @@ class ArrivalMovementRequestConversionServiceSpec extends SpecBase with Messages
       forAll(notifications) {
 
         case (arrivalNotificationRequest, normalNotification) =>
-          arrivalMovementRequestConversionService.convertToArrivalNotification(arrivalNotificationRequest) mustBe normalNotification
+          arrivalMovementRequestConversionService.convertToArrivalNotification(arrivalNotificationRequest) mustBe Some(normalNotification)
       }
     }
   }
