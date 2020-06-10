@@ -50,6 +50,8 @@ object XMLReads {
     }
   }
 
+  implicit val booleanFromIntReader: XmlReader[Boolean] = intReader.map(intValue => if (intValue == 1) true else false)
+
   implicit def strictReadOptionSeq[A](implicit reader: XmlReader[A]): XmlReader[Option[Seq[A]]] =
     XmlReader {
       xml =>
