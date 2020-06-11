@@ -39,7 +39,7 @@ class SubmissionModelService @Inject()() {
           timeOfPreparation           = timeOfPresentation
         )
         val header                                   = buildHeader(normalNotification, NormalProcedureFlag)
-        val traderDestination                        = buildTrader(normalNotification.trader)
+        val traderDestination                        = normalNotification.trader
         val customsOffice                            = CustomsOfficeOfPresentation(presentationOffice = normalNotification.presentationOfficeId)
         val enRouteEvents: Option[Seq[EnRouteEvent]] = normalNotification.enRouteEvents
 
@@ -57,17 +57,6 @@ class SubmissionModelService @Inject()() {
       procedureTypeFlag        = procedureTypeFlag,
       notificationDate         = arrivalNotification.notificationDate
     )
-
-  private def buildTrader(trader: Trader): Trader =
-    Trader(
-      name            = trader.name,
-      streetAndNumber = trader.streetAndNumber,
-      postCode        = trader.postCode,
-      city            = trader.city,
-      countryCode     = trader.countryCode,
-      eori            = trader.eori
-    )
-
 }
 
 sealed trait ModelConversionError

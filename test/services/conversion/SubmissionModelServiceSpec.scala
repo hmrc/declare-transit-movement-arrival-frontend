@@ -17,7 +17,7 @@
 package services.conversion
 
 import generators.MessagesModelGenerators
-import models.MovementReferenceNumber
+import models.{MovementReferenceNumber, NormalProcedureFlag}
 import models.messages._
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.{FreeSpec, MustMatchers, OptionValues}
@@ -42,36 +42,38 @@ class SubmissionModelServiceSpec
     "must convert NormalNotification to ArrivalMovementRequest for traders" in {
 
       val arrivalMovementRequest: ArrivalMovementRequest = arbitrary[ArrivalMovementRequest].sample.value
+      val setNormalTypeFlag: Header                      = arrivalMovementRequest.header.copy(procedureTypeFlag = NormalProcedureFlag)
+      val updatedArrivalMovementRequest                  = arrivalMovementRequest.copy(header = setNormalTypeFlag)
 
       val normalNotification: NormalNotification = {
         NormalNotification(
-          movementReferenceNumber = MovementReferenceNumber(arrivalMovementRequest.header.movementReferenceNumber).get,
-          notificationPlace       = arrivalMovementRequest.header.arrivalNotificationPlace,
-          notificationDate        = arrivalMovementRequest.header.notificationDate,
-          customsSubPlace         = arrivalMovementRequest.header.customsSubPlace,
+          movementReferenceNumber = MovementReferenceNumber(updatedArrivalMovementRequest.header.movementReferenceNumber).get,
+          notificationPlace       = updatedArrivalMovementRequest.header.arrivalNotificationPlace,
+          notificationDate        = updatedArrivalMovementRequest.header.notificationDate,
+          customsSubPlace         = updatedArrivalMovementRequest.header.customsSubPlace,
           trader = Trader(
-            name            = arrivalMovementRequest.trader.name,
-            streetAndNumber = arrivalMovementRequest.trader.streetAndNumber,
-            postCode        = arrivalMovementRequest.trader.postCode,
-            city            = arrivalMovementRequest.trader.city,
-            countryCode     = arrivalMovementRequest.trader.countryCode,
-            eori            = arrivalMovementRequest.trader.eori
+            name            = updatedArrivalMovementRequest.trader.name,
+            streetAndNumber = updatedArrivalMovementRequest.trader.streetAndNumber,
+            postCode        = updatedArrivalMovementRequest.trader.postCode,
+            city            = updatedArrivalMovementRequest.trader.city,
+            countryCode     = updatedArrivalMovementRequest.trader.countryCode,
+            eori            = updatedArrivalMovementRequest.trader.eori
           ),
-          presentationOfficeId   = arrivalMovementRequest.header.presentationOfficeId,
-          presentationOfficeName = arrivalMovementRequest.header.presentationOfficeName,
-          enRouteEvents          = arrivalMovementRequest.enRouteEvents
+          presentationOfficeId   = updatedArrivalMovementRequest.header.presentationOfficeId,
+          presentationOfficeName = updatedArrivalMovementRequest.header.presentationOfficeName,
+          enRouteEvents          = updatedArrivalMovementRequest.enRouteEvents
         )
       }
 
-      val messageSender               = arrivalMovementRequest.meta.messageSender
-      val interchangeControlReference = arrivalMovementRequest.meta.interchangeControlReference
+      val messageSender               = updatedArrivalMovementRequest.meta.messageSender
+      val interchangeControlReference = updatedArrivalMovementRequest.meta.interchangeControlReference
 
       val result = convertToSubmissionModel.convertToSubmissionModel(normalNotification,
                                                                      messageSender,
                                                                      interchangeControlReference,
-                                                                     arrivalMovementRequest.meta.timeOfPreparation)
+                                                                     updatedArrivalMovementRequest.meta.timeOfPreparation)
 
-      result mustBe arrivalMovementRequest
+      result mustBe updatedArrivalMovementRequest
     }
   }
 }
