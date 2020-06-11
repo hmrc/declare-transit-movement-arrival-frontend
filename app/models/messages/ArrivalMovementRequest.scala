@@ -27,7 +27,7 @@ import scala.xml.{Elem, Node, NodeSeq}
 
 case class ArrivalMovementRequest(meta: Meta,
                                   header: Header,
-                                  traderDestination: TraderDestination,
+                                  trader: Trader,
                                   customsOfficeOfPresentation: CustomsOfficeOfPresentation,
                                   enRouteEvents: Option[Seq[EnRouteEvent]])
 
@@ -40,7 +40,7 @@ object ArrivalMovementRequest {
       val childNodes: NodeSeq = {
         arrivalRequest.meta.toXml ++
           arrivalRequest.header.toXml ++
-          arrivalRequest.traderDestination.toXml ++
+          arrivalRequest.trader.toXml ++
           arrivalRequest.customsOfficeOfPresentation.toXml ++ {
           arrivalRequest.enRouteEvents.map(_.flatMap(_.toXml)).getOrElse(NodeSeq.Empty)
         }
@@ -52,7 +52,7 @@ object ArrivalMovementRequest {
   implicit val xmlReads: XmlReader[ArrivalMovementRequest] = (
     __.read[Meta],
     (__ \ "HEAHEA").read[Header],
-    (__ \ "TRADESTRD").read[TraderDestination],
+    (__ \ "TRADESTRD").read[Trader],
     (__ \ "CUSOFFPREOFFRES").read[CustomsOfficeOfPresentation],
     (__ \ "ENROUEVETEV").read(strictReadOptionSeq[EnRouteEvent])
   ) mapN apply

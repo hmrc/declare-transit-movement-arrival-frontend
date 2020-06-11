@@ -44,10 +44,17 @@ class ArrivalNotificationConversionService {
         notificationPlace       = notificationPlace,
         notificationDate        = LocalDate.now(),
         customsSubPlace         = Some(customsSubPlace),
-        trader                  = traderAddress(tradersAddress, traderEori, traderName),
-        presentationOfficeId    = presentationOffice.id,
-        presentationOfficeName  = presentationOffice.name,
-        enRouteEvents           = enRouteEvents(userAnswers)
+        trader = Trader(
+          eori            = traderEori,
+          name            = traderName,
+          streetAndNumber = tradersAddress.buildingAndStreet,
+          postCode        = tradersAddress.postcode,
+          city            = tradersAddress.city,
+          countryCode     = countryCode_GB
+        ),
+        presentationOfficeId   = presentationOffice.id,
+        presentationOfficeName = presentationOffice.name,
+        enRouteEvents          = enRouteEvents(userAnswers)
       )
     }
 
@@ -98,14 +105,4 @@ class ArrivalNotificationConversionService {
         }
     }
 
-  // TODO: Move this to the Trader model as a constructor?
-  private def traderAddress(traderAddress: Address, traderEori: String, traderName: String): TraderWithEori =
-    TraderWithEori(
-      eori            = traderEori,
-      name            = Some(traderName),
-      streetAndNumber = Some(traderAddress.buildingAndStreet),
-      postCode        = Some(traderAddress.postcode),
-      city            = Some(traderAddress.city),
-      countryCode     = Some(countryCode_GB)
-    )
 }

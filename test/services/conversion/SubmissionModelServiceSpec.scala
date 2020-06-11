@@ -17,9 +17,9 @@
 package services.conversion
 
 import generators.MessagesModelGenerators
-import models.MovementReferenceNumber
+import models.{MovementReferenceNumber, NormalProcedureFlag}
 import models.messages._
-import org.scalacheck.Gen
+import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.{FreeSpec, MustMatchers, OptionValues}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
@@ -39,95 +39,41 @@ class SubmissionModelServiceSpec
 
   "SubmissionModelService" - {
 
-    "must convert NormalNotification to ArrivalMovementRequest for traders with Eori" in {
+    "must convert NormalNotification to ArrivalMovementRequest for traders" in {
 
-      val notifications: Gen[(ArrivalMovementRequest, NormalNotification)] = {
-        for {
-          arrivalNotificationRequest <- arbitraryArrivalMovementRequestWithEori
-        } yield {
+      val arrivalMovementRequest: ArrivalMovementRequest = arbitrary[ArrivalMovementRequest].sample.value
+      val setNormalTypeFlag: Header                      = arrivalMovementRequest.header.copy(procedureTypeFlag = NormalProcedureFlag)
+      val updatedArrivalMovementRequest                  = arrivalMovementRequest.copy(header = setNormalTypeFlag)
 
-          val normalNotification: NormalNotification = {
-            NormalNotification(
-              movementReferenceNumber = MovementReferenceNumber(arrivalNotificationRequest.header.movementReferenceNumber).get,
-              notificationPlace       = arrivalNotificationRequest.header.arrivalNotificationPlace,
-              notificationDate        = arrivalNotificationRequest.header.notificationDate,
-              customsSubPlace         = arrivalNotificationRequest.header.customsSubPlace,
-              trader = TraderWithEori(
-                name            = arrivalNotificationRequest.traderDestination.name,
-                streetAndNumber = arrivalNotificationRequest.traderDestination.streetAndNumber,
-                postCode        = arrivalNotificationRequest.traderDestination.postCode,
-                city            = arrivalNotificationRequest.traderDestination.city,
-                countryCode     = arrivalNotificationRequest.traderDestination.countryCode,
-                eori            = arrivalNotificationRequest.traderDestination.eori.value
-              ),
-              presentationOfficeId   = arrivalNotificationRequest.header.presentationOfficeId,
-              presentationOfficeName = arrivalNotificationRequest.header.presentationOfficeName,
-              enRouteEvents          = arrivalNotificationRequest.enRouteEvents
-            )
-          }
-
-          (arrivalNotificationRequest, normalNotification)
-        }
+      val normalNotification: NormalNotification = {
+        NormalNotification(
+          movementReferenceNumber = MovementReferenceNumber(updatedArrivalMovementRequest.header.movementReferenceNumber).get,
+          notificationPlace       = updatedArrivalMovementRequest.header.arrivalNotificationPlace,
+          notificationDate        = updatedArrivalMovementRequest.header.notificationDate,
+          customsSubPlace         = updatedArrivalMovementRequest.header.customsSubPlace,
+          trader = Trader(
+            name            = updatedArrivalMovementRequest.trader.name,
+            streetAndNumber = updatedArrivalMovementRequest.trader.streetAndNumber,
+            postCode        = updatedArrivalMovementRequest.trader.postCode,
+            city            = updatedArrivalMovementRequest.trader.city,
+            countryCode     = updatedArrivalMovementRequest.trader.countryCode,
+            eori            = updatedArrivalMovementRequest.trader.eori
+          ),
+          presentationOfficeId   = updatedArrivalMovementRequest.header.presentationOfficeId,
+          presentationOfficeName = updatedArrivalMovementRequest.header.presentationOfficeName,
+          enRouteEvents          = updatedArrivalMovementRequest.enRouteEvents
+        )
       }
 
-      forAll(notifications) {
+      val messageSender               = updatedArrivalMovementRequest.meta.messageSender
+      val interchangeControlReference = updatedArrivalMovementRequest.meta.interchangeControlReference
 
-        case (arrivalNotificationRequest, normalNotification) =>
-          val messageSender               = arrivalNotificationRequest.meta.messageSender
-          val interchangeControlReference = arrivalNotificationRequest.meta.interchangeControlReference
+      val result = convertToSubmissionModel.convertToSubmissionModel(normalNotification,
+                                                                     messageSender,
+                                                                     interchangeControlReference,
+                                                                     updatedArrivalMovementRequest.meta.timeOfPreparation)
 
-          val result = convertToSubmissionModel.convertToSubmissionModel(normalNotification,
-                                                                         messageSender,
-                                                                         interchangeControlReference,
-                                                                         arrivalNotificationRequest.meta.timeOfPreparation)
-
-          result mustBe arrivalNotificationRequest
-      }
-    }
-  }
-
-  "must convert NormalNotification to ArrivalMovementRequest for traders without Eori" in {
-
-    val notifications: Gen[(ArrivalMovementRequest, NormalNotification)] = {
-      for {
-        arrivalNotificationRequest <- arbitraryArrivalMovementRequestWithoutEori
-      } yield {
-
-        val normalNotification: NormalNotification = {
-          NormalNotification(
-            movementReferenceNumber = MovementReferenceNumber(arrivalNotificationRequest.header.movementReferenceNumber).get,
-            notificationPlace       = arrivalNotificationRequest.header.arrivalNotificationPlace,
-            notificationDate        = arrivalNotificationRequest.header.notificationDate,
-            customsSubPlace         = arrivalNotificationRequest.header.customsSubPlace,
-            trader = TraderWithoutEori(
-              name            = arrivalNotificationRequest.traderDestination.name.value,
-              streetAndNumber = arrivalNotificationRequest.traderDestination.streetAndNumber.value,
-              postCode        = arrivalNotificationRequest.traderDestination.postCode.value,
-              city            = arrivalNotificationRequest.traderDestination.city.value,
-              countryCode     = arrivalNotificationRequest.traderDestination.countryCode.value
-            ),
-            presentationOfficeId   = arrivalNotificationRequest.header.presentationOfficeId,
-            presentationOfficeName = arrivalNotificationRequest.header.presentationOfficeName,
-            enRouteEvents          = arrivalNotificationRequest.enRouteEvents
-          )
-        }
-
-        (arrivalNotificationRequest, normalNotification)
-      }
-    }
-
-    forAll(notifications) {
-
-      case (arrivalNotificationRequest, normalNotification) =>
-        val messageSender: MessageSender                             = arrivalNotificationRequest.meta.messageSender
-        val interchangeControlReference: InterchangeControlReference = arrivalNotificationRequest.meta.interchangeControlReference
-
-        val result = convertToSubmissionModel.convertToSubmissionModel(normalNotification,
-                                                                       messageSender,
-                                                                       interchangeControlReference,
-                                                                       arrivalNotificationRequest.meta.timeOfPreparation)
-
-        result mustBe arrivalNotificationRequest
+      result mustBe updatedArrivalMovementRequest
     }
   }
 }
