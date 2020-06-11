@@ -22,12 +22,13 @@ import base.SpecBase
 import generators.MessagesModelGenerators
 import models.GoodsLocation.BorderForceOffice
 import models.messages._
-import models.reference.CustomsOffice
+import models.reference.{Country, CustomsOffice}
 import models.{Address, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages._
+import pages.events.{EventCountryPage, EventPlacePage, EventReportedPage, IncidentInformationPage, IsTranshipmentPage}
 
 class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyChecks with MessagesModelGenerators {
 
@@ -74,12 +75,44 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
           result mustBe userAnswers
       }
     }
+
+    "must return 'UserAnswers' message when there is one incident on route" in {
+      forAll(arrivalNotificationWithSubplace, enRouteEventIncident) {
+        case ((arbArrivalNotification, trader), (enRouteEvent, incident)) =>
+          val routeEvent: EnRouteEvent = enRouteEvent
+            .copy(seals = None)
+            .copy(eventDetails = Some(incident.copy(date = None, authority = None, place = None, country = None)))
+
+          val arrivalNotification: NormalNotification = arbArrivalNotification.copy(enRouteEvents = Some(Seq(routeEvent)))
+
+          val userAnswers: UserAnswers = createBasicUserAnswers(trader, arrivalNotification, isIncidentOnRoute = true)
+            .set(IsTranshipmentPage(eventIndex), false)
+            .success
+            .value
+            .set(EventPlacePage(eventIndex), routeEvent.place)
+            .success
+            .value
+            .set(EventCountryPage(eventIndex), Country("Valid", routeEvent.countryCode, "country name"))
+            .success
+            .value
+            .set(EventReportedPage(eventIndex), routeEvent.alreadyInNcts)
+            .success
+            .value
+
+          val updatedAnswers = incident.information.fold[UserAnswers](userAnswers) {
+            _ =>
+              userAnswers.set(IncidentInformationPage(eventIndex), incident.information.value).success.value
+          }
+
+          userAnswersConversionService.convertToUserAnswers(arrivalNotification) mustBe updatedAnswers
+      }
+    }
   }
 
   private def createBasicUserAnswers(trader: Trader,
                                      arrivalNotification: NormalNotification,
                                      isIncidentOnRoute: Boolean = false,
-                                     timeStamp: LocalDateTime): UserAnswers =
+                                     timeStamp: LocalDateTime   = LocalDateTime.now): UserAnswers =
     emptyUserAnswers
       .copy(id = arrivalNotification.movementReferenceNumber)
       .copy(lastUpdated = timeStamp)
