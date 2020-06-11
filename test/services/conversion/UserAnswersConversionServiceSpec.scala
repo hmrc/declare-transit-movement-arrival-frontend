@@ -92,19 +92,25 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
             .set(EventPlacePage(eventIndex), routeEvent.place)
             .success
             .value
-            .set(EventCountryPage(eventIndex), Country("Valid", routeEvent.countryCode, "country name"))
+            .set(EventCountryPage(eventIndex), Country("active", routeEvent.countryCode, "United Kingdom"))
             .success
             .value
             .set(EventReportedPage(eventIndex), routeEvent.alreadyInNcts)
             .success
             .value
 
+          val woa = LocalDateTime.now()
+
+          val result: UserAnswers = userAnswersConversionService.convertToUserAnswers(arrivalNotification).value.copy(lastUpdated = woa)
+
           val updatedAnswers = incident.information.fold[UserAnswers](userAnswers) {
             _ =>
               userAnswers.set(IncidentInformationPage(eventIndex), incident.information.value).success.value
           }
 
-          userAnswersConversionService.convertToUserAnswers(arrivalNotification) mustBe updatedAnswers
+          val ua = updatedAnswers.copy(lastUpdated = woa)
+
+          result mustBe ua
       }
     }
   }

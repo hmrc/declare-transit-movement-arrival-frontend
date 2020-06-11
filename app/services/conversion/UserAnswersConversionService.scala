@@ -24,7 +24,7 @@ import models.{Address, Index, UserAnswers}
 import pages._
 import models._
 import pages.events.transhipments.{TransportIdentityPage, TransportNationalityPage}
-import pages.events.{EventCountryPage, EventPlacePage, EventReportedPage, IncidentInformationPage, SectionConstants}
+import pages.events.{EventCountryPage, EventPlacePage, EventReportedPage, IncidentInformationPage, IsTranshipmentPage, SectionConstants}
 import play.api.libs.json.{JsObject, JsPath, JsResult, Json}
 import queries.{ContainersQuery, EventsQuery, SealsQuery}
 
@@ -54,42 +54,43 @@ class UserAnswersConversionService {
           ua7 <- ua6
             .set(IncidentOnRoutePage, normalNotification.enRouteEvents.isDefined)
         } yield {
-          val test= enRouteEvents(normalNotification,ua) match {
-            case Some(js) => Some(ua7.copy(data = ua7.data.deepMerge(js.asOpt.get)))
-            case _ => None
+
+          enRouteEvents(normalNotification, ua) match {
+            case Some(js) => Some(ua7.copy(data = ua7.data ++ js))
+            case _        => None
           }
 
-        }).toOption
+        }).toOption.flatten
       case _ => None
     }
 
-  def setEventDetsils(userAnswers: UserAnswers, event: EnRouteEvent, index: Int): Try[UserAnswers] = {
-
+  def setEventDetsils(userAnswers: UserAnswers, event: EnRouteEvent, index: Int): Try[UserAnswers] =
     event.eventDetails match {
-      case Some(incident:Incident) => userAnswers.set(IncidentInformationPage(Index(index)), incident.information.getOrElse(""))
-      case Some(vehicularTranshipment:VehicularTranshipment) => ???
-      case Some(containerTranshipment:ContainerTranshipment) => ???
-      case _ => Try(userAnswers)
+      case Some(incident: Incident)                           => userAnswers.set(IncidentInformationPage(Index(index)), incident.information.getOrElse(""))
+      case Some(vehicularTranshipment: VehicularTranshipment) => ???
+      case Some(containerTranshipment: ContainerTranshipment) => ???
+      case _                                                  => Try(userAnswers)
     }
-  }
 
-  private def enRouteEvents(normalNotification: NormalNotification, userAnswers: UserAnswers): Option[JsResult[JsObject]] = {
-
+  private def enRouteEvents(normalNotification: NormalNotification, userAnswers: UserAnswers): Option[JsObject] =
     normalNotification.enRouteEvents.map {
       events =>
-        val g = events.zipWithIndex flatMap { case (event, index)=>
-          (for {
-            ua1 <- userAnswers.set(EventPlacePage(Index(index)), event.place)
-            ua2 <- ua1.set(EventCountryPage(Index(index)), Country("active", event.countryCode, "United Kingdom")) //TODO need to fetch it from reference data service
-            ua3 <- ua2.set(EventReportedPage(Index(index)), event.alreadyInNcts)
-            ua4 <- setEventDetsils(ua3, event, index)
-            } yield ua4).toOption
-      }
-      val h: Seq[JsObject] = g.map {
-        _.data
-      }
-        userAnswers.data.setObject(EventsQuery.path, Json.toJson(h))
+        val g = events.zipWithIndex flatMap {
+          case (event, index) =>
+            (for {
+              ua1 <- userAnswers.set(EventPlacePage(Index(index)), event.place)
+              ua2 <- ua1.set(EventCountryPage(Index(index)), Country("active", event.countryCode, "United Kingdom")) //TODO need to fetch it from reference data service
+              ua3 <- ua2.set(EventReportedPage(Index(index)), event.alreadyInNcts)
+              ua4 <- ua3.set(IsTranshipmentPage(Index(index)), false) //TODO investigate the logic around this
+              ua5 <- setEventDetsils(ua4, event, index)
+            } yield ua5).toOption
+        }
+        val h: Seq[JsObject] = g.map {
+          _.data
+        }
+
+        h.last
+//        userAnswers.data.setObject(EventsQuery.path, Json.toJson(h))
     }
-  }
 
 }
