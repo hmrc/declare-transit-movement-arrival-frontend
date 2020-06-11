@@ -16,36 +16,27 @@
 
 package services.conversion
 
-import java.time.LocalDate
+import java.time.{LocalDate, LocalDateTime}
 
 import base.SpecBase
 import generators.MessagesModelGenerators
 import models.GoodsLocation.BorderForceOffice
-import models.{Address, UserAnswers}
-import models.messages.{ArrivalNotification, EnRouteEvent, Incident, NormalNotification, TraderWithEori, VehicularTranshipment}
+import models.messages._
 import models.reference.CustomsOffice
-import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import models.{Address, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
-import pages.{
-  CustomsSubPlacePage,
-  GoodsLocationPage,
-  IncidentOnRoutePage,
-  PlaceOfNotificationPage,
-  PresentationOfficePage,
-  TraderAddressPage,
-  TraderEoriPage,
-  TraderNamePage
-}
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import pages._
 
 class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyChecks with MessagesModelGenerators {
 
   val userAnswersConversionService: UserAnswersConversionService = app.injector.instanceOf[UserAnswersConversionService]
 
-  private val normalNotificationWithTraderWithEoriWithSubplace: Gen[(NormalNotification, TraderWithEori)] =
+  private val arrivalNotificationWithSubplace: Gen[(NormalNotification, Trader)] =
     for {
       base     <- arbitrary[NormalNotification]
-      trader   <- generatorTraderWithEoriAllValues
+      trader   <- arbitrary[Trader]
       subPlace <- stringsWithMaxLength(NormalNotification.Constants.customsSubPlaceLength)
     } yield {
 
@@ -71,20 +62,27 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
   "UserAnswersConversionService" - {
 
     "must return 'UserAnswers' message when there are no EventDetails on route" in {
-      forAll(normalNotificationWithTraderWithEoriWithSubplace) {
+      forAll(arrivalNotificationWithSubplace) {
         case (arbArrivalNotification, trader) =>
           val expectedArrivalNotification: NormalNotification = arbArrivalNotification.copy(enRouteEvents = None)
 
-          val userAnswers: UserAnswers = createBasicUserAnswers(trader, expectedArrivalNotification)
+          val result = userAnswersConversionService.convertToUserAnswers(arbArrivalNotification).value
 
-          userAnswersConversionService.convertToUserAnswers(arbArrivalNotification) mustEqual userAnswers
+          val userAnswers: UserAnswers =
+            createBasicUserAnswers(trader, expectedArrivalNotification, arbArrivalNotification.enRouteEvents.isDefined, result.lastUpdated)
+
+          result mustBe userAnswers
       }
     }
   }
 
-  private def createBasicUserAnswers(trader: TraderWithEori, arrivalNotification: NormalNotification, isIncidentOnRoute: Boolean = false): UserAnswers =
+  private def createBasicUserAnswers(trader: Trader,
+                                     arrivalNotification: NormalNotification,
+                                     isIncidentOnRoute: Boolean = false,
+                                     timeStamp: LocalDateTime): UserAnswers =
     emptyUserAnswers
       .copy(id = arrivalNotification.movementReferenceNumber)
+      .copy(lastUpdated = timeStamp)
       .set(GoodsLocationPage, BorderForceOffice)
       .success
       .value
@@ -97,10 +95,10 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
       .set(CustomsSubPlacePage, arrivalNotification.customsSubPlace.value)
       .success
       .value
-      .set(TraderNamePage, trader.name.value)
+      .set(TraderNamePage, trader.name)
       .success
       .value
-      .set(TraderAddressPage, Address(buildingAndStreet = trader.streetAndNumber.value, city = trader.city.value, postcode = trader.postCode.value))
+      .set(TraderAddressPage, Address(buildingAndStreet = trader.streetAndNumber, city = trader.city, postcode = trader.postCode))
       .success
       .value
       .set(TraderEoriPage, trader.eori)

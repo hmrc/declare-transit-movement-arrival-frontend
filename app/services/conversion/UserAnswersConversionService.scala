@@ -18,58 +18,39 @@ package services.conversion
 
 import java.time.LocalDate
 
+import models.GoodsLocation.BorderForceOffice
 import models.messages.{ArrivalNotification, NormalNotification, Trader}
 import models.reference.CustomsOffice
 import models.{Address, UserAnswers}
 import pages._
 
+import scala.util.{Success, Try}
+
 class UserAnswersConversionService {
 
+  def convertToUserAnswers(arrivalNotification: ArrivalNotification): Option[UserAnswers] =
+    arrivalNotification match {
 
-  def convertToUserAnswers(arrivalNotification: ArrivalNotification): UserAnswers = {
-???
-//    arrivalNotification match {
-//
-//      case normalNotification: NormalNotification =>
-//        for {
-//          ua <- UserAnswers(normalNotification.movementReferenceNumber)
-//            .set(PresentationOfficePage, CustomsOffice(normalNotification.presentationOfficeId,
-//              normalNotification.presentationOfficeName, Nil, None))
-//          ua1 <- ua
-//            .set(CustomsSubPlacePage, normalNotification.customsSubPlace.getOrElse(""))
-//          ua2 <- ua1
-//            .set(TraderAddressPage, traderAddress(normalNotification.trader))
-//          ua3 <- ua2
-//              .(TraderEoriPage, normalNotification. )
-//        }
-//          for {
-//
-//            presentationOffice <- userAnswers.get(PresentationOfficePage)
-//            customsSubPlace <- userAnswers.get(CustomsSubPlacePage)
-//            tradersAddress <- userAnswers.get(TraderAddressPage)
-//            traderEori <- userAnswers.get(TraderEoriPage)
-//            traderName <- userAnswers.get(TraderNamePage)
-//            notificationPlace <- userAnswers.get(PlaceOfNotificationPage) orElse Some(tradersAddress.postcode)
-//          } yield {
-//            NormalNotification(
-//              movementReferenceNumber = userAnswers.id,
-//              notificationPlace = notificationPlace,
-//              notificationDate = LocalDate.now(),
-//              customsSubPlace = Some(customsSubPlace),
-//              trader = traderAddress(tradersAddress, traderEori, traderName),
-//              presentationOfficeId = presentationOffice.id,
-//              presentationOfficeName = presentationOffice.name,
-//              enRouteEvents = enRouteEvents(userAnswers)
-//            )
-//
-//          }
-//    }
-  }
-
-    private def traderWithEori(trader: Trader): Address
-
-    = trader match {
-      case traderWithEori: TraderWithEori => Address(traderWithEori.streetAndNumber.getOrElse(""), traderWithEori.city.getOrElse(""), traderWithEori.postCode.getOrElse(""))
-      case traderWithoutEori: TraderWithoutEori => Address(traderWithoutEori.streetAndNumber, traderWithoutEori.city, traderWithoutEori.postCode)
+      case normalNotification: NormalNotification =>
+        (for {
+          ua <- UserAnswers(normalNotification.movementReferenceNumber)
+            .set(PresentationOfficePage, CustomsOffice(normalNotification.presentationOfficeId, normalNotification.presentationOfficeName, Nil, None))
+          ua1 <- ua
+            .set(CustomsSubPlacePage, normalNotification.customsSubPlace.getOrElse(""))
+          ua2 <- ua1
+            .set(TraderAddressPage, Address(normalNotification.trader.streetAndNumber, normalNotification.trader.city, normalNotification.trader.postCode))
+          ua3 <- ua2
+            .set(TraderEoriPage, normalNotification.trader.eori)
+          ua4 <- ua3
+            .set(TraderNamePage, normalNotification.trader.name)
+          ua5 <- ua4
+            .set(PlaceOfNotificationPage, normalNotification.notificationPlace) //TODO: userAnswers.get(PlaceOfNotificationPage) orElse Some(tradersAddress.postcode)
+          ua6 <- ua5
+            .set(GoodsLocationPage, BorderForceOffice)
+          ua7 <- ua6
+            .set(IncidentOnRoutePage, normalNotification.enRouteEvents.isDefined)
+        } yield ua7).toOption
+      case _ => None
     }
-  }
+
+}
