@@ -54,8 +54,8 @@ class TraderSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyCheck
           val expectedResult = <TRADESTRD>
             <NamTRD7>{trader.name}</NamTRD7>
             <StrAndNumTRD22>{trader.streetAndNumber}</StrAndNumTRD22>
-            <CitTRD24>{trader.city}</CitTRD24>
             <PosCodTRD23>{trader.postCode}</PosCodTRD23>
+            <CitTRD24>{trader.city}</CitTRD24>
             <CouTRD25>{trader.countryCode}</CouTRD25>
             <NADLNGRD>{LanguageCodeEnglish.code}</NADLNGRD>
             <TINTRD59>{trader.eori}</TINTRD59>
