@@ -44,13 +44,13 @@ class ArrivalMovementRequestSpec
     "must create valid xml" in {
       forAll(arbitrary[ArrivalMovementRequest]) {
         arrivalMovementRequest =>
-          whenever(hasEoriWithNormalProcedure(arrivalMovementRequest)) {
+          whenever(withNormalProcedure(arrivalMovementRequest)) {
 
             val validXml: Node =
               <CC007A>
                 {arrivalMovementRequest.meta.toXml ++
                 arrivalMovementRequest.header.toXml ++
-                arrivalMovementRequest.traderDestination.toXml ++
+                arrivalMovementRequest.trader.toXml ++
                 arrivalMovementRequest.customsOfficeOfPresentation.toXml ++
                 arrivalMovementRequest.enRouteEvents.map(_.flatMap(_.toXml)).getOrElse(NodeSeq.Empty)}
               </CC007A>
@@ -63,7 +63,7 @@ class ArrivalMovementRequestSpec
     "must read xml as ArrivalMovementRequest" in {
       forAll(arbitrary[ArrivalMovementRequest]) {
         arrivalMovementRequest =>
-          whenever(hasEoriWithNormalProcedure(arrivalMovementRequest)) {
+          whenever(withNormalProcedure(arrivalMovementRequest)) {
 
             val localTime: LocalTime          = LocalTime.parse(Format.timeFormatted(arrivalMovementRequest.meta.timeOfPreparation), timeFormatter)
             val updatedArrivalMovementRequest = arrivalMovementRequest.copy(meta = arrivalMovementRequest.meta.copy(timeOfPreparation = localTime))
@@ -72,7 +72,7 @@ class ArrivalMovementRequestSpec
               <CC007A>
                 {updatedArrivalMovementRequest.meta.toXml ++
                 updatedArrivalMovementRequest.header.toXml ++
-                updatedArrivalMovementRequest.traderDestination.toXml ++
+                updatedArrivalMovementRequest.trader.toXml ++
                 updatedArrivalMovementRequest.customsOfficeOfPresentation.toXml ++
                 updatedArrivalMovementRequest.enRouteEvents.map(_.flatMap(_.toXml)).getOrElse(NodeSeq.Empty)}
               </CC007A>
@@ -86,7 +86,7 @@ class ArrivalMovementRequestSpec
     "must write and read xml as ArrivalMovementRequest" in {
       forAll(arbitrary[ArrivalMovementRequest]) {
         arrivalMovementRequest =>
-          whenever(hasEoriWithNormalProcedure(arrivalMovementRequest)) {
+          whenever(withNormalProcedure(arrivalMovementRequest)) {
 
             val localTime: LocalTime          = LocalTime.parse(Format.timeFormatted(arrivalMovementRequest.meta.timeOfPreparation), timeFormatter)
             val updatedArrivalMovementRequest = arrivalMovementRequest.copy(meta = arrivalMovementRequest.meta.copy(timeOfPreparation = localTime))
@@ -98,7 +98,6 @@ class ArrivalMovementRequestSpec
     }
   }
 
-  private def hasEoriWithNormalProcedure(arrivalMovementRequest: ArrivalMovementRequest): Boolean =
-    arrivalMovementRequest.traderDestination.eori.isDefined &&
-      arrivalMovementRequest.header.procedureTypeFlag.equals(NormalProcedureFlag)
+  private def withNormalProcedure(arrivalMovementRequest: ArrivalMovementRequest): Boolean =
+    arrivalMovementRequest.header.procedureTypeFlag.equals(NormalProcedureFlag)
 }

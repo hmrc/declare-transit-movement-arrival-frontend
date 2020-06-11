@@ -17,42 +17,14 @@
 package models.messages
 
 import play.api.libs.json._
+import cats.syntax.all._
+import com.lucidchart.open.xtract.XmlReader._
+import com.lucidchart.open.xtract.{XmlReader, __ => xmlPath}
+import models.{LanguageCodeEnglish, XMLWrites}
 
-sealed trait Trader
+final case class Trader(name: String, streetAndNumber: String, postCode: String, city: String, countryCode: String, eori: String)
 
 object Trader {
-
-  implicit lazy val reads: Reads[Trader] = {
-    import scala.language.implicitConversions
-
-    implicit class ReadsWithContravariantOr[A](a: Reads[A]) {
-
-      def or[B >: A](b: Reads[B]): Reads[B] =
-        a.map[B](identity).orElse(b)
-    }
-
-    implicit def convertToSupertype[A, B >: A](a: Reads[A]): Reads[B] =
-      a.map(identity)
-
-    TraderWithEori.format or
-      TraderWithoutEori.format
-  }
-
-  implicit lazy val writes: Writes[Trader] = Writes {
-    case t: TraderWithEori    => Json.toJson(t)(TraderWithEori.format)
-    case t: TraderWithoutEori => Json.toJson(t)(TraderWithoutEori.format)
-  }
-}
-
-final case class TraderWithEori(eori: String,
-                                name: Option[String],
-                                streetAndNumber: Option[String],
-                                postCode: Option[String],
-                                city: Option[String],
-                                countryCode: Option[String])
-    extends Trader
-
-object TraderWithEori {
 
   object Constants {
     val eoriLength            = 17
@@ -65,22 +37,27 @@ object TraderWithEori {
 
   val eoriRegex = "[A-Z]{2}[^\n\r]{1,}"
 
-  implicit lazy val format: Format[TraderWithEori] =
-    Json.format[TraderWithEori]
-}
+  implicit lazy val format: Format[Trader] =
+    Json.format[Trader]
 
-final case class TraderWithoutEori(name: String, streetAndNumber: String, postCode: String, city: String, countryCode: String) extends Trader
-
-object TraderWithoutEori {
-
-  object Constants {
-    val nameLength            = 35
-    val streetAndNumberLength = 35
-    val postCodeLength        = 9
-    val cityLength            = 35
-    val countryCodeLength     = 2
+  implicit val writes: XMLWrites[Trader] = {
+    XMLWrites(trader => <TRADESTRD>
+      <NamTRD7>{trader.name}</NamTRD7>
+      <StrAndNumTRD22>{trader.streetAndNumber}</StrAndNumTRD22>
+      <PosCodTRD23>{trader.postCode}</PosCodTRD23>
+      <CitTRD24>{trader.city}</CitTRD24>
+      <CouTRD25>{trader.countryCode}</CouTRD25>
+      <NADLNGRD>{LanguageCodeEnglish.code}</NADLNGRD>
+      <TINTRD59>{trader.eori}</TINTRD59>
+    </TRADESTRD>)
   }
-
-  implicit lazy val format: Format[TraderWithoutEori] =
-    Json.format[TraderWithoutEori]
+  implicit val XmlReader: XmlReader[Trader] =
+    (
+      (xmlPath \ "NamTRD7").read[String],
+      (xmlPath \ "StrAndNumTRD22").read[String],
+      (xmlPath \ "PosCodTRD23").read[String],
+      (xmlPath \ "CitTRD24").read[String],
+      (xmlPath \ "CouTRD25").read[String],
+      (xmlPath \ "TINTRD59").read[String]
+    ).mapN(apply)
 }
