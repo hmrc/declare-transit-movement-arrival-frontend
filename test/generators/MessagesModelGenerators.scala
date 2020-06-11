@@ -27,6 +27,8 @@ import utils.Format._
 
 trait MessagesModelGenerators extends Generators {
 
+  private val gbCountryCode = "GB"
+
   private val maxNumberOfSeals = 99
   val pastDate: LocalDate      = LocalDate.of(1900, 1, 1)
   val dateNow: LocalDate       = LocalDate.now
@@ -45,8 +47,7 @@ trait MessagesModelGenerators extends Generators {
         streetAndNumber <- stringsWithMaxLength(Trader.Constants.streetAndNumberLength)
         postCode        <- stringsWithMaxLength(Trader.Constants.postCodeLength)
         city            <- stringsWithMaxLength(Trader.Constants.cityLength)
-        countryCode     <- stringsWithMaxLength(Trader.Constants.countryCodeLength)
-      } yield Trader(eori, name, streetAndNumber, postCode, city, countryCode)
+      } yield Trader(name, streetAndNumber, city, postCode, gbCountryCode, eori)
     }
 
   private val localDateGen: Gen[LocalDate] =
