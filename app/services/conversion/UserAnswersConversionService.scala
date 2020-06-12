@@ -16,17 +16,13 @@
 
 package services.conversion
 
-import derivable.DeriveNumberOfEvents
 import models.GoodsLocation.BorderForceOffice
-import models.messages.{ArrivalNotification, ContainerTranshipment, EnRouteEvent, Incident, NormalNotification, VehicularTranshipment}
+import models.messages._
 import models.reference.{Country, CustomsOffice}
 import models.{Address, Index, UserAnswers}
 import pages._
-import models._
-import pages.events.transhipments.{TransportIdentityPage, TransportNationalityPage}
-import pages.events.{EventCountryPage, EventPlacePage, EventReportedPage, IncidentInformationPage, IsTranshipmentPage, SectionConstants}
-import play.api.libs.json.{JsObject, JsPath, JsResult, Json}
-import queries.{ContainersQuery, EventsQuery, SealsQuery}
+import pages.events._
+import play.api.libs.json.JsObject
 
 import scala.util.Try
 
@@ -36,9 +32,10 @@ class UserAnswersConversionService {
     arrivalNotification match {
 
       case normalNotification: NormalNotification =>
+        val userAnswers: UserAnswers = UserAnswers(normalNotification.movementReferenceNumber)
         (for {
-          ua <- UserAnswers(normalNotification.movementReferenceNumber)
-            .set(PresentationOfficePage, CustomsOffice(normalNotification.presentationOfficeId, normalNotification.presentationOfficeName, Nil, None))
+          ua <- userAnswers.set(PresentationOfficePage,
+                                CustomsOffice(normalNotification.presentationOfficeId, normalNotification.presentationOfficeName, Nil, None))
           ua1 <- ua
             .set(CustomsSubPlacePage, normalNotification.customsSubPlace.getOrElse(""))
           ua2 <- ua1
@@ -53,14 +50,11 @@ class UserAnswersConversionService {
             .set(GoodsLocationPage, BorderForceOffice)
           ua7 <- ua6
             .set(IncidentOnRoutePage, normalNotification.enRouteEvents.isDefined)
-        } yield {
-
-          enRouteEvents(normalNotification, ua) match {
-            case Some(js) => Some(ua7.copy(data = ua7.data ++ js))
-            case _        => None
-          }
-
-        }).toOption.flatten
+        } yield
+          enRouteEvents(normalNotification, userAnswers) match {
+            case Some(eventObj) => ua7.copy(data = ua7.data ++ eventObj)
+            case _              => ua7
+          }).toOption
       case _ => None
     }
 
@@ -73,9 +67,9 @@ class UserAnswersConversionService {
     }
 
   private def enRouteEvents(normalNotification: NormalNotification, userAnswers: UserAnswers): Option[JsObject] =
-    normalNotification.enRouteEvents.map {
+    normalNotification.enRouteEvents.flatMap {
       events =>
-        val g = events.zipWithIndex flatMap {
+        (events.zipWithIndex flatMap {
           case (event, index) =>
             (for {
               ua1 <- userAnswers.set(EventPlacePage(Index(index)), event.place)
@@ -84,13 +78,6 @@ class UserAnswersConversionService {
               ua4 <- ua3.set(IsTranshipmentPage(Index(index)), false) //TODO investigate the logic around this
               ua5 <- setEventDetsils(ua4, event, index)
             } yield ua5).toOption
-        }
-        val h: Seq[JsObject] = g.map {
-          _.data
-        }
-
-        h.last
-//        userAnswers.data.setObject(EventsQuery.path, Json.toJson(h))
+        }).map(_.data).headOption
     }
-
 }

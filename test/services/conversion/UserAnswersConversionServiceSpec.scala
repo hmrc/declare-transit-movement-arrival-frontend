@@ -65,12 +65,12 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
     "must return 'UserAnswers' message when there are no EventDetails on route" in {
       forAll(arrivalNotificationWithSubplace) {
         case (arbArrivalNotification, trader) =>
-          val expectedArrivalNotification: NormalNotification = arbArrivalNotification.copy(enRouteEvents = None)
+          val arrivalNotification: NormalNotification = arbArrivalNotification.copy(enRouteEvents = None)
 
-          val result = userAnswersConversionService.convertToUserAnswers(arbArrivalNotification).value
+          val result = userAnswersConversionService.convertToUserAnswers(arrivalNotification).value
 
           val userAnswers: UserAnswers =
-            createBasicUserAnswers(trader, expectedArrivalNotification, arbArrivalNotification.enRouteEvents.isDefined, result.lastUpdated)
+            createBasicUserAnswers(trader, arrivalNotification, arrivalNotification.enRouteEvents.isDefined, result.lastUpdated)
 
           result mustBe userAnswers
       }
@@ -82,10 +82,11 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
           val routeEvent: EnRouteEvent = enRouteEvent
             .copy(seals = None)
             .copy(eventDetails = Some(incident.copy(date = None, authority = None, place = None, country = None)))
+          val lastUpdated = LocalDateTime.now()
 
           val arrivalNotification: NormalNotification = arbArrivalNotification.copy(enRouteEvents = Some(Seq(routeEvent)))
 
-          val userAnswers: UserAnswers = createBasicUserAnswers(trader, arrivalNotification, isIncidentOnRoute = true)
+          val userAnswers: UserAnswers = createBasicUserAnswers(trader, arrivalNotification, isIncidentOnRoute = true, lastUpdated)
             .set(IsTranshipmentPage(eventIndex), false)
             .success
             .value
@@ -98,19 +99,12 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
             .set(EventReportedPage(eventIndex), routeEvent.alreadyInNcts)
             .success
             .value
+            .set(IncidentInformationPage(eventIndex), incident.information.getOrElse(""))
+            .success
+            .value
 
-          val woa = LocalDateTime.now()
-
-          val result: UserAnswers = userAnswersConversionService.convertToUserAnswers(arrivalNotification).value.copy(lastUpdated = woa)
-
-          val updatedAnswers = incident.information.fold[UserAnswers](userAnswers) {
-            _ =>
-              userAnswers.set(IncidentInformationPage(eventIndex), incident.information.value).success.value
-          }
-
-          val ua = updatedAnswers.copy(lastUpdated = woa)
-
-          result mustBe ua
+          val result = userAnswersConversionService.convertToUserAnswers(arrivalNotification).value.copy(lastUpdated = lastUpdated)
+          result mustBe userAnswers
       }
     }
   }
