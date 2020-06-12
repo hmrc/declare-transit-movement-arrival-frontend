@@ -31,10 +31,13 @@ import pages._
 import pages.events.seals.SealIdentityPage
 import pages.events.transhipments.{TransportIdentityPage, TransportNationalityPage}
 import pages.events.{EventCountryPage, EventPlacePage, EventReportedPage, IncidentInformationPage, IsTranshipmentPage}
+import queries.ContainersQuery
 
 class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyChecks with MessagesModelGenerators {
 
   val userAnswersConversionService: UserAnswersConversionService = app.injector.instanceOf[UserAnswersConversionService]
+
+  private val lastUpdated = LocalDateTime.now()
 
   private val arrivalNotificationWithSubplace: Gen[(NormalNotification, Trader)] =
     for {
@@ -84,7 +87,6 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
           val routeEvent: EnRouteEvent = enRouteEvent
             .copy(seals = None)
             .copy(eventDetails = Some(incident.copy(date = None, authority = None, place = None, country = None)))
-          val lastUpdated = LocalDateTime.now()
 
           val arrivalNotification: NormalNotification = arbArrivalNotification.copy(enRouteEvents = Some(Seq(routeEvent)))
 
@@ -118,7 +120,6 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
             .copy(eventDetails = Some(vehicularTranshipment.copy(date = None, authority = None, place = None, country = None, containers = None)))
 
           val arrivalNotification: NormalNotification = arbArrivalNotification.copy(enRouteEvents = Some(Seq(routeEvent)))
-          val lastUpdated                             = LocalDateTime.now()
           val userAnswers: UserAnswers = createBasicUserAnswers(trader, arrivalNotification, isIncidentOnRoute = true, lastUpdated)
             .set(IsTranshipmentPage(eventIndex), true)
             .success
@@ -136,6 +137,75 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
             .success
             .value
             .set(TransportNationalityPage(eventIndex), Country("active", vehicularTranshipment.transportCountry, "United Kingdom"))
+            .success
+            .value
+
+          val result = userAnswersConversionService.convertToUserAnswers(arrivalNotification).value.copy(lastUpdated = lastUpdated)
+          result mustBe userAnswers
+      }
+    }
+
+    "must return User Answers when there is one container transhipment on route" in {
+      val enRouteEventContainerTranshipment: Gen[(EnRouteEvent, ContainerTranshipment)] = for {
+        generatedEnRouteEvent <- arbitrary[EnRouteEvent]
+        ct                    <- arbitrary[ContainerTranshipment]
+      } yield {
+        val containerTranshipment = ct.copy(date = None, authority = None, place = None, country = None)
+
+        val enRouteEvent = generatedEnRouteEvent.copy(eventDetails = Some(containerTranshipment), seals = None)
+
+        (enRouteEvent, containerTranshipment)
+      }
+
+      forAll(arrivalNotificationWithSubplace, enRouteEventContainerTranshipment) {
+        case ((arbArrivalNotification, trader), (enRouteEvent, containerTranshipment)) =>
+          val arrivalNotification: NormalNotification = arbArrivalNotification.copy(enRouteEvents = Some(Seq(enRouteEvent)))
+
+          val containers: Seq[Container] = containerTranshipment.containers
+
+          val userAnswers: UserAnswers = emptyUserAnswers
+            .copy(lastUpdated = lastUpdated)
+            .copy(id = arrivalNotification.movementReferenceNumber)
+            .set(GoodsLocationPage, BorderForceOffice)
+            .success
+            .value
+            .set(
+              PresentationOfficePage,
+              CustomsOffice(id = arrivalNotification.presentationOfficeId, name = arrivalNotification.presentationOfficeName, roles = Seq.empty, None)
+            )
+            .success
+            .value
+            .set(CustomsSubPlacePage, arrivalNotification.customsSubPlace.value)
+            .success
+            .value
+            .set(TraderNamePage, trader.name)
+            .success
+            .value
+            .set(TraderAddressPage, Address(buildingAndStreet = trader.streetAndNumber, city = trader.city, postcode = trader.postCode))
+            .success
+            .value
+            .set(TraderEoriPage, trader.eori)
+            .success
+            .value
+            .set(IncidentOnRoutePage, true)
+            .success
+            .value
+            .set(PlaceOfNotificationPage, arrivalNotification.notificationPlace)
+            .success
+            .value
+            .set(IsTranshipmentPage(eventIndex), true)
+            .success
+            .value
+            .set(EventPlacePage(eventIndex), enRouteEvent.place)
+            .success
+            .value
+            .set(EventCountryPage(eventIndex), Country("active", enRouteEvent.countryCode, "United Kingdom"))
+            .success
+            .value
+            .set(EventReportedPage(eventIndex), enRouteEvent.alreadyInNcts)
+            .success
+            .value
+            .set(ContainersQuery(eventIndex), containers)
             .success
             .value
 

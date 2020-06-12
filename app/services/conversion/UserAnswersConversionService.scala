@@ -22,8 +22,9 @@ import models.reference.{Country, CustomsOffice}
 import models.{Address, Index, UserAnswers}
 import pages._
 import pages.events._
-import pages.events.transhipments.{TransportIdentityPage, TransportNationalityPage}
-import play.api.libs.json.JsObject
+import pages.events.transhipments.{ContainerNumberPage, TransportIdentityPage, TransportNationalityPage}
+import play.api.libs.json.{JsObject, Json}
+import queries.ContainersQuery
 
 import scala.util.Try
 
@@ -59,22 +60,26 @@ class UserAnswersConversionService {
       case _ => None
     }
 
-  def setEventDetails(userAnswers: UserAnswers, event: EnRouteEvent, index: Int): Try[UserAnswers] =
+  def setEventDetails(userAnswers: UserAnswers, event: EnRouteEvent, eventIndex: Int): Try[UserAnswers] =
     event.eventDetails match {
       case Some(incident: Incident) =>
         for {
-          ua  <- userAnswers.set(IsTranshipmentPage(Index(index)), false)
-          ua1 <- ua.set(IncidentInformationPage(Index(index)), incident.information.getOrElse(""))
+          ua  <- userAnswers.set(IsTranshipmentPage(Index(eventIndex)), false)
+          ua1 <- ua.set(IncidentInformationPage(Index(eventIndex)), incident.information.getOrElse(""))
         } yield ua1
       case Some(vehicularTranshipment: VehicularTranshipment) =>
         for {
-          ua  <- userAnswers.set(IsTranshipmentPage(Index(index)), true)
-          ua1 <- ua.set(TransportIdentityPage(Index(index)), vehicularTranshipment.transportIdentity)
-          ua2 <- ua1.set(TransportNationalityPage(Index(index)), Country("active", vehicularTranshipment.transportCountry, "United Kingdom"))
+          ua  <- userAnswers.set(IsTranshipmentPage(Index(eventIndex)), true)
+          ua1 <- ua.set(TransportIdentityPage(Index(eventIndex)), vehicularTranshipment.transportIdentity)
+          ua2 <- ua1.set(TransportNationalityPage(Index(eventIndex)), Country("active", vehicularTranshipment.transportCountry, "United Kingdom"))
         } yield ua2
 
-      case Some(containerTranshipment: ContainerTranshipment) => ???
-      case _                                                  => Try(userAnswers)
+      case Some(containerTranshipment: ContainerTranshipment) =>
+        for {
+          ua  <- userAnswers.set(IsTranshipmentPage(Index(eventIndex)), true)
+          ua1 <- ua.set(ContainersQuery(Index(eventIndex)), containerTranshipment.containers)
+        } yield ua1
+      case _ => Try(userAnswers)
     }
 
   private def enRouteEvents(normalNotification: NormalNotification, userAnswers: UserAnswers): Option[JsObject] =
