@@ -80,7 +80,7 @@ trait MessagesModelGenerators extends Generators {
     }
 
   implicit lazy val arbitraryContainers: Arbitrary[Seq[Container]] =
-    Arbitrary(listWithMaxLength[Container](Transhipment.Constants.maxContainers))
+    Arbitrary(listWithMaxLength[Container](2))
 
   implicit lazy val arbitraryContainerTranshipment: Arbitrary[ContainerTranshipment] =
     Arbitrary {

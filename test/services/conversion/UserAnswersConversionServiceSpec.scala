@@ -23,11 +23,13 @@ import generators.MessagesModelGenerators
 import models.GoodsLocation.BorderForceOffice
 import models.messages._
 import models.reference.{Country, CustomsOffice}
-import models.{Address, UserAnswers}
+import models.{Address, Index, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages._
+import pages.events.seals.SealIdentityPage
+import pages.events.transhipments.{TransportIdentityPage, TransportNationalityPage}
 import pages.events.{EventCountryPage, EventPlacePage, EventReportedPage, IncidentInformationPage, IsTranshipmentPage}
 
 class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyChecks with MessagesModelGenerators {
@@ -107,12 +109,46 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
           result mustBe userAnswers
       }
     }
+
+    "must return 'UserAnswers' when there is one vehicle transhipment on route" in {
+      forAll(arrivalNotificationWithSubplace, enRouteEventVehicularTranshipment) {
+        case ((arbArrivalNotification, trader), (enRouteEvent, vehicularTranshipment)) =>
+          val routeEvent: EnRouteEvent = enRouteEvent
+            .copy(seals = None)
+            .copy(eventDetails = Some(vehicularTranshipment.copy(date = None, authority = None, place = None, country = None, containers = None)))
+
+          val arrivalNotification: NormalNotification = arbArrivalNotification.copy(enRouteEvents = Some(Seq(routeEvent)))
+          val lastUpdated                             = LocalDateTime.now()
+          val userAnswers: UserAnswers = createBasicUserAnswers(trader, arrivalNotification, isIncidentOnRoute = true, lastUpdated)
+            .set(IsTranshipmentPage(eventIndex), true)
+            .success
+            .value
+            .set(EventPlacePage(eventIndex), routeEvent.place)
+            .success
+            .value
+            .set(EventCountryPage(eventIndex), Country("active", routeEvent.countryCode, "United Kingdom"))
+            .success
+            .value
+            .set(EventReportedPage(eventIndex), routeEvent.alreadyInNcts)
+            .success
+            .value
+            .set(TransportIdentityPage(eventIndex), vehicularTranshipment.transportIdentity)
+            .success
+            .value
+            .set(TransportNationalityPage(eventIndex), Country("active", vehicularTranshipment.transportCountry, "United Kingdom"))
+            .success
+            .value
+
+          val result = userAnswersConversionService.convertToUserAnswers(arrivalNotification).value.copy(lastUpdated = lastUpdated)
+          result mustBe userAnswers
+      }
+    }
   }
 
   private def createBasicUserAnswers(trader: Trader,
                                      arrivalNotification: NormalNotification,
                                      isIncidentOnRoute: Boolean = false,
-                                     timeStamp: LocalDateTime   = LocalDateTime.now): UserAnswers =
+                                     timeStamp: LocalDateTime): UserAnswers =
     emptyUserAnswers
       .copy(id = arrivalNotification.movementReferenceNumber)
       .copy(lastUpdated = timeStamp)

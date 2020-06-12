@@ -22,6 +22,7 @@ import models.reference.{Country, CustomsOffice}
 import models.{Address, Index, UserAnswers}
 import pages._
 import pages.events._
+import pages.events.transhipments.{TransportIdentityPage, TransportNationalityPage}
 import play.api.libs.json.JsObject
 
 import scala.util.Try
@@ -58,10 +59,20 @@ class UserAnswersConversionService {
       case _ => None
     }
 
-  def setEventDetsils(userAnswers: UserAnswers, event: EnRouteEvent, index: Int): Try[UserAnswers] =
+  def setEventDetails(userAnswers: UserAnswers, event: EnRouteEvent, index: Int): Try[UserAnswers] =
     event.eventDetails match {
-      case Some(incident: Incident)                           => userAnswers.set(IncidentInformationPage(Index(index)), incident.information.getOrElse(""))
-      case Some(vehicularTranshipment: VehicularTranshipment) => ???
+      case Some(incident: Incident) =>
+        for {
+          ua  <- userAnswers.set(IsTranshipmentPage(Index(index)), false)
+          ua1 <- ua.set(IncidentInformationPage(Index(index)), incident.information.getOrElse(""))
+        } yield ua1
+      case Some(vehicularTranshipment: VehicularTranshipment) =>
+        for {
+          ua  <- userAnswers.set(IsTranshipmentPage(Index(index)), true)
+          ua1 <- ua.set(TransportIdentityPage(Index(index)), vehicularTranshipment.transportIdentity)
+          ua2 <- ua1.set(TransportNationalityPage(Index(index)), Country("active", vehicularTranshipment.transportCountry, "United Kingdom"))
+        } yield ua2
+
       case Some(containerTranshipment: ContainerTranshipment) => ???
       case _                                                  => Try(userAnswers)
     }
@@ -75,9 +86,8 @@ class UserAnswersConversionService {
               ua1 <- userAnswers.set(EventPlacePage(Index(index)), event.place)
               ua2 <- ua1.set(EventCountryPage(Index(index)), Country("active", event.countryCode, "United Kingdom")) //TODO need to fetch it from reference data service
               ua3 <- ua2.set(EventReportedPage(Index(index)), event.alreadyInNcts)
-              ua4 <- ua3.set(IsTranshipmentPage(Index(index)), false) //TODO investigate the logic around this
-              ua5 <- setEventDetsils(ua4, event, index)
-            } yield ua5).toOption
+              ua4 <- setEventDetails(ua3, event, index)
+            } yield ua4).toOption
         }).map(_.data).headOption
     }
 }
