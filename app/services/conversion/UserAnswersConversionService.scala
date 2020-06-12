@@ -24,7 +24,7 @@ import pages._
 import pages.events._
 import pages.events.transhipments.{ContainerNumberPage, TransportIdentityPage, TransportNationalityPage}
 import play.api.libs.json.{JsObject, Json}
-import queries.ContainersQuery
+import queries.{ContainersQuery, SealsQuery}
 
 import scala.util.Try
 
@@ -92,7 +92,8 @@ class UserAnswersConversionService {
               ua2 <- ua1.set(EventCountryPage(Index(index)), Country("active", event.countryCode, "United Kingdom")) //TODO need to fetch it from reference data service
               ua3 <- ua2.set(EventReportedPage(Index(index)), event.alreadyInNcts)
               ua4 <- setEventDetails(ua3, event, index)
-            } yield ua4).toOption
+              ua5 <- ua4.set(SealsQuery(Index(index)), event.seals.fold[Seq[Seal]](Nil)(x => x))
+            } yield ua5).toOption
         }).map(_.data).headOption
     }
 }

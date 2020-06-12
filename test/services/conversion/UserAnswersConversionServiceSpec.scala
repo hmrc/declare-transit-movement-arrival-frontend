@@ -31,7 +31,7 @@ import pages._
 import pages.events.seals.SealIdentityPage
 import pages.events.transhipments.{TransportIdentityPage, TransportNationalityPage}
 import pages.events.{EventCountryPage, EventPlacePage, EventReportedPage, IncidentInformationPage, IsTranshipmentPage}
-import queries.ContainersQuery
+import queries.{ContainersQuery, SealsQuery}
 
 class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyChecks with MessagesModelGenerators {
 
@@ -84,8 +84,9 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
     "must return 'UserAnswers' message when there is one incident on route" in {
       forAll(arrivalNotificationWithSubplace, enRouteEventIncident) {
         case ((arbArrivalNotification, trader), (enRouteEvent, incident)) =>
+          val seals = Seq(Seal("seal 1"), Seal("seal 2"))
           val routeEvent: EnRouteEvent = enRouteEvent
-            .copy(seals = None)
+            .copy(seals = Some(seals))
             .copy(eventDetails = Some(incident.copy(date = None, authority = None, place = None, country = None)))
 
           val arrivalNotification: NormalNotification = arbArrivalNotification.copy(enRouteEvents = Some(Seq(routeEvent)))
@@ -106,6 +107,9 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
             .set(IncidentInformationPage(eventIndex), incident.information.getOrElse(""))
             .success
             .value
+            .set(SealsQuery(eventIndex), seals)
+            .success
+            .value
 
           val result = userAnswersConversionService.convertToUserAnswers(arrivalNotification).value.copy(lastUpdated = lastUpdated)
           result mustBe userAnswers
@@ -115,8 +119,9 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
     "must return 'UserAnswers' when there is one vehicle transhipment on route" in {
       forAll(arrivalNotificationWithSubplace, enRouteEventVehicularTranshipment) {
         case ((arbArrivalNotification, trader), (enRouteEvent, vehicularTranshipment)) =>
+          val seals = Seq(Seal("seal 1"), Seal("seal 2"))
           val routeEvent: EnRouteEvent = enRouteEvent
-            .copy(seals = None)
+            .copy(seals = Some(seals))
             .copy(eventDetails = Some(vehicularTranshipment.copy(date = None, authority = None, place = None, country = None, containers = None)))
 
           val arrivalNotification: NormalNotification = arbArrivalNotification.copy(enRouteEvents = Some(Seq(routeEvent)))
@@ -139,6 +144,9 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
             .set(TransportNationalityPage(eventIndex), Country("active", vehicularTranshipment.transportCountry, "United Kingdom"))
             .success
             .value
+            .set(SealsQuery(eventIndex), seals)
+            .success
+            .value
 
           val result = userAnswersConversionService.convertToUserAnswers(arrivalNotification).value.copy(lastUpdated = lastUpdated)
           result mustBe userAnswers
@@ -146,13 +154,15 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
     }
 
     "must return User Answers when there is one container transhipment on route" in {
+
+      val seals = Seq(Seal("seal 1"), Seal("seal 2"))
+
       val enRouteEventContainerTranshipment: Gen[(EnRouteEvent, ContainerTranshipment)] = for {
         generatedEnRouteEvent <- arbitrary[EnRouteEvent]
         ct                    <- arbitrary[ContainerTranshipment]
       } yield {
-        val containerTranshipment = ct.copy(date = None, authority = None, place = None, country = None)
-
-        val enRouteEvent = generatedEnRouteEvent.copy(eventDetails = Some(containerTranshipment), seals = None)
+        val containerTranshipment = ct.copy(date                            = None, authority                    = None, place = None, country = None)
+        val enRouteEvent          = generatedEnRouteEvent.copy(eventDetails = Some(containerTranshipment), seals = Some(seals))
 
         (enRouteEvent, containerTranshipment)
       }
@@ -208,6 +218,9 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
             .set(ContainersQuery(eventIndex), containers)
             .success
             .value
+            .set(SealsQuery(eventIndex), seals)
+            .success
+            .value
 
           val result = userAnswersConversionService.convertToUserAnswers(arrivalNotification).value.copy(lastUpdated = lastUpdated)
           result mustBe userAnswers
@@ -249,5 +262,4 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
       .set(PlaceOfNotificationPage, arrivalNotification.notificationPlace)
       .success
       .value
-
 }
