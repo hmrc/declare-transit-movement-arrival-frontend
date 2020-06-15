@@ -169,11 +169,12 @@ class Navigator @Inject()() {
     }
 
   private def presentationOfficeRoute(mode: Mode)(ua: UserAnswers): Option[Call] =
-    (ua.get(GoodsLocationPage), ua.get(TraderNamePage), mode) match {
-      case (Some(BorderForceOffice), Some(_), CheckMode)       => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
-      case (Some(BorderForceOffice), _, _)                     => Some(routes.TraderNameController.onPageLoad(ua.id, mode))
-      case (Some(AuthorisedConsigneesLocation), _, _)          => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
-      case (Some(AuthorisedConsigneesLocation), _, NormalMode) => Some(routes.IncidentOnRouteController.onPageLoad(ua.id, mode))
+    (ua.get(GoodsLocationPage), ua.get(TraderNamePage), ua.get(ConsigneeNamePage), mode) match {
+      case (Some(BorderForceOffice), Some(_), _, _)                     => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
+      case (Some(BorderForceOffice), None, _, _)                        => Some(routes.TraderNameController.onPageLoad(ua.id, mode))
+      case (Some(AuthorisedConsigneesLocation), _, Some(_), NormalMode) => Some(routes.IncidentOnRouteController.onPageLoad(ua.id, mode))
+      case (Some(AuthorisedConsigneesLocation), _, _, _)                => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
+      case _                                                            => Some(routes.TraderNameController.onPageLoad(ua.id, mode))
     }
   private def traderNameRoute(mode: Mode)(ua: UserAnswers): Option[Call] =
     (ua.get(TraderEoriPage), mode) match {

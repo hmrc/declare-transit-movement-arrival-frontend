@@ -23,7 +23,7 @@ import javax.inject.Inject
 import models.reference.CustomsOffice
 import models.{Mode, MovementReferenceNumber}
 import navigation.Navigator
-import pages.{CustomsSubPlacePage, PresentationOfficePage}
+import pages.{ConsigneeNamePage, CustomsSubPlacePage, PresentationOfficePage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.{JsObject, Json}
@@ -52,16 +52,26 @@ class PresentationOfficeController @Inject()(override val messagesApi: MessagesA
   def onPageLoad(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] =
     (identify andThen getData(mrn) andThen requireData).async {
       implicit request =>
-        request.userAnswers.get(CustomsSubPlacePage) match {
-          case Some(subsPlace) =>
+        (request.userAnswers.get(CustomsSubPlacePage), request.userAnswers.get(ConsigneeNamePage)) match {
+          case (Some(presentationOffice), None) =>
             referenceDataConnector.getCustomsOffices flatMap {
               customsOffices =>
-                val form = formProvider(subsPlace, customsOffices)
+                val form = formProvider(presentationOffice, customsOffices)
                 val preparedForm = request.userAnswers.get(PresentationOfficePage) match {
                   case None        => form
                   case Some(value) => form.fill(value)
                 }
-                renderView(mrn, mode, subsPlace, preparedForm, customsOffices, Results.Ok)
+                renderView(mrn, mode, presentationOffice, preparedForm, customsOffices, Results.Ok)
+            }
+          case (None, Some(presentationOffice)) =>
+            referenceDataConnector.getCustomsOffices flatMap {
+              customsOffices =>
+                val form = formProvider(presentationOffice, customsOffices)
+                val preparedForm = request.userAnswers.get(PresentationOfficePage) match {
+                  case None        => form
+                  case Some(value) => form.fill(value)
+                }
+                renderView(mrn, mode, presentationOffice, preparedForm, customsOffices, Results.Ok)
             }
           case _ => Future.successful(Redirect(routes.SessionExpiredController.onPageLoad()))
         }
@@ -69,7 +79,7 @@ class PresentationOfficeController @Inject()(override val messagesApi: MessagesA
 
   private def renderView(mrn: MovementReferenceNumber,
                          mode: Mode,
-                         subsPlace: String,
+                         presentationOffice: String,
                          form: Form[CustomsOffice],
                          customsOffices: Seq[CustomsOffice],
                          status: Results.Status)(implicit request: Request[AnyContent]): Future[Result] = {
@@ -79,7 +89,7 @@ class PresentationOfficeController @Inject()(override val messagesApi: MessagesA
       "mrn"            -> mrn,
       "mode"           -> mode,
       "customsOffices" -> getCustomsOfficesAsJson(form.value, customsOffices),
-      "header"         -> msg"presentationOffice.title".withArgs(subsPlace)
+      "header"         -> msg"presentationOffice.title".withArgs(presentationOffice)
     )
     renderer.render("presentationOffice.njk", json).map(status(_))
   }
@@ -87,8 +97,8 @@ class PresentationOfficeController @Inject()(override val messagesApi: MessagesA
   def onSubmit(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] =
     (identify andThen getData(mrn) andThen requireData).async {
       implicit request =>
-        request.userAnswers.get(CustomsSubPlacePage) match {
-          case Some(subsPlace) =>
+        (request.userAnswers.get(CustomsSubPlacePage), request.userAnswers.get(ConsigneeNamePage)) match {
+          case (Some(subsPlace), _) =>
             referenceDataConnector.getCustomsOffices flatMap {
               customsOffices =>
                 val form = formProvider(subsPlace, customsOffices)
@@ -97,6 +107,23 @@ class PresentationOfficeController @Inject()(override val messagesApi: MessagesA
                   .fold(
                     formWithErrors => {
                       renderView(mrn, mode, subsPlace, formWithErrors, customsOffices, Results.BadRequest)
+                    },
+                    value =>
+                      for {
+                        updatedAnswers <- Future.fromTry(request.userAnswers.set(PresentationOfficePage, value))
+                        _              <- sessionRepository.set(updatedAnswers)
+                      } yield Redirect(navigator.nextPage(PresentationOfficePage, mode, updatedAnswers))
+                  )
+            }
+          case (_, Some(consigneeName)) =>
+            referenceDataConnector.getCustomsOffices flatMap {
+              customsOffices =>
+                val form = formProvider(consigneeName, customsOffices)
+                form
+                  .bindFromRequest()
+                  .fold(
+                    formWithErrors => {
+                      renderView(mrn, mode, consigneeName, formWithErrors, customsOffices, Results.BadRequest)
                     },
                     value =>
                       for {
