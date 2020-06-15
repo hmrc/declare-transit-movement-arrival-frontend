@@ -19,10 +19,10 @@ package services.conversion
 import models.GoodsLocation.BorderForceOffice
 import models.messages._
 import models.reference.{Country, CustomsOffice}
-import models.{Address, Index, TranshipmentType, UserAnswers}
+import models.{Address, Index, UserAnswers}
 import pages._
 import pages.events._
-import pages.events.transhipments.{TranshipmentTypePage, TransportIdentityPage, TransportNationalityPage}
+import pages.events.transhipments.{TransportIdentityPage, TransportNationalityPage}
 import queries.{ContainersQuery, SealsQuery}
 
 import scala.util.Try
@@ -93,10 +93,9 @@ class UserAnswersConversionService {
               ua1 <- ua.set(EventPlacePage(Index(index)), event.place)
               ua2 <- ua1.set(EventCountryPage(Index(index)), Country("active", event.countryCode, "United Kingdom")) //TODO need to fetch it from reference data service
               ua3 <- ua2.set(EventReportedPage(Index(index)), event.alreadyInNcts)
-              ua4 <- ua3.set(TranshipmentTypePage(Index(index)), setTranshipmentType(event))
-              ua5 <- setEventDetails(ua4, event, index)
-              ua6 <- if (event.seals.isDefined) { ua5.set(SealsQuery(Index(index)), event.seals.fold[Seq[Seal]](Nil)(x => x)) } else Try(ua5)
-            } yield ua6).toOption match {
+              ua4 <- setEventDetails(ua3, event, index)
+              ua5 <- if (event.seals.isDefined) { ua4.set(SealsQuery(Index(index)), event.seals.fold[Seq[Seal]](Nil)(x => x)) } else Try(ua4)
+            } yield ua5).toOption match {
               case Some(z) => ua.copy(data = ua.data ++ z.data)
               case _       => ua
             }
