@@ -20,6 +20,7 @@ import connectors.ReferenceDataConnector
 import controllers.actions._
 import forms.PresentationOfficeFormProvider
 import javax.inject.Inject
+import models.GoodsLocation.BorderForceOffice
 import models.reference.CustomsOffice
 import models.{Mode, MovementReferenceNumber}
 import navigation.Navigator
@@ -93,16 +94,22 @@ class PresentationOfficeController @Inject()(override val messagesApi: MessagesA
   def onSubmit(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] =
     (identify andThen getData(mrn) andThen requireData).async {
       implicit request =>
-        (request.userAnswers.get(CustomsSubPlacePage), request.userAnswers.get(ConsigneeNamePage)) match {
-          case (Some(subsPlace), _) =>
-            referenceDataConnector.getCustomsOffices flatMap {
-              customsOffices =>
-                val form = formProvider(subsPlace, customsOffices)
+        val locationName = (request.userAnswers.get(CustomsSubPlacePage), request.userAnswers.get(ConsigneeNamePage)) match {
+          case (Some(customsSubPlace), None) => customsSubPlace
+          case (None, Some(consigneeName))   => consigneeName
+          case _                             => None
+        }
+
+        referenceDataConnector.getCustomsOffices flatMap {
+          customsOffices =>
+            locationName match {
+              case locationName: String =>
+                val form = formProvider(locationName, customsOffices)
                 form
                   .bindFromRequest()
                   .fold(
                     formWithErrors => {
-                      renderView(mrn, mode, subsPlace, formWithErrors, customsOffices, Results.BadRequest)
+                      renderView(mrn, mode, locationName, formWithErrors, customsOffices, Results.BadRequest)
                     },
                     value =>
                       for {
@@ -110,25 +117,9 @@ class PresentationOfficeController @Inject()(override val messagesApi: MessagesA
                         _              <- sessionRepository.set(updatedAnswers)
                       } yield Redirect(navigator.nextPage(PresentationOfficePage, mode, updatedAnswers))
                   )
+              case _ => Future.successful(Redirect(routes.SessionExpiredController.onPageLoad()))
+
             }
-          case (_, Some(consigneeName)) =>
-            referenceDataConnector.getCustomsOffices flatMap {
-              customsOffices =>
-                val form = formProvider(consigneeName, customsOffices)
-                form
-                  .bindFromRequest()
-                  .fold(
-                    formWithErrors => {
-                      renderView(mrn, mode, consigneeName, formWithErrors, customsOffices, Results.BadRequest)
-                    },
-                    value =>
-                      for {
-                        updatedAnswers <- Future.fromTry(request.userAnswers.set(PresentationOfficePage, value))
-                        _              <- sessionRepository.set(updatedAnswers)
-                      } yield Redirect(navigator.nextPage(PresentationOfficePage, mode, updatedAnswers))
-                  )
-            }
-          case _ => Future.successful(Redirect(routes.SessionExpiredController.onPageLoad()))
         }
     }
 
