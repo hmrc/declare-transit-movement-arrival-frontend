@@ -28,9 +28,8 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages._
-import pages.events.seals.SealIdentityPage
 import pages.events.transhipments.{TransportIdentityPage, TransportNationalityPage}
-import pages.events.{EventCountryPage, EventPlacePage, EventReportedPage, IncidentInformationPage, IsTranshipmentPage}
+import pages.events._
 import queries.{ContainersQuery, SealsQuery}
 
 class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyChecks with MessagesModelGenerators {
@@ -67,7 +66,7 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
 
   "UserAnswersConversionService" - {
 
-    "must return 'UserAnswers' message when there are no EventDetails on route" in {
+    "must return 'User Answers' message when there are no EventDetails on route" in {
       forAll(arrivalNotificationWithSubplace) {
         case (arbArrivalNotification, trader) =>
           val arrivalNotification: NormalNotification = arbArrivalNotification.copy(enRouteEvents = None)
@@ -81,7 +80,7 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
       }
     }
 
-    "must return 'UserAnswers' message when there is one incident on route" in {
+    "must return 'User Answers' message when there is one incident on route" in {
       forAll(arrivalNotificationWithSubplace, enRouteEventIncident) {
         case ((arbArrivalNotification, trader), (enRouteEvent, incident)) =>
           val seals = Seq(Seal("seal 1"), Seal("seal 2"))
@@ -116,7 +115,7 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
       }
     }
 
-    "must return 'UserAnswers' when there is one vehicle transhipment on route" in {
+    "must return 'User Answers' when there is one vehicle transhipment on route" in {
       forAll(arrivalNotificationWithSubplace, enRouteEventVehicularTranshipment) {
         case ((arbArrivalNotification, trader), (enRouteEvent, vehicularTranshipment)) =>
           val seals = Seq(Seal("seal 1"), Seal("seal 2"))
@@ -153,7 +152,7 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
       }
     }
 
-    "must return User Answers when there is one container transhipment on route" in {
+    "must return 'User Answers' when there is one container transhipment on route" in {
 
       val seals = Seq(Seal("seal 1"), Seal("seal 2"))
 
@@ -219,6 +218,57 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
             .success
             .value
             .set(SealsQuery(eventIndex), seals)
+            .success
+            .value
+
+          val result = userAnswersConversionService.convertToUserAnswers(arrivalNotification).value.copy(lastUpdated = lastUpdated)
+          result mustBe userAnswers
+      }
+    }
+
+    "must return 'User Answers' when there multiple incidents on route" in {
+      forAll(arrivalNotificationWithSubplace, enRouteEventIncident, enRouteEventIncident) {
+        case ((arbArrivalNotification, trader), (enRouteEvent1, incident1), (enRouteEvent2, incident2)) =>
+          val routeEvent1: EnRouteEvent = enRouteEvent1
+            .copy(seals = None)
+            .copy(eventDetails = Some(incident1.copy(date = None, authority = None, place = None, country = None)))
+
+          val routeEvent2: EnRouteEvent = enRouteEvent2
+            .copy(seals = None)
+            .copy(eventDetails = Some(incident2.copy(date = None, authority = None, place = None, country = None)))
+
+          val arrivalNotification: NormalNotification = arbArrivalNotification.copy(enRouteEvents = Some(Seq(routeEvent1, routeEvent2)))
+          val eventIndex2                             = Index(1)
+
+          val userAnswers: UserAnswers = createBasicUserAnswers(trader, arrivalNotification, isIncidentOnRoute = true, lastUpdated)
+            .set(IsTranshipmentPage(eventIndex), false)
+            .success
+            .value
+            .set(EventPlacePage(eventIndex), routeEvent1.place)
+            .success
+            .value
+            .set(EventCountryPage(eventIndex), Country("active", routeEvent1.countryCode, "United Kingdom"))
+            .success
+            .value
+            .set(EventReportedPage(eventIndex), routeEvent1.alreadyInNcts)
+            .success
+            .value
+            .set(IsTranshipmentPage(eventIndex2), false)
+            .success
+            .value
+            .set(EventPlacePage(eventIndex2), routeEvent2.place)
+            .success
+            .value
+            .set(EventCountryPage(eventIndex2), Country("active", routeEvent2.countryCode, "United Kingdom"))
+            .success
+            .value
+            .set(EventReportedPage(eventIndex2), routeEvent2.alreadyInNcts)
+            .success
+            .value
+            .set(IncidentInformationPage(eventIndex), incident1.information.getOrElse(""))
+            .success
+            .value
+            .set(IncidentInformationPage(eventIndex2), incident2.information.getOrElse(""))
             .success
             .value
 

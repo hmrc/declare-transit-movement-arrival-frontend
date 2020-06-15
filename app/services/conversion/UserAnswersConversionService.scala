@@ -22,8 +22,7 @@ import models.reference.{Country, CustomsOffice}
 import models.{Address, Index, UserAnswers}
 import pages._
 import pages.events._
-import pages.events.transhipments.{ContainerNumberPage, TransportIdentityPage, TransportNationalityPage}
-import play.api.libs.json.{JsObject, Json}
+import pages.events.transhipments.{TransportIdentityPage, TransportNationalityPage}
 import queries.{ContainersQuery, SealsQuery}
 
 import scala.util.Try
@@ -54,7 +53,7 @@ class UserAnswersConversionService {
             .set(IncidentOnRoutePage, normalNotification.enRouteEvents.isDefined)
         } yield
           enRouteEvents(normalNotification, userAnswers) match {
-            case Some(eventObj) => ua7.copy(data = ua7.data ++ eventObj)
+            case Some(eventObj) => ua7.copy(data = ua7.data ++ eventObj.data)
             case _              => ua7
           }).toOption
       case _ => None
@@ -82,18 +81,25 @@ class UserAnswersConversionService {
       case _ => Try(userAnswers)
     }
 
-  private def enRouteEvents(normalNotification: NormalNotification, userAnswers: UserAnswers): Option[JsObject] =
-    normalNotification.enRouteEvents.flatMap {
+  private def enRouteEvents(normalNotification: NormalNotification, userAnswers: UserAnswers): Option[UserAnswers] =
+    normalNotification.enRouteEvents.map {
       events =>
-        (events.zipWithIndex flatMap {
-          case (event, index) =>
+        events.zipWithIndex.foldLeft(userAnswers) {
+          (ua, y) =>
+            val index = y._2
+            val event = y._1
             (for {
-              ua1 <- userAnswers.set(EventPlacePage(Index(index)), event.place)
+              ua1 <- ua.set(EventPlacePage(Index(index)), event.place)
               ua2 <- ua1.set(EventCountryPage(Index(index)), Country("active", event.countryCode, "United Kingdom")) //TODO need to fetch it from reference data service
               ua3 <- ua2.set(EventReportedPage(Index(index)), event.alreadyInNcts)
               ua4 <- setEventDetails(ua3, event, index)
-              ua5 <- ua4.set(SealsQuery(Index(index)), event.seals.fold[Seq[Seal]](Nil)(x => x))
-            } yield ua5).toOption
-        }).map(_.data).headOption
+              ua5 <- if (event.seals.isDefined) { ua4.set(SealsQuery(Index(index)), event.seals.fold[Seq[Seal]](Nil)(x => x)) } else Try(ua4)
+            } yield {
+              ua5
+            }).toOption match {
+              case Some(z) => ua.copy(data = ua.data ++ z.data)
+              case _       => ua
+            }
+        }
     }
 }
