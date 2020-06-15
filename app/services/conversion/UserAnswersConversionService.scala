@@ -69,7 +69,12 @@ class UserAnswersConversionService {
               ua2 <- ua1.set(EventCountryPage(Index(index)), Country("active", event.countryCode, "United Kingdom")) //TODO need to fetch it from reference data service
               ua3 <- ua2.set(EventReportedPage(Index(index)), event.alreadyInNcts)
               ua4 <- setEventDetails(ua3, event, index)
-              ua5 <- if (event.seals.isDefined) { ua4.set(SealsQuery(Index(index)), event.seals.fold[Seq[Seal]](Nil)(x => x)) } else Try(ua4)
+              ua5 <- event.seals
+                .map {
+                  seals =>
+                    ua4.set(SealsQuery(Index(index)), seals)
+                }
+                .getOrElse(Try(ua4))
             } yield ua5
 
             updatedUserAnswers
