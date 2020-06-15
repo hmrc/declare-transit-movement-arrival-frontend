@@ -59,6 +59,28 @@ class UserAnswersConversionService {
       case _ => None
     }
 
+  private def enRouteEvents(normalNotification: NormalNotification, userAnswers: UserAnswers): Option[UserAnswers] =
+    normalNotification.enRouteEvents.map {
+      events =>
+        events.zipWithIndex.foldLeft(userAnswers) {
+          case (ua, (event, index)) =>
+            val updatedUserAnswers: Try[UserAnswers] = for {
+              ua1 <- ua.set(EventPlacePage(Index(index)), event.place)
+              ua2 <- ua1.set(EventCountryPage(Index(index)), Country("active", event.countryCode, "United Kingdom")) //TODO need to fetch it from reference data service
+              ua3 <- ua2.set(EventReportedPage(Index(index)), event.alreadyInNcts)
+              ua4 <- setEventDetails(ua3, event, index)
+              ua5 <- if (event.seals.isDefined) { ua4.set(SealsQuery(Index(index)), event.seals.fold[Seq[Seal]](Nil)(x => x)) } else Try(ua4)
+            } yield ua5
+
+            updatedUserAnswers
+              .map {
+                updatedAnswers =>
+                  ua.copy(data = ua.data ++ updatedAnswers.data)
+              }
+              .getOrElse(ua)
+        }
+    }
+
   private def setEventDetails(userAnswers: UserAnswers, event: EnRouteEvent, eventIndex: Int): Try[UserAnswers] =
     event.eventDetails match {
       case Some(incident: Incident) =>
@@ -80,25 +102,5 @@ class UserAnswersConversionService {
           ua1 <- ua.set(ContainersQuery(Index(eventIndex)), containerTranshipment.containers)
         } yield ua1
       case _ => Try(userAnswers)
-    }
-
-  private def enRouteEvents(normalNotification: NormalNotification, userAnswers: UserAnswers): Option[UserAnswers] =
-    normalNotification.enRouteEvents.map {
-      events =>
-        events.zipWithIndex.foldLeft(userAnswers) {
-          (ua, y) =>
-            val index = y._2
-            val event = y._1
-            (for {
-              ua1 <- ua.set(EventPlacePage(Index(index)), event.place)
-              ua2 <- ua1.set(EventCountryPage(Index(index)), Country("active", event.countryCode, "United Kingdom")) //TODO need to fetch it from reference data service
-              ua3 <- ua2.set(EventReportedPage(Index(index)), event.alreadyInNcts)
-              ua4 <- setEventDetails(ua3, event, index)
-              ua5 <- if (event.seals.isDefined) { ua4.set(SealsQuery(Index(index)), event.seals.fold[Seq[Seal]](Nil)(x => x)) } else Try(ua4)
-            } yield ua5).toOption match {
-              case Some(z) => ua.copy(data = ua.data ++ z.data)
-              case _       => ua
-            }
-        }
     }
 }
