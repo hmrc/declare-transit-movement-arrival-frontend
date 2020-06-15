@@ -52,28 +52,24 @@ class PresentationOfficeController @Inject()(override val messagesApi: MessagesA
   def onPageLoad(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] =
     (identify andThen getData(mrn) andThen requireData).async {
       implicit request =>
-        (request.userAnswers.get(CustomsSubPlacePage), request.userAnswers.get(ConsigneeNamePage)) match {
-          case (Some(presentationOffice), None) =>
-            referenceDataConnector.getCustomsOffices flatMap {
-              customsOffices =>
-                val form = formProvider(presentationOffice, customsOffices)
+        val locationName = (request.userAnswers.get(CustomsSubPlacePage), request.userAnswers.get(ConsigneeNamePage)) match {
+          case (Some(customsSubPlace), None) => customsSubPlace
+          case (None, Some(consigneeName))   => consigneeName
+          case _                             => None
+        }
+        referenceDataConnector.getCustomsOffices flatMap {
+          customsOffices =>
+            locationName match {
+              case locationName: String =>
+                val form = formProvider(locationName, customsOffices)
                 val preparedForm = request.userAnswers.get(PresentationOfficePage) match {
                   case None        => form
                   case Some(value) => form.fill(value)
                 }
-                renderView(mrn, mode, presentationOffice, preparedForm, customsOffices, Results.Ok)
+                renderView(mrn, mode, locationName, preparedForm, customsOffices, Results.Ok)
+              case _ =>
+                Future.successful(Redirect(routes.SessionExpiredController.onPageLoad()))
             }
-          case (None, Some(presentationOffice)) =>
-            referenceDataConnector.getCustomsOffices flatMap {
-              customsOffices =>
-                val form = formProvider(presentationOffice, customsOffices)
-                val preparedForm = request.userAnswers.get(PresentationOfficePage) match {
-                  case None        => form
-                  case Some(value) => form.fill(value)
-                }
-                renderView(mrn, mode, presentationOffice, preparedForm, customsOffices, Results.Ok)
-            }
-          case _ => Future.successful(Redirect(routes.SessionExpiredController.onPageLoad()))
         }
     }
 
