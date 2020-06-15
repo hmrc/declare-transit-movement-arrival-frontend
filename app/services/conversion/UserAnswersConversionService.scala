@@ -59,7 +59,7 @@ class UserAnswersConversionService {
       case _ => None
     }
 
-  def setEventDetails(userAnswers: UserAnswers, event: EnRouteEvent, eventIndex: Int): Try[UserAnswers] =
+  private def setEventDetails(userAnswers: UserAnswers, event: EnRouteEvent, eventIndex: Int): Try[UserAnswers] =
     event.eventDetails match {
       case Some(incident: Incident) =>
         for {
@@ -94,9 +94,7 @@ class UserAnswersConversionService {
               ua3 <- ua2.set(EventReportedPage(Index(index)), event.alreadyInNcts)
               ua4 <- setEventDetails(ua3, event, index)
               ua5 <- if (event.seals.isDefined) { ua4.set(SealsQuery(Index(index)), event.seals.fold[Seq[Seal]](Nil)(x => x)) } else Try(ua4)
-            } yield {
-              ua5
-            }).toOption match {
+            } yield ua5).toOption match {
               case Some(z) => ua.copy(data = ua.data ++ z.data)
               case _       => ua
             }
