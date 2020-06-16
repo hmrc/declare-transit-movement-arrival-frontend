@@ -108,10 +108,16 @@ object NormalNotification {
             "notificationPlace"       -> notification.notificationPlace,
             "notificationDate"        -> notification.notificationDate,
             "customsSubPlace"         -> notification.customsSubPlace,
-            "trader"                  -> Json.toJson(notification.trader),
-            "presentationOfficeId"    -> notification.presentationOfficeId,
-            "presentationOfficeName"  -> notification.presentationOfficeName,
-            "enRouteEvents"           -> Json.toJson(notification.enRouteEvents)
+            "address" -> Json.obj(
+              "buildingAndStreet" -> notification.trader.streetAndNumber,
+              "city"              -> notification.trader.city,
+              "postcode"          -> notification.trader.postCode
+            ),
+            "presentationOfficeId"   -> notification.presentationOfficeId,
+            "presentationOfficeName" -> notification.presentationOfficeName,
+            "enRouteEvents"          -> Json.toJson(notification.enRouteEvents),
+            "traderEori"             -> notification.trader.eori,
+            "traderName"             -> notification.trader.name
           )
     }
 }
