@@ -55,9 +55,9 @@ object EventDetails {
       Incident.format
   }
 
-  implicit lazy val writes: Writes[EventDetails] = Writes {
-    case i: Incident     => Json.toJson(i)(Incident.format)
-    case t: Transhipment => Json.toJson(t)(Transhipment.writes)
+  implicit lazy val writes: OWrites[EventDetails] = OWrites {
+    case i: Incident     => Json.toJsObject(i)(Incident.format)
+    case t: Transhipment => Json.toJsObject(t)(Transhipment.writes)
   }
 
   implicit def xmlReader: XmlReader[EventDetails] = XmlReader {
@@ -74,7 +74,7 @@ object EventDetails {
 }
 
 final case class Incident(
-  information: Option[String],
+  incidentInformation: Option[String],
   date: Option[LocalDate]   = None,
   authority: Option[String] = None,
   place: Option[String]     = None,
@@ -87,14 +87,14 @@ object Incident {
     val informationLength = 350
   }
 
-  implicit lazy val format: Format[Incident] =
+  implicit lazy val format: OFormat[Incident] =
     Json.format[Incident]
 
   implicit def writes: XMLWrites[Incident] = XMLWrites[Incident] {
     incident =>
       <INCINC>
       {
-      incident.information.map(
+      incident.incidentInformation.map(
         information =>
         <IncInfINC4>{escapeXml(information)}</IncInfINC4>
       ).getOrElse(
@@ -154,9 +154,9 @@ object Transhipment {
       ContainerTranshipment.format
   }
 
-  implicit lazy val writes: Writes[Transhipment] = Writes {
-    case t: VehicularTranshipment => Json.toJson(t)(VehicularTranshipment.writes)
-    case t: ContainerTranshipment => Json.toJson(t)(ContainerTranshipment.format)
+  implicit lazy val writes: OWrites[Transhipment] = OWrites {
+    case t: VehicularTranshipment => Json.toJsObject(t)(VehicularTranshipment.writes)
+    case t: ContainerTranshipment => Json.toJsObject(t)(ContainerTranshipment.format)
   }
 
   implicit lazy val xmlReader: XmlReader[Transhipment] = VehicularTranshipment.xmlReader or ContainerTranshipment.xmlReader
@@ -263,7 +263,7 @@ final case class ContainerTranshipment(
 
 object ContainerTranshipment {
 
-  implicit lazy val format: Format[ContainerTranshipment] =
+  implicit lazy val format: OFormat[ContainerTranshipment] =
     Json.format[ContainerTranshipment]
 
   implicit def xmlWrites: XMLWrites[ContainerTranshipment] = XMLWrites[ContainerTranshipment] {

@@ -23,6 +23,7 @@ import models.reference.CustomsOffice
 import pages.PlaceOfNotificationPage
 import play.api.libs.json._
 import models._
+import queries.EventsQuery
 
 import scala.language.implicitConversions
 
@@ -96,8 +97,8 @@ object NormalNotification {
             (__ \ "trader").read[Trader] and
             (__ \ "presentationOfficeId").read[String] and
             (__ \ "presentationOfficeName").read[String] and
-            (__ \ "enRouteEvents").readNullable[Seq[EnRouteEvent]]
-        )(NormalNotification(_, _, _, _, _, _, _, _))
+            (__ \ "events").readNullable[Seq[EnRouteEvent]]
+        )(NormalNotification.apply _)
       )
   }
 
@@ -114,7 +115,7 @@ object NormalNotification {
               "postcode"          -> notification.trader.postCode
             ),
             "presentationOffice" -> Json.toJson(CustomsOffice(notification.presentationOfficeId, notification.presentationOfficeName, Seq.empty, None)),
-            "enRouteEvents"      -> Json.toJson(notification.enRouteEvents),
+            "events"             -> Json.toJson(notification.enRouteEvents),
             "traderEori"         -> notification.trader.eori,
             "traderName"         -> notification.trader.name
           )

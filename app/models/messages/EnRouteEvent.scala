@@ -54,12 +54,11 @@ object EnRouteEvent {
       event =>
         Json
           .obj(
-            "place"         -> event.place,
-            "countryCode"   -> event.countryCode,
-            "alreadyInNcts" -> event.alreadyInNcts,
-            "eventDetails"  -> Json.toJson(event.eventDetails),
+            "eventPlace"    -> event.place,
+            "eventReported" -> event.alreadyInNcts,
+            "eventCountry"  -> Json.obj("state" -> "", "code" -> event.countryCode, "description" -> ""),
             "seals"         -> Json.toJson(event.seals)
-          )
+          ) ++ Json.toJsObject(event.eventDetails.get)
 
     }
 

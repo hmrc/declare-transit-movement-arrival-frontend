@@ -30,7 +30,7 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages._
 import pages.events.transhipments.{TransportIdentityPage, TransportNationalityPage}
 import pages.events._
-import play.api.libs.json.{JsNull, Json}
+import play.api.libs.json.{JsArray, JsNull, Json}
 import queries.{ContainersQuery, SealsQuery}
 
 class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyChecks with MessagesModelGenerators {
@@ -55,9 +55,13 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
       (expected, trader)
     }
 
+  val incidentWithInformation: Gen[Incident] = for {
+    information <- stringsWithMaxLength(Incident.Constants.informationLength)
+  } yield Incident(Some(information))
+
   private val enRouteEventIncident: Gen[(EnRouteEvent, Incident)] = for {
     enRouteEvent <- arbitrary[EnRouteEvent]
-    incident     <- arbitrary[Incident]
+    incident     <- incidentWithInformation
   } yield (enRouteEvent.copy(eventDetails = Some(incident)), incident)
 
   private val enRouteEventVehicularTranshipment: Gen[(EnRouteEvent, VehicularTranshipment)] = for {
@@ -80,34 +84,47 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
           val result = userAnswersConversionService.convertToUserAnswers(arrivalNotification).value
 
           val userAnswers: UserAnswers =
-            createBasicUserAnswers(trader, arrivalNotification, arrivalNotification.enRouteEvents.isDefined, result.lastUpdated)
-
+            // format: off
+            UserAnswers(mrn, Json.obj("events" -> JsNull))
+              .copy(id = arrivalNotification.movementReferenceNumber)
+              .copy(lastUpdated = result.lastUpdated)
+              .set(
+                PresentationOfficePage,
+                CustomsOffice(id = arrivalNotification.presentationOfficeId, name = arrivalNotification.presentationOfficeName, roles = Seq.empty, None)
+              ).success.value
+              .set(TraderNamePage, trader.name).success.value
+              .set(TraderAddressPage, Address(buildingAndStreet = trader.streetAndNumber, city = trader.city, postcode = trader.postCode)).success.value
+              .set(CustomsSubPlacePage, arrivalNotification.customsSubPlace.value).success.value
+              .set(TraderEoriPage, trader.eori).success.value
+              .set(PlaceOfNotificationPage, arrivalNotification.notificationPlace).success.value
+          // format: on
           result mustBe userAnswers
       }
     }
 
-//    "must return 'User Answers' message when there is one incident on route with seals" in {
-//      forAll(arrivalNotificationWithSubplace, enRouteEventIncident, arbitrary[Seal]) {
-//        case ((arbArrivalNotification, trader), (enRouteEvent, incident), seal) =>
-//          val routeEvent: EnRouteEvent = enRouteEvent
-//            .copy(seals = Some(Seq(seal)))
-//            .copy(eventDetails = Some(incident.copy(date = None, authority = None, place = None, country = None)))
-//
-//          val arrivalNotification: NormalNotification = arbArrivalNotification.copy(enRouteEvents = Some(Seq(routeEvent)))
-//
-//          // format: off
-//          val userAnswers: UserAnswers = createBasicUserAnswers(trader, arrivalNotification, isIncidentOnRoute = true, lastUpdated)
-//            .set(EventPlacePage(eventIndex), routeEvent.place).success.value
-//            .set(EventCountryPage(eventIndex), Country("active", routeEvent.countryCode, "United Kingdom")).success.value
-//            .set(EventReportedPage(eventIndex), routeEvent.alreadyInNcts).success.value
-//            .set(IncidentInformationPage(eventIndex), incident.information.getOrElse("")).success.value
-//            .set(SealsQuery(eventIndex), Seq(seal)).success.value
-//          // format: on
-//
-//          val result = userAnswersConversionService.convertToUserAnswers(arrivalNotification).value.copy(lastUpdated = lastUpdated)
-//          result mustBe userAnswers
-//      }
-//    }
+    "must return 'User Answers' message when there is one incident on route with seals" in {
+      forAll(arrivalNotificationWithSubplace, enRouteEventIncident, arbitrary[Seal]) {
+        case ((arbArrivalNotification, trader), (enRouteEvent, incident), seal) =>
+          val routeEvent: EnRouteEvent = enRouteEvent
+            .copy(seals = Some(Seq(seal)))
+            .copy(eventDetails = Some(incident.copy(date = None, authority = None, place = None, country = None)))
+
+          val arrivalNotification: NormalNotification = arbArrivalNotification.copy(enRouteEvents = Some(Seq(routeEvent)))
+
+          // format: off
+          val userAnswers: UserAnswers = createBasicUserAnswers(trader, arrivalNotification, isIncidentOnRoute = true, lastUpdated)
+            .set(EventPlacePage(eventIndex), routeEvent.place).success.value
+            .set(EventCountryPage(eventIndex), Country("", routeEvent.countryCode, "")).success.value //TODO: we should have values
+            .set(EventReportedPage(eventIndex), routeEvent.alreadyInNcts).success.value
+            .set(IncidentInformationPage(eventIndex), incident.incidentInformation.value).success.value
+            .set(SealsQuery(eventIndex), Seq(seal)).success.value
+          // format: on
+
+          val result = userAnswersConversionService.convertToUserAnswers(arrivalNotification).value
+          result.data mustBe userAnswers.data
+          result.id mustBe userAnswers.id
+      }
+    }
 //
 //    "must return 'User Answers' when there is one vehicle transhipment on route with seals" in {
 //      forAll(arrivalNotificationWithSubplace, enRouteEventVehicularTranshipment, arbitrary[Seal]) {
@@ -266,7 +283,7 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
                                      isIncidentOnRoute: Boolean = false,
                                      timeStamp: LocalDateTime): UserAnswers =
     // format: off
-    UserAnswers(mrn, Json.obj("enRouteEvents" -> JsNull))
+    UserAnswers(mrn, Json.obj("events" -> JsArray(Seq.empty)))
       .copy(id = arrivalNotification.movementReferenceNumber)
       .copy(lastUpdated = timeStamp)
       .set(

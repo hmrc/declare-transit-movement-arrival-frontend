@@ -44,7 +44,7 @@ class EventDetailsSpec
 
       forAll(arbitrary[Incident]) {
         incident =>
-          val incidentInformationOrFlagNode = incident.information
+          val incidentInformationOrFlagNode = incident.incidentInformation
             .map {
               information =>
                 <IncInfINC4>{information}</IncInfINC4>
@@ -97,7 +97,7 @@ class EventDetailsSpec
 
       forAll(arbitrary[Incident]) {
         incident =>
-          val incidentInformationOrFlagNode: Elem = incident.information
+          val incidentInformationOrFlagNode: Elem = incident.incidentInformation
             .map {
               information =>
                 <IncInfINC4>{information}</IncInfINC4>
@@ -520,7 +520,7 @@ class EventDetailsSpec
 
       forAll(arbitrary[VehicularTranshipment]) {
         vehicularTranshipment =>
-          val json = Json.toJson(vehicularTranshipment)
+          val json = Json.toJson(vehicularTranshipment)(VehicularTranshipment.writes)
           json.validate[VehicularTranshipment] mustEqual JsSuccess(vehicularTranshipment)
       }
     }
@@ -618,7 +618,7 @@ class EventDetailsSpec
 
       forAll(arbitrary[VehicularTranshipment]) {
         vehicularTranshipment =>
-          val json = Json.toJson(vehicularTranshipment)
+          val json = Json.toJson(vehicularTranshipment)(VehicularTranshipment.writes) //TODO: we should not be passing this explicitly
           Json.toJson(vehicularTranshipment: EventDetails) mustEqual json
       }
     }
@@ -634,7 +634,7 @@ class EventDetailsSpec
   }
 
   private def incidentJson(incident: Incident): JsObject =
-    incident.information match {
+    incident.incidentInformation match {
       case Some(information) =>
         Json.obj("information" -> information)
       case _ =>
