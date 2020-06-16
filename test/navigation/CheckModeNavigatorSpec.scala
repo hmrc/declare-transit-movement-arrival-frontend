@@ -22,6 +22,7 @@ import controllers.events.seals.{routes => sealRoutes}
 import controllers.events.transhipments.{routes => transhipmentRoutes}
 import controllers.routes
 import generators.{Generators, MessagesModelGenerators}
+import models.GoodsLocation.BorderForceOffice
 import models.TranshipmentType.{DifferentContainer, DifferentContainerAndVehicle, DifferentVehicle}
 import models.messages.{Container, CustomsOfficeOfPresentation, Seal}
 import models.reference.{Country, CustomsOffice}
@@ -139,11 +140,17 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
           }
         }
-        "trader name when trader name has not  previously been answered " in {
-          forAll(arbitrary[UserAnswers]) {
-            answers =>
+        "trader name when trader name has not previously been answered on Normal Route" in {
+          forAll(arbitrary[UserAnswers], arbitrary[CustomsOffice]) {
+            (answers, presentationOffice) =>
               val updatedAnswers =
-                answers.remove(TraderNamePage).success.value
+                answers
+                  .set(GoodsLocationPage, BorderForceOffice)
+                  .success
+                  .value
+                  .set(PresentationOfficePage, presentationOffice).success.value
+
+                  .remove(TraderNamePage).success.value
 
               navigator
                 .nextPage(PresentationOfficePage, CheckMode, updatedAnswers)
