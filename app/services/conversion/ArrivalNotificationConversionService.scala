@@ -19,6 +19,7 @@ package services.conversion
 import java.time.LocalDate
 
 import derivable.DeriveNumberOfEvents
+import models.GoodsLocation.{AuthorisedConsigneesLocation, BorderForceOffice}
 import models.messages._
 import models.{Address, Index, UserAnswers}
 import pages._
@@ -30,32 +31,62 @@ class ArrivalNotificationConversionService {
 
   val countryCode_GB = "GB"
 
-  def convertToArrivalNotification(userAnswers: UserAnswers): Option[ArrivalNotification] =
-    for {
-      presentationOffice <- userAnswers.get(PresentationOfficePage)
-      customsSubPlace    <- userAnswers.get(CustomsSubPlacePage)
-      tradersAddress     <- userAnswers.get(TraderAddressPage)
-      traderEori         <- userAnswers.get(TraderEoriPage)
-      traderName         <- userAnswers.get(TraderNamePage)
-      notificationPlace  <- userAnswers.get(PlaceOfNotificationPage) orElse Some(tradersAddress.postcode)
-    } yield {
-      NormalNotification(
-        movementReferenceNumber = userAnswers.id,
-        notificationPlace       = notificationPlace,
-        notificationDate        = LocalDate.now(),
-        customsSubPlace         = Some(customsSubPlace),
-        trader = Trader(
-          eori            = traderEori,
-          name            = traderName,
-          streetAndNumber = tradersAddress.buildingAndStreet,
-          postCode        = tradersAddress.postcode,
-          city            = tradersAddress.city,
-          countryCode     = countryCode_GB
-        ),
-        presentationOfficeId   = presentationOffice.id,
-        presentationOfficeName = presentationOffice.name,
-        enRouteEvents          = enRouteEvents(userAnswers)
-      )
+  def convertToArrivalNotification(userAnswers: UserAnswers, eoriNumber: String = ""): Option[ArrivalNotification] =
+    userAnswers.get(GoodsLocationPage) match {
+      case Some(BorderForceOffice) =>
+        for {
+          presentationOffice <- userAnswers.get(PresentationOfficePage)
+          customsSubPlace    <- userAnswers.get(CustomsSubPlacePage)
+          tradersAddress     <- userAnswers.get(TraderAddressPage)
+          traderEori         <- userAnswers.get(TraderEoriPage)
+          traderName         <- userAnswers.get(TraderNamePage)
+          notificationPlace  <- userAnswers.get(PlaceOfNotificationPage) orElse Some(tradersAddress.postcode)
+        } yield
+          NormalNotification(
+            movementReferenceNumber = userAnswers.id,
+            notificationPlace       = notificationPlace,
+            notificationDate        = LocalDate.now(),
+            customsSubPlace         = Some(customsSubPlace),
+            trader = Trader(
+              eori            = traderEori,
+              name            = traderName,
+              streetAndNumber = tradersAddress.buildingAndStreet,
+              postCode        = tradersAddress.postcode,
+              city            = tradersAddress.city,
+              countryCode     = countryCode_GB
+            ),
+            presentationOfficeId   = presentationOffice.id,
+            presentationOfficeName = presentationOffice.name,
+            enRouteEvents          = enRouteEvents(userAnswers)
+          )
+      case Some(AuthorisedConsigneesLocation) =>
+        for {
+          presentationOffice <- userAnswers.get(PresentationOfficePage)
+          authorisedLocation <- userAnswers.get(AuthorisedLocationPage)
+          tradersAddress     <- userAnswers.get(ConsigneeAddressPage)
+          traderEori         <- userAnswers.get(ConsigneeEoriNumberPage) orElse Some(eoriNumber) //TODO remove .get with answering Eori in journey
+          traderName         <- userAnswers.get(ConsigneeNamePage)
+          notificationPlace  <- userAnswers.get(ConsigneeAddressPage) // orElse Some(tradersAddress)
+        } yield
+          SimplifiedNotification(
+            movementReferenceNumber = userAnswers.id,
+            notificationPlace       = notificationPlace.postcode,
+            notificationDate        = LocalDate.now(),
+            approvedLocation        = Some(authorisedLocation),
+            trader = Trader(
+              eori            = traderEori,
+              name            = traderName,
+              streetAndNumber = tradersAddress.buildingAndStreet,
+              postCode        = tradersAddress.postcode,
+              city            = tradersAddress.city,
+              countryCode     = countryCode_GB
+            ),
+            presentationOfficeId   = presentationOffice.id,
+            presentationOfficeName = presentationOffice.name,
+            enRouteEvents          = enRouteEvents(userAnswers)
+          )
+      case _ =>
+        None
     }
 
   private def eventDetails(
@@ -104,5 +135,4 @@ class ArrivalNotificationConversionService {
             }
         }
     }
-
 }
