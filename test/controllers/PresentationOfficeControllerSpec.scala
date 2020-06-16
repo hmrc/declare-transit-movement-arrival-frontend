@@ -23,7 +23,7 @@ import matchers.JsonMatchers
 import models.reference.CustomsOffice
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
-import org.mockito.ArgumentCaptor
+import org.mockito.{ArgumentCaptor, Mockito}
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
@@ -50,9 +50,14 @@ class PresentationOfficeControllerSpec extends SpecBase with MockitoSugar with N
 
   lazy val presentationOfficeRoute: String = routes.PresentationOfficeController.onPageLoad(mrn, NormalMode).url
 
-  val mockRefDataConnector: ReferenceDataConnector = mock[ReferenceDataConnector]
-  val templateCaptor: ArgumentCaptor[String]       = ArgumentCaptor.forClass(classOf[String])
-  val jsonCaptor: ArgumentCaptor[JsObject]         = ArgumentCaptor.forClass(classOf[JsObject])
+  private val mockRefDataConnector: ReferenceDataConnector = mock[ReferenceDataConnector]
+  val templateCaptor: ArgumentCaptor[String]               = ArgumentCaptor.forClass(classOf[String])
+  val jsonCaptor: ArgumentCaptor[JsObject]                 = ArgumentCaptor.forClass(classOf[JsObject])
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    Mockito.reset(mockRefDataConnector)
+  }
 
   "PresentationOffice Controller" - {
 
@@ -81,8 +86,12 @@ class PresentationOfficeControllerSpec extends SpecBase with MockitoSugar with N
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request     = FakeRequest(GET, presentationOfficeRoute)
+      when(mockRefDataConnector.getCustomsOffices()(any(), any())).thenReturn(Future.successful(customsOffices))
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .overrides(bind[ReferenceDataConnector].toInstance(mockRefDataConnector))
+        .build()
+      val request = FakeRequest(GET, presentationOfficeRoute)
 
       val result = route(application, request).value
 
@@ -131,8 +140,12 @@ class PresentationOfficeControllerSpec extends SpecBase with MockitoSugar with N
 
     "must redirect to session expired page when invalid data is submitted and user hasn't answered the customs sub-place page question" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request     = FakeRequest(POST, presentationOfficeRoute).withFormUrlEncodedBody(("value", ""))
+      when(mockRefDataConnector.getCustomsOffices()(any(), any())).thenReturn(Future.successful(customsOffices))
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .overrides(bind[ReferenceDataConnector].toInstance(mockRefDataConnector))
+        .build()
+      val request = FakeRequest(POST, presentationOfficeRoute).withFormUrlEncodedBody(("value", ""))
 
       val result = route(application, request).value
 
