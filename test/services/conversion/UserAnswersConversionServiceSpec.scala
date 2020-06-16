@@ -30,6 +30,7 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages._
 import pages.events.transhipments.{TransportIdentityPage, TransportNationalityPage}
 import pages.events._
+import play.api.libs.json.{JsNull, Json}
 import queries.{ContainersQuery, SealsQuery}
 
 class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyChecks with MessagesModelGenerators {
@@ -265,19 +266,17 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
                                      isIncidentOnRoute: Boolean = false,
                                      timeStamp: LocalDateTime): UserAnswers =
     // format: off
-    emptyUserAnswers
+    UserAnswers(mrn, Json.obj("enRouteEvents" -> JsNull))
       .copy(id = arrivalNotification.movementReferenceNumber)
       .copy(lastUpdated = timeStamp)
-      .set(GoodsLocationPage, BorderForceOffice).success.value
       .set(
         PresentationOfficePage,
         CustomsOffice(id = arrivalNotification.presentationOfficeId, name = arrivalNotification.presentationOfficeName, roles = Seq.empty, None)
       ).success.value
-      .set(CustomsSubPlacePage, arrivalNotification.customsSubPlace.value).success.value
       .set(TraderNamePage, trader.name).success.value
       .set(TraderAddressPage, Address(buildingAndStreet = trader.streetAndNumber, city = trader.city, postcode = trader.postCode)).success.value
+      .set(CustomsSubPlacePage, arrivalNotification.customsSubPlace.value).success.value
       .set(TraderEoriPage, trader.eori).success.value
-      .set(IncidentOnRoutePage, isIncidentOnRoute).success.value
       .set(PlaceOfNotificationPage, arrivalNotification.notificationPlace).success.value
   // format: on
 }

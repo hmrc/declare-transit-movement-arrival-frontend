@@ -19,7 +19,10 @@ package models.messages
 import java.time.LocalDate
 
 import models.MovementReferenceNumber
+import models.reference.CustomsOffice
+import pages.PlaceOfNotificationPage
 import play.api.libs.json._
+import models._
 
 import scala.language.implicitConversions
 
@@ -103,21 +106,17 @@ object NormalNotification {
       notification =>
         Json
           .obj(
-            "procedure"               -> Json.toJson(notification.procedure),
-            "movementReferenceNumber" -> notification.movementReferenceNumber,
-            "notificationPlace"       -> notification.notificationPlace,
-            "notificationDate"        -> notification.notificationDate,
-            "customsSubPlace"         -> notification.customsSubPlace,
+            PlaceOfNotificationPage.toString -> notification.notificationPlace,
+            "customsSubPlace"                -> notification.customsSubPlace,
             "address" -> Json.obj(
               "buildingAndStreet" -> notification.trader.streetAndNumber,
               "city"              -> notification.trader.city,
               "postcode"          -> notification.trader.postCode
             ),
-            "presentationOfficeId"   -> notification.presentationOfficeId,
-            "presentationOfficeName" -> notification.presentationOfficeName,
-            "enRouteEvents"          -> Json.toJson(notification.enRouteEvents),
-            "traderEori"             -> notification.trader.eori,
-            "traderName"             -> notification.trader.name
+            "presentationOffice" -> Json.toJson(CustomsOffice(notification.presentationOfficeId, notification.presentationOfficeName, Seq.empty, None)),
+            "enRouteEvents"      -> Json.toJson(notification.enRouteEvents),
+            "traderEori"         -> notification.trader.eori,
+            "traderName"         -> notification.trader.name
           )
     }
 }
