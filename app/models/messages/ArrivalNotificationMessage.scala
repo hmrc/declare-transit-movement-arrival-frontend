@@ -117,12 +117,13 @@ object NormalNotification {
 }
 
 final case class SimplifiedNotification(
-  movementReferenceNumber: String, // TODO: Make this a MovementReferenceNumber
+  movementReferenceNumber: MovementReferenceNumber,
   notificationPlace: String,
   notificationDate: LocalDate,
   approvedLocation: Option[String],
   trader: Trader,
-  presentationOffice: String,
+  presentationOfficeId: String,
+  presentationOfficeName: String,
   enRouteEvents: Option[Seq[EnRouteEvent]]
 ) extends ArrivalNotification {
 
@@ -155,12 +156,13 @@ object SimplifiedNotification {
       }
       .andKeep(
         (
-          (__ \ "movementReferenceNumber").read[String] and
+          (__ \ "movementReferenceNumber").read[MovementReferenceNumber] and
             (__ \ "notificationPlace").read[String] and
             (__ \ "notificationDate").read[LocalDate] and
             (__ \ "approvedLocation").readNullable[String] and
             (__ \ "trader").read[Trader] and
-            (__ \ "presentationOffice").read[String] and
+            (__ \ "presentationOfficeId").read[String] and
+            (__ \ "presentationOfficeName").read[String] and
             (__ \ "enRouteEvents").readNullable[Seq[EnRouteEvent]]
         )(SimplifiedNotification.apply _)
       )
@@ -177,7 +179,8 @@ object SimplifiedNotification {
             "notificationDate"        -> notification.notificationDate,
             "approvedLocation"        -> notification.approvedLocation,
             "trader"                  -> Json.toJson(notification.trader),
-            "presentationOffice"      -> notification.presentationOffice,
+            "presentationOfficeId"    -> notification.presentationOfficeId,
+            "presentationOfficeName"  -> notification.presentationOfficeName,
             "enRouteEvents"           -> Json.toJson(notification.enRouteEvents)
           )
     }
