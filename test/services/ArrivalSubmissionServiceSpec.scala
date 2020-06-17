@@ -62,7 +62,7 @@ class ArrivalSubmissionServiceSpec extends SpecBase with MessagesModelGenerators
     "submit" - {
 
       "must return None on submission of invalid data" in {
-        when(mockConverterService.convertToArrivalNotification(any(), any()))
+        when(mockConverterService.convertToArrivalNotification(any()))
           .thenReturn(None)
 
         val application = applicationBuilder(Some(emptyUserAnswers))
@@ -80,7 +80,7 @@ class ArrivalSubmissionServiceSpec extends SpecBase with MessagesModelGenerators
         when(mockInterchangeControllerReference.nextInterchangeControlReferenceId())
           .thenReturn(Future.successful(InterchangeControlReference("date", 0)))
 
-        when(mockConverterService.convertToArrivalNotification(any(), any()))
+        when(mockConverterService.convertToArrivalNotification(any()))
           .thenReturn(Some(normalNotification))
 
         when(mockArrivalMovementConnector.submitArrivalMovement(any())(any()))
@@ -104,7 +104,7 @@ class ArrivalSubmissionServiceSpec extends SpecBase with MessagesModelGenerators
         when(mockInterchangeControllerReference.nextInterchangeControlReferenceId())
           .thenReturn(Future.failed(new Exception("failed to get nextInterchange reference id")))
 
-        when(mockConverterService.convertToArrivalNotification(any(), any()))
+        when(mockConverterService.convertToArrivalNotification(any()))
           .thenReturn(Some(normalNotification))
 
         val application = applicationBuilder(Some(emptyUserAnswers))

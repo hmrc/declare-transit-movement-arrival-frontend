@@ -31,22 +31,22 @@ class ArrivalNotificationConversionService {
 
   val countryCode_GB = "GB"
 
-  def convertToArrivalNotification(userAnswers: UserAnswers, eoriNumber: String = ""): Option[ArrivalNotification] =
+  def convertToArrivalNotification(userAnswers: UserAnswers): Option[ArrivalNotification] =
     userAnswers.get(GoodsLocationPage) match {
       case Some(BorderForceOffice) =>
         createNormalNotification(userAnswers)
       case Some(AuthorisedConsigneesLocation) =>
-        createSimplifiedNotification(userAnswers, eoriNumber)
+        createSimplifiedNotification(userAnswers)
       case _ =>
         None
     }
 
-  private def createSimplifiedNotification(userAnswers: UserAnswers, eoriNumber: String) =
+  private def createSimplifiedNotification(userAnswers: UserAnswers) =
     for {
       presentationOffice <- userAnswers.get(PresentationOfficePage)
       authorisedLocation <- userAnswers.get(AuthorisedLocationPage)
       tradersAddress     <- userAnswers.get(ConsigneeAddressPage)
-      traderEori         <- userAnswers.get(ConsigneeEoriNumberPage) orElse Some(eoriNumber) //TODO remove .get with answering Eori in journey
+      traderEori         <- userAnswers.get(ConsigneeEoriNumberPage)
       traderName         <- userAnswers.get(ConsigneeNamePage)
       notificationPlace  <- userAnswers.get(ConsigneeAddressPage)
     } yield
