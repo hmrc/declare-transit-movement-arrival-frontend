@@ -260,12 +260,12 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
           // format: off
           val userAnswers: UserAnswers = createBasicUserAnswers(trader, arrivalNotification, isIncidentOnRoute = true, lastUpdated)
             .set(EventPlacePage(eventIndex), enRouteEvent1.place).success.value
-            .set(EventCountryPage(eventIndex), Country("active", enRouteEvent1.countryCode, "United Kingdom")).success.value
+            .set(EventCountryPage(eventIndex), Country("", enRouteEvent1.countryCode, "")).success.value
             .set(EventReportedPage(eventIndex), enRouteEvent1.alreadyInNcts).success.value
             .set(ContainersQuery(eventIndex), Seq(container)).success.value
             .set(SealsQuery(eventIndex), Seq(seal)).success.value
             .set(EventPlacePage(eventIndex2), enRouteEvent2.place).success.value
-            .set(EventCountryPage(eventIndex2), Country("active", enRouteEvent2.countryCode, "United Kingdom")).success.value
+            .set(EventCountryPage(eventIndex2), Country("", enRouteEvent2.countryCode, "")).success.value
             .set(EventReportedPage(eventIndex2), enRouteEvent2.alreadyInNcts).success.value
             .set(ContainersQuery(eventIndex2), Seq(container)).success.value
             .set(SealsQuery(eventIndex2), Seq(seal)).success.value
