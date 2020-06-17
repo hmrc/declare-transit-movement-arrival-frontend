@@ -67,7 +67,7 @@ class SimplifiedNotificationConversionServiceSpec extends SpecBase with ScalaChe
 
 
   "ArrivalNotificationConversionService" - {
-    "return 'Normal Arrival Notification' message" - {
+    "return 'Simplified Arrival Notification' message" - {
       "when there are no EventDetails on route" in {
         forAll(simplifiedNotificationWithSubplace) {
           case (arbArrivalNotification, trader) =>

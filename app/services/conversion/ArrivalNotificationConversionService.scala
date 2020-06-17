@@ -34,60 +34,66 @@ class ArrivalNotificationConversionService {
   def convertToArrivalNotification(userAnswers: UserAnswers, eoriNumber: String = ""): Option[ArrivalNotification] =
     userAnswers.get(GoodsLocationPage) match {
       case Some(BorderForceOffice) =>
-        for {
-          presentationOffice <- userAnswers.get(PresentationOfficePage)
-          customsSubPlace    <- userAnswers.get(CustomsSubPlacePage)
-          tradersAddress     <- userAnswers.get(TraderAddressPage)
-          traderEori         <- userAnswers.get(TraderEoriPage)
-          traderName         <- userAnswers.get(TraderNamePage)
-          notificationPlace  <- userAnswers.get(PlaceOfNotificationPage) orElse Some(tradersAddress.postcode)
-        } yield
-          NormalNotification(
-            movementReferenceNumber = userAnswers.id,
-            notificationPlace       = notificationPlace,
-            notificationDate        = LocalDate.now(),
-            customsSubPlace         = Some(customsSubPlace),
-            trader = Trader(
-              eori            = traderEori,
-              name            = traderName,
-              streetAndNumber = tradersAddress.buildingAndStreet,
-              postCode        = tradersAddress.postcode,
-              city            = tradersAddress.city,
-              countryCode     = countryCode_GB
-            ),
-            presentationOfficeId   = presentationOffice.id,
-            presentationOfficeName = presentationOffice.name,
-            enRouteEvents          = enRouteEvents(userAnswers)
-          )
+        createNormalNotification(userAnswers)
       case Some(AuthorisedConsigneesLocation) =>
-        for {
-          presentationOffice <- userAnswers.get(PresentationOfficePage)
-          authorisedLocation <- userAnswers.get(AuthorisedLocationPage)
-          tradersAddress     <- userAnswers.get(ConsigneeAddressPage)
-          traderEori         <- userAnswers.get(ConsigneeEoriNumberPage) orElse Some(eoriNumber) //TODO remove .get with answering Eori in journey
-          traderName         <- userAnswers.get(ConsigneeNamePage)
-          notificationPlace  <- userAnswers.get(ConsigneeAddressPage) // orElse Some(tradersAddress)
-        } yield
-          SimplifiedNotification(
-            movementReferenceNumber = userAnswers.id,
-            notificationPlace       = notificationPlace.postcode,
-            notificationDate        = LocalDate.now(),
-            approvedLocation        = Some(authorisedLocation),
-            trader = Trader(
-              eori            = traderEori,
-              name            = traderName,
-              streetAndNumber = tradersAddress.buildingAndStreet,
-              postCode        = tradersAddress.postcode,
-              city            = tradersAddress.city,
-              countryCode     = countryCode_GB
-            ),
-            presentationOfficeId   = presentationOffice.id,
-            presentationOfficeName = presentationOffice.name,
-            enRouteEvents          = enRouteEvents(userAnswers)
-          )
+        createSimplifiedNotification(userAnswers, eoriNumber)
       case _ =>
         None
     }
+
+  private def createSimplifiedNotification(userAnswers: UserAnswers, eoriNumber: String) =
+    for {
+      presentationOffice <- userAnswers.get(PresentationOfficePage)
+      authorisedLocation <- userAnswers.get(AuthorisedLocationPage)
+      tradersAddress     <- userAnswers.get(ConsigneeAddressPage)
+      traderEori         <- userAnswers.get(ConsigneeEoriNumberPage) orElse Some(eoriNumber) //TODO remove .get with answering Eori in journey
+      traderName         <- userAnswers.get(ConsigneeNamePage)
+      notificationPlace  <- userAnswers.get(ConsigneeAddressPage)
+    } yield
+      SimplifiedNotification(
+        movementReferenceNumber = userAnswers.id,
+        notificationPlace       = notificationPlace.postcode,
+        notificationDate        = LocalDate.now(),
+        approvedLocation        = Some(authorisedLocation),
+        trader = Trader(
+          eori            = traderEori,
+          name            = traderName,
+          streetAndNumber = tradersAddress.buildingAndStreet,
+          postCode        = tradersAddress.postcode,
+          city            = tradersAddress.city,
+          countryCode     = countryCode_GB
+        ),
+        presentationOfficeId   = presentationOffice.id,
+        presentationOfficeName = presentationOffice.name,
+        enRouteEvents          = enRouteEvents(userAnswers)
+      )
+
+  private def createNormalNotification(userAnswers: UserAnswers) =
+    for {
+      presentationOffice <- userAnswers.get(PresentationOfficePage)
+      customsSubPlace    <- userAnswers.get(CustomsSubPlacePage)
+      tradersAddress     <- userAnswers.get(TraderAddressPage)
+      traderEori         <- userAnswers.get(TraderEoriPage)
+      traderName         <- userAnswers.get(TraderNamePage)
+      notificationPlace  <- userAnswers.get(PlaceOfNotificationPage) orElse Some(tradersAddress.postcode)
+    } yield
+      NormalNotification(
+        movementReferenceNumber = userAnswers.id,
+        notificationPlace       = notificationPlace,
+        notificationDate        = LocalDate.now(),
+        customsSubPlace         = Some(customsSubPlace),
+        trader = Trader(
+          eori            = traderEori,
+          name            = traderName,
+          streetAndNumber = tradersAddress.buildingAndStreet,
+          postCode        = tradersAddress.postcode,
+          city            = tradersAddress.city,
+          countryCode     = countryCode_GB
+        ),
+        presentationOfficeId   = presentationOffice.id,
+        presentationOfficeName = presentationOffice.name,
+        enRouteEvents          = enRouteEvents(userAnswers)
+      )
 
   private def eventDetails(
     incidentInformation: Option[String],
