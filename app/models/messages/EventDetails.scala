@@ -24,8 +24,10 @@ import com.lucidchart.open.xtract.{ParseFailure, XmlReader, __ => xmlPath}
 import models.XMLReads._
 import models.XMLWrites
 import models.XMLWrites._
+import models.reference.Country
 import play.api.libs.json._
 import utils.Format
+import models._
 
 import scala.language.implicitConversions
 import scala.xml.NodeSeq
@@ -201,14 +203,15 @@ object VehicularTranshipment {
       transhipment =>
         Json
           .obj(
-            "transportIdentity" -> transhipment.transportIdentity,
-            "transportCountry"  -> transhipment.transportCountry,
-            "date"              -> transhipment.date,
-            "authority"         -> transhipment.authority,
-            "place"             -> transhipment.place,
-            "country"           -> transhipment.country,
-            "containers"        -> Json.toJson(transhipment.containers)
+            "transportIdentity"    -> transhipment.transportIdentity,
+            "transportNationality" -> Json.obj("state" -> "", "code" -> transhipment.transportCountry, "description" -> ""),
+            "date"                 -> transhipment.date,
+            "authority"            -> transhipment.authority,
+            "place"                -> transhipment.place,
+            "country"              -> transhipment.country,
+            "containers"           -> Json.toJson(transhipment.containers)
           )
+          .filterNulls
     }
 
   implicit def xmlWrites: XMLWrites[VehicularTranshipment] = XMLWrites[VehicularTranshipment] {
@@ -242,7 +245,7 @@ object VehicularTranshipment {
 
   implicit lazy val xmlReader: XmlReader[VehicularTranshipment] = (
     (xmlPath \ "NewTraMeaIdeSHP26").read[String],
-    (xmlPath \ "NewTraMeaNatSHP54").read[String],
+    (xmlPath \ "NewTraMeaNatSHP54").read[String], //TODO NEEDS LOOKUP
     (xmlPath \ "EndDatSHP60").read[LocalDate].optional,
     (xmlPath \ "EndAutSHP61").read[String].optional,
     (xmlPath \ "EndPlaSHP63").read[String].optional,

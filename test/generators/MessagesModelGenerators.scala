@@ -21,6 +21,7 @@ import java.time.{LocalDate, LocalTime}
 import models._
 import models.messages.ErrorType.{GenericError, MRNError}
 import models.messages._
+import models.reference.Country
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 import utils.Format._

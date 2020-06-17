@@ -125,30 +125,30 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
           result.id mustBe userAnswers.id
       }
     }
-//
-//    "must return 'User Answers' when there is one vehicle transhipment on route with seals" in {
-//      forAll(arrivalNotificationWithSubplace, enRouteEventVehicularTranshipment, arbitrary[Seal]) {
-//        case ((arbArrivalNotification, trader), (enRouteEvent, vehicularTranshipment), seal) =>
-//          val routeEvent: EnRouteEvent = enRouteEvent
-//            .copy(seals = Some(Seq(seal)))
-//            .copy(eventDetails = Some(vehicularTranshipment.copy(date = None, authority = None, place = None, country = None, containers = None)))
-//
-//          val arrivalNotification: NormalNotification = arbArrivalNotification.copy(enRouteEvents = Some(Seq(routeEvent)))
-//
-//          // format: off
-//          val userAnswers: UserAnswers = createBasicUserAnswers(trader, arrivalNotification, isIncidentOnRoute = true, lastUpdated)
-//            .set(EventPlacePage(eventIndex), routeEvent.place).success.value
-//            .set(EventCountryPage(eventIndex), Country("active", routeEvent.countryCode, "United Kingdom")).success.value
-//            .set(EventReportedPage(eventIndex), routeEvent.alreadyInNcts).success.value
-//            .set(TransportIdentityPage(eventIndex), vehicularTranshipment.transportIdentity).success.value
-//            .set(TransportNationalityPage(eventIndex), Country("active", vehicularTranshipment.transportCountry, "United Kingdom")).success.value
-//            .set(SealsQuery(eventIndex), Seq(seal)).success.value
-//          // format: on
-//
-//          val result = userAnswersConversionService.convertToUserAnswers(arrivalNotification).value.copy(lastUpdated = lastUpdated)
-//          result mustBe userAnswers
-//      }
-//    }
+
+    "must return 'User Answers' when there is one vehicle transhipment on route with seals" in {
+      forAll(arrivalNotificationWithSubplace, enRouteEventVehicularTranshipment, arbitrary[Seal]) {
+        case ((arbArrivalNotification, trader), (enRouteEvent, vehicularTranshipment), seal) =>
+          val routeEvent: EnRouteEvent = enRouteEvent
+            .copy(seals = Some(Seq(seal)))
+            .copy(eventDetails = Some(vehicularTranshipment.copy(date = None, authority = None, place = None, country = None, containers = None)))
+
+          val arrivalNotification: NormalNotification = arbArrivalNotification.copy(enRouteEvents = Some(Seq(routeEvent)))
+
+          // format: off
+          val userAnswers: UserAnswers = createBasicUserAnswers(trader, arrivalNotification, isIncidentOnRoute = true, lastUpdated)
+            .set(EventPlacePage(eventIndex), routeEvent.place).success.value
+            .set(EventCountryPage(eventIndex), Country("", routeEvent.countryCode, "")).success.value
+            .set(EventReportedPage(eventIndex), routeEvent.alreadyInNcts).success.value
+            .set(TransportIdentityPage(eventIndex), vehicularTranshipment.transportIdentity).success.value
+            .set(TransportNationalityPage(eventIndex), Country("", vehicularTranshipment.transportCountry, "")).success.value
+            .set(SealsQuery(eventIndex), Seq(seal)).success.value
+          // format: on
+
+          val result = userAnswersConversionService.convertToUserAnswers(arrivalNotification).value.copy(lastUpdated = lastUpdated)
+          result mustBe userAnswers
+      }
+    }
 //
 //    "must return 'User Answers' when there is one container transhipment on route with seals" in {
 //      forAll(arrivalNotificationWithSubplace, enRouteEventContainerTranshipment, arbitrary[Container], arbitrary[Seal]) {
