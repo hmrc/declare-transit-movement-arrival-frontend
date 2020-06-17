@@ -68,7 +68,7 @@ trait MessagesModelGenerators extends Generators {
 
         transportIdentity <- stringsWithMaxLength(VehicularTranshipment.Constants.transportIdentityLength)
         transportCountry  <- stringsWithMaxLength(VehicularTranshipment.Constants.transportCountryLength)
-        containers        <- Gen.option(listWithMaxLength[Container](Transhipment.Constants.maxContainers))
+        containers        <- Gen.option(listWithMaxLength[Container](2))
       } yield VehicularTranshipment(transportIdentity = transportIdentity, transportCountry = transportCountry, containers = containers)
     }
 
@@ -80,12 +80,12 @@ trait MessagesModelGenerators extends Generators {
     }
 
   implicit lazy val arbitraryContainers: Arbitrary[Seq[Container]] =
-    Arbitrary(listWithMaxLength[Container](Transhipment.Constants.maxContainers))
+    Arbitrary(listWithMaxLength[Container](2))
 
   implicit lazy val arbitraryContainerTranshipment: Arbitrary[ContainerTranshipment] =
     Arbitrary {
       for {
-        containers <- listWithMaxLength[Container](Transhipment.Constants.maxContainers)
+        containers <- listWithMaxLength[Container](2)
       } yield ContainerTranshipment(containers = containers)
     }
 
