@@ -172,38 +172,39 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
           result mustBe userAnswers
       }
     }
-//
-//    "must return 'User Answers' when there multiple incidents on route" in {
-//      forAll(arrivalNotificationWithSubplace, enRouteEventIncident, enRouteEventIncident) {
-//        case ((arbArrivalNotification, trader), (enRouteEvent1, incident1), (enRouteEvent2, incident2)) =>
-//          val routeEvent1: EnRouteEvent = enRouteEvent1
-//            .copy(seals = None)
-//            .copy(eventDetails = Some(incident1.copy(date = None, authority = None, place = None, country = None)))
-//
-//          val routeEvent2: EnRouteEvent = enRouteEvent2
-//            .copy(seals = None)
-//            .copy(eventDetails = Some(incident2.copy(date = None, authority = None, place = None, country = None)))
-//
-//          val arrivalNotification: NormalNotification = arbArrivalNotification.copy(enRouteEvents = Some(Seq(routeEvent1, routeEvent2)))
-//          val eventIndex2                             = Index(1)
-//
-//          // format: off
-//          val userAnswers: UserAnswers = createBasicUserAnswers(trader, arrivalNotification, isIncidentOnRoute = true, lastUpdated)
-//            .set(EventPlacePage(eventIndex), routeEvent1.place).success.value
-//            .set(EventCountryPage(eventIndex), Country("active", routeEvent1.countryCode, "United Kingdom")).success.value
-//            .set(EventReportedPage(eventIndex), routeEvent1.alreadyInNcts).success.value
-//            .set(IsTranshipmentPage(eventIndex2), false).success.value
-//            .set(EventPlacePage(eventIndex2), routeEvent2.place).success.value
-//            .set(EventCountryPage(eventIndex2), Country("active", routeEvent2.countryCode, "United Kingdom")).success.value
-//            .set(EventReportedPage(eventIndex2), routeEvent2.alreadyInNcts).success.value
-//            .set(IncidentInformationPage(eventIndex), incident1.information.getOrElse("")).success.value
-//            .set(IncidentInformationPage(eventIndex2), incident2.information.getOrElse("")).success.value
-//          // format: on
-//
-//          val result = userAnswersConversionService.convertToUserAnswers(arrivalNotification).value.copy(lastUpdated = lastUpdated)
-//          result mustBe userAnswers
-//      }
-//    }
+
+    "must return 'User Answers' when there multiple incidents on route" in {
+      forAll(arrivalNotificationWithSubplace, enRouteEventIncident, enRouteEventIncident, arbitrary[Seal]) {
+        case ((arbArrivalNotification, trader), (enRouteEvent1, incident1), (enRouteEvent2, incident2), seal) =>
+          val routeEvent1: EnRouteEvent = enRouteEvent1
+            .copy(seals = Some(Seq(seal)))
+            .copy(eventDetails = Some(incident1.copy(date = None, authority = None, place = None, country = None)))
+
+          val routeEvent2: EnRouteEvent = enRouteEvent2
+            .copy(seals = Some(Seq(seal)))
+            .copy(eventDetails = Some(incident2.copy(date = None, authority = None, place = None, country = None)))
+
+          val arrivalNotification: NormalNotification = arbArrivalNotification.copy(enRouteEvents = Some(Seq(routeEvent1, routeEvent2)))
+          val eventIndex2                             = Index(1)
+
+          // format: off
+          val userAnswers: UserAnswers = createBasicUserAnswers(trader, arrivalNotification, isIncidentOnRoute = true, lastUpdated)
+            .set(EventPlacePage(eventIndex), routeEvent1.place).success.value
+            .set(EventCountryPage(eventIndex), Country("", routeEvent1.countryCode, "")).success.value
+            .set(EventReportedPage(eventIndex), routeEvent1.alreadyInNcts).success.value
+            .set(EventPlacePage(eventIndex2), routeEvent2.place).success.value
+            .set(EventCountryPage(eventIndex2), Country("", routeEvent2.countryCode, "")).success.value
+            .set(EventReportedPage(eventIndex2), routeEvent2.alreadyInNcts).success.value
+            .set(IncidentInformationPage(eventIndex), incident1.incidentInformation.getOrElse("")).success.value
+            .set(IncidentInformationPage(eventIndex2), incident2.incidentInformation.getOrElse("")).success.value
+            .set(SealsQuery(eventIndex), Seq(seal)).success.value
+            .set(SealsQuery(eventIndex2), Seq(seal)).success.value
+          // format: on
+
+          val result = userAnswersConversionService.convertToUserAnswers(arrivalNotification).value.copy(lastUpdated = lastUpdated)
+          result mustBe userAnswers
+      }
+    }
 //
 //    "must return 'User Answers' when there multiple vehicular transhipment incidents on route with seals" in {
 //      forAll(arrivalNotificationWithSubplace, enRouteEventVehicularTranshipment, enRouteEventVehicularTranshipment, arbitrary[Seal]) {

@@ -23,6 +23,7 @@ import models.XMLReads._
 import cats.syntax.all._
 import models.{LanguageCodeEnglish, XMLWrites}
 import play.api.libs.json._
+import models._
 
 import scala.xml.NodeSeq
 
@@ -58,7 +59,7 @@ object EnRouteEvent {
             "eventReported" -> event.alreadyInNcts,
             "eventCountry"  -> Json.obj("state" -> "", "code" -> event.countryCode, "description" -> ""),
             "seals"         -> Json.toJson(event.seals)
-          ) ++ Json.toJsObject(event.eventDetails.get)
+          ) ++ Json.toJsObject(event.eventDetails.get).filterNulls
 
     }
 
