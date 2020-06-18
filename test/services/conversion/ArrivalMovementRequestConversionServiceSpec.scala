@@ -18,8 +18,9 @@ package services.conversion
 
 import base.SpecBase
 import generators.MessagesModelGenerators
-import models.MovementReferenceNumber
-import models.messages.{ArrivalMovementRequest, Header, NormalNotification, Trader}
+import models.{domain, MovementReferenceNumber}
+import models.domain.NormalNotification
+import models.messages.{ArrivalMovementRequest, Header, Trader}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
@@ -44,7 +45,7 @@ class ArrivalMovementRequestConversionServiceSpec extends SpecBase with Messages
       val arrivalNotificationRequest = arbitrary[ArrivalMovementRequest].sample.value
 
       val normalNotification: NormalNotification = {
-        NormalNotification(
+        domain.NormalNotification(
           movementReferenceNumber = MovementReferenceNumber(arrivalNotificationRequest.header.movementReferenceNumber).get,
           notificationPlace       = arrivalNotificationRequest.header.arrivalNotificationPlace,
           notificationDate        = arrivalNotificationRequest.header.notificationDate,

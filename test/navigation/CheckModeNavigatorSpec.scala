@@ -930,7 +930,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
       }
 
       "go from 'Place of Notification' to CheckYourAnswer" in {
-        import models.messages.NormalNotification.Constants.notificationPlaceLength
+        import models.domain.NormalNotification.Constants.notificationPlaceLength
 
         forAll(arbitrary[UserAnswers], stringsWithMaxLength(notificationPlaceLength)) {
           case (answers, placeOfNotification) =>

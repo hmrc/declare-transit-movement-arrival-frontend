@@ -14,19 +14,21 @@
  * limitations under the License.
  */
 
-package forms
+package models.domain
 
-import forms.mappings.Mappings
-import javax.inject.Inject
-import play.api.data.Form
-import models.domain.NormalNotification.Constants.customsSubPlaceLength
+import forms.mappings.StringEquivalence
+import play.api.libs.json.{Json, OFormat}
 
-class CustomsSubPlaceFormProvider @Inject() extends Mappings {
+case class Container(containerNumber: String)
 
-  def apply(): Form[String] =
-    Form(
-      "value" -> text("customsSubPlace.error.required")
-        .verifying(maxLength(customsSubPlaceLength, "customsSubPlace.error.length"))
-        .verifying(printableAscii("customsSubPlace.error.invalid"))
-    )
+object Container {
+
+  object Constants {
+    val containerNumberLength = 17
+  }
+
+  implicit val formats: OFormat[Container] = Json.format[Container]
+
+  implicit val containerStringEquivalenceCheck: StringEquivalence[Container] =
+    StringEquivalence[Container]((container, stringContainer) => container.containerNumber == stringContainer)
 }

@@ -20,6 +20,7 @@ import java.time.LocalDateTime
 
 import base.SpecBase
 import generators.MessagesModelGenerators
+import models.domain.NormalNotification
 import models.messages._
 import models.reference.{Country, CustomsOffice}
 import models.{Address, Index, UserAnswers}

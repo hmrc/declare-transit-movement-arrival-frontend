@@ -19,6 +19,7 @@ package services.conversion
 import java.time.LocalTime
 
 import com.google.inject.Inject
+import models.domain.{ArrivalNotification, NormalNotification}
 import models.messages._
 import models.{NormalProcedureFlag, ProcedureTypeFlag}
 

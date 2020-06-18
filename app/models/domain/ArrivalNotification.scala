@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package models.messages
+package models.domain
 
 import java.time.LocalDate
 
 import models.MovementReferenceNumber
+import models.messages.{EnRouteEvent, ProcedureType, Trader}
 import models.reference.CustomsOffice
 import pages._
 import play.api.libs.json._

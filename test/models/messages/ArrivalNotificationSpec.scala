@@ -17,6 +17,7 @@
 package models.messages
 
 import generators.MessagesModelGenerators
+import models.domain.{ArrivalNotification, NormalNotification, SimplifiedNotification}
 import models.messages.behaviours.JsonBehaviours
 import models.reference.CustomsOffice
 import org.scalacheck.Arbitrary.arbitrary

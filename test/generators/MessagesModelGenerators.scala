@@ -18,7 +18,8 @@ package generators
 
 import java.time.{LocalDate, LocalTime}
 
-import models._
+import models.{domain, _}
+import models.domain.{ArrivalNotification, NormalNotification, SimplifiedNotification}
 import models.messages.ErrorType.{GenericError, MRNError}
 import models.messages._
 import org.scalacheck.Arbitrary.arbitrary
@@ -144,7 +145,7 @@ trait MessagesModelGenerators extends Generators {
         presentationOfficeId   <- stringsWithMaxLength(NormalNotification.Constants.presentationOfficeLength)
         presentationOfficeName <- arbitrary[String]
         events                 <- Gen.option(listWithMaxLength[EnRouteEvent](NormalNotification.Constants.maxNumberOfEnRouteEvents))
-      } yield NormalNotification(mrn, place, date, subPlace, trader, presentationOfficeId, presentationOfficeName, events)
+      } yield domain.NormalNotification(mrn, place, date, subPlace, trader, presentationOfficeId, presentationOfficeName, events)
     }
 
   implicit lazy val arbitrarySimplifiedNotification: Arbitrary[SimplifiedNotification] =
@@ -158,7 +159,7 @@ trait MessagesModelGenerators extends Generators {
         trader             <- arbitrary[Trader]
         presentationOffice <- stringsWithMaxLength(SimplifiedNotification.Constants.presentationOfficeLength)
         events             <- Gen.option(listWithMaxLength[EnRouteEvent](NormalNotification.Constants.maxNumberOfEnRouteEvents))
-      } yield SimplifiedNotification(mrn, place, date, approvedLocation, trader, presentationOffice, events)
+      } yield domain.SimplifiedNotification(mrn, place, date, approvedLocation, trader, presentationOffice, events)
     }
 
   implicit lazy val arbitraryArrivalNotification: Arbitrary[ArrivalNotification] =

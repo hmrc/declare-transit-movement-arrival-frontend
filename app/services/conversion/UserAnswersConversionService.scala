@@ -17,6 +17,7 @@
 package services.conversion
 
 import models.UserAnswers
+import models.domain.{ArrivalNotification, NormalNotification}
 import models.messages._
 import play.api.libs.json.Json
 

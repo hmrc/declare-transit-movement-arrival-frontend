@@ -17,7 +17,8 @@
 package services.conversion
 
 import generators.MessagesModelGenerators
-import models.{MovementReferenceNumber, NormalProcedureFlag}
+import models.domain.NormalNotification
+import models.{domain, MovementReferenceNumber, NormalProcedureFlag}
 import models.messages._
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.{FreeSpec, MustMatchers, OptionValues}
@@ -46,7 +47,7 @@ class SubmissionModelServiceSpec
       val updatedArrivalMovementRequest                  = arrivalMovementRequest.copy(header = setNormalTypeFlag)
 
       val normalNotification: NormalNotification = {
-        NormalNotification(
+        domain.NormalNotification(
           movementReferenceNumber = MovementReferenceNumber(updatedArrivalMovementRequest.header.movementReferenceNumber).get,
           notificationPlace       = updatedArrivalMovementRequest.header.arrivalNotificationPlace,
           notificationDate        = updatedArrivalMovementRequest.header.notificationDate,

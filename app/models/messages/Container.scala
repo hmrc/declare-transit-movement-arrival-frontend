@@ -17,22 +17,11 @@
 package models.messages
 
 import com.lucidchart.open.xtract.{__, XmlReader}
-import forms.mappings.StringEquivalence
 import models.XMLWrites
-import play.api.libs.json.{Json, OFormat}
 
 case class Container(containerNumber: String)
 
 object Container {
-
-  object Constants {
-    val containerNumberLength = 17
-  }
-
-  implicit val formats: OFormat[Container] = Json.format[Container]
-
-  implicit val containerStringEquivalenceCheck: StringEquivalence[Container] =
-    StringEquivalence[Container]((container, stringContainer) => container.containerNumber == stringContainer)
 
   implicit def xmlWrites: XMLWrites[Container] = XMLWrites[Container] {
     container =>

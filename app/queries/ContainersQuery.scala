@@ -17,7 +17,7 @@
 package queries
 
 import models.Index
-import models.messages.Container
+import models.domain.Container
 import pages.QuestionPage
 import pages.events.SectionConstants
 import play.api.libs.json.JsPath

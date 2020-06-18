@@ -17,7 +17,8 @@
 package services.conversion
 
 import models.MovementReferenceNumber
-import models.messages.{ArrivalMovementRequest, ArrivalNotification, NormalNotification}
+import models.domain.{ArrivalNotification, NormalNotification}
+import models.messages.ArrivalMovementRequest
 
 class ArrivalMovementRequestConversionService {
 
