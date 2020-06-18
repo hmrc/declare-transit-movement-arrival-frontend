@@ -25,9 +25,8 @@ import models.XMLWrites._
 import models.messages.{ArrivalMovementRequest, InterchangeControlReference, NormalNotification, Trader}
 import models.{ArrivalId, MovementReferenceNumber}
 import org.mockito.Matchers.any
-import org.mockito.Mockito.{never, reset, times, verify, when}
+import org.mockito.Mockito._
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalatestplus.mockito.MockitoSugar
 import play.api.Configuration
 import play.api.http.Status._
 import play.api.inject.bind
@@ -45,7 +44,7 @@ class ArrivalSubmissionServiceSpec extends SpecBase with MessagesModelGenerators
   private val mockArrivalNotificationMessageService = mock[ArrivalNotificationMessageService]
 
   private val traderWithoutEori  = Trader("", "", "", "", "", "")
-  private val normalNotification = NormalNotification(mrn, "", LocalDate.now(), None, traderWithoutEori, "", "", None)
+  private val normalNotification = NormalNotification(mrn, "", LocalDate.now(), "", traderWithoutEori, "", "", None)
 
   private val userEoriNumber = arbitrary[String].sample.value
 

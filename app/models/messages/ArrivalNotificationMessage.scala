@@ -39,7 +39,7 @@ object ArrivalNotification {
 final case class NormalNotification(movementReferenceNumber: MovementReferenceNumber,
                                     notificationPlace: String,
                                     notificationDate: LocalDate,
-                                    customsSubPlace: Option[String],
+                                    customsSubPlace: String,
                                     trader: Trader,
                                     presentationOfficeId: String,
                                     presentationOfficeName: String,

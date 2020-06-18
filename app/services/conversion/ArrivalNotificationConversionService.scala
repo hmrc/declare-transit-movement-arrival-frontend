@@ -43,7 +43,7 @@ class ArrivalNotificationConversionService {
         movementReferenceNumber = userAnswers.id,
         notificationPlace       = notificationPlace,
         notificationDate        = LocalDate.now(),
-        customsSubPlace         = Some(customsSubPlace),
+        customsSubPlace         = customsSubPlace,
         trader = Trader(
           eori            = traderEori,
           name            = traderName,

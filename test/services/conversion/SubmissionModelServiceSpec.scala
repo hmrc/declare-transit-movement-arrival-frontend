@@ -50,7 +50,7 @@ class SubmissionModelServiceSpec
           movementReferenceNumber = MovementReferenceNumber(updatedArrivalMovementRequest.header.movementReferenceNumber).get,
           notificationPlace       = updatedArrivalMovementRequest.header.arrivalNotificationPlace,
           notificationDate        = updatedArrivalMovementRequest.header.notificationDate,
-          customsSubPlace         = updatedArrivalMovementRequest.header.customsSubPlace,
+          customsSubPlace         = updatedArrivalMovementRequest.header.customsSubPlace.getOrElse(""),
           trader = Trader(
             name            = updatedArrivalMovementRequest.trader.name,
             streetAndNumber = updatedArrivalMovementRequest.trader.streetAndNumber,

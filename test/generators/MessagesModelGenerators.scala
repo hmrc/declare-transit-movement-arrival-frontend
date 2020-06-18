@@ -139,7 +139,7 @@ trait MessagesModelGenerators extends Generators {
         mrn                    <- arbitrary[MovementReferenceNumber]
         place                  <- stringsWithMaxLength(NormalNotification.Constants.notificationPlaceLength)
         date                   <- localDateGen
-        subPlace               <- Gen.option(stringsWithMaxLength(NormalNotification.Constants.customsSubPlaceLength))
+        subPlace               <- stringsWithMaxLength(NormalNotification.Constants.customsSubPlaceLength)
         trader                 <- arbitrary[Trader]
         presentationOfficeId   <- stringsWithMaxLength(NormalNotification.Constants.presentationOfficeLength)
         presentationOfficeName <- arbitrary[String]
@@ -336,7 +336,7 @@ trait MessagesModelGenerators extends Generators {
       val expected: NormalNotification = base
         .copy(movementReferenceNumber = mrn)
         .copy(trader = trader)
-        .copy(customsSubPlace = Some(subPlace))
+        .copy(customsSubPlace = subPlace)
         .copy(notificationDate = LocalDate.now())
 
       (expected, trader)

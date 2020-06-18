@@ -28,7 +28,7 @@ class ArrivalMovementRequestConversionService {
           mrn,
           arrivalMovementRequest.header.arrivalNotificationPlace,
           arrivalMovementRequest.header.notificationDate,
-          arrivalMovementRequest.header.customsSubPlace,
+          arrivalMovementRequest.header.customsSubPlace.get, // TODO need to address the case when there is no subsplace
           arrivalMovementRequest.trader,
           arrivalMovementRequest.header.presentationOfficeId,
           arrivalMovementRequest.header.presentationOfficeName,

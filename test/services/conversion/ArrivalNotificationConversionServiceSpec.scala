@@ -16,14 +16,12 @@
 
 package services.conversion
 
-import java.time.LocalDate
-
 import base.SpecBase
 import generators.MessagesModelGenerators
 import models.GoodsLocation.BorderForceOffice
 import models.messages.{NormalNotification, _}
 import models.reference.{Country, CustomsOffice}
-import models.{Address, Index, MovementReferenceNumber, UserAnswers}
+import models.{Address, Index, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -135,7 +133,7 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
             .copy(id = expectedArrivalNotification.movementReferenceNumber)
             .set(GoodsLocationPage, BorderForceOffice).success.value
             .set(PresentationOfficePage, CustomsOffice(id = expectedArrivalNotification.presentationOfficeId, name = expectedArrivalNotification.presentationOfficeName, roles = Seq.empty, None)).success.value
-            .set(CustomsSubPlacePage, expectedArrivalNotification.customsSubPlace.value).success.value
+            .set(CustomsSubPlacePage, expectedArrivalNotification.customsSubPlace).success.value
             .set(TraderNamePage, trader.name).success.value
             .set(TraderAddressPage, Address(buildingAndStreet = trader.streetAndNumber, city = trader.city, postcode = trader.postCode)).success.value
             .set(TraderEoriPage, trader.eori).success.value
@@ -217,7 +215,7 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
       .copy(id = arrivalNotification.movementReferenceNumber)
       .set(GoodsLocationPage, BorderForceOffice).success.value
       .set(PresentationOfficePage, CustomsOffice(id = arrivalNotification.presentationOfficeId, name = arrivalNotification.presentationOfficeName, roles = Seq.empty, None)).success.value
-      .set(CustomsSubPlacePage, arrivalNotification.customsSubPlace.value).success.value
+      .set(CustomsSubPlacePage, arrivalNotification.customsSubPlace).success.value
       .set(TraderNamePage, trader.name).success.value
       .set(TraderAddressPage, Address(buildingAndStreet = trader.streetAndNumber, city = trader.city, postcode = trader.postCode)).success.value
       .set(TraderEoriPage, trader.eori).success.value

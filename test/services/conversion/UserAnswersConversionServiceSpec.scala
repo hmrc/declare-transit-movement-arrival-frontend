@@ -16,20 +16,18 @@
 
 package services.conversion
 
-import java.time.{LocalDate, LocalDateTime}
+import java.time.LocalDateTime
 
 import base.SpecBase
 import generators.MessagesModelGenerators
-import models.GoodsLocation.BorderForceOffice
 import models.messages._
 import models.reference.{Country, CustomsOffice}
 import models.{Address, Index, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages._
-import pages.events.transhipments.{TransportIdentityPage, TransportNationalityPage}
 import pages.events._
+import pages.events.transhipments.{TransportIdentityPage, TransportNationalityPage}
 import play.api.libs.json.{JsArray, JsNull, Json}
 import queries.{ContainersQuery, SealsQuery}
 
@@ -58,7 +56,7 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
               ).success.value
               .set(TraderNamePage, trader.name).success.value
               .set(TraderAddressPage, Address(buildingAndStreet = trader.streetAndNumber, city = trader.city, postcode = trader.postCode)).success.value
-              .set(CustomsSubPlacePage, arrivalNotification.customsSubPlace.value).success.value
+              .set(CustomsSubPlacePage, arrivalNotification.customsSubPlace).success.value
               .set(TraderEoriPage, trader.eori).success.value
               .set(PlaceOfNotificationPage, arrivalNotification.notificationPlace).success.value
           // format: on
@@ -255,7 +253,7 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
       ).success.value
       .set(TraderNamePage, trader.name).success.value
       .set(TraderAddressPage, Address(buildingAndStreet = trader.streetAndNumber, city = trader.city, postcode = trader.postCode)).success.value
-      .set(CustomsSubPlacePage, arrivalNotification.customsSubPlace.value).success.value
+      .set(CustomsSubPlacePage, arrivalNotification.customsSubPlace).success.value
       .set(TraderEoriPage, trader.eori).success.value
       .set(PlaceOfNotificationPage, arrivalNotification.notificationPlace).success.value
   // format: on
