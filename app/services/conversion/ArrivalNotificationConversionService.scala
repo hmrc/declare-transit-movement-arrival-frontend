@@ -41,7 +41,7 @@ class ArrivalNotificationConversionService {
         None
     }
 
-  private def createSimplifiedNotification(userAnswers: UserAnswers) =
+  private def createSimplifiedNotification(userAnswers: UserAnswers): Option[SimplifiedNotification] =
     for {
       presentationOffice <- userAnswers.get(PresentationOfficePage)
       authorisedLocation <- userAnswers.get(AuthorisedLocationPage)
