@@ -18,7 +18,7 @@ package models.messages
 
 import java.time.LocalDate
 
-import models.MovementReferenceNumber
+import models.{GoodsLocation, MovementReferenceNumber}
 import models.reference.CustomsOffice
 import pages._
 import play.api.libs.json._
@@ -63,6 +63,7 @@ object NormalNotification {
       notification =>
         Json
           .obj(
+            GoodsLocationPage.toString       -> GoodsLocation.BorderForceOffice.toString,
             PlaceOfNotificationPage.toString -> notification.notificationPlace,
             CustomsSubPlacePage.toString     -> notification.customsSubPlace,
             TraderAddressPage.toString -> Json.obj(

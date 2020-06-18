@@ -17,12 +17,13 @@
 package models.messages
 
 import generators.MessagesModelGenerators
+import models.GoodsLocation
 import models.messages.behaviours.JsonBehaviours
 import models.reference.CustomsOffice
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.{FreeSpec, MustMatchers}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import pages.{CustomsSubPlacePage, PlaceOfNotificationPage, PresentationOfficePage, TraderAddressPage, TraderEoriPage, TraderNamePage}
+import pages.{CustomsSubPlacePage, GoodsLocationPage, PlaceOfNotificationPage, PresentationOfficePage, TraderAddressPage, TraderEoriPage, TraderNamePage}
 import play.api.libs.json.{JsError, JsObject, JsSuccess, Json}
 import queries.EventsQuery
 
@@ -85,7 +86,8 @@ class ArrivalNotificationSpec extends FreeSpec with MustMatchers with ScalaCheck
       PresentationOfficePage.toString -> Json.toJson(CustomsOffice(notification.presentationOfficeId, notification.presentationOfficeName, Seq.empty, None)),
       EventsQuery.toString            -> Json.toJson(notification.enRouteEvents),
       TraderEoriPage.toString         -> notification.trader.eori,
-      TraderNamePage.toString         -> notification.trader.name
+      TraderNamePage.toString         -> notification.trader.name,
+      GoodsLocationPage.toString      -> GoodsLocation.BorderForceOffice.toString
     )
 
   private def createSimplifiedNotificationJson(notification: SimplifiedNotification): JsObject =

@@ -23,7 +23,7 @@ import generators.MessagesModelGenerators
 import models.GoodsLocation.BorderForceOffice
 import models.messages._
 import models.reference.{Country, CustomsOffice}
-import models.{Address, Index, UserAnswers}
+import models.{Address, GoodsLocation, Index, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -52,6 +52,7 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
             // format: off
             UserAnswers(arrivalNotification.movementReferenceNumber, Json.obj("events" -> JsNull))
               .copy(lastUpdated = result.lastUpdated)
+              .set(GoodsLocationPage, GoodsLocation.BorderForceOffice).success.value
               .set(
                 PresentationOfficePage,
                 CustomsOffice(id = arrivalNotification.presentationOfficeId, name = arrivalNotification.presentationOfficeName, roles = Seq.empty, None)
@@ -249,6 +250,7 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
     UserAnswers(mrn, Json.obj("events" -> JsArray(Seq.empty)))
       .copy(id = arrivalNotification.movementReferenceNumber)
       .copy(lastUpdated = timeStamp)
+      .set(GoodsLocationPage, GoodsLocation.BorderForceOffice).success.value
       .set(
         PresentationOfficePage,
         CustomsOffice(id = arrivalNotification.presentationOfficeId, name = arrivalNotification.presentationOfficeName, roles = Seq.empty, None)
