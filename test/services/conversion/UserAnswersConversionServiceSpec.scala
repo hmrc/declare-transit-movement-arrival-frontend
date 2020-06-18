@@ -53,6 +53,7 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
             UserAnswers(arrivalNotification.movementReferenceNumber, Json.obj("events" -> JsNull))
               .copy(lastUpdated = result.lastUpdated)
               .set(GoodsLocationPage, GoodsLocation.BorderForceOffice).success.value
+              .set(IsTraderAddressPlaceOfNotificationPage, trader.postCode.equalsIgnoreCase(arrivalNotification.notificationPlace)).success.value
               .set(
                 PresentationOfficePage,
                 CustomsOffice(id = arrivalNotification.presentationOfficeId, name = arrivalNotification.presentationOfficeName, roles = Seq.empty, None)
@@ -251,6 +252,7 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
       .copy(id = arrivalNotification.movementReferenceNumber)
       .copy(lastUpdated = timeStamp)
       .set(GoodsLocationPage, GoodsLocation.BorderForceOffice).success.value
+      .set(IsTraderAddressPlaceOfNotificationPage, trader.postCode.equalsIgnoreCase(arrivalNotification.notificationPlace)).success.value
       .set(
         PresentationOfficePage,
         CustomsOffice(id = arrivalNotification.presentationOfficeId, name = arrivalNotification.presentationOfficeName, roles = Seq.empty, None)
