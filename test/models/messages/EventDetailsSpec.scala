@@ -18,16 +18,15 @@ package models.messages
 
 import com.lucidchart.open.xtract.XmlReader
 import generators.MessagesModelGenerators
-import models.LanguageCodeEnglish
 import models.XMLWrites._
+import models.{LanguageCodeEnglish, _}
 import models.messages.behaviours.JsonBehaviours
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.OptionValues._
 import org.scalatest.{FreeSpec, MustMatchers, StreamlinedXmlEquality}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.libs.json.{JsObject, JsSuccess, Json}
+import play.api.libs.json.{JsObject, Json}
 import utils.Format
-import models._
 
 import scala.xml.{Elem, NodeSeq}
 
@@ -156,21 +155,12 @@ class EventDetailsSpec
       }
     }
 
-    "must deserialise" in {
-
-      forAll(arbitrary[Incident]) {
-        incident =>
-          val json = incidentJson(incident)
-          json.validate[Incident] mustEqual JsSuccess(incident)
-      }
-    }
-
     "must serialise" in {
 
       forAll(arbitrary[Incident]) {
         incident =>
           val json = incidentJson(incident)
-          Json.toJson(incident) mustEqual json
+          Json.toJson(incident)(Incident.incidentJsonWrites) mustEqual json
       }
     }
   }
@@ -294,21 +284,12 @@ class EventDetailsSpec
       }
     }
 
-    "must deserialise" in {
-
-      forAll(arbitrary[ContainerTranshipment]) {
-        containerTranshipment =>
-          val json = Json.toJson(containerTranshipment)
-          json.validate[ContainerTranshipment] mustEqual JsSuccess(containerTranshipment)
-      }
-    }
-
     "must serialise" in {
 
       forAll(arbitrary[ContainerTranshipment]) {
         containerTranshipment =>
-          val json = Json.toJson(containerTranshipment)
-          Json.toJson(containerTranshipment) mustEqual json
+          val json = Json.toJson(containerTranshipment)(ContainerTranshipment.containerJsonWrites)
+          Json.toJson(containerTranshipment)(ContainerTranshipment.containerJsonWrites) mustEqual json
       }
     }
   }
@@ -523,7 +504,7 @@ class EventDetailsSpec
         vehicularTranshipment =>
           val json = vehicularTranshipmentJson(vehicularTranshipment)
 
-          Json.toJson(vehicularTranshipment)(VehicularTranshipment.writes) mustEqual json
+          Json.toJson(vehicularTranshipment)(VehicularTranshipment.vehicularTranshipmentJsonWrites) mustEqual json
       }
     }
   }
@@ -535,7 +516,7 @@ class EventDetailsSpec
       forAll(arbitrary[VehicularTranshipment]) {
         vehicularTranshipment =>
           val json = vehicularTranshipmentJson(vehicularTranshipment)
-          Json.toJson(vehicularTranshipment: Transhipment)(Transhipment.writes) mustEqual json
+          Json.toJson(vehicularTranshipment: Transhipment)(Transhipment.transhipmentJsonWrites) mustEqual json
       }
     }
 
@@ -543,8 +524,8 @@ class EventDetailsSpec
 
       forAll(arbitrary[ContainerTranshipment]) {
         containerTranshipment =>
-          val json = Json.toJson(containerTranshipment)
-          Json.toJson(containerTranshipment: Transhipment)(Transhipment.writes) mustEqual json
+          val json = Json.toJson(containerTranshipment)(ContainerTranshipment.containerJsonWrites)
+          Json.toJson(containerTranshipment: Transhipment)(Transhipment.transhipmentJsonWrites) mustEqual json
       }
     }
   }
@@ -564,7 +545,7 @@ class EventDetailsSpec
 
       forAll(arbitrary[VehicularTranshipment]) {
         vehicularTranshipment =>
-          val json = Json.toJson(vehicularTranshipment)(VehicularTranshipment.writes) //TODO: we should not be passing this explicitly
+          val json = Json.toJson(vehicularTranshipment)(VehicularTranshipment.vehicularTranshipmentJsonWrites)
           Json.toJson(vehicularTranshipment: EventDetails) mustEqual json
       }
     }
@@ -573,7 +554,7 @@ class EventDetailsSpec
 
       forAll(arbitrary[ContainerTranshipment]) {
         containerTranshipment =>
-          val json = Json.toJson(containerTranshipment)
+          val json = Json.toJson(containerTranshipment)(ContainerTranshipment.containerJsonWrites)
           Json.toJson(containerTranshipment: EventDetails) mustEqual json
       }
     }

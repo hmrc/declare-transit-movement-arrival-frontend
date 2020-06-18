@@ -37,34 +37,6 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
   // format: off
   private val service = injector.instanceOf[ArrivalNotificationConversionService]
 
-  private val arrivalNotificationWithSubplace: Gen[(NormalNotification, Trader)] =
-    for {
-      base     <- arbitrary[NormalNotification]
-      trader   <- arbitrary[Trader]
-      subPlace <- stringsWithMaxLength(NormalNotification.Constants.customsSubPlaceLength)
-    } yield {
-
-      val expected: NormalNotification = base
-        .copy(movementReferenceNumber = mrn)
-        .copy(trader = trader)
-        .copy(customsSubPlace = Some(subPlace))
-        .copy(notificationDate = LocalDate.now())
-
-      (expected, trader)
-    }
-
-  private val enRouteEventIncident: Gen[(EnRouteEvent, Incident)] = for {
-    enRouteEvent <- arbitrary[EnRouteEvent]
-    incident     <- arbitrary[Incident]
-  } yield (enRouteEvent.copy(eventDetails = Some(incident)), incident)
-
-
-  private val enRouteEventVehicularTranshipment: Gen[(EnRouteEvent, VehicularTranshipment)] = for {
-    enRouteEvent <- arbitrary[EnRouteEvent]
-    vehicularTranshipment     <- arbitrary[VehicularTranshipment]
-  } yield (enRouteEvent.copy(eventDetails = Some(vehicularTranshipment)), vehicularTranshipment)
-
-
   "ArrivalNotificationConversionService" - {
     "must return 'Normal Arrival Notification' message when there are no EventDetails on route" in {
       forAll(arrivalNotificationWithSubplace) {
