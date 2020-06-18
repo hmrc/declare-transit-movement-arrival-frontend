@@ -19,28 +19,16 @@ package models.messages
 import java.time.LocalDate
 
 import models.MovementReferenceNumber
+import models.reference.CustomsOffice
+import pages._
 import play.api.libs.json._
+import queries.EventsQuery
 
 import scala.language.implicitConversions
 
 sealed trait ArrivalNotification
 
 object ArrivalNotification {
-
-  implicit lazy val reads: Reads[ArrivalNotification] = {
-
-    implicit class ReadsWithContravariantOr[A](a: Reads[A]) {
-
-      def or[B >: A](b: Reads[B]): Reads[B] =
-        a.map[B](identity).orElse(b)
-    }
-
-    implicit def convertToSupertype[A, B >: A](a: Reads[A]): Reads[B] =
-      a.map(identity)
-
-    NormalNotification.reads or
-      SimplifiedNotification.reads
-  }
 
   implicit lazy val writes: Writes[ArrivalNotification] = Writes {
     case n: NormalNotification     => Json.toJson(n)(NormalNotification.writes)
@@ -70,48 +58,23 @@ object NormalNotification {
     val maxNumberOfEnRouteEvents = 9
   }
 
-  implicit lazy val reads: Reads[NormalNotification] = {
-
-    import play.api.libs.functional.syntax._
-
-    (__ \ "procedure")
-      .read[String]
-      .flatMap[String] {
-        p =>
-          if (p == ProcedureType.Normal.toString) {
-            Reads(_ => JsSuccess(p))
-          } else {
-            Reads(_ => JsError("procedure must be `normal`"))
-          }
-      }
-      .andKeep(
-        (
-          (__ \ "movementReferenceNumber").read[MovementReferenceNumber] and
-            (__ \ "notificationPlace").read[String] and
-            (__ \ "notificationDate").read[LocalDate] and
-            (__ \ "customsSubPlace").readNullable[String] and
-            (__ \ "trader").read[Trader] and
-            (__ \ "presentationOfficeId").read[String] and
-            (__ \ "presentationOfficeName").read[String] and
-            (__ \ "enRouteEvents").readNullable[Seq[EnRouteEvent]]
-        )(NormalNotification(_, _, _, _, _, _, _, _))
-      )
-  }
-
   implicit lazy val writes: OWrites[NormalNotification] =
     OWrites[NormalNotification] {
       notification =>
         Json
           .obj(
-            "procedure"               -> Json.toJson(notification.procedure),
-            "movementReferenceNumber" -> notification.movementReferenceNumber,
-            "notificationPlace"       -> notification.notificationPlace,
-            "notificationDate"        -> notification.notificationDate,
-            "customsSubPlace"         -> notification.customsSubPlace,
-            "trader"                  -> Json.toJson(notification.trader),
-            "presentationOfficeId"    -> notification.presentationOfficeId,
-            "presentationOfficeName"  -> notification.presentationOfficeName,
-            "enRouteEvents"           -> Json.toJson(notification.enRouteEvents)
+            PlaceOfNotificationPage.toString -> notification.notificationPlace,
+            CustomsSubPlacePage.toString     -> notification.customsSubPlace,
+            TraderAddressPage.toString -> Json.obj(
+              "buildingAndStreet" -> notification.trader.streetAndNumber,
+              "city"              -> notification.trader.city,
+              "postcode"          -> notification.trader.postCode
+            ),
+            PresentationOfficePage.toString -> Json.toJson(
+              CustomsOffice(notification.presentationOfficeId, notification.presentationOfficeName, Seq.empty, None)),
+            EventsQuery.toString    -> Json.toJson(notification.enRouteEvents),
+            TraderEoriPage.toString -> notification.trader.eori,
+            TraderNamePage.toString -> notification.trader.name
           )
     }
 }
@@ -137,33 +100,6 @@ object SimplifiedNotification {
     val presentationOfficeLength = 8
     val maxNumberOfEnRouteEvents = 9
     val authorisedLocationRegex  = "^[a-zA-Z0-9]*$"
-  }
-
-  implicit lazy val reads: Reads[SimplifiedNotification] = {
-
-    import play.api.libs.functional.syntax._
-
-    (__ \ "procedure")
-      .read[String]
-      .flatMap[String] {
-        p =>
-          if (p == ProcedureType.Simplified.toString) {
-            Reads(_ => JsSuccess(p))
-          } else {
-            Reads(_ => JsError("procedure must be `simplified`"))
-          }
-      }
-      .andKeep(
-        (
-          (__ \ "movementReferenceNumber").read[String] and
-            (__ \ "notificationPlace").read[String] and
-            (__ \ "notificationDate").read[LocalDate] and
-            (__ \ "approvedLocation").readNullable[String] and
-            (__ \ "trader").read[Trader] and
-            (__ \ "presentationOffice").read[String] and
-            (__ \ "enRouteEvents").readNullable[Seq[EnRouteEvent]]
-        )(SimplifiedNotification.apply _)
-      )
   }
 
   implicit lazy val writes: OWrites[SimplifiedNotification] = {

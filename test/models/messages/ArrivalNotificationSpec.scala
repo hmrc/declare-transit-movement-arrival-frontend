@@ -18,36 +18,17 @@ package models.messages
 
 import generators.MessagesModelGenerators
 import models.messages.behaviours.JsonBehaviours
+import models.reference.CustomsOffice
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.{FreeSpec, MustMatchers}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import pages.{CustomsSubPlacePage, PlaceOfNotificationPage, PresentationOfficePage, TraderAddressPage, TraderEoriPage, TraderNamePage}
 import play.api.libs.json.{JsError, JsObject, JsSuccess, Json}
+import queries.EventsQuery
 
 class ArrivalNotificationSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with MessagesModelGenerators with JsonBehaviours {
 
   "Normal notification" - {
-
-    "must deserialise" in {
-
-      forAll(arbitrary[NormalNotification]) {
-        normalNotification =>
-          val json = createNormalNotificationJson(normalNotification)
-          json.validate[NormalNotification] mustEqual JsSuccess(normalNotification)
-      }
-    }
-
-    "must fail to deserialise when `procedure` is `simplified`" in {
-
-      forAll(arbitrary[NormalNotification]) {
-        normalNotification =>
-          val jsonWithSimplified = {
-            createNormalNotificationJson(normalNotification) ++
-              Json.obj("procedure" -> Json.toJson(ProcedureType.Simplified))
-          }
-
-          jsonWithSimplified.validate[NormalNotification] mustEqual JsError("procedure must be `normal`")
-      }
-    }
 
     "must serialise" in {
 
@@ -61,28 +42,6 @@ class ArrivalNotificationSpec extends FreeSpec with MustMatchers with ScalaCheck
 
   "Simplified notification" - {
 
-    "must deserialise" in {
-
-      forAll(arbitrary[SimplifiedNotification]) {
-        simplifiedNotification =>
-          val json = createSimplifiedNotificationJson(simplifiedNotification)
-          json.validate[SimplifiedNotification] mustEqual JsSuccess(simplifiedNotification)
-      }
-    }
-
-    "must fail to deserialise when `procedure` is `normal`" in {
-      forAll(arbitrary[SimplifiedNotification]) {
-
-        simplifiedNotification =>
-          val jsonWithNormal = {
-            createSimplifiedNotificationJson(simplifiedNotification) ++
-              Json.obj("procedure" -> Json.toJson(ProcedureType.Normal))
-          }
-
-          jsonWithNormal.validate[SimplifiedNotification] mustEqual JsError("procedure must be `simplified`")
-      }
-    }
-
     "must serialise" in {
 
       forAll(arbitrary[SimplifiedNotification]) {
@@ -94,24 +53,6 @@ class ArrivalNotificationSpec extends FreeSpec with MustMatchers with ScalaCheck
   }
 
   "Arrival Notification" - {
-
-    "must deserialise to a Normal notification" in {
-
-      forAll(arbitrary[NormalNotification]) {
-        normalNotification =>
-          val json = createNormalNotificationJson(normalNotification)
-          json.validate[ArrivalNotification] mustEqual JsSuccess(normalNotification)
-      }
-    }
-
-    "must deserialise to a Simplified notification" in {
-
-      forAll(arbitrary[SimplifiedNotification]) {
-        simplifiedNotification =>
-          val json = createSimplifiedNotificationJson(simplifiedNotification)
-          json.validate[ArrivalNotification] mustEqual JsSuccess(simplifiedNotification)
-      }
-    }
 
     "must serialise from a Normal notification" in {
 
@@ -134,15 +75,17 @@ class ArrivalNotificationSpec extends FreeSpec with MustMatchers with ScalaCheck
 
   private def createNormalNotificationJson(notification: NormalNotification): JsObject =
     Json.obj(
-      "procedure"               -> notification.procedure,
-      "movementReferenceNumber" -> notification.movementReferenceNumber,
-      "notificationPlace"       -> notification.notificationPlace,
-      "notificationDate"        -> notification.notificationDate,
-      "enRouteEvents"           -> Json.toJson(notification.enRouteEvents),
-      "customsSubPlace"         -> Json.toJson(notification.customsSubPlace),
-      "trader"                  -> Json.toJson(notification.trader),
-      "presentationOfficeId"    -> notification.presentationOfficeId,
-      "presentationOfficeName"  -> notification.presentationOfficeName
+      PlaceOfNotificationPage.toString -> notification.notificationPlace,
+      CustomsSubPlacePage.toString     -> notification.customsSubPlace,
+      TraderAddressPage.toString -> Json.obj(
+        "buildingAndStreet" -> notification.trader.streetAndNumber,
+        "city"              -> notification.trader.city,
+        "postcode"          -> notification.trader.postCode
+      ),
+      PresentationOfficePage.toString -> Json.toJson(CustomsOffice(notification.presentationOfficeId, notification.presentationOfficeName, Seq.empty, None)),
+      EventsQuery.toString            -> Json.toJson(notification.enRouteEvents),
+      TraderEoriPage.toString         -> notification.trader.eori,
+      TraderNamePage.toString         -> notification.trader.name
     )
 
   private def createSimplifiedNotificationJson(notification: SimplifiedNotification): JsObject =
