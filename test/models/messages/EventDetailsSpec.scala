@@ -27,6 +27,7 @@ import org.scalatest.{FreeSpec, MustMatchers, StreamlinedXmlEquality}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.{JsObject, JsSuccess, Json}
 import utils.Format
+import models._
 
 import scala.xml.{Elem, NodeSeq}
 
@@ -516,15 +517,6 @@ class EventDetailsSpec
       }
     }
 
-    "must deserialise" in {
-
-      forAll(arbitrary[VehicularTranshipment]) {
-        vehicularTranshipment =>
-          val json = Json.toJson(vehicularTranshipment)(VehicularTranshipment.writes)
-          json.validate[VehicularTranshipment] mustEqual JsSuccess(vehicularTranshipment)
-      }
-    }
-
     "must serialise" in {
 
       forAll(arbitrary[VehicularTranshipment]) {
@@ -537,25 +529,6 @@ class EventDetailsSpec
   }
 
   "Transhipment" - {
-
-    "must deserialise to a Vehicular transhipment" in {
-
-      forAll(arbitrary[VehicularTranshipment]) {
-        vehicularTranshipment =>
-          val json = vehicularTranshipmentJson(vehicularTranshipment)
-          json.validate[Transhipment] mustEqual JsSuccess(vehicularTranshipment)
-      }
-    }
-
-    "must deserialise to a Container transhipment" in {
-
-      forAll(arbitrary[ContainerTranshipment]) {
-        containerTranshipment =>
-          val json = Json.toJson(containerTranshipment)
-          json.validate[Transhipment] mustEqual JsSuccess(containerTranshipment)
-
-      }
-    }
 
     "must serialise from a Vehicular transhipment" in {
 
@@ -577,33 +550,6 @@ class EventDetailsSpec
   }
 
   "EventDetails" - {
-
-    "must deserialise to an Incident" in {
-
-      forAll(arbitrary[Incident]) {
-        incident =>
-          val json = incidentJson(incident)
-          json.validate[EventDetails] mustEqual JsSuccess(incident)
-      }
-    }
-
-    "must deserialise to a Vehicular transhipment" in {
-
-      forAll(arbitrary[VehicularTranshipment]) {
-        vehicularTranshipment =>
-          val json = vehicularTranshipmentJson(vehicularTranshipment)
-          json.validate[EventDetails] mustEqual JsSuccess(vehicularTranshipment)
-      }
-    }
-
-    "must deserialise to a Container transhipment" in {
-
-      forAll(arbitrary[ContainerTranshipment]) {
-        containerTranshipment =>
-          val json = Json.toJson(containerTranshipment)
-          json.validate[EventDetails] mustEqual JsSuccess(containerTranshipment)
-      }
-    }
 
     "must serialise from an Incident" in {
 
@@ -636,20 +582,22 @@ class EventDetailsSpec
   private def incidentJson(incident: Incident): JsObject =
     incident.incidentInformation match {
       case Some(information) =>
-        Json.obj("information" -> information)
+        Json.obj("incidentInformation" -> information)
       case _ =>
         JsObject.empty
     }
 
   private def vehicularTranshipmentJson(vehicularTranshipment: VehicularTranshipment): JsObject =
-    Json.obj(
-      "transportIdentity" -> vehicularTranshipment.transportIdentity,
-      "transportCountry"  -> vehicularTranshipment.transportCountry,
-      "date"              -> Json.toJson(vehicularTranshipment.date),
-      "authority"         -> Json.toJson(vehicularTranshipment.authority),
-      "place"             -> Json.toJson(vehicularTranshipment.place),
-      "country"           -> Json.toJson(vehicularTranshipment.country),
-      "containers"        -> Json.toJson(vehicularTranshipment.containers)
-    )
+    Json
+      .obj(
+        "transportIdentity"    -> vehicularTranshipment.transportIdentity,
+        "transportNationality" -> Json.obj("state" -> "", "code" -> vehicularTranshipment.transportCountry, "description" -> ""),
+        "date"                 -> vehicularTranshipment.date,
+        "authority"            -> vehicularTranshipment.authority,
+        "place"                -> vehicularTranshipment.place,
+        "country"              -> vehicularTranshipment.country,
+        "containers"           -> Json.toJson(vehicularTranshipment.containers)
+      )
+      .filterNulls
 
 }

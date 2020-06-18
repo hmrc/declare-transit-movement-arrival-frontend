@@ -37,19 +37,6 @@ object EnRouteEvent {
     val sealsLength       = 20
   }
 
-  implicit lazy val reads: Reads[EnRouteEvent] = {
-
-    import play.api.libs.functional.syntax._
-
-    (
-      (__ \ "place").read[String] and
-        (__ \ "countryCode").read[String] and
-        (__ \ "alreadyInNcts").read[Boolean] and
-        (__ \ "eventDetails").readNullable[EventDetails] and
-        (__ \ "seals").readNullable[Seq[Seal]]
-    )(EnRouteEvent(_, _, _, _, _))
-  }
-
   implicit lazy val writes: OWrites[EnRouteEvent] =
     OWrites[EnRouteEvent] {
       event =>
@@ -59,7 +46,12 @@ object EnRouteEvent {
             "eventReported" -> event.alreadyInNcts,
             "eventCountry"  -> Json.obj("state" -> "", "code" -> event.countryCode, "description" -> ""),
             "seals"         -> Json.toJson(event.seals)
-          ) ++ Json.toJsObject(event.eventDetails.get).filterNulls
+          ) ++ event.eventDetails
+          .map {
+            result =>
+              Json.toJsObject(result).filterNulls
+          }
+          .getOrElse(JsObject.empty)
 
     }
 

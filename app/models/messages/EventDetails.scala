@@ -22,12 +22,10 @@ import cats.syntax.all._
 import com.lucidchart.open.xtract.XmlReader._
 import com.lucidchart.open.xtract.{ParseFailure, XmlReader, __ => xmlPath}
 import models.XMLReads._
-import models.XMLWrites
 import models.XMLWrites._
-import models.reference.Country
+import models.{XMLWrites, _}
 import play.api.libs.json._
 import utils.Format
-import models._
 
 import scala.language.implicitConversions
 import scala.xml.NodeSeq
@@ -40,21 +38,6 @@ object EventDetails {
     val authorityLength = 35
     val placeLength     = 35
     val countryLength   = 2
-  }
-
-  implicit lazy val reads: Reads[EventDetails] = {
-
-    implicit class ReadsWithContravariantOr[A](a: Reads[A]) {
-
-      def or[B >: A](b: Reads[B]): Reads[B] =
-        a.map[B](identity).orElse(b)
-    }
-
-    implicit def convertToSupertype[A, B >: A](a: Reads[A]): Reads[B] =
-      a.map(identity)
-
-    Transhipment.reads or
-      Incident.format
   }
 
   implicit lazy val writes: OWrites[EventDetails] = OWrites {
@@ -141,21 +124,6 @@ object Transhipment {
     val maxContainers   = 99
   }
 
-  implicit lazy val reads: Reads[Transhipment] = {
-
-    implicit class ReadsWithContravariantOr[A](a: Reads[A]) {
-
-      def or[B >: A](b: Reads[B]): Reads[B] =
-        a.map[B](identity).orElse(b)
-    }
-
-    implicit def convertToSupertype[A, B >: A](a: Reads[A]): Reads[B] =
-      a.map(identity)
-
-    VehicularTranshipment.reads or
-      ContainerTranshipment.format
-  }
-
   implicit lazy val writes: OWrites[Transhipment] = OWrites {
     case t: VehicularTranshipment => Json.toJsObject(t)(VehicularTranshipment.writes)
     case t: ContainerTranshipment => Json.toJsObject(t)(ContainerTranshipment.format)
@@ -181,21 +149,6 @@ object VehicularTranshipment {
     val transportIdentityLength = 27
     val transportCountryLength  = 2
 
-  }
-
-  implicit lazy val reads: Reads[VehicularTranshipment] = {
-
-    import play.api.libs.functional.syntax._
-
-    (
-      (__ \ "transportIdentity").read[String] and
-        (__ \ "transportCountry").read[String] and
-        (__ \ "date").readNullable[LocalDate] and
-        (__ \ "authority").readNullable[String] and
-        (__ \ "place").readNullable[String] and
-        (__ \ "country").readNullable[String] and
-        (__ \ "containers").readNullable[Seq[Container]]
-    )(VehicularTranshipment.apply _)
   }
 
   implicit lazy val writes: OWrites[VehicularTranshipment] =

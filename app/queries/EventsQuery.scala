@@ -22,6 +22,8 @@ import play.api.libs.json.{JsArray, JsObject, JsPath}
 
 case object EventsQuery extends QuestionPage[List[JsObject]] {
 
-  override def path: JsPath = JsPath \ SectionConstants.events
+  override def path: JsPath = JsPath \ toString
+
+  override def toString: String = SectionConstants.events
 
 }

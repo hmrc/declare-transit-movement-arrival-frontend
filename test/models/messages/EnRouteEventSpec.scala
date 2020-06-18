@@ -24,7 +24,8 @@ import models.messages.behaviours.JsonBehaviours
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.{FreeSpec, MustMatchers, OptionValues, StreamlinedXmlEquality}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.libs.json.{JsObject, JsSuccess, Json}
+import play.api.libs.json.{JsObject, Json}
+import models._
 
 class EnRouteEventSpec
     extends FreeSpec
@@ -124,14 +125,6 @@ class EnRouteEventSpec
           }
 
           enRouteEventWithVehicle.toXml mustEqual result
-      }
-    }
-    "must deserialise" in {
-
-      forAll(arbitrary[EnRouteEvent]) {
-        enRouteEvent =>
-          val json = createEnRouteEventJson(enRouteEvent)
-          json.validate[EnRouteEvent] mustEqual JsSuccess(enRouteEvent)
       }
     }
 
@@ -247,10 +240,14 @@ class EnRouteEventSpec
 
   def createEnRouteEventJson(enRouteEvent: EnRouteEvent): JsObject =
     Json.obj(
-      "place"         -> enRouteEvent.place,
-      "countryCode"   -> enRouteEvent.countryCode,
-      "alreadyInNcts" -> enRouteEvent.alreadyInNcts,
-      "eventDetails"  -> Json.toJson(enRouteEvent.eventDetails),
+      "eventPlace"    -> enRouteEvent.place,
+      "eventReported" -> enRouteEvent.alreadyInNcts,
+      "eventCountry"  -> Json.obj("state" -> "", "code" -> enRouteEvent.countryCode, "description" -> ""),
       "seals"         -> Json.toJson(enRouteEvent.seals)
-    )
+    ) ++ enRouteEvent.eventDetails
+      .map {
+        result =>
+          Json.toJsObject(result).filterNulls
+      }
+      .getOrElse(JsObject.empty)
 }
