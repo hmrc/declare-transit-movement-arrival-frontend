@@ -20,7 +20,7 @@ import java.time.LocalTime
 
 import com.google.inject.Inject
 import models.messages._
-import models.{NormalProcedureFlag, ProcedureTypeFlag}
+import models.{NormalProcedureFlag, ProcedureTypeFlag, SimplifiedProcedureFlag}
 
 class SubmissionModelService @Inject()() {
 
@@ -44,13 +44,38 @@ class SubmissionModelService @Inject()() {
         val enRouteEvents: Option[Seq[EnRouteEvent]] = normalNotification.enRouteEvents
 
         ArrivalMovementRequest(meta, header, traderDestination, customsOffice, enRouteEvents)
-      case _ => ???
+
+      case simplifiedNotification: SimplifiedNotification =>
+        val meta = Meta(
+          messageSender               = messageSender,
+          interchangeControlReference = interchangeControlReference,
+          dateOfPreparation           = simplifiedNotification.notificationDate,
+          timeOfPreparation           = timeOfPresentation
+        )
+        val header                                   = buildSimplifiedHeader(simplifiedNotification, SimplifiedProcedureFlag)
+        val traderDestination                        = simplifiedNotification.trader
+        val customsOffice                            = CustomsOfficeOfPresentation(presentationOffice = simplifiedNotification.presentationOfficeId)
+        val enRouteEvents: Option[Seq[EnRouteEvent]] = simplifiedNotification.enRouteEvents
+
+        ArrivalMovementRequest(meta, header, traderDestination, customsOffice, enRouteEvents)
+      case _ => ??? //todo: what do we do here?
     }
 
   private def buildHeader(arrivalNotification: NormalNotification, procedureTypeFlag: ProcedureTypeFlag): Header =
     Header(
       movementReferenceNumber  = arrivalNotification.movementReferenceNumber.toString,
       customsSubPlace          = arrivalNotification.customsSubPlace,
+      arrivalNotificationPlace = arrivalNotification.notificationPlace,
+      presentationOfficeId     = arrivalNotification.presentationOfficeId,
+      presentationOfficeName   = arrivalNotification.presentationOfficeName,
+      procedureTypeFlag        = procedureTypeFlag,
+      notificationDate         = arrivalNotification.notificationDate
+    )
+
+  private def buildSimplifiedHeader(arrivalNotification: SimplifiedNotification, procedureTypeFlag: ProcedureTypeFlag): Header =
+    Header(
+      movementReferenceNumber  = arrivalNotification.movementReferenceNumber.toString,
+      customsSubPlace          = arrivalNotification.approvedLocation,
       arrivalNotificationPlace = arrivalNotification.notificationPlace,
       presentationOfficeId     = arrivalNotification.presentationOfficeId,
       presentationOfficeName   = arrivalNotification.presentationOfficeName,
