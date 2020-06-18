@@ -19,6 +19,7 @@ package services.conversion
 import java.time.LocalDate
 
 import derivable.DeriveNumberOfEvents
+import models.GoodsLocation.{AuthorisedConsigneesLocation, BorderForceOffice}
 import models.messages._
 import models.{Address, Index, UserAnswers}
 import pages._
@@ -31,6 +32,43 @@ class ArrivalNotificationConversionService {
   val countryCode_GB = "GB"
 
   def convertToArrivalNotification(userAnswers: UserAnswers): Option[ArrivalNotification] =
+    userAnswers.get(GoodsLocationPage) match {
+      case Some(BorderForceOffice) =>
+        createNormalNotification(userAnswers)
+      case Some(AuthorisedConsigneesLocation) =>
+        createSimplifiedNotification(userAnswers)
+      case _ =>
+        None
+    }
+
+  private def createSimplifiedNotification(userAnswers: UserAnswers) =
+    for {
+      presentationOffice <- userAnswers.get(PresentationOfficePage)
+      authorisedLocation <- userAnswers.get(AuthorisedLocationPage)
+      tradersAddress     <- userAnswers.get(ConsigneeAddressPage)
+      traderEori         <- userAnswers.get(ConsigneeEoriNumberPage)
+      traderName         <- userAnswers.get(ConsigneeNamePage)
+      notificationPlace  <- userAnswers.get(ConsigneeAddressPage)
+    } yield
+      SimplifiedNotification(
+        movementReferenceNumber = userAnswers.id,
+        notificationPlace       = notificationPlace.postcode,
+        notificationDate        = LocalDate.now(),
+        approvedLocation        = Some(authorisedLocation),
+        trader = Trader(
+          eori            = traderEori,
+          name            = traderName,
+          streetAndNumber = tradersAddress.buildingAndStreet,
+          postCode        = tradersAddress.postcode,
+          city            = tradersAddress.city,
+          countryCode     = countryCode_GB
+        ),
+        presentationOfficeId   = presentationOffice.id,
+        presentationOfficeName = presentationOffice.name,
+        enRouteEvents          = enRouteEvents(userAnswers)
+      )
+
+  private def createNormalNotification(userAnswers: UserAnswers) =
     for {
       presentationOffice <- userAnswers.get(PresentationOfficePage)
       customsSubPlace    <- userAnswers.get(CustomsSubPlacePage)
@@ -38,7 +76,7 @@ class ArrivalNotificationConversionService {
       traderEori         <- userAnswers.get(TraderEoriPage)
       traderName         <- userAnswers.get(TraderNamePage)
       notificationPlace  <- userAnswers.get(PlaceOfNotificationPage) orElse Some(tradersAddress.postcode)
-    } yield {
+    } yield
       NormalNotification(
         movementReferenceNumber = userAnswers.id,
         notificationPlace       = notificationPlace,
@@ -56,7 +94,6 @@ class ArrivalNotificationConversionService {
         presentationOfficeName = presentationOffice.name,
         enRouteEvents          = enRouteEvents(userAnswers)
       )
-    }
 
   private def eventDetails(
     incidentInformation: Option[String],
@@ -104,5 +141,4 @@ class ArrivalNotificationConversionService {
             }
         }
     }
-
 }

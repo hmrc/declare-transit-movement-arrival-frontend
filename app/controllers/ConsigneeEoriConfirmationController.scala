@@ -21,7 +21,7 @@ import forms.EoriConfirmationFormProvider
 import javax.inject.Inject
 import models.{Mode, MovementReferenceNumber}
 import navigation.Navigator
-import pages.{ConsigneeEoriConfirmationPage, ConsigneeNamePage}
+import pages.{ConsigneeEoriConfirmationPage, ConsigneeEoriNumberPage, ConsigneeNamePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -92,7 +92,12 @@ class ConsigneeEoriConfirmationController @Inject()(
               },
               value =>
                 for {
-                  updatedAnswers <- Future.fromTry(request.userAnswers.set(ConsigneeEoriConfirmationPage, value))
+                  ua <- if (value) {
+                    Future.fromTry(request.userAnswers.set(ConsigneeEoriNumberPage, request.eoriNumber))
+                  } else {
+                    Future.successful(request.userAnswers)
+                  }
+                  updatedAnswers <- Future.fromTry(ua.set(ConsigneeEoriConfirmationPage, value))
                   _              <- sessionRepository.set(updatedAnswers)
                 } yield Redirect(navigator.nextPage(ConsigneeEoriConfirmationPage, mode, updatedAnswers))
             )

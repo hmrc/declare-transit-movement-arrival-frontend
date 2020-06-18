@@ -151,14 +151,15 @@ trait MessagesModelGenerators extends Generators {
     Arbitrary {
 
       for {
-        mrn                <- arbitrary[MovementReferenceNumber].map(_.toString)
-        place              <- stringsWithMaxLength(SimplifiedNotification.Constants.notificationPlaceLength)
-        date               <- localDateGen
-        approvedLocation   <- Gen.option(stringsWithMaxLength(SimplifiedNotification.Constants.approvedLocationLength))
-        trader             <- arbitrary[Trader]
-        presentationOffice <- stringsWithMaxLength(SimplifiedNotification.Constants.presentationOfficeLength)
-        events             <- Gen.option(listWithMaxLength[EnRouteEvent](NormalNotification.Constants.maxNumberOfEnRouteEvents))
-      } yield SimplifiedNotification(mrn, place, date, approvedLocation, trader, presentationOffice, events)
+        mrn                    <- arbitrary[MovementReferenceNumber]
+        place                  <- stringsWithMaxLength(SimplifiedNotification.Constants.notificationPlaceLength)
+        date                   <- localDateGen
+        approvedLocation       <- Gen.option(stringsWithMaxLength(SimplifiedNotification.Constants.approvedLocationLength))
+        trader                 <- arbitrary[Trader]
+        presentationOfficeId   <- stringsWithMaxLength(SimplifiedNotification.Constants.presentationOfficeLength)
+        presentationOfficeName <- stringsWithMaxLength(SimplifiedNotification.Constants.presentationOfficeLength)
+        events                 <- Gen.option(listWithMaxLength[EnRouteEvent](NormalNotification.Constants.maxNumberOfEnRouteEvents))
+      } yield SimplifiedNotification(mrn, place, date, approvedLocation, trader, presentationOfficeId, presentationOfficeName, events)
     }
 
   implicit lazy val arbitraryArrivalNotification: Arbitrary[ArrivalNotification] =
