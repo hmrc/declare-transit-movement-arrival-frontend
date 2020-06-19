@@ -21,7 +21,7 @@ import forms.mappings.Mappings
 import models.Address
 import play.api.data.Form
 import play.api.data.Forms._
-import models.messages.Trader.Constants.{cityLength, postCodeLength, streetAndNumberLength}
+import models.domain.Trader.Constants.{cityLength, postCodeLength, streetAndNumberLength}
 
 class ConsigneeAddressFormProvider @Inject() extends Mappings {
 

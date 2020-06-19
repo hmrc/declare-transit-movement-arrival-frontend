@@ -19,7 +19,7 @@ package forms
 import forms.mappings.Mappings
 import javax.inject.Inject
 import play.api.data.Form
-import models.messages.Trader.Constants.nameLength
+import models.domain.Trader.Constants.nameLength
 
 class TraderNameFormProvider @Inject() extends Mappings {
 

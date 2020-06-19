@@ -19,8 +19,8 @@ package services.conversion
 import base.SpecBase
 import generators.MessagesModelGenerators
 import models.GoodsLocation.BorderForceOffice
-import models.domain.NormalNotification
-import models.messages._
+import models.domain.{NormalNotification, Trader}
+import models.messages.{ContainerTranshipment, EnRouteEvent, Seal}
 import models.reference.{Country, CustomsOffice}
 import models.{Address, Index, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
@@ -91,7 +91,7 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
     "must return 'Normal Arrival Notification' message when there is one vehicle transhipment on route" in {
       forAll(arrivalNotificationWithSubplace, enRouteEventVehicularTranshipment) {
         case ((arbArrivalNotification, trader), (enRouteEvent, vehicularTranshipment)) =>
-          val routeEvent: EnRouteEvent = enRouteEvent
+          val routeEvent = enRouteEvent
             .copy(seals = Some(Seq(Seal("seal 1"), Seal("seal 2"))))
             .copy(eventDetails = Some(vehicularTranshipment.copy(date = None, authority = None, place = None, country = None,
               containers = None)))
@@ -126,9 +126,9 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
       forAll(arrivalNotificationWithSubplace, enRouteEventContainerTranshipment) {
         case ((arbArrivalNotification, trader), (enRouteEvent, containerTranshipment)) =>
 
-          val expectedArrivalNotification: NormalNotification = arbArrivalNotification.copy(enRouteEvents = Some(Seq(enRouteEvent)))
+          val expectedArrivalNotification = arbArrivalNotification.copy(enRouteEvents = Some(Seq(enRouteEvent)))
 
-          val containers: Seq[Container] = containerTranshipment.containers
+          val containers = containerTranshipment.containers
 
           val userAnswers: UserAnswers = emptyUserAnswers
             .copy(id = expectedArrivalNotification.movementReferenceNumber)

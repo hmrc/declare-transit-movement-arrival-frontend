@@ -19,7 +19,7 @@ package forms
 import forms.behaviours.StringFieldBehaviours
 import org.scalacheck.Gen
 import play.api.data.{Field, FormError}
-import models.messages.Trader.Constants._
+import models.domain.Trader.Constants._
 
 class TraderEoriFormProviderSpec extends StringFieldBehaviours {
 

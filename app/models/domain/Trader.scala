@@ -14,27 +14,29 @@
  * limitations under the License.
  */
 
-package models.messages
-
-import java.time.LocalDate
+package models.domain
 
 import play.api.libs.json.{Format, Json}
 
-// TODO: To remove
-final case class GoodsReleaseNotificationMessage(
-  movementReferenceNumber: String,
-  releaseDate: LocalDate,
-  trader: Trader,
-  presentationOffice: String
-)
+final case class Trader(name: String, streetAndNumber: String, postCode: String, city: String, countryCode: String, eori: String)
 
-object GoodsReleaseNotificationMessage {
+object Trader {
+
+  def domainTraderToMessagesTrader(trader: Trader): models.messages.Trader =
+    Trader.unapply(trader).map((models.messages.Trader.apply _).tupled).get
 
   object Constants {
-    val presentationOfficeLength = 8
+    val eoriLength            = 17
+    val nameLength            = 35
+    val streetAndNumberLength = 35
+    val postCodeLength        = 9
+    val cityLength            = 35
+    val countryCodeLength     = 2
   }
 
-//  implicit lazy val format: Format[GoodsReleaseNotificationMessage] =
-//    Json.format[GoodsReleaseNotification
-  //    Message]
+  val eoriRegex = "[A-Z]{2}[^\n\r]{1,}"
+
+  implicit lazy val format: Format[Trader] =
+    Json.format[Trader]
+
 }

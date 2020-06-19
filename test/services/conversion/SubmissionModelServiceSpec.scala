@@ -17,9 +17,9 @@
 package services.conversion
 
 import generators.MessagesModelGenerators
-import models.domain.NormalNotification
+import models.domain.{NormalNotification, Trader}
+import models.messages.ArrivalMovementRequest
 import models.{domain, MovementReferenceNumber, NormalProcedureFlag}
-import models.messages._
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.{FreeSpec, MustMatchers, OptionValues}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
@@ -42,12 +42,12 @@ class SubmissionModelServiceSpec
 
     "must convert NormalNotification to ArrivalMovementRequest for traders" in {
 
-      val arrivalMovementRequest: ArrivalMovementRequest = arbitrary[ArrivalMovementRequest].sample.value
-      val setNormalTypeFlag: Header                      = arrivalMovementRequest.header.copy(procedureTypeFlag = NormalProcedureFlag)
-      val updatedArrivalMovementRequest                  = arrivalMovementRequest.copy(header = setNormalTypeFlag)
+      val arrivalMovementRequest        = arbitrary[ArrivalMovementRequest].sample.value
+      val setNormalTypeFlag             = arrivalMovementRequest.header.copy(procedureTypeFlag = NormalProcedureFlag)
+      val updatedArrivalMovementRequest = arrivalMovementRequest.copy(header = setNormalTypeFlag)
 
-      val normalNotification: NormalNotification = {
-        domain.NormalNotification(
+      val normalNotification = {
+        NormalNotification(
           movementReferenceNumber = MovementReferenceNumber(updatedArrivalMovementRequest.header.movementReferenceNumber).get,
           notificationPlace       = updatedArrivalMovementRequest.header.arrivalNotificationPlace,
           notificationDate        = updatedArrivalMovementRequest.header.notificationDate,

@@ -19,8 +19,8 @@ package services.conversion
 import base.SpecBase
 import generators.MessagesModelGenerators
 import models.{domain, MovementReferenceNumber}
-import models.domain.NormalNotification
-import models.messages.{ArrivalMovementRequest, Header, Trader}
+import models.domain.{NormalNotification, Trader}
+import models.messages.{ArrivalMovementRequest, Header}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 

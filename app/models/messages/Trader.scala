@@ -26,19 +26,8 @@ final case class Trader(name: String, streetAndNumber: String, postCode: String,
 
 object Trader {
 
-  object Constants {
-    val eoriLength            = 17
-    val nameLength            = 35
-    val streetAndNumberLength = 35
-    val postCodeLength        = 9
-    val cityLength            = 35
-    val countryCodeLength     = 2
-  }
-
-  val eoriRegex = "[A-Z]{2}[^\n\r]{1,}"
-
-  implicit lazy val format: Format[Trader] =
-    Json.format[Trader]
+  def messagesTraderToDomainTrader(trader: Trader): models.domain.Trader =
+    Trader.unapply(trader).map((models.domain.Trader.apply _).tupled).get
 
   implicit val writes: XMLWrites[Trader] = {
     XMLWrites(trader => <TRADESTRD>

@@ -30,7 +30,7 @@ class ArrivalMovementRequestConversionService {
           arrivalMovementRequest.header.arrivalNotificationPlace,
           arrivalMovementRequest.header.notificationDate,
           arrivalMovementRequest.header.customsSubPlace.get, // TODO need to address the case when there is no subsplace
-          arrivalMovementRequest.trader,
+          models.messages.Trader.messagesTraderToDomainTrader(arrivalMovementRequest.trader),
           arrivalMovementRequest.header.presentationOfficeId,
           arrivalMovementRequest.header.presentationOfficeName,
           arrivalMovementRequest.enRouteEvents
