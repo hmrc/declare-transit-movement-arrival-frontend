@@ -26,6 +26,7 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.{
   CustomsSubPlacePage,
   GoodsLocationPage,
+  IncidentOnRoutePage,
   IsTraderAddressPlaceOfNotificationPage,
   PlaceOfNotificationPage,
   PresentationOfficePage,
@@ -97,7 +98,8 @@ class ArrivalNotificationSpec extends FreeSpec with MustMatchers with ScalaCheck
       TraderEoriPage.toString                         -> notification.trader.eori,
       TraderNamePage.toString                         -> notification.trader.name,
       GoodsLocationPage.toString                      -> GoodsLocation.BorderForceOffice.toString,
-      IsTraderAddressPlaceOfNotificationPage.toString -> notification.notificationPlace.equalsIgnoreCase(notification.trader.postCode)
+      IsTraderAddressPlaceOfNotificationPage.toString -> notification.notificationPlace.equalsIgnoreCase(notification.trader.postCode),
+      IncidentOnRoutePage.toString                    -> notification.enRouteEvents.isDefined
     )
 
   private def createSimplifiedNotificationJson(notification: SimplifiedNotification): JsObject =
