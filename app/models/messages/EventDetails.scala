@@ -144,15 +144,19 @@ final case class VehicularTranshipment(
 object VehicularTranshipment {
 
   object Constants {
-
     val transportIdentityLength = 27
     val transportCountryLength  = 2
-
   }
 
-  implicit lazy val vehicularTranshipmentJsonWrites: OWrites[VehicularTranshipment] =
+  implicit lazy val vehicularTranshipmentJsonWrites: OWrites[VehicularTranshipment] = {
     OWrites[VehicularTranshipment] {
       transhipment =>
+        val transhipmentType: TranshipmentType =
+          if (transhipment.containers.exists(_.nonEmpty))
+            TranshipmentType.DifferentContainerAndVehicle
+          else
+            TranshipmentType.DifferentVehicle
+
         Json
           .obj(
             "transportIdentity"    -> transhipment.transportIdentity,
@@ -161,10 +165,12 @@ object VehicularTranshipment {
             "authority"            -> transhipment.authority,
             "place"                -> transhipment.place,
             "country"              -> transhipment.country,
-            "containers"           -> Json.toJson(transhipment.containers)
+            "containers"           -> Json.toJson(transhipment.containers),
+            "transhipmentType"     -> transhipmentType.toString
           )
           .filterNulls
     }
+  }
 
   implicit def xmlWrites: XMLWrites[VehicularTranshipment] = XMLWrites[VehicularTranshipment] {
     transhipment =>
@@ -218,8 +224,19 @@ final case class ContainerTranshipment(
 
 object ContainerTranshipment {
 
-  implicit lazy val containerJsonWrites: OWrites[ContainerTranshipment] =
-    Json.writes[ContainerTranshipment]
+  implicit lazy val containerJsonWrites: OWrites[ContainerTranshipment] = OWrites {
+    transhipment =>
+      Json
+        .obj(
+          "date"             -> transhipment.date,
+          "authority"        -> transhipment.authority,
+          "place"            -> transhipment.place,
+          "country"          -> transhipment.country,
+          "containers"       -> transhipment.containers,
+          "transhipmentType" -> TranshipmentType.DifferentContainer.toString
+        )
+        .filterNulls
+  }
 
   implicit def xmlWrites: XMLWrites[ContainerTranshipment] = XMLWrites[ContainerTranshipment] {
     transhipment =>

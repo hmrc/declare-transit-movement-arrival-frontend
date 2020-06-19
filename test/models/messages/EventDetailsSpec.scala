@@ -521,10 +521,11 @@ class EventDetailsSpec
     }
 
     "must serialise from a Container transhipment" in {
+      val transhipmentType = Json.obj("transhipmentType" -> TranshipmentType.DifferentContainer.toString)
 
       forAll(arbitrary[ContainerTranshipment]) {
         containerTranshipment =>
-          val json = Json.toJson(containerTranshipment)(ContainerTranshipment.containerJsonWrites)
+          val json = Json.toJson(containerTranshipment)(ContainerTranshipment.containerJsonWrites).as[JsObject] ++ transhipmentType
           Json.toJson(containerTranshipment: Transhipment)(Transhipment.transhipmentJsonWrites) mustEqual json
       }
     }
@@ -551,10 +552,11 @@ class EventDetailsSpec
     }
 
     "must serialise from a Container transhipment" in {
+      val transhipmentType = Json.obj("transhipmentType" -> TranshipmentType.DifferentContainer.toString)
 
       forAll(arbitrary[ContainerTranshipment]) {
         containerTranshipment =>
-          val json = Json.toJson(containerTranshipment)(ContainerTranshipment.containerJsonWrites)
+          val json = Json.toJson(containerTranshipment)(ContainerTranshipment.containerJsonWrites).as[JsObject] ++ transhipmentType
           Json.toJson(containerTranshipment: EventDetails) mustEqual json
       }
     }
@@ -568,7 +570,13 @@ class EventDetailsSpec
         JsObject.empty
     }
 
-  private def vehicularTranshipmentJson(vehicularTranshipment: VehicularTranshipment): JsObject =
+  private def vehicularTranshipmentJson(vehicularTranshipment: VehicularTranshipment): JsObject = {
+    val transhipmentType = if (vehicularTranshipment.containers.exists(_.nonEmpty)) {
+      TranshipmentType.DifferentContainerAndVehicle
+    } else {
+      TranshipmentType.DifferentVehicle
+    }
+
     Json
       .obj(
         "transportIdentity"    -> vehicularTranshipment.transportIdentity,
@@ -577,8 +585,10 @@ class EventDetailsSpec
         "authority"            -> vehicularTranshipment.authority,
         "place"                -> vehicularTranshipment.place,
         "country"              -> vehicularTranshipment.country,
-        "containers"           -> Json.toJson(vehicularTranshipment.containers)
+        "containers"           -> Json.toJson(vehicularTranshipment.containers),
+        "transhipmentType"     -> transhipmentType.toString
       )
       .filterNulls
+  }
 
 }
