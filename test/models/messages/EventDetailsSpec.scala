@@ -19,8 +19,8 @@ package models.messages
 import com.lucidchart.open.xtract.XmlReader
 import generators.MessagesModelGenerators
 import models.XMLWrites._
-import models.{LanguageCodeEnglish, _}
 import models.messages.behaviours.JsonBehaviours
+import models.{LanguageCodeEnglish, _}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.OptionValues._
 import org.scalatest.{FreeSpec, MustMatchers, StreamlinedXmlEquality}
@@ -552,11 +552,11 @@ class EventDetailsSpec
     }
 
     "must serialise from a Container transhipment" in {
-      val transhipmentType = Json.obj("transhipmentType" -> TranshipmentType.DifferentContainer.toString)
+      val additionalJsObject = Json.obj("transhipmentType" -> TranshipmentType.DifferentContainer.toString, "isTranshipment" -> true)
 
       forAll(arbitrary[ContainerTranshipment]) {
         containerTranshipment =>
-          val json = Json.toJson(containerTranshipment)(ContainerTranshipment.containerJsonWrites).as[JsObject] ++ transhipmentType
+          val json = Json.toJson(containerTranshipment)(ContainerTranshipment.containerJsonWrites).as[JsObject] ++ additionalJsObject
           Json.toJson(containerTranshipment: EventDetails) mustEqual json
       }
     }
@@ -565,9 +565,9 @@ class EventDetailsSpec
   private def incidentJson(incident: Incident): JsObject =
     incident.incidentInformation match {
       case Some(information) =>
-        Json.obj("incidentInformation" -> information)
+        Json.obj("incidentInformation" -> information, "isTranshipment" -> false)
       case _ =>
-        JsObject.empty
+        Json.obj("isTranshipment" -> false)
     }
 
   private def vehicularTranshipmentJson(vehicularTranshipment: VehicularTranshipment): JsObject = {
@@ -586,7 +586,8 @@ class EventDetailsSpec
         "place"                -> vehicularTranshipment.place,
         "country"              -> vehicularTranshipment.country,
         "containers"           -> Json.toJson(vehicularTranshipment.containers),
-        "transhipmentType"     -> transhipmentType.toString
+        "transhipmentType"     -> transhipmentType.toString,
+        "isTranshipment"       -> true
       )
       .filterNulls
   }

@@ -80,6 +80,7 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
             .set(EventPlacePage(eventIndex), routeEvent.place).success.value
             .set(EventCountryPage(eventIndex), Country("", routeEvent.countryCode, "")).success.value //TODO: we should have values
             .set(EventReportedPage(eventIndex), routeEvent.alreadyInNcts).success.value
+            .set(IsTranshipmentPage(eventIndex), false).success.value
             .set(IncidentInformationPage(eventIndex), incident.incidentInformation.value).success.value
             .set(SealsQuery(eventIndex), Seq(seal)).success.value
           // format: on
@@ -104,6 +105,7 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
             .set(EventPlacePage(eventIndex), routeEvent.place).success.value
             .set(EventCountryPage(eventIndex), Country("", routeEvent.countryCode, "")).success.value
             .set(EventReportedPage(eventIndex), routeEvent.alreadyInNcts).success.value
+            .set(IsTranshipmentPage(eventIndex), true).success.value
             .set(TranshipmentTypePage(eventIndex), TranshipmentType.DifferentVehicle).success.value
             .set(TransportIdentityPage(eventIndex), vehicularTranshipment.transportIdentity).success.value
             .set(TransportNationalityPage(eventIndex), Country("", vehicularTranshipment.transportCountry, "")).success.value
@@ -129,6 +131,7 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
             .set(EventPlacePage(eventIndex), enRouteEvent.place).success.value
             .set(EventCountryPage(eventIndex), Country("", enRouteEvent.countryCode, "")).success.value
             .set(EventReportedPage(eventIndex), enRouteEvent.alreadyInNcts).success.value
+            .set(IsTranshipmentPage(eventIndex), true).success.value
             .set(TranshipmentTypePage(eventIndex), TranshipmentType.DifferentContainer).success.value
             .set(ContainersQuery(eventIndex), Seq(container)).success.value
             .set(SealsQuery(eventIndex), Seq(seal)).success.value
@@ -159,9 +162,11 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
             .set(EventPlacePage(eventIndex), routeEvent1.place).success.value
             .set(EventCountryPage(eventIndex), Country("", routeEvent1.countryCode, "")).success.value
             .set(EventReportedPage(eventIndex), routeEvent1.alreadyInNcts).success.value
+            .set(IsTranshipmentPage(eventIndex), false).success.value
             .set(EventPlacePage(eventIndex2), routeEvent2.place).success.value
             .set(EventCountryPage(eventIndex2), Country("", routeEvent2.countryCode, "")).success.value
             .set(EventReportedPage(eventIndex2), routeEvent2.alreadyInNcts).success.value
+            .set(IsTranshipmentPage(eventIndex2), false).success.value
             .set(IncidentInformationPage(eventIndex), incident1.incidentInformation.getOrElse("")).success.value
             .set(IncidentInformationPage(eventIndex2), incident2.incidentInformation.getOrElse("")).success.value
             .set(SealsQuery(eventIndex), Seq(seal)).success.value
@@ -181,8 +186,8 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
             .copy(eventDetails = Some(vehicularTranshipment1.copy(date = None, authority = None, place = None, country = None, containers = None)))
           val routeEvent2: EnRouteEvent = enRouteEvent2
             .copy(seals = Some(Seq(seal)))
-            .copy(eventDetails = Some(vehicularTranshipment2.copy(date = None, authority = None, place = None, country = None,
-              containers = Some(Seq(container)))))
+            .copy(
+              eventDetails = Some(vehicularTranshipment2.copy(date = None, authority = None, place = None, country = None, containers = Some(Seq(container)))))
 
           val eventIndex2 = Index(1)
 
@@ -193,6 +198,7 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
             .set(EventPlacePage(eventIndex), routeEvent1.place).success.value
             .set(EventCountryPage(eventIndex), Country("", routeEvent1.countryCode, "")).success.value
             .set(EventReportedPage(eventIndex), routeEvent1.alreadyInNcts).success.value
+            .set(IsTranshipmentPage(eventIndex), true).success.value
             .set(TranshipmentTypePage(eventIndex), TranshipmentType.DifferentVehicle).success.value
             .set(TransportIdentityPage(eventIndex), vehicularTranshipment1.transportIdentity).success.value
             .set(TransportNationalityPage(eventIndex), Country("", vehicularTranshipment1.transportCountry, "")).success.value
@@ -201,6 +207,7 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
             .set(EventPlacePage(eventIndex2), routeEvent2.place).success.value
             .set(EventCountryPage(eventIndex2), Country("", routeEvent2.countryCode, "")).success.value
             .set(EventReportedPage(eventIndex2), routeEvent2.alreadyInNcts).success.value
+            .set(IsTranshipmentPage(eventIndex2), true).success.value
             .set(TransportIdentityPage(eventIndex2), vehicularTranshipment2.transportIdentity).success.value
             .set(TransportNationalityPage(eventIndex2), Country("", vehicularTranshipment2.transportCountry, "")).success.value
             .set(SealsQuery(eventIndex2), Seq(seal)).success.value
@@ -233,12 +240,14 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
             .set(EventPlacePage(eventIndex), enRouteEvent1.place).success.value
             .set(EventCountryPage(eventIndex), Country("", enRouteEvent1.countryCode, "")).success.value
             .set(EventReportedPage(eventIndex), enRouteEvent1.alreadyInNcts).success.value
+            .set(IsTranshipmentPage(eventIndex), true).success.value
             .set(TranshipmentTypePage(eventIndex), TranshipmentType.DifferentContainer).success.value
             .set(ContainersQuery(eventIndex), Seq(container)).success.value
             .set(SealsQuery(eventIndex), Seq(seal)).success.value
             .set(EventPlacePage(eventIndex2), enRouteEvent2.place).success.value
             .set(EventCountryPage(eventIndex2), Country("", enRouteEvent2.countryCode, "")).success.value
             .set(EventReportedPage(eventIndex2), enRouteEvent2.alreadyInNcts).success.value
+            .set(IsTranshipmentPage(eventIndex2), true).success.value
             .set(TranshipmentTypePage(eventIndex2), TranshipmentType.DifferentContainer).success.value
             .set(ContainersQuery(eventIndex2), Seq(container)).success.value
             .set(SealsQuery(eventIndex2), Seq(seal)).success.value

@@ -72,7 +72,19 @@ object Incident {
     val informationLength = 350
   }
 
-  implicit lazy val incidentJsonWrites: OWrites[Incident] = Json.writes[Incident]
+  implicit lazy val incidentJsonWrites: OWrites[Incident] = OWrites[Incident] {
+    incident =>
+      Json
+        .obj(
+          "incidentInformation" -> incident.incidentInformation,
+          "date"                -> incident.date,
+          "authority"           -> incident.authority,
+          "place"               -> incident.place,
+          "country"             -> incident.country,
+          "isTranshipment"      -> false
+        )
+        .filterNulls
+  }
 
   implicit def xmlWrites: XMLWrites[Incident] = XMLWrites[Incident] {
     incident =>
@@ -166,7 +178,8 @@ object VehicularTranshipment {
             "place"                -> transhipment.place,
             "country"              -> transhipment.country,
             "containers"           -> Json.toJson(transhipment.containers),
-            "transhipmentType"     -> transhipmentType.toString
+            "transhipmentType"     -> transhipmentType.toString,
+            "isTranshipment"       -> true
           )
           .filterNulls
     }
@@ -233,7 +246,8 @@ object ContainerTranshipment {
           "place"            -> transhipment.place,
           "country"          -> transhipment.country,
           "containers"       -> transhipment.containers,
-          "transhipmentType" -> TranshipmentType.DifferentContainer.toString
+          "transhipmentType" -> TranshipmentType.DifferentContainer.toString,
+          "isTranshipment"   -> true
         )
         .filterNulls
   }
