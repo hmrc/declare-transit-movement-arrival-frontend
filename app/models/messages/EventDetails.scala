@@ -164,7 +164,7 @@ object VehicularTranshipment {
     OWrites[VehicularTranshipment] {
       transhipment =>
         val transhipmentType: TranshipmentType =
-          if (transhipment.containers.exists(_.nonEmpty))
+          if (transhipment.containers.isDefined)
             TranshipmentType.DifferentContainerAndVehicle
           else
             TranshipmentType.DifferentVehicle

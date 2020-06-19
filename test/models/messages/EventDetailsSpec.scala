@@ -571,7 +571,7 @@ class EventDetailsSpec
     }
 
   private def vehicularTranshipmentJson(vehicularTranshipment: VehicularTranshipment): JsObject = {
-    val transhipmentType = if (vehicularTranshipment.containers.exists(_.nonEmpty)) {
+    val transhipmentType = if (vehicularTranshipment.containers.isDefined) {
       TranshipmentType.DifferentContainerAndVehicle
     } else {
       TranshipmentType.DifferentVehicle
