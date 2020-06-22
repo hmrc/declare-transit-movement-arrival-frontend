@@ -71,11 +71,13 @@ object NormalNotification {
               "city"              -> notification.trader.city,
               "postcode"          -> notification.trader.postCode
             ),
+            IsTraderAddressPlaceOfNotificationPage.toString -> notification.notificationPlace.equalsIgnoreCase(notification.trader.postCode),
             PresentationOfficePage.toString -> Json.toJson(
               CustomsOffice(notification.presentationOfficeId, notification.presentationOfficeName, Seq.empty, None)),
-            EventsQuery.toString    -> Json.toJson(notification.enRouteEvents),
-            TraderEoriPage.toString -> notification.trader.eori,
-            TraderNamePage.toString -> notification.trader.name
+            EventsQuery.toString         -> Json.toJson(notification.enRouteEvents),
+            TraderEoriPage.toString      -> notification.trader.eori,
+            TraderNamePage.toString      -> notification.trader.name,
+            IncidentOnRoutePage.toString -> notification.enRouteEvents.isDefined
           )
     }
 }

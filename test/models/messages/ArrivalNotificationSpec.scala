@@ -23,7 +23,17 @@ import models.reference.CustomsOffice
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.{FreeSpec, MustMatchers}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import pages.{CustomsSubPlacePage, GoodsLocationPage, PlaceOfNotificationPage, PresentationOfficePage, TraderAddressPage, TraderEoriPage, TraderNamePage}
+import pages.{
+  CustomsSubPlacePage,
+  GoodsLocationPage,
+  IncidentOnRoutePage,
+  IsTraderAddressPlaceOfNotificationPage,
+  PlaceOfNotificationPage,
+  PresentationOfficePage,
+  TraderAddressPage,
+  TraderEoriPage,
+  TraderNamePage
+}
 import play.api.libs.json.{JsError, JsObject, JsSuccess, Json}
 import queries.EventsQuery
 
@@ -83,11 +93,13 @@ class ArrivalNotificationSpec extends FreeSpec with MustMatchers with ScalaCheck
         "city"              -> notification.trader.city,
         "postcode"          -> notification.trader.postCode
       ),
-      PresentationOfficePage.toString -> Json.toJson(CustomsOffice(notification.presentationOfficeId, notification.presentationOfficeName, Seq.empty, None)),
-      EventsQuery.toString            -> Json.toJson(notification.enRouteEvents),
-      TraderEoriPage.toString         -> notification.trader.eori,
-      TraderNamePage.toString         -> notification.trader.name,
-      GoodsLocationPage.toString      -> GoodsLocation.BorderForceOffice.toString
+      PresentationOfficePage.toString                 -> Json.toJson(CustomsOffice(notification.presentationOfficeId, notification.presentationOfficeName, Seq.empty, None)),
+      EventsQuery.toString                            -> Json.toJson(notification.enRouteEvents),
+      TraderEoriPage.toString                         -> notification.trader.eori,
+      TraderNamePage.toString                         -> notification.trader.name,
+      GoodsLocationPage.toString                      -> GoodsLocation.BorderForceOffice.toString,
+      IsTraderAddressPlaceOfNotificationPage.toString -> notification.notificationPlace.equalsIgnoreCase(notification.trader.postCode),
+      IncidentOnRoutePage.toString                    -> notification.enRouteEvents.isDefined
     )
 
   private def createSimplifiedNotificationJson(notification: SimplifiedNotification): JsObject =

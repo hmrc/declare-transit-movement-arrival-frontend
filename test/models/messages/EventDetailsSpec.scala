@@ -19,8 +19,8 @@ package models.messages
 import com.lucidchart.open.xtract.XmlReader
 import generators.MessagesModelGenerators
 import models.XMLWrites._
-import models.{LanguageCodeEnglish, _}
 import models.messages.behaviours.JsonBehaviours
+import models.{LanguageCodeEnglish, _}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.OptionValues._
 import org.scalatest.{FreeSpec, MustMatchers, StreamlinedXmlEquality}
@@ -521,10 +521,11 @@ class EventDetailsSpec
     }
 
     "must serialise from a Container transhipment" in {
+      val transhipmentType = Json.obj("transhipmentType" -> TranshipmentType.DifferentContainer.toString)
 
       forAll(arbitrary[ContainerTranshipment]) {
         containerTranshipment =>
-          val json = Json.toJson(containerTranshipment)(ContainerTranshipment.containerJsonWrites)
+          val json = Json.toJson(containerTranshipment)(ContainerTranshipment.containerJsonWrites).as[JsObject] ++ transhipmentType
           Json.toJson(containerTranshipment: Transhipment)(Transhipment.transhipmentJsonWrites) mustEqual json
       }
     }
@@ -551,10 +552,11 @@ class EventDetailsSpec
     }
 
     "must serialise from a Container transhipment" in {
+      val additionalJsObject = Json.obj("transhipmentType" -> TranshipmentType.DifferentContainer.toString, "isTranshipment" -> true)
 
       forAll(arbitrary[ContainerTranshipment]) {
         containerTranshipment =>
-          val json = Json.toJson(containerTranshipment)(ContainerTranshipment.containerJsonWrites)
+          val json = Json.toJson(containerTranshipment)(ContainerTranshipment.containerJsonWrites).as[JsObject] ++ additionalJsObject
           Json.toJson(containerTranshipment: EventDetails) mustEqual json
       }
     }
@@ -563,12 +565,18 @@ class EventDetailsSpec
   private def incidentJson(incident: Incident): JsObject =
     incident.incidentInformation match {
       case Some(information) =>
-        Json.obj("incidentInformation" -> information)
+        Json.obj("incidentInformation" -> information, "isTranshipment" -> false)
       case _ =>
-        JsObject.empty
+        Json.obj("isTranshipment" -> false)
     }
 
-  private def vehicularTranshipmentJson(vehicularTranshipment: VehicularTranshipment): JsObject =
+  private def vehicularTranshipmentJson(vehicularTranshipment: VehicularTranshipment): JsObject = {
+    val transhipmentType = if (vehicularTranshipment.containers.isDefined) {
+      TranshipmentType.DifferentContainerAndVehicle
+    } else {
+      TranshipmentType.DifferentVehicle
+    }
+
     Json
       .obj(
         "transportIdentity"    -> vehicularTranshipment.transportIdentity,
@@ -577,8 +585,11 @@ class EventDetailsSpec
         "authority"            -> vehicularTranshipment.authority,
         "place"                -> vehicularTranshipment.place,
         "country"              -> vehicularTranshipment.country,
-        "containers"           -> Json.toJson(vehicularTranshipment.containers)
+        "containers"           -> Json.toJson(vehicularTranshipment.containers),
+        "transhipmentType"     -> transhipmentType.toString,
+        "isTranshipment"       -> true
       )
       .filterNulls
+  }
 
 }
