@@ -62,5 +62,16 @@ class UserAnswersServiceSpec extends SpecBase with MessagesModelGenerators {
       userAnswersService.getUserAnswers(ArrivalId(1)).futureValue.value mustBe emptyUserAnswers
 
     }
+
+    "must return None for invalid request" in {
+      when(mockArrivalNotificationMessageService.getArrivalNotificationMessage(any())(any(), any()))
+        .thenReturn(Future.successful(None))
+
+      val application = applicationBuilder(Some(emptyUserAnswers))
+        .overrides(bind[ArrivalNotificationMessageService].toInstance(mockArrivalNotificationMessageService))
+        .build()
+      val userAnswersService = application.injector.instanceOf[UserAnswersService]
+      userAnswersService.getUserAnswers(ArrivalId(1)).futureValue mustBe None
+    }
   }
 }
