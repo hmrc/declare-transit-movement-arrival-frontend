@@ -20,13 +20,12 @@ import base.SpecBase
 import generators.MessagesModelGenerators
 import models.MovementReferenceNumber
 import models.messages.{ArrivalMovementRequest, Header, NormalNotification, Trader}
-import org.scalacheck.Gen
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
 class ArrivalMovementRequestConversionServiceSpec extends SpecBase with MessagesModelGenerators with ScalaCheckPropertyChecks {
 
-  val arrivalMovementRequestConversionService: ArrivalMovementRequestConversionService = app.injector.instanceOf[ArrivalMovementRequestConversionService]
+  val arrivalMovementRequestConversionService: ArrivalMovementRequestConversionService.type = ArrivalMovementRequestConversionService
 
   "ArrivalMovementRequest" - {
 

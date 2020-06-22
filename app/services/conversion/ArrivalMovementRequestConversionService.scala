@@ -19,7 +19,7 @@ package services.conversion
 import models.MovementReferenceNumber
 import models.messages.{ArrivalMovementRequest, ArrivalNotification, NormalNotification}
 
-class ArrivalMovementRequestConversionService {
+object ArrivalMovementRequestConversionService {
 
   def convertToArrivalNotification(arrivalMovementRequest: ArrivalMovementRequest): Option[ArrivalNotification] =
     MovementReferenceNumber(arrivalMovementRequest.header.movementReferenceNumber) map {

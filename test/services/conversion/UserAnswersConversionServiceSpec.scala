@@ -34,7 +34,7 @@ import queries.{ContainersQuery, EventsQuery, SealsQuery}
 
 class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyChecks with MessagesModelGenerators {
 
-  val userAnswersConversionService: UserAnswersConversionService = app.injector.instanceOf[UserAnswersConversionService]
+  val userAnswersConversionService: UserAnswersConversionService.type = UserAnswersConversionService
 
   private val lastUpdated = LocalDateTime.now()
 

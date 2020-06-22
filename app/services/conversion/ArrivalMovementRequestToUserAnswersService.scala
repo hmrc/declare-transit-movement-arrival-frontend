@@ -21,6 +21,10 @@ import models.messages.ArrivalMovementRequest
 
 object ArrivalMovementRequestToUserAnswersService {
 
-  def apply(arrivalMovementRequest: ArrivalMovementRequest): Option[UserAnswers] = ???
+  def apply(arrivalMovementRequest: ArrivalMovementRequest): Option[UserAnswers] =
+    ArrivalMovementRequestConversionService.convertToArrivalNotification(arrivalMovementRequest).flatMap {
+      arrivalNotification =>
+        UserAnswersConversionService.convertToUserAnswers(arrivalNotification)
+    }
 
 }

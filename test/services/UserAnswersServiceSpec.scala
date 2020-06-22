@@ -29,34 +29,24 @@ import services.conversion.{ArrivalMovementRequestConversionService, UserAnswers
 import scala.concurrent.Future
 
 class UserAnswersServiceSpec extends SpecBase with MessagesModelGenerators {
-  val mockArrivalNotificationMessageService       = mock[ArrivalNotificationMessageService]
-  val mockArrivalMovementRequestConversionService = mock[ArrivalMovementRequestConversionService]
-  val mockUserAnswersConversionService            = mock[UserAnswersConversionService]
+
+  val mockArrivalNotificationMessageService: ArrivalNotificationMessageService = mock[ArrivalNotificationMessageService]
 
   override def beforeEach: Unit = {
     super.beforeEach()
     reset(mockArrivalNotificationMessageService)
-    reset(mockArrivalMovementRequestConversionService)
-    reset(mockUserAnswersConversionService)
   }
 
   "UserAnswers" - {
     "must return user answers for valid input" in {
 
       val arrivalMovementRequest = arbitrary[ArrivalMovementRequest].sample.value
-      val arrivalNotification    = arbitrary[ArrivalNotification].sample.value
 
       when(mockArrivalNotificationMessageService.getArrivalNotificationMessage(any())(any(), any()))
         .thenReturn(Future.successful(Some(arrivalMovementRequest)))
-      when(mockArrivalMovementRequestConversionService.convertToArrivalNotification(any()))
-        .thenReturn(Some(arrivalNotification))
-      when(mockUserAnswersConversionService.convertToUserAnswers(any()))
-        .thenReturn(Some(emptyUserAnswers))
 
       val application = applicationBuilder(Some(emptyUserAnswers))
         .overrides(bind[ArrivalNotificationMessageService].toInstance(mockArrivalNotificationMessageService))
-        .overrides(bind[ArrivalMovementRequestConversionService].toInstance(mockArrivalMovementRequestConversionService))
-        .overrides(bind[UserAnswersConversionService].toInstance(mockUserAnswersConversionService))
         .build()
       val userAnswersService = application.injector.instanceOf[UserAnswersService]
       userAnswersService.getUserAnswers(ArrivalId(1)).futureValue.value mustBe emptyUserAnswers
