@@ -35,7 +35,9 @@ class ReferenceDataConnector @Inject()(config: FrontendAppConfig, http: HttpClie
     http.GET[Seq[Country]](serviceUrl)
   }
 
-  def getCountry(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[HttpResponse] = {
-    ???
+  //TODO Chat with design if we get a 404 (invalid code) as this is technically not a failure
+  def getCountry(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Country] = {
+    val serviceUrl = s"${config.referenceDataUrl}/countries/$code"
+    http.GET[Country](serviceUrl)
   }
 }

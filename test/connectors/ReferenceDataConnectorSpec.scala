@@ -146,7 +146,7 @@ class ReferenceDataConnectorSpec extends SpecBase with WireMockServerHandler wit
 
         val expectedResult = Country("valid", "GB", "United Kingdom")
 
-        connector.getCountry(code) mustBe expectedResult
+        connector.getCountry(code).futureValue mustBe expectedResult
       }
 
       "must return an exception when an error response is returned" in {
@@ -156,7 +156,6 @@ class ReferenceDataConnectorSpec extends SpecBase with WireMockServerHandler wit
         checkErrorResponse(s"/$startUrl/countries/$invalidCode", connector.getCountry(invalidCode))
       }
     }
-
 
   }
 
