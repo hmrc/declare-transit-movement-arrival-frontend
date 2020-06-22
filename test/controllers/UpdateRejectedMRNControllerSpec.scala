@@ -81,7 +81,7 @@ class UpdateRejectedMRNControllerSpec extends SpecBase with MessagesModelGenerat
         .thenReturn(Future.successful(Html("")))
       val arrivalMovementRequest: ArrivalMovementRequest = arbitrary[ArrivalMovementRequest].sample.value
       when(mockArrivalMovementMessageService.getArrivalNotificationMessage(any())(any(), any()))
-        .thenReturn(Future.successful(Some((arrivalMovementRequest.toXml, MovementReferenceNumber(arrivalMovementRequest.header.movementReferenceNumber).get))))
+        .thenReturn(Future.successful(Some(arrivalMovementRequest)))
 
       val application =
         applicationBuilder(userAnswers = None)

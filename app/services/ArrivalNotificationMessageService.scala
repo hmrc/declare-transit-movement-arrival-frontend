@@ -18,16 +18,15 @@ package services
 
 import connectors.ArrivalMovementConnector
 import javax.inject.Inject
-import models.{ArrivalId, MovementReferenceNumber}
+import models.ArrivalId
+import models.messages.ArrivalMovementRequest
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.xml.NodeSeq
 
 class ArrivalNotificationMessageService @Inject()(arrivalMovementConnector: ArrivalMovementConnector) {
 
-  def getArrivalNotificationMessage(arrivalId: ArrivalId)(implicit hc: HeaderCarrier,
-                                                          ec: ExecutionContext): Future[Option[(NodeSeq, MovementReferenceNumber)]] =
+  def getArrivalNotificationMessage(arrivalId: ArrivalId)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[ArrivalMovementRequest]] =
     arrivalMovementConnector.getSummary(arrivalId) flatMap {
       case Some(summary) =>
         arrivalMovementConnector.getArrivalNotificationMessage(summary.messagesLocation.arrivalNotification)

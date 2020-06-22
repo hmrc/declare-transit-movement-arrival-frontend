@@ -19,7 +19,7 @@ package controllers
 import controllers.actions._
 import forms.UpdateRejectedMRNFormProvider
 import javax.inject.Inject
-import models.ArrivalId
+import models.{ArrivalId, MovementReferenceNumber}
 import navigation.Navigator
 import pages.UpdateRejectedMRNPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -48,9 +48,13 @@ class UpdateRejectedMRNController @Inject()(override val messagesApi: MessagesAp
   def onPageLoad(arrivalId: ArrivalId): Action[AnyContent] = identify.async {
     implicit request =>
       arrivalMovementMessageService.getArrivalNotificationMessage(arrivalId) flatMap {
-        case Some((_, mrn)) =>
-          val json = Json.obj("form" -> form.fill(mrn), "arrivalId" -> arrivalId.value)
-          renderer.render("updateMovementReferenceNumber.njk", json).map(Ok(_))
+        case Some(arrivalMovementRequest) =>
+          MovementReferenceNumber(arrivalMovementRequest.header.movementReferenceNumber) match {
+            case Some(mrn) =>
+              val json = Json.obj("form" -> form.fill(mrn), "arrivalId" -> arrivalId.value)
+              renderer.render("updateMovementReferenceNumber.njk", json).map(Ok(_))
+            case _ => Future.successful(Redirect(routes.TechnicalDifficultiesController.onPageLoad()))
+          }
         case _ => Future.successful(Redirect(routes.TechnicalDifficultiesController.onPageLoad()))
       }
   }

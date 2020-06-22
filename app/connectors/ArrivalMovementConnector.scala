@@ -21,7 +21,7 @@ import config.FrontendAppConfig
 import javax.inject.Inject
 import models.XMLWrites._
 import models.messages.{ArrivalMovementRequest, ArrivalNotificationRejectionMessage}
-import models.{ArrivalId, MessagesSummary, MovementReferenceNumber, ResponseMovementMessage}
+import models.{ArrivalId, MessagesSummary, ResponseMovementMessage}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpErrorFunctions, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
@@ -57,26 +57,21 @@ class ArrivalMovementConnector @Inject()(val config: FrontendAppConfig, val http
     }
   }
 
-  //TODO MovementReferenceNumber will be removed when we implement xml reads for ArrivalMovementRequest
-  def getArrivalNotificationMessage(location: String)(implicit hc: HeaderCarrier): Future[Option[(NodeSeq, MovementReferenceNumber)]] = {
+  def getArrivalNotificationMessage(location: String)(implicit hc: HeaderCarrier): Future[Option[ArrivalMovementRequest]] = {
     val serviceUrl = s"${config.baseDestinationUrl}$location"
     http.GET[HttpResponse](serviceUrl) map {
       case responseMessage if is2xx(responseMessage.status) =>
         val xml = responseMessage.json.as[ResponseMovementMessage].message
-
-        MovementReferenceNumber(xml.\\("DocNumHEA5").text) map {
-          mrn =>
-            (responseMessage.json.as[ResponseMovementMessage].message, mrn)
-        }
+        XmlReader.of[ArrivalMovementRequest].read(xml).toOption
       case _ =>
         None
     }
   }
 
-  def updateArrivalMovement(arrivalId: ArrivalId, arrivalMovementXml: NodeSeq)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
+  def updateArrivalMovement(arrivalId: ArrivalId, arrivalMovementRequest: ArrivalMovementRequest)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
     val serviceUrl = s"${config.destinationUrl}/movements/arrivals/${arrivalId.value}"
     val headers    = Seq(("Content-Type", "application/xml"))
 
-    http.PUTString[HttpResponse](serviceUrl, arrivalMovementXml.toString(), headers)
+    http.PUTString[HttpResponse](serviceUrl, arrivalMovementRequest.toXml.toString(), headers)
   }
 }

@@ -27,7 +27,6 @@ import play.api.Logger
 import repositories.InterchangeControlReferenceIdRepository
 import services.conversion.{ArrivalNotificationConversionService, SubmissionModelService}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
-import utils.XMLTransformer
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -72,9 +71,8 @@ class ArrivalSubmissionService @Inject()(
   //TODO this service only to update MRN
   def update(arrivalId: ArrivalId, mrn: MovementReferenceNumber)(implicit hc: HeaderCarrier): Future[Option[HttpResponse]] =
     arrivalNotificationMessageService.getArrivalNotificationMessage(arrivalId) flatMap {
-      case Some((xml, _)) =>
-        val updatedXml = XMLTransformer.updateXmlNode("DocNumHEA5", mrn.toString, xml)
-        connector.updateArrivalMovement(arrivalId, updatedXml).map(Some(_))
+      case Some(arrivalMovementRequest) =>
+        connector.updateArrivalMovement(arrivalId, arrivalMovementRequest).map(Some(_))
       case _ => Future.successful(None)
     }
 

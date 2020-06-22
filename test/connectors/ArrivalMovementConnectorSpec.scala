@@ -23,7 +23,7 @@ import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import generators.MessagesModelGenerators
 import helper.WireMockServerHandler
-import models.messages.ErrorType.DuplicateMrn
+import models.XMLWrites._
 import models.messages._
 import models.{ArrivalId, MessagesLocation, MessagesSummary}
 import org.scalacheck.Arbitrary.arbitrary
@@ -34,7 +34,6 @@ import play.api.http.Status._
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.HttpResponse
-import models.XMLWrites._
 
 import scala.concurrent.Future
 import scala.xml.NodeSeq
@@ -86,7 +85,7 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
 
         forAll(arbitrary[ArrivalMovementRequest]) {
           arrivalMovementRequest =>
-            val result: Future[HttpResponse] = connector.updateArrivalMovement(ArrivalId(1), arrivalMovementRequest.toXml)
+            val result: Future[HttpResponse] = connector.updateArrivalMovement(ArrivalId(1), arrivalMovementRequest)
             result.futureValue.status mustBe ACCEPTED
         }
       }
@@ -96,7 +95,7 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
           (arrivalMovementRequest, errorResponseCode) =>
             stubPutResponse(errorResponseCode)
 
-            val result = connector.updateArrivalMovement(ArrivalId(1), arrivalMovementRequest.toXml)
+            val result = connector.updateArrivalMovement(ArrivalId(1), arrivalMovementRequest)
             result.futureValue.status mustBe errorResponseCode
         }
       }
@@ -142,9 +141,9 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
 
         forAll(arbitrary[ArrivalMovementRequest]) {
           arrivalMovementRequest =>
-            val notificationXml: NodeSeq =
-              arrivalMovementRequest.copy(header = arrivalMovementRequest.header.copy(movementReferenceNumber = mrn.toString)).toXml
-            val json = Json.obj("message" -> notificationXml.toString())
+            val expectedArrivalMovementRequest =
+              arrivalMovementRequest.copy(header = arrivalMovementRequest.header.copy(movementReferenceNumber = mrn.toString))
+            val json = Json.obj("message" -> expectedArrivalMovementRequest.toXml.toString())
 
             server.stubFor(
               get(urlEqualTo(arrivalNotificationLocation))
@@ -153,9 +152,8 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
                 )
             )
 
-            val (xml, movementReferenceNumber) = connector.getArrivalNotificationMessage(arrivalNotificationLocation).futureValue.value
-            xml.toString() mustBe notificationXml.toString
-            movementReferenceNumber mustBe mrn
+            val result = connector.getArrivalNotificationMessage(arrivalNotificationLocation).futureValue.value
+            result mustBe expectedArrivalMovementRequest
         }
       }
 
