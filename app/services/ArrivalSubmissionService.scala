@@ -60,7 +60,11 @@ class ArrivalSubmissionService @Inject()(
                     timeOfPresentation          = LocalTime.now()
                   )
               }
-              connector.submitArrivalMovement(arrivalMovementRequest).map(Some(_))
+              userAnswers.arrivalId match {
+                case Some(arrivalId) => connector.updateArrivalMovement(arrivalId, arrivalMovementRequest).map(Some(_))
+                case _               => connector.submitArrivalMovement(arrivalMovementRequest).map(Some(_))
+
+              }
           }
           .recover {
             case ex =>
