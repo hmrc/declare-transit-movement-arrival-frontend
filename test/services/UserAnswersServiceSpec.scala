@@ -18,13 +18,12 @@ package services
 
 import base.SpecBase
 import generators.MessagesModelGenerators
-import models.ArrivalId
-import models.messages.{ArrivalMovementRequest, ArrivalNotification}
+import models.messages.ArrivalMovementRequest
+import models.{ArrivalId, UserAnswers}
 import org.mockito.Matchers.any
 import org.mockito.Mockito._
-import play.api.inject.bind
 import org.scalacheck.Arbitrary.arbitrary
-import services.conversion.{ArrivalMovementRequestConversionService, UserAnswersConversionService}
+import play.api.inject.bind
 
 import scala.concurrent.Future
 
@@ -49,7 +48,7 @@ class UserAnswersServiceSpec extends SpecBase with MessagesModelGenerators {
         .overrides(bind[ArrivalNotificationMessageService].toInstance(mockArrivalNotificationMessageService))
         .build()
       val userAnswersService = application.injector.instanceOf[UserAnswersService]
-      userAnswersService.getUserAnswers(ArrivalId(1)).futureValue.value mustBe emptyUserAnswers
+      userAnswersService.getUserAnswers(ArrivalId(1)).futureValue.value mustBe a[UserAnswers]
 
     }
 
