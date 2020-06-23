@@ -36,8 +36,7 @@ import base.SpecBase
 import forms.MovementReferenceNumberFormProvider
 import generators.MessagesModelGenerators
 import matchers.JsonMatchers
-import models.{ArrivalId, MovementReferenceNumber}
-import models.XMLWrites._
+import models.ArrivalId
 import models.messages.ArrivalMovementRequest
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
@@ -52,7 +51,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import repositories.SessionRepository
-import services.ArrivalNotificationMessageService
+import services.{ArrivalNotificationMessageService, UserAnswersService}
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
@@ -134,14 +133,17 @@ class UpdateRejectedMRNControllerSpec extends SpecBase with MessagesModelGenerat
 
     "must redirect to the next page when valid data is submitted" in {
 
-      val mockSessionRepository = mock[SessionRepository]
+      val mockSessionRepository  = mock[SessionRepository]
+      val mockUserAnswersService = mock[UserAnswersService]
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockUserAnswersService.getUserAnswers(any())(any())) thenReturn Future.successful(Some(emptyUserAnswers))
 
       val application =
         applicationBuilder(userAnswers = None)
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[UserAnswersService].toInstance(mockUserAnswersService),
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
@@ -154,6 +156,40 @@ class UpdateRejectedMRNControllerSpec extends SpecBase with MessagesModelGenerat
 
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual onwardRoute.url
+      verify(mockUserAnswersService, times(1)).getUserAnswers(any())(any())
+      verify(mockSessionRepository, times(1)).set(any())
+
+      application.stop()
+    }
+
+    "must redirect to to TechnicalDifficulties page when UserAnswersService return 'none'" in {
+
+      val mockSessionRepository  = mock[SessionRepository]
+      val mockUserAnswersService = mock[UserAnswersService]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockUserAnswersService.getUserAnswers(any())(any())) thenReturn Future.successful(None)
+
+      val application =
+        applicationBuilder(userAnswers = None)
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[UserAnswersService].toInstance(mockUserAnswersService),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      val request =
+        FakeRequest(POST, movementReferenceNumberRoute)
+          .withFormUrlEncodedBody(("value", "99IT9876AB88901209"))
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual routes.TechnicalDifficultiesController.onPageLoad().url
+
+      verify(mockUserAnswersService, times(1)).getUserAnswers(any())(any())
+      verify(mockSessionRepository, never()).set(any())
 
       application.stop()
     }

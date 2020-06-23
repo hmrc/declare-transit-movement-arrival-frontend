@@ -26,7 +26,8 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
-import services.ArrivalNotificationMessageService
+import repositories.SessionRepository
+import services.{ArrivalNotificationMessageService, UserAnswersService}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
@@ -36,7 +37,9 @@ class UpdateRejectedMRNController @Inject()(override val messagesApi: MessagesAp
                                             navigator: Navigator,
                                             identify: IdentifierAction,
                                             formProvider: UpdateRejectedMRNFormProvider,
+                                            sessionRepository: SessionRepository,
                                             arrivalMovementMessageService: ArrivalNotificationMessageService,
+                                            userAnswersService: UserAnswersService,
                                             val controllerComponents: MessagesControllerComponents,
                                             renderer: Renderer)(implicit ec: ExecutionContext)
     extends FrontendBaseController
@@ -70,7 +73,13 @@ class UpdateRejectedMRNController @Inject()(override val messagesApi: MessagesAp
 
             renderer.render("updateMovementReferenceNumber.njk", json).map(BadRequest(_))
           },
-          value => Future(Redirect(navigator.nextRejectionPage(UpdateRejectedMRNPage, value, arrivalId)))
+          value =>
+            userAnswersService.getUserAnswers(arrivalId) map {
+              case Some(userAnswers) =>
+                sessionRepository.set(userAnswers.copy(value))
+                Redirect(navigator.nextRejectionPage(UpdateRejectedMRNPage, value, arrivalId))
+              case _ => Redirect(routes.TechnicalDifficultiesController.onPageLoad())
+          }
         )
   }
 }
