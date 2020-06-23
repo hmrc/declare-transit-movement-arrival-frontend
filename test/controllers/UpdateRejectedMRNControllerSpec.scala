@@ -36,11 +36,11 @@ import base.SpecBase
 import forms.MovementReferenceNumberFormProvider
 import generators.MessagesModelGenerators
 import matchers.JsonMatchers
-import models.ArrivalId
+import models.{ArrivalId, MovementReferenceNumber}
 import models.messages.ArrivalMovementRequest
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
-import org.mockito.Matchers.any
+import org.mockito.Matchers.{any, eq => meq}
 import org.mockito.Mockito._
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.mockito.MockitoSugar
@@ -135,6 +135,7 @@ class UpdateRejectedMRNControllerSpec extends SpecBase with MessagesModelGenerat
 
       val mockSessionRepository  = mock[SessionRepository]
       val mockUserAnswersService = mock[UserAnswersService]
+      val mrn                    = "99IT9876AB88901209"
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
       when(mockUserAnswersService.getUserAnswers(any())(any())) thenReturn Future.successful(Some(emptyUserAnswers))
@@ -150,14 +151,14 @@ class UpdateRejectedMRNControllerSpec extends SpecBase with MessagesModelGenerat
 
       val request =
         FakeRequest(POST, movementReferenceNumberRoute)
-          .withFormUrlEncodedBody(("value", "99IT9876AB88901209"))
+          .withFormUrlEncodedBody(("value", mrn))
 
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual onwardRoute.url
       verify(mockUserAnswersService, times(1)).getUserAnswers(any())(any())
-      verify(mockSessionRepository, times(1)).set(any())
+      verify(mockSessionRepository, times(1)).set(meq(emptyUserAnswers.copy(id = MovementReferenceNumber(mrn).get)))
 
       application.stop()
     }

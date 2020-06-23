@@ -50,9 +50,8 @@ class CheckYourAnswersRejectionsController @Inject()(override val messagesApi: M
       val helper = new CheckYourAnswersHelper(UserAnswers(mrn))
 
       val json = Json.obj(
-        "arrivalId" -> arrivalId.value,
-        "mrn"       -> mrn,
-        "sections"  -> Json.toJson(Seq(Section(Seq(helper.movementReferenceNumber))))
+        "sections" -> Json.toJson(Seq(Section(Seq(helper.movementReferenceNumber)))),
+        "action"   -> routes.CheckYourAnswersRejectionsController.onPost(mrn, arrivalId).url
       )
       renderer.render("check-your-answers-rejections.njk", json).map(Ok(_))
   }
