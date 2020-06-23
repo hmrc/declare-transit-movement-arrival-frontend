@@ -158,7 +158,7 @@ class UpdateRejectedMRNControllerSpec extends SpecBase with MessagesModelGenerat
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual onwardRoute.url
       verify(mockUserAnswersService, times(1)).getUserAnswers(any())(any())
-      verify(mockSessionRepository, times(1)).set(meq(emptyUserAnswers.copy(id = MovementReferenceNumber(mrn).get, arrivalId = Some(arrivalId))))
+      verify(mockSessionRepository, times(1)).set(meq(emptyUserAnswers.copy(id = MovementReferenceNumber(mrn).get)))
 
       application.stop()
     }
