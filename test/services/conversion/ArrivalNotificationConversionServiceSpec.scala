@@ -19,7 +19,7 @@ package services.conversion
 import base.SpecBase
 import generators.MessagesModelGenerators
 import models.GoodsLocation.BorderForceOffice
-import models.domain.{NormalNotification, Trader}
+import models.domain.{EnRouteEventDomain, NormalNotification, Trader}
 import models.messages.{ContainerTranshipment, EnRouteEvent, Seal}
 import models.reference.{Country, CustomsOffice}
 import models.{Address, Index, UserAnswers}
@@ -67,7 +67,7 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
     "must return 'Normal Arrival Notification' message when there is one incident on route" in {
       forAll(arrivalNotificationWithSubplace, enRouteEventIncident) {
         case ((arbArrivalNotification, trader), (enRouteEvent, incident)) =>
-          val routeEvent: EnRouteEvent = enRouteEvent
+          val routeEvent: EnRouteEventDomain = enRouteEvent
             .copy(seals = None)
             .copy(eventDetails = Some(incident.copy(date = None, authority = None, place = None, country = None)))
 
@@ -111,8 +111,8 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
       }
     }
 
-    val enRouteEventContainerTranshipment: Gen[(EnRouteEvent, ContainerTranshipment)] = for {
-      generatedEnRouteEvent <- arbitrary[EnRouteEvent]
+    val enRouteEventContainerTranshipment: Gen[(EnRouteEventDomain, ContainerTranshipment)] = for {
+      generatedEnRouteEvent <- arbitrary[EnRouteEventDomain]
       ct <- arbitrary[ContainerTranshipment]
     } yield {
       val containerTranshipment = ct.copy(date = None, authority = None, place = None, country = None)
@@ -153,11 +153,11 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
     "must return 'Normal Arrival Notification' message when there multiple incidents on route" in {
       forAll(arrivalNotificationWithSubplace, enRouteEventIncident, enRouteEventIncident) {
         case ((arbArrivalNotification, trader), (enRouteEvent1, incident1), (enRouteEvent2, incident2)) =>
-          val routeEvent1: EnRouteEvent = enRouteEvent1
+          val routeEvent1: EnRouteEventDomain = enRouteEvent1
             .copy(seals = None)
             .copy(eventDetails = Some(incident1.copy(date = None, authority = None, place = None, country = None)))
 
-          val routeEvent2: EnRouteEvent = enRouteEvent2
+          val routeEvent2: EnRouteEventDomain = enRouteEvent2
             .copy(seals = None)
             .copy(eventDetails = Some(incident2.copy(date = None, authority = None, place = None, country = None)))
 

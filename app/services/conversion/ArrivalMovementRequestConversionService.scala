@@ -17,14 +17,21 @@
 package services.conversion
 
 import models.MovementReferenceNumber
-import models.domain.{ArrivalNotification, NormalNotification}
-import models.messages.ArrivalMovementRequest
+import models.domain.{ArrivalNotification, EnRouteEventDomain, NormalNotification}
+import models.messages.{ArrivalMovementRequest, EnRouteEvent}
 
 class ArrivalMovementRequestConversionService {
 
   def convertToArrivalNotification(arrivalMovementRequest: ArrivalMovementRequest): Option[ArrivalNotification] =
     MovementReferenceNumber(arrivalMovementRequest.header.movementReferenceNumber) map {
       mrn =>
+        val buildEnrouteEvents: Option[Seq[EnRouteEventDomain]] = arrivalMovementRequest.enRouteEvents.map {
+          events =>
+            events.map {
+              models.messages.EnRouteEvent.enRouteEventToEnrouteEventDomain
+            }
+        }
+
         NormalNotification(
           mrn,
           arrivalMovementRequest.header.arrivalNotificationPlace,
@@ -33,7 +40,7 @@ class ArrivalMovementRequestConversionService {
           models.messages.Trader.messagesTraderToDomainTrader(arrivalMovementRequest.trader),
           arrivalMovementRequest.header.presentationOfficeId,
           arrivalMovementRequest.header.presentationOfficeName,
-          arrivalMovementRequest.enRouteEvents
+          buildEnrouteEvents
         )
     }
 }

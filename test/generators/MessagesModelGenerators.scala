@@ -19,7 +19,7 @@ package generators
 import java.time.{LocalDate, LocalTime}
 
 import models.{domain, messages, MovementReferenceNumber, NormalProcedureFlag, ProcedureTypeFlag, SimplifiedProcedureFlag}
-import models.domain.{ArrivalNotification, NormalNotification, SimplifiedNotification}
+import models.domain.{ArrivalNotification, EnRouteEventDomain, NormalNotification, SimplifiedNotification}
 import models.messages.ErrorType.{GenericError, MRNError}
 import models.messages.{
   ArrivalMovementRequest,
@@ -165,6 +165,23 @@ trait MessagesModelGenerators extends Generators {
       }
     }
 
+  implicit lazy val arbitraryDomainEnRouteEvent: Arbitrary[EnRouteEventDomain] =
+    Arbitrary {
+
+      for {
+        place         <- stringsWithMaxLength(EnRouteEvent.Constants.placeLength)
+        countryCode   <- stringsWithMaxLength(EnRouteEvent.Constants.countryCodeLength)
+        alreadyInNcts <- arbitrary[Boolean]
+        eventDetails  <- arbitrary[Option[EventDetails]]
+        seals         <- listWithMaxLength[Seal](1)
+      } yield {
+
+        val sealsOpt = if (eventDetails.isDefined) Some(seals) else None
+
+        EnRouteEventDomain(place, countryCode, alreadyInNcts, eventDetails, sealsOpt)
+      }
+    }
+
   implicit lazy val arbitraryNormalNotification: Arbitrary[NormalNotification] =
     Arbitrary {
 
@@ -176,7 +193,7 @@ trait MessagesModelGenerators extends Generators {
         trader                 <- arbitrary[domain.Trader]
         presentationOfficeId   <- stringsWithMaxLength(NormalNotification.Constants.presentationOfficeLength)
         presentationOfficeName <- arbitrary[String]
-        events                 <- Gen.option(listWithMaxLength[EnRouteEvent](NormalNotification.Constants.maxNumberOfEnRouteEvents))
+        events                 <- Gen.option(listWithMaxLength[EnRouteEventDomain](NormalNotification.Constants.maxNumberOfEnRouteEvents))
       } yield domain.NormalNotification(mrn, place, date, subPlace, trader, presentationOfficeId, presentationOfficeName, events)
     }
 
@@ -358,18 +375,18 @@ trait MessagesModelGenerators extends Generators {
     information <- stringsWithMaxLength(Incident.Constants.informationLength)
   } yield Incident(Some(information))
 
-  val enRouteEventIncident: Gen[(EnRouteEvent, Incident)] = for {
-    enRouteEvent <- arbitrary[EnRouteEvent]
+  val enRouteEventIncident: Gen[(EnRouteEventDomain, Incident)] = for {
+    enRouteEvent <- arbitrary[EnRouteEventDomain]
     incident     <- incidentWithInformation
   } yield (enRouteEvent.copy(eventDetails = Some(incident)), incident)
 
-  val enRouteEventVehicularTranshipment: Gen[(EnRouteEvent, VehicularTranshipment)] = for {
-    enRouteEvent          <- arbitrary[EnRouteEvent]
+  val enRouteEventVehicularTranshipment: Gen[(EnRouteEventDomain, VehicularTranshipment)] = for {
+    enRouteEvent          <- arbitrary[EnRouteEventDomain]
     vehicularTranshipment <- arbitrary[VehicularTranshipment]
   } yield (enRouteEvent.copy(eventDetails = Some(vehicularTranshipment)), vehicularTranshipment)
 
-  val enRouteEventContainerTranshipment: Gen[(EnRouteEvent, ContainerTranshipment)] = for {
-    generatedEnRouteEvent <- arbitrary[EnRouteEvent]
+  val enRouteEventContainerTranshipment: Gen[(EnRouteEventDomain, ContainerTranshipment)] = for {
+    generatedEnRouteEvent <- arbitrary[EnRouteEventDomain]
     containerTranshipment <- arbitrary[ContainerTranshipment]
   } yield (generatedEnRouteEvent.copy(eventDetails = Some(containerTranshipment)), containerTranshipment)
 }

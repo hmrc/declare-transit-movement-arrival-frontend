@@ -19,9 +19,10 @@ package services.conversion
 import base.SpecBase
 import generators.MessagesModelGenerators
 import models.{domain, MovementReferenceNumber}
-import models.domain.{NormalNotification, Trader}
-import models.messages.{ArrivalMovementRequest, Header}
+import models.domain.{EnRouteEventDomain, NormalNotification, Trader}
+import models.messages.{ArrivalMovementRequest, EnRouteEvent, Header}
 import org.scalacheck.Arbitrary.arbitrary
+import org.scalacheck.{Arbitrary, Gen}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
 class ArrivalMovementRequestConversionServiceSpec extends SpecBase with MessagesModelGenerators with ScalaCheckPropertyChecks {
@@ -42,7 +43,13 @@ class ArrivalMovementRequestConversionServiceSpec extends SpecBase with Messages
 
     "must convert ArrivalMovementRequest to NormalNotification for trader" in {
 
-      val arrivalNotificationRequest = arbitrary[ArrivalMovementRequest].sample.value
+      val genArrivalNotificationRequest = arbitrary[ArrivalMovementRequest].sample.value
+      val arrivalNotificationRequest    = genArrivalNotificationRequest.copy(header = genArrivalNotificationRequest.header.copy(customsSubPlace = Some("")))
+
+      val convertEnRouteEvents = arrivalNotificationRequest.enRouteEvents.map {
+        events =>
+          events.map(EnRouteEvent.enRouteEventToEnrouteEventDomain)
+      }
 
       val normalNotification: NormalNotification = {
         domain.NormalNotification(
@@ -60,7 +67,7 @@ class ArrivalMovementRequestConversionServiceSpec extends SpecBase with Messages
           ),
           presentationOfficeId   = arrivalNotificationRequest.header.presentationOfficeId,
           presentationOfficeName = arrivalNotificationRequest.header.presentationOfficeName,
-          enRouteEvents          = arrivalNotificationRequest.enRouteEvents
+          enRouteEvents          = convertEnRouteEvents
         )
       }
 

@@ -19,7 +19,7 @@ package services.conversion
 import java.time.LocalTime
 
 import com.google.inject.Inject
-import models.domain.{ArrivalNotification, NormalNotification}
+import models.domain.{ArrivalNotification, EnRouteEventDomain, NormalNotification}
 import models.messages._
 import models.{NormalProcedureFlag, ProcedureTypeFlag}
 
@@ -39,10 +39,10 @@ class SubmissionModelService @Inject()() {
           dateOfPreparation           = normalNotification.notificationDate,
           timeOfPreparation           = timeOfPresentation
         )
-        val header                                   = buildHeader(normalNotification, NormalProcedureFlag)
-        val traderDestination                        = models.domain.Trader.domainTraderToMessagesTrader(normalNotification.trader)
-        val customsOffice                            = CustomsOfficeOfPresentation(presentationOffice = normalNotification.presentationOfficeId)
-        val enRouteEvents: Option[Seq[EnRouteEvent]] = normalNotification.enRouteEvents
+        val header            = buildHeader(normalNotification, NormalProcedureFlag)
+        val traderDestination = models.domain.Trader.domainTraderToMessagesTrader(normalNotification.trader)
+        val customsOffice     = CustomsOfficeOfPresentation(presentationOffice = normalNotification.presentationOfficeId)
+        val enRouteEvents     = normalNotification.enRouteEvents.map(_.map(EnRouteEventDomain.domainEnrouteEventToEnrouteEvent))
 
         ArrivalMovementRequest(meta, header, traderDestination, customsOffice, enRouteEvents)
       case _ => ???

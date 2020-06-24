@@ -19,8 +19,8 @@ package services.conversion
 import java.time.LocalDate
 
 import derivable.DeriveNumberOfEvents
-import models.domain.{ArrivalNotification, NormalNotification, Trader}
-import models.messages.{Container, ContainerTranshipment, EnRouteEvent, EventDetails, Incident, VehicularTranshipment}
+import models.domain.{ArrivalNotification, EnRouteEventDomain, NormalNotification, Trader}
+import models.messages._
 import models.{Index, UserAnswers}
 import pages._
 import pages.events._
@@ -80,7 +80,7 @@ class ArrivalNotificationConversionService {
       case _ => None
     }
 
-  private def enRouteEvents(userAnswers: UserAnswers): Option[Seq[EnRouteEvent]] =
+  private def enRouteEvents(userAnswers: UserAnswers): Option[Seq[EnRouteEventDomain]] =
     userAnswers.get(DeriveNumberOfEvents).map {
       numberOfEvents =>
         val listOfEvents = List.range(0, numberOfEvents).map(Index(_))
@@ -95,7 +95,7 @@ class ArrivalNotificationConversionService {
               transportCountry    = userAnswers.get(TransportNationalityPage(eventIndex))
               containers          = userAnswers.get(ContainersQuery(eventIndex))
             } yield {
-              EnRouteEvent(
+              EnRouteEventDomain(
                 place         = place,
                 countryCode   = country.code,
                 alreadyInNcts = isReported,

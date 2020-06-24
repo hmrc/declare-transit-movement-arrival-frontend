@@ -16,14 +16,15 @@
 
 package models.messages
 
-import com.lucidchart.open.xtract.{XmlReader, __ => xmlPath}
-import com.lucidchart.open.xtract.XmlReader._
-import models.XMLWrites._
-import models.XMLReads._
 import cats.syntax.all._
+import com.lucidchart.open.xtract.XmlReader._
+import com.lucidchart.open.xtract.{XmlReader, __ => xmlPath}
+import models.XMLReads._
+import models.XMLWrites._
 import models.{LanguageCodeEnglish, XMLWrites}
-import play.api.libs.json._
+import play.api.libs.json.{JsObject, Json, OWrites}
 import models._
+import models.domain.EnRouteEventDomain
 
 import scala.xml.NodeSeq
 
@@ -36,6 +37,9 @@ object EnRouteEvent {
     val countryCodeLength = 2
     val sealsLength       = 20
   }
+
+  def enRouteEventToEnrouteEventDomain(enrouteEvent: EnRouteEvent): EnRouteEventDomain =
+    EnRouteEvent.unapply(enrouteEvent).map((EnRouteEventDomain.apply _).tupled).get
 
   implicit lazy val writes: OWrites[EnRouteEvent] =
     OWrites[EnRouteEvent] {

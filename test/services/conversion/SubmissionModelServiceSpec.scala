@@ -17,8 +17,8 @@
 package services.conversion
 
 import generators.MessagesModelGenerators
-import models.domain.{NormalNotification, Trader}
-import models.messages.ArrivalMovementRequest
+import models.domain.{EnRouteEventDomain, NormalNotification, Trader}
+import models.messages.{ArrivalMovementRequest, EnRouteEvent}
 import models.{domain, MovementReferenceNumber, NormalProcedureFlag}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.{FreeSpec, MustMatchers, OptionValues}
@@ -42,16 +42,21 @@ class SubmissionModelServiceSpec
 
     "must convert NormalNotification to ArrivalMovementRequest for traders" in {
 
-      val arrivalMovementRequest        = arbitrary[ArrivalMovementRequest].sample.value
-      val setNormalTypeFlag             = arrivalMovementRequest.header.copy(procedureTypeFlag = NormalProcedureFlag)
+      val arrivalMovementRequest = arbitrary[ArrivalMovementRequest].sample.value
+      val setNormalTypeFlag = arrivalMovementRequest.header.copy(
+        procedureTypeFlag = NormalProcedureFlag,
+        customsSubPlace   = Some("")
+      )
+
       val updatedArrivalMovementRequest = arrivalMovementRequest.copy(header = setNormalTypeFlag)
+      val enRouteEventsDomain           = updatedArrivalMovementRequest.enRouteEvents.map(_.map(EnRouteEvent.enRouteEventToEnrouteEventDomain))
 
       val normalNotification = {
         NormalNotification(
           movementReferenceNumber = MovementReferenceNumber(updatedArrivalMovementRequest.header.movementReferenceNumber).get,
           notificationPlace       = updatedArrivalMovementRequest.header.arrivalNotificationPlace,
           notificationDate        = updatedArrivalMovementRequest.header.notificationDate,
-          customsSubPlace         = updatedArrivalMovementRequest.header.customsSubPlace.getOrElse(""),
+          customsSubPlace         = updatedArrivalMovementRequest.header.customsSubPlace.get,
           trader = Trader(
             name            = updatedArrivalMovementRequest.trader.name,
             streetAndNumber = updatedArrivalMovementRequest.trader.streetAndNumber,
@@ -62,7 +67,7 @@ class SubmissionModelServiceSpec
           ),
           presentationOfficeId   = updatedArrivalMovementRequest.header.presentationOfficeId,
           presentationOfficeName = updatedArrivalMovementRequest.header.presentationOfficeName,
-          enRouteEvents          = updatedArrivalMovementRequest.enRouteEvents
+          enRouteEvents          = enRouteEventsDomain
         )
       }
 
