@@ -65,7 +65,7 @@ class SubmissionModelService @Inject()() {
     Header(
       movementReferenceNumber  = arrivalNotification.movementReferenceNumber.toString,
       customsSubPlace          = arrivalNotification.customsSubPlace,
-      arrivalNotificationPlace = arrivalNotification.notificationPlace,
+      arrivalNotificationPlace = None,
       presentationOfficeId     = arrivalNotification.presentationOfficeId,
       presentationOfficeName   = arrivalNotification.presentationOfficeName,
       procedureTypeFlag        = procedureTypeFlag,
@@ -75,8 +75,8 @@ class SubmissionModelService @Inject()() {
   private def buildSimplifiedHeader(arrivalNotification: SimplifiedNotification, procedureTypeFlag: ProcedureTypeFlag): Header =
     Header(
       movementReferenceNumber  = arrivalNotification.movementReferenceNumber.toString,
-      customsSubPlace          = arrivalNotification.approvedLocation,
-      arrivalNotificationPlace = arrivalNotification.notificationPlace,
+      customsSubPlace          = None,
+      arrivalNotificationPlace = arrivalNotification.approvedLocation,
       presentationOfficeId     = arrivalNotification.presentationOfficeId,
       presentationOfficeName   = arrivalNotification.presentationOfficeName,
       procedureTypeFlag        = procedureTypeFlag,

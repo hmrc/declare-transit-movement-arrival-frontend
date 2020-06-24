@@ -52,9 +52,9 @@ class ArrivalNotificationConversionService {
     } yield
       SimplifiedNotification(
         movementReferenceNumber = userAnswers.id,
-        notificationPlace       = notificationPlace.postcode,
+        notificationPlace       = Some(authorisedLocation),
         notificationDate        = LocalDate.now(),
-        approvedLocation        = Some(authorisedLocation),
+        approvedLocation        = None,
         trader = Trader(
           eori            = traderEori,
           name            = traderName,
@@ -79,7 +79,7 @@ class ArrivalNotificationConversionService {
     } yield
       NormalNotification(
         movementReferenceNumber = userAnswers.id,
-        notificationPlace       = notificationPlace,
+        notificationPlace       = None,
         notificationDate        = LocalDate.now(),
         customsSubPlace         = Some(customsSubPlace),
         trader = Trader(

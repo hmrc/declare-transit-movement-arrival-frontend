@@ -49,7 +49,7 @@ object ArrivalNotification {
 }
 
 final case class NormalNotification(movementReferenceNumber: MovementReferenceNumber,
-                                    notificationPlace: String,
+                                    notificationPlace: Option[String],
                                     notificationDate: LocalDate,
                                     customsSubPlace: Option[String],
                                     trader: Trader,
@@ -87,7 +87,7 @@ object NormalNotification {
       .andKeep(
         (
           (__ \ "movementReferenceNumber").read[MovementReferenceNumber] and
-            (__ \ "notificationPlace").read[String] and
+            (__ \ "notificationPlace").readNullable[String] and
             (__ \ "notificationDate").read[LocalDate] and
             (__ \ "customsSubPlace").readNullable[String] and
             (__ \ "trader").read[Trader] and
@@ -118,7 +118,7 @@ object NormalNotification {
 
 final case class SimplifiedNotification(
   movementReferenceNumber: MovementReferenceNumber,
-  notificationPlace: String,
+  notificationPlace: Option[String],
   notificationDate: LocalDate,
   approvedLocation: Option[String],
   trader: Trader,
@@ -157,7 +157,7 @@ object SimplifiedNotification {
       .andKeep(
         (
           (__ \ "movementReferenceNumber").read[MovementReferenceNumber] and
-            (__ \ "notificationPlace").read[String] and
+            (__ \ "notificationPlace").readNullable[String] and
             (__ \ "notificationDate").read[LocalDate] and
             (__ \ "approvedLocation").readNullable[String] and
             (__ \ "trader").read[Trader] and
