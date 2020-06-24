@@ -18,18 +18,15 @@ package services
 
 import java.time.LocalTime
 
-import com.lucidchart.open.xtract.XmlReader
 import config.FrontendAppConfig
 import connectors.ArrivalMovementConnector
 import javax.inject.Inject
-import models.messages.{ArrivalMovementRequest, MessageSender}
-import models.{ArrivalId, MovementReferenceNumber, UserAnswers}
+import models.UserAnswers
+import models.messages.MessageSender
 import play.api.Logger
-import models.XMLWrites._
 import repositories.InterchangeControlReferenceIdRepository
 import services.conversion.{ArrivalNotificationConversionService, SubmissionModelService}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
-import utils.XMLTransformer
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -38,7 +35,6 @@ class ArrivalSubmissionService @Inject()(
   connector: ArrivalMovementConnector,
   appConfig: FrontendAppConfig,
   submissionModelService: SubmissionModelService,
-  arrivalNotificationMessageService: ArrivalNotificationMessageService,
   interchangeControlReferenceIdRepository: InterchangeControlReferenceIdRepository
 )(implicit ec: ExecutionContext) {
 
@@ -74,17 +70,4 @@ class ArrivalSubmissionService @Inject()(
 
       case None => Future.successful(None)
     }
-
-  //TODO this service only to update MRN, UseAnswers to be passed as a param
-  def update(arrivalId: ArrivalId, mrn: MovementReferenceNumber)(implicit hc: HeaderCarrier): Future[Option[HttpResponse]] =
-    arrivalNotificationMessageService.getArrivalNotificationMessage(arrivalId) flatMap {
-      case Some(arrivalMovementRequest) =>
-        val updatedXml = XMLTransformer.updateXmlNode("DocNumHEA5", mrn.toString, arrivalMovementRequest.toXml)
-        XmlReader.of[ArrivalMovementRequest].read(updatedXml).toOption match {
-          case Some(updatedRequest) => connector.updateArrivalMovement(arrivalId, updatedRequest).map(Some(_))
-          case _                    => Future.successful(None)
-        }
-      case _ => Future.successful(None)
-    }
-
 }
