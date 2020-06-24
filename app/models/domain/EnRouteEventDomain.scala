@@ -38,10 +38,11 @@ object EnRouteEventDomain {
       event =>
         Json
           .obj(
-            "eventPlace"    -> event.place,
-            "eventReported" -> event.alreadyInNcts,
-            "eventCountry"  -> Json.obj("state" -> "", "code" -> event.countryCode, "description" -> ""),
-            "seals"         -> Json.toJson(event.seals)
+            "eventPlace"       -> event.place,
+            "eventReported"    -> event.alreadyInNcts,
+            "eventCountry"     -> Json.obj("state" -> "", "code" -> event.countryCode, "description" -> ""),
+            "seals"            -> Json.toJson(event.seals),
+            "haveSealsChanged" -> event.seals.isDefined
           ) ++ event.eventDetails
           .map {
             result =>
@@ -50,4 +51,5 @@ object EnRouteEventDomain {
           .getOrElse(JsObject.empty)
 
     }
+
 }
