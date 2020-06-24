@@ -20,6 +20,7 @@ import java.time.LocalDate
 
 import models.MovementReferenceNumber
 import models.messages.{EnRouteEvent, ProcedureType}
+import models.{GoodsLocation, MovementReferenceNumber}
 import models.reference.CustomsOffice
 import pages._
 import play.api.libs.json._
@@ -64,6 +65,7 @@ object NormalNotification {
       notification =>
         Json
           .obj(
+            GoodsLocationPage.toString       -> GoodsLocation.BorderForceOffice.toString,
             PlaceOfNotificationPage.toString -> notification.notificationPlace,
             CustomsSubPlacePage.toString     -> notification.customsSubPlace,
             TraderAddressPage.toString -> Json.obj(
@@ -71,11 +73,13 @@ object NormalNotification {
               "city"              -> notification.trader.city,
               "postcode"          -> notification.trader.postCode
             ),
+            IsTraderAddressPlaceOfNotificationPage.toString -> notification.notificationPlace.equalsIgnoreCase(notification.trader.postCode),
             PresentationOfficePage.toString -> Json.toJson(
               CustomsOffice(notification.presentationOfficeId, notification.presentationOfficeName, Seq.empty, None)),
-            EventsQuery.toString    -> Json.toJson(notification.enRouteEvents),
-            TraderEoriPage.toString -> notification.trader.eori,
-            TraderNamePage.toString -> notification.trader.name
+            EventsQuery.toString         -> Json.toJson(notification.enRouteEvents),
+            TraderEoriPage.toString      -> notification.trader.eori,
+            TraderNamePage.toString      -> notification.trader.name,
+            IncidentOnRoutePage.toString -> notification.enRouteEvents.isDefined
           )
     }
 }

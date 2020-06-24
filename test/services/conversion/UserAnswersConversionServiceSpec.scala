@@ -23,12 +23,13 @@ import generators.MessagesModelGenerators
 import models.domain.{NormalNotification, Trader}
 import models.messages.{Container, Seal}
 import models.reference.{Country, CustomsOffice}
-import models.{Address, Index, UserAnswers}
+import models.{Address, GoodsLocation, Index, TranshipmentType, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages._
 import pages.events._
-import pages.events.transhipments.{TransportIdentityPage, TransportNationalityPage}
+import pages.events.seals.HaveSealsChangedPage
+import pages.events.transhipments.{TranshipmentTypePage, TransportIdentityPage, TransportNationalityPage}
 import play.api.libs.json.{JsArray, JsNull, Json}
 import queries.{ContainersQuery, SealsQuery}
 
@@ -49,8 +50,10 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
 
           val userAnswers: UserAnswers =
             // format: off
-            UserAnswers(arrivalNotification.movementReferenceNumber, Json.obj("events" -> JsNull))
+            UserAnswers(arrivalNotification.movementReferenceNumber)
               .copy(lastUpdated = result.lastUpdated)
+              .set(GoodsLocationPage, GoodsLocation.BorderForceOffice).success.value
+              .set(IsTraderAddressPlaceOfNotificationPage, trader.postCode.equalsIgnoreCase(arrivalNotification.notificationPlace)).success.value
               .set(
                 PresentationOfficePage,
                 CustomsOffice(id = arrivalNotification.presentationOfficeId, name = arrivalNotification.presentationOfficeName, roles = Seq.empty, None)
@@ -60,8 +63,10 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
               .set(CustomsSubPlacePage, arrivalNotification.customsSubPlace).success.value
               .set(TraderEoriPage, trader.eori).success.value
               .set(PlaceOfNotificationPage, arrivalNotification.notificationPlace).success.value
+              .set(IncidentOnRoutePage, false).success.value
+              val x = userAnswers.copy(data = userAnswers.data ++ Json.obj("events" -> JsNull))
           // format: on
-          result mustBe userAnswers
+          result mustBe x
       }
     }
 
@@ -75,11 +80,13 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
           val arrivalNotification: NormalNotification = arbArrivalNotification.copy(enRouteEvents = Some(Seq(routeEvent)))
 
           // format: off
-          val userAnswers: UserAnswers = createBasicUserAnswers(trader, arrivalNotification, isIncidentOnRoute = true, lastUpdated)
+          val userAnswers: UserAnswers = createBasicUserAnswers(trader, arrivalNotification, lastUpdated)
             .set(EventPlacePage(eventIndex), routeEvent.place).success.value
             .set(EventCountryPage(eventIndex), Country("", routeEvent.countryCode, "")).success.value //TODO: we should have values
             .set(EventReportedPage(eventIndex), routeEvent.alreadyInNcts).success.value
+            .set(IsTranshipmentPage(eventIndex), false).success.value
             .set(IncidentInformationPage(eventIndex), incident.incidentInformation.value).success.value
+            .set(HaveSealsChangedPage(eventIndex), true).success.value
             .set(SealsQuery(eventIndex), Seq(seal)).success.value
           // format: on
 
@@ -99,12 +106,15 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
           val arrivalNotification: NormalNotification = arbArrivalNotification.copy(enRouteEvents = Some(Seq(routeEvent)))
 
           // format: off
-          val userAnswers: UserAnswers = createBasicUserAnswers(trader, arrivalNotification, isIncidentOnRoute = true, lastUpdated)
+          val userAnswers: UserAnswers = createBasicUserAnswers(trader, arrivalNotification, lastUpdated)
             .set(EventPlacePage(eventIndex), routeEvent.place).success.value
             .set(EventCountryPage(eventIndex), Country("", routeEvent.countryCode, "")).success.value
             .set(EventReportedPage(eventIndex), routeEvent.alreadyInNcts).success.value
+            .set(IsTranshipmentPage(eventIndex), true).success.value
+            .set(TranshipmentTypePage(eventIndex), TranshipmentType.DifferentVehicle).success.value
             .set(TransportIdentityPage(eventIndex), vehicularTranshipment.transportIdentity).success.value
             .set(TransportNationalityPage(eventIndex), Country("", vehicularTranshipment.transportCountry, "")).success.value
+            .set(HaveSealsChangedPage(eventIndex), true).success.value
             .set(SealsQuery(eventIndex), Seq(seal)).success.value
           // format: on
 
@@ -123,12 +133,16 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
           val arrivalNotification: NormalNotification = arbArrivalNotification.copy(enRouteEvents = Some(Seq(routeEvent)))
 
           // format: off
-          val userAnswers: UserAnswers = createBasicUserAnswers(trader, arrivalNotification, isIncidentOnRoute = true, lastUpdated)
+          val userAnswers: UserAnswers = createBasicUserAnswers(trader, arrivalNotification, lastUpdated)
             .set(EventPlacePage(eventIndex), enRouteEvent.place).success.value
             .set(EventCountryPage(eventIndex), Country("", enRouteEvent.countryCode, "")).success.value
             .set(EventReportedPage(eventIndex), enRouteEvent.alreadyInNcts).success.value
+            .set(IsTranshipmentPage(eventIndex), true).success.value
+            .set(TranshipmentTypePage(eventIndex), TranshipmentType.DifferentContainer).success.value
             .set(ContainersQuery(eventIndex), Seq(container)).success.value
+            .set(HaveSealsChangedPage(eventIndex), true).success.value
             .set(SealsQuery(eventIndex), Seq(seal)).success.value
+
           // format: on
 
           val result = userAnswersConversionService.convertToUserAnswers(arrivalNotification).value.copy(lastUpdated = lastUpdated)
@@ -151,15 +165,19 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
           val eventIndex2                             = Index(1)
 
           // format: off
-          val userAnswers: UserAnswers = createBasicUserAnswers(trader, arrivalNotification, isIncidentOnRoute = true, lastUpdated)
+          val userAnswers: UserAnswers = createBasicUserAnswers(trader, arrivalNotification, lastUpdated)
             .set(EventPlacePage(eventIndex), routeEvent1.place).success.value
             .set(EventCountryPage(eventIndex), Country("", routeEvent1.countryCode, "")).success.value
             .set(EventReportedPage(eventIndex), routeEvent1.alreadyInNcts).success.value
+            .set(IsTranshipmentPage(eventIndex), false).success.value
             .set(EventPlacePage(eventIndex2), routeEvent2.place).success.value
             .set(EventCountryPage(eventIndex2), Country("", routeEvent2.countryCode, "")).success.value
             .set(EventReportedPage(eventIndex2), routeEvent2.alreadyInNcts).success.value
+            .set(IsTranshipmentPage(eventIndex2), false).success.value
             .set(IncidentInformationPage(eventIndex), incident1.incidentInformation.getOrElse("")).success.value
             .set(IncidentInformationPage(eventIndex2), incident2.incidentInformation.getOrElse("")).success.value
+            .set(HaveSealsChangedPage(eventIndex), true).success.value
+            .set(HaveSealsChangedPage(eventIndex2), true).success.value
             .set(SealsQuery(eventIndex), Seq(seal)).success.value
             .set(SealsQuery(eventIndex2), Seq(seal)).success.value
           // format: on
@@ -178,26 +196,35 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
 
           val routeEvent2 = enRouteEvent2
             .copy(seals = Some(Seq(seal)))
-            .copy(eventDetails = Some(vehicularTranshipment2.copy(date = None, authority = None, place = None, country = None, containers = None)))
+            .copy(
+              eventDetails = Some(vehicularTranshipment2.copy(date = None, authority = None, place = None, country = None, containers = Some(Seq(container)))))
 
           val eventIndex2 = Index(1)
 
           val arrivalNotification: NormalNotification = arbArrivalNotification.copy(enRouteEvents = Some(Seq(routeEvent1, routeEvent2)))
 
           // format: off
-          val userAnswers: UserAnswers = createBasicUserAnswers(trader, arrivalNotification, isIncidentOnRoute = true, lastUpdated)
+          val userAnswers: UserAnswers = createBasicUserAnswers(trader, arrivalNotification, lastUpdated)
             .set(EventPlacePage(eventIndex), routeEvent1.place).success.value
             .set(EventCountryPage(eventIndex), Country("", routeEvent1.countryCode, "")).success.value
             .set(EventReportedPage(eventIndex), routeEvent1.alreadyInNcts).success.value
+            .set(IsTranshipmentPage(eventIndex), true).success.value
+            .set(TranshipmentTypePage(eventIndex), TranshipmentType.DifferentVehicle).success.value
             .set(TransportIdentityPage(eventIndex), vehicularTranshipment1.transportIdentity).success.value
             .set(TransportNationalityPage(eventIndex), Country("", vehicularTranshipment1.transportCountry, "")).success.value
+            .set(HaveSealsChangedPage(eventIndex), true).success.value
             .set(SealsQuery(eventIndex), Seq(seal)).success.value
+            .set(TranshipmentTypePage(eventIndex2), TranshipmentType.DifferentContainerAndVehicle).success.value
             .set(EventPlacePage(eventIndex2), routeEvent2.place).success.value
             .set(EventCountryPage(eventIndex2), Country("", routeEvent2.countryCode, "")).success.value
             .set(EventReportedPage(eventIndex2), routeEvent2.alreadyInNcts).success.value
+            .set(IsTranshipmentPage(eventIndex2), true).success.value
             .set(TransportIdentityPage(eventIndex2), vehicularTranshipment2.transportIdentity).success.value
             .set(TransportNationalityPage(eventIndex2), Country("", vehicularTranshipment2.transportCountry, "")).success.value
+            .set(HaveSealsChangedPage(eventIndex2), true).success.value
             .set(SealsQuery(eventIndex2), Seq(seal)).success.value
+            .set(ContainersQuery(eventIndex2), Seq(container)).success.value
+
           // format: on
 
           val result = userAnswersConversionService.convertToUserAnswers(arrivalNotification).value.copy(lastUpdated = lastUpdated)
@@ -221,17 +248,24 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
           val arrivalNotification: NormalNotification = arbArrivalNotification.copy(enRouteEvents = Some(Seq(routeEvent1, routeEvent2)))
 
           // format: off
-          val userAnswers: UserAnswers = createBasicUserAnswers(trader, arrivalNotification, isIncidentOnRoute = true, lastUpdated)
+          val userAnswers: UserAnswers = createBasicUserAnswers(trader, arrivalNotification, lastUpdated)
             .set(EventPlacePage(eventIndex), enRouteEvent1.place).success.value
             .set(EventCountryPage(eventIndex), Country("", enRouteEvent1.countryCode, "")).success.value
             .set(EventReportedPage(eventIndex), enRouteEvent1.alreadyInNcts).success.value
+            .set(IsTranshipmentPage(eventIndex), true).success.value
+            .set(TranshipmentTypePage(eventIndex), TranshipmentType.DifferentContainer).success.value
             .set(ContainersQuery(eventIndex), Seq(container)).success.value
+            .set(HaveSealsChangedPage(eventIndex), true).success.value
             .set(SealsQuery(eventIndex), Seq(seal)).success.value
             .set(EventPlacePage(eventIndex2), enRouteEvent2.place).success.value
             .set(EventCountryPage(eventIndex2), Country("", enRouteEvent2.countryCode, "")).success.value
             .set(EventReportedPage(eventIndex2), enRouteEvent2.alreadyInNcts).success.value
+            .set(IsTranshipmentPage(eventIndex2), true).success.value
+            .set(TranshipmentTypePage(eventIndex2), TranshipmentType.DifferentContainer).success.value
             .set(ContainersQuery(eventIndex2), Seq(container)).success.value
+            .set(HaveSealsChangedPage(eventIndex2), true).success.value
             .set(SealsQuery(eventIndex2), Seq(seal)).success.value
+
           // format: on
 
           val result = userAnswersConversionService.convertToUserAnswers(arrivalNotification).value.copy(lastUpdated = lastUpdated)
@@ -240,14 +274,13 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
     }
   }
 
-  private def createBasicUserAnswers(trader: Trader,
-                                     arrivalNotification: NormalNotification,
-                                     isIncidentOnRoute: Boolean = false,
-                                     timeStamp: LocalDateTime): UserAnswers =
+  private def createBasicUserAnswers(trader: Trader, arrivalNotification: NormalNotification, timeStamp: LocalDateTime): UserAnswers =
     // format: off
     UserAnswers(mrn, Json.obj("events" -> JsArray(Seq.empty)))
       .copy(id = arrivalNotification.movementReferenceNumber)
       .copy(lastUpdated = timeStamp)
+      .set(GoodsLocationPage, GoodsLocation.BorderForceOffice).success.value
+      .set(IsTraderAddressPlaceOfNotificationPage, trader.postCode.equalsIgnoreCase(arrivalNotification.notificationPlace)).success.value
       .set(
         PresentationOfficePage,
         CustomsOffice(id = arrivalNotification.presentationOfficeId, name = arrivalNotification.presentationOfficeName, roles = Seq.empty, None)
@@ -257,5 +290,6 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
       .set(CustomsSubPlacePage, arrivalNotification.customsSubPlace).success.value
       .set(TraderEoriPage, trader.eori).success.value
       .set(PlaceOfNotificationPage, arrivalNotification.notificationPlace).success.value
+      .set(IncidentOnRoutePage, arrivalNotification.enRouteEvents.isDefined).success.value
   // format: on
 }

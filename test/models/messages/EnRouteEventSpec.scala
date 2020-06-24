@@ -240,10 +240,11 @@ class EnRouteEventSpec
 
   def createEnRouteEventJson(enRouteEvent: EnRouteEvent): JsObject =
     Json.obj(
-      "eventPlace"    -> enRouteEvent.place,
-      "eventReported" -> enRouteEvent.alreadyInNcts,
-      "eventCountry"  -> Json.obj("state" -> "", "code" -> enRouteEvent.countryCode, "description" -> ""),
-      "seals"         -> Json.toJson(enRouteEvent.seals)
+      "eventPlace"       -> enRouteEvent.place,
+      "eventReported"    -> enRouteEvent.alreadyInNcts,
+      "eventCountry"     -> Json.obj("state" -> "", "code" -> enRouteEvent.countryCode, "description" -> ""),
+      "seals"            -> Json.toJson(enRouteEvent.seals),
+      "haveSealsChanged" -> enRouteEvent.seals.isDefined
     ) ++ enRouteEvent.eventDetails
       .map {
         result =>

@@ -19,6 +19,7 @@ package utils
 import java.time.format.DateTimeFormatter
 
 import controllers.routes
+import models.GoodsLocation.BorderForceOffice
 import models.{CheckMode, UserAnswers}
 import pages._
 import uk.gov.hmrc.viewmodels.SummaryList._
@@ -231,11 +232,13 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswers
 
   def presentationOffice: Option[Row] = userAnswers.get(PresentationOfficePage) map {
     answer =>
-      val customsSubPlace: String = userAnswers.get(CustomsSubPlacePage).getOrElse("this location")
-
+      val location: String = (userAnswers.get(CustomsSubPlacePage), userAnswers.get(ConsigneeNamePage)) match {
+        case (Some(customsSubPlace), None) => customsSubPlace
+        case (None, Some(consigneeName))   => consigneeName
+      }
       Row(
         key = Key(
-          content = msg"presentationOffice.checkYourAnswersLabel".withArgs(customsSubPlace),
+          content = msg"presentationOffice.checkYourAnswersLabel".withArgs(location),
           classes = Seq("govuk-!-width-one-half")
         ),
         value = Value(lit"${answer.name} (${answer.id})"),
@@ -243,7 +246,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswers
           Action(
             content            = msg"site.edit",
             href               = routes.PresentationOfficeController.onPageLoad(mrn, CheckMode).url,
-            visuallyHiddenText = Some(msg"presentationOffice.change.hidden".withArgs(customsSubPlace)),
+            visuallyHiddenText = Some(msg"presentationOffice.change.hidden".withArgs(location)),
             attributes         = Map("id" -> s"""change-presentation-office""")
           )
         )

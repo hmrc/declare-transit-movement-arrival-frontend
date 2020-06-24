@@ -105,7 +105,8 @@ class CheckYourAnswersController @Inject()(override val messagesApi: MessagesApi
           case Some(false) => helper.eoriNumber
           case _           => None
         },
-        helper.consigneeAddress
+        helper.consigneeAddress,
+        helper.presentationOffice
       ).flatten
     )
     val placeOfNotification = Section(
