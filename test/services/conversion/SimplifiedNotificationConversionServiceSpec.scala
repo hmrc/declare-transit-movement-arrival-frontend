@@ -49,7 +49,7 @@ class SimplifiedNotificationConversionServiceSpec extends SpecBase with ScalaChe
         .copy(trader = trader)
         .copy(notificationDate = LocalDate.now())
         .copy(approvedLocation = None)
-        .copy(notificationPlace = Some(trader.postCode))
+        .copy(notificationPlace = Some(approvedLocation))
 
       (expected, trader)
     }
@@ -165,7 +165,7 @@ class SimplifiedNotificationConversionServiceSpec extends SpecBase with ScalaChe
               .copy(id = expectedArrivalNotification.movementReferenceNumber)
               .set(GoodsLocationPage, AuthorisedConsigneesLocation).success.value
               .set(PresentationOfficePage, CustomsOffice(id = expectedArrivalNotification.presentationOfficeId, name = expectedArrivalNotification.presentationOfficeName, roles = Seq.empty, None)).success.value
-              .set(AuthorisedLocationPage, expectedArrivalNotification.approvedLocation.value).success.value
+              .set(AuthorisedLocationPage, expectedArrivalNotification.notificationPlace.value).success.value
               .set(ConsigneeNamePage, trader.name).success.value
               .set(ConsigneeAddressPage, Address(buildingAndStreet = trader.streetAndNumber, city = trader.city, postcode = trader.postCode)).success.value
               .set(ConsigneeEoriNumberPage, trader.eori).success.value
@@ -247,7 +247,7 @@ class SimplifiedNotificationConversionServiceSpec extends SpecBase with ScalaChe
     emptyUserAnswers
       .copy(id = arrivalNotification.movementReferenceNumber)
       .set(GoodsLocationPage, AuthorisedConsigneesLocation).success.value
-//      .set(AuthorisedLocationPage,arrivalNotification.approvedLocation.value).success.value
+      .set(AuthorisedLocationPage,arrivalNotification.notificationPlace.value).success.value
       .set(ConsigneeNamePage, trader.name).success.value
       .set(ConsigneeEoriConfirmationPage,false).success.value
       .set(ConsigneeEoriNumberPage, trader.eori).success.value

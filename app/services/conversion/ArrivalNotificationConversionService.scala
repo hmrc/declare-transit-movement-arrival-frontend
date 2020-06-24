@@ -44,15 +44,15 @@ class ArrivalNotificationConversionService {
   private def createSimplifiedNotification(userAnswers: UserAnswers): Option[SimplifiedNotification] =
     for {
       presentationOffice <- userAnswers.get(PresentationOfficePage)
-      authorisedLocation <- userAnswers.get(AuthorisedLocationPage)
+      notificationPlace  <- userAnswers.get(AuthorisedLocationPage)
       tradersAddress     <- userAnswers.get(ConsigneeAddressPage)
       traderEori         <- userAnswers.get(ConsigneeEoriNumberPage)
       traderName         <- userAnswers.get(ConsigneeNamePage)
-      notificationPlace  <- userAnswers.get(ConsigneeAddressPage)
+      //notificationPlace  <- userAnswers.get(ConsigneeAddressPage)
     } yield
       SimplifiedNotification(
         movementReferenceNumber = userAnswers.id,
-        notificationPlace       = Some(authorisedLocation),
+        notificationPlace       = Some(notificationPlace),
         notificationDate        = LocalDate.now(),
         approvedLocation        = None,
         trader = Trader(
@@ -68,18 +68,18 @@ class ArrivalNotificationConversionService {
         enRouteEvents          = enRouteEvents(userAnswers)
       )
 
-  private def createNormalNotification(userAnswers: UserAnswers) =
+  private def createNormalNotification(userAnswers: UserAnswers): Option[NormalNotification] =
     for {
       presentationOffice <- userAnswers.get(PresentationOfficePage)
       customsSubPlace    <- userAnswers.get(CustomsSubPlacePage)
       tradersAddress     <- userAnswers.get(TraderAddressPage)
       traderEori         <- userAnswers.get(TraderEoriPage)
       traderName         <- userAnswers.get(TraderNamePage)
-      notificationPlace  <- userAnswers.get(PlaceOfNotificationPage) orElse Some(tradersAddress.postcode)
+      notificationPlace  <- userAnswers.get(PlaceOfNotificationPage) // orElse Some(tradersAddress.postcode)
     } yield
       NormalNotification(
         movementReferenceNumber = userAnswers.id,
-        notificationPlace       = None,
+        notificationPlace       = Some(notificationPlace),
         notificationDate        = LocalDate.now(),
         customsSubPlace         = Some(customsSubPlace),
         trader = Trader(
