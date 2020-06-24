@@ -79,15 +79,15 @@ class SubmissionModelServiceSpec
     "must convert SimplifiedNotification to ArrivalMovementRequest for traders" in {
 
       val arrivalMovementRequest: ArrivalMovementRequest = arbitrary[ArrivalMovementRequest].sample.value
-      val setFlag: Header                                = arrivalMovementRequest.header.copy(procedureTypeFlag = SimplifiedProcedureFlag)
+      val setFlag: Header                                = arrivalMovementRequest.header.copy(procedureTypeFlag = SimplifiedProcedureFlag, customsSubPlace = None)
       val updatedArrivalMovementRequest                  = arrivalMovementRequest.copy(header = setFlag)
 
       val simplifiedNotification: SimplifiedNotification = {
         SimplifiedNotification(
           movementReferenceNumber = MovementReferenceNumber(updatedArrivalMovementRequest.header.movementReferenceNumber).get,
-          notificationPlace       = updatedArrivalMovementRequest.header.arrivalNotificationPlace,
+          notificationPlace       = updatedArrivalMovementRequest.header.arrivalNotificationPlace, //TODO: Is this required
           notificationDate        = updatedArrivalMovementRequest.header.notificationDate,
-          approvedLocation        = updatedArrivalMovementRequest.header.customsSubPlace,
+          approvedLocation        = updatedArrivalMovementRequest.header.arrivalNotificationPlace,
           trader = Trader(
             name            = updatedArrivalMovementRequest.trader.name,
             streetAndNumber = updatedArrivalMovementRequest.trader.streetAndNumber,

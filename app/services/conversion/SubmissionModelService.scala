@@ -65,7 +65,7 @@ class SubmissionModelService @Inject()() {
     Header(
       movementReferenceNumber  = arrivalNotification.movementReferenceNumber.toString,
       customsSubPlace          = arrivalNotification.customsSubPlace,
-      arrivalNotificationPlace = None,
+      arrivalNotificationPlace = arrivalNotification.notificationPlace,
       presentationOfficeId     = arrivalNotification.presentationOfficeId,
       presentationOfficeName   = arrivalNotification.presentationOfficeName,
       procedureTypeFlag        = procedureTypeFlag,
