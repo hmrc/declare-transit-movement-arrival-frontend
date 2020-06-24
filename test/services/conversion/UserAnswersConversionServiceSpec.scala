@@ -40,9 +40,11 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
 
   private val arrivalNotificationWithSubplace: Gen[(NormalNotification, Trader)] =
     for {
-      base     <- arbitrary[NormalNotification]
-      trader   <- arbitrary[Trader]
-      subPlace <- stringsWithMaxLength(NormalNotification.Constants.customsSubPlaceLength)
+      base              <- arbitrary[NormalNotification]
+      trader            <- arbitrary[Trader]
+      subPlace          <- stringsWithMaxLength(NormalNotification.Constants.customsSubPlaceLength)
+      notificationPlace <- stringsWithMaxLength(NormalNotification.Constants.notificationPlaceLength)
+
     } yield {
 
       val expected: NormalNotification = base
@@ -50,7 +52,7 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
         .copy(trader = trader)
         .copy(customsSubPlace = Some(subPlace))
         .copy(notificationDate = LocalDate.now())
-
+        .copy(notificationPlace = Some(notificationPlace))
       (expected, trader)
     }
 
@@ -275,10 +277,10 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
       .copy(id = arrivalNotification.movementReferenceNumber)
       .copy(lastUpdated = timeStamp)
       .set(GoodsLocationPage, BorderForceOffice).success.value
-      .set(
-        PresentationOfficePage,
-        CustomsOffice(id = arrivalNotification.presentationOfficeId, name = arrivalNotification.presentationOfficeName, roles = Seq.empty, None)
-      ).success.value
+//      .set(
+//        PresentationOfficePage,
+//        CustomsOffice(id = arrivalNotification.presentationOfficeId, name = arrivalNotification.presentationOfficeName, roles = Seq.empty, None)
+//      ).success.value
       .set(CustomsSubPlacePage, arrivalNotification.customsSubPlace.value).success.value
       .set(TraderNamePage, trader.name).success.value
       .set(TraderAddressPage, Address(buildingAndStreet = trader.streetAndNumber, city = trader.city, postcode = trader.postCode)).success.value
