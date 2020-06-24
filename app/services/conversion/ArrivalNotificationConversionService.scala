@@ -37,24 +37,27 @@ class ArrivalNotificationConversionService {
         createNormalNotification(userAnswers)
       case Some(AuthorisedConsigneesLocation) =>
         createSimplifiedNotification(userAnswers)
-      case _ =>
+      case _ => {
         None
+      }
+
     }
 
-  private def createSimplifiedNotification(userAnswers: UserAnswers): Option[SimplifiedNotification] =
+  private def createSimplifiedNotification(userAnswers: UserAnswers): Option[SimplifiedNotification] = {
     for {
-      presentationOffice <- userAnswers.get(PresentationOfficePage)
-      notificationPlace  <- userAnswers.get(AuthorisedLocationPage)
-      tradersAddress     <- userAnswers.get(ConsigneeAddressPage)
-      traderEori         <- userAnswers.get(ConsigneeEoriNumberPage)
-      traderName         <- userAnswers.get(ConsigneeNamePage)
+      //presentationOffice <- userAnswers.get(PresentationOfficePage) //TODO: goes back in when pres office is in
+      notificationPlace <- userAnswers.get(AuthorisedLocationPage)
+      tradersAddress    <- userAnswers.get(ConsigneeAddressPage)
+      traderEori        <- userAnswers.get(ConsigneeEoriNumberPage)
+      traderName        <- userAnswers.get(ConsigneeNamePage)
       //notificationPlace  <- userAnswers.get(ConsigneeAddressPage)
-    } yield
+    } yield {
+
       SimplifiedNotification(
         movementReferenceNumber = userAnswers.id,
-        notificationPlace       = Some(notificationPlace),
+        notificationPlace       = None,
         notificationDate        = LocalDate.now(),
-        approvedLocation        = None,
+        approvedLocation        = Some(notificationPlace),
         trader = Trader(
           eori            = traderEori,
           name            = traderName,
@@ -63,10 +66,16 @@ class ArrivalNotificationConversionService {
           city            = tradersAddress.city,
           countryCode     = countryCode_GB
         ),
-        presentationOfficeId   = presentationOffice.id,
-        presentationOfficeName = presentationOffice.name,
+//        presentationOfficeId   = presentationOffice.id,
+//        presentationOfficeName = presentationOffice.name,
+        presentationOfficeId   = "id", //TODO: put the above back in when pres office is in
+        presentationOfficeName = "name",
+
         enRouteEvents          = enRouteEvents(userAnswers)
       )
+    }
+
+  }
 
   private def createNormalNotification(userAnswers: UserAnswers): Option[NormalNotification] =
     for {
@@ -75,7 +84,7 @@ class ArrivalNotificationConversionService {
       tradersAddress     <- userAnswers.get(TraderAddressPage)
       traderEori         <- userAnswers.get(TraderEoriPage)
       traderName         <- userAnswers.get(TraderNamePage)
-      notificationPlace  <- userAnswers.get(PlaceOfNotificationPage) // orElse Some(tradersAddress.postcode)
+      notificationPlace  <- userAnswers.get(PlaceOfNotificationPage) orElse Some(tradersAddress.postcode)
     } yield
       NormalNotification(
         movementReferenceNumber = userAnswers.id,

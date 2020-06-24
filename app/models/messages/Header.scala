@@ -59,6 +59,7 @@ object Header {
     val arrivalNotificationPlaceLength = 35
   }
 
+  //TODO: can't send ArrAgrLocCodHEA62 and ArrAgrLocOfGooHEA63 for simplified submission (check ProcedureTypeFlag)
   implicit def writes: XMLWrites[Header] = XMLWrites[Header] {
     header =>
       <HEAHEA>
