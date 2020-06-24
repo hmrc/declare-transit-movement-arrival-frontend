@@ -284,6 +284,6 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
       .set(TraderAddressPage, Address(buildingAndStreet = trader.streetAndNumber, city = trader.city, postcode = trader.postCode)).success.value
       .set(TraderEoriPage, trader.eori).success.value
       .set(IncidentOnRoutePage, isIncidentOnRoute).success.value
-      .set(PlaceOfNotificationPage, arrivalNotification.notificationPlace).success.value
+      .set(PlaceOfNotificationPage, arrivalNotification.notificationPlace.value).success.value
   // format: on
 }
