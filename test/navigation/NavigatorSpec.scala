@@ -133,7 +133,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
             navigator
               .nextPage(ConsigneeAddressPage, NormalMode, answers)
-              .mustBe(routes.PresentationOfficeController.onPageLoad(answers.id, NormalMode))
+              .mustBe(routes.IncidentOnRouteController.onPageLoad(answers.id, NormalMode))
         }
       }
 
@@ -143,39 +143,6 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
             navigator
               .nextPage(CustomsSubPlacePage, NormalMode, answers)
               .mustBe(routes.PresentationOfficeController.onPageLoad(answers.id, NormalMode))
-        }
-      }
-
-      "must go from 'presentation office'" - {
-        " to 'traders name' when trader's name not previously answered(on Normal journey)" in {
-          forAll(arbitrary[UserAnswers]) {
-            answers =>
-              val updatedAnswers = answers
-                .set(GoodsLocationPage, BorderForceOffice)
-                .success
-                .value
-                .remove(TraderNamePage)
-                .success
-                .value
-              navigator
-                .nextPage(PresentationOfficePage, NormalMode, updatedAnswers)
-                .mustBe(routes.TraderNameController.onPageLoad(answers.id, NormalMode))
-          }
-        }
-        " to 'incident on route page' on Simplified journey)" in {
-          forAll(arbitrary[UserAnswers]) {
-            answers =>
-              val updatedAnswers = answers
-                .set(GoodsLocationPage, AuthorisedConsigneesLocation)
-                .success
-                .value
-                .set(ConsigneeNamePage, "Frank")
-                .success
-                .value
-              navigator
-                .nextPage(PresentationOfficePage, NormalMode, updatedAnswers)
-                .mustBe(routes.IncidentOnRouteController.onPageLoad(answers.id, NormalMode))
-          }
         }
       }
 

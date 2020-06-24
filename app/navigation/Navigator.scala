@@ -42,7 +42,7 @@ class Navigator @Inject()() {
     case ConsigneeNamePage => ua => Some(routes.ConsigneeEoriConfirmationController.onPageLoad(ua.id, NormalMode))
     case ConsigneeEoriConfirmationPage => consigneeEoriConfirmationRoute(NormalMode)
     case ConsigneeEoriNumberPage => ua => Some(routes.ConsigneeAddressController.onPageLoad(ua.id, NormalMode))
-    case ConsigneeAddressPage => ua => Some(routes.PresentationOfficeController.onPageLoad(ua.id, NormalMode))
+    case ConsigneeAddressPage => ua => Some(routes.IncidentOnRouteController.onPageLoad(ua.id, NormalMode))
     case PresentationOfficePage => presentationOfficeRoute(NormalMode)
     case CustomsSubPlacePage => ua => Some(routes.PresentationOfficeController.onPageLoad(ua.id, NormalMode))
     case TraderNamePage => ua => Some(routes.TraderEoriController.onPageLoad(ua.id, NormalMode))
