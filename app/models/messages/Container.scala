@@ -19,11 +19,15 @@ package models.messages
 import com.lucidchart.open.xtract.{__, XmlReader}
 import forms.mappings.StringEquivalence
 import models.XMLWrites
+import models.domain.ContainerDomain
 import play.api.libs.json.{Json, OFormat}
 
 case class Container(containerNumber: String)
 
 object Container {
+
+  def containerToDomain(container: Container): ContainerDomain =
+    Container.unapply(container).map(ContainerDomain.apply).get
 
   implicit val formats: OFormat[Container] = Json.format[Container]
 

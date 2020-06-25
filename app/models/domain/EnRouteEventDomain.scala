@@ -19,8 +19,9 @@ package models.domain
 import models.messages._
 import play.api.libs.json.{JsObject, Json, OWrites}
 import models._
+import models.reference.Country
 
-final case class EnRouteEventDomain(place: String, countryCode: String, alreadyInNcts: Boolean, eventDetails: Option[EventDetails], seals: Option[Seq[Seal]])
+final case class EnRouteEventDomain(place: String, country: Country, alreadyInNcts: Boolean, eventDetails: Option[EventDetailsDomain], seals: Option[Seq[Seal]])
 
 object EnRouteEventDomain {
 
@@ -31,7 +32,19 @@ object EnRouteEventDomain {
   }
 
   def domainEnrouteEventToEnrouteEvent(enrouteEventDomain: EnRouteEventDomain): EnRouteEvent =
-    EnRouteEventDomain.unapply(enrouteEventDomain).map((EnRouteEvent.apply _).tupled).get
+    EnRouteEventDomain
+      .unapply(enrouteEventDomain)
+      .map {
+        case _ @(place, country, alreadyInNct, eventDetails, seals) =>
+          EnRouteEvent(
+            place,
+            country.code,
+            alreadyInNct,
+            eventDetails.map(EventDetailsDomain.eventDetailsDomainToEventDetails),
+            seals
+          )
+      }
+      .get
 
   implicit lazy val writes: OWrites[EnRouteEventDomain] =
     OWrites[EnRouteEventDomain] {
@@ -40,7 +53,7 @@ object EnRouteEventDomain {
           .obj(
             "eventPlace"       -> event.place,
             "eventReported"    -> event.alreadyInNcts,
-            "eventCountry"     -> Json.obj("state" -> "", "code" -> event.countryCode, "description" -> ""),
+            "eventCountry"     -> event.country,
             "seals"            -> Json.toJson(event.seals),
             "haveSealsChanged" -> event.seals.isDefined
           ) ++ event.eventDetails

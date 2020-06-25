@@ -24,7 +24,8 @@ import models.XMLWrites._
 import models.{LanguageCodeEnglish, XMLWrites}
 import play.api.libs.json.{JsObject, Json, OWrites}
 import models._
-import models.domain.EnRouteEventDomain
+import models.domain.{EnRouteEventDomain, EventDetailsDomain}
+import models.reference.Country
 
 import scala.xml.NodeSeq
 
@@ -38,8 +39,20 @@ object EnRouteEvent {
     val sealsLength       = 20
   }
 
-  def enRouteEventToEnrouteEventDomain(enrouteEvent: EnRouteEvent): EnRouteEventDomain =
-    EnRouteEvent.unapply(enrouteEvent).map((EnRouteEventDomain.apply _).tupled).get
+  def enRouteEventToDomain(enRouteEvent: EnRouteEvent, country: Country): EnRouteEventDomain =
+    EnRouteEvent
+      .unapply(enRouteEvent)
+      .map {
+        case _ @(place, _, alreadyInNct, eventDetails, seals) =>
+          EnRouteEventDomain(
+            place,
+            country,
+            alreadyInNct,
+            eventDetails.map(EventDetails.eventDetailToDomain),
+            seals
+          )
+      }
+      .get
 
   implicit lazy val writes: OWrites[EnRouteEvent] =
     OWrites[EnRouteEvent] {

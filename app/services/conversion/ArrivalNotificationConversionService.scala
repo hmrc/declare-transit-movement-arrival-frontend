@@ -19,8 +19,8 @@ package services.conversion
 import java.time.LocalDate
 
 import derivable.DeriveNumberOfEvents
-import models.domain.{ArrivalNotification, EnRouteEventDomain, NormalNotification, Trader}
-import models.messages._
+import models.domain._
+import models.reference.Country
 import models.{Index, UserAnswers}
 import pages._
 import pages.events._
@@ -62,21 +62,21 @@ class ArrivalNotificationConversionService {
   private def eventDetails(
     incidentInformation: Option[String],
     transportIdentity: Option[String],
-    transportCountry: Option[String],
-    containers: Option[Seq[Container]]
-  ): Option[EventDetails] =
+    transportCountry: Option[Country],
+    containers: Option[Seq[ContainerDomain]]
+  ): Option[EventDetailsDomain] =
     (incidentInformation, transportIdentity, transportCountry, containers) match {
       case (incidentInformation, None, None, None) =>
-        Some(Incident(incidentInformation))
+        Some(IncidentDomain(incidentInformation))
       case (None, Some(transportIdentity), Some(transportCountry), _) =>
         Some(
-          VehicularTranshipment(
+          VehicularTranshipmentDomain(
             transportIdentity = transportIdentity,
             transportCountry  = transportCountry,
             containers        = containers
           ))
       case (None, None, None, Some(containers)) =>
-        Some(ContainerTranshipment(containers = containers))
+        Some(ContainerTranshipmentDomain(containers = containers))
       case _ => None
     }
 
@@ -97,9 +97,9 @@ class ArrivalNotificationConversionService {
             } yield {
               EnRouteEventDomain(
                 place         = place,
-                countryCode   = country.code,
+                country       = country,
                 alreadyInNcts = isReported,
-                eventDetails  = eventDetails(incidentInformation, transportIdentity, transportCountry.map(_.code), containers),
+                eventDetails  = eventDetails(incidentInformation, transportIdentity, transportCountry, containers),
                 seals         = userAnswers.get(SealsQuery(eventIndex))
               )
             }

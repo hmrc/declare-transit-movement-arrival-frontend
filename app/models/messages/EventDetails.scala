@@ -23,6 +23,8 @@ import com.lucidchart.open.xtract.XmlReader._
 import com.lucidchart.open.xtract.{ParseFailure, XmlReader, __ => xmlPath}
 import models.XMLReads._
 import models.XMLWrites._
+import models.domain.{ContainerTranshipmentDomain, EventDetailsDomain, IncidentDomain, VehicularTranshipmentDomain}
+import models.reference.Country
 import models.{XMLWrites, _}
 import play.api.libs.json._
 import utils.Format
@@ -33,6 +35,13 @@ import scala.xml.NodeSeq
 sealed trait EventDetails
 
 object EventDetails {
+
+  def eventDetailToDomain(eventDetails: EventDetails): EventDetailsDomain =
+    eventDetails match {
+      case incident: Incident                           => ???
+      case container: ContainerTranshipment             => ???
+      case vehicularTranshipment: VehicularTranshipment => ???
+    }
 
   object Constants {
     val authorityLength = 35
@@ -71,6 +80,9 @@ object Incident {
   object Constants {
     val informationLength = 350
   }
+
+  def incidentToDomain(incident: Incident): IncidentDomain =
+    Incident.unapply(incident).map((IncidentDomain.apply _).tupled).get
 
   implicit lazy val incidentJsonWrites: OWrites[Incident] = OWrites[Incident] {
     incident =>
@@ -160,6 +172,23 @@ object VehicularTranshipment {
     val transportCountryLength  = 2
   }
 
+  def vehicularTranshipmentToDomain(transhipment: VehicularTranshipment, transportCountry: Country): VehicularTranshipmentDomain =
+    VehicularTranshipment
+      .unapply(transhipment)
+      .map {
+        case _ @(transportIdentity, _, date, authority, place, country, container) =>
+          VehicularTranshipmentDomain(
+            transportIdentity,
+            transportCountry,
+            date,
+            authority,
+            place,
+            country,
+            container.map(_.map(Container.containerToDomain))
+          )
+      }
+      .get
+
   implicit lazy val vehicularTranshipmentJsonWrites: OWrites[VehicularTranshipment] = {
     OWrites[VehicularTranshipment] {
       transhipment =>
@@ -236,6 +265,21 @@ final case class ContainerTranshipment(
 }
 
 object ContainerTranshipment {
+
+  def containerTranshipmentToDomain(transhipment: ContainerTranshipment, country: Option[Country] = None): ContainerTranshipmentDomain =
+    ContainerTranshipment
+      .unapply(transhipment)
+      .map {
+        case _ @(date, authority, place, _, containers) =>
+          ContainerTranshipmentDomain(
+            date,
+            authority,
+            place,
+            country,
+            containers.map(Container.containerToDomain)
+          )
+      }
+      .get
 
   implicit lazy val containerJsonWrites: OWrites[ContainerTranshipment] = OWrites {
     transhipment =>

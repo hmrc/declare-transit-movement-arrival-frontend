@@ -17,11 +17,15 @@
 package models.domain
 
 import forms.mappings.StringEquivalence
+import models.messages.Container
 import play.api.libs.json.{Json, OFormat}
 
 case class ContainerDomain(containerNumber: String)
 
 object ContainerDomain {
+
+  def domainContainerToContainer(domainContainer: ContainerDomain): Container =
+    ContainerDomain.unapply(domainContainer).map(Container.apply).get
 
   object Constants {
     val containerNumberLength = 17

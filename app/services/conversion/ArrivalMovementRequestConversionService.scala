@@ -19,17 +19,20 @@ package services.conversion
 import models.MovementReferenceNumber
 import models.domain.{ArrivalNotification, EnRouteEventDomain, NormalNotification}
 import models.messages.{ArrivalMovementRequest, EnRouteEvent}
+import models.reference.Country
 
 class ArrivalMovementRequestConversionService {
 
   def convertToArrivalNotification(arrivalMovementRequest: ArrivalMovementRequest): Option[ArrivalNotification] =
     MovementReferenceNumber(arrivalMovementRequest.header.movementReferenceNumber) map {
       mrn =>
+
+        // TODO How do we handle the call to the connector here???
+        val country = Country("", "", "")
+
         val buildEnrouteEvents: Option[Seq[EnRouteEventDomain]] = arrivalMovementRequest.enRouteEvents.map {
           events =>
-            events.map {
-              models.messages.EnRouteEvent.enRouteEventToEnrouteEventDomain
-            }
+            events.map(event => EnRouteEvent.enRouteEventToDomain(event, country))
         }
 
         NormalNotification(

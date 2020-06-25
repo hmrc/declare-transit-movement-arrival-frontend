@@ -18,7 +18,7 @@ package utils
 
 import controllers.events.transhipments.routes.ContainerNumberController
 import controllers.events.transhipments.routes.ConfirmRemoveContainerController
-import models.messages.Container
+import models.domain.ContainerDomain
 import models.{Index, Mode, UserAnswers}
 import pages.events.transhipments.ContainerNumberPage
 import uk.gov.hmrc.viewmodels.SummaryList.{Action, Key, Row, Value}
@@ -28,7 +28,7 @@ class AddContainerHelper(userAnswers: UserAnswers) {
 
   def containerRow(eventIndex: Index, containerIndex: Index, mode: Mode): Option[Row] =
     userAnswers.get(ContainerNumberPage(eventIndex, containerIndex)).map {
-      case Container(answer) =>
+      case ContainerDomain(answer) =>
         Row(
           key   = Key(msg"addContainer.containerList.label".withArgs(containerIndex.display)),
           value = Value(lit"$answer"),
