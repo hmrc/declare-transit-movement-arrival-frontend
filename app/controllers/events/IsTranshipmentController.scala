@@ -56,10 +56,11 @@ class IsTranshipmentController @Inject()(override val messagesApi: MessagesApi,
         }
 
         val json = Json.obj(
-          "form"   -> preparedForm,
-          "mode"   -> mode,
-          "mrn"    -> mrn,
-          "radios" -> Radios.yesNo(preparedForm("value"))
+          "form"        -> preparedForm,
+          "mode"        -> mode,
+          "mrn"         -> mrn,
+          "radios"      -> Radios.yesNo(preparedForm("value")),
+          "onSubmitUrl" -> routes.IsTranshipmentController.onSubmit(mrn, eventIndex, mode).url
         )
 
         renderer.render("events/isTranshipment.njk", json).map(Ok(_))
