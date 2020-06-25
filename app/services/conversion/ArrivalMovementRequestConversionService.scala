@@ -26,7 +26,6 @@ class ArrivalMovementRequestConversionService {
   def convertToArrivalNotification(arrivalMovementRequest: ArrivalMovementRequest): Option[ArrivalNotification] =
     MovementReferenceNumber(arrivalMovementRequest.header.movementReferenceNumber) map {
       mrn =>
-
         // TODO How do we handle the call to the connector here???
         val country = Country("", "", "")
 

@@ -19,7 +19,18 @@ package generators
 import java.time.{LocalDate, LocalTime}
 
 import models.{domain, messages, MovementReferenceNumber, NormalProcedureFlag, ProcedureTypeFlag, SimplifiedProcedureFlag}
-import models.domain.{ArrivalNotification, EnRouteEventDomain, NormalNotification, SimplifiedNotification}
+import models.domain.{
+  ArrivalNotification,
+  ContainerDomain,
+  ContainerTranshipmentDomain,
+  EnRouteEventDomain,
+  EventDetailsDomain,
+  IncidentDomain,
+  NormalNotification,
+  SimplifiedNotification,
+  TranshipmentDomain,
+  VehicularTranshipmentDomain
+}
 import models.messages.ErrorType.{GenericError, MRNError}
 import models.messages.{
   ArrivalMovementRequest,
@@ -42,6 +53,7 @@ import models.messages.{
   Transhipment,
   VehicularTranshipment
 }
+import models.reference.Country
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 import utils.Format._
@@ -94,6 +106,25 @@ trait MessagesModelGenerators extends Generators {
       } yield Incident(information)
     }
 
+  implicit lazy val arbitraryIncidentDomain: Arbitrary[IncidentDomain] =
+    Arbitrary {
+
+      for {
+        information <- Gen.option(stringsWithMaxLength(Incident.Constants.informationLength))
+      } yield IncidentDomain(information)
+    }
+
+  implicit lazy val arbitraryVehicularTranshipmentDomain: Arbitrary[VehicularTranshipmentDomain] =
+    Arbitrary {
+
+      for {
+
+        transportIdentity <- stringsWithMaxLength(VehicularTranshipment.Constants.transportIdentityLength)
+        transportCountry  <- arbitrary[Country]
+        containers        <- Gen.option(listWithMaxLength[ContainerDomain](2))
+      } yield VehicularTranshipmentDomain(transportIdentity = transportIdentity, transportCountry = transportCountry, containers = containers)
+    }
+
   implicit lazy val arbitraryVehicularTranshipment: Arbitrary[VehicularTranshipment] =
     Arbitrary {
 
@@ -108,18 +139,35 @@ trait MessagesModelGenerators extends Generators {
   implicit lazy val arbitraryContainer: Arbitrary[Container] =
     Arbitrary {
       for {
-        container <- stringsWithMaxLength(Transhipment.Constants.containerLength).suchThat(_.length > 0)
-      } yield Container(container)
+        containerNumber <- stringsWithMaxLength(Transhipment.Constants.containerLength).suchThat(_.length > 0)
+      } yield Container(containerNumber)
+    }
+
+  implicit lazy val arbitraryContainerDomain: Arbitrary[ContainerDomain] =
+    Arbitrary {
+      for {
+        containerNumber <- stringsWithMaxLength(Transhipment.Constants.containerLength).suchThat(_.length > 0)
+      } yield ContainerDomain(containerNumber)
     }
 
   implicit lazy val arbitraryContainers: Arbitrary[Seq[Container]] =
     Arbitrary(listWithMaxLength[Container](2))
+
+  implicit lazy val arbitraryContainersDomain: Arbitrary[Seq[ContainerDomain]] =
+    Arbitrary(listWithMaxLength[ContainerDomain](2))
 
   implicit lazy val arbitraryContainerTranshipment: Arbitrary[ContainerTranshipment] =
     Arbitrary {
       for {
         containers <- listWithMaxLength[Container](2)
       } yield ContainerTranshipment(containers = containers)
+    }
+
+  implicit lazy val arbitraryContainerTranshipmentDomain: Arbitrary[ContainerTranshipmentDomain] =
+    Arbitrary {
+      for {
+        containers <- listWithMaxLength[ContainerDomain](2)
+      } yield ContainerTranshipmentDomain(containers = containers)
     }
 
   implicit lazy val arbitraryTranshipment: Arbitrary[Transhipment] =
@@ -130,11 +178,27 @@ trait MessagesModelGenerators extends Generators {
       )
     }
 
+  implicit lazy val arbitraryTranshipmentDomain: Arbitrary[TranshipmentDomain] =
+    Arbitrary {
+      Gen.oneOf[TranshipmentDomain](
+        arbitrary[VehicularTranshipmentDomain],
+        arbitrary[ContainerTranshipmentDomain]
+      )
+    }
+
   implicit lazy val arbitraryEventDetails: Arbitrary[EventDetails] =
     Arbitrary {
       Gen.oneOf[EventDetails](
         arbitrary[Incident],
         arbitrary[Transhipment]
+      )
+    }
+
+  implicit lazy val arbitraryEventDetailsDomain: Arbitrary[EventDetailsDomain] =
+    Arbitrary {
+      Gen.oneOf[EventDetailsDomain](
+        arbitrary[IncidentDomain],
+        arbitrary[TranshipmentDomain]
       )
     }
 
@@ -170,15 +234,15 @@ trait MessagesModelGenerators extends Generators {
 
       for {
         place         <- stringsWithMaxLength(EnRouteEvent.Constants.placeLength)
-        countryCode   <- stringsWithMaxLength(EnRouteEvent.Constants.countryCodeLength)
+        country       <- arbitrary[Country]
         alreadyInNcts <- arbitrary[Boolean]
-        eventDetails  <- arbitrary[Option[EventDetails]]
+        eventDetails  <- arbitrary[Option[EventDetailsDomain]]
         seals         <- listWithMaxLength[Seal](1)
       } yield {
 
         val sealsOpt = if (eventDetails.isDefined) Some(seals) else None
 
-        EnRouteEventDomain(place, countryCode, alreadyInNcts, eventDetails, sealsOpt)
+        EnRouteEventDomain(place, country, alreadyInNcts, eventDetails, sealsOpt)
       }
     }
 
@@ -375,18 +439,18 @@ trait MessagesModelGenerators extends Generators {
     information <- stringsWithMaxLength(Incident.Constants.informationLength)
   } yield Incident(Some(information))
 
-  val enRouteEventIncident: Gen[(EnRouteEventDomain, Incident)] = for {
+  val enRouteEventIncident: Gen[(EnRouteEventDomain, IncidentDomain)] = for {
     enRouteEvent <- arbitrary[EnRouteEventDomain]
-    incident     <- incidentWithInformation
+    incident     <- arbitrary[IncidentDomain]
   } yield (enRouteEvent.copy(eventDetails = Some(incident)), incident)
 
-  val enRouteEventVehicularTranshipment: Gen[(EnRouteEventDomain, VehicularTranshipment)] = for {
+  val enRouteEventVehicularTranshipment: Gen[(EnRouteEventDomain, VehicularTranshipmentDomain)] = for {
     enRouteEvent          <- arbitrary[EnRouteEventDomain]
-    vehicularTranshipment <- arbitrary[VehicularTranshipment]
+    vehicularTranshipment <- arbitrary[VehicularTranshipmentDomain]
   } yield (enRouteEvent.copy(eventDetails = Some(vehicularTranshipment)), vehicularTranshipment)
 
-  val enRouteEventContainerTranshipment: Gen[(EnRouteEventDomain, ContainerTranshipment)] = for {
+  val enRouteEventContainerTranshipment: Gen[(EnRouteEventDomain, ContainerTranshipmentDomain)] = for {
     generatedEnRouteEvent <- arbitrary[EnRouteEventDomain]
-    containerTranshipment <- arbitrary[ContainerTranshipment]
+    containerTranshipment <- arbitrary[ContainerTranshipmentDomain]
   } yield (generatedEnRouteEvent.copy(eventDetails = Some(containerTranshipment)), containerTranshipment)
 }
