@@ -18,6 +18,7 @@ package pages.events.transhipments
 
 import generators.MessagesModelGenerators
 import models.Index
+import models.domain.ContainerDomain
 import models.messages.Container
 import pages.behaviours.PageBehaviours
 
@@ -28,10 +29,10 @@ class ContainerNumberPageSpec extends PageBehaviours with MessagesModelGenerator
 
   "ContainerNumberPage" - {
 
-    beRetrievable[Container](ContainerNumberPage(eventIndex, containerIndex))
+    beRetrievable[ContainerDomain](ContainerNumberPage(eventIndex, containerIndex))
 
-    beSettable[Container](ContainerNumberPage(eventIndex, containerIndex))
+    beSettable[ContainerDomain](ContainerNumberPage(eventIndex, containerIndex))
 
-    beRemovable[Container](ContainerNumberPage(eventIndex, containerIndex))
+    beRemovable[ContainerDomain](ContainerNumberPage(eventIndex, containerIndex))
   }
 }

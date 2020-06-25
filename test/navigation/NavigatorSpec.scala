@@ -25,6 +25,7 @@ import generators.{Generators, MessagesModelGenerators}
 import models.GoodsLocation.{AuthorisedConsigneesLocation, BorderForceOffice}
 import models.TranshipmentType.{DifferentContainer, DifferentContainerAndVehicle, DifferentVehicle}
 import models._
+import models.domain.ContainerDomain
 import models.messages.{Container, EnRouteEvent, Seal}
 import models.reference.Country
 import org.scalacheck.Arbitrary.arbitrary
@@ -445,7 +446,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
                 .set(TranshipmentTypePage(eventIndex), DifferentContainer)
                 .success
                 .value
-                .set(ContainerNumberPage(eventIndex, containerIndex), Container("1"))
+                .set(ContainerNumberPage(eventIndex, containerIndex), ContainerDomain("1"))
                 .success
                 .value
               navigator
@@ -546,7 +547,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
                 .set(TranshipmentTypePage(eventIndex), DifferentContainer)
                 .success
                 .value
-                .set(ContainerNumberPage(eventIndex, containerIndex), Container("1"))
+                .set(ContainerNumberPage(eventIndex, containerIndex), ContainerDomain("1"))
                 .success
                 .value
               navigator
@@ -603,7 +604,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
                 .set(TranshipmentTypePage(eventIndex), DifferentContainerAndVehicle)
                 .success
                 .value
-                .set(ContainerNumberPage(eventIndex, containerIndex), Container("number1"))
+                .set(ContainerNumberPage(eventIndex, containerIndex), ContainerDomain("number1"))
                 .success
                 .value
 
@@ -709,7 +710,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         "to 'Container number' with index 1 when the option is 'Yes' and there is 1 previous containers" in {
           val nextIndex = Index(containerIndex.position + 1)
 
-          forAll(arbitrary[UserAnswers], arbitrary[Container]) {
+          forAll(arbitrary[UserAnswers], arbitrary[ContainerDomain]) {
             case (answers, container) =>
               val updatedAnswers = answers
                 .remove(EventsQuery)

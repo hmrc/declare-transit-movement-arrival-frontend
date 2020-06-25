@@ -21,6 +21,7 @@ import generators.MessagesModelGenerators
 import models.{domain, MovementReferenceNumber}
 import models.domain.{EnRouteEventDomain, NormalNotification, Trader}
 import models.messages.{ArrivalMovementRequest, EnRouteEvent, Header}
+import models.reference.Country
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -34,7 +35,7 @@ class ArrivalMovementRequestConversionServiceSpec extends SpecBase with Messages
     "must return None if MRN is malformed" in {
       val arrivalMovementRequest: ArrivalMovementRequest = arbitrary[ArrivalMovementRequest].sample.value
 
-      val header: Header = arrivalMovementRequest.header.copy(movementReferenceNumber = "FRANK")
+      val header: Header = arrivalMovementRequest.header.copy(movementReferenceNumber = "Invalid MRN")
 
       val arrivalMovementRequestWithMalformedMrn: ArrivalMovementRequest = arrivalMovementRequest.copy(header = header)
 
@@ -43,12 +44,14 @@ class ArrivalMovementRequestConversionServiceSpec extends SpecBase with Messages
 
     "must convert ArrivalMovementRequest to NormalNotification for trader" in {
 
+      val country = Country("", "", "")
+
       val genArrivalNotificationRequest = arbitrary[ArrivalMovementRequest].sample.value
       val arrivalNotificationRequest    = genArrivalNotificationRequest.copy(header = genArrivalNotificationRequest.header.copy(customsSubPlace = Some("")))
 
       val convertEnRouteEvents = arrivalNotificationRequest.enRouteEvents.map {
         events =>
-          events.map(EnRouteEvent.enRouteEventToEnrouteEventDomain)
+          events.map(event => EnRouteEvent.enRouteEventToDomain(event, country))
       }
 
       val normalNotification: NormalNotification = {

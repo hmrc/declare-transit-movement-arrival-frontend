@@ -20,6 +20,7 @@ import base.SpecBase
 import forms.behaviours.StringFieldBehaviours
 import generators.MessagesModelGenerators
 import models.Index
+import models.domain.ContainerDomain
 import models.messages.{Container, Transhipment}
 import play.api.data.FormError
 
@@ -57,7 +58,7 @@ class ContainerNumberFormProviderSpec extends StringFieldBehaviours with Message
 
     "no errors if there are existing container numbers when applying against the same index" in {
 
-      forAll(listWithMaxLength[Container](10)) {
+      forAll(listWithMaxLength[ContainerDomain](10)) {
         containers =>
           val result = form(containerIndex, containers).bind(Map(fieldName -> containers.head.containerNumber)).apply(fieldName)
 
@@ -67,7 +68,7 @@ class ContainerNumberFormProviderSpec extends StringFieldBehaviours with Message
 
     "errors if there are existing container numbers and index is different from current" in {
 
-      forAll(listWithMaxLength[Container](10)) {
+      forAll(listWithMaxLength[ContainerDomain](10)) {
         containers =>
           val nextIndex = containers.length
           val index     = Index(nextIndex)
@@ -79,7 +80,7 @@ class ContainerNumberFormProviderSpec extends StringFieldBehaviours with Message
     }
 
     "no errors if there are no existing container number" in {
-      forAll(listWithMaxLength[Container](10)) {
+      forAll(listWithMaxLength[ContainerDomain](10)) {
         containers =>
           val containersWithDuplicatesRemoved = {
             containers.toSet.filterNot(_.containerNumber == container.containerNumber).toSeq

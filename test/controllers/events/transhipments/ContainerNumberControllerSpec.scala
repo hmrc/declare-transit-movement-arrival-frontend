@@ -20,6 +20,7 @@ import base.SpecBase
 import forms.events.transhipments.ContainerNumberFormProvider
 import generators.MessagesModelGenerators
 import matchers.JsonMatchers
+import models.domain.ContainerDomain
 import models.messages.Container
 import models.{Index, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
@@ -86,7 +87,7 @@ class ContainerNumberControllerSpec extends SpecBase with MockitoSugar with Nunj
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers    = UserAnswers(mrn).set(ContainerNumberPage(eventIndex, containerIndex), Container("answer")).success.value
+      val userAnswers    = UserAnswers(mrn).set(ContainerNumberPage(eventIndex, containerIndex), ContainerDomain("answer")).success.value
       val application    = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request        = FakeRequest(GET, containerNumberRoute())
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -144,7 +145,7 @@ class ContainerNumberControllerSpec extends SpecBase with MockitoSugar with Nunj
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
-      val container   = arbitrary[Container].sample.value
+      val container   = arbitrary[ContainerDomain].sample.value
       val userAnswers = emptyUserAnswers.set(ContainerNumberPage(eventIndex, containerIndex), container).success.value
 
       val application =
@@ -172,7 +173,7 @@ class ContainerNumberControllerSpec extends SpecBase with MockitoSugar with Nunj
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val container   = arbitrary[Container].sample.value
+      val container   = arbitrary[ContainerDomain].sample.value
       val userAnswers = emptyUserAnswers.set(ContainerNumberPage(eventIndex, containerIndex), container).success.value
       val nextIndex   = Index(1)
 

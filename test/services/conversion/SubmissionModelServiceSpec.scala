@@ -19,6 +19,7 @@ package services.conversion
 import generators.MessagesModelGenerators
 import models.domain.{EnRouteEventDomain, NormalNotification, Trader}
 import models.messages.{ArrivalMovementRequest, EnRouteEvent}
+import models.reference.Country
 import models.{domain, MovementReferenceNumber, NormalProcedureFlag}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.{FreeSpec, MustMatchers, OptionValues}
@@ -48,8 +49,10 @@ class SubmissionModelServiceSpec
         customsSubPlace   = Some("")
       )
 
+      val country = Country("", "", "")
+
       val updatedArrivalMovementRequest = arrivalMovementRequest.copy(header = setNormalTypeFlag)
-      val enRouteEventsDomain           = updatedArrivalMovementRequest.enRouteEvents.map(_.map(EnRouteEvent.enRouteEventToEnrouteEventDomain))
+      val enRouteEventsDomain           = updatedArrivalMovementRequest.enRouteEvents.map(_.map(event => EnRouteEvent.enRouteEventToDomain(event, country)))
 
       val normalNotification = {
         NormalNotification(
