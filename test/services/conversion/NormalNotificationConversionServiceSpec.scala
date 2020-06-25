@@ -79,8 +79,7 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
       }
     }
 
-    //TODO: Why did we set PlaceOfNotificationPage to tradersAddress.postcode if PlaceOfNotificationPage doesn't exist?
-    "must return 'Normal Arrival Notification' with trader address postcode as notification place when no notification place is set" ignore {
+    "must return 'Normal Arrival Notification' with trader address postcode as notification place when no notification place is set" in {
       forAll(arrivalNotificationWithSubplace) {
         case (arbArrivalNotification, trader) =>
           val expectedArrivalNotification: NormalNotification = arbArrivalNotification
