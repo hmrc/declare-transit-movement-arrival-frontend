@@ -42,7 +42,8 @@ class CheckEventAnswersController @Inject()(override val messagesApi: MessagesAp
   def onPageLoad(mrn: MovementReferenceNumber, eventIndex: Index): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
       val json = Json.obj(
-        "mrn" -> mrn
+        "mrn"         -> mrn,
+        "onSubmitUrl" -> routes.CheckEventAnswersController.onSubmit(mrn, eventIndex).url
       ) ++ Json.toJsObject {
         CheckEventAnswersViewModel(request.userAnswers, eventIndex, CheckMode)
       }

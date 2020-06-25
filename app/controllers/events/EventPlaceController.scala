@@ -56,9 +56,10 @@ class EventPlaceController @Inject()(override val messagesApi: MessagesApi,
         }
 
         val json = Json.obj(
-          "form" -> preparedForm,
-          "mrn"  -> mrn,
-          "mode" -> mode
+          "form"        -> preparedForm,
+          "mrn"         -> mrn,
+          "mode"        -> mode,
+          "onSubmitUrl" -> routes.EventPlaceController.onSubmit(mrn, eventIndex, mode).url
         )
 
         renderer.render("events/eventPlace.njk", json).map(Ok(_))
@@ -73,9 +74,10 @@ class EventPlaceController @Inject()(override val messagesApi: MessagesApi,
             formWithErrors => {
 
               val json = Json.obj(
-                "form" -> formWithErrors,
-                "mrn"  -> mrn,
-                "mode" -> mode
+                "form"        -> formWithErrors,
+                "mrn"         -> mrn,
+                "mode"        -> mode,
+                "onSubmitUrl" -> routes.EventPlaceController.onSubmit(mrn, eventIndex, mode).url
               )
 
               renderer.render("events/eventPlace.njk", json).map(BadRequest(_))

@@ -61,7 +61,7 @@ class SealIdentityController @Inject()(
           case Some(value) => form(sealIndex).fill(value.numberOrMark)
         }
 
-        renderView(mrn, mode, preparedForm).map(Ok(_))
+        renderView(mrn, mode, preparedForm, eventIndex, sealIndex).map(Ok(_))
     }
 
   def onSubmit(mrn: MovementReferenceNumber, eventIndex: Index, sealIndex: Index, mode: Mode): Action[AnyContent] =
@@ -72,7 +72,7 @@ class SealIdentityController @Inject()(
         form(sealIndex, seals)
           .bindFromRequest()
           .fold(
-            formWithErrors => renderView(mrn, mode, formWithErrors).map(BadRequest(_)),
+            formWithErrors => renderView(mrn, mode, formWithErrors, eventIndex, sealIndex).map(BadRequest(_)),
             value =>
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(SealIdentityPage(eventIndex, sealIndex), Seal(value)))
@@ -81,11 +81,13 @@ class SealIdentityController @Inject()(
           )
     }
 
-  private def renderView(mrn: MovementReferenceNumber, mode: Mode, preparedForm: Form[String])(implicit request: DataRequest[AnyContent]) = {
+  private def renderView(mrn: MovementReferenceNumber, mode: Mode, preparedForm: Form[String], eventIndex: Index, sealIndex: Index)(
+    implicit request: DataRequest[AnyContent]) = {
     val json = Json.obj(
-      "form" -> preparedForm,
-      "mrn"  -> mrn,
-      "mode" -> mode
+      "form"        -> preparedForm,
+      "mrn"         -> mrn,
+      "mode"        -> mode,
+      "onSubmitUrl" -> routes.SealIdentityController.onSubmit(mrn, eventIndex, sealIndex, mode).url
     )
 
     renderer.render("events/seals/sealIdentity.njk", json)
