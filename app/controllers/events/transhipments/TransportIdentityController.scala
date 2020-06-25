@@ -57,9 +57,10 @@ class TransportIdentityController @Inject()(
       }
 
       val json = Json.obj(
-        "form" -> preparedForm,
-        "mrn"  -> mrn,
-        "mode" -> mode
+        "form"        -> preparedForm,
+        "mrn"         -> mrn,
+        "mode"        -> mode,
+        "onSubmitUrl" -> routes.TransportIdentityController.onSubmit(mrn, eventIndex, mode).url
       )
 
       renderer.render("events/transhipments/transportIdentity.njk", json).map(Ok(_))
@@ -73,9 +74,10 @@ class TransportIdentityController @Inject()(
           formWithErrors => {
 
             val json = Json.obj(
-              "form" -> formWithErrors,
-              "mrn"  -> mrn,
-              "mode" -> mode
+              "form"        -> formWithErrors,
+              "mrn"         -> mrn,
+              "mode"        -> mode,
+              "onSubmitUrl" -> routes.TransportIdentityController.onSubmit(mrn, eventIndex, mode).url
             )
 
             renderer.render("events/transhipments/transportIdentity.njk", json).map(BadRequest(_))

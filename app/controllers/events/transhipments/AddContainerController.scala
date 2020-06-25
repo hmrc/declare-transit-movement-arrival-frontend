@@ -54,10 +54,11 @@ class AddContainerController @Inject()(
   def onPageLoad(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
       val json = Json.obj(
-        "form"   -> form,
-        "mode"   -> mode,
-        "mrn"    -> mrn,
-        "radios" -> Radios.yesNo(form("value"))
+        "form"        -> form,
+        "mode"        -> mode,
+        "mrn"         -> mrn,
+        "radios"      -> Radios.yesNo(form("value")),
+        "onSubmitUrl" -> routes.AddContainerController.onSubmit(mrn, eventIndex, mode).url
       ) ++ Json.toJsObject {
         AddContainerViewModel(eventIndex, request.userAnswers, mode)
       }
@@ -73,10 +74,11 @@ class AddContainerController @Inject()(
           formWithErrors => {
 
             val json = Json.obj(
-              "form"   -> formWithErrors,
-              "mode"   -> mode,
-              "mrn"    -> mrn,
-              "radios" -> Radios.yesNo(formWithErrors("value"))
+              "form"        -> formWithErrors,
+              "mode"        -> mode,
+              "mrn"         -> mrn,
+              "radios"      -> Radios.yesNo(formWithErrors("value")),
+              "onSubmitUrl" -> routes.AddContainerController.onSubmit(mrn, eventIndex, mode).url
             ) ++ Json.toJsObject {
               AddContainerViewModel(eventIndex, request.userAnswers, mode)
             }

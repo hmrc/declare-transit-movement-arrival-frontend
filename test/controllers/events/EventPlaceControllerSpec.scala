@@ -71,9 +71,10 @@ class EventPlaceControllerSpec extends SpecBase with MockitoSugar with NunjucksS
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form" -> form,
-        "mrn"  -> mrn,
-        "mode" -> NormalMode
+        "form"        -> form,
+        "mrn"         -> mrn,
+        "mode"        -> NormalMode,
+        "onSubmitUrl" -> routes.EventPlaceController.onSubmit(mrn, eventIndex, NormalMode).url
       )
 
       templateCaptor.getValue mustEqual "events/eventPlace.njk"
@@ -102,9 +103,10 @@ class EventPlaceControllerSpec extends SpecBase with MockitoSugar with NunjucksS
       val filledForm = form.bind(Map("value" -> "answer"))
 
       val expectedJson = Json.obj(
-        "form" -> filledForm,
-        "mrn"  -> mrn,
-        "mode" -> NormalMode
+        "form"        -> filledForm,
+        "mrn"         -> mrn,
+        "mode"        -> NormalMode,
+        "onSubmitUrl" -> routes.EventPlaceController.onSubmit(mrn, eventIndex, NormalMode).url
       )
 
       templateCaptor.getValue mustEqual "events/eventPlace.njk"
@@ -157,9 +159,10 @@ class EventPlaceControllerSpec extends SpecBase with MockitoSugar with NunjucksS
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form" -> boundForm,
-        "mrn"  -> mrn,
-        "mode" -> NormalMode
+        "form"        -> boundForm,
+        "mrn"         -> mrn,
+        "mode"        -> NormalMode,
+        "onSubmitUrl" -> routes.EventPlaceController.onSubmit(mrn, eventIndex, NormalMode).url
       )
 
       templateCaptor.getValue mustEqual "events/eventPlace.njk"
