@@ -18,7 +18,7 @@ package services
 
 import javax.inject.Inject
 import models.{ArrivalId, UserAnswers}
-import services.conversion.{ArrivalMovementRequestConversionService, UserAnswersConversionService}
+import services.conversion.ArrivalMovementRequestToUserAnswersService
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -31,10 +31,7 @@ class UserAnswersService @Inject()(arrivalNotificationMessageService: ArrivalNot
       .map(
         _.flatMap {
           arrivalMovementRequest =>
-            ArrivalMovementRequestConversionService.convertToArrivalNotification(arrivalMovementRequest).flatMap {
-              arrivalNotification =>
-                UserAnswersConversionService.convertToUserAnswers(arrivalNotification)
-            }
+            ArrivalMovementRequestToUserAnswersService.apply(arrivalMovementRequest)
         }
       )
 }
