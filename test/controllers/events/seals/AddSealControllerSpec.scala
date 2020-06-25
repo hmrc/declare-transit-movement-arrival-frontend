@@ -69,13 +69,14 @@ class AddSealControllerSpec extends SpecBase with MockitoSugar with NunjucksSupp
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form"      -> form,
-        "mode"      -> NormalMode,
-        "mrn"       -> mrn,
-        "pageTitle" -> "You have added 1 seal",
-        "heading"   -> "You have added 1 seal",
-        "seals"     -> Json.toJson(Seq(AddSealHelper.apply(ua).sealRow(eventIndex, sealIndex, NormalMode).value)),
-        "radios"    -> Radios.yesNo(form("value"))
+        "form"        -> form,
+        "mode"        -> NormalMode,
+        "mrn"         -> mrn,
+        "pageTitle"   -> "You have added 1 seal",
+        "heading"     -> "You have added 1 seal",
+        "seals"       -> Json.toJson(Seq(AddSealHelper.apply(ua).sealRow(eventIndex, sealIndex, NormalMode).value)),
+        "radios"      -> Radios.yesNo(form("value")),
+        "onSubmitUrl" -> routes.AddSealController.onSubmit(mrn, eventIndex, NormalMode).url
       )
 
       templateCaptor.getValue mustEqual "events/seals/addSeal.njk"
@@ -130,13 +131,14 @@ class AddSealControllerSpec extends SpecBase with MockitoSugar with NunjucksSupp
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form"      -> boundForm,
-        "mode"      -> NormalMode,
-        "mrn"       -> mrn,
-        "pageTitle" -> "You have added 1 seal",
-        "heading"   -> "You have added 1 seal",
-        "seals"     -> Json.toJson(Seq(AddSealHelper.apply(ua).sealRow(eventIndex, sealIndex, NormalMode).value)),
-        "radios"    -> Radios.yesNo(boundForm("value"))
+        "form"        -> boundForm,
+        "mode"        -> NormalMode,
+        "mrn"         -> mrn,
+        "pageTitle"   -> "You have added 1 seal",
+        "heading"     -> "You have added 1 seal",
+        "seals"       -> Json.toJson(Seq(AddSealHelper.apply(ua).sealRow(eventIndex, sealIndex, NormalMode).value)),
+        "radios"      -> Radios.yesNo(boundForm("value")),
+        "onSubmitUrl" -> routes.AddSealController.onSubmit(mrn, eventIndex, NormalMode).url
       )
 
       templateCaptor.getValue mustEqual "events/seals/addSeal.njk"
