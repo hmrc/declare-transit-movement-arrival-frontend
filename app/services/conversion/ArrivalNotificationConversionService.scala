@@ -55,7 +55,7 @@ class ArrivalNotificationConversionService {
 
       SimplifiedNotification(
         movementReferenceNumber = userAnswers.id,
-        notificationPlace       = None,
+        notificationPlace       = notificationPlace, //TODO: This needs removing from SimplifiedNotification - isn't used
         notificationDate        = LocalDate.now(),
         approvedLocation        = Some(notificationPlace),
         trader = Trader(
@@ -83,7 +83,7 @@ class ArrivalNotificationConversionService {
     } yield
       NormalNotification(
         movementReferenceNumber = userAnswers.id,
-        notificationPlace       = Some(notificationPlace),
+        notificationPlace       = notificationPlace,
         notificationDate        = LocalDate.now(),
         customsSubPlace         = Some(customsSubPlace),
         trader = Trader(

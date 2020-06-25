@@ -49,7 +49,7 @@ class SimplifiedNotificationConversionServiceSpec extends SpecBase with ScalaChe
         .copy(trader = trader)
         .copy(notificationDate = LocalDate.now())
         .copy(approvedLocation = Some(approvedLocation))
-        .copy(notificationPlace = None)
+        .copy(notificationPlace = approvedLocation) //TODO: Don't need this setting for simplified
 
       (expected, trader)
     }
@@ -84,7 +84,7 @@ class SimplifiedNotificationConversionServiceSpec extends SpecBase with ScalaChe
           case (arbArrivalNotification, trader) =>
             val expectedArrivalNotification: SimplifiedNotification = arbArrivalNotification
               .copy(enRouteEvents = None)
-              .copy(notificationPlace = None)
+//              .copy(notificationPlace = None)
 
             val userAnswers: UserAnswers = basicUserAnswers(trader, expectedArrivalNotification)
               .remove(PlaceOfNotificationPage)

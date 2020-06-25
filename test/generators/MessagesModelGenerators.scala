@@ -137,7 +137,7 @@ trait MessagesModelGenerators extends Generators {
 
       for {
         mrn                    <- arbitrary[MovementReferenceNumber]
-        place                  <- Gen.option(stringsWithMaxLength(NormalNotification.Constants.notificationPlaceLength))
+        place                  <- stringsWithMaxLength(NormalNotification.Constants.notificationPlaceLength)
         date                   <- localDateGen
         subPlace               <- Gen.option(stringsWithMaxLength(NormalNotification.Constants.customsSubPlaceLength))
         trader                 <- arbitrary[Trader]
@@ -152,7 +152,7 @@ trait MessagesModelGenerators extends Generators {
 
       for {
         mrn                    <- arbitrary[MovementReferenceNumber]
-        place                  <- Gen.option(stringsWithMaxLength(SimplifiedNotification.Constants.notificationPlaceLength))
+        place                  <- stringsWithMaxLength(SimplifiedNotification.Constants.notificationPlaceLength)
         date                   <- localDateGen
         approvedLocation       <- Gen.option(stringsWithMaxLength(SimplifiedNotification.Constants.approvedLocationLength))
         trader                 <- arbitrary[Trader]
@@ -267,7 +267,7 @@ trait MessagesModelGenerators extends Generators {
       for {
         movementReferenceNumber  <- arbitrary[MovementReferenceNumber].map(_.toString())
         customsSubPlace          <- Gen.option(stringsWithMaxLength(Header.Constants.customsSubPlaceLength))
-        arrivalNotificationPlace <- Gen.option(stringsWithMaxLength(Header.Constants.arrivalNotificationPlaceLength))
+        arrivalNotificationPlace <- stringsWithMaxLength(Header.Constants.arrivalNotificationPlaceLength)
         procedureTypeFlag        <- arbitrary[ProcedureTypeFlag]
         notificationDate         <- arbitrary[LocalDate]
         presentationOfficeId     <- stringsWithMaxLength(CustomsOfficeOfPresentation.Constants.presentationOfficeLength)

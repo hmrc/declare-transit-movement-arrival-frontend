@@ -45,13 +45,11 @@ class HeaderSpec extends SpecBase with ScalaCheckPropertyChecks with MessagesMod
             presentationOfficeId     = header.presentationOfficeId,
             presentationOfficeName   = header.presentationOfficeName
           )
-          val arrivalNotificationPlace = header.arrivalNotificationPlace.map(
-            arrivalNotificationPlace => <ArrNotPlaHEA60>{escapeXml(arrivalNotificationPlace)}</ArrNotPlaHEA60>
-          )
+
           val expectedResult: NodeSeq =
             <HEAHEA>
               <DocNumHEA5>{escapeXml(minimalHeader.movementReferenceNumber)}</DocNumHEA5>
-              {arrivalNotificationPlace.getOrElse(NodeSeq.Empty)}
+              <ArrNotPlaHEA60>{escapeXml(minimalHeader.arrivalNotificationPlace)}</ArrNotPlaHEA60>
               <ArrNotPlaHEA60LNG>{LanguageCodeEnglish.code}</ArrNotPlaHEA60LNG>
               <ArrAgrLocCodHEA62>{escapeXml(minimalHeader.presentationOfficeId)}</ArrAgrLocCodHEA62>
               <ArrAgrLocOfGooHEA63>{escapeXml(minimalHeader.presentationOfficeName)}</ArrAgrLocOfGooHEA63>
@@ -77,14 +75,12 @@ class HeaderSpec extends SpecBase with ScalaCheckPropertyChecks with MessagesMod
           val authorisedLocationOfGoods = normalHeader.arrivalAgreedLocationOfGoods.map(
             arrivalAgreedLocationOfGoods => <ArrAutLocOfGooHEA65>{escapeXml(arrivalAgreedLocationOfGoods)}</ArrAutLocOfGooHEA65>
           )
-          val arrivalNotificationPlace = normalHeader.arrivalNotificationPlace.map(
-            arrivalNotificationPlace => <ArrNotPlaHEA60>{escapeXml(arrivalNotificationPlace)}</ArrNotPlaHEA60>
-          )
+
           val expectedResult: NodeSeq =
             <HEAHEA>
               <DocNumHEA5>{escapeXml(normalHeader.movementReferenceNumber)}</DocNumHEA5>
               {customsSubPlaceNode.getOrElse(NodeSeq.Empty)}
-              {arrivalNotificationPlace.getOrElse(NodeSeq.Empty)}
+              <ArrNotPlaHEA60>{escapeXml(normalHeader.arrivalNotificationPlace)}</ArrNotPlaHEA60>
               <ArrNotPlaHEA60LNG>{LanguageCodeEnglish.code}</ArrNotPlaHEA60LNG>
               <ArrAgrLocCodHEA62>{escapeXml(normalHeader.presentationOfficeId)}</ArrAgrLocCodHEA62>
               <ArrAgrLocOfGooHEA63>{escapeXml(normalHeader.presentationOfficeName)}</ArrAgrLocOfGooHEA63>

@@ -43,8 +43,8 @@ import utils.Format
 import scala.xml.NodeSeq
 
 case class Header(movementReferenceNumber: String,
-                  customsSubPlace: Option[String]          = None,
-                  arrivalNotificationPlace: Option[String] = None,
+                  customsSubPlace: Option[String] = None,
+                  arrivalNotificationPlace: String,
                   presentationOfficeId: String,
                   presentationOfficeName: String,
                   arrivalAgreedLocationOfGoods: Option[String] = None,
@@ -68,11 +68,8 @@ object Header {
                 <CusSubPlaHEA66>{escapeXml(place)}</CusSubPlaHEA66>
               }
           }
-          {
-            header.arrivalNotificationPlace.fold(NodeSeq.Empty) { place =>
-                <ArrNotPlaHEA60>{escapeXml(place)}</ArrNotPlaHEA60>
-              }
-          }
+          <ArrNotPlaHEA60>{escapeXml(header.arrivalNotificationPlace)}</ArrNotPlaHEA60>
+
           <ArrNotPlaHEA60LNG>{Header.Constants.languageCode.code}</ArrNotPlaHEA60LNG>
           {
             if(header.procedureTypeFlag == NormalProcedureFlag) {
@@ -94,7 +91,7 @@ object Header {
   implicit val reads: XmlReader[Header] = (
     (__ \ "DocNumHEA5").read[String],
     (__ \ "CusSubPlaHEA66").read[String].optional,
-    (__ \ "ArrNotPlaHEA60").read[String].optional,
+    (__ \ "ArrNotPlaHEA60").read[String],
     (__ \ "ArrAgrLocCodHEA62").read[String],
     (__ \ "ArrAgrLocOfGooHEA63").read[String],
     (__ \ "ArrAutLocOfGooHEA65").read[String].optional,

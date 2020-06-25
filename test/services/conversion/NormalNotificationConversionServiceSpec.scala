@@ -49,7 +49,7 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
         .copy(movementReferenceNumber = mrn)
         .copy(trader = trader)
         .copy(customsSubPlace = Some(subPlace))
-        .copy(notificationPlace = Some(notificationPlace))
+        .copy(notificationPlace = notificationPlace)
         .copy(notificationDate = LocalDate.now())
 
       (expected, trader)
@@ -84,7 +84,7 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
         case (arbArrivalNotification, trader) =>
           val expectedArrivalNotification: NormalNotification = arbArrivalNotification
             .copy(enRouteEvents = None)
-            .copy(notificationPlace = Some(trader.postCode))
+            .copy(notificationPlace = trader.postCode)
 
           val userAnswers: UserAnswers = createBasicUserAnswers(trader, expectedArrivalNotification)
             .remove(PlaceOfNotificationPage)
@@ -170,7 +170,7 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
             .set(TraderAddressPage, Address(buildingAndStreet = trader.streetAndNumber, city = trader.city, postcode = trader.postCode)).success.value
             .set(TraderEoriPage, trader.eori).success.value
             .set(IncidentOnRoutePage, true).success.value
-            .set(PlaceOfNotificationPage, expectedArrivalNotification.notificationPlace.value).success.value
+            .set(PlaceOfNotificationPage, expectedArrivalNotification.notificationPlace).success.value
             .set(IsTranshipmentPage(eventIndex), true).success.value
             .set(EventPlacePage(eventIndex), enRouteEvent.place).success.value
             .set(EventCountryPage(eventIndex), Country("Valid", enRouteEvent.countryCode, "country name")).success.value
@@ -252,6 +252,6 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
       .set(TraderAddressPage, Address(buildingAndStreet = trader.streetAndNumber, city = trader.city, postcode = trader.postCode)).success.value
       .set(TraderEoriPage, trader.eori).success.value
       .set(IncidentOnRoutePage, isIncidentOnRoute).success.value
-      .set(PlaceOfNotificationPage, arrivalNotification.notificationPlace.value).success.value
+      .set(PlaceOfNotificationPage, arrivalNotification.notificationPlace).success.value
   // format: on
 }

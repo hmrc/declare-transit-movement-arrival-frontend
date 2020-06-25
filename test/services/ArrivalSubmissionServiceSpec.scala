@@ -45,7 +45,7 @@ class ArrivalSubmissionServiceSpec extends SpecBase with MessagesModelGenerators
   private val mockArrivalNotificationMessageService = mock[ArrivalNotificationMessageService]
 
   private val traderWithoutEori  = Trader("", "", "", "", "", "")
-  private val normalNotification = NormalNotification(mrn, Some(""), LocalDate.now(), None, traderWithoutEori, "", "", None)
+  private val normalNotification = NormalNotification(mrn, "", LocalDate.now(), None, traderWithoutEori, "", "", None)
 
   private val userEoriNumber = arbitrary[String].sample.value
 

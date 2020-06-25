@@ -87,7 +87,7 @@ class SubmissionModelServiceSpec
           movementReferenceNumber = MovementReferenceNumber(updatedArrivalMovementRequest.header.movementReferenceNumber).get,
           notificationPlace       = updatedArrivalMovementRequest.header.arrivalNotificationPlace, //TODO: Is this required
           notificationDate        = updatedArrivalMovementRequest.header.notificationDate,
-          approvedLocation        = updatedArrivalMovementRequest.header.arrivalNotificationPlace,
+          approvedLocation        = Some(updatedArrivalMovementRequest.header.arrivalNotificationPlace),
           trader = Trader(
             name            = updatedArrivalMovementRequest.trader.name,
             streetAndNumber = updatedArrivalMovementRequest.trader.streetAndNumber,

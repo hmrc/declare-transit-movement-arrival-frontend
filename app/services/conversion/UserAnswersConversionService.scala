@@ -46,7 +46,7 @@ class UserAnswersConversionService {
           ua4 <- ua3
             .set(TraderNamePage, normalNotification.trader.name)
           ua5 <- ua4
-            .set(PlaceOfNotificationPage, normalNotification.notificationPlace.getOrElse("")) //TODO: userAnswers.get(PlaceOfNotificationPage) orElse Some(tradersAddress.postcode)
+            .set(PlaceOfNotificationPage, normalNotification.notificationPlace) //TODO: userAnswers.get(PlaceOfNotificationPage) orElse Some(tradersAddress.postcode)
           ua6 <- ua5
             .set(GoodsLocationPage, BorderForceOffice)
           ua7 <- ua6

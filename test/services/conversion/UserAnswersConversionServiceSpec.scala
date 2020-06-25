@@ -52,7 +52,7 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
         .copy(trader = trader)
         .copy(customsSubPlace = Some(subPlace))
         .copy(notificationDate = LocalDate.now())
-        .copy(notificationPlace = Some(notificationPlace))
+        .copy(notificationPlace = notificationPlace)
       (expected, trader)
     }
 
@@ -286,6 +286,6 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
       .set(TraderAddressPage, Address(buildingAndStreet = trader.streetAndNumber, city = trader.city, postcode = trader.postCode)).success.value
       .set(TraderEoriPage, trader.eori).success.value
       .set(IncidentOnRoutePage, isIncidentOnRoute).success.value
-      .set(PlaceOfNotificationPage, arrivalNotification.notificationPlace.value).success.value
+      .set(PlaceOfNotificationPage, arrivalNotification.notificationPlace).success.value
   // format: on
 }
