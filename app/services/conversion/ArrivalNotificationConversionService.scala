@@ -45,11 +45,11 @@ class ArrivalNotificationConversionService {
 
   private def createSimplifiedNotification(userAnswers: UserAnswers): Option[SimplifiedNotification] =
     for {
-      //presentationOffice <- userAnswers.get(PresentationOfficePage) //TODO: goes back in when pres office is in
-      notificationPlace <- userAnswers.get(AuthorisedLocationPage)
-      tradersAddress    <- userAnswers.get(ConsigneeAddressPage)
-      traderEori        <- userAnswers.get(ConsigneeEoriNumberPage)
-      traderName        <- userAnswers.get(ConsigneeNamePage)
+      presentationOffice <- userAnswers.get(PresentationOfficePage)
+      notificationPlace  <- userAnswers.get(AuthorisedLocationPage)
+      tradersAddress     <- userAnswers.get(ConsigneeAddressPage)
+      traderEori         <- userAnswers.get(ConsigneeEoriNumberPage)
+      traderName         <- userAnswers.get(ConsigneeNamePage)
       //notificationPlace  <- userAnswers.get(ConsigneeAddressPage)
     } yield {
 
@@ -66,10 +66,8 @@ class ArrivalNotificationConversionService {
           city            = tradersAddress.city,
           countryCode     = countryCode_GB
         ),
-//        presentationOfficeId   = presentationOffice.id,
-//        presentationOfficeName = presentationOffice.name,
-        presentationOfficeId   = "id", //TODO: put the above back in when pres office is in
-        presentationOfficeName = "name",
+        presentationOfficeId   = presentationOffice.id,
+        presentationOfficeName = presentationOffice.name,
         enRouteEvents          = enRouteEvents(userAnswers)
       )
     }
