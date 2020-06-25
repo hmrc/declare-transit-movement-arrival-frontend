@@ -16,7 +16,6 @@
 
 package generators
 
-import java.time.format.DateTimeFormatter
 import java.time.{LocalDate, LocalTime}
 
 import models._
@@ -233,13 +232,13 @@ trait MessagesModelGenerators extends Generators {
         messageSender               <- arbitrary[MessageSender]
         interchangeControlReference <- arbitrary[InterchangeControlReference]
         date                        <- arbitrary[LocalDate]
-        time                        <- Gen.const(LocalTime.of(14, 20))
+        time                        <- arbitrary[LocalTime]
       } yield
         Meta(
           messageSender,
           interchangeControlReference,
           date,
-          time,
+          LocalTime.of(time.getHour, time.getMinute),
           None,
           None,
           None,
