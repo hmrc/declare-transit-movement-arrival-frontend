@@ -48,8 +48,8 @@ class SimplifiedNotificationConversionServiceSpec extends SpecBase with ScalaChe
         .copy(movementReferenceNumber = mrn)
         .copy(trader = trader)
         .copy(notificationDate = LocalDate.now())
-        .copy(approvedLocation = None)
-        .copy(notificationPlace = Some(approvedLocation))
+        .copy(approvedLocation = Some(approvedLocation))
+        .copy(notificationPlace = None)
 
       (expected, trader)
     }
@@ -84,7 +84,7 @@ class SimplifiedNotificationConversionServiceSpec extends SpecBase with ScalaChe
           case (arbArrivalNotification, trader) =>
             val expectedArrivalNotification: SimplifiedNotification = arbArrivalNotification
               .copy(enRouteEvents = None)
-              .copy(notificationPlace = Some(trader.postCode))
+              .copy(notificationPlace = None)
 
             val userAnswers: UserAnswers = basicUserAnswers(trader, expectedArrivalNotification)
               .remove(PlaceOfNotificationPage)
@@ -165,12 +165,12 @@ class SimplifiedNotificationConversionServiceSpec extends SpecBase with ScalaChe
               .copy(id = expectedArrivalNotification.movementReferenceNumber)
               .set(GoodsLocationPage, AuthorisedConsigneesLocation).success.value
               .set(PresentationOfficePage, CustomsOffice(id = expectedArrivalNotification.presentationOfficeId, name = expectedArrivalNotification.presentationOfficeName, roles = Seq.empty, None)).success.value
-              .set(AuthorisedLocationPage, expectedArrivalNotification.notificationPlace.value).success.value
+              .set(AuthorisedLocationPage, expectedArrivalNotification.approvedLocation.value).success.value
               .set(ConsigneeNamePage, trader.name).success.value
               .set(ConsigneeAddressPage, Address(buildingAndStreet = trader.streetAndNumber, city = trader.city, postcode = trader.postCode)).success.value
               .set(ConsigneeEoriNumberPage, trader.eori).success.value
               .set(IncidentOnRoutePage, true).success.value
-              .set(PlaceOfNotificationPage, expectedArrivalNotification.notificationPlace.value).success.value
+              //.set(PlaceOfNotificationPage, expectedArrivalNotification.notificationPlace.value).success.value
               .set(IsTranshipmentPage(eventIndex), true).success.value
               .set(EventPlacePage(eventIndex), enRouteEvent.place).success.value
               .set(EventCountryPage(eventIndex), Country("Valid", enRouteEvent.countryCode, "country name")).success.value
@@ -247,7 +247,7 @@ class SimplifiedNotificationConversionServiceSpec extends SpecBase with ScalaChe
     emptyUserAnswers
       .copy(id = arrivalNotification.movementReferenceNumber)
       .set(GoodsLocationPage, AuthorisedConsigneesLocation).success.value
-      .set(AuthorisedLocationPage,arrivalNotification.notificationPlace.value).success.value
+      .set(AuthorisedLocationPage,arrivalNotification.approvedLocation.value).success.value
       .set(ConsigneeNamePage, trader.name).success.value
       .set(ConsigneeEoriConfirmationPage,false).success.value
       .set(ConsigneeEoriNumberPage, trader.eori).success.value
