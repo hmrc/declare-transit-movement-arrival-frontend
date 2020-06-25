@@ -43,7 +43,7 @@ class ArrivalNotificationConversionService {
 
     }
 
-  private def createSimplifiedNotification(userAnswers: UserAnswers): Option[SimplifiedNotification] = {
+  private def createSimplifiedNotification(userAnswers: UserAnswers): Option[SimplifiedNotification] =
     for {
       //presentationOffice <- userAnswers.get(PresentationOfficePage) //TODO: goes back in when pres office is in
       notificationPlace <- userAnswers.get(AuthorisedLocationPage)
@@ -70,12 +70,9 @@ class ArrivalNotificationConversionService {
 //        presentationOfficeName = presentationOffice.name,
         presentationOfficeId   = "id", //TODO: put the above back in when pres office is in
         presentationOfficeName = "name",
-
         enRouteEvents          = enRouteEvents(userAnswers)
       )
     }
-
-  }
 
   private def createNormalNotification(userAnswers: UserAnswers): Option[NormalNotification] =
     for {

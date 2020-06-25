@@ -42,7 +42,7 @@ class Navigator @Inject()() {
     case ConsigneeNamePage => ua => Some(routes.ConsigneeEoriConfirmationController.onPageLoad(ua.id, NormalMode))
     case ConsigneeEoriConfirmationPage => consigneeEoriConfirmationRoute(NormalMode)
     case ConsigneeEoriNumberPage => ua => Some(routes.ConsigneeAddressController.onPageLoad(ua.id, NormalMode))
-    case ConsigneeAddressPage => ua => Some(routes.IncidentOnRouteController.onPageLoad(ua.id, NormalMode))
+    case ConsigneeAddressPage => ua => Some(routes.PresentationOfficeController.onPageLoad(ua.id, NormalMode))
     case PresentationOfficePage => presentationOfficeRoute(NormalMode)
     case CustomsSubPlacePage => ua => Some(routes.PresentationOfficeController.onPageLoad(ua.id, NormalMode))
     case TraderNamePage => ua => Some(routes.TraderEoriController.onPageLoad(ua.id, NormalMode))
@@ -169,12 +169,12 @@ class Navigator @Inject()() {
     }
 
   private def presentationOfficeRoute(mode: Mode)(ua: UserAnswers): Option[Call] =
-    (ua.get(GoodsLocationPage), ua.get(TraderNamePage), ua.get(ConsigneeNamePage), mode) match {
-      case (Some(BorderForceOffice), Some(_), _, _)                     => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
-      case (Some(BorderForceOffice), None, _, _)                        => Some(routes.TraderNameController.onPageLoad(ua.id, mode))
-      case (Some(AuthorisedConsigneesLocation), _, Some(_), NormalMode) => Some(routes.IncidentOnRouteController.onPageLoad(ua.id, mode))
-      case (Some(AuthorisedConsigneesLocation), _, _, _)                => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
-      case _                                                            => Some(routes.TraderNameController.onPageLoad(ua.id, mode))
+    (ua.get(GoodsLocationPage), ua.get(TraderNamePage), mode) match {
+      case (Some(BorderForceOffice), Some(_), _)               => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
+      case (Some(BorderForceOffice), None, _)                  => Some(routes.TraderNameController.onPageLoad(ua.id, mode))
+      case (Some(AuthorisedConsigneesLocation), _, NormalMode) => Some(routes.IncidentOnRouteController.onPageLoad(ua.id, mode))
+      case (Some(AuthorisedConsigneesLocation), _, _)          => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
+      case _                                                   => Some(routes.SessionExpiredController.onPageLoad())
     }
   private def traderNameRoute(mode: Mode)(ua: UserAnswers): Option[Call] =
     (ua.get(TraderEoriPage), mode) match {
