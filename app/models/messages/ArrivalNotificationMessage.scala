@@ -106,34 +106,6 @@ object SimplifiedNotification {
     val authorisedLocationRegex  = "^[a-zA-Z0-9]*$"
   }
 
-//  implicit lazy val reads: Reads[SimplifiedNotification] = {
-//
-//    import play.api.libs.functional.syntax._
-//
-//    (__ \ "procedure")
-//      .read[String]
-//      .flatMap[String] {
-//        p =>
-//          if (p == ProcedureType.Simplified.toString) {
-//            Reads(_ => JsSuccess(p))
-//          } else {
-//            Reads(_ => JsError("procedure must be `simplified`"))
-//          }
-//      }
-//      .andKeep(
-//        (
-//          (__ \ "movementReferenceNumber").read[MovementReferenceNumber] and
-//            (__ \ "notificationPlace").read[String] and
-//            (__ \ "notificationDate").read[LocalDate] and
-//            (__ \ "approvedLocation").readNullable[String] and
-//            (__ \ "trader").read[Trader] and
-//            (__ \ "presentationOfficeId").read[String] and
-//            (__ \ "presentationOfficeName").read[String] and
-//            (__ \ "enRouteEvents").readNullable[Seq[EnRouteEvent]]
-//        )(SimplifiedNotification.apply _)
-//      )
-//  }
-
   implicit lazy val writes: OWrites[SimplifiedNotification] = {
     OWrites[SimplifiedNotification] {
       notification =>

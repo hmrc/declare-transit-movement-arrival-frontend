@@ -94,7 +94,8 @@ class HeaderSpec extends SpecBase with ScalaCheckPropertyChecks with MessagesMod
       }
     }
 
-    //TODO: This isn't needed at the moment but the build xml on the Header model needs refactoring when it goes back in
+    //TODO: This isn't needed at the moment but the build xml on the
+    //TODO: Header model needs refactoring when it goes back in
     "must deserialize from xml" ignore {
       forAll(arbitrary[Header]) {
         header =>

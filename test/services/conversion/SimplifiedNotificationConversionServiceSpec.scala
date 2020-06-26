@@ -37,6 +37,7 @@ class SimplifiedNotificationConversionServiceSpec extends SpecBase with ScalaChe
   // format: off
   private val service = injector.instanceOf[ArrivalNotificationConversionService]
 
+  //TODO: Move this into MessagesModelGenerators
   private val simplifiedNotificationWithSubplace: Gen[(SimplifiedNotification, Trader)] =
     for {
       base     <- arbitrary[SimplifiedNotification]
@@ -53,18 +54,6 @@ class SimplifiedNotificationConversionServiceSpec extends SpecBase with ScalaChe
 
       (expected, trader)
     }
-
-//  private val enRouteEventIncident: Gen[(EnRouteEvent, Incident)] = for {
-//    enRouteEvent <- arbitrary[EnRouteEvent]
-//    incident     <- arbitrary[Incident]
-//  } yield (enRouteEvent.copy(eventDetails = Some(incident)), incident)
-//
-//
-//  private val enRouteEventVehicularTranshipment: Gen[(EnRouteEvent, VehicularTranshipment)] = for {
-//    enRouteEvent <- arbitrary[EnRouteEvent]
-//    vehicularTranshipment     <- arbitrary[VehicularTranshipment]
-//  } yield (enRouteEvent.copy(eventDetails = Some(vehicularTranshipment)), vehicularTranshipment)
-
 
   "ArrivalNotificationConversionService" - {
     "return 'Simplified Arrival Notification' message" - {
@@ -84,7 +73,6 @@ class SimplifiedNotificationConversionServiceSpec extends SpecBase with ScalaChe
           case (arbArrivalNotification, trader) =>
             val expectedArrivalNotification: SimplifiedNotification = arbArrivalNotification
               .copy(enRouteEvents = None)
-//              .copy(notificationPlace = None)
 
             val userAnswers: UserAnswers = basicUserAnswers(trader, expectedArrivalNotification)
               .remove(PlaceOfNotificationPage)
@@ -170,7 +158,6 @@ class SimplifiedNotificationConversionServiceSpec extends SpecBase with ScalaChe
               .set(ConsigneeAddressPage, Address(buildingAndStreet = trader.streetAndNumber, city = trader.city, postcode = trader.postCode)).success.value
               .set(ConsigneeEoriNumberPage, trader.eori).success.value
               .set(IncidentOnRoutePage, true).success.value
-              //.set(PlaceOfNotificationPage, expectedArrivalNotification.notificationPlace.value).success.value
               .set(IsTranshipmentPage(eventIndex), true).success.value
               .set(EventPlacePage(eventIndex), enRouteEvent.place).success.value
               .set(EventCountryPage(eventIndex), Country("Valid", enRouteEvent.countryCode, "country name")).success.value

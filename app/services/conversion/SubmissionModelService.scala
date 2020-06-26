@@ -58,7 +58,6 @@ class SubmissionModelService @Inject()() {
         val enRouteEvents: Option[Seq[EnRouteEvent]] = simplifiedNotification.enRouteEvents
 
         ArrivalMovementRequest(meta, header, traderDestination, customsOffice, enRouteEvents)
-      case _ => ??? //todo: what do we do here?
     }
 
   private def buildHeader(arrivalNotification: NormalNotification, procedureTypeFlag: ProcedureTypeFlag): Header =

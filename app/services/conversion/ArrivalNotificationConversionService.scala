@@ -37,10 +37,8 @@ class ArrivalNotificationConversionService {
         createNormalNotification(userAnswers)
       case Some(AuthorisedConsigneesLocation) =>
         createSimplifiedNotification(userAnswers)
-      case _ => {
+      case _ =>
         None
-      }
-
     }
 
   private def createSimplifiedNotification(userAnswers: UserAnswers): Option[SimplifiedNotification] =
@@ -50,7 +48,6 @@ class ArrivalNotificationConversionService {
       tradersAddress     <- userAnswers.get(ConsigneeAddressPage)
       traderEori         <- userAnswers.get(ConsigneeEoriNumberPage)
       traderName         <- userAnswers.get(ConsigneeNamePage)
-      //notificationPlace  <- userAnswers.get(ConsigneeAddressPage)
     } yield {
 
       SimplifiedNotification(
