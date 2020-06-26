@@ -23,7 +23,7 @@ import generators.MessagesModelGenerators
 import models.GoodsLocation.BorderForceOffice
 import models.messages.{NormalNotification, _}
 import models.reference.{Country, CustomsOffice}
-import models.{Address, Index, MovementReferenceNumber, UserAnswers}
+import models.{Address, Index, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -37,7 +37,8 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
   // format: off
   private val service = injector.instanceOf[ArrivalNotificationConversionService]
 
-  private val arrivalNotificationWithSubplace: Gen[(NormalNotification, Trader)] =
+  //TODO: Can we use this from MessagesModelGenerators
+  override val arrivalNotificationWithSubplace: Gen[(NormalNotification, Trader)] =
     for {
       base     <- arbitrary[NormalNotification]
       trader   <- arbitrary[Trader]
@@ -55,17 +56,16 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
       (expected, trader)
     }
 
-  private val enRouteEventIncident: Gen[(EnRouteEvent, Incident)] = for {
-    enRouteEvent <- arbitrary[EnRouteEvent]
-    incident     <- arbitrary[Incident]
-  } yield (enRouteEvent.copy(eventDetails = Some(incident)), incident)
+//  private val enRouteEventIncident: Gen[(EnRouteEvent, Incident)] = for {
+//    enRouteEvent <- arbitrary[EnRouteEvent]
+//    incident     <- arbitrary[Incident]
+//  } yield (enRouteEvent.copy(eventDetails = Some(incident)), incident)
 
 
-  private val enRouteEventVehicularTranshipment: Gen[(EnRouteEvent, VehicularTranshipment)] = for {
-    enRouteEvent <- arbitrary[EnRouteEvent]
-    vehicularTranshipment     <- arbitrary[VehicularTranshipment]
-  } yield (enRouteEvent.copy(eventDetails = Some(vehicularTranshipment)), vehicularTranshipment)
-
+//  private val enRouteEventVehicularTranshipment: Gen[(EnRouteEvent, VehicularTranshipment)] = for {
+//    enRouteEvent <- arbitrary[EnRouteEvent]
+//    vehicularTranshipment     <- arbitrary[VehicularTranshipment]
+//  } yield (enRouteEvent.copy(eventDetails = Some(vehicularTranshipment)), vehicularTranshipment)
 
   "ArrivalNotificationConversionService" - {
     "must return 'Normal Arrival Notification' message when there are no EventDetails on route" in {
@@ -110,9 +110,9 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
             .set(EventCountryPage(eventIndex), Country("Valid", routeEvent.countryCode, "country name")).success.value
             .set(EventReportedPage(eventIndex), routeEvent.alreadyInNcts).success.value
 
-          val updatedAnswers = incident.information.fold[UserAnswers](userAnswers) {
+          val updatedAnswers = incident.incidentInformation.fold[UserAnswers](userAnswers) {
             _ =>
-              userAnswers.set(IncidentInformationPage(eventIndex), incident.information.value).success.value
+              userAnswers.set(IncidentInformationPage(eventIndex), incident.incidentInformation.value).success.value
           }
 
           service.convertToArrivalNotification(updatedAnswers).value mustEqual arrivalNotification
@@ -206,14 +206,14 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
             .set(EventCountryPage(eventIndex2), Country("Valid", routeEvent2.countryCode, "country name")).success.value
             .set(EventReportedPage(eventIndex2), routeEvent2.alreadyInNcts).success.value
 
-          val updatedAnswers1 = incident1.information.fold[UserAnswers](userAnswers) {
+          val updatedAnswers1 = incident1.incidentInformation.fold[UserAnswers](userAnswers) {
             _ =>
-              userAnswers.set(IncidentInformationPage(eventIndex), incident1.information.value).success.value
+              userAnswers.set(IncidentInformationPage(eventIndex), incident1.incidentInformation.value).success.value
           }
 
-          val updatedAnswers = incident2.information.fold[UserAnswers](updatedAnswers1) {
+          val updatedAnswers = incident2.incidentInformation.fold[UserAnswers](updatedAnswers1) {
             _ =>
-              updatedAnswers1.set(IncidentInformationPage(eventIndex2), incident2.information.value).success.value
+              updatedAnswers1.set(IncidentInformationPage(eventIndex2), incident2.incidentInformation.value).success.value
           }
 
           service.convertToArrivalNotification(updatedAnswers).value mustEqual arrivalNotification

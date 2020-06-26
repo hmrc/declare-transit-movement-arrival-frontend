@@ -101,7 +101,8 @@ class ConfirmRemoveContainerController @Inject()(
       "mode"            -> mode,
       "mrn"             -> mrn,
       "containerNumber" -> container.containerNumber,
-      "radios"          -> Radios.yesNo(form("value"))
+      "radios"          -> Radios.yesNo(form("value")),
+      "onSubmitUrl"     -> routes.ConfirmRemoveContainerController.onSubmit(mrn, eventIndex, containerIndex, mode).url
     )
 
     renderer.render(confirmRemoveContainerTemplate, json)

@@ -26,6 +26,7 @@ import org.scalatest.Assertion
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.test.Helpers._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -75,47 +76,87 @@ class ReferenceDataConnectorSpec extends SpecBase with WireMockServerHandler wit
       |]
       |""".stripMargin
 
+  private val gbCountryJson: String =
+    """
+      |{
+      |   "code":"GB",
+      |   "state":"valid",
+      |   "description":"United Kingdom"
+      |}
+      |""".stripMargin
+
   val errorResponses: Gen[Int] = Gen.chooseNum(400, 599)
 
   "Reference Data" - {
-    "must return a successful future response with a sequence of CustomsOffices" in {
-      server.stubFor(
-        get(urlEqualTo(s"/$startUrl/customs-offices"))
-          .willReturn(okJson(customsOfficeResponseJson))
-      )
 
-      val expectedResult = {
-        Seq(
-          CustomsOffice("testId1", "testName1", Seq("role1", "role2"), Some("testPhoneNumber")),
-          CustomsOffice("testId2", "testName2", Seq("role1", "role2"), None)
+    "getCustomsOffices" - {
+      "must return a successful future response with a sequence of CustomsOffices" in {
+        server.stubFor(
+          get(urlEqualTo(s"/$startUrl/customs-offices"))
+            .willReturn(okJson(customsOfficeResponseJson))
         )
+
+        val expectedResult = {
+          Seq(
+            CustomsOffice("testId1", "testName1", Seq("role1", "role2"), Some("testPhoneNumber")),
+            CustomsOffice("testId2", "testName2", Seq("role1", "role2"), None)
+          )
+        }
+
+        connector.getCustomsOffices.futureValue mustBe expectedResult
       }
 
-      connector.getCustomsOffices.futureValue mustBe expectedResult
+      "must return an exception when an error response is returned" in {
+        checkErrorResponse(s"/$startUrl/customs-offices", connector.getCustomsOffices)
+      }
     }
 
-    "must return an exception when an error response is returned" in {
-      checkErrorResponse(s"/$startUrl/customs-offices", connector.getCustomsOffices)
+    "getCountryList" - {
+
+      "must return Seq of Country when successful" in {
+        server.stubFor(
+          get(urlEqualTo(s"/$startUrl/countries-full-list"))
+            .willReturn(okJson(countryListResponseJson))
+        )
+
+        val expectedResult = Seq(
+          Country("valid", "GB", "United Kingdom"),
+          Country("valid", "AD", "Andorra")
+        )
+
+        connector.getCountryList.futureValue mustBe expectedResult
+      }
+
+      "must return an exception when an error response is returned" in {
+
+        checkErrorResponse(s"/$startUrl/countries-full-list", connector.getCountryList)
+      }
     }
 
-    "must return 'Country List' successfully" in {
-      server.stubFor(
-        get(urlEqualTo(s"/$startUrl/countries-full-list"))
-          .willReturn(okJson(countryListResponseJson))
-      )
+    "getCountry" - {
 
-      val expectedResult = Seq(
-        Country("valid", "GB", "United Kingdom"),
-        Country("valid", "AD", "Andorra")
-      )
+      "must return a Country when successful" in {
 
-      connector.getCountryList.futureValue mustBe expectedResult
+        val code = "GB"
+
+        server.stubFor(
+          get(urlEqualTo(s"/$startUrl/countries/$code"))
+            .willReturn(okJson(gbCountryJson))
+        )
+
+        val expectedResult = Country("valid", "GB", "United Kingdom")
+
+        connector.getCountry(code).futureValue mustBe expectedResult
+      }
+
+      "must return an exception when an error response is returned" in {
+
+        val invalidCode = "ZZ"
+
+        checkErrorResponse(s"/$startUrl/countries/$invalidCode", connector.getCountry(invalidCode))
+      }
     }
 
-    "must return an exception when an error response is returned from getCountryList" in {
-
-      checkErrorResponse(s"/$startUrl/countries-full-list", connector.getCountryList)
-    }
   }
 
   private def checkErrorResponse(url: String, result: Future[_]): Assertion =

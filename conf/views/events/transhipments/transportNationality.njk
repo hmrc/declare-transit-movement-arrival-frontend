@@ -33,7 +33,7 @@
           }) }}
         {% endif %}
 
-        <form action="{{ routes.controllers.events.transhipments.TransportNationalityController.onSubmit(mrn, mode).url }}" method="post">
+        <form action="{{ onSubmitUrl }}" method="post">
 
           {{ csrf() | safe }}
 

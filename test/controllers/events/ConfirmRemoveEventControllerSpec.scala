@@ -70,11 +70,12 @@ class ConfirmRemoveEventControllerSpec extends SpecBase with MockitoSugar with N
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form"       -> form,
-        "mode"       -> NormalMode,
-        "mrn"        -> mrn,
-        "eventTitle" -> eventTitle,
-        "radios"     -> Radios.yesNo(form("value"))
+        "form"        -> form,
+        "mode"        -> NormalMode,
+        "mrn"         -> mrn,
+        "eventTitle"  -> eventTitle,
+        "radios"      -> Radios.yesNo(form("value")),
+        "onSubmitUrl" -> routes.ConfirmRemoveEventController.onSubmit(mrn, eventIndex, NormalMode).url
       )
 
       templateCaptor.getValue mustEqual confirmRemoveEventTemplate
@@ -227,10 +228,11 @@ class ConfirmRemoveEventControllerSpec extends SpecBase with MockitoSugar with N
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form"   -> boundForm,
-        "mode"   -> NormalMode,
-        "mrn"    -> mrn,
-        "radios" -> Radios.yesNo(boundForm("value"))
+        "form"        -> boundForm,
+        "mode"        -> NormalMode,
+        "mrn"         -> mrn,
+        "radios"      -> Radios.yesNo(boundForm("value")),
+        "onSubmitUrl" -> routes.ConfirmRemoveEventController.onSubmit(mrn, eventIndex, NormalMode).url
       )
 
       templateCaptor.getValue mustEqual confirmRemoveEventTemplate

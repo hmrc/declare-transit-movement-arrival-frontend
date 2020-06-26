@@ -125,10 +125,11 @@ class EventCountryControllerSpec extends SpecBase with MockitoSugar with Nunjuck
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form"      -> boundForm,
-        "mrn"       -> mrn,
-        "mode"      -> NormalMode,
-        "countries" -> json
+        "form"        -> boundForm,
+        "mrn"         -> mrn,
+        "mode"        -> NormalMode,
+        "countries"   -> json,
+        "onSubmitUrl" -> routes.EventCountryController.onSubmit(mrn, eventIndex, NormalMode).url
       )
 
       templateCaptor.getValue mustEqual "events/eventCountry.njk"

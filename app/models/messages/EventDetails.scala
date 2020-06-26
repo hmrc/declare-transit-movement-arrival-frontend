@@ -22,8 +22,8 @@ import cats.syntax.all._
 import com.lucidchart.open.xtract.XmlReader._
 import com.lucidchart.open.xtract.{ParseFailure, XmlReader, __ => xmlPath}
 import models.XMLReads._
-import models.XMLWrites
 import models.XMLWrites._
+import models.{XMLWrites, _}
 import play.api.libs.json._
 import utils.Format
 
@@ -40,24 +40,9 @@ object EventDetails {
     val countryLength   = 2
   }
 
-  implicit lazy val reads: Reads[EventDetails] = {
-
-    implicit class ReadsWithContravariantOr[A](a: Reads[A]) {
-
-      def or[B >: A](b: Reads[B]): Reads[B] =
-        a.map[B](identity).orElse(b)
-    }
-
-    implicit def convertToSupertype[A, B >: A](a: Reads[A]): Reads[B] =
-      a.map(identity)
-
-    Transhipment.reads or
-      Incident.format
-  }
-
-  implicit lazy val writes: Writes[EventDetails] = Writes {
-    case i: Incident     => Json.toJson(i)(Incident.format)
-    case t: Transhipment => Json.toJson(t)(Transhipment.writes)
+  implicit lazy val writes: OWrites[EventDetails] = OWrites {
+    case i: Incident     => Json.toJsObject(i)(Incident.incidentJsonWrites)
+    case t: Transhipment => Json.toJsObject(t)(Transhipment.transhipmentJsonWrites)
   }
 
   implicit def xmlReader: XmlReader[EventDetails] = XmlReader {
@@ -74,7 +59,7 @@ object EventDetails {
 }
 
 final case class Incident(
-  information: Option[String],
+  incidentInformation: Option[String],
   date: Option[LocalDate]   = None,
   authority: Option[String] = None,
   place: Option[String]     = None,
@@ -87,14 +72,25 @@ object Incident {
     val informationLength = 350
   }
 
-  implicit lazy val format: Format[Incident] =
-    Json.format[Incident]
+  implicit lazy val incidentJsonWrites: OWrites[Incident] = OWrites[Incident] {
+    incident =>
+      Json
+        .obj(
+          "incidentInformation" -> incident.incidentInformation,
+          "date"                -> incident.date,
+          "authority"           -> incident.authority,
+          "place"               -> incident.place,
+          "country"             -> incident.country,
+          "isTranshipment"      -> false
+        )
+        .filterNulls
+  }
 
-  implicit def writes: XMLWrites[Incident] = XMLWrites[Incident] {
+  implicit def xmlWrites: XMLWrites[Incident] = XMLWrites[Incident] {
     incident =>
       <INCINC>
       {
-      incident.information.map(
+      incident.incidentInformation.map(
         information =>
         <IncInfINC4>{escapeXml(information)}</IncInfINC4>
       ).getOrElse(
@@ -139,24 +135,9 @@ object Transhipment {
     val maxContainers   = 99
   }
 
-  implicit lazy val reads: Reads[Transhipment] = {
-
-    implicit class ReadsWithContravariantOr[A](a: Reads[A]) {
-
-      def or[B >: A](b: Reads[B]): Reads[B] =
-        a.map[B](identity).orElse(b)
-    }
-
-    implicit def convertToSupertype[A, B >: A](a: Reads[A]): Reads[B] =
-      a.map(identity)
-
-    VehicularTranshipment.reads or
-      ContainerTranshipment.format
-  }
-
-  implicit lazy val writes: Writes[Transhipment] = Writes {
-    case t: VehicularTranshipment => Json.toJson(t)(VehicularTranshipment.writes)
-    case t: ContainerTranshipment => Json.toJson(t)(ContainerTranshipment.format)
+  implicit lazy val transhipmentJsonWrites: OWrites[Transhipment] = OWrites {
+    case t: VehicularTranshipment => Json.toJsObject(t)(VehicularTranshipment.vehicularTranshipmentJsonWrites)
+    case t: ContainerTranshipment => Json.toJsObject(t)(ContainerTranshipment.containerJsonWrites)
   }
 
   implicit lazy val xmlReader: XmlReader[Transhipment] = VehicularTranshipment.xmlReader or ContainerTranshipment.xmlReader
@@ -175,41 +156,34 @@ final case class VehicularTranshipment(
 object VehicularTranshipment {
 
   object Constants {
-
     val transportIdentityLength = 27
     val transportCountryLength  = 2
-
   }
 
-  implicit lazy val reads: Reads[VehicularTranshipment] = {
-
-    import play.api.libs.functional.syntax._
-
-    (
-      (__ \ "transportIdentity").read[String] and
-        (__ \ "transportCountry").read[String] and
-        (__ \ "date").readNullable[LocalDate] and
-        (__ \ "authority").readNullable[String] and
-        (__ \ "place").readNullable[String] and
-        (__ \ "country").readNullable[String] and
-        (__ \ "containers").readNullable[Seq[Container]]
-    )(VehicularTranshipment.apply _)
-  }
-
-  implicit lazy val writes: OWrites[VehicularTranshipment] =
+  implicit lazy val vehicularTranshipmentJsonWrites: OWrites[VehicularTranshipment] = {
     OWrites[VehicularTranshipment] {
       transhipment =>
+        val transhipmentType: TranshipmentType =
+          if (transhipment.containers.isDefined)
+            TranshipmentType.DifferentContainerAndVehicle
+          else
+            TranshipmentType.DifferentVehicle
+
         Json
           .obj(
-            "transportIdentity" -> transhipment.transportIdentity,
-            "transportCountry"  -> transhipment.transportCountry,
-            "date"              -> transhipment.date,
-            "authority"         -> transhipment.authority,
-            "place"             -> transhipment.place,
-            "country"           -> transhipment.country,
-            "containers"        -> Json.toJson(transhipment.containers)
+            "transportIdentity"    -> transhipment.transportIdentity,
+            "transportNationality" -> Json.obj("state" -> "", "code" -> transhipment.transportCountry, "description" -> ""),
+            "date"                 -> transhipment.date,
+            "authority"            -> transhipment.authority,
+            "place"                -> transhipment.place,
+            "country"              -> transhipment.country,
+            "containers"           -> Json.toJson(transhipment.containers),
+            "transhipmentType"     -> transhipmentType.toString,
+            "isTranshipment"       -> true
           )
+          .filterNulls
     }
+  }
 
   implicit def xmlWrites: XMLWrites[VehicularTranshipment] = XMLWrites[VehicularTranshipment] {
     transhipment =>
@@ -242,7 +216,7 @@ object VehicularTranshipment {
 
   implicit lazy val xmlReader: XmlReader[VehicularTranshipment] = (
     (xmlPath \ "NewTraMeaIdeSHP26").read[String],
-    (xmlPath \ "NewTraMeaNatSHP54").read[String],
+    (xmlPath \ "NewTraMeaNatSHP54").read[String], //TODO NEEDS LOOKUP
     (xmlPath \ "EndDatSHP60").read[LocalDate].optional,
     (xmlPath \ "EndAutSHP61").read[String].optional,
     (xmlPath \ "EndPlaSHP63").read[String].optional,
@@ -263,8 +237,20 @@ final case class ContainerTranshipment(
 
 object ContainerTranshipment {
 
-  implicit lazy val format: Format[ContainerTranshipment] =
-    Json.format[ContainerTranshipment]
+  implicit lazy val containerJsonWrites: OWrites[ContainerTranshipment] = OWrites {
+    transhipment =>
+      Json
+        .obj(
+          "date"             -> transhipment.date,
+          "authority"        -> transhipment.authority,
+          "place"            -> transhipment.place,
+          "country"          -> transhipment.country,
+          "containers"       -> transhipment.containers,
+          "transhipmentType" -> TranshipmentType.DifferentContainer.toString,
+          "isTranshipment"   -> true
+        )
+        .filterNulls
+  }
 
   implicit def xmlWrites: XMLWrites[ContainerTranshipment] = XMLWrites[ContainerTranshipment] {
     transhipment =>

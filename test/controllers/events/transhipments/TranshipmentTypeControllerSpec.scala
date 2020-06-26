@@ -69,10 +69,11 @@ class TranshipmentTypeControllerSpec extends SpecBase with MockitoSugar with Nun
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form"   -> form,
-        "mode"   -> NormalMode,
-        "mrn"    -> mrn,
-        "radios" -> TranshipmentType.radios(form)
+        "form"        -> form,
+        "mode"        -> NormalMode,
+        "mrn"         -> mrn,
+        "radios"      -> TranshipmentType.radios(form),
+        "onSubmitUrl" -> routes.TranshipmentTypeController.onSubmit(mrn, eventIndex, NormalMode).url
       )
 
       templateCaptor.getValue mustEqual transhipmentTypeTemplate
@@ -101,10 +102,11 @@ class TranshipmentTypeControllerSpec extends SpecBase with MockitoSugar with Nun
       val filledForm = form.bind(Map("value" -> TranshipmentType.values.head.toString))
 
       val expectedJson = Json.obj(
-        "form"   -> filledForm,
-        "mode"   -> NormalMode,
-        "mrn"    -> mrn,
-        "radios" -> TranshipmentType.radios(filledForm)
+        "form"        -> filledForm,
+        "mode"        -> NormalMode,
+        "mrn"         -> mrn,
+        "radios"      -> TranshipmentType.radios(filledForm),
+        "onSubmitUrl" -> routes.TranshipmentTypeController.onSubmit(mrn, eventIndex, NormalMode).url
       )
 
       templateCaptor.getValue mustEqual transhipmentTypeTemplate
@@ -158,10 +160,11 @@ class TranshipmentTypeControllerSpec extends SpecBase with MockitoSugar with Nun
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form"   -> boundForm,
-        "mode"   -> NormalMode,
-        "mrn"    -> mrn,
-        "radios" -> TranshipmentType.radios(boundForm)
+        "form"        -> boundForm,
+        "mode"        -> NormalMode,
+        "mrn"         -> mrn,
+        "radios"      -> TranshipmentType.radios(boundForm),
+        "onSubmitUrl" -> routes.TranshipmentTypeController.onSubmit(mrn, eventIndex, NormalMode).url
       )
 
       templateCaptor.getValue mustEqual transhipmentTypeTemplate

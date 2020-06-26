@@ -54,16 +54,16 @@ class SimplifiedNotificationConversionServiceSpec extends SpecBase with ScalaChe
       (expected, trader)
     }
 
-  private val enRouteEventIncident: Gen[(EnRouteEvent, Incident)] = for {
-    enRouteEvent <- arbitrary[EnRouteEvent]
-    incident     <- arbitrary[Incident]
-  } yield (enRouteEvent.copy(eventDetails = Some(incident)), incident)
-
-
-  private val enRouteEventVehicularTranshipment: Gen[(EnRouteEvent, VehicularTranshipment)] = for {
-    enRouteEvent <- arbitrary[EnRouteEvent]
-    vehicularTranshipment     <- arbitrary[VehicularTranshipment]
-  } yield (enRouteEvent.copy(eventDetails = Some(vehicularTranshipment)), vehicularTranshipment)
+//  private val enRouteEventIncident: Gen[(EnRouteEvent, Incident)] = for {
+//    enRouteEvent <- arbitrary[EnRouteEvent]
+//    incident     <- arbitrary[Incident]
+//  } yield (enRouteEvent.copy(eventDetails = Some(incident)), incident)
+//
+//
+//  private val enRouteEventVehicularTranshipment: Gen[(EnRouteEvent, VehicularTranshipment)] = for {
+//    enRouteEvent <- arbitrary[EnRouteEvent]
+//    vehicularTranshipment     <- arbitrary[VehicularTranshipment]
+//  } yield (enRouteEvent.copy(eventDetails = Some(vehicularTranshipment)), vehicularTranshipment)
 
 
   "ArrivalNotificationConversionService" - {
@@ -110,9 +110,9 @@ class SimplifiedNotificationConversionServiceSpec extends SpecBase with ScalaChe
               .set(EventCountryPage(eventIndex), Country("Valid", routeEvent.countryCode, "country name")).success.value
               .set(EventReportedPage(eventIndex), routeEvent.alreadyInNcts).success.value
 
-            val updatedAnswers = incident.information.fold[UserAnswers](userAnswers) {
+            val updatedAnswers = incident.incidentInformation.fold[UserAnswers](userAnswers) {
               _ =>
-                userAnswers.set(IncidentInformationPage(eventIndex), incident.information.value).success.value
+                userAnswers.set(IncidentInformationPage(eventIndex), incident.incidentInformation.value).success.value
             }
 
             service.convertToArrivalNotification(updatedAnswers).value mustEqual arrivalNotification
@@ -206,14 +206,14 @@ class SimplifiedNotificationConversionServiceSpec extends SpecBase with ScalaChe
               .set(EventCountryPage(eventIndex2), Country("Valid", routeEvent2.countryCode, "country name")).success.value
               .set(EventReportedPage(eventIndex2), routeEvent2.alreadyInNcts).success.value
 
-            val updatedAnswers1 = incident1.information.fold[UserAnswers](userAnswers) {
+            val updatedAnswers1 = incident1.incidentInformation.fold[UserAnswers](userAnswers) {
               _ =>
-                userAnswers.set(IncidentInformationPage(eventIndex), incident1.information.value).success.value
+                userAnswers.set(IncidentInformationPage(eventIndex), incident1.incidentInformation.value).success.value
             }
 
-            val updatedAnswers = incident2.information.fold[UserAnswers](updatedAnswers1) {
+            val updatedAnswers = incident2.incidentInformation.fold[UserAnswers](updatedAnswers1) {
               _ =>
-                updatedAnswers1.set(IncidentInformationPage(eventIndex2), incident2.information.value).success.value
+                updatedAnswers1.set(IncidentInformationPage(eventIndex2), incident2.incidentInformation.value).success.value
             }
 
             service.convertToArrivalNotification(updatedAnswers).value mustEqual arrivalNotification

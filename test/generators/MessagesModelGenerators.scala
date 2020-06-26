@@ -325,4 +325,40 @@ trait MessagesModelGenerators extends Generators {
         originalValue <- arbitrary[Option[String]]
       } yield FunctionalError(errorType, ErrorPointer(pointer), reason, originalValue)
     }
+
+  val arrivalNotificationWithSubplace: Gen[(NormalNotification, Trader)] =
+    for {
+      base     <- arbitrary[NormalNotification]
+      trader   <- arbitrary[Trader]
+      mrn      <- arbitrary[MovementReferenceNumber]
+      subPlace <- stringsWithMaxLength(NormalNotification.Constants.customsSubPlaceLength)
+    } yield {
+
+      val expected: NormalNotification = base
+        .copy(movementReferenceNumber = mrn)
+        .copy(trader = trader)
+        .copy(customsSubPlace = Some(subPlace))
+        .copy(notificationDate = LocalDate.now())
+
+      (expected, trader)
+    }
+
+  val incidentWithInformation: Gen[Incident] = for {
+    information <- stringsWithMaxLength(Incident.Constants.informationLength)
+  } yield Incident(Some(information))
+
+  val enRouteEventIncident: Gen[(EnRouteEvent, Incident)] = for {
+    enRouteEvent <- arbitrary[EnRouteEvent]
+    incident     <- incidentWithInformation
+  } yield (enRouteEvent.copy(eventDetails = Some(incident)), incident)
+
+  val enRouteEventVehicularTranshipment: Gen[(EnRouteEvent, VehicularTranshipment)] = for {
+    enRouteEvent          <- arbitrary[EnRouteEvent]
+    vehicularTranshipment <- arbitrary[VehicularTranshipment]
+  } yield (enRouteEvent.copy(eventDetails = Some(vehicularTranshipment)), vehicularTranshipment)
+
+  val enRouteEventContainerTranshipment: Gen[(EnRouteEvent, ContainerTranshipment)] = for {
+    generatedEnRouteEvent <- arbitrary[EnRouteEvent]
+    containerTranshipment <- arbitrary[ContainerTranshipment]
+  } yield (generatedEnRouteEvent.copy(eventDetails = Some(containerTranshipment)), containerTranshipment)
 }

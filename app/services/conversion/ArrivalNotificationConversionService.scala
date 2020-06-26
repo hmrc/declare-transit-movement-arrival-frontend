@@ -21,7 +21,7 @@ import java.time.LocalDate
 import derivable.DeriveNumberOfEvents
 import models.GoodsLocation.{AuthorisedConsigneesLocation, BorderForceOffice}
 import models.messages._
-import models.{Address, Index, UserAnswers}
+import models.{Index, UserAnswers}
 import pages._
 import pages.events._
 import pages.events.transhipments._
