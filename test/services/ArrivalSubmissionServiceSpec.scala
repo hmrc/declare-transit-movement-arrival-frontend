@@ -21,7 +21,7 @@ import java.time.LocalDate
 import base.SpecBase
 import connectors.ArrivalMovementConnector
 import generators.MessagesModelGenerators
-import models.ArrivalId
+import models.{ArrivalId, NormalProcedureFlag}
 import models.messages.{ArrivalMovementRequest, InterchangeControlReference, NormalNotification, Trader}
 import org.mockito.Matchers.any
 import org.mockito.Mockito._
@@ -124,22 +124,23 @@ class ArrivalSubmissionServiceSpec extends SpecBase with MessagesModelGenerators
         val arrivalId = ArrivalId(1)
 
         val arrivalMovementRequest: ArrivalMovementRequest = arbitrary[ArrivalMovementRequest].sample.value
+        if (arrivalMovementRequest.header.procedureTypeFlag.equals(NormalProcedureFlag)) {
+          when(mockArrivalNotificationMessageService.getArrivalNotificationMessage(any())(any(), any()))
+            .thenReturn(Future.successful(Some(arrivalMovementRequest)))
+          when(mockArrivalMovementConnector.updateArrivalMovement(any(), any())(any())).thenReturn(Future.successful(HttpResponse(ACCEPTED)))
 
-        when(mockArrivalNotificationMessageService.getArrivalNotificationMessage(any())(any(), any()))
-          .thenReturn(Future.successful(Some(arrivalMovementRequest)))
-        when(mockArrivalMovementConnector.updateArrivalMovement(any(), any())(any())).thenReturn(Future.successful(HttpResponse(ACCEPTED)))
+          val application = applicationBuilder(Some(emptyUserAnswers))
+            .overrides(bind[ArrivalNotificationMessageService].toInstance(mockArrivalNotificationMessageService))
+            .overrides(bind[ArrivalMovementConnector].toInstance(mockArrivalMovementConnector))
+            .build()
 
-        val application = applicationBuilder(Some(emptyUserAnswers))
-          .overrides(bind[ArrivalNotificationMessageService].toInstance(mockArrivalNotificationMessageService))
-          .overrides(bind[ArrivalMovementConnector].toInstance(mockArrivalMovementConnector))
-          .build()
+          val arrivalNotificationService = application.injector.instanceOf[ArrivalSubmissionService]
+          val response                   = arrivalNotificationService.update(arrivalId, mrn).futureValue.value
+          response.status mustBe ACCEPTED
 
-        val arrivalNotificationService = application.injector.instanceOf[ArrivalSubmissionService]
-        val response                   = arrivalNotificationService.update(arrivalId, mrn).futureValue.value
-        response.status mustBe ACCEPTED
-
-        verify(mockArrivalMovementConnector, times(1)).updateArrivalMovement(any(), any())(any())
-        verify(mockArrivalNotificationMessageService, times(1)).getArrivalNotificationMessage(any())(any(), any())
+          verify(mockArrivalMovementConnector, times(1)).updateArrivalMovement(any(), any())(any())
+          verify(mockArrivalNotificationMessageService, times(1)).getArrivalNotificationMessage(any())(any(), any())
+        }
       }
 
       "must return None when getArrivalNotificationMessage fails to get ArrivalNotification message " in {
