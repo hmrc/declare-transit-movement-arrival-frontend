@@ -22,7 +22,7 @@ import forms.events.ConfirmRemoveEventFormProvider
 import handlers.ErrorHandler
 import javax.inject.Inject
 import models.requests.DataRequest
-import models.{Index, Mode, MovementReferenceNumber, UserAnswers}
+import models.{Index, Mode, MovementReferenceNumber, NormalMode, UserAnswers}
 import navigation.Navigator
 import pages.events.{ConfirmRemoveEventPage, EventCountryPage, EventPlacePage}
 import play.api.data.Form
@@ -100,11 +100,12 @@ class ConfirmRemoveEventController @Inject()(
   private def renderPage(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode, form: Form[Boolean], eventTitle: String)(
     implicit request: DataRequest[AnyContent]): Future[Html] = {
     val json = Json.obj(
-      "form"       -> form,
-      "mode"       -> mode,
-      "mrn"        -> mrn,
-      "eventTitle" -> eventTitle,
-      "radios"     -> Radios.yesNo(form("value"))
+      "form"        -> form,
+      "mode"        -> mode,
+      "mrn"         -> mrn,
+      "eventTitle"  -> eventTitle,
+      "radios"      -> Radios.yesNo(form("value")),
+      "onSubmitUrl" -> routes.ConfirmRemoveEventController.onSubmit(mrn, eventIndex, NormalMode).url
     )
 
     renderer.render(confirmRemoveEventTemplate, json)

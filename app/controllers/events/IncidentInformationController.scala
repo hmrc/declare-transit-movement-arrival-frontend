@@ -19,7 +19,7 @@ package controllers.events
 import controllers.actions._
 import forms.IncidentInformationFormProvider
 import javax.inject.Inject
-import models.{Index, Mode, MovementReferenceNumber}
+import models.{Index, Mode, MovementReferenceNumber, NormalMode}
 import navigation.Navigator
 import pages.events.IncidentInformationPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -56,9 +56,10 @@ class IncidentInformationController @Inject()(override val messagesApi: Messages
         }
 
         val json = Json.obj(
-          "form" -> preparedForm,
-          "mrn"  -> mrn,
-          "mode" -> mode
+          "form"        -> preparedForm,
+          "mrn"         -> mrn,
+          "mode"        -> mode,
+          "onSubmitUrl" -> routes.IncidentInformationController.onSubmit(mrn, eventIndex, mode).url
         )
 
         renderer.render("events/incidentInformation.njk", json).map(Ok(_))
@@ -72,9 +73,10 @@ class IncidentInformationController @Inject()(override val messagesApi: Messages
           formWithErrors => {
 
             val json = Json.obj(
-              "form" -> formWithErrors,
-              "mrn"  -> mrn,
-              "mode" -> mode
+              "form"        -> formWithErrors,
+              "mrn"         -> mrn,
+              "mode"        -> mode,
+              "onSubmitUrl" -> routes.IncidentInformationController.onSubmit(mrn, eventIndex, mode).url
             )
 
             renderer.render("events/incidentInformation.njk", json).map(BadRequest(_))

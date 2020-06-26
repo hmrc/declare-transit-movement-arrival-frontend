@@ -24,7 +24,7 @@
           {{ sectionMacro(section.sectionTitle, section.rows) }}
         {% endfor %}
 
-        <form action="{{ routes.controllers.events.CheckEventAnswersController.onSubmit.url }}" method="post">
+        <form action="{{ onSubmitUrl }}" method="post">
             {{ csrf() | safe }}
 
             {{ govukButton({

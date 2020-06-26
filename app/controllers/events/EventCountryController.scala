@@ -59,7 +59,7 @@ class EventCountryController @Inject()(override val messagesApi: MessagesApi,
               case None        => form
               case Some(value) => form.fill(value)
             }
-            renderPage(mrn, mode, preparedForm, countries, Results.Ok)
+            renderPage(mrn, mode, preparedForm, countries, Results.Ok, eventIndex)
         }
     }
 
@@ -73,7 +73,7 @@ class EventCountryController @Inject()(override val messagesApi: MessagesApi,
             form
               .bindFromRequest()
               .fold(
-                formWithErrors => renderPage(mrn, mode, formWithErrors, countries, Results.BadRequest),
+                formWithErrors => renderPage(mrn, mode, formWithErrors, countries, Results.BadRequest, eventIndex),
                 value =>
                   for {
                     updatedAnswers <- Future.fromTry(request.userAnswers.set(EventCountryPage(eventIndex), value))
@@ -83,13 +83,14 @@ class EventCountryController @Inject()(override val messagesApi: MessagesApi,
         }
     }
 
-  private def renderPage(mrn: MovementReferenceNumber, mode: Mode, form: Form[Country], countries: Seq[Country], status: Results.Status)(
+  private def renderPage(mrn: MovementReferenceNumber, mode: Mode, form: Form[Country], countries: Seq[Country], status: Results.Status, eventIndex: Index)(
     implicit request: Request[AnyContent]): Future[Result] = {
     val json = Json.obj(
-      "form"      -> form,
-      "mrn"       -> mrn,
-      "mode"      -> mode,
-      "countries" -> countryJsonList(form.value, countries)
+      "form"        -> form,
+      "mrn"         -> mrn,
+      "mode"        -> mode,
+      "countries"   -> countryJsonList(form.value, countries),
+      "onSubmitUrl" -> routes.EventCountryController.onSubmit(mrn, eventIndex, mode).url
     )
 
     renderer.render("events/eventCountry.njk", json).map(status(_))

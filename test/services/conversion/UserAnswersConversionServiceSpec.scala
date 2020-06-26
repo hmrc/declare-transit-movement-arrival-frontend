@@ -29,8 +29,8 @@ import pages._
 import pages.events._
 import pages.events.seals.HaveSealsChangedPage
 import pages.events.transhipments.{TranshipmentTypePage, TransportIdentityPage, TransportNationalityPage}
-import play.api.libs.json.{JsArray, JsNull, JsObject, Json}
-import queries.{ContainersQuery, EventsQuery, SealsQuery}
+import play.api.libs.json.{JsArray, JsNull, Json}
+import queries.{ContainersQuery, SealsQuery}
 
 class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyChecks with MessagesModelGenerators {
 

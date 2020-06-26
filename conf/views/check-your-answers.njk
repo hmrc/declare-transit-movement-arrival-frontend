@@ -28,7 +28,7 @@
 
         <p class="govuk-body">{{ messages("checkYourAnswers.confirmation.paragraph") }}</p>
 
-        <form action="{{ action }}" method="post">
+        <form action="{{ onSubmitUrl }}" method="post">
             {{ csrf() | safe }}
 
             {{ govukButton({

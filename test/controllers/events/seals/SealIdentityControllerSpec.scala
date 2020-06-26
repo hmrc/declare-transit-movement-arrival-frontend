@@ -69,9 +69,10 @@ class SealIdentityControllerSpec extends SpecBase with MockitoSugar with Nunjuck
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form" -> form,
-        "mrn"  -> mrn,
-        "mode" -> NormalMode
+        "form"        -> form,
+        "mrn"         -> mrn,
+        "mode"        -> NormalMode,
+        "onSubmitUrl" -> routes.SealIdentityController.onSubmit(mrn, eventIndex, sealIndex, NormalMode).url
       )
 
       templateCaptor.getValue mustEqual "events/seals/sealIdentity.njk"
@@ -100,9 +101,10 @@ class SealIdentityControllerSpec extends SpecBase with MockitoSugar with Nunjuck
       val filledForm = form.bind(Map("value" -> seal.numberOrMark))
 
       val expectedJson = Json.obj(
-        "form" -> filledForm,
-        "mrn"  -> mrn,
-        "mode" -> NormalMode
+        "form"        -> filledForm,
+        "mrn"         -> mrn,
+        "mode"        -> NormalMode,
+        "onSubmitUrl" -> routes.SealIdentityController.onSubmit(mrn, eventIndex, sealIndex, NormalMode).url
       )
 
       templateCaptor.getValue mustEqual "events/seals/sealIdentity.njk"
@@ -184,9 +186,10 @@ class SealIdentityControllerSpec extends SpecBase with MockitoSugar with Nunjuck
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form" -> boundForm,
-        "mrn"  -> mrn,
-        "mode" -> NormalMode
+        "form"        -> boundForm,
+        "mrn"         -> mrn,
+        "mode"        -> NormalMode,
+        "onSubmitUrl" -> routes.SealIdentityController.onSubmit(mrn, eventIndex, sealIndex, NormalMode).url
       )
 
       templateCaptor.getValue mustEqual "events/seals/sealIdentity.njk"
