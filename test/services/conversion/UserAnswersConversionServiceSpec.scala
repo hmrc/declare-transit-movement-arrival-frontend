@@ -75,7 +75,8 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
         case ((arbArrivalNotification, trader), (enRouteEvent, incident), seal) =>
           val routeEvent: EnRouteEventDomain = enRouteEvent
             .copy(seals = Some(Seq(seal)))
-            .copy(eventDetails = Some(incident.copy(date = None, authority = None, place = None, country = None)))
+            .copy(eventDetails = Some(incident
+              .copy(incidentInformation = Some(incident.incidentInformation.getOrElse("")), date = None, authority = None, place = None, country = None)))
 
           val arrivalNotification: NormalNotification = arbArrivalNotification.copy(enRouteEvents = Some(Seq(routeEvent)))
 
@@ -93,7 +94,7 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
           val result = userAnswersConversionService.convertToUserAnswers(arrivalNotification).value
 
           result.data mustBe userAnswers.data
-        //result.id mustBe userAnswers.id
+          result.id mustBe userAnswers.id
       }
     }
 
@@ -156,11 +157,13 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
         case ((arbArrivalNotification, trader), (enRouteEvent1, incident1), (enRouteEvent2, incident2), seal) =>
           val routeEvent1 = enRouteEvent1
             .copy(seals = Some(Seq(seal)))
-            .copy(eventDetails = Some(incident1.copy(date = None, authority = None, place = None, country = None)))
+            .copy(eventDetails = Some(incident1
+              .copy(incidentInformation = Some(incident1.incidentInformation.getOrElse("")), date = None, authority = None, place = None, country = None)))
 
           val routeEvent2 = enRouteEvent2
             .copy(seals = Some(Seq(seal)))
-            .copy(eventDetails = Some(incident2.copy(date = None, authority = None, place = None, country = None)))
+            .copy(eventDetails = Some(incident2
+              .copy(incidentInformation = Some(incident2.incidentInformation.getOrElse("")), date = None, authority = None, place = None, country = None)))
 
           val arrivalNotification: NormalNotification = arbArrivalNotification.copy(enRouteEvents = Some(Seq(routeEvent1, routeEvent2)))
           val eventIndex2                             = Index(1)
@@ -212,7 +215,7 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
             .set(IsTranshipmentPage(eventIndex), true).success.value
             .set(TranshipmentTypePage(eventIndex), TranshipmentType.DifferentVehicle).success.value
             .set(TransportIdentityPage(eventIndex), vehicularTranshipment1.transportIdentity).success.value
-            .set(TransportNationalityPage(eventIndex), Country("", vehicularTranshipment1.transportCountry.code, "")).success.value
+            .set(TransportNationalityPage(eventIndex), vehicularTranshipment1.transportCountry).success.value
             .set(HaveSealsChangedPage(eventIndex), true).success.value
             .set(SealsQuery(eventIndex), Seq(seal)).success.value
             .set(TranshipmentTypePage(eventIndex2), TranshipmentType.DifferentContainerAndVehicle).success.value
@@ -221,7 +224,7 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
             .set(EventReportedPage(eventIndex2), routeEvent2.alreadyInNcts).success.value
             .set(IsTranshipmentPage(eventIndex2), true).success.value
             .set(TransportIdentityPage(eventIndex2), vehicularTranshipment2.transportIdentity).success.value
-            .set(TransportNationalityPage(eventIndex2), Country("", vehicularTranshipment2.transportCountry.code, "")).success.value
+            .set(TransportNationalityPage(eventIndex2), vehicularTranshipment2.transportCountry).success.value
             .set(HaveSealsChangedPage(eventIndex2), true).success.value
             .set(SealsQuery(eventIndex2), Seq(seal)).success.value
             .set(ContainersQuery(eventIndex2), Seq(domainContainer)).success.value
@@ -240,13 +243,11 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
 
           val routeEvent1 = enRouteEvent1
             .copy(seals = Some(Seq(seal)))
-            .copy(
-              eventDetails = Some(containerTranshipment1.copy(date = None, authority = None, place = None, country = None, containers = Seq(domainContainer))))
+            .copy(eventDetails = Some(containerTranshipment1.copy(date = None, authority = None, place = None, country = None, containers = Seq(container))))
 
           val routeEvent2 = enRouteEvent2
             .copy(seals = Some(Seq(seal)))
-            .copy(
-              eventDetails = Some(containerTranshipment2.copy(date = None, authority = None, place = None, country = None, containers = Seq(domainContainer))))
+            .copy(eventDetails = Some(containerTranshipment2.copy(date = None, authority = None, place = None, country = None, containers = Seq(container))))
 
           val arrivalNotification: NormalNotification = arbArrivalNotification.copy(enRouteEvents = Some(Seq(routeEvent1, routeEvent2)))
 
