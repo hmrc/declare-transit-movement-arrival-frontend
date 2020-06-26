@@ -37,7 +37,7 @@ import java.time.LocalDate
 import cats.syntax.all._
 import com.lucidchart.open.xtract.{__, XmlReader}
 import models.XMLReads._
-import models.{LanguageCode, LanguageCodeEnglish, ProcedureTypeFlag, XMLWrites}
+import models.{LanguageCode, LanguageCodeEnglish, NormalProcedureFlag, ProcedureTypeFlag, XMLWrites}
 import utils.Format
 
 import scala.xml.NodeSeq
@@ -69,10 +69,15 @@ object Header {
               }
           }
           <ArrNotPlaHEA60>{escapeXml(header.arrivalNotificationPlace)}</ArrNotPlaHEA60>
+
           <ArrNotPlaHEA60LNG>{Header.Constants.languageCode.code}</ArrNotPlaHEA60LNG>
-          <ArrAgrLocCodHEA62>{escapeXml(header.presentationOfficeId)}</ArrAgrLocCodHEA62>
-          <ArrAgrLocOfGooHEA63>{escapeXml(header.presentationOfficeName)}</ArrAgrLocOfGooHEA63>
-          <ArrAgrLocOfGooHEA63LNG>{Header.Constants.languageCode.code}</ArrAgrLocOfGooHEA63LNG>
+          {
+            if(header.procedureTypeFlag == NormalProcedureFlag) {
+              <ArrAgrLocCodHEA62>{escapeXml(header.presentationOfficeId)}</ArrAgrLocCodHEA62>
+              <ArrAgrLocOfGooHEA63>{escapeXml(header.presentationOfficeName)}</ArrAgrLocOfGooHEA63>
+              <ArrAgrLocOfGooHEA63LNG>{Header.Constants.languageCode.code}</ArrAgrLocOfGooHEA63LNG>
+            }
+          }
           {
             header.arrivalAgreedLocationOfGoods.fold(NodeSeq.Empty) { location =>
                 <ArrAutLocOfGooHEA65>{escapeXml(location)}</ArrAutLocOfGooHEA65>

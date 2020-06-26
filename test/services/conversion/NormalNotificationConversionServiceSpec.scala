@@ -23,7 +23,7 @@ import generators.MessagesModelGenerators
 import models.GoodsLocation.BorderForceOffice
 import models.messages.{NormalNotification, _}
 import models.reference.{Country, CustomsOffice}
-import models.{Address, Index, MovementReferenceNumber, UserAnswers}
+import models.{Address, Index, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -191,7 +191,7 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
     }
 
     "must return 'None' from empty userAnswers" in {
-      service.convertToArrivalNotification(emptyUserAnswers) mustNot be(defined)
+      service.convertToArrivalNotification(emptyUserAnswers) mustBe None
     }
 
     "must return 'None' from a partly filled userAnswers" in {

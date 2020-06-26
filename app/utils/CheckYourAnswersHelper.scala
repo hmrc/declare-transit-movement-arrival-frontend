@@ -28,12 +28,11 @@ import uk.gov.hmrc.viewmodels._
 class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswersHelper(userAnswers) {
 
   def eoriNumber: Option[Row] =
-    userAnswers.get(ConsigneeEoriConfirmationPage) match {
-      case Some(false) =>
+    (userAnswers.get(ConsigneeEoriConfirmationPage), userAnswers.get(ConsigneeEoriNumberPage)) match {
+      case (Some(false), Some(consigneeName)) =>
         userAnswers.get(ConsigneeEoriNumberPage) map {
           answer =>
-            val consigneeName = userAnswers.get(ConsigneeNamePage).getOrElse("")
-            val messages      = msg"eoriNumber.checkYourAnswersLabel".withArgs(consigneeName)
+            val messages = msg"eoriNumber.checkYourAnswersLabel".withArgs(consigneeName)
             Row(
               key   = Key(messages, classes = Seq("govuk-!-width-one-half")),
               value = Value(lit"$answer"),

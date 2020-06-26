@@ -17,7 +17,7 @@
 package services.conversion
 
 import generators.MessagesModelGenerators
-import models.{MovementReferenceNumber, NormalProcedureFlag}
+import models.{MovementReferenceNumber, NormalProcedureFlag, SimplifiedProcedureFlag}
 import models.messages._
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.{FreeSpec, MustMatchers, OptionValues}
@@ -69,6 +69,43 @@ class SubmissionModelServiceSpec
       val interchangeControlReference = updatedArrivalMovementRequest.meta.interchangeControlReference
 
       val result = convertToSubmissionModel.convertToSubmissionModel(normalNotification,
+                                                                     messageSender,
+                                                                     interchangeControlReference,
+                                                                     updatedArrivalMovementRequest.meta.timeOfPreparation)
+
+      result mustBe updatedArrivalMovementRequest
+    }
+
+    "must convert SimplifiedNotification to ArrivalMovementRequest for traders" in {
+
+      val arrivalMovementRequest: ArrivalMovementRequest = arbitrary[ArrivalMovementRequest].sample.value
+      val setFlag: Header                                = arrivalMovementRequest.header.copy(procedureTypeFlag = SimplifiedProcedureFlag, customsSubPlace = None)
+      val updatedArrivalMovementRequest                  = arrivalMovementRequest.copy(header = setFlag)
+
+      val simplifiedNotification: SimplifiedNotification = {
+        SimplifiedNotification(
+          movementReferenceNumber = MovementReferenceNumber(updatedArrivalMovementRequest.header.movementReferenceNumber).get,
+          notificationPlace       = updatedArrivalMovementRequest.header.arrivalNotificationPlace, //TODO: Is this required
+          notificationDate        = updatedArrivalMovementRequest.header.notificationDate,
+          approvedLocation        = Some(updatedArrivalMovementRequest.header.arrivalNotificationPlace),
+          trader = Trader(
+            name            = updatedArrivalMovementRequest.trader.name,
+            streetAndNumber = updatedArrivalMovementRequest.trader.streetAndNumber,
+            postCode        = updatedArrivalMovementRequest.trader.postCode,
+            city            = updatedArrivalMovementRequest.trader.city,
+            countryCode     = updatedArrivalMovementRequest.trader.countryCode,
+            eori            = updatedArrivalMovementRequest.trader.eori
+          ),
+          presentationOfficeId   = updatedArrivalMovementRequest.header.presentationOfficeId,
+          presentationOfficeName = updatedArrivalMovementRequest.header.presentationOfficeName,
+          enRouteEvents          = updatedArrivalMovementRequest.enRouteEvents
+        )
+      }
+
+      val messageSender               = updatedArrivalMovementRequest.meta.messageSender
+      val interchangeControlReference = updatedArrivalMovementRequest.meta.interchangeControlReference
+
+      val result = convertToSubmissionModel.convertToSubmissionModel(simplifiedNotification,
                                                                      messageSender,
                                                                      interchangeControlReference,
                                                                      updatedArrivalMovementRequest.meta.timeOfPreparation)
