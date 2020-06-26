@@ -144,7 +144,7 @@ object VehicularTranshipmentDomain {
         Json
           .obj(
             "transportIdentity"    -> transhipment.transportIdentity,
-            "transportNationality" -> Json.obj("state" -> "", "code" -> transhipment.transportCountry, "description" -> ""),
+            "transportNationality" -> transhipment.transportCountry,
             "date"                 -> transhipment.date,
             "authority"            -> transhipment.authority,
             "place"                -> transhipment.place,

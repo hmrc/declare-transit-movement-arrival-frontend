@@ -27,11 +27,13 @@ class ArrivalMovementRequestConversionService {
     MovementReferenceNumber(arrivalMovementRequest.header.movementReferenceNumber) map {
       mrn =>
         // TODO How do we handle the call to the connector here???
-        val country = Country("", "", "")
-
         val buildEnrouteEvents: Option[Seq[EnRouteEventDomain]] = arrivalMovementRequest.enRouteEvents.map {
           events =>
-            events.map(event => EnRouteEvent.enRouteEventToDomain(event, country))
+            events.map {
+              event =>
+                val country = Country("", event.countryCode, "")
+                EnRouteEvent.enRouteEventToDomain(event, country)
+            }
         }
 
         NormalNotification(

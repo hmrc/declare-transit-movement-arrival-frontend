@@ -38,9 +38,9 @@ object EventDetails {
 
   def eventDetailToDomain(eventDetails: EventDetails): EventDetailsDomain =
     eventDetails match {
-      case incident: Incident                           => ???
-      case container: ContainerTranshipment             => ???
-      case vehicularTranshipment: VehicularTranshipment => ???
+      case incident: Incident                           => Incident.incidentToDomain(incident)
+      case container: ContainerTranshipment             => ContainerTranshipment.containerTranshipmentToDomain(container)
+      case vehicularTranshipment: VehicularTranshipment => VehicularTranshipment.vehicularTranshipmentToDomain(vehicularTranshipment)
     }
 
   object Constants {
@@ -172,14 +172,14 @@ object VehicularTranshipment {
     val transportCountryLength  = 2
   }
 
-  def vehicularTranshipmentToDomain(transhipment: VehicularTranshipment, transportCountry: Country): VehicularTranshipmentDomain =
+  def vehicularTranshipmentToDomain(transhipment: VehicularTranshipment): VehicularTranshipmentDomain =
     VehicularTranshipment
       .unapply(transhipment)
       .map {
-        case _ @(transportIdentity, _, date, authority, place, country, container) =>
+        case _ @(transportIdentity, transportCountry, date, authority, place, country, container) =>
           VehicularTranshipmentDomain(
             transportIdentity,
-            transportCountry,
+            Country("", transportCountry, ""),
             date,
             authority,
             place,

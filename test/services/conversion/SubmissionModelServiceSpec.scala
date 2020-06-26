@@ -49,10 +49,12 @@ class SubmissionModelServiceSpec
         customsSubPlace   = Some("")
       )
 
-      val country = Country("", "", "")
-
       val updatedArrivalMovementRequest = arrivalMovementRequest.copy(header = setNormalTypeFlag)
-      val enRouteEventsDomain           = updatedArrivalMovementRequest.enRouteEvents.map(_.map(event => EnRouteEvent.enRouteEventToDomain(event, country)))
+      val enRouteEventsDomain = updatedArrivalMovementRequest.enRouteEvents.map(_.map {
+        event =>
+          val country = Country("", event.countryCode, "")
+          EnRouteEvent.enRouteEventToDomain(event, country)
+      })
 
       val normalNotification = {
         NormalNotification(

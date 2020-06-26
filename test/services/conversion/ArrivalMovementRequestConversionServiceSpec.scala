@@ -44,14 +44,16 @@ class ArrivalMovementRequestConversionServiceSpec extends SpecBase with Messages
 
     "must convert ArrivalMovementRequest to NormalNotification for trader" in {
 
-      val country = Country("", "", "")
-
       val genArrivalNotificationRequest = arbitrary[ArrivalMovementRequest].sample.value
       val arrivalNotificationRequest    = genArrivalNotificationRequest.copy(header = genArrivalNotificationRequest.header.copy(customsSubPlace = Some("")))
 
       val convertEnRouteEvents = arrivalNotificationRequest.enRouteEvents.map {
         events =>
-          events.map(event => EnRouteEvent.enRouteEventToDomain(event, country))
+          events.map {
+            event =>
+              val country = Country("", event.countryCode, "")
+              EnRouteEvent.enRouteEventToDomain(event, country)
+          }
       }
 
       val normalNotification: NormalNotification = {
