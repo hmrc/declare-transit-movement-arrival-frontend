@@ -16,7 +16,7 @@
 
 package connectors
 
-import java.time.{LocalDate, LocalTime}
+import java.time.LocalDate
 
 import base.SpecBase
 import com.github.tomakehurst.wiremock.client.WireMock._
@@ -34,8 +34,6 @@ import play.api.http.Status._
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.HttpResponse
-import utils.Format
-import utils.Format.timeFormatter
 
 import scala.concurrent.Future
 import scala.xml.NodeSeq
@@ -145,9 +143,7 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
           arrivalMovementRequest =>
             if (arrivalMovementRequest.header.procedureTypeFlag.equals(NormalProcedureFlag)) {
 
-              val localTime: LocalTime          = LocalTime.parse(Format.timeFormatted(arrivalMovementRequest.meta.timeOfPreparation), timeFormatter)
-              val updatedArrivalMovementRequest = arrivalMovementRequest.copy(meta = arrivalMovementRequest.meta.copy(timeOfPreparation = localTime))
-              val json                          = Json.obj("message" -> updatedArrivalMovementRequest.toXml.toString())
+              val json = Json.obj("message" -> arrivalMovementRequest.toXml.toString())
               server.stubFor(
                 get(urlEqualTo(arrivalNotificationLocation))
                   .willReturn(
@@ -156,7 +152,7 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
               )
 
               val result = connector.getArrivalNotificationMessage(arrivalNotificationLocation).futureValue.value
-              result mustBe updatedArrivalMovementRequest
+              result mustBe arrivalMovementRequest
             }
         }
       }
