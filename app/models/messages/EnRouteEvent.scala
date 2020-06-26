@@ -49,7 +49,7 @@ object EnRouteEvent {
             country,
             alreadyInNct,
             eventDetails.map(EventDetails.eventDetailToDomain),
-            seals
+            seals.map(_.map(Seal.sealToDomain))
           )
       }
       .get

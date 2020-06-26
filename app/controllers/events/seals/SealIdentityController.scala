@@ -19,6 +19,7 @@ package controllers.events.seals
 import controllers.actions._
 import forms.events.seals.SealIdentityFormProvider
 import javax.inject.Inject
+import models.domain.SealDomain
 import models.requests.DataRequest
 import models.{Index, Mode, MovementReferenceNumber}
 import navigation.Navigator
@@ -75,7 +76,7 @@ class SealIdentityController @Inject()(
             formWithErrors => renderView(mrn, mode, formWithErrors).map(BadRequest(_)),
             value =>
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(SealIdentityPage(eventIndex, sealIndex), Seal(value)))
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(SealIdentityPage(eventIndex, sealIndex), SealDomain(value)))
                 _              <- sessionRepository.set(updatedAnswers)
               } yield Redirect(navigator.nextPage(SealIdentityPage(eventIndex, sealIndex), mode, updatedAnswers))
           )

@@ -25,7 +25,7 @@ import generators.{Generators, MessagesModelGenerators}
 import models.GoodsLocation.{AuthorisedConsigneesLocation, BorderForceOffice}
 import models.TranshipmentType.{DifferentContainer, DifferentContainerAndVehicle, DifferentVehicle}
 import models._
-import models.domain.ContainerDomain
+import models.domain.{ContainerDomain, SealDomain}
 import models.messages.{Container, EnRouteEvent, Seal}
 import models.reference.Country
 import org.scalacheck.Arbitrary.arbitrary
@@ -889,7 +889,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         }
 
         "to 'add seal page'" in {
-          forAll(arbitrary[UserAnswers], arbitrary[Seal]) {
+          forAll(arbitrary[UserAnswers], arbitrary[SealDomain]) {
             (answers, seal) =>
               val updatedAnswers = answers
                 .set(SealIdentityPage(eventIndex, sealIndex), seal)
@@ -909,7 +909,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
       "must go from seals identity page" - {
 
         "to check event answers page" in {
-          forAll(arbitrary[UserAnswers], arbitrary[Seal]) {
+          forAll(arbitrary[UserAnswers], arbitrary[SealDomain]) {
             (answers, seal) =>
               val updatedAnswers = answers.set(SealIdentityPage(eventIndex, sealIndex), seal).success.value
 
@@ -940,7 +940,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
             .set(AddSealPage(eventIndex), true)
             .success
             .value
-            .set(SealIdentityPage(eventIndex, sealIndex), Seal("seal1"))
+            .set(SealIdentityPage(eventIndex, sealIndex), SealDomain("seal1"))
             .success
             .value
 
@@ -952,7 +952,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
       "go from remove seals page" - {
         "add seals page when 'Yes' is selected and there are still seals" in {
-          forAll(arbitrary[UserAnswers], arbitrary[Seal]) {
+          forAll(arbitrary[UserAnswers], arbitrary[SealDomain]) {
             case (userAnswers, seal) =>
               val updatedAnswers = userAnswers
                 .set(SealIdentityPage(eventIndex, sealIndex), seal)

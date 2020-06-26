@@ -18,6 +18,7 @@ package models.messages
 
 import com.lucidchart.open.xtract.{__, XmlReader}
 import forms.mappings.StringEquivalence
+import models.domain.SealDomain
 import models.{LanguageCode, LanguageCodeEnglish, XMLWrites}
 import play.api.libs.json.{Json, OFormat}
 
@@ -29,6 +30,8 @@ object Seal {
     val sealNumberOrMarkLength     = 20
     val languageCode: LanguageCode = LanguageCodeEnglish
   }
+
+  def sealToDomain(seal: Seal): SealDomain = Seal.unapply(seal).map(SealDomain.apply).get
 
   implicit val format: OFormat[Seal] = Json.format[Seal]
 

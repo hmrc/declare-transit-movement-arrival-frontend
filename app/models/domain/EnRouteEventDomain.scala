@@ -21,7 +21,11 @@ import play.api.libs.json.{JsObject, Json, OWrites}
 import models._
 import models.reference.Country
 
-final case class EnRouteEventDomain(place: String, country: Country, alreadyInNcts: Boolean, eventDetails: Option[EventDetailsDomain], seals: Option[Seq[Seal]])
+final case class EnRouteEventDomain(place: String,
+                                    country: Country,
+                                    alreadyInNcts: Boolean,
+                                    eventDetails: Option[EventDetailsDomain],
+                                    seals: Option[Seq[SealDomain]])
 
 object EnRouteEventDomain {
 
@@ -41,7 +45,7 @@ object EnRouteEventDomain {
             country.code,
             alreadyInNct,
             eventDetails.map(EventDetailsDomain.eventDetailsDomainToEventDetails),
-            seals
+            seals.map(_.map(SealDomain.domainSealToSeal))
           )
       }
       .get

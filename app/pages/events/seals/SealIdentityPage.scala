@@ -17,13 +17,12 @@
 package pages.events.seals
 
 import models.Index
-import models.messages.Seal
+import models.domain.SealDomain
 import pages.QuestionPage
 import pages.events.SectionConstants
 import play.api.libs.json.JsPath
 
-case class SealIdentityPage(eventIndex: Index, sealIndex: Index) extends QuestionPage[Seal] {
+case class SealIdentityPage(eventIndex: Index, sealIndex: Index) extends QuestionPage[SealDomain] {
 
   override def path: JsPath = JsPath \ SectionConstants.events \ eventIndex.position \ SectionConstants.seals \ sealIndex.position
-
 }

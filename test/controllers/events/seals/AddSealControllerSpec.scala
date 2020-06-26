@@ -55,7 +55,7 @@ class AddSealControllerSpec extends SpecBase with MockitoSugar with NunjucksSupp
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val ua = emptyUserAnswers.set(SealIdentityPage(eventIndex, sealIndex), seal).success.value
+      val ua = emptyUserAnswers.set(SealIdentityPage(eventIndex, sealIndex), sealDomain).success.value
 
       val application    = applicationBuilder(userAnswers = Some(ua)).build()
       val request        = FakeRequest(GET, addSealRoute)
@@ -115,7 +115,7 @@ class AddSealControllerSpec extends SpecBase with MockitoSugar with NunjucksSupp
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
-      val ua = emptyUserAnswers.set(SealIdentityPage(eventIndex, sealIndex), seal).success.value
+      val ua = emptyUserAnswers.set(SealIdentityPage(eventIndex, sealIndex), sealDomain).success.value
 
       val application    = applicationBuilder(userAnswers = Some(ua)).build()
       val request        = FakeRequest(POST, addSealRoute).withFormUrlEncodedBody(("value", ""))

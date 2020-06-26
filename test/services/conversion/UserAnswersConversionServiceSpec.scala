@@ -20,7 +20,7 @@ import java.time.LocalDateTime
 
 import base.SpecBase
 import generators.MessagesModelGenerators
-import models.domain.{ContainerDomain, EnRouteEventDomain, NormalNotification, Trader}
+import models.domain.{ContainerDomain, EnRouteEventDomain, NormalNotification, SealDomain, Trader}
 import models.messages.{Container, Seal}
 import models.reference.{Country, CustomsOffice}
 import models.{Address, GoodsLocation, Index, TranshipmentType, UserAnswers}
@@ -71,7 +71,7 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
     }
 
     "must return 'User Answers' message when there is one incident on route with seals" in {
-      forAll(arrivalNotificationWithSubplace, enRouteEventIncident, arbitrary[Seal]) {
+      forAll(arrivalNotificationWithSubplace, enRouteEventIncident, arbitrary[SealDomain]) {
         case ((arbArrivalNotification, trader), (enRouteEvent, incident), seal) =>
           val routeEvent: EnRouteEventDomain = enRouteEvent
             .copy(seals = Some(Seq(seal)))
@@ -86,7 +86,7 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
             .set(EventCountryPage(eventIndex), routeEvent.country).success.value //TODO: we should have values
             .set(EventReportedPage(eventIndex), routeEvent.alreadyInNcts).success.value
             .set(IsTranshipmentPage(eventIndex), false).success.value
-            .set(IncidentInformationPage(eventIndex), incident.incidentInformation.value).success.value
+            .set(IncidentInformationPage(eventIndex), incident.incidentInformation.getOrElse("")).success.value
             .set(HaveSealsChangedPage(eventIndex), true).success.value
             .set(SealsQuery(eventIndex), Seq(seal)).success.value
           // format: on
@@ -99,7 +99,7 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
     }
 
     "must return 'User Answers' when there is one vehicle transhipment on route with seals" in {
-      forAll(arrivalNotificationWithSubplace, enRouteEventVehicularTranshipment, arbitrary[Seal]) {
+      forAll(arrivalNotificationWithSubplace, enRouteEventVehicularTranshipment, arbitrary[SealDomain]) {
         case ((arbArrivalNotification, trader), (enRouteEvent, vehicularTranshipment), seal) =>
           val routeEvent = enRouteEvent
             .copy(seals = Some(Seq(seal)))
@@ -126,7 +126,7 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
     }
 
     "must return 'User Answers' when there is one container transhipment on route with seals" in {
-      forAll(arrivalNotificationWithSubplace, enRouteEventContainerTranshipment, arbitrary[ContainerDomain], arbitrary[Seal]) {
+      forAll(arrivalNotificationWithSubplace, enRouteEventContainerTranshipment, arbitrary[ContainerDomain], arbitrary[SealDomain]) {
         case ((arbArrivalNotification, trader), (enRouteEvent, containerTranshipment), container, seal) =>
           val routeEvent = enRouteEvent
             .copy(seals = Some(Seq(seal)))
@@ -153,7 +153,7 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
     }
 
     "must return 'User Answers' when there multiple incidents on route" in {
-      forAll(arrivalNotificationWithSubplace, enRouteEventIncident, enRouteEventIncident, arbitrary[Seal]) {
+      forAll(arrivalNotificationWithSubplace, enRouteEventIncident, enRouteEventIncident, arbitrary[SealDomain]) {
         case ((arbArrivalNotification, trader), (enRouteEvent1, incident1), (enRouteEvent2, incident2), seal) =>
           val routeEvent1 = enRouteEvent1
             .copy(seals = Some(Seq(seal)))
@@ -192,7 +192,7 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
     }
 
     "must return 'User Answers' when there multiple vehicular transhipment incidents on route with seals" in {
-      forAll(arrivalNotificationWithSubplace, enRouteEventVehicularTranshipment, enRouteEventVehicularTranshipment, arbitrary[Seal]) {
+      forAll(arrivalNotificationWithSubplace, enRouteEventVehicularTranshipment, enRouteEventVehicularTranshipment, arbitrary[SealDomain]) {
         case ((arbArrivalNotification, trader), (enRouteEvent1, vehicularTranshipment1), (enRouteEvent2, vehicularTranshipment2), seal) =>
           val routeEvent1 = enRouteEvent1
             .copy(seals = Some(Seq(seal)))
@@ -237,7 +237,11 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
     }
 
     "must return 'User Answers' when there multiple container transhipment incidents on route with seals" in {
-      forAll(arrivalNotificationWithSubplace, enRouteEventContainerTranshipment, enRouteEventContainerTranshipment, arbitrary[ContainerDomain], arbitrary[Seal]) {
+      forAll(arrivalNotificationWithSubplace,
+             enRouteEventContainerTranshipment,
+             enRouteEventContainerTranshipment,
+             arbitrary[ContainerDomain],
+             arbitrary[SealDomain]) {
         case ((arbArrivalNotification, trader), (enRouteEvent1, containerTranshipment1), (enRouteEvent2, containerTranshipment2), container, seal) =>
           val eventIndex2 = Index(1)
 

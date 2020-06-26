@@ -27,6 +27,7 @@ import models.domain.{
   EventDetailsDomain,
   IncidentDomain,
   NormalNotification,
+  SealDomain,
   SimplifiedNotification,
   TranshipmentDomain,
   VehicularTranshipmentDomain
@@ -209,6 +210,13 @@ trait MessagesModelGenerators extends Generators {
       } yield Seal(seal)
     }
 
+  implicit lazy val arbitrarySealDomain: Arbitrary[SealDomain] =
+    Arbitrary {
+      for {
+        sealNumber <- stringsWithMaxLength(EnRouteEvent.Constants.sealsLength).suchThat(_.length > 0)
+      } yield SealDomain(sealNumber)
+    }
+
   implicit lazy val arbitrarySeals: Arbitrary[Seq[Seal]] =
     Arbitrary(listWithMaxLength[Seal](maxNumberOfSeals))
 
@@ -237,7 +245,7 @@ trait MessagesModelGenerators extends Generators {
         country       <- arbitrary[Country]
         alreadyInNcts <- arbitrary[Boolean]
         eventDetails  <- arbitrary[Option[EventDetailsDomain]]
-        seals         <- listWithMaxLength[Seal](1)
+        seals         <- listWithMaxLength[SealDomain](1)
       } yield {
 
         val sealsOpt = if (eventDetails.isDefined) Some(seals) else None

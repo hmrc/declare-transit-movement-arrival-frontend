@@ -19,7 +19,7 @@ package services.conversion
 import base.SpecBase
 import generators.MessagesModelGenerators
 import models.GoodsLocation.BorderForceOffice
-import models.domain.{ContainerTranshipmentDomain, EnRouteEventDomain, NormalNotification, Trader}
+import models.domain.{ContainerTranshipmentDomain, EnRouteEventDomain, NormalNotification, SealDomain, Trader}
 import models.messages.{ContainerTranshipment, EnRouteEvent, Seal}
 import models.reference.{Country, CustomsOffice}
 import models.{Address, Index, UserAnswers}
@@ -92,7 +92,7 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
       forAll(arrivalNotificationWithSubplace, enRouteEventVehicularTranshipment) {
         case ((arbArrivalNotification, trader), (enRouteEvent, vehicularTranshipment)) =>
           val routeEvent = enRouteEvent
-            .copy(seals = Some(Seq(Seal("seal 1"), Seal("seal 2"))))
+            .copy(seals = Some(Seq(SealDomain("seal 1"), SealDomain("seal 2"))))
             .copy(eventDetails = Some(vehicularTranshipment.copy(date = None, authority = None, place = None, country = None,
               containers = None)))
 
@@ -104,8 +104,8 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
             .set(EventReportedPage(eventIndex), routeEvent.alreadyInNcts).success.value
             .set(TransportIdentityPage(eventIndex), vehicularTranshipment.transportIdentity).success.value
             .set(TransportNationalityPage(eventIndex), vehicularTranshipment.transportCountry).success.value
-            .set(SealIdentityPage(eventIndex, Index(0)), Seal("seal 1")).success.value
-            .set(SealIdentityPage(eventIndex, Index(1)), Seal("seal 2")).success.value
+            .set(SealIdentityPage(eventIndex, Index(0)), SealDomain("seal 1")).success.value
+            .set(SealIdentityPage(eventIndex, Index(1)), SealDomain("seal 2")).success.value
 
           service.convertToArrivalNotification(userAnswers).value mustEqual arrivalNotification
       }

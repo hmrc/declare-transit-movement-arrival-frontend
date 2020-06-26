@@ -20,6 +20,7 @@ import base.SpecBase
 import forms.behaviours.StringFieldBehaviours
 import generators.MessagesModelGenerators
 import models.Index
+import models.domain.SealDomain
 import models.messages.Seal
 import play.api.data.FormError
 
@@ -57,7 +58,7 @@ class SealIdentityFormProviderSpec extends StringFieldBehaviours with MessagesMo
 
   "no errors if there are existing seal numbers or marks when applying against the same index" in {
 
-    forAll(listWithMaxLength[Seal](10)) {
+    forAll(listWithMaxLength[SealDomain](10)) {
       seals =>
         val result = form(sealIndex, seals).bind(Map(fieldName -> seals.head.numberOrMark)).apply(fieldName)
 
@@ -67,7 +68,7 @@ class SealIdentityFormProviderSpec extends StringFieldBehaviours with MessagesMo
 
   "errors if there are existing seal numbers or marks and index is different from current" in {
 
-    forAll(listWithMaxLength[Seal](10)) {
+    forAll(listWithMaxLength[SealDomain](10)) {
       seals =>
         val nextIndex = seals.length
         val index     = Index(nextIndex)
@@ -78,7 +79,7 @@ class SealIdentityFormProviderSpec extends StringFieldBehaviours with MessagesMo
   }
 
   "no errors if there are no existing seal numbers or marks" in {
-    forAll(listWithMaxLength[Seal](10)) {
+    forAll(listWithMaxLength[SealDomain](10)) {
       seals =>
         val sealsWithDuplicatesRemoved = seals.toSet.filterNot(_.numberOrMark == seal.numberOrMark).toSeq
         val result                     = form(sealIndex, sealsWithDuplicatesRemoved).bind(Map(fieldName -> seal.numberOrMark)).apply(fieldName)

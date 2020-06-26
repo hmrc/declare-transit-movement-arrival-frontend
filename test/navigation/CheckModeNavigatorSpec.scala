@@ -24,7 +24,7 @@ import controllers.routes
 import generators.{Generators, MessagesModelGenerators}
 import models.GoodsLocation.BorderForceOffice
 import models.TranshipmentType.{DifferentContainer, DifferentContainerAndVehicle, DifferentVehicle}
-import models.domain.ContainerDomain
+import models.domain.{ContainerDomain, SealDomain}
 import models.messages.{Container, CustomsOfficeOfPresentation, Seal}
 import models.reference.{Country, CustomsOffice}
 import models.{Address, CheckMode, GoodsLocation, Index, NormalMode, UserAnswers}
@@ -838,7 +838,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
       "seals page" - {
 
         "must go from seals identity page to add seals page" in {
-          forAll(arbitrary[UserAnswers], arbitrary[Seal]) {
+          forAll(arbitrary[UserAnswers], arbitrary[SealDomain]) {
             (answers, seal) =>
               val updatedAnswers = answers.set(SealIdentityPage(eventIndex, sealIndex), seal).success.value
 

@@ -38,7 +38,6 @@ import utils.AddSealHelper
 import scala.concurrent.{ExecutionContext, Future}
 
 class AddSealController @Inject()(override val messagesApi: MessagesApi,
-                                  sessionRepository: SessionRepository,
                                   navigator: Navigator,
                                   identify: IdentifierAction,
                                   getData: DataRetrievalActionProvider,
