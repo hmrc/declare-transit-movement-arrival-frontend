@@ -16,7 +16,7 @@
 
 package connectors
 
-import java.time.LocalDate
+import java.time.{LocalDate, LocalTime}
 
 import base.SpecBase
 import com.github.tomakehurst.wiremock.client.WireMock._
@@ -25,7 +25,7 @@ import generators.MessagesModelGenerators
 import helper.WireMockServerHandler
 import models.XMLWrites._
 import models.messages._
-import models.{ArrivalId, MessagesLocation, MessagesSummary}
+import models.{ArrivalId, MessagesLocation, MessagesSummary, NormalProcedureFlag}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -34,6 +34,8 @@ import play.api.http.Status._
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.HttpResponse
+import utils.Format
+import utils.Format.timeFormatter
 
 import scala.concurrent.Future
 import scala.xml.NodeSeq
@@ -141,19 +143,21 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
 
         forAll(arbitrary[ArrivalMovementRequest]) {
           arrivalMovementRequest =>
-            val expectedArrivalMovementRequest =
-              arrivalMovementRequest.copy(header = arrivalMovementRequest.header.copy(movementReferenceNumber = mrn.toString))
-            val json = Json.obj("message" -> expectedArrivalMovementRequest.toXml.toString())
+            if (arrivalMovementRequest.header.procedureTypeFlag.equals(NormalProcedureFlag)) {
 
-            server.stubFor(
-              get(urlEqualTo(arrivalNotificationLocation))
-                .willReturn(
-                  okJson(json.toString)
-                )
-            )
+              val localTime: LocalTime          = LocalTime.parse(Format.timeFormatted(arrivalMovementRequest.meta.timeOfPreparation), timeFormatter)
+              val updatedArrivalMovementRequest = arrivalMovementRequest.copy(meta = arrivalMovementRequest.meta.copy(timeOfPreparation = localTime))
+              val json                          = Json.obj("message" -> updatedArrivalMovementRequest.toXml.toString())
+              server.stubFor(
+                get(urlEqualTo(arrivalNotificationLocation))
+                  .willReturn(
+                    okJson(json.toString)
+                  )
+              )
 
-            val result = connector.getArrivalNotificationMessage(arrivalNotificationLocation).futureValue.value
-            result mustBe expectedArrivalMovementRequest
+              val result = connector.getArrivalNotificationMessage(arrivalNotificationLocation).futureValue.value
+              result mustBe updatedArrivalMovementRequest
+            }
         }
       }
 
