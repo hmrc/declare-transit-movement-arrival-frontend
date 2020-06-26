@@ -239,7 +239,7 @@ trait MessagesModelGenerators extends Generators {
           messageSender,
           interchangeControlReference,
           date,
-          time,
+          LocalTime.of(time.getHour, time.getMinute),
           None,
           None,
           None,

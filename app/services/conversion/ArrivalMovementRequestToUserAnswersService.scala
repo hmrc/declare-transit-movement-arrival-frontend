@@ -17,15 +17,14 @@
 package services.conversion
 
 import models.UserAnswers
-import models.messages._
-import play.api.libs.json.Json
+import models.messages.ArrivalMovementRequest
 
-object UserAnswersConversionService {
+object ArrivalMovementRequestToUserAnswersService {
 
-  def convertToUserAnswers(arrivalNotification: ArrivalNotification): Option[UserAnswers] =
-    arrivalNotification match {
-      case normalNotification: NormalNotification =>
-        Some(UserAnswers(normalNotification.movementReferenceNumber, Json.toJsObject(normalNotification)))
-      case _ => None
+  def apply(arrivalMovementRequest: ArrivalMovementRequest): Option[UserAnswers] =
+    ArrivalMovementRequestConversionService.convertToArrivalNotification(arrivalMovementRequest).flatMap {
+      arrivalNotification =>
+        UserAnswersConversionService.convertToUserAnswers(arrivalNotification)
     }
+
 }

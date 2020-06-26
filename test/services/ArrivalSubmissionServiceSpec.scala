@@ -21,13 +21,11 @@ import java.time.LocalDate
 import base.SpecBase
 import connectors.ArrivalMovementConnector
 import generators.MessagesModelGenerators
-import models.XMLWrites._
+import models.ArrivalId
 import models.messages.{ArrivalMovementRequest, InterchangeControlReference, NormalNotification, Trader}
-import models.{ArrivalId, MovementReferenceNumber}
 import org.mockito.Matchers.any
-import org.mockito.Mockito.{never, reset, times, verify, when}
+import org.mockito.Mockito._
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalatestplus.mockito.MockitoSugar
 import play.api.Configuration
 import play.api.http.Status._
 import play.api.inject.bind
@@ -128,8 +126,7 @@ class ArrivalSubmissionServiceSpec extends SpecBase with MessagesModelGenerators
         val arrivalMovementRequest: ArrivalMovementRequest = arbitrary[ArrivalMovementRequest].sample.value
 
         when(mockArrivalNotificationMessageService.getArrivalNotificationMessage(any())(any(), any()))
-          .thenReturn(
-            Future.successful(Some((arrivalMovementRequest.toXml, MovementReferenceNumber(arrivalMovementRequest.header.movementReferenceNumber).get))))
+          .thenReturn(Future.successful(Some(arrivalMovementRequest)))
         when(mockArrivalMovementConnector.updateArrivalMovement(any(), any())(any())).thenReturn(Future.successful(HttpResponse(ACCEPTED)))
 
         val application = applicationBuilder(Some(emptyUserAnswers))

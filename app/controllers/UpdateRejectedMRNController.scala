@@ -19,14 +19,15 @@ package controllers
 import controllers.actions._
 import forms.UpdateRejectedMRNFormProvider
 import javax.inject.Inject
-import models.ArrivalId
+import models.{ArrivalId, MovementReferenceNumber}
 import navigation.Navigator
 import pages.UpdateRejectedMRNPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
-import services.ArrivalNotificationMessageService
+import repositories.SessionRepository
+import services.{ArrivalNotificationMessageService, UserAnswersService}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
@@ -36,7 +37,9 @@ class UpdateRejectedMRNController @Inject()(override val messagesApi: MessagesAp
                                             navigator: Navigator,
                                             identify: IdentifierAction,
                                             formProvider: UpdateRejectedMRNFormProvider,
+                                            sessionRepository: SessionRepository,
                                             arrivalMovementMessageService: ArrivalNotificationMessageService,
+                                            userAnswersService: UserAnswersService,
                                             val controllerComponents: MessagesControllerComponents,
                                             renderer: Renderer)(implicit ec: ExecutionContext)
     extends FrontendBaseController
@@ -48,9 +51,13 @@ class UpdateRejectedMRNController @Inject()(override val messagesApi: MessagesAp
   def onPageLoad(arrivalId: ArrivalId): Action[AnyContent] = identify.async {
     implicit request =>
       arrivalMovementMessageService.getArrivalNotificationMessage(arrivalId) flatMap {
-        case Some((_, mrn)) =>
-          val json = Json.obj("form" -> form.fill(mrn), "arrivalId" -> arrivalId.value)
-          renderer.render("updateMovementReferenceNumber.njk", json).map(Ok(_))
+        case Some(arrivalMovementRequest) =>
+          MovementReferenceNumber(arrivalMovementRequest.header.movementReferenceNumber) match {
+            case Some(mrn) =>
+              val json = Json.obj("form" -> form.fill(mrn), "arrivalId" -> arrivalId.value)
+              renderer.render("updateMovementReferenceNumber.njk", json).map(Ok(_))
+            case _ => Future.successful(Redirect(routes.TechnicalDifficultiesController.onPageLoad()))
+          }
         case _ => Future.successful(Redirect(routes.TechnicalDifficultiesController.onPageLoad()))
       }
   }
@@ -66,7 +73,13 @@ class UpdateRejectedMRNController @Inject()(override val messagesApi: MessagesAp
 
             renderer.render("updateMovementReferenceNumber.njk", json).map(BadRequest(_))
           },
-          value => Future(Redirect(navigator.nextRejectionPage(UpdateRejectedMRNPage, value, arrivalId)))
+          value =>
+            userAnswersService.getUserAnswers(arrivalId) map {
+              case Some(userAnswers) =>
+                sessionRepository.set(userAnswers.copy(id = value))
+                Redirect(navigator.nextRejectionPage(UpdateRejectedMRNPage, value, arrivalId))
+              case _ => Redirect(routes.TechnicalDifficultiesController.onPageLoad())
+          }
         )
   }
 }
