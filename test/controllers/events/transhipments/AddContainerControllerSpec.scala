@@ -76,11 +76,12 @@ class AddContainerControllerSpec extends SpecBase with MockitoSugar with Nunjuck
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form"       -> form,
-        "mode"       -> NormalMode,
-        "mrn"        -> mrn,
-        "radios"     -> Radios.yesNo(form("value")),
-        "containers" -> Section(Seq(AddContainerHelper(ua).containerRow(eventIndex, containerIndex, NormalMode).value))
+        "form"        -> form,
+        "mode"        -> NormalMode,
+        "mrn"         -> mrn,
+        "radios"      -> Radios.yesNo(form("value")),
+        "containers"  -> Section(Seq(AddContainerHelper(ua).containerRow(eventIndex, containerIndex, NormalMode).value)),
+        "onSubmitUrl" -> routes.AddContainerController.onSubmit(mrn, eventIndex, NormalMode).url
       )
 
       templateCaptor.getValue mustEqual addContainerTemplate
@@ -134,10 +135,11 @@ class AddContainerControllerSpec extends SpecBase with MockitoSugar with Nunjuck
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form"   -> boundForm,
-        "mode"   -> NormalMode,
-        "mrn"    -> mrn,
-        "radios" -> Radios.yesNo(boundForm("value"))
+        "form"        -> boundForm,
+        "mode"        -> NormalMode,
+        "mrn"         -> mrn,
+        "radios"      -> Radios.yesNo(boundForm("value")),
+        "onSubmitUrl" -> routes.AddContainerController.onSubmit(mrn, eventIndex, NormalMode).url
       )
 
       templateCaptor.getValue mustEqual addContainerTemplate

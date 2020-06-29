@@ -119,10 +119,11 @@ class TransportNationalityControllerSpec extends SpecBase with MockitoSugar with
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form"      -> boundForm,
-        "mrn"       -> mrn,
-        "mode"      -> NormalMode,
-        "countries" -> countriesJson()
+        "form"        -> boundForm,
+        "mrn"         -> mrn,
+        "mode"        -> NormalMode,
+        "countries"   -> countriesJson(),
+        "onSubmitUrl" -> routes.TransportNationalityController.onSubmit(mrn, eventIndex, NormalMode).url
       )
 
       templateCaptor.getValue mustEqual transportNationalityTemplate

@@ -86,13 +86,14 @@ class AddSealController @Inject()(override val messagesApi: MessagesApi,
     val singularOrPlural = if (numberOfSeals == 1) "singular" else "plural"
 
     val json = Json.obj(
-      "form"      -> form,
-      "mode"      -> mode,
-      "mrn"       -> mrn,
-      "pageTitle" -> msg"addSeal.title.$singularOrPlural".withArgs(numberOfSeals),
-      "heading"   -> msg"addSeal.heading.$singularOrPlural".withArgs(numberOfSeals),
-      "seals"     -> sealsRows,
-      "radios"    -> Radios.yesNo(form("value"))
+      "form"        -> form,
+      "mode"        -> mode,
+      "mrn"         -> mrn,
+      "pageTitle"   -> msg"addSeal.title.$singularOrPlural".withArgs(numberOfSeals),
+      "heading"     -> msg"addSeal.heading.$singularOrPlural".withArgs(numberOfSeals),
+      "seals"       -> sealsRows,
+      "radios"      -> Radios.yesNo(form("value")),
+      "onSubmitUrl" -> routes.AddSealController.onSubmit(mrn, eventIndex, mode).url
     )
 
     renderer.render("events/seals/addSeal.njk", json)

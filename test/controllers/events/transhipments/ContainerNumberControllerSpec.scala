@@ -71,9 +71,10 @@ class ContainerNumberControllerSpec extends SpecBase with MockitoSugar with Nunj
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form" -> form,
-        "mrn"  -> mrn,
-        "mode" -> NormalMode
+        "form"        -> form,
+        "mrn"         -> mrn,
+        "mode"        -> NormalMode,
+        "onSubmitUrl" -> routes.ContainerNumberController.onSubmit(mrn, eventIndex, containerIndex, NormalMode).url
       )
 
       templateCaptor.getValue mustEqual containerNumberTemplate
@@ -102,9 +103,10 @@ class ContainerNumberControllerSpec extends SpecBase with MockitoSugar with Nunj
       val filledForm = form.bind(Map("value" -> "answer"))
 
       val expectedJson = Json.obj(
-        "form" -> filledForm,
-        "mrn"  -> mrn,
-        "mode" -> NormalMode
+        "form"        -> filledForm,
+        "mrn"         -> mrn,
+        "mode"        -> NormalMode,
+        "onSubmitUrl" -> routes.ContainerNumberController.onSubmit(mrn, eventIndex, containerIndex, NormalMode).url
       )
 
       templateCaptor.getValue mustEqual containerNumberTemplate
@@ -210,9 +212,10 @@ class ContainerNumberControllerSpec extends SpecBase with MockitoSugar with Nunj
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form" -> boundForm,
-        "mrn"  -> mrn,
-        "mode" -> NormalMode
+        "form"        -> boundForm,
+        "mrn"         -> mrn,
+        "mode"        -> NormalMode,
+        "onSubmitUrl" -> routes.ContainerNumberController.onSubmit(mrn, eventIndex, containerIndex, NormalMode).url
       )
 
       templateCaptor.getValue mustEqual containerNumberTemplate

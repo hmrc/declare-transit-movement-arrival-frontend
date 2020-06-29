@@ -21,7 +21,7 @@ import models.domain.{ArrivalNotification, EnRouteEventDomain, NormalNotificatio
 import models.messages.{ArrivalMovementRequest, EnRouteEvent, Trader}
 import models.reference.Country
 
-class ArrivalMovementRequestConversionService {
+object ArrivalMovementRequestConversionService {
 
   def convertToArrivalNotification(arrivalMovementRequest: ArrivalMovementRequest): Option[ArrivalNotification] =
     MovementReferenceNumber(arrivalMovementRequest.header.movementReferenceNumber) map {

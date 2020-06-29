@@ -14,13 +14,17 @@
  * limitations under the License.
  */
 
-package pages
+package services.conversion
 
-import play.api.libs.json.JsPath
+import models.UserAnswers
+import models.messages.ArrivalMovementRequest
 
-case object ConsigneeEoriConfirmationPage extends QuestionPage[Boolean] {
+object ArrivalMovementRequestToUserAnswersService {
 
-  override def path: JsPath = JsPath \ toString
+  def apply(arrivalMovementRequest: ArrivalMovementRequest): Option[UserAnswers] =
+    ArrivalMovementRequestConversionService.convertToArrivalNotification(arrivalMovementRequest).flatMap {
+      arrivalNotification =>
+        UserAnswersConversionService.convertToUserAnswers(arrivalNotification)
+    }
 
-  override def toString: String = "eoriConfirmation"
 }

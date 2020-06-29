@@ -96,11 +96,12 @@ class ConfirmRemoveSealController @Inject()(
   private def renderPage(mrn: MovementReferenceNumber, mode: Mode, form: Form[Boolean], seal: SealDomain)(
     implicit request: DataRequest[AnyContent]): Future[Html] = {
     val json = Json.obj(
-      "form"       -> form,
-      "mode"       -> mode,
-      "mrn"        -> mrn,
-      "sealNumber" -> seal.numberOrMark,
-      "radios"     -> Radios.yesNo(form("value"))
+      "form"        -> form,
+      "mode"        -> mode,
+      "mrn"         -> mrn,
+      "sealNumber"  -> seal.numberOrMark,
+      "radios"      -> Radios.yesNo(form("value")),
+      "onSubmitUrl" -> routes.ConfirmRemoveSealController.onSubmit(mrn, eventIndex, sealIndex, mode).url
     )
     renderer.render(confirmRemoveSealTemplate, json)
 

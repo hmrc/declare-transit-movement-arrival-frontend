@@ -57,10 +57,11 @@ class TranshipmentTypeController @Inject()(
       }
 
       val json = Json.obj(
-        "form"   -> preparedForm,
-        "mode"   -> mode,
-        "mrn"    -> mrn,
-        "radios" -> TranshipmentType.radios(preparedForm)
+        "form"        -> preparedForm,
+        "mode"        -> mode,
+        "mrn"         -> mrn,
+        "radios"      -> TranshipmentType.radios(preparedForm),
+        "onSubmitUrl" -> routes.TranshipmentTypeController.onSubmit(mrn, eventIndex, mode).url
       )
 
       renderer.render("events/transhipments/transhipmentType.njk", json).map(Ok(_))
@@ -74,10 +75,11 @@ class TranshipmentTypeController @Inject()(
           formWithErrors => {
 
             val json = Json.obj(
-              "form"   -> formWithErrors,
-              "mode"   -> mode,
-              "mrn"    -> mrn,
-              "radios" -> TranshipmentType.radios(formWithErrors)
+              "form"        -> formWithErrors,
+              "mode"        -> mode,
+              "mrn"         -> mrn,
+              "radios"      -> TranshipmentType.radios(formWithErrors),
+              "onSubmitUrl" -> routes.TranshipmentTypeController.onSubmit(mrn, eventIndex, mode).url
             )
 
             renderer.render("events/transhipments/transhipmentType.njk", json).map(BadRequest(_))

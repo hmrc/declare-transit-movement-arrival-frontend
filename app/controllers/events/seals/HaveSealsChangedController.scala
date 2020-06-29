@@ -59,7 +59,7 @@ class HaveSealsChangedController @Inject()(
         case Some(value) => form.fill(value)
       }
 
-      renderView(mrn, mode, preparedForm).map(Ok(_))
+      renderView(mrn, eventIndex, mode, preparedForm).map(Ok(_))
   }
 
   def onSubmit(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
@@ -67,7 +67,7 @@ class HaveSealsChangedController @Inject()(
       form
         .bindFromRequest()
         .fold(
-          formWithErrors => renderView(mrn, mode, formWithErrors).map(BadRequest(_)),
+          formWithErrors => renderView(mrn, eventIndex, mode, formWithErrors).map(BadRequest(_)),
           value =>
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(HaveSealsChangedPage(eventIndex), value))
@@ -76,12 +76,14 @@ class HaveSealsChangedController @Inject()(
         )
   }
 
-  private def renderView(mrn: MovementReferenceNumber, mode: Mode, preparedForm: Form[Boolean])(implicit request: DataRequest[AnyContent]): Future[Html] = {
+  private def renderView(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode, preparedForm: Form[Boolean])(
+    implicit request: DataRequest[AnyContent]): Future[Html] = {
     val json = Json.obj(
-      "form"   -> preparedForm,
-      "mode"   -> mode,
-      "mrn"    -> mrn,
-      "radios" -> Radios.yesNo(preparedForm("value"))
+      "form"        -> preparedForm,
+      "mode"        -> mode,
+      "mrn"         -> mrn,
+      "radios"      -> Radios.yesNo(preparedForm("value")),
+      "onSubmitUrl" -> routes.HaveSealsChangedController.onSubmit(mrn, eventIndex, mode).url
     )
     renderer.render("events/seals/haveSealsChanged.njk", json)
   }

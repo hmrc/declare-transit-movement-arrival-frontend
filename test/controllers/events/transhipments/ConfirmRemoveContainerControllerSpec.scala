@@ -74,7 +74,8 @@ class ConfirmRemoveContainerControllerSpec extends SpecBase with MockitoSugar wi
         "mode"            -> NormalMode,
         "mrn"             -> mrn,
         "containerNumber" -> container.containerNumber,
-        "radios"          -> Radios.yesNo(form("value"))
+        "radios"          -> Radios.yesNo(form("value")),
+        "onSubmitUrl"     -> routes.ConfirmRemoveContainerController.onSubmit(mrn, eventIndex, containerIndex, NormalMode).url
       )
 
       templateCaptor.getValue mustEqual confirmRemoveContainerTemplate
@@ -241,10 +242,11 @@ class ConfirmRemoveContainerControllerSpec extends SpecBase with MockitoSugar wi
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form"   -> boundForm,
-        "mode"   -> NormalMode,
-        "mrn"    -> mrn,
-        "radios" -> Radios.yesNo(boundForm("value"))
+        "form"        -> boundForm,
+        "mode"        -> NormalMode,
+        "mrn"         -> mrn,
+        "radios"      -> Radios.yesNo(boundForm("value")),
+        "onSubmitUrl" -> routes.ConfirmRemoveContainerController.onSubmit(mrn, eventIndex, containerIndex, NormalMode).url
       )
 
       templateCaptor.getValue mustEqual confirmRemoveContainerTemplate

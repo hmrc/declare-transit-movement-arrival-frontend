@@ -16,20 +16,22 @@
 
 package services
 
-import connectors.ArrivalMovementConnector
 import javax.inject.Inject
-import models.ArrivalId
-import models.messages.ArrivalMovementRequest
+import models.{ArrivalId, UserAnswers}
+import services.conversion.ArrivalMovementRequestToUserAnswersService
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class ArrivalNotificationMessageService @Inject()(arrivalMovementConnector: ArrivalMovementConnector) {
+class UserAnswersService @Inject()(arrivalNotificationMessageService: ArrivalNotificationMessageService)(implicit ec: ExecutionContext) {
 
-  def getArrivalNotificationMessage(arrivalId: ArrivalId)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[ArrivalMovementRequest]] =
-    arrivalMovementConnector.getSummary(arrivalId) flatMap {
-      case Some(summary) =>
-        arrivalMovementConnector.getArrivalNotificationMessage(summary.messagesLocation.arrivalNotification)
-      case _ => Future.successful(None)
-    }
+  def getUserAnswers(arrivalId: ArrivalId)(implicit hc: HeaderCarrier): Future[Option[UserAnswers]] =
+    arrivalNotificationMessageService
+      .getArrivalNotificationMessage(arrivalId)
+      .map(
+        _.flatMap {
+          arrivalMovementRequest =>
+            ArrivalMovementRequestToUserAnswersService.apply(arrivalMovementRequest)
+        }
+      )
 }

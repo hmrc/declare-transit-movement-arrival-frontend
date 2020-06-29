@@ -39,6 +39,7 @@ import queries.EventsQuery
 
 class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generators with MessagesModelGenerators {
 
+  // format: off
   val navigator: Navigator = app.injector.instanceOf[Navigator]
 
   val country: Country = Country("Valid", "GB", "United Kingdom")
@@ -77,7 +78,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
               .mustBe(routes.CustomsSubPlaceController.onPageLoad(updatedAnswers.id, NormalMode))
         }
       }
-      "must go from'authorisedLocationCode page to consigneeName page" in {
+      "must go from 'authorisedLocationCode page to consigneeName page" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
             navigator
@@ -85,7 +86,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
               .mustBe(routes.ConsigneeNameController.onPageLoad(answers.id, NormalMode))
         }
       }
-      "must go from'consigneeName page to eoriConfirmation page" in {
+      "must go from 'consigneeName page to eoriConfirmation page" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
             navigator
@@ -94,7 +95,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         }
       }
 
-      "must go from'eoriConfirmation page to eoriNumber page when 'No' is selected" in {
+      "must go from 'eoriConfirmation page to eoriNumber page when 'No' is selected" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
             val updatedAnswers = answers
@@ -111,7 +112,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         }
       }
 
-      "must go from'eoriConfirmation page to consigneeAddress page when 'Yes' is selected" in {
+      "must go from 'eoriConfirmation page to consigneeAddress page when 'Yes' is selected" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
             val updatedAnswers = answers.set(ConsigneeEoriConfirmationPage, true).success.value
@@ -121,7 +122,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
               .mustBe(routes.ConsigneeAddressController.onPageLoad(answers.id, NormalMode))
         }
       }
-      "must go from eoriNumber page to consigneeAddress page" in {
+      "must go from 'eoriNumber' page to consigneeAddress page" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
             navigator
@@ -129,12 +130,45 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
               .mustBe(routes.ConsigneeAddressController.onPageLoad(answers.id, NormalMode))
         }
       }
-      "must go from consigneeAddress page to Incident On route page" in {
+
+      "must go from 'ConsigneeAddress' page to 'Presentation Office' On route page when simplified journey" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
             navigator
               .nextPage(ConsigneeAddressPage, NormalMode, answers)
               .mustBe(routes.PresentationOfficeController.onPageLoad(answers.id, NormalMode))
+        }
+      }
+
+      "must go from 'Presentation office'" - {
+        "to 'EventOnRoute' in simplified journey" in {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val ua = answers
+                .set(GoodsLocationPage, AuthorisedConsigneesLocation).success.value
+                .remove(IncidentOnRoutePage).success.value
+              navigator
+                .nextPage(PresentationOfficePage, NormalMode, ua)
+                .mustBe(routes.IncidentOnRouteController.onPageLoad(ua.id, NormalMode))
+          }
+        }
+
+        "to 'TraderName' in normal journey" in {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val ua = answers
+                .set(GoodsLocationPage, BorderForceOffice).success.value
+                .remove(TraderNamePage).success.value
+              navigator
+                .nextPage(PresentationOfficePage, NormalMode, ua)
+                .mustBe(routes.TraderNameController.onPageLoad(ua.id, NormalMode))
+          }
+        }
+
+        "to 'SessionExpired' when no answers are available" in {
+          navigator
+            .nextPage(PresentationOfficePage, NormalMode, emptyUserAnswers)
+            .mustBe(routes.SessionExpiredController.onPageLoad())
         }
       }
 
@@ -144,39 +178,6 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
             navigator
               .nextPage(CustomsSubPlacePage, NormalMode, answers)
               .mustBe(routes.PresentationOfficeController.onPageLoad(answers.id, NormalMode))
-        }
-      }
-
-      "must go from 'presentation office'" - {
-        " to 'traders name' when trader's name not previously answered(on Normal journey)" in {
-          forAll(arbitrary[UserAnswers]) {
-            answers =>
-              val updatedAnswers = answers
-                .set(GoodsLocationPage, BorderForceOffice)
-                .success
-                .value
-                .remove(TraderNamePage)
-                .success
-                .value
-              navigator
-                .nextPage(PresentationOfficePage, NormalMode, updatedAnswers)
-                .mustBe(routes.TraderNameController.onPageLoad(answers.id, NormalMode))
-          }
-        }
-        " to 'incident on route page' on Simplified journey)" in {
-          forAll(arbitrary[UserAnswers]) {
-            answers =>
-              val updatedAnswers = answers
-                .set(GoodsLocationPage, AuthorisedConsigneesLocation)
-                .success
-                .value
-                .set(ConsigneeNamePage, "Frank")
-                .success
-                .value
-              navigator
-                .nextPage(PresentationOfficePage, NormalMode, updatedAnswers)
-                .mustBe(routes.IncidentOnRouteController.onPageLoad(answers.id, NormalMode))
-          }
         }
       }
 
@@ -993,5 +994,5 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
     }
 
   }
-
+  // format: on
 }

@@ -55,8 +55,9 @@ class CheckYourAnswersController @Inject()(override val messagesApi: MessagesApi
       val answers: Seq[Section] = createSections(request.userAnswers, request.eoriNumber)
 
       val json = Json.obj(
-        "sections" -> Json.toJson(answers),
-        "mrn"      -> mrn
+        "sections"    -> Json.toJson(answers),
+        "mrn"         -> mrn,
+        "onSubmitUrl" -> routes.CheckYourAnswersController.onPost(mrn).url
       )
       renderer.render("check-your-answers.njk", json).map(Ok(_))
   }

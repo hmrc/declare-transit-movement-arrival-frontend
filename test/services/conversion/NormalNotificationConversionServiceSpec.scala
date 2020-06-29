@@ -187,7 +187,7 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
     }
 
     "must return 'None' from empty userAnswers" in {
-      service.convertToArrivalNotification(emptyUserAnswers) mustNot be(defined)
+      service.convertToArrivalNotification(emptyUserAnswers) mustBe None
     }
 
     "must return 'None' from a partly filled userAnswers" in {

@@ -20,7 +20,7 @@ import base.SpecBase
 import controllers.events.transhipments.{routes => transhipmentRoutes}
 import forms.events.transhipments.TransportIdentityFormProvider
 import matchers.JsonMatchers
-import models.{NormalMode, UserAnswers}
+import models.{Mode, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
@@ -68,9 +68,10 @@ class TransportIdentityControllerSpec extends SpecBase with MockitoSugar with Nu
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form" -> form,
-        "mrn"  -> mrn,
-        "mode" -> NormalMode
+        "form"        -> form,
+        "mrn"         -> mrn,
+        "mode"        -> NormalMode,
+        "onSubmitUrl" -> routes.TransportIdentityController.onSubmit(mrn, eventIndex, NormalMode).url
       )
 
       templateCaptor.getValue mustEqual transportIdentityTemplate

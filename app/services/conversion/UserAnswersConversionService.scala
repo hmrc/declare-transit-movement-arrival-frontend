@@ -21,7 +21,7 @@ import models.domain.{ArrivalNotification, NormalNotification}
 import models.messages._
 import play.api.libs.json.Json
 
-class UserAnswersConversionService {
+object UserAnswersConversionService {
 
   def convertToUserAnswers(arrivalNotification: ArrivalNotification): Option[UserAnswers] =
     arrivalNotification match {

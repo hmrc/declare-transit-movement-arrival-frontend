@@ -19,41 +19,9 @@ package generators
 import java.time.{LocalDate, LocalTime}
 
 import models.{domain, messages, MovementReferenceNumber, NormalProcedureFlag, ProcedureTypeFlag, SimplifiedProcedureFlag}
-import models.domain.{
-  ArrivalNotification,
-  ContainerDomain,
-  ContainerTranshipmentDomain,
-  EnRouteEventDomain,
-  EventDetailsDomain,
-  IncidentDomain,
-  NormalNotification,
-  SealDomain,
-  SimplifiedNotification,
-  TranshipmentDomain,
-  VehicularTranshipmentDomain
-}
+import models.domain._
 import models.messages.ErrorType.{GenericError, MRNError}
-import models.messages.{
-  ArrivalMovementRequest,
-  ArrivalNotificationRejectionMessage,
-  Container,
-  ContainerTranshipment,
-  CustomsOfficeOfPresentation,
-  EnRouteEvent,
-  ErrorPointer,
-  ErrorType,
-  EventDetails,
-  FunctionalError,
-  Header,
-  Incident,
-  InterchangeControlReference,
-  MessageSender,
-  Meta,
-  ProcedureType,
-  Seal,
-  Transhipment,
-  VehicularTranshipment
-}
+import models.messages._
 import models.reference.Country
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
@@ -273,14 +241,15 @@ trait MessagesModelGenerators extends Generators {
     Arbitrary {
 
       for {
-        mrn                <- arbitrary[MovementReferenceNumber].map(_.toString)
-        place              <- stringsWithMaxLength(SimplifiedNotification.Constants.notificationPlaceLength)
-        date               <- localDateGen
-        approvedLocation   <- Gen.option(stringsWithMaxLength(SimplifiedNotification.Constants.approvedLocationLength))
-        trader             <- arbitrary[domain.TraderDomain]
-        presentationOffice <- stringsWithMaxLength(SimplifiedNotification.Constants.presentationOfficeLength)
-        events             <- Gen.option(listWithMaxLength[EnRouteEvent](NormalNotification.Constants.maxNumberOfEnRouteEvents))
-      } yield domain.SimplifiedNotification(mrn, place, date, approvedLocation, trader, presentationOffice, events)
+        mrn                    <- arbitrary[MovementReferenceNumber]
+        place                  <- stringsWithMaxLength(SimplifiedNotification.Constants.notificationPlaceLength)
+        date                   <- localDateGen
+        approvedLocation       <- Gen.option(stringsWithMaxLength(SimplifiedNotification.Constants.approvedLocationLength))
+        trader                 <- arbitrary[TraderDomain]
+        presentationOfficeId   <- stringsWithMaxLength(SimplifiedNotification.Constants.presentationOfficeLength)
+        presentationOfficeName <- stringsWithMaxLength(SimplifiedNotification.Constants.presentationOfficeLength)
+        events                 <- Gen.option(listWithMaxLength[EnRouteEvent](NormalNotification.Constants.maxNumberOfEnRouteEvents))
+      } yield SimplifiedNotification(mrn, place, date, approvedLocation, trader, presentationOfficeId, presentationOfficeName, events)
     }
 
   implicit lazy val arbitraryArrivalNotification: Arbitrary[ArrivalNotification] =
@@ -339,7 +308,7 @@ trait MessagesModelGenerators extends Generators {
           messageSender,
           interchangeControlReference,
           date,
-          time,
+          LocalTime.of(time.getHour, time.getMinute),
           None,
           None,
           None,

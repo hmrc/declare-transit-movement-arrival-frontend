@@ -84,12 +84,13 @@ object NormalNotification {
 }
 
 final case class SimplifiedNotification(
-  movementReferenceNumber: String, // TODO: Make this a MovementReferenceNumber
+  movementReferenceNumber: MovementReferenceNumber,
   notificationPlace: String,
   notificationDate: LocalDate,
   approvedLocation: Option[String],
   trader: TraderDomain,
-  presentationOffice: String,
+  presentationOfficeId: String,
+  presentationOfficeName: String,
   enRouteEvents: Option[Seq[EnRouteEvent]]
 ) extends ArrivalNotification {
 
@@ -117,7 +118,8 @@ object SimplifiedNotification {
             "notificationDate"        -> notification.notificationDate,
             "approvedLocation"        -> notification.approvedLocation,
             "trader"                  -> Json.toJson(notification.trader),
-            "presentationOffice"      -> notification.presentationOffice,
+            "presentationOfficeId"    -> notification.presentationOfficeId,
+            "presentationOfficeName"  -> notification.presentationOfficeName,
             "enRouteEvents"           -> Json.toJson(notification.enRouteEvents)
           )
     }

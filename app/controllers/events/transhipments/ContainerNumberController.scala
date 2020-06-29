@@ -58,9 +58,10 @@ class ContainerNumberController @Inject()(
         }
 
         val json = Json.obj(
-          "form" -> preparedForm,
-          "mrn"  -> mrn,
-          "mode" -> mode
+          "form"        -> preparedForm,
+          "mrn"         -> mrn,
+          "mode"        -> mode,
+          "onSubmitUrl" -> routes.ContainerNumberController.onSubmit(mrn, eventIndex, containerIndex, mode).url
         )
 
         renderer.render("events/transhipments/containerNumber.njk", json).map(Ok(_))
@@ -77,9 +78,10 @@ class ContainerNumberController @Inject()(
             formWithErrors => {
 
               val json = Json.obj(
-                "form" -> formWithErrors,
-                "mrn"  -> mrn,
-                "mode" -> mode
+                "form"        -> formWithErrors,
+                "mrn"         -> mrn,
+                "mode"        -> mode,
+                "onSubmitUrl" -> routes.ContainerNumberController.onSubmit(mrn, eventIndex, containerIndex, mode).url
               )
 
               renderer.render("events/transhipments/containerNumber.njk", json).map(BadRequest(_))

@@ -59,7 +59,7 @@ class TransportNationalityController @Inject()(override val messagesApi: Message
             case Some(value) => form.fill(value)
           }
 
-          renderPage(mrn, mode, preparedForm, countries, Ok)
+          renderPage(mrn, mode, preparedForm, countries, Ok, eventIndex)
       }
   }
 
@@ -72,7 +72,7 @@ class TransportNationalityController @Inject()(override val messagesApi: Message
           form
             .bindFromRequest()
             .fold(
-              formWithErrors => renderPage(mrn, mode, formWithErrors, countries, BadRequest),
+              formWithErrors => renderPage(mrn, mode, formWithErrors, countries, BadRequest, eventIndex),
               value =>
                 for {
                   updatedAnswers <- Future.fromTry(request.userAnswers.set(TransportNationalityPage(eventIndex), value))
@@ -82,13 +82,14 @@ class TransportNationalityController @Inject()(override val messagesApi: Message
       }
   }
 
-  private def renderPage(mrn: MovementReferenceNumber, mode: Mode, form: Form[Country], countries: Seq[Country], status: Status)(
+  private def renderPage(mrn: MovementReferenceNumber, mode: Mode, form: Form[Country], countries: Seq[Country], status: Status, eventIndex: Index)(
     implicit request: Request[AnyContent]): Future[Result] = {
     val json = Json.obj(
-      "form"      -> form,
-      "mrn"       -> mrn,
-      "mode"      -> mode,
-      "countries" -> countryJsonList(form.value, countries)
+      "form"        -> form,
+      "mrn"         -> mrn,
+      "mode"        -> mode,
+      "countries"   -> countryJsonList(form.value, countries),
+      "onSubmitUrl" -> routes.TransportNationalityController.onSubmit(mrn, eventIndex, mode).url
     )
 
     renderer.render("events/transhipments/transportNationality.njk", json).map(status(_))

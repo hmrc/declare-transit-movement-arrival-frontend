@@ -112,6 +112,7 @@ class ArrivalNotificationSpec extends FreeSpec with MustMatchers with ScalaCheck
       "enRouteEvents"           -> Json.toJson(notification.enRouteEvents),
       "approvedLocation"        -> Json.toJson(notification.approvedLocation),
       "trader"                  -> Json.toJson(notification.trader),
-      "presentationOffice"      -> notification.presentationOffice
+      "presentationOfficeId"    -> notification.presentationOfficeId,
+      "presentationOfficeName"  -> notification.presentationOfficeName
     )
 }

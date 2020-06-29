@@ -55,10 +55,11 @@ class EventReportedController @Inject()(override val messagesApi: MessagesApi,
       }
 
       val json = Json.obj(
-        "form"   -> preparedForm,
-        "mode"   -> mode,
-        "mrn"    -> mrn,
-        "radios" -> Radios.yesNo(preparedForm("value"))
+        "form"        -> preparedForm,
+        "mode"        -> mode,
+        "mrn"         -> mrn,
+        "radios"      -> Radios.yesNo(preparedForm("value")),
+        "onSubmitUrl" -> routes.EventReportedController.onSubmit(mrn, eventIndex, mode).url
       )
 
       renderer.render("events/eventReported.njk", json).map(Ok(_))
@@ -73,10 +74,11 @@ class EventReportedController @Inject()(override val messagesApi: MessagesApi,
             formWithErrors => {
 
               val json = Json.obj(
-                "form"   -> formWithErrors,
-                "mode"   -> mode,
-                "mrn"    -> mrn,
-                "radios" -> Radios.yesNo(formWithErrors("value"))
+                "form"        -> formWithErrors,
+                "mode"        -> mode,
+                "mrn"         -> mrn,
+                "radios"      -> Radios.yesNo(formWithErrors("value")),
+                "onSubmitUrl" -> routes.EventReportedController.onSubmit(mrn, eventIndex, mode).url
               )
 
               renderer.render("events/eventReported.njk", json).map(BadRequest(_))
