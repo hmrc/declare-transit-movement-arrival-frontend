@@ -57,7 +57,7 @@ class ArrivalNotificationConversionService {
         notificationPlace       = notificationPlace, //TODO: This needs removing from SimplifiedNotification - isn't used
         notificationDate        = LocalDate.now(),
         approvedLocation        = Some(notificationPlace),
-        trader = Trader(
+        trader = TraderDomain(
           eori            = traderEori,
           name            = traderName,
           streetAndNumber = tradersAddress.buildingAndStreet,

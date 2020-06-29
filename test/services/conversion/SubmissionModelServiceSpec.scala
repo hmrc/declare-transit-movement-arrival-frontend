@@ -17,7 +17,7 @@
 package services.conversion
 
 import generators.MessagesModelGenerators
-import models.domain.{EnRouteEventDomain, NormalNotification, TraderDomain}
+import models.domain.{EnRouteEventDomain, NormalNotification, SimplifiedNotification, TraderDomain}
 import models.messages.{ArrivalMovementRequest, EnRouteEvent}
 import models.reference.Country
 import models.{domain, MovementReferenceNumber, NormalProcedureFlag}
@@ -95,13 +95,19 @@ class SubmissionModelServiceSpec
       val setFlag: Header                                = arrivalMovementRequest.header.copy(procedureTypeFlag = SimplifiedProcedureFlag, customsSubPlace = None)
       val updatedArrivalMovementRequest                  = arrivalMovementRequest.copy(header = setFlag)
 
+      val enRouteEventsDomain = updatedArrivalMovementRequest.enRouteEvents.map(_.map {
+        event =>
+          val country = Country("", event.countryCode, "")
+          EnRouteEvent.enRouteEventToDomain(event, country)
+      })
+
       val simplifiedNotification: SimplifiedNotification = {
         SimplifiedNotification(
           movementReferenceNumber = MovementReferenceNumber(updatedArrivalMovementRequest.header.movementReferenceNumber).get,
           notificationPlace       = updatedArrivalMovementRequest.header.arrivalNotificationPlace, //TODO: Is this required
           notificationDate        = updatedArrivalMovementRequest.header.notificationDate,
           approvedLocation        = Some(updatedArrivalMovementRequest.header.arrivalNotificationPlace),
-          trader = Trader(
+          trader = TraderDomain(
             name            = updatedArrivalMovementRequest.trader.name,
             streetAndNumber = updatedArrivalMovementRequest.trader.streetAndNumber,
             postCode        = updatedArrivalMovementRequest.trader.postCode,
@@ -111,7 +117,7 @@ class SubmissionModelServiceSpec
           ),
           presentationOfficeId   = updatedArrivalMovementRequest.header.presentationOfficeId,
           presentationOfficeName = updatedArrivalMovementRequest.header.presentationOfficeName,
-          enRouteEvents          = updatedArrivalMovementRequest.enRouteEvents
+          enRouteEvents          = enRouteEventsDomain
         )
       }
 

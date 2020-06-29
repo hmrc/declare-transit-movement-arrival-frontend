@@ -248,7 +248,7 @@ trait MessagesModelGenerators extends Generators {
         trader                 <- arbitrary[TraderDomain]
         presentationOfficeId   <- stringsWithMaxLength(SimplifiedNotification.Constants.presentationOfficeLength)
         presentationOfficeName <- stringsWithMaxLength(SimplifiedNotification.Constants.presentationOfficeLength)
-        events                 <- Gen.option(listWithMaxLength[EnRouteEvent](NormalNotification.Constants.maxNumberOfEnRouteEvents))
+        events                 <- Gen.option(listWithMaxLength[EnRouteEventDomain](NormalNotification.Constants.maxNumberOfEnRouteEvents))
       } yield SimplifiedNotification(mrn, place, date, approvedLocation, trader, presentationOfficeId, presentationOfficeName, events)
     }
 
@@ -356,9 +356,10 @@ trait MessagesModelGenerators extends Generators {
   implicit lazy val arbitraryArrivalMovementRequest: Arbitrary[ArrivalMovementRequest] = {
     Arbitrary {
       for {
-        meta          <- arbitrary[Meta]
-        header        <- arbitrary[Header].map(_.copy(notificationDate = meta.dateOfPreparation))
-        trader        <- arbitrary[messages.Trader]
+        meta <- arbitrary[Meta]
+        header <- arbitrary[Header].map(header =>
+          header.copy(notificationDate = meta.dateOfPreparation, customsSubPlace = Some(header.customsSubPlace.getOrElse(""))))
+        trader        <- arbitrary[Trader]
         customsOffice <- arbitrary[CustomsOfficeOfPresentation].map(_.copy(presentationOffice = header.presentationOfficeId))
         enRouteEvents <- Gen.option(listWithMaxLength[EnRouteEvent](1))
       } yield ArrivalMovementRequest(meta, header, trader, customsOffice, enRouteEvents)

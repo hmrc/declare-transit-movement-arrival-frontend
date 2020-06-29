@@ -63,7 +63,7 @@ class ConfirmRemoveSealController @Inject()(
         request.userAnswers.get(SealIdentityPage(eventIndex, sealIndex)) match {
           case Some(seal) =>
             val form = formProvider(seal)
-            renderPage(mrn, mode, form, seal).map(Ok(_))
+            renderPage(mrn, eventIndex, sealIndex, mode, form, seal).map(Ok(_))
           case _ =>
             renderErrorPage(eventIndex, mode)
         }
@@ -77,7 +77,7 @@ class ConfirmRemoveSealController @Inject()(
             formProvider(seal)
               .bindFromRequest()
               .fold(
-                formWithErrors => renderPage(mrn, mode, formWithErrors, seal).map(BadRequest(_)),
+                formWithErrors => renderPage(mrn, eventIndex, sealIndex, mode, formWithErrors, seal).map(BadRequest(_)),
                 value =>
                   if (value) {
                     for {
@@ -93,7 +93,7 @@ class ConfirmRemoveSealController @Inject()(
         }
     }
 
-  private def renderPage(mrn: MovementReferenceNumber, mode: Mode, form: Form[Boolean], seal: SealDomain)(
+  private def renderPage(mrn: MovementReferenceNumber, eventIndex: Index, sealIndex: Index, mode: Mode, form: Form[Boolean], seal: SealDomain)(
     implicit request: DataRequest[AnyContent]): Future[Html] = {
     val json = Json.obj(
       "form"        -> form,

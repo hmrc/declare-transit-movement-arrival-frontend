@@ -62,7 +62,7 @@ class ConfirmRemoveContainerController @Inject()(
         request.userAnswers.get(ContainerNumberPage(eventIndex, containerIndex)) match {
           case Some(container) =>
             val form = formProvider(container)
-            renderPage(mrn, form, mode, container).map(Ok(_))
+            renderPage(mrn, eventIndex, containerIndex, form, mode, container).map(Ok(_))
           case _ =>
             renderErrorPage(eventIndex, mode, request.userAnswers)
         }
@@ -77,7 +77,7 @@ class ConfirmRemoveContainerController @Inject()(
             formProvider(container)
               .bindFromRequest()
               .fold(
-                formWithErrors => renderPage(mrn, formWithErrors, mode, container).map(BadRequest(_)),
+                formWithErrors => renderPage(mrn, eventIndex, containerIndex, formWithErrors, mode, container).map(BadRequest(_)),
                 value =>
                   if (value) {
                     for {
@@ -93,7 +93,7 @@ class ConfirmRemoveContainerController @Inject()(
         }
     }
 
-  private def renderPage(mrn: MovementReferenceNumber, form: Form[Boolean], mode: Mode, container: ContainerDomain)(
+  private def renderPage(mrn: MovementReferenceNumber, eventIndex: Index, containerIndex: Index, form: Form[Boolean], mode: Mode, container: ContainerDomain)(
     implicit request: DataRequest[AnyContent]): Future[Html] = {
 
     val json = Json.obj(

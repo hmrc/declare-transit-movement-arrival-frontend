@@ -19,13 +19,10 @@ package services.conversion
 import base.SpecBase
 import generators.MessagesModelGenerators
 import models.{domain, MovementReferenceNumber}
-import models.domain.{EnRouteEventDomain, NormalNotification, TraderDomain}
+import models.domain.{NormalNotification, TraderDomain}
 import models.messages.{ArrivalMovementRequest, EnRouteEvent, Header}
 import models.reference.Country
-import models.MovementReferenceNumber
-import models.messages.{ArrivalMovementRequest, Header, NormalNotification, Trader}
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalacheck.{Arbitrary, Gen}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
 class ArrivalMovementRequestConversionServiceSpec extends SpecBase with MessagesModelGenerators with ScalaCheckPropertyChecks {

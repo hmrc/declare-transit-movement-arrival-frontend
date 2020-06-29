@@ -22,11 +22,8 @@ import base.SpecBase
 import connectors.ArrivalMovementConnector
 import generators.MessagesModelGenerators
 import models.{ArrivalId, NormalProcedureFlag}
-import models.messages.{ArrivalMovementRequest, InterchangeControlReference, NormalNotification, Trader}
-import models.XMLWrites._
 import models.domain.{NormalNotification, TraderDomain}
 import models.messages.{ArrivalMovementRequest, InterchangeControlReference}
-import models.{ArrivalId, MovementReferenceNumber}
 import org.mockito.Matchers.any
 import org.mockito.Mockito._
 import org.scalacheck.Arbitrary.arbitrary

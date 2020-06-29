@@ -18,7 +18,7 @@ package models.domain
 
 import java.time.LocalDate
 
-import models.messages.{EnRouteEvent, ProcedureType}
+import models.messages.{EnRouteEvent, ProcedureType, Trader}
 import models.reference.CustomsOffice
 import models.{GoodsLocation, MovementReferenceNumber}
 import pages._
@@ -91,7 +91,7 @@ final case class SimplifiedNotification(
   trader: TraderDomain,
   presentationOfficeId: String,
   presentationOfficeName: String,
-  enRouteEvents: Option[Seq[EnRouteEvent]]
+  enRouteEvents: Option[Seq[EnRouteEventDomain]]
 ) extends ArrivalNotification {
 
   val procedure: ProcedureType = ProcedureType.Simplified
