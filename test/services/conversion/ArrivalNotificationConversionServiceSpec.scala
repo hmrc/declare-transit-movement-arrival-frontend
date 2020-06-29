@@ -69,7 +69,7 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
         case ((arbArrivalNotification, trader), (enRouteEvent, incident)) =>
           val routeEvent: EnRouteEventDomain = enRouteEvent
             .copy(seals = None)
-            .copy(eventDetails = Some(incident.copy(date = None, authority = None, place = None, country = None)))
+            .copy(eventDetails = Some(incident))
 
           val arrivalNotification: NormalNotification = arbArrivalNotification.copy(enRouteEvents = Some(Seq(routeEvent)))
 
@@ -93,8 +93,7 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
         case ((arbArrivalNotification, trader), (enRouteEvent, vehicularTranshipment)) =>
           val routeEvent = enRouteEvent
             .copy(seals = Some(Seq(SealDomain("seal 1"), SealDomain("seal 2"))))
-            .copy(eventDetails = Some(vehicularTranshipment.copy(date = None, authority = None, place = None, country = None,
-              containers = None)))
+            .copy(eventDetails = Some(vehicularTranshipment.copy(containers = None)))
 
           val arrivalNotification: NormalNotification = arbArrivalNotification.copy(enRouteEvents = Some(Seq(routeEvent)))
           val userAnswers: UserAnswers = createBasicUserAnswers(trader, arrivalNotification, isIncidentOnRoute = true)
@@ -113,10 +112,8 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
 
     val enRouteEventContainerTranshipment: Gen[(EnRouteEventDomain, ContainerTranshipmentDomain)] = for {
       generatedEnRouteEvent <- arbitrary[EnRouteEventDomain]
-      ct <- arbitrary[ContainerTranshipmentDomain]
+      containerTranshipment <- arbitrary[ContainerTranshipmentDomain]
     } yield {
-      val containerTranshipment = ct.copy(date = None, authority = None, place = None, country = None)
-
       val enRouteEvent = generatedEnRouteEvent.copy(eventDetails = Some(containerTranshipment), seals = None)
 
       (enRouteEvent, containerTranshipment)
@@ -155,11 +152,11 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
         case ((arbArrivalNotification, trader), (enRouteEvent1, incident1), (enRouteEvent2, incident2)) =>
           val routeEvent1: EnRouteEventDomain = enRouteEvent1
             .copy(seals = None)
-            .copy(eventDetails = Some(incident1.copy(date = None, authority = None, place = None, country = None)))
+            .copy(eventDetails = Some(incident1))
 
           val routeEvent2: EnRouteEventDomain = enRouteEvent2
             .copy(seals = None)
-            .copy(eventDetails = Some(incident2.copy(date = None, authority = None, place = None, country = None)))
+            .copy(eventDetails = Some(incident2))
 
           val arrivalNotification: NormalNotification = arbArrivalNotification.copy(enRouteEvents = Some(Seq(routeEvent1, routeEvent2)))
 

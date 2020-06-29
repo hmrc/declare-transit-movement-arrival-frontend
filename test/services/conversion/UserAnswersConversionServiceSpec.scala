@@ -76,7 +76,7 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
           val routeEvent: EnRouteEventDomain = enRouteEvent
             .copy(seals = Some(Seq(seal)))
             .copy(eventDetails = Some(incident
-              .copy(incidentInformation = Some(incident.incidentInformation.getOrElse("")), date = None, authority = None, place = None, country = None)))
+              .copy(incidentInformation = Some(incident.incidentInformation.getOrElse("")))))
 
           val arrivalNotification: NormalNotification = arbArrivalNotification.copy(enRouteEvents = Some(Seq(routeEvent)))
 
@@ -103,7 +103,7 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
         case ((arbArrivalNotification, trader), (enRouteEvent, vehicularTranshipment), seal) =>
           val routeEvent = enRouteEvent
             .copy(seals = Some(Seq(seal)))
-            .copy(eventDetails = Some(vehicularTranshipment.copy(date = None, authority = None, place = None, country = None, containers = None)))
+            .copy(eventDetails = Some(vehicularTranshipment.copy(containers = None)))
 
           val arrivalNotification: NormalNotification = arbArrivalNotification.copy(enRouteEvents = Some(Seq(routeEvent)))
 
@@ -130,7 +130,7 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
         case ((arbArrivalNotification, trader), (enRouteEvent, containerTranshipment), container, seal) =>
           val routeEvent = enRouteEvent
             .copy(seals = Some(Seq(seal)))
-            .copy(eventDetails = Some(containerTranshipment.copy(date = None, authority = None, place = None, country = None, containers = Seq(container))))
+            .copy(eventDetails = Some(containerTranshipment.copy(containers = Seq(container))))
 
           val arrivalNotification: NormalNotification = arbArrivalNotification.copy(enRouteEvents = Some(Seq(routeEvent)))
 
@@ -158,12 +158,12 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
           val routeEvent1 = enRouteEvent1
             .copy(seals = Some(Seq(seal)))
             .copy(eventDetails = Some(incident1
-              .copy(incidentInformation = Some(incident1.incidentInformation.getOrElse("")), date = None, authority = None, place = None, country = None)))
+              .copy(incidentInformation = Some(incident1.incidentInformation.getOrElse("")))))
 
           val routeEvent2 = enRouteEvent2
             .copy(seals = Some(Seq(seal)))
             .copy(eventDetails = Some(incident2
-              .copy(incidentInformation = Some(incident2.incidentInformation.getOrElse("")), date = None, authority = None, place = None, country = None)))
+              .copy(incidentInformation = Some(incident2.incidentInformation.getOrElse("")))))
 
           val arrivalNotification: NormalNotification = arbArrivalNotification.copy(enRouteEvents = Some(Seq(routeEvent1, routeEvent2)))
           val eventIndex2                             = Index(1)
@@ -196,12 +196,11 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
         case ((arbArrivalNotification, trader), (enRouteEvent1, vehicularTranshipment1), (enRouteEvent2, vehicularTranshipment2), seal) =>
           val routeEvent1 = enRouteEvent1
             .copy(seals = Some(Seq(seal)))
-            .copy(eventDetails = Some(vehicularTranshipment1.copy(date = None, authority = None, place = None, country = None, containers = None)))
+            .copy(eventDetails = Some(vehicularTranshipment1.copy(containers = None)))
 
           val routeEvent2 = enRouteEvent2
             .copy(seals = Some(Seq(seal)))
-            .copy(eventDetails =
-              Some(vehicularTranshipment2.copy(date = None, authority = None, place = None, country = None, containers = Some(Seq(domainContainer)))))
+            .copy(eventDetails = Some(vehicularTranshipment2.copy(containers = Some(Seq(domainContainer)))))
 
           val eventIndex2 = Index(1)
 
@@ -247,11 +246,11 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
 
           val routeEvent1 = enRouteEvent1
             .copy(seals = Some(Seq(seal)))
-            .copy(eventDetails = Some(containerTranshipment1.copy(date = None, authority = None, place = None, country = None, containers = Seq(container))))
+            .copy(eventDetails = Some(containerTranshipment1.copy(containers = Seq(container))))
 
           val routeEvent2 = enRouteEvent2
             .copy(seals = Some(Seq(seal)))
-            .copy(eventDetails = Some(containerTranshipment2.copy(date = None, authority = None, place = None, country = None, containers = Seq(container))))
+            .copy(eventDetails = Some(containerTranshipment2.copy(containers = Seq(container))))
 
           val arrivalNotification: NormalNotification = arbArrivalNotification.copy(enRouteEvents = Some(Seq(routeEvent1, routeEvent2)))
 

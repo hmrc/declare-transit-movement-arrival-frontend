@@ -82,7 +82,13 @@ object Incident {
   }
 
   def incidentToDomain(incident: Incident): IncidentDomain =
-    Incident.unapply(incident).map((IncidentDomain.apply _).tupled).get
+    Incident
+      .unapply(incident)
+      .map {
+        case _ @(incidentInformation, _, _, _, _) =>
+          IncidentDomain(incidentInformation)
+      }
+      .get
 
   implicit lazy val incidentJsonWrites: OWrites[Incident] = OWrites[Incident] {
     incident =>
@@ -158,11 +164,11 @@ object Transhipment {
 final case class VehicularTranshipment(
   transportIdentity: String,
   transportCountry: String,
+  containers: Option[Seq[Container]],
   date: Option[LocalDate]   = None,
   authority: Option[String] = None,
   place: Option[String]     = None,
-  country: Option[String]   = None,
-  containers: Option[Seq[Container]]
+  country: Option[String]   = None
 ) extends Transhipment
 
 object VehicularTranshipment {
@@ -176,15 +182,11 @@ object VehicularTranshipment {
     VehicularTranshipment
       .unapply(transhipment)
       .map {
-        case _ @(transportIdentity, transportCountry, date, authority, place, country, container) =>
+        case _ @(transportIdentity, transportCountry, containers, _, _, _, _) =>
           VehicularTranshipmentDomain(
             transportIdentity,
             Country("", transportCountry, ""),
-            date,
-            authority,
-            place,
-            country,
-            container.map(_.map(Container.containerToDomain))
+            containers.map(_.map(Container.containerToDomain))
           )
       }
       .get
@@ -245,37 +247,33 @@ object VehicularTranshipment {
 
   implicit lazy val xmlReader: XmlReader[VehicularTranshipment] = (
     (xmlPath \ "NewTraMeaIdeSHP26").read[String],
-    (xmlPath \ "NewTraMeaNatSHP54").read[String], //TODO NEEDS LOOKUP
+    (xmlPath \ "NewTraMeaNatSHP54").read[String],
+    (xmlPath \ "CONNR3").read(strictReadOptionSeq[Container]),
     (xmlPath \ "EndDatSHP60").read[LocalDate].optional,
     (xmlPath \ "EndAutSHP61").read[String].optional,
     (xmlPath \ "EndPlaSHP63").read[String].optional,
-    (xmlPath \ "EndCouSHP65").read[String].optional,
-    (xmlPath \ "CONNR3").read(strictReadOptionSeq[Container])
+    (xmlPath \ "EndCouSHP65").read[String].optional
   ).mapN(apply)
 }
 
 final case class ContainerTranshipment(
+  containers: Seq[Container],
   date: Option[LocalDate]   = None,
   authority: Option[String] = None,
   place: Option[String]     = None,
-  country: Option[String]   = None,
-  containers: Seq[Container]
+  country: Option[String]   = None
 ) extends Transhipment {
   require(containers.nonEmpty, "At least one container number must be provided")
 }
 
 object ContainerTranshipment {
 
-  def containerTranshipmentToDomain(transhipment: ContainerTranshipment, country: Option[Country] = None): ContainerTranshipmentDomain =
+  def containerTranshipmentToDomain(transhipment: ContainerTranshipment): ContainerTranshipmentDomain =
     ContainerTranshipment
       .unapply(transhipment)
       .map {
-        case _ @(date, authority, place, _, containers) =>
+        case _ @(containers, _, _, _, _) =>
           ContainerTranshipmentDomain(
-            date,
-            authority,
-            place,
-            country,
             containers.map(Container.containerToDomain)
           )
       }
@@ -323,10 +321,10 @@ object ContainerTranshipment {
   }
 
   implicit lazy val xmlReader: XmlReader[ContainerTranshipment] = (
+    (xmlPath \ "CONNR3").read(strictReadSeq[Container]),
     (xmlPath \ "EndDatSHP60").read[LocalDate].optional,
     (xmlPath \ "EndAutSHP61").read[String].optional,
     (xmlPath \ "EndPlaSHP63").read[String].optional,
-    (xmlPath \ "EndCouSHP65").read[String].optional,
-    (xmlPath \ "CONNR3").read(strictReadSeq[Container])
+    (xmlPath \ "EndCouSHP65").read[String].optional
   ).mapN(apply)
 }

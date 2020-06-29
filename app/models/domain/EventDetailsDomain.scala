@@ -16,8 +16,6 @@
 
 package models.domain
 
-import java.time.LocalDate
-
 import models._
 import models.messages.{ContainerTranshipment, EventDetails, Incident, VehicularTranshipment}
 import models.reference.Country
@@ -51,18 +49,20 @@ object EventDetailsDomain {
   }
 }
 
-final case class IncidentDomain(
-  incidentInformation: Option[String],
-  date: Option[LocalDate]   = None,
-  authority: Option[String] = None,
-  place: Option[String]     = None,
-  country: Option[String]   = None
-) extends EventDetailsDomain
+final case class IncidentDomain(incidentInformation: Option[String]) extends EventDetailsDomain
 
 object IncidentDomain {
 
   def domainIncidentToIncident(incident: IncidentDomain): Incident =
-    IncidentDomain.unapply(incident).map((Incident.apply _).tupled).get
+    IncidentDomain
+      .unapply(incident)
+      .map {
+        case _ @incidentInformation =>
+          Incident(
+            incidentInformation
+          )
+      }
+      .get
 
   object Constants {
     val informationLength = 350
@@ -73,10 +73,6 @@ object IncidentDomain {
       Json
         .obj(
           "incidentInformation" -> incident.incidentInformation,
-          "date"                -> incident.date,
-          "authority"           -> incident.authority,
-          "place"               -> incident.place,
-          "country"             -> incident.country,
           "isTranshipment"      -> false
         )
         .filterNulls
@@ -101,10 +97,6 @@ object TranshipmentDomain {
 final case class VehicularTranshipmentDomain(
   transportIdentity: String,
   transportCountry: Country,
-  date: Option[LocalDate]   = None,
-  authority: Option[String] = None,
-  place: Option[String]     = None,
-  country: Option[String]   = None,
   containers: Option[Seq[ContainerDomain]]
 ) extends TranshipmentDomain
 
@@ -119,14 +111,10 @@ object VehicularTranshipmentDomain {
     VehicularTranshipmentDomain
       .unapply(transhipment)
       .map {
-        case _ @(transportIdentity, transportCountry, date, authority, place, country, container) =>
+        case _ @(transportIdentity, transportCountry, container) =>
           VehicularTranshipment(
             transportIdentity,
             transportCountry.code,
-            date,
-            authority,
-            place,
-            country,
             container.map(_.map(ContainerDomain.domainContainerToContainer))
           )
       }
@@ -145,10 +133,6 @@ object VehicularTranshipmentDomain {
           .obj(
             "transportIdentity"    -> transhipment.transportIdentity,
             "transportNationality" -> transhipment.transportCountry,
-            "date"                 -> transhipment.date,
-            "authority"            -> transhipment.authority,
-            "place"                -> transhipment.place,
-            "country"              -> transhipment.country,
             "containers"           -> Json.toJson(transhipment.containers),
             "transhipmentType"     -> transhipmentType.toString,
             "isTranshipment"       -> true
@@ -158,13 +142,7 @@ object VehicularTranshipmentDomain {
   }
 }
 
-final case class ContainerTranshipmentDomain(
-  date: Option[LocalDate]   = None,
-  authority: Option[String] = None,
-  place: Option[String]     = None,
-  country: Option[Country]  = None,
-  containers: Seq[ContainerDomain]
-) extends TranshipmentDomain {
+final case class ContainerTranshipmentDomain(containers: Seq[ContainerDomain]) extends TranshipmentDomain {
   require(containers.nonEmpty, "At least one container number must be provided")
 }
 
@@ -174,12 +152,8 @@ object ContainerTranshipmentDomain {
     ContainerTranshipmentDomain
       .unapply(transhipment)
       .map {
-        case _ @(date, authority, place, country, containers) =>
+        case _ @(containers) =>
           ContainerTranshipment(
-            date,
-            authority,
-            place,
-            country.map(_.code),
             containers.map(ContainerDomain.domainContainerToContainer)
           )
       }
@@ -189,10 +163,6 @@ object ContainerTranshipmentDomain {
     transhipment =>
       Json
         .obj(
-          "date"             -> transhipment.date,
-          "authority"        -> transhipment.authority,
-          "place"            -> transhipment.place,
-          "country"          -> transhipment.country,
           "containers"       -> transhipment.containers,
           "transhipmentType" -> TranshipmentType.DifferentContainer.toString,
           "isTranshipment"   -> true
