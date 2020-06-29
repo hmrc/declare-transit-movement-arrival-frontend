@@ -22,11 +22,10 @@ import cats.syntax.all._
 import com.lucidchart.open.xtract.XmlReader._
 import com.lucidchart.open.xtract.{ParseFailure, XmlReader, __ => xmlPath}
 import models.XMLReads._
+import models.XMLWrites
 import models.XMLWrites._
 import models.domain.{ContainerTranshipmentDomain, EventDetailsDomain, IncidentDomain, VehicularTranshipmentDomain}
 import models.reference.Country
-import models.{XMLWrites, _}
-import play.api.libs.json._
 import utils.Format
 
 import scala.language.implicitConversions
@@ -47,11 +46,6 @@ object EventDetails {
     val authorityLength = 35
     val placeLength     = 35
     val countryLength   = 2
-  }
-
-  implicit lazy val writes: OWrites[EventDetails] = OWrites {
-    case i: Incident     => Json.toJsObject(i)(Incident.incidentJsonWrites)
-    case t: Transhipment => Json.toJsObject(t)(Transhipment.transhipmentJsonWrites)
   }
 
   implicit def xmlReader: XmlReader[EventDetails] = XmlReader {
@@ -89,20 +83,6 @@ object Incident {
           IncidentDomain(incidentInformation)
       }
       .get
-
-  implicit lazy val incidentJsonWrites: OWrites[Incident] = OWrites[Incident] {
-    incident =>
-      Json
-        .obj(
-          "incidentInformation" -> incident.incidentInformation,
-          "date"                -> incident.date,
-          "authority"           -> incident.authority,
-          "place"               -> incident.place,
-          "country"             -> incident.country,
-          "isTranshipment"      -> false
-        )
-        .filterNulls
-  }
 
   implicit def xmlWrites: XMLWrites[Incident] = XMLWrites[Incident] {
     incident =>
@@ -153,11 +133,6 @@ object Transhipment {
     val maxContainers   = 99
   }
 
-  implicit lazy val transhipmentJsonWrites: OWrites[Transhipment] = OWrites {
-    case t: VehicularTranshipment => Json.toJsObject(t)(VehicularTranshipment.vehicularTranshipmentJsonWrites)
-    case t: ContainerTranshipment => Json.toJsObject(t)(ContainerTranshipment.containerJsonWrites)
-  }
-
   implicit lazy val xmlReader: XmlReader[Transhipment] = VehicularTranshipment.xmlReader or ContainerTranshipment.xmlReader
 }
 
@@ -190,31 +165,6 @@ object VehicularTranshipment {
           )
       }
       .get
-
-  implicit lazy val vehicularTranshipmentJsonWrites: OWrites[VehicularTranshipment] = {
-    OWrites[VehicularTranshipment] {
-      transhipment =>
-        val transhipmentType: TranshipmentType =
-          if (transhipment.containers.isDefined)
-            TranshipmentType.DifferentContainerAndVehicle
-          else
-            TranshipmentType.DifferentVehicle
-
-        Json
-          .obj(
-            "transportIdentity"    -> transhipment.transportIdentity,
-            "transportNationality" -> Json.obj("state" -> "", "code" -> transhipment.transportCountry, "description" -> ""),
-            "date"                 -> transhipment.date,
-            "authority"            -> transhipment.authority,
-            "place"                -> transhipment.place,
-            "country"              -> transhipment.country,
-            "containers"           -> Json.toJson(transhipment.containers),
-            "transhipmentType"     -> transhipmentType.toString,
-            "isTranshipment"       -> true
-          )
-          .filterNulls
-    }
-  }
 
   implicit def xmlWrites: XMLWrites[VehicularTranshipment] = XMLWrites[VehicularTranshipment] {
     transhipment =>
@@ -278,21 +228,6 @@ object ContainerTranshipment {
           )
       }
       .get
-
-  implicit lazy val containerJsonWrites: OWrites[ContainerTranshipment] = OWrites {
-    transhipment =>
-      Json
-        .obj(
-          "date"             -> transhipment.date,
-          "authority"        -> transhipment.authority,
-          "place"            -> transhipment.place,
-          "country"          -> transhipment.country,
-          "containers"       -> transhipment.containers,
-          "transhipmentType" -> TranshipmentType.DifferentContainer.toString,
-          "isTranshipment"   -> true
-        )
-        .filterNulls
-  }
 
   implicit def xmlWrites: XMLWrites[ContainerTranshipment] = XMLWrites[ContainerTranshipment] {
     transhipment =>

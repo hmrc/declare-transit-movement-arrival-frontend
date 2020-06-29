@@ -21,11 +21,9 @@ import com.lucidchart.open.xtract.XmlReader._
 import com.lucidchart.open.xtract.{XmlReader, __ => xmlPath}
 import models.XMLReads._
 import models.XMLWrites._
-import models.{LanguageCodeEnglish, XMLWrites}
-import play.api.libs.json.{JsObject, Json, OWrites}
-import models._
-import models.domain.{EnRouteEventDomain, EventDetailsDomain}
+import models.domain.EnRouteEventDomain
 import models.reference.Country
+import models.{LanguageCodeEnglish, XMLWrites}
 
 import scala.xml.NodeSeq
 
@@ -54,25 +52,6 @@ object EnRouteEvent {
       }
       .get
 
-  implicit lazy val writes: OWrites[EnRouteEvent] =
-    OWrites[EnRouteEvent] {
-      event =>
-        Json
-          .obj(
-            "eventPlace"       -> event.place,
-            "eventReported"    -> event.alreadyInNcts,
-            "eventCountry"     -> Json.obj("state" -> "", "code" -> event.countryCode, "description" -> ""),
-            "seals"            -> Json.toJson(event.seals),
-            "haveSealsChanged" -> event.seals.isDefined
-          ) ++ event.eventDetails
-          .map {
-            result =>
-              Json.toJsObject(result).filterNulls
-          }
-          .getOrElse(JsObject.empty)
-
-    }
-
   implicit def xmlWrites: XMLWrites[EnRouteEvent] = XMLWrites[EnRouteEvent] {
     enRouteEvent =>
       val buildSealsXml = enRouteEvent.seals match {
@@ -98,11 +77,11 @@ object EnRouteEvent {
           }
         </CTLCTL>
         {
-        enRouteEvent.eventDetails.map {
-          case incident: Incident                           => incident.toXml ++ buildSealsXml
-          case containerTranshipment: ContainerTranshipment => buildSealsXml ++ containerTranshipment.toXml
-          case vehicularTranshipment: VehicularTranshipment => buildSealsXml ++ vehicularTranshipment.toXml
-        }.getOrElse(NodeSeq.Empty)
+          enRouteEvent.eventDetails.map {
+            case incident: Incident                           => incident.toXml ++ buildSealsXml
+            case containerTranshipment: ContainerTranshipment => buildSealsXml ++ containerTranshipment.toXml
+            case vehicularTranshipment: VehicularTranshipment => buildSealsXml ++ vehicularTranshipment.toXml
+          }.getOrElse(NodeSeq.Empty)
         }
       </ENROUEVETEV>
   }

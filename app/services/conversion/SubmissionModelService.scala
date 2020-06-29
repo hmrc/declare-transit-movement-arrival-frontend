@@ -19,14 +19,14 @@ package services.conversion
 import java.time.LocalTime
 
 import com.google.inject.Inject
-import models.domain.{ArrivalNotification, EnRouteEventDomain, NormalNotification, SimplifiedNotification, TraderDomain}
+import models.domain._
 import models.messages._
 import models.{NormalProcedureFlag, ProcedureTypeFlag, SimplifiedProcedureFlag}
 
 class SubmissionModelService @Inject()() {
 
   def convertToSubmissionModel(
-    arrivalNotification: ArrivalNotification,
+    arrivalNotification: ArrivalNotificationDomain,
     messageSender: MessageSender,
     interchangeControlReference: InterchangeControlReference,
     timeOfPresentation: LocalTime

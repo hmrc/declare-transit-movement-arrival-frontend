@@ -17,10 +17,8 @@
 package models.messages
 
 import com.lucidchart.open.xtract.{__, XmlReader}
-import forms.mappings.StringEquivalence
 import models.domain.SealDomain
 import models.{LanguageCode, LanguageCodeEnglish, XMLWrites}
-import play.api.libs.json.{Json, OFormat}
 
 case class Seal(numberOrMark: String)
 
@@ -32,11 +30,6 @@ object Seal {
   }
 
   def sealToDomain(seal: Seal): SealDomain = Seal.unapply(seal).map(SealDomain.apply).get
-
-  implicit val format: OFormat[Seal] = Json.format[Seal]
-
-  implicit val sealStringEquivalenceCheck: StringEquivalence[Seal] =
-    StringEquivalence[Seal]((seal, sealNumberOrMark) => seal.numberOrMark == sealNumberOrMark)
 
   implicit def writes: XMLWrites[Seal] = XMLWrites[Seal] {
     seal =>

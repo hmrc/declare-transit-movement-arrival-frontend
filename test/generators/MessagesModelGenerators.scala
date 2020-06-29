@@ -252,7 +252,7 @@ trait MessagesModelGenerators extends Generators {
       } yield SimplifiedNotification(mrn, place, date, approvedLocation, trader, presentationOfficeId, presentationOfficeName, events)
     }
 
-  implicit lazy val arbitraryArrivalNotification: Arbitrary[ArrivalNotification] =
+  implicit lazy val arbitraryArrivalNotification: Arbitrary[ArrivalNotificationDomain] =
     Arbitrary {
       Gen.oneOf(arbitrary[NormalNotification], arbitrary[SimplifiedNotification])
     }

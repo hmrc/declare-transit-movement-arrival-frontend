@@ -49,6 +49,7 @@ object EventDetailsDomain {
   }
 }
 
+//TODO Split out into two different models (one with information, one without)
 final case class IncidentDomain(incidentInformation: Option[String]) extends EventDetailsDomain
 
 object IncidentDomain {

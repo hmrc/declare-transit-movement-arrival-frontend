@@ -18,7 +18,7 @@ package models.domain
 
 import java.time.LocalDate
 
-import models.messages.{EnRouteEvent, ProcedureType, Trader}
+import models.messages.ProcedureType
 import models.reference.CustomsOffice
 import models.{GoodsLocation, MovementReferenceNumber}
 import pages._
@@ -27,11 +27,11 @@ import queries.EventsQuery
 
 import scala.language.implicitConversions
 
-sealed trait ArrivalNotification
+sealed trait ArrivalNotificationDomain
 
-object ArrivalNotification {
+object ArrivalNotificationDomain {
 
-  implicit lazy val writes: Writes[ArrivalNotification] = Writes {
+  implicit lazy val writes: Writes[ArrivalNotificationDomain] = Writes {
     case n: NormalNotification     => Json.toJson(n)(NormalNotification.writes)
     case s: SimplifiedNotification => Json.toJson(s)(SimplifiedNotification.writes)
   }
@@ -45,7 +45,7 @@ final case class NormalNotification(movementReferenceNumber: MovementReferenceNu
                                     presentationOfficeId: String,
                                     presentationOfficeName: String,
                                     enRouteEvents: Option[Seq[EnRouteEventDomain]])
-    extends ArrivalNotification {
+    extends ArrivalNotificationDomain {
 
   val procedure: ProcedureType = ProcedureType.Normal
 }
@@ -92,7 +92,7 @@ final case class SimplifiedNotification(
   presentationOfficeId: String,
   presentationOfficeName: String,
   enRouteEvents: Option[Seq[EnRouteEventDomain]]
-) extends ArrivalNotification {
+) extends ArrivalNotificationDomain {
 
   val procedure: ProcedureType = ProcedureType.Simplified
 }

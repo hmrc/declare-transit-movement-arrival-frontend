@@ -33,7 +33,7 @@ class ArrivalNotificationConversionService {
 
   val countryCode_GB = "GB"
 
-  def convertToArrivalNotification(userAnswers: UserAnswers): Option[ArrivalNotification] =
+  def convertToArrivalNotification(userAnswers: UserAnswers): Option[ArrivalNotificationDomain] =
     userAnswers.get(GoodsLocationPage) match {
       case Some(BorderForceOffice) =>
         createNormalNotification(userAnswers)

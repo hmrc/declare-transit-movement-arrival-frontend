@@ -17,13 +17,13 @@
 package services.conversion
 
 import models.MovementReferenceNumber
-import models.domain.{ArrivalNotification, EnRouteEventDomain, NormalNotification}
+import models.domain.{ArrivalNotificationDomain, EnRouteEventDomain, NormalNotification}
 import models.messages.{ArrivalMovementRequest, EnRouteEvent, Trader}
 import models.reference.Country
 
 object ArrivalMovementRequestConversionService {
 
-  def convertToArrivalNotification(arrivalMovementRequest: ArrivalMovementRequest): Option[ArrivalNotification] =
+  def convertToArrivalNotification(arrivalMovementRequest: ArrivalMovementRequest): Option[ArrivalNotificationDomain] =
     MovementReferenceNumber(arrivalMovementRequest.header.movementReferenceNumber) map {
       mrn =>
         // TODO How do we handle the call to the connector here???

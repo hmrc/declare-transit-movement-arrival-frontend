@@ -24,7 +24,7 @@ import models.reference.Country
 final case class EnRouteEventDomain(place: String,
                                     country: Country,
                                     alreadyInNcts: Boolean,
-                                    eventDetails: Option[EventDetailsDomain],
+                                    eventDetails: Option[EventDetailsDomain], //TODO does this need to be an option
                                     seals: Option[Seq[SealDomain]])
 
 object EnRouteEventDomain {
@@ -35,6 +35,7 @@ object EnRouteEventDomain {
     val sealsLength       = 20
   }
 
+  //TODO Revisit this...
   def domainEnrouteEventToEnrouteEvent(enrouteEventDomain: EnRouteEventDomain): EnRouteEvent =
     EnRouteEventDomain
       .unapply(enrouteEventDomain)

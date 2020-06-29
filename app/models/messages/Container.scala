@@ -29,11 +29,6 @@ object Container {
   def containerToDomain(container: Container): ContainerDomain =
     Container.unapply(container).map(ContainerDomain.apply).get
 
-  implicit val formats: OFormat[Container] = Json.format[Container]
-
-  implicit val containerStringEquivalenceCheck: StringEquivalence[Container] =
-    StringEquivalence[Container]((container, stringContainer) => container.containerNumber == stringContainer)
-
   implicit def xmlWrites: XMLWrites[Container] = XMLWrites[Container] {
     container =>
       <CONNR3>
