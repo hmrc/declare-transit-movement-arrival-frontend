@@ -17,7 +17,7 @@
 package services
 
 import javax.inject.Inject
-import models.{ArrivalId, UserAnswers}
+import models.ArrivalId
 import services.conversion.ArrivalMovementRequestToUserAnswersService
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -28,11 +28,10 @@ class UserAnswersService @Inject()(
   arrivalMovementRequestToUserAnswersService: ArrivalMovementRequestToUserAnswersService
 )(implicit ec: ExecutionContext) {
 
-  def getUserAnswers(arrivalId: ArrivalId)(implicit hc: HeaderCarrier): Future[Option[UserAnswers]] =
-    arrivalNotificationMessageService
-      .getArrivalNotificationMessage(arrivalId)
+  def getUserAnswers(arrivalId: ArrivalId)(implicit hc: HeaderCarrier): Future[Nothing] =
+    arrivalNotificationMessageService.getArrivalNotificationMessage(arrivalId)
       .map(
-        _.flatMap {
+        _.map {
           arrivalMovementRequest =>
             arrivalMovementRequestToUserAnswersService.apply(arrivalMovementRequest)
         }

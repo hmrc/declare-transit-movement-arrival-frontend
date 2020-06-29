@@ -20,12 +20,18 @@ import com.google.inject.Inject
 import models.UserAnswers
 import models.messages.ArrivalMovementRequest
 
-class ArrivalMovementRequestToUserAnswersService @Inject()(arrivalMovementRequestConversionService: ArrivalMovementRequestConversionService) {
+import scala.concurrent.{ExecutionContext, Future}
 
-  def apply(arrivalMovementRequest: ArrivalMovementRequest): Option[UserAnswers] =
-    arrivalMovementRequestConversionService.convertToArrivalNotification(arrivalMovementRequest).flatMap {
+class ArrivalMovementRequestToUserAnswersService @Inject()(arrivalMovementRequestConversionService: ArrivalMovementRequestConversionService)
+                                                          (implicit ec: ExecutionContext){
+
+  def apply(arrivalMovementRequest: ArrivalMovementRequest): Future[Option[UserAnswers]] =
+    arrivalMovementRequestConversionService.convertToArrivalNotification(arrivalMovementRequest).map {
       arrivalNotification =>
-        UserAnswersConversionService.convertToUserAnswers(arrivalNotification)
+        arrivalNotification.flatMap {
+          x =>
+            UserAnswersConversionService.convertToUserAnswers(x)
+        }
     }
 
 }

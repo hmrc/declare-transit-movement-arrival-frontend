@@ -35,7 +35,7 @@ class ArrivalMovementRequestConversionServiceSpec extends SpecBase with Messages
 
   private val mockReferenceDataConnector = mock[ReferenceDataConnector]
 
-  "ArrivalMovementRequest" - {
+  "convertToArrivalNotification" - {
 
     "must return None if MRN is malformed" in {
 

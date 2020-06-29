@@ -17,35 +17,46 @@
 package services.conversion
 
 import com.google.inject.Inject
+import connectors.ReferenceDataConnector
 import models.MovementReferenceNumber
 import models.domain.{ArrivalNotificationDomain, EnRouteEventDomain, NormalNotification}
 import models.messages.{ArrivalMovementRequest, EnRouteEvent, Trader}
-import models.reference.Country
+import uk.gov.hmrc.http.HeaderCarrier
+import cats.implicits._
 
-class ArrivalMovementRequestConversionService @Inject()() {
+import scala.concurrent.{ExecutionContext, Future}
 
-  def convertToArrivalNotification(arrivalMovementRequest: ArrivalMovementRequest): Option[ArrivalNotificationDomain] =
-    MovementReferenceNumber(arrivalMovementRequest.header.movementReferenceNumber) map {
+class ArrivalMovementRequestConversionService @Inject()(referenceDataConnector: ReferenceDataConnector)(implicit ec: ExecutionContext, hc: HeaderCarrier) {
+
+  def convertToArrivalNotification(arrivalMovementRequest: ArrivalMovementRequest): Future[Option[ArrivalNotificationDomain]] =
+    MovementReferenceNumber(arrivalMovementRequest.header.movementReferenceNumber) traverse {
       mrn =>
         // TODO How do we handle the call to the connector here???
-        val buildEnrouteEvents: Option[Seq[EnRouteEventDomain]] = arrivalMovementRequest.enRouteEvents.map {
+        val buildEnrouteEvents: Future[Option[Seq[EnRouteEventDomain]]] = arrivalMovementRequest.enRouteEvents.traverse {
           events =>
-            events.map {
-              event =>
-                val country = Country("", event.countryCode, "")
-                EnRouteEvent.enRouteEventToDomain(event, country)
-            }
+            Future.sequence(
+              events.map {
+                event =>
+                  referenceDataConnector.getCountry(event.countryCode).map {
+                    country =>
+                      EnRouteEvent.enRouteEventToDomain(event, country)
+                  }
+              }
+            )
         }
 
-        NormalNotification(
-          mrn,
-          arrivalMovementRequest.header.arrivalNotificationPlace,
-          arrivalMovementRequest.header.notificationDate,
-          arrivalMovementRequest.header.customsSubPlace.get, // TODO need to address the case when there is no subsplace
-          Trader.messagesTraderToDomainTrader(arrivalMovementRequest.trader),
-          arrivalMovementRequest.header.presentationOfficeId,
-          arrivalMovementRequest.header.presentationOfficeName,
-          buildEnrouteEvents
-        )
+        buildEnrouteEvents.map {
+          enRouteEvents =>
+            NormalNotification(
+              mrn,
+              arrivalMovementRequest.header.arrivalNotificationPlace,
+              arrivalMovementRequest.header.notificationDate,
+              arrivalMovementRequest.header.customsSubPlace.get, // TODO need to address the case when there is no subsplace
+              Trader.messagesTraderToDomainTrader(arrivalMovementRequest.trader),
+              arrivalMovementRequest.header.presentationOfficeId,
+              arrivalMovementRequest.header.presentationOfficeName,
+              enRouteEvents
+            )
+        }
     }
 }
