@@ -19,6 +19,7 @@ package models.messages
 import com.lucidchart.open.xtract.XmlReader
 import generators.ModelGenerators
 import models.XMLWrites._
+import models.domain.ContainerDomain
 import models.messages.behaviours.JsonBehaviours
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.{FreeSpec, MustMatchers, OptionValues, StreamlinedXmlEquality}
@@ -69,6 +70,18 @@ class ContainerSpec
           result mustEqual container
       }
 
+    }
+
+    "must convert to ContainerDomain model" in {
+
+      forAll(arbitrary[Container]) {
+        container =>
+          val containerDomain = ContainerDomain(
+            container.containerNumber
+          )
+
+          Container.containerToDomain(container) mustBe containerDomain
+      }
     }
   }
 

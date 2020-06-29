@@ -18,19 +18,13 @@ package models.domain
 
 import generators.MessagesModelGenerators
 import models._
-import models.messages.behaviours.JsonBehaviours
+import models.messages.EnRouteEvent
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.{FreeSpec, MustMatchers, OptionValues}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.{JsObject, Json}
 
-class EnRouteEventDomainSpec
-    extends FreeSpec
-    with MustMatchers
-    with ScalaCheckPropertyChecks
-    with MessagesModelGenerators
-    with JsonBehaviours
-    with OptionValues {
+class EnRouteEventDomainSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with MessagesModelGenerators with OptionValues {
 
   "must serialise" in {
 
@@ -50,6 +44,14 @@ class EnRouteEventDomainSpec
           .getOrElse(JsObject.empty)
 
         Json.toJson(enRouteEvent) mustEqual json
+    }
+  }
+
+  "must convert to EnRouteEvent model" in {
+
+    forAll(arbitrary[EnRouteEventDomain]) {
+      enRouteEventDomain =>
+        EnRouteEventDomain.domainEnrouteEventToEnrouteEvent(enRouteEventDomain) mustBe an[EnRouteEvent]
     }
   }
 }

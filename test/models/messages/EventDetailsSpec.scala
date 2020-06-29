@@ -18,14 +18,14 @@ package models.messages
 
 import com.lucidchart.open.xtract.XmlReader
 import generators.MessagesModelGenerators
+import models.LanguageCodeEnglish
 import models.XMLWrites._
+import models.domain.{ContainerTranshipmentDomain, IncidentDomain, VehicularTranshipmentDomain}
 import models.messages.behaviours.JsonBehaviours
-import models.{LanguageCodeEnglish, _}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.OptionValues._
 import org.scalatest.{FreeSpec, MustMatchers, StreamlinedXmlEquality}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.libs.json.{JsObject, Json}
 import utils.Format
 
 import scala.xml.{Elem, NodeSeq}
@@ -37,6 +37,34 @@ class EventDetailsSpec
     with MessagesModelGenerators
     with JsonBehaviours
     with StreamlinedXmlEquality {
+
+  "EventDetails" - {
+
+    "must convert Incident event to IncidentDomain" in {
+
+      forAll(arbitrary[Incident]) {
+        incident =>
+          EventDetails.eventDetailToDomain(incident: EventDetails) mustBe an[IncidentDomain]
+      }
+    }
+
+    "must convert ContainerTranshipment event to ContainerTranshipmentDomain" in {
+
+      forAll(arbitrary[ContainerTranshipment]) {
+        containerTranshipment =>
+          EventDetails.eventDetailToDomain(containerTranshipment: EventDetails) mustBe an[ContainerTranshipmentDomain]
+      }
+    }
+
+    "must convert VehicularTranshipment event to VehicularTranshipmentDomain" in {
+
+      forAll(arbitrary[VehicularTranshipment]) {
+        vehicularTranshipment =>
+          EventDetails.eventDetailToDomain(vehicularTranshipment: EventDetails) mustBe an[VehicularTranshipmentDomain]
+      }
+    }
+
+  }
 
   "Incident" - {
 
@@ -152,6 +180,13 @@ class EventDetailsSpec
         incident =>
           val result = XmlReader.of[Incident].read(incident.toXml).toOption.value
           result mustEqual incident
+      }
+    }
+
+    "must convert to IncidentDomain model" in {
+      forAll(arbitrary[Incident]) {
+        incident =>
+          Incident.incidentToDomain(incident) mustBe an[IncidentDomain]
       }
     }
   }
@@ -272,6 +307,13 @@ class EventDetailsSpec
 
       intercept[IllegalArgumentException] {
         ContainerTranshipment(containers = Seq.empty)
+      }
+    }
+
+    "must convert to ContainerTranshipmentDomain model" in {
+      forAll(arbitrary[ContainerTranshipment]) {
+        containerTranshipment =>
+          ContainerTranshipment.containerTranshipmentToDomain(containerTranshipment) mustBe an[ContainerTranshipmentDomain]
       }
     }
   }
@@ -477,6 +519,15 @@ class EventDetailsSpec
         vehicularTranshipment =>
           val result = XmlReader.of[VehicularTranshipment].read(vehicularTranshipment.toXml).toOption.value
           result mustEqual vehicularTranshipment
+      }
+    }
+
+    "must convert to VehicularTranshipment model" in {
+      forAll(arbitrary[VehicularTranshipment]) {
+        vehicularTranshipment =>
+          val result = VehicularTranshipment.vehicularTranshipmentToDomain(vehicularTranshipment)
+
+          result mustBe an[VehicularTranshipmentDomain]
       }
     }
   }

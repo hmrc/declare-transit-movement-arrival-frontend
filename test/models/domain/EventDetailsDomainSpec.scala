@@ -17,21 +17,14 @@
 package models.domain
 
 import generators.MessagesModelGenerators
+import models.messages.{ContainerTranshipment, Incident, VehicularTranshipment}
 import models.{TranshipmentType, _}
-import models.messages.{ContainerTranshipment, EventDetails, Incident, VehicularTranshipment}
-import models.messages.behaviours.JsonBehaviours
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.{FreeSpec, MustMatchers, OptionValues}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.{JsObject, Json}
 
-class EventDetailsDomainSpec
-    extends FreeSpec
-    with MustMatchers
-    with ScalaCheckPropertyChecks
-    with MessagesModelGenerators
-    with JsonBehaviours
-    with OptionValues {
+class EventDetailsDomainSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with MessagesModelGenerators {
 
   "IncidentDomain" - {
 
@@ -43,6 +36,15 @@ class EventDetailsDomainSpec
           Json.toJson(incidentDomain)(IncidentDomain.incidentJsonWrites) mustEqual json
       }
     }
+
+    "must convert to Incident model" in {
+
+      forAll(arbitrary[IncidentDomain]) {
+        incidentDomain =>
+          IncidentDomain.domainIncidentToIncident(incidentDomain) mustBe an[Incident]
+      }
+    }
+
   }
 
   "ContainerTranshipmentDomain" - {
@@ -53,6 +55,16 @@ class EventDetailsDomainSpec
         containerTranshipmentDomain =>
           val json = Json.toJson(containerTranshipmentDomain)(ContainerTranshipmentDomain.containerJsonWrites)
           Json.toJson(containerTranshipmentDomain)(ContainerTranshipmentDomain.containerJsonWrites) mustEqual json
+      }
+    }
+
+    "must convert to ContainerTranshipment model" in {
+
+      forAll(arbitrary[ContainerTranshipmentDomain]) {
+        containerTranshipmentDomain =>
+          val result = ContainerTranshipmentDomain.domainContainerTranshipmenttoContainerTranshipment(containerTranshipmentDomain)
+
+          result mustBe an[ContainerTranshipment]
       }
     }
   }
@@ -66,6 +78,16 @@ class EventDetailsDomainSpec
           val json = vehicularTranshipmentJson(vehicularTranshipment)
 
           Json.toJson(vehicularTranshipment)(VehicularTranshipmentDomain.vehicularTranshipmentJsonWrites) mustEqual json
+      }
+    }
+
+    "must convert to VehicularTranshipment model" in {
+
+      forAll(arbitrary[VehicularTranshipmentDomain]) {
+        vehicularTranshipmentDomain =>
+          val result = VehicularTranshipmentDomain.domainVehicularTranshipmentToVehicularTranshipment(vehicularTranshipmentDomain)
+
+          result mustBe an[VehicularTranshipment]
       }
     }
 
@@ -142,7 +164,7 @@ class EventDetailsDomainSpec
     Json
       .obj(
         "transportIdentity"    -> vehicularTranshipment.transportIdentity,
-        "transportNationality" -> Json.obj("state" -> "", "code" -> vehicularTranshipment.transportCountry, "description" -> ""),
+        "transportNationality" -> Json.toJson(vehicularTranshipment.transportCountry),
         "containers"           -> Json.toJson(vehicularTranshipment.containers),
         "transhipmentType"     -> transhipmentType.toString,
         "isTranshipment"       -> true

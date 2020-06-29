@@ -19,6 +19,7 @@ package models.messages
 import com.lucidchart.open.xtract.XmlReader
 import generators.ModelGenerators
 import models.XMLWrites._
+import models.domain.SealDomain
 import models.messages.behaviours.JsonBehaviours
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.{FreeSpec, MustMatchers, OptionValues, StreamlinedXmlEquality}
@@ -35,7 +36,7 @@ class SealSpec
     with StreamlinedXmlEquality
     with OptionValues {
 
-  "Container" - {
+  "Seal" - {
     "must create valid xml" in {
 
       forAll(arbitrary[Seal]) {
@@ -75,6 +76,13 @@ class SealSpec
           result mustEqual seal
       }
 
+    }
+
+    "must convert to SealDomain" in {
+      forAll(arbitrary[Seal]) {
+        seal =>
+          Seal.sealToDomain(seal) mustBe an[SealDomain]
+      }
     }
   }
 }
