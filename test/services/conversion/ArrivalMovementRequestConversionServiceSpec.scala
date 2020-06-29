@@ -17,46 +17,70 @@
 package services.conversion
 
 import base.SpecBase
+import connectors.ReferenceDataConnector
 import generators.MessagesModelGenerators
-import models.{domain, MovementReferenceNumber}
+import models.MovementReferenceNumber
 import models.domain.{NormalNotification, TraderDomain}
 import models.messages.{ArrivalMovementRequest, EnRouteEvent, Header}
 import models.reference.Country
+import org.mockito.Matchers.any
+import org.mockito.Mockito._
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import play.api.inject.bind
+
+import scala.concurrent.Future
 
 class ArrivalMovementRequestConversionServiceSpec extends SpecBase with MessagesModelGenerators with ScalaCheckPropertyChecks {
 
-  val arrivalMovementRequestConversionService: ArrivalMovementRequestConversionService.type = ArrivalMovementRequestConversionService
+  private val mockReferenceDataConnector = mock[ReferenceDataConnector]
 
   "ArrivalMovementRequest" - {
 
     "must return None if MRN is malformed" in {
+
+      val genCountry: Country                            = arbitrary[Country].sample.value
       val arrivalMovementRequest: ArrivalMovementRequest = arbitrary[ArrivalMovementRequest].sample.value
 
-      val header: Header = arrivalMovementRequest.header.copy(movementReferenceNumber = "Invalid MRN")
+      when(mockReferenceDataConnector.getCountry(any())(any(), any()))
+        .thenReturn(Future.successful(genCountry))
 
+      val application = applicationBuilder(Some(emptyUserAnswers))
+        .overrides(bind[ReferenceDataConnector].toInstance(mockReferenceDataConnector))
+        .build()
+
+      val arrivalMovementRequestConversionService                        = application.injector.instanceOf[ArrivalMovementRequestConversionService]
+      val header: Header                                                 = arrivalMovementRequest.header.copy(movementReferenceNumber = "Invalid MRN")
       val arrivalMovementRequestWithMalformedMrn: ArrivalMovementRequest = arrivalMovementRequest.copy(header = header)
 
-      arrivalMovementRequestConversionService.convertToArrivalNotification(arrivalMovementRequestWithMalformedMrn) mustBe None
+      arrivalMovementRequestConversionService.convertToArrivalNotification(arrivalMovementRequestWithMalformedMrn) mustBe Future.successful(None)
     }
 
     "must convert ArrivalMovementRequest to NormalNotification for trader" in {
 
+      val genCountry: Country           = arbitrary[Country].sample.value
       val genArrivalNotificationRequest = arbitrary[ArrivalMovementRequest].sample.value
-      val arrivalNotificationRequest    = genArrivalNotificationRequest.copy(header = genArrivalNotificationRequest.header.copy(customsSubPlace = Some("")))
+
+      when(mockReferenceDataConnector.getCountry(any())(any(), any()))
+        .thenReturn(Future.successful(genCountry))
+
+      val application = applicationBuilder(Some(emptyUserAnswers))
+        .overrides(bind[ReferenceDataConnector].toInstance(mockReferenceDataConnector))
+        .build()
+
+      val arrivalMovementRequestConversionService = application.injector.instanceOf[ArrivalMovementRequestConversionService]
+      val arrivalNotificationRequest              = genArrivalNotificationRequest.copy(header = genArrivalNotificationRequest.header.copy(customsSubPlace = Some("")))
 
       val convertEnRouteEvents = arrivalNotificationRequest.enRouteEvents.map {
         events =>
           events.map {
             event =>
-              val country = Country("", event.countryCode, "")
-              EnRouteEvent.enRouteEventToDomain(event, country)
+              EnRouteEvent.enRouteEventToDomain(event, genCountry)
           }
       }
 
       val normalNotification: NormalNotification = {
-        domain.NormalNotification(
+        NormalNotification(
           movementReferenceNumber = MovementReferenceNumber(arrivalNotificationRequest.header.movementReferenceNumber).get,
           notificationPlace       = arrivalNotificationRequest.header.arrivalNotificationPlace,
           notificationDate        = arrivalNotificationRequest.header.notificationDate,
@@ -75,7 +99,7 @@ class ArrivalMovementRequestConversionServiceSpec extends SpecBase with Messages
         )
       }
 
-      arrivalMovementRequestConversionService.convertToArrivalNotification(arrivalNotificationRequest) mustBe Some(normalNotification)
+      arrivalMovementRequestConversionService.convertToArrivalNotification(arrivalNotificationRequest) mustBe Future.successful(Some(normalNotification))
     }
   }
 

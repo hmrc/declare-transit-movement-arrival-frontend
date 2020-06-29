@@ -16,12 +16,13 @@
 
 package services.conversion
 
+import com.google.inject.Inject
 import models.MovementReferenceNumber
 import models.domain.{ArrivalNotificationDomain, EnRouteEventDomain, NormalNotification}
 import models.messages.{ArrivalMovementRequest, EnRouteEvent, Trader}
 import models.reference.Country
 
-object ArrivalMovementRequestConversionService {
+class ArrivalMovementRequestConversionService @Inject()() {
 
   def convertToArrivalNotification(arrivalMovementRequest: ArrivalMovementRequest): Option[ArrivalNotificationDomain] =
     MovementReferenceNumber(arrivalMovementRequest.header.movementReferenceNumber) map {

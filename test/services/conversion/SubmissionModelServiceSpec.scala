@@ -39,7 +39,7 @@ class SubmissionModelServiceSpec
 
   def injector: Injector = app.injector
 
-  val convertToSubmissionModel: SubmissionModelService = injector.instanceOf[SubmissionModelService]
+  val convertToSubmissionModel: SubmissionModelService.type = SubmissionModelService
 
   "SubmissionModelService" - {
 

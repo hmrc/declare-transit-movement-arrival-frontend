@@ -17,19 +17,29 @@
 package services.conversion
 
 import base.SpecBase
+import connectors.ReferenceDataConnector
 import generators.MessagesModelGenerators
 import models.UserAnswers
 import models.messages.ArrivalMovementRequest
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import play.api.inject.bind
 
 class ArrivalMovementRequestToUserAnswersServiceSpec extends SpecBase with MessagesModelGenerators with ScalaCheckPropertyChecks {
+
+  private val mockArrivalMovementRequestConversionService = mock[ArrivalMovementRequestConversionService]
 
   "when we can go from ArrivalMovementRequest to UserAnswers" in {
 
     forAll(arbitrary[ArrivalMovementRequest]) {
       arrivalMovementRequest =>
-        val result = ArrivalMovementRequestToUserAnswersService.apply(arrivalMovementRequest)
+        val application = applicationBuilder(Some(emptyUserAnswers))
+          .overrides(bind[ArrivalMovementRequestConversionService].toInstance(mockArrivalMovementRequestConversionService))
+          .build()
+
+        val arrivalMovementRequestToUserAnswers = application.injector.instanceOf[ArrivalMovementRequestToUserAnswersService]
+
+        val result = arrivalMovementRequestToUserAnswers.apply(arrivalMovementRequest)
 
         result must be(defined)
         result.value mustBe an[UserAnswers]
@@ -44,7 +54,13 @@ class ArrivalMovementRequestToUserAnswersServiceSpec extends SpecBase with Messa
 
     forAll(failingArrivalMovementRequest) {
       arrivalMovementRequest =>
-        val result = ArrivalMovementRequestToUserAnswersService.apply(arrivalMovementRequest)
+        val application = applicationBuilder(Some(emptyUserAnswers))
+          .overrides(bind[ArrivalMovementRequestConversionService].toInstance(mockArrivalMovementRequestConversionService))
+          .build()
+
+        val arrivalMovementRequestToUserAnswers = application.injector.instanceOf[ArrivalMovementRequestToUserAnswersService]
+
+        val result = arrivalMovementRequestToUserAnswers.apply(arrivalMovementRequest)
 
         result must not be (defined)
     }

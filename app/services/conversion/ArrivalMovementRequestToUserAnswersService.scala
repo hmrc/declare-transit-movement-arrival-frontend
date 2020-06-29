@@ -16,13 +16,14 @@
 
 package services.conversion
 
+import com.google.inject.Inject
 import models.UserAnswers
 import models.messages.ArrivalMovementRequest
 
-object ArrivalMovementRequestToUserAnswersService {
+class ArrivalMovementRequestToUserAnswersService @Inject()(arrivalMovementRequestConversionService: ArrivalMovementRequestConversionService) {
 
   def apply(arrivalMovementRequest: ArrivalMovementRequest): Option[UserAnswers] =
-    ArrivalMovementRequestConversionService.convertToArrivalNotification(arrivalMovementRequest).flatMap {
+    arrivalMovementRequestConversionService.convertToArrivalNotification(arrivalMovementRequest).flatMap {
       arrivalNotification =>
         UserAnswersConversionService.convertToUserAnswers(arrivalNotification)
     }
