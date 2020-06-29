@@ -17,7 +17,7 @@
 package services.conversion
 
 import generators.MessagesModelGenerators
-import models.domain.{EnRouteEventDomain, NormalNotification, Trader}
+import models.domain.{EnRouteEventDomain, NormalNotification, TraderDomain}
 import models.messages.{ArrivalMovementRequest, EnRouteEvent}
 import models.reference.Country
 import models.{domain, MovementReferenceNumber, NormalProcedureFlag}
@@ -62,7 +62,7 @@ class SubmissionModelServiceSpec
           notificationPlace       = updatedArrivalMovementRequest.header.arrivalNotificationPlace,
           notificationDate        = updatedArrivalMovementRequest.header.notificationDate,
           customsSubPlace         = updatedArrivalMovementRequest.header.customsSubPlace.get,
-          trader = Trader(
+          trader = TraderDomain(
             name            = updatedArrivalMovementRequest.trader.name,
             streetAndNumber = updatedArrivalMovementRequest.trader.streetAndNumber,
             postCode        = updatedArrivalMovementRequest.trader.postCode,

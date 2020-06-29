@@ -22,7 +22,7 @@ import base.SpecBase
 import connectors.ArrivalMovementConnector
 import generators.MessagesModelGenerators
 import models.XMLWrites._
-import models.domain.{NormalNotification, Trader}
+import models.domain.{NormalNotification, TraderDomain}
 import models.messages.{ArrivalMovementRequest, InterchangeControlReference}
 import models.{ArrivalId, MovementReferenceNumber}
 import org.mockito.Matchers.any
@@ -44,7 +44,7 @@ class ArrivalSubmissionServiceSpec extends SpecBase with MessagesModelGenerators
   private val mockInterchangeControllerReference    = mock[InterchangeControlReferenceIdRepository]
   private val mockArrivalNotificationMessageService = mock[ArrivalNotificationMessageService]
 
-  private val traderWithoutEori  = Trader("", "", "", "", "", "")
+  private val traderWithoutEori  = TraderDomain("", "", "", "", "", "")
   private val normalNotification = NormalNotification(mrn, "", LocalDate.now(), "", traderWithoutEori, "", "", None)
 
   private val userEoriNumber = arbitrary[String].sample.value

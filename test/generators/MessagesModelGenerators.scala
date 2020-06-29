@@ -72,27 +72,27 @@ trait MessagesModelGenerators extends Generators {
       Gen.oneOf(ProcedureType.Normal, ProcedureType.Simplified)
     }
 
-  implicit lazy val arbitraryDomainTrader: Arbitrary[domain.Trader] =
+  implicit lazy val arbitraryDomainTrader: Arbitrary[domain.TraderDomain] =
     Arbitrary {
 
       for {
-        eori            <- stringsWithMaxLength(domain.Trader.Constants.eoriLength)
-        name            <- stringsWithMaxLength(domain.Trader.Constants.nameLength)
-        streetAndNumber <- stringsWithMaxLength(domain.Trader.Constants.streetAndNumberLength)
-        postCode        <- stringsWithMaxLength(domain.Trader.Constants.postCodeLength)
-        city            <- stringsWithMaxLength(domain.Trader.Constants.cityLength)
-      } yield domain.Trader(name, streetAndNumber, city, postCode, gbCountryCode, eori)
+        eori            <- stringsWithMaxLength(domain.TraderDomain.Constants.eoriLength)
+        name            <- stringsWithMaxLength(domain.TraderDomain.Constants.nameLength)
+        streetAndNumber <- stringsWithMaxLength(domain.TraderDomain.Constants.streetAndNumberLength)
+        postCode        <- stringsWithMaxLength(domain.TraderDomain.Constants.postCodeLength)
+        city            <- stringsWithMaxLength(domain.TraderDomain.Constants.cityLength)
+      } yield domain.TraderDomain(name, streetAndNumber, city, postCode, gbCountryCode, eori)
     }
 
   implicit lazy val arbitraryMessagesTrader: Arbitrary[messages.Trader] =
     Arbitrary {
 
       for {
-        eori            <- stringsWithMaxLength(domain.Trader.Constants.eoriLength)
-        name            <- stringsWithMaxLength(domain.Trader.Constants.nameLength)
-        streetAndNumber <- stringsWithMaxLength(domain.Trader.Constants.streetAndNumberLength)
-        postCode        <- stringsWithMaxLength(domain.Trader.Constants.postCodeLength)
-        city            <- stringsWithMaxLength(domain.Trader.Constants.cityLength)
+        eori            <- stringsWithMaxLength(domain.TraderDomain.Constants.eoriLength)
+        name            <- stringsWithMaxLength(domain.TraderDomain.Constants.nameLength)
+        streetAndNumber <- stringsWithMaxLength(domain.TraderDomain.Constants.streetAndNumberLength)
+        postCode        <- stringsWithMaxLength(domain.TraderDomain.Constants.postCodeLength)
+        city            <- stringsWithMaxLength(domain.TraderDomain.Constants.cityLength)
       } yield messages.Trader(name, streetAndNumber, city, postCode, gbCountryCode, eori)
     }
 
@@ -262,7 +262,7 @@ trait MessagesModelGenerators extends Generators {
         place                  <- stringsWithMaxLength(NormalNotification.Constants.notificationPlaceLength)
         date                   <- localDateGen
         subPlace               <- stringsWithMaxLength(NormalNotification.Constants.customsSubPlaceLength)
-        trader                 <- arbitrary[domain.Trader]
+        trader                 <- arbitrary[domain.TraderDomain]
         presentationOfficeId   <- stringsWithMaxLength(NormalNotification.Constants.presentationOfficeLength)
         presentationOfficeName <- arbitrary[String]
         events                 <- Gen.option(listWithMaxLength[EnRouteEventDomain](NormalNotification.Constants.maxNumberOfEnRouteEvents))
@@ -277,7 +277,7 @@ trait MessagesModelGenerators extends Generators {
         place              <- stringsWithMaxLength(SimplifiedNotification.Constants.notificationPlaceLength)
         date               <- localDateGen
         approvedLocation   <- Gen.option(stringsWithMaxLength(SimplifiedNotification.Constants.approvedLocationLength))
-        trader             <- arbitrary[domain.Trader]
+        trader             <- arbitrary[domain.TraderDomain]
         presentationOffice <- stringsWithMaxLength(SimplifiedNotification.Constants.presentationOfficeLength)
         events             <- Gen.option(listWithMaxLength[EnRouteEvent](NormalNotification.Constants.maxNumberOfEnRouteEvents))
       } yield domain.SimplifiedNotification(mrn, place, date, approvedLocation, trader, presentationOffice, events)
@@ -313,7 +313,7 @@ trait MessagesModelGenerators extends Generators {
     Arbitrary {
       for {
         environment <- Gen.oneOf(Seq("LOCAL", "QA", "STAGING", "PRODUCTION"))
-        eori        <- stringsWithMaxLength(domain.Trader.Constants.eoriLength)
+        eori        <- stringsWithMaxLength(domain.TraderDomain.Constants.eoriLength)
       } yield MessageSender(environment, eori)
     }
   }
@@ -426,10 +426,10 @@ trait MessagesModelGenerators extends Generators {
       } yield FunctionalError(errorType, ErrorPointer(pointer), reason, originalValue)
     }
 
-  val arrivalNotificationWithSubplace: Gen[(NormalNotification, domain.Trader)] =
+  val arrivalNotificationWithSubplace: Gen[(NormalNotification, domain.TraderDomain)] =
     for {
       base     <- arbitrary[NormalNotification]
-      trader   <- arbitrary[domain.Trader]
+      trader   <- arbitrary[domain.TraderDomain]
       mrn      <- arbitrary[MovementReferenceNumber]
       subPlace <- stringsWithMaxLength(NormalNotification.Constants.customsSubPlaceLength)
     } yield {

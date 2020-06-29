@@ -16,14 +16,15 @@
 
 package models.domain
 
+import models.messages.Trader
 import play.api.libs.json.{Format, Json}
 
-final case class Trader(name: String, streetAndNumber: String, postCode: String, city: String, countryCode: String, eori: String)
+final case class TraderDomain(name: String, streetAndNumber: String, postCode: String, city: String, countryCode: String, eori: String)
 
-object Trader {
+object TraderDomain {
 
-  def domainTraderToMessagesTrader(trader: Trader): models.messages.Trader =
-    Trader.unapply(trader).map((models.messages.Trader.apply _).tupled).get
+  def domainTraderToMessagesTrader(trader: TraderDomain): Trader =
+    TraderDomain.unapply(trader).map((Trader.apply _).tupled).get
 
   object Constants {
     val eoriLength            = 17
@@ -36,7 +37,7 @@ object Trader {
 
   val eoriRegex = "[A-Z]{2}[^\n\r]{1,}"
 
-  implicit lazy val format: Format[Trader] =
-    Json.format[Trader]
+  implicit lazy val format: Format[TraderDomain] =
+    Json.format[TraderDomain]
 
 }

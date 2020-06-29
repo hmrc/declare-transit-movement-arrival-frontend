@@ -18,7 +18,7 @@ package services.conversion
 
 import models.MovementReferenceNumber
 import models.domain.{ArrivalNotification, EnRouteEventDomain, NormalNotification}
-import models.messages.{ArrivalMovementRequest, EnRouteEvent}
+import models.messages.{ArrivalMovementRequest, EnRouteEvent, Trader}
 import models.reference.Country
 
 class ArrivalMovementRequestConversionService {
@@ -41,7 +41,7 @@ class ArrivalMovementRequestConversionService {
           arrivalMovementRequest.header.arrivalNotificationPlace,
           arrivalMovementRequest.header.notificationDate,
           arrivalMovementRequest.header.customsSubPlace.get, // TODO need to address the case when there is no subsplace
-          models.messages.Trader.messagesTraderToDomainTrader(arrivalMovementRequest.trader),
+          Trader.messagesTraderToDomainTrader(arrivalMovementRequest.trader),
           arrivalMovementRequest.header.presentationOfficeId,
           arrivalMovementRequest.header.presentationOfficeName,
           buildEnrouteEvents

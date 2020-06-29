@@ -19,7 +19,7 @@ package services.conversion
 import base.SpecBase
 import generators.MessagesModelGenerators
 import models.GoodsLocation.BorderForceOffice
-import models.domain.{ContainerTranshipmentDomain, EnRouteEventDomain, NormalNotification, SealDomain, Trader}
+import models.domain.{ContainerTranshipmentDomain, EnRouteEventDomain, NormalNotification, SealDomain, TraderDomain}
 import models.messages.{ContainerTranshipment, EnRouteEvent, Seal}
 import models.reference.{Country, CustomsOffice}
 import models.{Address, Index, UserAnswers}
@@ -191,7 +191,7 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
     }
 
     "must return 'None' from a partly filled userAnswers" in {
-      forAll(arbitrary[NormalNotification], arbitrary[Trader]) {
+      forAll(arbitrary[NormalNotification], arbitrary[TraderDomain]) {
         case (arrivalNotification, trader) =>
           val userAnswers: UserAnswers =
             emptyUserAnswers
@@ -208,7 +208,7 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
     }
   }
 
-  private def createBasicUserAnswers(trader: Trader, arrivalNotification: NormalNotification, isIncidentOnRoute: Boolean = false): UserAnswers =
+  private def createBasicUserAnswers(trader: TraderDomain, arrivalNotification: NormalNotification, isIncidentOnRoute: Boolean = false): UserAnswers =
     emptyUserAnswers
       .copy(id = arrivalNotification.movementReferenceNumber)
       .set(GoodsLocationPage, BorderForceOffice).success.value

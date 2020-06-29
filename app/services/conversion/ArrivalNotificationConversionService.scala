@@ -45,7 +45,7 @@ class ArrivalNotificationConversionService {
         notificationPlace       = notificationPlace,
         notificationDate        = LocalDate.now(),
         customsSubPlace         = customsSubPlace,
-        trader = Trader(
+        trader = TraderDomain(
           eori            = traderEori,
           name            = traderName,
           streetAndNumber = tradersAddress.buildingAndStreet,

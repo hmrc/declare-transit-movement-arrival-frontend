@@ -20,7 +20,7 @@ import java.time.LocalDateTime
 
 import base.SpecBase
 import generators.MessagesModelGenerators
-import models.domain.{ContainerDomain, EnRouteEventDomain, NormalNotification, SealDomain, Trader}
+import models.domain.{ContainerDomain, EnRouteEventDomain, NormalNotification, SealDomain, TraderDomain}
 import models.messages.{Container, Seal}
 import models.reference.{Country, CustomsOffice}
 import models.{Address, GoodsLocation, Index, TranshipmentType, UserAnswers}
@@ -281,7 +281,7 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
     }
   }
 
-  private def createBasicUserAnswers(trader: Trader, arrivalNotification: NormalNotification, timeStamp: LocalDateTime): UserAnswers =
+  private def createBasicUserAnswers(trader: TraderDomain, arrivalNotification: NormalNotification, timeStamp: LocalDateTime): UserAnswers =
     // format: off
     UserAnswers(mrn, Json.obj("events" -> JsArray(Seq.empty)))
       .copy(id = arrivalNotification.movementReferenceNumber)

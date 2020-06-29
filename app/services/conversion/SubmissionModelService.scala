@@ -40,7 +40,7 @@ class SubmissionModelService @Inject()() {
           timeOfPreparation           = timeOfPresentation
         )
         val header            = buildHeader(normalNotification, NormalProcedureFlag)
-        val traderDestination = models.domain.Trader.domainTraderToMessagesTrader(normalNotification.trader)
+        val traderDestination = models.domain.TraderDomain.domainTraderToMessagesTrader(normalNotification.trader)
         val customsOffice     = CustomsOfficeOfPresentation(presentationOffice = normalNotification.presentationOfficeId)
         val enRouteEvents     = normalNotification.enRouteEvents.map(_.map(EnRouteEventDomain.domainEnrouteEventToEnrouteEvent))
 

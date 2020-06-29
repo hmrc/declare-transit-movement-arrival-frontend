@@ -19,7 +19,7 @@ package services.conversion
 import base.SpecBase
 import generators.MessagesModelGenerators
 import models.{domain, MovementReferenceNumber}
-import models.domain.{EnRouteEventDomain, NormalNotification, Trader}
+import models.domain.{EnRouteEventDomain, NormalNotification, TraderDomain}
 import models.messages.{ArrivalMovementRequest, EnRouteEvent, Header}
 import models.reference.Country
 import org.scalacheck.Arbitrary.arbitrary
@@ -62,7 +62,7 @@ class ArrivalMovementRequestConversionServiceSpec extends SpecBase with Messages
           notificationPlace       = arrivalNotificationRequest.header.arrivalNotificationPlace,
           notificationDate        = arrivalNotificationRequest.header.notificationDate,
           customsSubPlace         = arrivalNotificationRequest.header.customsSubPlace.getOrElse(""),
-          trader = Trader(
+          trader = TraderDomain(
             name            = arrivalNotificationRequest.trader.name,
             city            = arrivalNotificationRequest.trader.city,
             postCode        = arrivalNotificationRequest.trader.postCode,

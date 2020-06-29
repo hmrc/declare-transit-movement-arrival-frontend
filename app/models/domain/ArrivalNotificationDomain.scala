@@ -18,10 +18,9 @@ package models.domain
 
 import java.time.LocalDate
 
-import models.MovementReferenceNumber
 import models.messages.{EnRouteEvent, ProcedureType}
-import models.{GoodsLocation, MovementReferenceNumber}
 import models.reference.CustomsOffice
+import models.{GoodsLocation, MovementReferenceNumber}
 import pages._
 import play.api.libs.json._
 import queries.EventsQuery
@@ -42,7 +41,7 @@ final case class NormalNotification(movementReferenceNumber: MovementReferenceNu
                                     notificationPlace: String,
                                     notificationDate: LocalDate,
                                     customsSubPlace: String,
-                                    trader: Trader,
+                                    trader: TraderDomain,
                                     presentationOfficeId: String,
                                     presentationOfficeName: String,
                                     enRouteEvents: Option[Seq[EnRouteEventDomain]])
@@ -89,7 +88,7 @@ final case class SimplifiedNotification(
   notificationPlace: String,
   notificationDate: LocalDate,
   approvedLocation: Option[String],
-  trader: Trader,
+  trader: TraderDomain,
   presentationOffice: String,
   enRouteEvents: Option[Seq[EnRouteEvent]]
 ) extends ArrivalNotification {

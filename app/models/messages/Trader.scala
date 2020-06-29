@@ -25,8 +25,8 @@ final case class Trader(name: String, streetAndNumber: String, postCode: String,
 
 object Trader {
 
-  def messagesTraderToDomainTrader(trader: Trader): models.domain.Trader =
-    Trader.unapply(trader).map((models.domain.Trader.apply _).tupled).get
+  def messagesTraderToDomainTrader(trader: Trader): models.domain.TraderDomain =
+    Trader.unapply(trader).map((models.domain.TraderDomain.apply _).tupled).get
 
   implicit val writes: XMLWrites[Trader] = {
     XMLWrites(trader => <TRADESTRD>
