@@ -21,8 +21,8 @@ import java.time.LocalDate
 import base.SpecBase
 import connectors.ArrivalMovementConnector
 import generators.MessagesModelGenerators
-import models.ArrivalId
-import models.messages.{InterchangeControlReference, NormalNotification, Trader}
+import models.{ArrivalId, NormalProcedureFlag}
+import models.messages.{ArrivalMovementRequest, InterchangeControlReference, NormalNotification, Trader}
 import org.mockito.Matchers.any
 import org.mockito.Mockito._
 import org.scalacheck.Arbitrary.arbitrary
