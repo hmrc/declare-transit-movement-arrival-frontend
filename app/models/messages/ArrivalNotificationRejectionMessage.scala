@@ -23,7 +23,6 @@ import com.lucidchart.open.xtract.XmlReader._
 import com.lucidchart.open.xtract.{__, XmlReader}
 import models.XMLReads._
 
-// TODO: To remove
 final case class ArrivalNotificationRejectionMessage(
   movementReferenceNumber: String,
   rejectionDate: LocalDate,
