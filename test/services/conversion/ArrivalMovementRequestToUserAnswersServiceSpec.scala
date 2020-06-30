@@ -17,53 +17,62 @@
 package services.conversion
 
 import base.SpecBase
-import connectors.ReferenceDataConnector
 import generators.MessagesModelGenerators
 import models.UserAnswers
+import models.domain.{ArrivalNotificationDomain, NormalNotification}
 import models.messages.ArrivalMovementRequest
+import org.mockito.Matchers.any
+import org.mockito.Mockito.when
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.bind
 
-class ArrivalMovementRequestToUserAnswersServiceSpec extends SpecBase with MessagesModelGenerators with ScalaCheckPropertyChecks {
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
-  private val mockArrivalMovementRequestConversionService = mock[ArrivalMovementRequestConversionService]
+class ArrivalMovementRequestToUserAnswersServiceSpec extends SpecBase with MessagesModelGenerators with ScalaCheckPropertyChecks {
 
   "when we can go from ArrivalMovementRequest to UserAnswers" in {
 
-    forAll(arbitrary[ArrivalMovementRequest]) {
-      arrivalMovementRequest =>
-        val application = applicationBuilder(Some(emptyUserAnswers))
-          .overrides(bind[ArrivalMovementRequestConversionService].toInstance(mockArrivalMovementRequestConversionService))
-          .build()
+    val mockArrivalMovementRequestConversionService = mock[ArrivalMovementRequestConversionService]
 
-        val arrivalMovementRequestToUserAnswers = application.injector.instanceOf[ArrivalMovementRequestToUserAnswersService]
+    val sampleNotificationDomain = arbitrary[NormalNotification].sample.value
+    val sampleMovementRequest    = arbitrary[ArrivalMovementRequest].sample.value
 
-        val result = arrivalMovementRequestToUserAnswers.apply(arrivalMovementRequest)
+    val application = applicationBuilder(Some(emptyUserAnswers))
+      .overrides(bind[ArrivalMovementRequestConversionService].toInstance(mockArrivalMovementRequestConversionService))
+      .build()
 
-        result must be(defined)
-        result.value mustBe an[UserAnswers]
-    }
+    val arrivalMovementRequestToUserAnswers = application.injector.instanceOf[ArrivalMovementRequestToUserAnswersService]
+
+    when(mockArrivalMovementRequestConversionService.convertToArrivalNotification(any())(any(), any()))
+      .thenReturn(Future.successful(Some(sampleNotificationDomain)))
+
+    val result = arrivalMovementRequestToUserAnswers.apply(sampleMovementRequest)
+
+    result.futureValue must be(defined)
+    result.futureValue.value mustBe an[UserAnswers]
   }
 
   "when we cannot go from ArrivalMovementRequest to NormalNotification we get a None" in {
-    val failingArrivalMovementRequest = arbitrary[ArrivalMovementRequest].map {
-      amr =>
-        amr.copy(header = amr.header.copy(movementReferenceNumber = "asdf"))
-    }
 
-    forAll(failingArrivalMovementRequest) {
-      arrivalMovementRequest =>
-        val application = applicationBuilder(Some(emptyUserAnswers))
-          .overrides(bind[ArrivalMovementRequestConversionService].toInstance(mockArrivalMovementRequestConversionService))
-          .build()
+    val mockArrivalMovementRequestConversionService = mock[ArrivalMovementRequestConversionService]
 
-        val arrivalMovementRequestToUserAnswers = application.injector.instanceOf[ArrivalMovementRequestToUserAnswersService]
+    val sampleNotificationDomain = arbitrary[NormalNotification].sample.value
+    val sampleMovementRequest    = arbitrary[ArrivalMovementRequest].sample.value
 
-        val result = arrivalMovementRequestToUserAnswers.apply(arrivalMovementRequest)
+    val application = applicationBuilder(Some(emptyUserAnswers))
+      .overrides(bind[ArrivalMovementRequestConversionService].toInstance(mockArrivalMovementRequestConversionService))
+      .build()
 
-        result must not be (defined)
-    }
+    val arrivalMovementRequestToUserAnswers = application.injector.instanceOf[ArrivalMovementRequestToUserAnswersService]
+
+    when(mockArrivalMovementRequestConversionService.convertToArrivalNotification(any())(any(), any()))
+      .thenReturn(Future.successful(None))
+
+    val result = arrivalMovementRequestToUserAnswers.apply(sampleMovementRequest)
+
+    result.futureValue must not be defined
   }
 
 }

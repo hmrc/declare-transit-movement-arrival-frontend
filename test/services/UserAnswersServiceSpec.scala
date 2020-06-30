@@ -24,16 +24,20 @@ import org.mockito.Matchers.any
 import org.mockito.Mockito._
 import org.scalacheck.Arbitrary.arbitrary
 import play.api.inject.bind
+import services.conversion.ArrivalMovementRequestToUserAnswersService
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class UserAnswersServiceSpec extends SpecBase with MessagesModelGenerators {
 
-  val mockArrivalNotificationMessageService: ArrivalNotificationMessageService = mock[ArrivalNotificationMessageService]
+  val mockArrivalNotificationMessageService          = mock[ArrivalNotificationMessageService]
+  val mockArrivalMovementRequestToUserAnswersService = mock[ArrivalMovementRequestToUserAnswersService]
 
   override def beforeEach: Unit = {
     super.beforeEach()
     reset(mockArrivalNotificationMessageService)
+    reset(mockArrivalMovementRequestToUserAnswersService)
   }
 
   "UserAnswers" - {
@@ -44,12 +48,17 @@ class UserAnswersServiceSpec extends SpecBase with MessagesModelGenerators {
       when(mockArrivalNotificationMessageService.getArrivalNotificationMessage(any())(any(), any()))
         .thenReturn(Future.successful(Some(arrivalMovementRequest)))
 
+      when(mockArrivalMovementRequestToUserAnswersService.apply(any())(any(), any()))
+        .thenReturn(Future.successful(Some(emptyUserAnswers)))
+
       val application = applicationBuilder(Some(emptyUserAnswers))
         .overrides(bind[ArrivalNotificationMessageService].toInstance(mockArrivalNotificationMessageService))
+        .overrides(bind[ArrivalMovementRequestToUserAnswersService].toInstance(mockArrivalMovementRequestToUserAnswersService))
         .build()
-      val userAnswersService = application.injector.instanceOf[UserAnswersService]
-      userAnswersService.getUserAnswers(ArrivalId(1)).futureValue.value mustBe a[UserAnswers]
 
+      val userAnswersService = application.injector.instanceOf[UserAnswersService]
+
+      userAnswersService.getUserAnswers(ArrivalId(1)).futureValue.value mustBe a[UserAnswers]
     }
 
     "must return None for invalid request" in {

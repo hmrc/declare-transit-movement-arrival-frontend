@@ -26,12 +26,12 @@ import cats.implicits._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class ArrivalMovementRequestConversionService @Inject()(referenceDataConnector: ReferenceDataConnector)(implicit ec: ExecutionContext, hc: HeaderCarrier) {
+class ArrivalMovementRequestConversionService @Inject()(referenceDataConnector: ReferenceDataConnector) {
 
-  def convertToArrivalNotification(arrivalMovementRequest: ArrivalMovementRequest): Future[Option[ArrivalNotificationDomain]] =
+  def convertToArrivalNotification(arrivalMovementRequest: ArrivalMovementRequest)(implicit ec: ExecutionContext,
+                                                                                   hc: HeaderCarrier): Future[Option[ArrivalNotificationDomain]] =
     MovementReferenceNumber(arrivalMovementRequest.header.movementReferenceNumber) traverse {
       mrn =>
-        // TODO How do we handle the call to the connector here???
         val buildEnrouteEvents: Future[Option[Seq[EnRouteEventDomain]]] = arrivalMovementRequest.enRouteEvents.traverse {
           events =>
             Future.sequence(

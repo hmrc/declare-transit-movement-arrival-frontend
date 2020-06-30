@@ -19,19 +19,16 @@ package services.conversion
 import com.google.inject.Inject
 import models.UserAnswers
 import models.messages.ArrivalMovementRequest
+import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class ArrivalMovementRequestToUserAnswersService @Inject()(arrivalMovementRequestConversionService: ArrivalMovementRequestConversionService)
-                                                          (implicit ec: ExecutionContext){
+class ArrivalMovementRequestToUserAnswersService @Inject()(arrivalMovementRequestConversionService: ArrivalMovementRequestConversionService) {
 
-  def apply(arrivalMovementRequest: ArrivalMovementRequest): Future[Option[UserAnswers]] =
+  def apply(arrivalMovementRequest: ArrivalMovementRequest)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[UserAnswers]] =
     arrivalMovementRequestConversionService.convertToArrivalNotification(arrivalMovementRequest).map {
       arrivalNotification =>
-        arrivalNotification.flatMap {
-          x =>
-            UserAnswersConversionService.convertToUserAnswers(x)
-        }
+        arrivalNotification.flatMap(UserAnswersConversionService.convertToUserAnswers)
     }
 
 }

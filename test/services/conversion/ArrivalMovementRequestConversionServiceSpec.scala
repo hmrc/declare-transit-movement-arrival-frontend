@@ -29,6 +29,7 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.bind
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class ArrivalMovementRequestConversionServiceSpec extends SpecBase with MessagesModelGenerators with ScalaCheckPropertyChecks {
@@ -53,7 +54,7 @@ class ArrivalMovementRequestConversionServiceSpec extends SpecBase with Messages
       val header: Header                                                 = arrivalMovementRequest.header.copy(movementReferenceNumber = "Invalid MRN")
       val arrivalMovementRequestWithMalformedMrn: ArrivalMovementRequest = arrivalMovementRequest.copy(header = header)
 
-      arrivalMovementRequestConversionService.convertToArrivalNotification(arrivalMovementRequestWithMalformedMrn) mustBe Future.successful(None)
+      arrivalMovementRequestConversionService.convertToArrivalNotification(arrivalMovementRequestWithMalformedMrn).futureValue mustBe None
     }
 
     "must convert ArrivalMovementRequest to NormalNotification for trader" in {
@@ -99,7 +100,7 @@ class ArrivalMovementRequestConversionServiceSpec extends SpecBase with Messages
         )
       }
 
-      arrivalMovementRequestConversionService.convertToArrivalNotification(arrivalNotificationRequest) mustBe Future.successful(Some(normalNotification))
+      arrivalMovementRequestConversionService.convertToArrivalNotification(arrivalNotificationRequest).futureValue.value mustBe normalNotification
     }
   }
 
