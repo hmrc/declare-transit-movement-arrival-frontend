@@ -76,8 +76,8 @@ class UpdateRejectedMRNController @Inject()(override val messagesApi: MessagesAp
           value =>
             userAnswersService.getUserAnswers(arrivalId) map {
               case Some(userAnswers) =>
-                sessionRepository.set(userAnswers.copy(id = value))
-                Redirect(navigator.nextRejectionPage(UpdateRejectedMRNPage, value, arrivalId))
+                sessionRepository.set(userAnswers.copy(id = value, arrivalId = Some(arrivalId)))
+                Redirect(navigator.nextRejectionPage(UpdateRejectedMRNPage, value))
               case _ => Redirect(routes.TechnicalDifficultiesController.onPageLoad())
           }
         )
