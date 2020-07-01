@@ -56,20 +56,14 @@ class ArrivalMovementRequestConversionService @Inject()(referenceDataConnector: 
     }
 
   private def buildEnRouteEventDomain(enRouteEvent: EnRouteEvent)(implicit hc: HeaderCarrier): Future[EnRouteEventDomain] =
-    referenceDataConnector.getCountry(enRouteEvent.countryCode).flatMap {
-      eventCountry =>
-        enRouteEvent.eventDetails
-          .traverse(buildEventDetailsDomain)
-          .map(EnRouteEvent.enRouteEventToDomain(enRouteEvent, eventCountry, _))
-    }
+    referenceDataConnector
+      .getCountry(enRouteEvent.countryCode)
+      .map(EnRouteEvent.enRouteEventToDomain(enRouteEvent, _, enRouteEvent.eventDetails.map(buildEventDetailsDomain)))
 
-  private def buildEventDetailsDomain(eventDetails: EventDetails)(implicit hc: HeaderCarrier): Future[EventDetailsDomain] =
+  private def buildEventDetailsDomain(eventDetails: EventDetails)(implicit hc: HeaderCarrier): EventDetailsDomain =
     eventDetails match {
-      case vehicularTranshipment: VehicularTranshipment =>
-        referenceDataConnector
-          .getCountry(vehicularTranshipment.transportCountry)
-          .map(VehicularTranshipment.vehicularTranshipmentToDomain(vehicularTranshipment, _))
-      case incident: Incident                           => Future.successful(Incident.incidentToDomain(incident))
-      case containerTranshipment: ContainerTranshipment => Future.successful(ContainerTranshipment.containerTranshipmentToDomain(containerTranshipment))
+      case vehicularTranshipment: VehicularTranshipment => VehicularTranshipment.vehicularTranshipmentToDomain(vehicularTranshipment)
+      case incident: Incident                           => Incident.incidentToDomain(incident)
+      case containerTranshipment: ContainerTranshipment => ContainerTranshipment.containerTranshipmentToDomain(containerTranshipment)
     }
 }

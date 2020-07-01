@@ -498,8 +498,7 @@ class EventDetailsSpec
     "must convert to VehicularTranshipment model" in {
       forAll(arbitrary[VehicularTranshipment]) {
         vehicularTranshipment =>
-          val sampleCountry = arbitrary[Country].sample.value
-          val result        = VehicularTranshipment.vehicularTranshipmentToDomain(vehicularTranshipment, sampleCountry)
+          val result = VehicularTranshipment.vehicularTranshipmentToDomain(vehicularTranshipment)
 
           result mustBe an[VehicularTranshipmentDomain]
       }

@@ -76,6 +76,7 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
           val userAnswers: UserAnswers = createBasicUserAnswers(trader, arrivalNotification, isIncidentOnRoute = true)
             .set(IsTranshipmentPage(eventIndex), false).success.value
             .set(EventPlacePage(eventIndex), routeEvent.place).success.value
+
             .set(EventCountryPage(eventIndex), routeEvent.country).success.value
             .set(EventReportedPage(eventIndex), routeEvent.alreadyInNcts).success.value
 

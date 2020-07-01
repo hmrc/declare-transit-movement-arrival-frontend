@@ -111,7 +111,7 @@ class ArrivalNotificationConversionService {
         Some(
           VehicularTranshipmentDomain(
             transportIdentity = transportIdentity,
-            transportCountry  = transportCountry,
+            transportCountry  = transportCountry.code,
             containers        = containers
           ))
       case (None, None, None, Some(containers)) =>
@@ -136,7 +136,7 @@ class ArrivalNotificationConversionService {
             } yield {
               EnRouteEventDomain(
                 place         = place,
-                country       = country,
+                country       = country.code,
                 alreadyInNcts = isReported,
                 eventDetails  = eventDetails(incidentInformation, transportIdentity, transportCountry, containers),
                 seals         = userAnswers.get(SealsQuery(eventIndex))

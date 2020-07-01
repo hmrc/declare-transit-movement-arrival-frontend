@@ -146,14 +146,14 @@ object VehicularTranshipment {
     val transportCountryLength  = 2
   }
 
-  def vehicularTranshipmentToDomain(transhipment: VehicularTranshipment, country: Country): VehicularTranshipmentDomain =
+  def vehicularTranshipmentToDomain(transhipment: VehicularTranshipment): VehicularTranshipmentDomain =
     VehicularTranshipment
       .unapply(transhipment)
       .map {
         case _ @(transportIdentity, transportCountry, containers, _, _, _, _) =>
           VehicularTranshipmentDomain(
             transportIdentity,
-            country,
+            transportCountry,
             containers.map(_.map(Container.containerToDomain))
           )
       }

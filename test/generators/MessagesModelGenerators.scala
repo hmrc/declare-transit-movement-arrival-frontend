@@ -89,7 +89,7 @@ trait MessagesModelGenerators extends Generators {
       for {
 
         transportIdentity <- stringsWithMaxLength(VehicularTranshipment.Constants.transportIdentityLength)
-        transportCountry  <- arbitrary[Country]
+        transportCountry  <- arbitrary[Country].map(_.code)
         containers        <- Gen.option(listWithMaxLength[ContainerDomain](2))
       } yield VehicularTranshipmentDomain(transportIdentity = transportIdentity, transportCountry = transportCountry, containers = containers)
     }
@@ -210,7 +210,7 @@ trait MessagesModelGenerators extends Generators {
 
       for {
         place         <- stringsWithMaxLength(EnRouteEvent.Constants.placeLength)
-        country       <- arbitrary[Country]
+        country       <- arbitrary[Country].map(_.code)
         alreadyInNcts <- arbitrary[Boolean]
         eventDetails  <- arbitrary[Option[EventDetailsDomain]]
         seals         <- listWithMaxLength[SealDomain](1)

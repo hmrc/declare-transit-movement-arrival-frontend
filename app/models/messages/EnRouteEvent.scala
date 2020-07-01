@@ -44,7 +44,7 @@ object EnRouteEvent {
         case _ @(place, _, alreadyInNct, _, seals) =>
           EnRouteEventDomain(
             place,
-            eventCountry,
+            eventCountry.code,
             alreadyInNct,
             eventDetailsDomain,
             seals.map(_.map(Seal.sealToDomain))

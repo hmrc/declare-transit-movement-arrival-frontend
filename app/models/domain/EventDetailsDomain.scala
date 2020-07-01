@@ -18,7 +18,6 @@ package models.domain
 
 import models._
 import models.messages.{ContainerTranshipment, EventDetails, Incident, VehicularTranshipment}
-import models.reference.Country
 import play.api.libs.json._
 
 import scala.language.implicitConversions
@@ -97,7 +96,7 @@ object TranshipmentDomain {
 
 final case class VehicularTranshipmentDomain(
   transportIdentity: String,
-  transportCountry: Country,
+  transportCountry: String,
   containers: Option[Seq[ContainerDomain]]
 ) extends TranshipmentDomain
 
@@ -112,10 +111,10 @@ object VehicularTranshipmentDomain {
     VehicularTranshipmentDomain
       .unapply(transhipment)
       .map {
-        case _ @(transportIdentity, transportCountry, container) =>
+        case (transportIdentity, transportCountry, container) =>
           VehicularTranshipment(
             transportIdentity,
-            transportCountry.code,
+            transportCountry,
             container.map(_.map(ContainerDomain.domainContainerToContainer))
           )
       }
