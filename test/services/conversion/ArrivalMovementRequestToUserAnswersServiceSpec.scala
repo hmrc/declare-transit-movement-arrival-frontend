@@ -18,8 +18,8 @@ package services.conversion
 
 import base.SpecBase
 import generators.MessagesModelGenerators
-import models.{MovementReferenceNumber, UserAnswers}
-import models.messages.{ArrivalMovementRequest, Header, NormalNotification, Trader}
+import models.UserAnswers
+import models.messages.ArrivalMovementRequest
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 

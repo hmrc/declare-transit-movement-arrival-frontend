@@ -18,10 +18,9 @@ package forms
 
 import forms.mappings.Mappings
 import javax.inject.Inject
+import models.domain.TraderDomain.Constants.eoriLength
+import models.domain.TraderDomain.eoriRegex
 import play.api.data.Form
-import models.messages.Trader.Constants.eoriLength
-import models.messages.Trader.eoriRegex
-import play.api.i18n.Messages
 
 class EoriNumberFormProvider @Inject() extends Mappings {
 

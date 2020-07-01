@@ -18,6 +18,7 @@ package pages.events.seals
 
 import generators.MessagesModelGenerators
 import models.Index
+import models.domain.SealDomain
 import models.messages.Seal
 import pages.behaviours.PageBehaviours
 
@@ -28,10 +29,10 @@ class SealIdentityPageSpec extends PageBehaviours with MessagesModelGenerators {
 
   "SealIdentityPage" - {
 
-    beRetrievable[Seal](SealIdentityPage(eventIndex, sealIndex))
+    beRetrievable[SealDomain](SealIdentityPage(eventIndex, sealIndex))
 
-    beSettable[Seal](SealIdentityPage(eventIndex, sealIndex))
+    beSettable[SealDomain](SealIdentityPage(eventIndex, sealIndex))
 
-    beRemovable[Seal](SealIdentityPage(eventIndex, sealIndex))
+    beRemovable[SealDomain](SealIdentityPage(eventIndex, sealIndex))
   }
 }

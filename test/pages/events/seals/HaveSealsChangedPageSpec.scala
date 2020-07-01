@@ -41,7 +41,7 @@ class HaveSealsChangedPageSpec extends PageBehaviours with SpecBase {
               .set(HaveSealsChangedPage(eventIndex), true)
               .success
               .value
-              .set(SealIdentityPage(eventIndex, sealIndex), seal)
+              .set(SealIdentityPage(eventIndex, sealIndex), sealDomain)
               .success
               .value
               .set(HaveSealsChangedPage(eventIndex), false)
@@ -61,7 +61,7 @@ class HaveSealsChangedPageSpec extends PageBehaviours with SpecBase {
               .set(HaveSealsChangedPage(eventIndex), false)
               .success
               .value
-              .set(SealIdentityPage(eventIndex, sealIndex), seal)
+              .set(SealIdentityPage(eventIndex, sealIndex), sealDomain)
               .success
               .value
               .set(HaveSealsChangedPage(eventIndex), true)

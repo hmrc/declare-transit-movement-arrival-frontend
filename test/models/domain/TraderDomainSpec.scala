@@ -14,15 +14,20 @@
  * limitations under the License.
  */
 
-package pages.events.seals
+package models.domain
 
-import models.Index
-import models.domain.SealDomain
-import pages.QuestionPage
-import pages.events.SectionConstants
-import play.api.libs.json.JsPath
+import generators.MessagesModelGenerators
+import models.messages.Trader
+import models.messages.behaviours.JsonBehaviours
+import org.scalacheck.Arbitrary.arbitrary
+import org.scalatest.{FreeSpec, MustMatchers}
 
-case class SealIdentityPage(eventIndex: Index, sealIndex: Index) extends QuestionPage[SealDomain] {
+class TraderDomainSpec extends FreeSpec with MustMatchers with MessagesModelGenerators with JsonBehaviours {
 
-  override def path: JsPath = JsPath \ SectionConstants.events \ eventIndex.position \ SectionConstants.seals \ sealIndex.position
+  "must convert to Trader model" in {
+    forAll(arbitrary[TraderDomain]) {
+      traderDomain =>
+        TraderDomain.domainTraderToMessagesTrader(traderDomain) mustBe an[Trader]
+    }
+  }
 }

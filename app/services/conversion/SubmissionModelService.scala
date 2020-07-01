@@ -19,13 +19,14 @@ package services.conversion
 import java.time.LocalTime
 
 import com.google.inject.Inject
+import models.domain._
 import models.messages._
 import models.{NormalProcedureFlag, ProcedureTypeFlag, SimplifiedProcedureFlag}
 
 class SubmissionModelService @Inject()() {
 
   def convertToSubmissionModel(
-    arrivalNotification: ArrivalNotification,
+    arrivalNotification: ArrivalNotificationDomain,
     messageSender: MessageSender,
     interchangeControlReference: InterchangeControlReference,
     timeOfPresentation: LocalTime
@@ -38,10 +39,10 @@ class SubmissionModelService @Inject()() {
           dateOfPreparation           = normalNotification.notificationDate,
           timeOfPreparation           = timeOfPresentation
         )
-        val header                                   = buildHeader(normalNotification, NormalProcedureFlag)
-        val traderDestination                        = normalNotification.trader
-        val customsOffice                            = CustomsOfficeOfPresentation(presentationOffice = normalNotification.presentationOfficeId)
-        val enRouteEvents: Option[Seq[EnRouteEvent]] = normalNotification.enRouteEvents
+        val header            = buildHeader(normalNotification, NormalProcedureFlag)
+        val traderDestination = TraderDomain.domainTraderToMessagesTrader(normalNotification.trader)
+        val customsOffice     = CustomsOfficeOfPresentation(presentationOffice = normalNotification.presentationOfficeId)
+        val enRouteEvents     = normalNotification.enRouteEvents.map(_.map(EnRouteEventDomain.domainEnrouteEventToEnrouteEvent))
 
         ArrivalMovementRequest(meta, header, traderDestination, customsOffice, enRouteEvents)
 
@@ -53,9 +54,9 @@ class SubmissionModelService @Inject()() {
           timeOfPreparation           = timeOfPresentation
         )
         val header                                   = buildSimplifiedHeader(simplifiedNotification, SimplifiedProcedureFlag)
-        val traderDestination                        = simplifiedNotification.trader
+        val traderDestination                        = TraderDomain.domainTraderToMessagesTrader(simplifiedNotification.trader)
         val customsOffice                            = CustomsOfficeOfPresentation(presentationOffice = simplifiedNotification.presentationOfficeId)
-        val enRouteEvents: Option[Seq[EnRouteEvent]] = simplifiedNotification.enRouteEvents
+        val enRouteEvents: Option[Seq[EnRouteEvent]] = simplifiedNotification.enRouteEvents.map(_.map(EnRouteEventDomain.domainEnrouteEventToEnrouteEvent))
 
         ArrivalMovementRequest(meta, header, traderDestination, customsOffice, enRouteEvents)
     }
@@ -63,7 +64,7 @@ class SubmissionModelService @Inject()() {
   private def buildHeader(arrivalNotification: NormalNotification, procedureTypeFlag: ProcedureTypeFlag): Header =
     Header(
       movementReferenceNumber  = arrivalNotification.movementReferenceNumber.toString,
-      customsSubPlace          = arrivalNotification.customsSubPlace,
+      customsSubPlace          = Some(arrivalNotification.customsSubPlace),
       arrivalNotificationPlace = arrivalNotification.notificationPlace,
       presentationOfficeId     = arrivalNotification.presentationOfficeId,
       presentationOfficeName   = arrivalNotification.presentationOfficeName,

@@ -14,33 +14,26 @@
  * limitations under the License.
  */
 
-package models.messages
+package models.domain
 
-import com.lucidchart.open.xtract.{__, XmlReader}
-import models.domain.SealDomain
-import models.{LanguageCode, LanguageCodeEnglish, XMLWrites}
+import forms.mappings.StringEquivalence
+import models.messages.Seal
+import models.{LanguageCode, LanguageCodeEnglish}
+import play.api.libs.json.{Json, OFormat}
 
-case class Seal(numberOrMark: String)
+case class SealDomain(numberOrMark: String)
 
-object Seal {
+object SealDomain {
 
   object Constants {
     val sealNumberOrMarkLength     = 20
     val languageCode: LanguageCode = LanguageCodeEnglish
   }
 
-  def sealToDomain(seal: Seal): SealDomain = Seal.unapply(seal).map(SealDomain.apply).get
+  def domainSealToSeal(sealDomain: SealDomain): Seal = SealDomain.unapply(sealDomain).map(Seal.apply).get
 
-  implicit def writes: XMLWrites[Seal] = XMLWrites[Seal] {
-    seal =>
-      <SEAIDSI1>
-        {
-          <SeaIdeSI11>{ escapeXml(seal.numberOrMark) }</SeaIdeSI11> ++
-          <SeaIdeSI11LNG>{ Seal.Constants.languageCode.code }</SeaIdeSI11LNG>
-        }
-      </SEAIDSI1>
-  }
+  implicit val format: OFormat[SealDomain] = Json.format[SealDomain]
 
-  implicit lazy val xmlReader: XmlReader[Seal] = (__ \ "SeaIdeSI11").read[String] map apply
-
+  implicit val sealStringEquivalenceCheck: StringEquivalence[SealDomain] =
+    StringEquivalence[SealDomain]((seal, sealNumberOrMark) => seal.numberOrMark == sealNumberOrMark)
 }

@@ -20,6 +20,7 @@ import base.SpecBase
 import generators.MessagesModelGenerators
 import models.{CheckMode, Index}
 import models.TranshipmentType._
+import models.domain.{ContainerDomain, SealDomain}
 import models.messages.{Container, Seal}
 import models.reference.Country
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -84,8 +85,8 @@ class CheckEventAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChe
         .set(IsTranshipmentPage(eventIndex), false).success.value
         .set(IncidentInformationPage(eventIndex), "value").success.value
         .set(HaveSealsChangedPage(eventIndex), true).success.value
-        .set(SealIdentityPage(eventIndex, Index(0)), Seal("seal1")).success.value
-        .set(SealIdentityPage(eventIndex, Index(1)), Seal("seal2")).success.value
+        .set(SealIdentityPage(eventIndex, Index(0)), SealDomain("seal1")).success.value
+        .set(SealIdentityPage(eventIndex, Index(1)), SealDomain("seal2")).success.value
 
       val vm = CheckEventAnswersViewModel(ua, eventIndex, CheckMode)
 
@@ -138,9 +139,9 @@ class CheckEventAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChe
         .set(EventReportedPage(eventIndex), false).success.value
         .set(IsTranshipmentPage(eventIndex), true).success.value
         .set(TranshipmentTypePage(eventIndex), DifferentContainer).success.value
-        .set(ContainerNumberPage(eventIndex, Index(0)), Container("value")).success.value
-        .set(ContainerNumberPage(eventIndex, Index(1)), Container("value")).success.value
-        .set(ContainerNumberPage(eventIndex, Index(2)), Container("value")).success.value
+        .set(ContainerNumberPage(eventIndex, Index(0)), ContainerDomain("value")).success.value
+        .set(ContainerNumberPage(eventIndex, Index(1)), ContainerDomain("value")).success.value
+        .set(ContainerNumberPage(eventIndex, Index(2)), ContainerDomain("value")).success.value
         .set(HaveSealsChangedPage(eventIndex), false).success.value
 
       val vm = CheckEventAnswersViewModel(ua, eventIndex, CheckMode)
@@ -158,9 +159,9 @@ class CheckEventAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChe
         .set(EventReportedPage(eventIndex), false).success.value
         .set(IsTranshipmentPage(eventIndex), true).success.value
         .set(TranshipmentTypePage(eventIndex), DifferentContainerAndVehicle).success.value
-        .set(ContainerNumberPage(eventIndex, Index(0)), Container("value")).success.value
-        .set(ContainerNumberPage(eventIndex, Index(1)), Container("value")).success.value
-        .set(ContainerNumberPage(eventIndex, Index(2)), Container("value")).success.value
+        .set(ContainerNumberPage(eventIndex, Index(0)), ContainerDomain("value")).success.value
+        .set(ContainerNumberPage(eventIndex, Index(1)), ContainerDomain("value")).success.value
+        .set(ContainerNumberPage(eventIndex, Index(2)), ContainerDomain("value")).success.value
         .set(TransportIdentityPage(eventIndex), "value").success.value
         .set(TransportNationalityPage(eventIndex), Country("Valid","TT","Some country")).success.value
         .set(HaveSealsChangedPage(eventIndex), false).success.value

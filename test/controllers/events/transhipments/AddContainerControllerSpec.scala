@@ -20,6 +20,7 @@ import base.SpecBase
 import forms.events.transhipments.AddContainerFormProvider
 import generators.MessagesModelGenerators
 import matchers.JsonMatchers
+import models.domain.ContainerDomain
 import models.messages.Container
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
@@ -60,7 +61,7 @@ class AddContainerControllerSpec extends SpecBase with MockitoSugar with Nunjuck
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val containterNumber = arbitrary[Container].sample.value
+      val containterNumber = arbitrary[ContainerDomain].sample.value
       val ua               = emptyUserAnswers.set(ContainerNumberPage(eventIndex, containerIndex), containterNumber).success.value
 
       val application    = applicationBuilder(userAnswers = Some(ua)).build()

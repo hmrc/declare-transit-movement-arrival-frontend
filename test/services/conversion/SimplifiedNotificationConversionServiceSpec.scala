@@ -21,6 +21,7 @@ import java.time.LocalDate
 import base.SpecBase
 import generators.MessagesModelGenerators
 import models.GoodsLocation.{AuthorisedConsigneesLocation, BorderForceOffice}
+import models.domain.{ContainerDomain, ContainerTranshipmentDomain, EnRouteEventDomain, SealDomain, SimplifiedNotification, TraderDomain}
 import models.messages._
 import models.reference.{Country, CustomsOffice}
 import models.{Address, Index, UserAnswers}
@@ -38,10 +39,10 @@ class SimplifiedNotificationConversionServiceSpec extends SpecBase with ScalaChe
   private val service = injector.instanceOf[ArrivalNotificationConversionService]
 
   //TODO: Move this into MessagesModelGenerators
-  private val simplifiedNotificationWithSubplace: Gen[(SimplifiedNotification, Trader)] =
+  private val simplifiedNotificationWithSubplace: Gen[(SimplifiedNotification, TraderDomain)] =
     for {
       base     <- arbitrary[SimplifiedNotification]
-      trader   <- arbitrary[Trader]
+      trader   <- arbitrary[TraderDomain]
       approvedLocation <- stringsWithMaxLength(SimplifiedNotification.Constants.approvedLocationLength)
     } yield {
 
@@ -86,16 +87,16 @@ class SimplifiedNotificationConversionServiceSpec extends SpecBase with ScalaChe
       "when there is one incident on route" in {
         forAll(simplifiedNotificationWithSubplace, enRouteEventIncident) {
           case ((arbArrivalNotification, trader), (enRouteEvent, incident)) =>
-            val routeEvent: EnRouteEvent = enRouteEvent
+            val routeEvent: EnRouteEventDomain = enRouteEvent
               .copy(seals = None)
-              .copy(eventDetails = Some(incident.copy(date = None, authority = None, place = None, country = None)))
+              .copy(eventDetails = Some(incident))
 
             val arrivalNotification: SimplifiedNotification = arbArrivalNotification.copy(enRouteEvents = Some(Seq(routeEvent)))
 
             val userAnswers: UserAnswers = basicUserAnswers(trader, arrivalNotification, isIncidentOnRoute = true)
               .set(IsTranshipmentPage(eventIndex), false).success.value
               .set(EventPlacePage(eventIndex), routeEvent.place).success.value
-              .set(EventCountryPage(eventIndex), Country("Valid", routeEvent.countryCode, "country name")).success.value
+              .set(EventCountryPage(eventIndex), routeEvent.country).success.value
               .set(EventReportedPage(eventIndex), routeEvent.alreadyInNcts).success.value
 
             val updatedAnswers = incident.incidentInformation.fold[UserAnswers](userAnswers) {
@@ -110,31 +111,29 @@ class SimplifiedNotificationConversionServiceSpec extends SpecBase with ScalaChe
       "when there is one vehicle transhipment on route" in {
         forAll(simplifiedNotificationWithSubplace, enRouteEventVehicularTranshipment) {
           case ((arbArrivalNotification, trader), (enRouteEvent, vehicularTranshipment)) =>
-            val routeEvent: EnRouteEvent = enRouteEvent
-              .copy(seals = Some(Seq(Seal("seal 1"), Seal("seal 2"))))
-              .copy(eventDetails = Some(vehicularTranshipment.copy(date = None, authority = None, place = None, country = None,
-                containers = None)))
+            val routeEvent: EnRouteEventDomain = enRouteEvent
+              .copy(seals = Some(Seq(SealDomain("seal 1"), SealDomain("seal 2"))))
+              .copy(eventDetails = Some(vehicularTranshipment.copy(containers = None)))
 
             val arrivalNotification: SimplifiedNotification = arbArrivalNotification.copy(enRouteEvents = Some(Seq(routeEvent)))
             val userAnswers: UserAnswers = basicUserAnswers(trader, arrivalNotification, isIncidentOnRoute = true)
               .set(IsTranshipmentPage(eventIndex), true).success.value
               .set(EventPlacePage(eventIndex), routeEvent.place).success.value
-              .set(EventCountryPage(eventIndex), Country("Valid", routeEvent.countryCode, "country name")).success.value
+              .set(EventCountryPage(eventIndex), routeEvent.country).success.value
               .set(EventReportedPage(eventIndex), routeEvent.alreadyInNcts).success.value
               .set(TransportIdentityPage(eventIndex), vehicularTranshipment.transportIdentity).success.value
-              .set(TransportNationalityPage(eventIndex), Country("Valid", vehicularTranshipment.transportCountry, "country name")).success.value
-              .set(SealIdentityPage(eventIndex, Index(0)), Seal("seal 1")).success.value
-              .set(SealIdentityPage(eventIndex, Index(1)), Seal("seal 2")).success.value
+              .set(TransportNationalityPage(eventIndex), vehicularTranshipment.transportCountry).success.value
+              .set(SealIdentityPage(eventIndex, Index(0)), SealDomain("seal 1")).success.value
+              .set(SealIdentityPage(eventIndex, Index(1)), SealDomain("seal 2")).success.value
 
             service.convertToArrivalNotification(userAnswers).value mustEqual arrivalNotification
         }
       }
 
-      val enRouteEventContainerTranshipment: Gen[(EnRouteEvent, ContainerTranshipment)] = for {
-        generatedEnRouteEvent <- arbitrary[EnRouteEvent]
-        ct <- arbitrary[ContainerTranshipment]
+      val enRouteEventContainerTranshipment: Gen[(EnRouteEventDomain, ContainerTranshipmentDomain)] = for {
+        generatedEnRouteEvent <- arbitrary[EnRouteEventDomain]
+        containerTranshipment <- arbitrary[ContainerTranshipmentDomain]
       } yield {
-        val containerTranshipment = ct.copy(date = None, authority = None, place = None, country = None)
 
         val enRouteEvent = generatedEnRouteEvent.copy(eventDetails = Some(containerTranshipment), seals = None)
 
@@ -147,7 +146,7 @@ class SimplifiedNotificationConversionServiceSpec extends SpecBase with ScalaChe
 
             val expectedArrivalNotification: SimplifiedNotification = arbArrivalNotification.copy(enRouteEvents = Some(Seq(enRouteEvent)))
 
-            val containers: Seq[Container] = containerTranshipment.containers
+            val containers: Seq[ContainerDomain] = containerTranshipment.containers
 
             val userAnswers: UserAnswers = emptyUserAnswers
               .copy(id = expectedArrivalNotification.movementReferenceNumber)
@@ -160,7 +159,7 @@ class SimplifiedNotificationConversionServiceSpec extends SpecBase with ScalaChe
               .set(IncidentOnRoutePage, true).success.value
               .set(IsTranshipmentPage(eventIndex), true).success.value
               .set(EventPlacePage(eventIndex), enRouteEvent.place).success.value
-              .set(EventCountryPage(eventIndex), Country("Valid", enRouteEvent.countryCode, "country name")).success.value
+              .set(EventCountryPage(eventIndex), enRouteEvent.country).success.value
               .set(EventReportedPage(eventIndex), enRouteEvent.alreadyInNcts).success.value
               .set(ContainersQuery(eventIndex), containers).success.value
 
@@ -171,13 +170,13 @@ class SimplifiedNotificationConversionServiceSpec extends SpecBase with ScalaChe
       "when there multiple incidents on route" in {
         forAll(simplifiedNotificationWithSubplace, enRouteEventIncident, enRouteEventIncident) {
           case ((arbArrivalNotification, trader), (enRouteEvent1, incident1), (enRouteEvent2, incident2)) =>
-            val routeEvent1: EnRouteEvent = enRouteEvent1
+            val routeEvent1: EnRouteEventDomain = enRouteEvent1
               .copy(seals = None)
-              .copy(eventDetails = Some(incident1.copy(date = None, authority = None, place = None, country = None)))
+              .copy(eventDetails = Some(incident1))
 
-            val routeEvent2: EnRouteEvent = enRouteEvent2
+            val routeEvent2: EnRouteEventDomain = enRouteEvent2
               .copy(seals = None)
-              .copy(eventDetails = Some(incident2.copy(date = None, authority = None, place = None, country = None)))
+              .copy(eventDetails = Some(incident2))
 
             val arrivalNotification: SimplifiedNotification = arbArrivalNotification.copy(enRouteEvents = Some(Seq(routeEvent1, routeEvent2)))
 
@@ -186,11 +185,11 @@ class SimplifiedNotificationConversionServiceSpec extends SpecBase with ScalaChe
             val userAnswers: UserAnswers = basicUserAnswers(trader, arrivalNotification, isIncidentOnRoute = true)
               .set(IsTranshipmentPage(eventIndex), false).success.value
               .set(EventPlacePage(eventIndex), routeEvent1.place).success.value
-              .set(EventCountryPage(eventIndex), Country("Valid", routeEvent1.countryCode, "country name")).success.value
+              .set(EventCountryPage(eventIndex), routeEvent1.country).success.value
               .set(EventReportedPage(eventIndex), routeEvent1.alreadyInNcts).success.value
               .set(IsTranshipmentPage(eventIndex2), false).success.value
               .set(EventPlacePage(eventIndex2), routeEvent2.place).success.value
-              .set(EventCountryPage(eventIndex2), Country("Valid", routeEvent2.countryCode, "country name")).success.value
+              .set(EventCountryPage(eventIndex2), routeEvent2.country).success.value
               .set(EventReportedPage(eventIndex2), routeEvent2.alreadyInNcts).success.value
 
             val updatedAnswers1 = incident1.incidentInformation.fold[UserAnswers](userAnswers) {
@@ -230,7 +229,7 @@ class SimplifiedNotificationConversionServiceSpec extends SpecBase with ScalaChe
     }
   }
 
-  private def basicUserAnswers(trader: Trader, arrivalNotification: SimplifiedNotification, isIncidentOnRoute: Boolean = false): UserAnswers =
+  private def basicUserAnswers(trader: TraderDomain, arrivalNotification: SimplifiedNotification, isIncidentOnRoute: Boolean = false): UserAnswers =
     emptyUserAnswers
       .copy(id = arrivalNotification.movementReferenceNumber)
       .set(GoodsLocationPage, AuthorisedConsigneesLocation).success.value

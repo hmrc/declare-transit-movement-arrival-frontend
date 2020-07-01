@@ -20,6 +20,7 @@ import generators.MessagesModelGenerators
 import models.messages.Container
 import models.{Index, TranshipmentType, UserAnswers}
 import models.TranshipmentType._
+import models.domain.ContainerDomain
 import models.reference.Country
 import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
@@ -63,7 +64,7 @@ class TranshipmentTypePageSpec extends PageBehaviours with MessagesModelGenerato
 
       "must remove container numbers when the answer changes to Different Vehicle" in {
 
-        forAll(arbitrary[UserAnswers], arbitrary[Container]) {
+        forAll(arbitrary[UserAnswers], arbitrary[ContainerDomain]) {
           (userAnswers, containerNumber) =>
             val result = userAnswers
               .set(TranshipmentTypePage(eventIndex), DifferentContainer)
@@ -85,7 +86,7 @@ class TranshipmentTypePageSpec extends PageBehaviours with MessagesModelGenerato
 
       "must remove all transhipment data when there is no answer" in {
 
-        forAll(arbitrary[UserAnswers], arbitrary[String], arbitrary[Container], arbitrary[Country]) {
+        forAll(arbitrary[UserAnswers], arbitrary[String], arbitrary[ContainerDomain], arbitrary[Country]) {
           (userAnswers, stringAnswer, container, country) =>
             val result = userAnswers
               .set(TransportIdentityPage(eventIndex), stringAnswer)
