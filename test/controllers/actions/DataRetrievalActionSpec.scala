@@ -51,6 +51,7 @@ class DataRetrievalActionSpec
 
   val sessionRepository: SessionRepository = mock[SessionRepository]
   val mrn: MovementReferenceNumber         = arbitrary[MovementReferenceNumber].sample.value
+  val eoriNumber: EoriNumber               = arbitrary[EoriNumber].sample.value
 
   override lazy val app: Application = {
 
@@ -97,7 +98,7 @@ class DataRetrievalActionSpec
 
       "when there are existing answers for this MRN" in {
 
-        when(sessionRepository.get(any(), any())) thenReturn Future.successful(Some(UserAnswers(mrn)))
+        when(sessionRepository.get(any(), any())) thenReturn Future.successful(Some(UserAnswers(mrn, eoriNumber)))
 
         harness(mrn, {
           request =>

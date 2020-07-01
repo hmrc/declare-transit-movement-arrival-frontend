@@ -17,31 +17,23 @@
 package navigation
 
 import base.SpecBase
-import controllers.events.{routes => eventRoutes}
 import controllers.events.seals.{routes => sealRoutes}
 import controllers.events.transhipments.{routes => transhipmentRoutes}
+import controllers.events.{routes => eventRoutes}
 import controllers.routes
 import generators.{Generators, MessagesModelGenerators}
 import models.GoodsLocation.BorderForceOffice
 import models.TranshipmentType.{DifferentContainer, DifferentContainerAndVehicle, DifferentVehicle}
 import models.domain.{ContainerDomain, SealDomain}
-import models.messages.{Container, CustomsOfficeOfPresentation, Seal}
 import models.reference.{Country, CustomsOffice}
 import models.{Address, CheckMode, GoodsLocation, Index, NormalMode, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import pages.events._
 import pages._
+import pages.events._
 import pages.events.seals.{AddSealPage, HaveSealsChangedPage, SealIdentityPage}
-import pages.events.transhipments.{
-  AddContainerPage,
-  ConfirmRemoveContainerPage,
-  ContainerNumberPage,
-  TranshipmentTypePage,
-  TransportIdentityPage,
-  TransportNationalityPage
-}
+import pages.events.transhipments._
 import queries.{ContainersQuery, EventsQuery}
 
 class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generators with MessagesModelGenerators {
@@ -375,7 +367,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
                 val updatedAnswers =
                   answers
                     .set(ConsigneeEoriConfirmationPage, false).success.value
-                    .set(ConsigneeEoriNumberPage, eoriNumber).success.value
+                    .set(ConsigneeEoriNumberPage, eoriNumber.value).success.value
                 navigator
                   .nextPage(ConsigneeEoriConfirmationPage, CheckMode, updatedAnswers)
                   .mustBe(routes.CheckYourAnswersController.onPageLoad(answers.id))

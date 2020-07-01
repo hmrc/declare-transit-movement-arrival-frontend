@@ -88,7 +88,7 @@ class EventPlaceControllerSpec extends SpecBase with MockitoSugar with NunjucksS
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers    = UserAnswers(mrn).set(EventPlacePage(eventIndex), "answer").success.value
+      val userAnswers    = emptyUserAnswers.set(EventPlacePage(eventIndex), "answer").success.value
       val application    = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request        = FakeRequest(GET, eventPlaceRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])

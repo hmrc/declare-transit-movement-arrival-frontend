@@ -17,7 +17,7 @@
 package services
 
 import javax.inject.Inject
-import models.{ArrivalId, UserAnswers}
+import models.{ArrivalId, EoriNumber, UserAnswers}
 import services.conversion.ArrivalMovementRequestToUserAnswersService
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -25,13 +25,13 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class UserAnswersService @Inject()(arrivalNotificationMessageService: ArrivalNotificationMessageService)(implicit ec: ExecutionContext) {
 
-  def getUserAnswers(arrivalId: ArrivalId)(implicit hc: HeaderCarrier): Future[Option[UserAnswers]] =
+  def getUserAnswers(arrivalId: ArrivalId, eoriNumber: EoriNumber)(implicit hc: HeaderCarrier): Future[Option[UserAnswers]] =
     arrivalNotificationMessageService
       .getArrivalNotificationMessage(arrivalId)
       .map(
         _.flatMap {
           arrivalMovementRequest =>
-            ArrivalMovementRequestToUserAnswersService.apply(arrivalMovementRequest)
+            ArrivalMovementRequestToUserAnswersService.apply(arrivalMovementRequest, eoriNumber)
         }
       )
 }

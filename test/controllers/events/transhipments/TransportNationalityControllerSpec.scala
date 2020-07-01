@@ -63,7 +63,7 @@ class TransportNationalityControllerSpec extends SpecBase with MockitoSugar with
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
       val filledForm  = form.bind(Map("value" -> "GB"))
-      val userAnswers = UserAnswers(mrn).set(TransportNationalityPage(eventIndex), country).success.value
+      val userAnswers = emptyUserAnswers.set(TransportNationalityPage(eventIndex), country).success.value
 
       verifyOnPageLoad(filledForm, userAnswers, preSelect = true)
     }

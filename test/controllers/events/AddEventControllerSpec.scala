@@ -20,26 +20,20 @@ import base.SpecBase
 import forms.events.AddEventFormProvider
 import matchers.JsonMatchers
 import models.NormalMode
-import models.UserAnswers
-import navigation.FakeNavigator
-import navigation.Navigator
+import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
-import org.mockito.Mockito.times
-import org.mockito.Mockito.verify
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.events.AddEventPage
 import play.api.inject.bind
-import play.api.libs.json.JsObject
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import repositories.SessionRepository
-import uk.gov.hmrc.viewmodels.NunjucksSupport
-import uk.gov.hmrc.viewmodels.Radios
+import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.Future
 
@@ -88,7 +82,7 @@ class AddEventControllerSpec extends SpecBase with MockitoSugar with NunjucksSup
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers    = UserAnswers(mrn).set(AddEventPage, true).success.value
+      val userAnswers    = emptyUserAnswers.set(AddEventPage, true).success.value
       val application    = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request        = FakeRequest(GET, addEventRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])

@@ -63,7 +63,7 @@ class EventCountryControllerSpec extends SpecBase with MockitoSugar with Nunjuck
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
-      val userAnswers = UserAnswers(mrn).set(EventCountryPage(eventIndex), country).success.value
+      val userAnswers = emptyUserAnswers.set(EventCountryPage(eventIndex), country).success.value
       val filledForm  = form.bind(Map("value" -> "GB"))
 
       verifyOnPageLoad(Some(userAnswers), filledForm, true)

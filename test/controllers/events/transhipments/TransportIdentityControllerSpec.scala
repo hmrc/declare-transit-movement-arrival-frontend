@@ -85,7 +85,7 @@ class TransportIdentityControllerSpec extends SpecBase with MockitoSugar with Nu
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers    = UserAnswers(mrn).set(TransportIdentityPage(eventIndex), "answer").success.value
+      val userAnswers    = emptyUserAnswers.set(TransportIdentityPage(eventIndex), "answer").success.value
       val application    = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request        = FakeRequest(GET, transportIdentityRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])

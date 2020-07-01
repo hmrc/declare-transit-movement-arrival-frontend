@@ -19,8 +19,7 @@ package controllers
 import base.SpecBase
 import forms.GoodsLocationFormProvider
 import matchers.JsonMatchers
-import models.{GoodsLocation, NormalMode, UserAnswers}
-import navigation.{FakeNavigator, Navigator}
+import models.{GoodsLocation, NormalMode}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
@@ -28,7 +27,7 @@ import org.scalatestplus.mockito.MockitoSugar
 import pages.GoodsLocationPage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.{AnyContentAsFormUrlEncoded, Call}
+import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
@@ -82,7 +81,7 @@ class GoodsLocationControllerSpec extends SpecBase with MockitoSugar with Nunjuc
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers    = UserAnswers(mrn).set(GoodsLocationPage, GoodsLocation.values.head).success.value
+      val userAnswers    = emptyUserAnswers.set(GoodsLocationPage, GoodsLocation.values.head).success.value
       val application    = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request        = FakeRequest(GET, goodsLocationRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])

@@ -29,7 +29,7 @@ class ArrivalMovementRequestToUserAnswersServiceSpec extends SpecBase with Messa
 
     forAll(arbitrary[ArrivalMovementRequest]) {
       arrivalMovementRequest =>
-        val result = ArrivalMovementRequestToUserAnswersService.apply(arrivalMovementRequest)
+        val result = ArrivalMovementRequestToUserAnswersService.apply(arrivalMovementRequest, eoriNumber)
 
         result must be(defined)
         result.value mustBe an[UserAnswers]
@@ -44,7 +44,7 @@ class ArrivalMovementRequestToUserAnswersServiceSpec extends SpecBase with Messa
 
     forAll(failingArrivalMovementRequest) {
       arrivalMovementRequest =>
-        val result = ArrivalMovementRequestToUserAnswersService.apply(arrivalMovementRequest)
+        val result = ArrivalMovementRequestToUserAnswersService.apply(arrivalMovementRequest, eoriNumber)
 
         result must not be (defined)
     }

@@ -19,7 +19,7 @@ package controllers
 import base.SpecBase
 import forms.MovementReferenceNumberFormProvider
 import matchers.JsonMatchers
-import models.{EoriNumber, UserAnswers}
+import models.UserAnswers
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
@@ -99,7 +99,7 @@ class MovementReferenceNumberControllerSpec extends SpecBase with MockitoSugar w
       verify(mockSessionRepository).set(userAnswersCaptor.capture())
 
       userAnswersCaptor.getValue.id mustBe mrn
-      userAnswersCaptor.getValue.eoriNumber mustBe Some(EoriNumber(eoriNumber))
+      userAnswersCaptor.getValue.eoriNumber mustBe eoriNumber
 
       application.stop()
     }

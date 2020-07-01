@@ -19,7 +19,6 @@ package controllers.events.transhipments
 import base.SpecBase
 import forms.events.transhipments.ConfirmRemoveContainerFormProvider
 import matchers.JsonMatchers
-import models.messages.Container
 import models.{Index, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
@@ -176,6 +175,7 @@ class ConfirmRemoveContainerControllerSpec extends SpecBase with MockitoSugar wi
 
       val updateAnswers = UserAnswers(
         id          = presetUserAnswers.id,
+        eoriNumber  = presetUserAnswers.eoriNumber,
         data        = presetUserAnswers.remove(ContainerNumberPage(eventIndex, containerIndex)).success.value.data,
         lastUpdated = presetUserAnswers.lastUpdated
       )
@@ -211,6 +211,7 @@ class ConfirmRemoveContainerControllerSpec extends SpecBase with MockitoSugar wi
 
       val updateAnswers = UserAnswers(
         id          = presetUserAnswers.id,
+        eoriNumber  = eoriNumber,
         data        = presetUserAnswers.remove(ContainerNumberPage(eventIndex, containerIndex)).success.value.data,
         lastUpdated = presetUserAnswers.lastUpdated
       )

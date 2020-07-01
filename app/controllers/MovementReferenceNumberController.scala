@@ -64,9 +64,9 @@ class MovementReferenceNumberController @Inject()(override val messagesApi: Mess
             renderer.render("movementReferenceNumber.njk", json).map(BadRequest(_))
           },
           value =>
-            sessionRepository.set(UserAnswers(id = value, eoriNumber = Some(request.eoriNumber))) map {
+            sessionRepository.set(UserAnswers(id = value, eoriNumber = request.eoriNumber)) map {
               _ =>
-                Redirect(navigator.nextPage(MovementReferenceNumberPage, NormalMode, UserAnswers(value)))
+                Redirect(navigator.nextPage(MovementReferenceNumberPage, NormalMode, UserAnswers(value, request.eoriNumber)))
           }
         )
   }

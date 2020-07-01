@@ -19,15 +19,15 @@ package controllers
 import base.SpecBase
 import forms.EoriNumberFormProvider
 import matchers.JsonMatchers
-import models.{NormalMode, UserAnswers}
+import models.NormalMode
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.{AuthorisedLocationPage, ConsigneeEoriConfirmationPage, ConsigneeEoriNumberPage, ConsigneeNamePage}
+import pages.{ConsigneeEoriConfirmationPage, ConsigneeEoriNumberPage, ConsigneeNamePage}
 import play.api.inject.bind
-import play.api.libs.json.{JsObject, JsString, Json}
+import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -52,7 +52,7 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar with NunjucksS
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
-      val userAnswers = UserAnswers(mrn)
+      val userAnswers = emptyUserAnswers
         .set(ConsigneeEoriConfirmationPage, true)
         .success
         .value
@@ -87,14 +87,14 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar with NunjucksS
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
-      val userAnswers = UserAnswers(mrn)
+      val userAnswers = emptyUserAnswers
         .set(ConsigneeEoriConfirmationPage, false)
         .success
         .value
         .set(ConsigneeNamePage, traderName)
         .success
         .value
-        .set(ConsigneeEoriNumberPage, eoriNumber)
+        .set(ConsigneeEoriNumberPage, eoriNumber.value)
         .success
         .value
 
@@ -109,7 +109,7 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar with NunjucksS
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = formProvider(traderName).bind(Map("value" -> eoriNumber))
+      val filledForm = formProvider(traderName).bind(Map("value" -> eoriNumber.value))
 
       val expectedJson = Json.obj(
         "form"       -> filledForm,
@@ -130,7 +130,7 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar with NunjucksS
       val mockSessionRepository = mock[SessionRepository]
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-      val userAnswers = UserAnswers(mrn)
+      val userAnswers = emptyUserAnswers
         .set(ConsigneeEoriConfirmationPage, false)
         .success
         .value
@@ -147,7 +147,7 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar with NunjucksS
 
       val request =
         FakeRequest(POST, eoriNumberRoute)
-          .withFormUrlEncodedBody(("value", eoriNumber))
+          .withFormUrlEncodedBody(("value", eoriNumber.value))
 
       val result = route(application, request).value
 
@@ -161,7 +161,7 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar with NunjucksS
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
-      val userAnswers = UserAnswers(mrn)
+      val userAnswers = emptyUserAnswers
         .set(ConsigneeEoriConfirmationPage, false)
         .success
         .value

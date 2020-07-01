@@ -16,15 +16,15 @@
 
 package services.conversion
 
-import models.UserAnswers
+import models.{EoriNumber, UserAnswers}
 import models.messages.ArrivalMovementRequest
 
 object ArrivalMovementRequestToUserAnswersService {
 
-  def apply(arrivalMovementRequest: ArrivalMovementRequest): Option[UserAnswers] =
+  def apply(arrivalMovementRequest: ArrivalMovementRequest, eoriNumber: EoriNumber): Option[UserAnswers] =
     ArrivalMovementRequestConversionService.convertToArrivalNotification(arrivalMovementRequest).flatMap {
       arrivalNotification =>
-        UserAnswersConversionService.convertToUserAnswers(arrivalNotification)
+        UserAnswersConversionService.convertToUserAnswers(arrivalNotification, eoriNumber)
     }
 
 }

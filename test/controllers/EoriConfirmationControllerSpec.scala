@@ -19,7 +19,7 @@ package controllers
 import base.SpecBase
 import forms.EoriConfirmationFormProvider
 import matchers.JsonMatchers
-import models.{NormalMode, UserAnswers}
+import models.NormalMode
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
@@ -82,7 +82,7 @@ class EoriConfirmationControllerSpec extends SpecBase with MockitoSugar with Nun
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(mrn)
+      val userAnswers = emptyUserAnswers
         .set(ConsigneeEoriConfirmationPage, true)
         .success
         .value
@@ -120,7 +120,7 @@ class EoriConfirmationControllerSpec extends SpecBase with MockitoSugar with Nun
       val mockSessionRepository = mock[SessionRepository]
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-      val userAnswers = UserAnswers(mrn)
+      val userAnswers = emptyUserAnswers
         .set(ConsigneeEoriConfirmationPage, true)
         .success
         .value
@@ -153,7 +153,7 @@ class EoriConfirmationControllerSpec extends SpecBase with MockitoSugar with Nun
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(mrn)
+      val userAnswers = emptyUserAnswers
         .set(ConsigneeEoriConfirmationPage, true)
         .success
         .value
