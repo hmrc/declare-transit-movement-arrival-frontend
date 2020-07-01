@@ -85,7 +85,7 @@ class DataRetrievalActionSpec
 
       "where there are no existing answers for this MRN" in {
 
-        when(sessionRepository.get(any())) thenReturn Future.successful(None)
+        when(sessionRepository.get(any(), any())) thenReturn Future.successful(None)
 
         harness(mrn, {
           request =>
@@ -98,7 +98,7 @@ class DataRetrievalActionSpec
 
       "when there are existing answers for this MRN" in {
 
-        when(sessionRepository.get(any())) thenReturn Future.successful(Some(UserAnswers(mrn)))
+        when(sessionRepository.get(any(), any())) thenReturn Future.successful(Some(UserAnswers(mrn)))
 
         harness(mrn, {
           request =>

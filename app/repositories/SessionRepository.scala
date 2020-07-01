@@ -54,8 +54,8 @@ class DefaultSessionRepository @Inject()(mongo: ReactiveMongoApi, config: Config
       }
       .map(_ => ())
 
-  override def get(id: String): Future[Option[UserAnswers]] =
-    collection.flatMap(_.find(Json.obj("_id" -> id), None).one[UserAnswers])
+  override def get(id: String, eoriNumber: String): Future[Option[UserAnswers]] =
+    collection.flatMap(_.find(Json.obj("_id" -> id, "eoriNumber" -> eoriNumber), None).one[UserAnswers])
 
   override def set(userAnswers: UserAnswers): Future[Boolean] = {
 
@@ -87,7 +87,7 @@ trait SessionRepository {
 
   val started: Future[Unit]
 
-  def get(id: String): Future[Option[UserAnswers]]
+  def get(id: String, eoriNumber: String): Future[Option[UserAnswers]]
 
   def set(userAnswers: UserAnswers): Future[Boolean]
 

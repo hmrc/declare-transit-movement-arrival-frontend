@@ -19,6 +19,7 @@ package controllers
 import base.SpecBase
 import forms.MovementReferenceNumberFormProvider
 import matchers.JsonMatchers
+import models.UserAnswers
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
@@ -75,6 +76,7 @@ class MovementReferenceNumberControllerSpec extends SpecBase with MockitoSugar w
     "must redirect to the next page when valid data is submitted" in {
 
       val mockSessionRepository = mock[SessionRepository]
+      val userAnswersCaptor     = ArgumentCaptor.forClass(classOf[UserAnswers])
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
@@ -88,12 +90,16 @@ class MovementReferenceNumberControllerSpec extends SpecBase with MockitoSugar w
 
       val request =
         FakeRequest(POST, movementReferenceNumberRoute)
-          .withFormUrlEncodedBody(("value", "99IT9876AB88901209"))
+          .withFormUrlEncodedBody(("value", mrn.toString))
 
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual onwardRoute.url
+      verify(mockSessionRepository).set(userAnswersCaptor.capture())
+
+      userAnswersCaptor.getValue.id mustBe mrn
+      userAnswersCaptor.getValue.eoriNumber mustBe Some(eoriNumber)
 
       application.stop()
     }
