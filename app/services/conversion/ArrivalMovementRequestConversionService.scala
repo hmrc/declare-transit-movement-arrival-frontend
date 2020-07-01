@@ -26,10 +26,9 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class ArrivalMovementRequestConversionService @Inject()(referenceDataConnector: ReferenceDataConnector) {
+class ArrivalMovementRequestConversionService @Inject()(referenceDataConnector: ReferenceDataConnector)(implicit ec: ExecutionContext) {
 
-  def convertToArrivalNotification(arrivalMovementRequest: ArrivalMovementRequest)(implicit ec: ExecutionContext,
-                                                                                   hc: HeaderCarrier): Future[Option[NormalNotification]] =
+  def convertToArrivalNotification(arrivalMovementRequest: ArrivalMovementRequest)(implicit hc: HeaderCarrier): Future[Option[NormalNotification]] =
     (
       MovementReferenceNumber(arrivalMovementRequest.header.movementReferenceNumber),
       arrivalMovementRequest.header.customsSubPlace
@@ -56,24 +55,20 @@ class ArrivalMovementRequestConversionService @Inject()(referenceDataConnector: 
         }
     }
 
-  private def buildEnRouteEventDomain(enRouteEvent: EnRouteEvent)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[EnRouteEventDomain] =
+  private def buildEnRouteEventDomain(enRouteEvent: EnRouteEvent)(implicit hc: HeaderCarrier): Future[EnRouteEventDomain] =
     referenceDataConnector.getCountry(enRouteEvent.countryCode).flatMap {
       eventCountry =>
-        buildEventDetailsDomain(enRouteEvent.eventDetails).map {
-          eventDetails =>
-            EnRouteEvent.enRouteEventToDomain(enRouteEvent, eventCountry, eventDetails)
-        }
+        enRouteEvent.eventDetails
+          .traverse(buildEventDetailsDomain)
+          .map(EnRouteEvent.enRouteEventToDomain(enRouteEvent, eventCountry, _))
     }
 
-  private def buildEventDetailsDomain(eventDetails: Option[EventDetails])(implicit hc: HeaderCarrier,
-                                                                          ec: ExecutionContext): Future[Option[EventDetailsDomain]] =
-    eventDetails.traverse {
-      case vehicularTranshipment: VehicularTranshipment => {
-        referenceDataConnector.getCountry(vehicularTranshipment.transportCountry).map {
-          country =>
-            VehicularTranshipment.vehicularTranshipmentToDomain(vehicularTranshipment, country)
-        }
-      }
+  private def buildEventDetailsDomain(eventDetails: EventDetails)(implicit hc: HeaderCarrier): Future[EventDetailsDomain] =
+    eventDetails match {
+      case vehicularTranshipment: VehicularTranshipment =>
+        referenceDataConnector
+          .getCountry(vehicularTranshipment.transportCountry)
+          .map(VehicularTranshipment.vehicularTranshipmentToDomain(vehicularTranshipment, _))
       case incident: Incident                           => Future.successful(Incident.incidentToDomain(incident))
       case containerTranshipment: ContainerTranshipment => Future.successful(ContainerTranshipment.containerTranshipmentToDomain(containerTranshipment))
     }

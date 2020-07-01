@@ -45,7 +45,7 @@ class ArrivalMovementRequestToUserAnswersServiceSpec extends SpecBase with Messa
 
     val arrivalMovementRequestToUserAnswers = application.injector.instanceOf[ArrivalMovementRequestToUserAnswersService]
 
-    when(mockArrivalMovementRequestConversionService.convertToArrivalNotification(any())(any(), any()))
+    when(mockArrivalMovementRequestConversionService.convertToArrivalNotification(any())(any()))
       .thenReturn(Future.successful(Some(sampleNotificationDomain)))
 
     val result = arrivalMovementRequestToUserAnswers.apply(sampleMovementRequest)
@@ -67,7 +67,7 @@ class ArrivalMovementRequestToUserAnswersServiceSpec extends SpecBase with Messa
 
     val arrivalMovementRequestToUserAnswers = application.injector.instanceOf[ArrivalMovementRequestToUserAnswersService]
 
-    when(mockArrivalMovementRequestConversionService.convertToArrivalNotification(any())(any(), any()))
+    when(mockArrivalMovementRequestConversionService.convertToArrivalNotification(any())(any()))
       .thenReturn(Future.successful(None))
 
     val result = arrivalMovementRequestToUserAnswers.apply(sampleMovementRequest)
