@@ -21,6 +21,7 @@ import derivable.DeriveNumberOfSeals
 import forms.events.seals.ConfirmRemoveSealFormProvider
 import handlers.ErrorHandler
 import javax.inject.Inject
+import models.domain.SealDomain
 import models.messages.Seal
 import models.requests.DataRequest
 import models.{Index, Mode, MovementReferenceNumber, UserAnswers}
@@ -64,7 +65,7 @@ class ConfirmRemoveSealController @Inject()(
             val form = formProvider(seal)
             renderPage(mrn, eventIndex, sealIndex, mode, form, seal).map(Ok(_))
           case _ =>
-            renderErrorPage(eventIndex, mode, request.userAnswers)
+            renderErrorPage(eventIndex, mode)
         }
     }
 
@@ -88,11 +89,11 @@ class ConfirmRemoveSealController @Inject()(
                 }
               )
           case _ =>
-            renderErrorPage(eventIndex, mode, request.userAnswers)
+            renderErrorPage(eventIndex, mode)
         }
     }
 
-  private def renderPage(mrn: MovementReferenceNumber, eventIndex: Index, sealIndex: Index, mode: Mode, form: Form[Boolean], seal: Seal)(
+  private def renderPage(mrn: MovementReferenceNumber, eventIndex: Index, sealIndex: Index, mode: Mode, form: Form[Boolean], seal: SealDomain)(
     implicit request: DataRequest[AnyContent]): Future[Html] = {
     val json = Json.obj(
       "form"        -> form,
@@ -105,7 +106,7 @@ class ConfirmRemoveSealController @Inject()(
     renderer.render(confirmRemoveSealTemplate, json)
 
   }
-  private def renderErrorPage(eventIndex: Index, mode: Mode, userAnswers: UserAnswers)(implicit request: DataRequest[AnyContent]): Future[Result] = {
+  private def renderErrorPage(eventIndex: Index, mode: Mode)(implicit request: DataRequest[AnyContent]): Future[Result] = {
     val redirectLinkText = if (request.userAnswers.get(DeriveNumberOfSeals(eventIndex)).contains(0)) "noSeal" else "multipleSeal"
     val redirectLink     = navigator.nextPage(ConfirmRemoveSealPage(eventIndex), mode, request.userAnswers).url
 

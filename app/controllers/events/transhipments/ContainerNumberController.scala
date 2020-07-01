@@ -19,7 +19,7 @@ package controllers.events.transhipments
 import controllers.actions._
 import forms.events.transhipments.ContainerNumberFormProvider
 import javax.inject.Inject
-import models.messages.Container
+import models.domain.ContainerDomain
 import models.{Index, Mode, MovementReferenceNumber}
 import navigation.Navigator
 import pages.events.transhipments.ContainerNumberPage
@@ -88,7 +88,7 @@ class ContainerNumberController @Inject()(
             },
             value =>
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(ContainerNumberPage(eventIndex, containerIndex), Container(value)))
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(ContainerNumberPage(eventIndex, containerIndex), ContainerDomain(value)))
                 _              <- sessionRepository.set(updatedAnswers)
               } yield Redirect(navigator.nextPage(ContainerNumberPage(eventIndex, containerIndex), mode, updatedAnswers))
           )

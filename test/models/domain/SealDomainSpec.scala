@@ -14,25 +14,22 @@
  * limitations under the License.
  */
 
-package models.messages
+package models.domain
 
-import java.time.LocalDate
+import generators.MessagesModelGenerators
+import models.messages.Seal
+import models.messages.behaviours.JsonBehaviours
+import org.scalacheck.Arbitrary.arbitrary
+import org.scalatest.{FreeSpec, MustMatchers}
 
-import play.api.libs.json.{Format, Json}
+class SealDomainSpec extends FreeSpec with MustMatchers with MessagesModelGenerators with JsonBehaviours {
 
-final case class GoodsReleaseNotificationMessage(
-  movementReferenceNumber: String,
-  releaseDate: LocalDate,
-  trader: Trader,
-  presentationOffice: String
-)
+  "must convert to Seal model" in {
 
-object GoodsReleaseNotificationMessage {
-
-  object Constants {
-    val presentationOfficeLength = 8
+    forAll(arbitrary[SealDomain]) {
+      sealDomain =>
+        SealDomain.domainSealToSeal(sealDomain) mustBe an[Seal]
+    }
   }
 
-  implicit lazy val format: Format[GoodsReleaseNotificationMessage] =
-    Json.format[GoodsReleaseNotificationMessage]
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models.messages
+package models.domain
 
 import generators.MessagesModelGenerators
 import models.GoodsLocation
@@ -23,21 +23,11 @@ import models.reference.CustomsOffice
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.{FreeSpec, MustMatchers}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import pages.{
-  CustomsSubPlacePage,
-  GoodsLocationPage,
-  IncidentOnRoutePage,
-  IsTraderAddressPlaceOfNotificationPage,
-  PlaceOfNotificationPage,
-  PresentationOfficePage,
-  TraderAddressPage,
-  TraderEoriPage,
-  TraderNamePage
-}
-import play.api.libs.json.{JsError, JsObject, JsSuccess, Json}
+import pages._
+import play.api.libs.json.{JsObject, Json}
 import queries.EventsQuery
 
-class ArrivalNotificationSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with MessagesModelGenerators with JsonBehaviours {
+class ArrivalNotificationDomainSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with MessagesModelGenerators with JsonBehaviours {
 
   "Normal notification" - {
 
@@ -70,7 +60,7 @@ class ArrivalNotificationSpec extends FreeSpec with MustMatchers with ScalaCheck
       forAll(arbitrary[NormalNotification]) {
         normalNotification =>
           val json = createNormalNotificationJson(normalNotification)
-          Json.toJson(normalNotification: ArrivalNotification) mustEqual json
+          Json.toJson(normalNotification: ArrivalNotificationDomain) mustEqual json
       }
     }
 
@@ -79,7 +69,7 @@ class ArrivalNotificationSpec extends FreeSpec with MustMatchers with ScalaCheck
       forAll(arbitrary[SimplifiedNotification]) {
         simplifiedNotification =>
           val json = createSimplifiedNotificationJson(simplifiedNotification)
-          Json.toJson(simplifiedNotification: ArrivalNotification) mustEqual json
+          Json.toJson(simplifiedNotification: ArrivalNotificationDomain) mustEqual json
       }
     }
   }

@@ -20,12 +20,12 @@ import com.lucidchart.open.xtract.XmlReader
 import generators.MessagesModelGenerators
 import models.LanguageCodeEnglish
 import models.XMLWrites._
+import models.domain.EnRouteEventDomain
 import models.messages.behaviours.JsonBehaviours
+import models.reference.Country
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.{FreeSpec, MustMatchers, OptionValues, StreamlinedXmlEquality}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.libs.json.{JsObject, Json}
-import models._
 
 class EnRouteEventSpec
     extends FreeSpec
@@ -128,12 +128,21 @@ class EnRouteEventSpec
       }
     }
 
-    "must serialise" in {
+    "must convert to EnRouteEventDomain model" in {
 
       forAll(arbitrary[EnRouteEvent]) {
         enRouteEvent =>
-          val json = createEnRouteEventJson(enRouteEvent)
-          Json.toJson(enRouteEvent) mustEqual json
+          val country = Country("", enRouteEvent.countryCode, "")
+
+          val enRouteEventDomain = EnRouteEventDomain(
+            enRouteEvent.place,
+            country,
+            enRouteEvent.alreadyInNcts,
+            enRouteEvent.eventDetails.map(EventDetails.eventDetailToDomain),
+            enRouteEvent.seals.map(_.map(Seal.sealToDomain))
+          )
+
+          EnRouteEvent.enRouteEventToDomain(enRouteEvent, country) mustBe enRouteEventDomain
       }
     }
 
@@ -238,17 +247,4 @@ class EnRouteEventSpec
     }
   }
 
-  def createEnRouteEventJson(enRouteEvent: EnRouteEvent): JsObject =
-    Json.obj(
-      "eventPlace"       -> enRouteEvent.place,
-      "eventReported"    -> enRouteEvent.alreadyInNcts,
-      "eventCountry"     -> Json.obj("state" -> "", "code" -> enRouteEvent.countryCode, "description" -> ""),
-      "seals"            -> Json.toJson(enRouteEvent.seals),
-      "haveSealsChanged" -> enRouteEvent.seals.isDefined
-    ) ++ enRouteEvent.eventDetails
-      .map {
-        result =>
-          Json.toJsObject(result).filterNulls
-      }
-      .getOrElse(JsObject.empty)
 }

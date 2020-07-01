@@ -43,13 +43,13 @@ class ConfirmRemoveContainerControllerSpec extends SpecBase with MockitoSugar wi
   private def onwardRoute = Call("GET", "/foo")
 
   private val formProvider = new ConfirmRemoveContainerFormProvider()
-  private val form         = formProvider(container)
+  private val form         = formProvider(domainContainer)
 
   private lazy val confirmRemoveContainerRoute    = routes.ConfirmRemoveContainerController.onPageLoad(mrn, eventIndex, containerIndex, NormalMode).url
   private lazy val confirmRemoveContainerTemplate = "events/transhipments/confirmRemoveContainer.njk"
 
   private val presetUserAnswers =
-    emptyUserAnswers.set(ContainerNumberPage(eventIndex, containerIndex), container).success.value
+    emptyUserAnswers.set(ContainerNumberPage(eventIndex, containerIndex), domainContainer).success.value
 
   "ConfirmRemoveContainer Controller" - {
 
@@ -118,10 +118,10 @@ class ConfirmRemoveContainerControllerSpec extends SpecBase with MockitoSugar wi
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
       val updatedAnswer = presetUserAnswers
-        .set(ContainerNumberPage(eventIndex, Index(1)), container)
+        .set(ContainerNumberPage(eventIndex, Index(1)), domainContainer)
         .success
         .value
-        .set(ContainerNumberPage(eventIndex, Index(2)), container)
+        .set(ContainerNumberPage(eventIndex, Index(2)), domainContainer)
         .success
         .value
         .remove(ContainerNumberPage(eventIndex, Index(2)))

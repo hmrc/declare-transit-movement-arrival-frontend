@@ -17,13 +17,12 @@
 package pages.events.transhipments
 
 import models.Index
-import models.messages.Container
+import models.domain.ContainerDomain
 import pages.QuestionPage
-import pages.events.SectionConstants
 import play.api.libs.json.JsPath
 import queries.ContainersQuery
 
-final case class ContainerNumberPage(eventIndex: Index, containerIndex: Index) extends QuestionPage[Container] {
+final case class ContainerNumberPage(eventIndex: Index, containerIndex: Index) extends QuestionPage[ContainerDomain] {
 
   override def path: JsPath = ContainersQuery(eventIndex).path \ containerIndex.position
 

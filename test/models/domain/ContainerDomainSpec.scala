@@ -14,15 +14,22 @@
  * limitations under the License.
  */
 
-package pages.events.seals
+package models.domain
 
-import models.Index
-import models.domain.SealDomain
-import pages.QuestionPage
-import pages.events.SectionConstants
-import play.api.libs.json.JsPath
+import generators.MessagesModelGenerators
+import models.messages.Container
+import org.scalacheck.Arbitrary.arbitrary
+import org.scalatest.{FreeSpec, MustMatchers, OptionValues}
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
-case class SealIdentityPage(eventIndex: Index, sealIndex: Index) extends QuestionPage[SealDomain] {
+class ContainerDomainSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with MessagesModelGenerators with OptionValues {
 
-  override def path: JsPath = JsPath \ SectionConstants.events \ eventIndex.position \ SectionConstants.seals \ sealIndex.position
+  "must convert to Container model" in {
+
+    forAll(arbitrary[ContainerDomain]) {
+      containerDomain =>
+        ContainerDomain.domainContainerToContainer(containerDomain) mustBe an[Container]
+    }
+  }
+
 }

@@ -14,27 +14,25 @@
  * limitations under the License.
  */
 
-package models.messages
+package models.domain
 
-import com.lucidchart.open.xtract.{__, XmlReader}
 import forms.mappings.StringEquivalence
-import models.XMLWrites
-import models.domain.ContainerDomain
+import models.messages.Container
 import play.api.libs.json.{Json, OFormat}
 
-case class Container(containerNumber: String)
+case class ContainerDomain(containerNumber: String)
 
-object Container {
+object ContainerDomain {
 
-  def containerToDomain(container: Container): ContainerDomain =
-    Container.unapply(container).map(ContainerDomain.apply).get
+  def domainContainerToContainer(domainContainer: ContainerDomain): Container =
+    ContainerDomain.unapply(domainContainer).map(Container.apply).get
 
-  implicit def xmlWrites: XMLWrites[Container] = XMLWrites[Container] {
-    container =>
-      <CONNR3>
-          <ConNumNR31>{escapeXml(container.containerNumber)}</ConNumNR31>
-      </CONNR3>
+  object Constants {
+    val containerNumberLength = 17
   }
 
-  implicit lazy val xmlReader: XmlReader[Container] = (__ \ "ConNumNR31").read[String].map(apply)
+  implicit val formats: OFormat[ContainerDomain] = Json.format[ContainerDomain]
+
+  implicit val containerStringEquivalenceCheck: StringEquivalence[ContainerDomain] =
+    StringEquivalence[ContainerDomain]((container, stringContainer) => container.containerNumber == stringContainer)
 }

@@ -41,10 +41,10 @@ class ArrivalSubmissionServiceSpec extends SpecBase with MessagesModelGenerators
   private val mockInterchangeControllerReference    = mock[InterchangeControlReferenceIdRepository]
   private val mockArrivalNotificationMessageService = mock[ArrivalNotificationMessageService]
 
-  private val traderWithoutEori  = Trader("", "", "", "", "", "")
-  private val normalNotification = NormalNotification(mrn, "", LocalDate.now(), None, traderWithoutEori, "", "", None)
+  private val traderWithoutEori  = TraderDomain("", "", "", "", "", "")
+  private val normalNotification = NormalNotification(mrn, "", LocalDate.now(), "", traderWithoutEori, "", "", None)
 
-  private val userEoriNumber = arbitrary[EoriNumber].sample.value
+  private val userEoriNumber = arbitrary[String].sample.value
 
   override def beforeEach: Unit = {
     super.beforeEach()

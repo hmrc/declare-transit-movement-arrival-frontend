@@ -18,8 +18,10 @@ package services.conversion
 
 import base.SpecBase
 import generators.MessagesModelGenerators
-import models.MovementReferenceNumber
-import models.messages.{ArrivalMovementRequest, Header, NormalNotification, Trader}
+import models.{domain, MovementReferenceNumber}
+import models.domain.{NormalNotification, TraderDomain}
+import models.messages.{ArrivalMovementRequest, EnRouteEvent, Header}
+import models.reference.Country
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
@@ -32,7 +34,7 @@ class ArrivalMovementRequestConversionServiceSpec extends SpecBase with Messages
     "must return None if MRN is malformed" in {
       val arrivalMovementRequest: ArrivalMovementRequest = arbitrary[ArrivalMovementRequest].sample.value
 
-      val header: Header = arrivalMovementRequest.header.copy(movementReferenceNumber = "FRANK")
+      val header: Header = arrivalMovementRequest.header.copy(movementReferenceNumber = "Invalid MRN")
 
       val arrivalMovementRequestWithMalformedMrn: ArrivalMovementRequest = arrivalMovementRequest.copy(header = header)
 
@@ -41,15 +43,25 @@ class ArrivalMovementRequestConversionServiceSpec extends SpecBase with Messages
 
     "must convert ArrivalMovementRequest to NormalNotification for trader" in {
 
-      val arrivalNotificationRequest = arbitrary[ArrivalMovementRequest].sample.value
+      val genArrivalNotificationRequest = arbitrary[ArrivalMovementRequest].sample.value
+      val arrivalNotificationRequest    = genArrivalNotificationRequest.copy(header = genArrivalNotificationRequest.header.copy(customsSubPlace = Some("")))
+
+      val convertEnRouteEvents = arrivalNotificationRequest.enRouteEvents.map {
+        events =>
+          events.map {
+            event =>
+              val country = Country("", event.countryCode, "")
+              EnRouteEvent.enRouteEventToDomain(event, country)
+          }
+      }
 
       val normalNotification: NormalNotification = {
-        NormalNotification(
+        domain.NormalNotification(
           movementReferenceNumber = MovementReferenceNumber(arrivalNotificationRequest.header.movementReferenceNumber).get,
           notificationPlace       = arrivalNotificationRequest.header.arrivalNotificationPlace,
           notificationDate        = arrivalNotificationRequest.header.notificationDate,
-          customsSubPlace         = arrivalNotificationRequest.header.customsSubPlace,
-          trader = Trader(
+          customsSubPlace         = arrivalNotificationRequest.header.customsSubPlace.getOrElse(""),
+          trader = TraderDomain(
             name            = arrivalNotificationRequest.trader.name,
             city            = arrivalNotificationRequest.trader.city,
             postCode        = arrivalNotificationRequest.trader.postCode,
@@ -59,7 +71,7 @@ class ArrivalMovementRequestConversionServiceSpec extends SpecBase with Messages
           ),
           presentationOfficeId   = arrivalNotificationRequest.header.presentationOfficeId,
           presentationOfficeName = arrivalNotificationRequest.header.presentationOfficeName,
-          enRouteEvents          = arrivalNotificationRequest.enRouteEvents
+          enRouteEvents          = convertEnRouteEvents
         )
       }
 

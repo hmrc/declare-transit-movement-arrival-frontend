@@ -16,14 +16,14 @@
 
 package models.messages
 
-import com.lucidchart.open.xtract.{XmlReader, __ => xmlPath}
-import com.lucidchart.open.xtract.XmlReader._
-import models.XMLWrites._
-import models.XMLReads._
 import cats.syntax.all._
+import com.lucidchart.open.xtract.XmlReader._
+import com.lucidchart.open.xtract.{XmlReader, __ => xmlPath}
+import models.XMLReads._
+import models.XMLWrites._
+import models.domain.EnRouteEventDomain
+import models.reference.Country
 import models.{LanguageCodeEnglish, XMLWrites}
-import play.api.libs.json._
-import models._
 
 import scala.xml.NodeSeq
 
@@ -37,24 +37,20 @@ object EnRouteEvent {
     val sealsLength       = 20
   }
 
-  implicit lazy val writes: OWrites[EnRouteEvent] =
-    OWrites[EnRouteEvent] {
-      event =>
-        Json
-          .obj(
-            "eventPlace"       -> event.place,
-            "eventReported"    -> event.alreadyInNcts,
-            "eventCountry"     -> Json.obj("state" -> "", "code" -> event.countryCode, "description" -> ""),
-            "seals"            -> Json.toJson(event.seals),
-            "haveSealsChanged" -> event.seals.isDefined
-          ) ++ event.eventDetails
-          .map {
-            result =>
-              Json.toJsObject(result).filterNulls
-          }
-          .getOrElse(JsObject.empty)
-
-    }
+  def enRouteEventToDomain(enRouteEvent: EnRouteEvent, country: Country): EnRouteEventDomain =
+    EnRouteEvent
+      .unapply(enRouteEvent)
+      .map {
+        case _ @(place, _, alreadyInNct, eventDetails, seals) =>
+          EnRouteEventDomain(
+            place,
+            country,
+            alreadyInNct,
+            eventDetails.map(EventDetails.eventDetailToDomain),
+            seals.map(_.map(Seal.sealToDomain))
+          )
+      }
+      .get
 
   implicit def xmlWrites: XMLWrites[EnRouteEvent] = XMLWrites[EnRouteEvent] {
     enRouteEvent =>
@@ -81,11 +77,11 @@ object EnRouteEvent {
           }
         </CTLCTL>
         {
-        enRouteEvent.eventDetails.map {
-          case incident: Incident                           => incident.toXml ++ buildSealsXml
-          case containerTranshipment: ContainerTranshipment => buildSealsXml ++ containerTranshipment.toXml
-          case vehicularTranshipment: VehicularTranshipment => buildSealsXml ++ vehicularTranshipment.toXml
-        }.getOrElse(NodeSeq.Empty)
+          enRouteEvent.eventDetails.map {
+            case incident: Incident                           => incident.toXml ++ buildSealsXml
+            case containerTranshipment: ContainerTranshipment => buildSealsXml ++ containerTranshipment.toXml
+            case vehicularTranshipment: VehicularTranshipment => buildSealsXml ++ vehicularTranshipment.toXml
+          }.getOrElse(NodeSeq.Empty)
         }
       </ENROUEVETEV>
   }

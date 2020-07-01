@@ -17,22 +17,34 @@
 package services.conversion
 
 import models.MovementReferenceNumber
-import models.messages.{ArrivalMovementRequest, ArrivalNotification, NormalNotification}
+import models.domain.{ArrivalNotificationDomain, EnRouteEventDomain, NormalNotification}
+import models.messages.{ArrivalMovementRequest, EnRouteEvent, Trader}
+import models.reference.Country
 
 object ArrivalMovementRequestConversionService {
 
-  def convertToArrivalNotification(arrivalMovementRequest: ArrivalMovementRequest): Option[ArrivalNotification] =
+  def convertToArrivalNotification(arrivalMovementRequest: ArrivalMovementRequest): Option[ArrivalNotificationDomain] =
     MovementReferenceNumber(arrivalMovementRequest.header.movementReferenceNumber) map {
       mrn =>
+        // TODO How do we handle the call to the connector here???
+        val buildEnrouteEvents: Option[Seq[EnRouteEventDomain]] = arrivalMovementRequest.enRouteEvents.map {
+          events =>
+            events.map {
+              event =>
+                val country = Country("", event.countryCode, "")
+                EnRouteEvent.enRouteEventToDomain(event, country)
+            }
+        }
+
         NormalNotification(
           mrn,
           arrivalMovementRequest.header.arrivalNotificationPlace,
           arrivalMovementRequest.header.notificationDate,
-          arrivalMovementRequest.header.customsSubPlace,
-          arrivalMovementRequest.trader,
+          arrivalMovementRequest.header.customsSubPlace.get, // TODO need to address the case when there is no subsplace
+          Trader.messagesTraderToDomainTrader(arrivalMovementRequest.trader),
           arrivalMovementRequest.header.presentationOfficeId,
           arrivalMovementRequest.header.presentationOfficeName,
-          arrivalMovementRequest.enRouteEvents
+          buildEnrouteEvents
         )
     }
 }

@@ -45,10 +45,10 @@ class ConfirmRemoveSealControllerSpec extends SpecBase with MockitoSugar with Nu
   def onwardRoute: Call = Call("GET", "/foo")
 
   private val formProvider        = new ConfirmRemoveSealFormProvider()
-  private val form: Form[Boolean] = formProvider(seal)
+  private val form: Form[Boolean] = formProvider(sealDomain)
 
   private val removeSealRoute: String   = routes.ConfirmRemoveSealController.onPageLoad(mrn, eventIndex, sealIndex, NormalMode).url
-  private val userAnswersWithSeal       = emptyUserAnswers.set(SealIdentityPage(eventIndex, sealIndex), seal).success.value
+  private val userAnswersWithSeal       = emptyUserAnswers.set(SealIdentityPage(eventIndex, sealIndex), sealDomain).success.value
   private val confirmRemoveSealTemplate = "events/seals/confirmRemoveSeal.njk"
 
   "ConfirmRemoveSealController" - {
@@ -117,10 +117,10 @@ class ConfirmRemoveSealControllerSpec extends SpecBase with MockitoSugar with Nu
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
       val updatedAnswer = userAnswersWithSeal
-        .set(SealIdentityPage(eventIndex, Index(1)), seal)
+        .set(SealIdentityPage(eventIndex, Index(1)), sealDomain)
         .success
         .value
-        .set(SealIdentityPage(eventIndex, Index(2)), seal)
+        .set(SealIdentityPage(eventIndex, Index(2)), sealDomain)
         .success
         .value
         .remove(SealIdentityPage(eventIndex, Index(2)))

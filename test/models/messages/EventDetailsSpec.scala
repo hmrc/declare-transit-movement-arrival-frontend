@@ -18,14 +18,14 @@ package models.messages
 
 import com.lucidchart.open.xtract.XmlReader
 import generators.MessagesModelGenerators
+import models.LanguageCodeEnglish
 import models.XMLWrites._
+import models.domain.{ContainerTranshipmentDomain, IncidentDomain, VehicularTranshipmentDomain}
 import models.messages.behaviours.JsonBehaviours
-import models.{LanguageCodeEnglish, _}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.OptionValues._
 import org.scalatest.{FreeSpec, MustMatchers, StreamlinedXmlEquality}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.libs.json.{JsObject, Json}
 import utils.Format
 
 import scala.xml.{Elem, NodeSeq}
@@ -37,6 +37,34 @@ class EventDetailsSpec
     with MessagesModelGenerators
     with JsonBehaviours
     with StreamlinedXmlEquality {
+
+  "EventDetails" - {
+
+    "must convert Incident event to IncidentDomain" in {
+
+      forAll(arbitrary[Incident]) {
+        incident =>
+          EventDetails.eventDetailToDomain(incident: EventDetails) mustBe an[IncidentDomain]
+      }
+    }
+
+    "must convert ContainerTranshipment event to ContainerTranshipmentDomain" in {
+
+      forAll(arbitrary[ContainerTranshipment]) {
+        containerTranshipment =>
+          EventDetails.eventDetailToDomain(containerTranshipment: EventDetails) mustBe an[ContainerTranshipmentDomain]
+      }
+    }
+
+    "must convert VehicularTranshipment event to VehicularTranshipmentDomain" in {
+
+      forAll(arbitrary[VehicularTranshipment]) {
+        vehicularTranshipment =>
+          EventDetails.eventDetailToDomain(vehicularTranshipment: EventDetails) mustBe an[VehicularTranshipmentDomain]
+      }
+    }
+
+  }
 
   "Incident" - {
 
@@ -155,12 +183,10 @@ class EventDetailsSpec
       }
     }
 
-    "must serialise" in {
-
+    "must convert to IncidentDomain model" in {
       forAll(arbitrary[Incident]) {
         incident =>
-          val json = incidentJson(incident)
-          Json.toJson(incident)(Incident.incidentJsonWrites) mustEqual json
+          Incident.incidentToDomain(incident) mustBe an[IncidentDomain]
       }
     }
   }
@@ -284,12 +310,10 @@ class EventDetailsSpec
       }
     }
 
-    "must serialise" in {
-
+    "must convert to ContainerTranshipmentDomain model" in {
       forAll(arbitrary[ContainerTranshipment]) {
         containerTranshipment =>
-          val json = Json.toJson(containerTranshipment)(ContainerTranshipment.containerJsonWrites)
-          Json.toJson(containerTranshipment)(ContainerTranshipment.containerJsonWrites) mustEqual json
+          ContainerTranshipment.containerTranshipmentToDomain(containerTranshipment) mustBe an[ContainerTranshipmentDomain]
       }
     }
   }
@@ -498,98 +522,13 @@ class EventDetailsSpec
       }
     }
 
-    "must serialise" in {
-
+    "must convert to VehicularTranshipment model" in {
       forAll(arbitrary[VehicularTranshipment]) {
         vehicularTranshipment =>
-          val json = vehicularTranshipmentJson(vehicularTranshipment)
+          val result = VehicularTranshipment.vehicularTranshipmentToDomain(vehicularTranshipment)
 
-          Json.toJson(vehicularTranshipment)(VehicularTranshipment.vehicularTranshipmentJsonWrites) mustEqual json
+          result mustBe an[VehicularTranshipmentDomain]
       }
     }
   }
-
-  "Transhipment" - {
-
-    "must serialise from a Vehicular transhipment" in {
-
-      forAll(arbitrary[VehicularTranshipment]) {
-        vehicularTranshipment =>
-          val json = vehicularTranshipmentJson(vehicularTranshipment)
-          Json.toJson(vehicularTranshipment: Transhipment)(Transhipment.transhipmentJsonWrites) mustEqual json
-      }
-    }
-
-    "must serialise from a Container transhipment" in {
-      val transhipmentType = Json.obj("transhipmentType" -> TranshipmentType.DifferentContainer.toString)
-
-      forAll(arbitrary[ContainerTranshipment]) {
-        containerTranshipment =>
-          val json = Json.toJson(containerTranshipment)(ContainerTranshipment.containerJsonWrites).as[JsObject] ++ transhipmentType
-          Json.toJson(containerTranshipment: Transhipment)(Transhipment.transhipmentJsonWrites) mustEqual json
-      }
-    }
-  }
-
-  "EventDetails" - {
-
-    "must serialise from an Incident" in {
-
-      forAll(arbitrary[Incident]) {
-        incident =>
-          val json = incidentJson(incident)
-          Json.toJson(incident: EventDetails) mustEqual json
-      }
-    }
-
-    "must serialise from a Vehicular transhipment" in {
-
-      forAll(arbitrary[VehicularTranshipment]) {
-        vehicularTranshipment =>
-          val json = Json.toJson(vehicularTranshipment)(VehicularTranshipment.vehicularTranshipmentJsonWrites)
-          Json.toJson(vehicularTranshipment: EventDetails) mustEqual json
-      }
-    }
-
-    "must serialise from a Container transhipment" in {
-      val additionalJsObject = Json.obj("transhipmentType" -> TranshipmentType.DifferentContainer.toString, "isTranshipment" -> true)
-
-      forAll(arbitrary[ContainerTranshipment]) {
-        containerTranshipment =>
-          val json = Json.toJson(containerTranshipment)(ContainerTranshipment.containerJsonWrites).as[JsObject] ++ additionalJsObject
-          Json.toJson(containerTranshipment: EventDetails) mustEqual json
-      }
-    }
-  }
-
-  private def incidentJson(incident: Incident): JsObject =
-    incident.incidentInformation match {
-      case Some(information) =>
-        Json.obj("incidentInformation" -> information, "isTranshipment" -> false)
-      case _ =>
-        Json.obj("isTranshipment" -> false)
-    }
-
-  private def vehicularTranshipmentJson(vehicularTranshipment: VehicularTranshipment): JsObject = {
-    val transhipmentType = if (vehicularTranshipment.containers.isDefined) {
-      TranshipmentType.DifferentContainerAndVehicle
-    } else {
-      TranshipmentType.DifferentVehicle
-    }
-
-    Json
-      .obj(
-        "transportIdentity"    -> vehicularTranshipment.transportIdentity,
-        "transportNationality" -> Json.obj("state" -> "", "code" -> vehicularTranshipment.transportCountry, "description" -> ""),
-        "date"                 -> vehicularTranshipment.date,
-        "authority"            -> vehicularTranshipment.authority,
-        "place"                -> vehicularTranshipment.place,
-        "country"              -> vehicularTranshipment.country,
-        "containers"           -> Json.toJson(vehicularTranshipment.containers),
-        "transhipmentType"     -> transhipmentType.toString,
-        "isTranshipment"       -> true
-      )
-      .filterNulls
-  }
-
 }

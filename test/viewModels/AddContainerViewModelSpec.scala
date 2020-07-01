@@ -18,6 +18,7 @@ package viewModels
 
 import base.SpecBase
 import generators.MessagesModelGenerators
+import models.domain.ContainerDomain
 import models.{Index, NormalMode}
 import models.messages.Container
 import org.scalacheck.Arbitrary.arbitrary
@@ -42,7 +43,7 @@ class AddContainerViewModelSpec extends SpecBase with ScalaCheckPropertyChecks w
     }
 
     "has the number of containers" in {
-      forAll(arbitrary[Seq[Container]]) {
+      forAll(arbitrary[Seq[ContainerDomain]]) {
         containers =>
           val userAnswers = containers.zipWithIndex.foldLeft(emptyUserAnswers) {
             case (ua, (container, containerIndex)) =>
@@ -64,7 +65,7 @@ class AddContainerViewModelSpec extends SpecBase with ScalaCheckPropertyChecks w
     }
 
     "has the number of containers" in {
-      forAll(arbitrary[Seq[Container]]) {
+      forAll(arbitrary[Seq[ContainerDomain]]) {
         containers =>
           val userAnswers = containers.zipWithIndex.foldLeft(emptyUserAnswers) {
             case (ua, (container, containerIndex)) =>

@@ -17,12 +17,12 @@
 package services.conversion
 
 import models.UserAnswers
-import models.messages._
+import models.domain.{ArrivalNotificationDomain, NormalNotification}
 import play.api.libs.json.Json
 
 object UserAnswersConversionService {
 
-  def convertToUserAnswers(arrivalNotification: ArrivalNotification): Option[UserAnswers] =
+  def convertToUserAnswers(arrivalNotification: ArrivalNotificationDomain): Option[UserAnswers] =
     arrivalNotification match {
       case normalNotification: NormalNotification =>
         Some(UserAnswers(normalNotification.movementReferenceNumber, Json.toJsObject(normalNotification)))

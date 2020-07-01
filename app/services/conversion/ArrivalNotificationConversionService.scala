@@ -19,6 +19,8 @@ package services.conversion
 import java.time.LocalDate
 
 import derivable.DeriveNumberOfEvents
+import models.domain._
+import models.reference.Country
 import models.GoodsLocation.{AuthorisedConsigneesLocation, BorderForceOffice}
 import models.messages._
 import models.{Index, UserAnswers}
@@ -31,7 +33,7 @@ class ArrivalNotificationConversionService {
 
   val countryCode_GB = "GB"
 
-  def convertToArrivalNotification(userAnswers: UserAnswers): Option[ArrivalNotification] =
+  def convertToArrivalNotification(userAnswers: UserAnswers): Option[ArrivalNotificationDomain] =
     userAnswers.get(GoodsLocationPage) match {
       case Some(BorderForceOffice) =>
         createNormalNotification(userAnswers)
@@ -55,7 +57,7 @@ class ArrivalNotificationConversionService {
         notificationPlace       = notificationPlace, //TODO: This needs removing from SimplifiedNotification - isn't used
         notificationDate        = LocalDate.now(),
         approvedLocation        = Some(notificationPlace),
-        trader = Trader(
+        trader = TraderDomain(
           eori            = traderEori,
           name            = traderName,
           streetAndNumber = tradersAddress.buildingAndStreet,
@@ -82,8 +84,8 @@ class ArrivalNotificationConversionService {
         movementReferenceNumber = userAnswers.id,
         notificationPlace       = notificationPlace,
         notificationDate        = LocalDate.now(),
-        customsSubPlace         = Some(customsSubPlace),
-        trader = Trader(
+        customsSubPlace         = customsSubPlace,
+        trader = TraderDomain(
           eori            = traderEori,
           name            = traderName,
           streetAndNumber = tradersAddress.buildingAndStreet,
@@ -99,25 +101,25 @@ class ArrivalNotificationConversionService {
   private def eventDetails(
     incidentInformation: Option[String],
     transportIdentity: Option[String],
-    transportCountry: Option[String],
-    containers: Option[Seq[Container]]
-  ): Option[EventDetails] =
+    transportCountry: Option[Country],
+    containers: Option[Seq[ContainerDomain]]
+  ): Option[EventDetailsDomain] =
     (incidentInformation, transportIdentity, transportCountry, containers) match {
       case (incidentInformation, None, None, None) =>
-        Some(Incident(incidentInformation))
+        Some(IncidentDomain(incidentInformation))
       case (None, Some(transportIdentity), Some(transportCountry), _) =>
         Some(
-          VehicularTranshipment(
+          VehicularTranshipmentDomain(
             transportIdentity = transportIdentity,
             transportCountry  = transportCountry,
             containers        = containers
           ))
       case (None, None, None, Some(containers)) =>
-        Some(ContainerTranshipment(containers = containers))
+        Some(ContainerTranshipmentDomain(containers = containers))
       case _ => None
     }
 
-  private def enRouteEvents(userAnswers: UserAnswers): Option[Seq[EnRouteEvent]] =
+  private def enRouteEvents(userAnswers: UserAnswers): Option[Seq[EnRouteEventDomain]] =
     userAnswers.get(DeriveNumberOfEvents).map {
       numberOfEvents =>
         val listOfEvents = List.range(0, numberOfEvents).map(Index(_))
@@ -132,11 +134,11 @@ class ArrivalNotificationConversionService {
               transportCountry    = userAnswers.get(TransportNationalityPage(eventIndex))
               containers          = userAnswers.get(ContainersQuery(eventIndex))
             } yield {
-              EnRouteEvent(
+              EnRouteEventDomain(
                 place         = place,
-                countryCode   = country.code,
+                country       = country,
                 alreadyInNcts = isReported,
-                eventDetails  = eventDetails(incidentInformation, transportIdentity, transportCountry.map(_.code), containers),
+                eventDetails  = eventDetails(incidentInformation, transportIdentity, transportCountry, containers),
                 seals         = userAnswers.get(SealsQuery(eventIndex))
               )
             }

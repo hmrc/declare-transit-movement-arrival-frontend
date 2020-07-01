@@ -25,7 +25,7 @@ class ConfirmRemoveContainerFormProviderSpec extends BooleanFieldBehaviours with
   val requiredKey = "confirmRemoveContainer.error.required"
   val invalidKey  = "error.boolean"
 
-  val form = new ConfirmRemoveContainerFormProvider()(container)
+  val form = new ConfirmRemoveContainerFormProvider()(domainContainer)
 
   ".value" - {
 
@@ -34,13 +34,13 @@ class ConfirmRemoveContainerFormProviderSpec extends BooleanFieldBehaviours with
     behave like booleanField(
       form,
       fieldName,
-      invalidError = FormError(fieldName, invalidKey, Seq(container.containerNumber))
+      invalidError = FormError(fieldName, invalidKey, Seq(domainContainer.containerNumber))
     )
 
     behave like mandatoryField(
       form,
       fieldName,
-      requiredError = FormError(fieldName, requiredKey, Seq(container.containerNumber))
+      requiredError = FormError(fieldName, requiredKey, Seq(domainContainer.containerNumber))
     )
   }
 }

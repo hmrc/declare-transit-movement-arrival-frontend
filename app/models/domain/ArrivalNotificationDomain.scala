@@ -14,23 +14,24 @@
  * limitations under the License.
  */
 
-package models.messages
+package models.domain
 
 import java.time.LocalDate
 
-import models.{GoodsLocation, MovementReferenceNumber}
+import models.messages.ProcedureType
 import models.reference.CustomsOffice
+import models.{GoodsLocation, MovementReferenceNumber}
 import pages._
 import play.api.libs.json._
 import queries.EventsQuery
 
 import scala.language.implicitConversions
 
-sealed trait ArrivalNotification
+sealed trait ArrivalNotificationDomain
 
-object ArrivalNotification {
+object ArrivalNotificationDomain {
 
-  implicit lazy val writes: Writes[ArrivalNotification] = Writes {
+  implicit lazy val writes: Writes[ArrivalNotificationDomain] = Writes {
     case n: NormalNotification     => Json.toJson(n)(NormalNotification.writes)
     case s: SimplifiedNotification => Json.toJson(s)(SimplifiedNotification.writes)
   }
@@ -39,12 +40,12 @@ object ArrivalNotification {
 final case class NormalNotification(movementReferenceNumber: MovementReferenceNumber,
                                     notificationPlace: String,
                                     notificationDate: LocalDate,
-                                    customsSubPlace: Option[String],
-                                    trader: Trader,
+                                    customsSubPlace: String,
+                                    trader: TraderDomain,
                                     presentationOfficeId: String,
                                     presentationOfficeName: String,
-                                    enRouteEvents: Option[Seq[EnRouteEvent]])
-    extends ArrivalNotification {
+                                    enRouteEvents: Option[Seq[EnRouteEventDomain]])
+    extends ArrivalNotificationDomain {
 
   val procedure: ProcedureType = ProcedureType.Normal
 }
@@ -87,11 +88,11 @@ final case class SimplifiedNotification(
   notificationPlace: String,
   notificationDate: LocalDate,
   approvedLocation: Option[String],
-  trader: Trader,
+  trader: TraderDomain,
   presentationOfficeId: String,
   presentationOfficeName: String,
-  enRouteEvents: Option[Seq[EnRouteEvent]]
-) extends ArrivalNotification {
+  enRouteEvents: Option[Seq[EnRouteEventDomain]]
+) extends ArrivalNotificationDomain {
 
   val procedure: ProcedureType = ProcedureType.Simplified
 }

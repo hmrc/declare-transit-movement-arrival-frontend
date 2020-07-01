@@ -19,12 +19,13 @@ package forms.events.transhipments
 import forms.mappings.Mappings
 import javax.inject.Inject
 import models.Index
-import models.messages.{Container, Transhipment}
+import models.domain.ContainerDomain
+import models.messages.Transhipment
 import play.api.data.Form
 
 class ContainerNumberFormProvider @Inject() extends Mappings {
 
-  def apply(index: Index, declaredContainers: Seq[Container] = Seq.empty[Container]): Form[String] =
+  def apply(index: Index, declaredContainers: Seq[ContainerDomain] = Seq.empty[ContainerDomain]): Form[String] =
     Form(
       "value" -> text("containerNumber.error.required")
         .verifying(maxLength(Transhipment.Constants.containerLength, "containerNumber.error.length"))

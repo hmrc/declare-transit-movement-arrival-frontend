@@ -17,12 +17,12 @@
 package queries
 
 import models.Index
-import models.messages.Container
+import models.domain.ContainerDomain
 import pages.QuestionPage
 import pages.events.SectionConstants
 import play.api.libs.json.JsPath
 
-final case class ContainersQuery(eventIndex: Index) extends QuestionPage[Seq[Container]] {
+final case class ContainersQuery(eventIndex: Index) extends QuestionPage[Seq[ContainerDomain]] {
 
   override def path: JsPath = JsPath \ SectionConstants.events \ eventIndex.position \ SectionConstants.containers
 

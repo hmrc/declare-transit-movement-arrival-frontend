@@ -20,6 +20,7 @@ import base.SpecBase
 import forms.events.seals.SealIdentityFormProvider
 import generators.MessagesModelGenerators
 import matchers.JsonMatchers
+import models.domain.SealDomain
 import models.messages.Seal
 import models.{Index, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
@@ -86,7 +87,7 @@ class SealIdentityControllerSpec extends SpecBase with MockitoSugar with Nunjuck
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers    = UserAnswers(mrn).set(SealIdentityPage(eventIndex, sealIndex), seal).success.value
+      val userAnswers    = UserAnswers(mrn).set(SealIdentityPage(eventIndex, sealIndex), sealDomain).success.value
       val application    = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request        = FakeRequest(GET, sealIdentityRoute())
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -146,7 +147,7 @@ class SealIdentityControllerSpec extends SpecBase with MockitoSugar with Nunjuck
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       val seal        = arbitrary[Seal].sample.value
-      val userAnswers = emptyUserAnswers.set(SealIdentityPage(eventIndex, sealIndex), seal).success.value
+      val userAnswers = emptyUserAnswers.set(SealIdentityPage(eventIndex, sealIndex), sealDomain).success.value
 
       val application =
         applicationBuilder(userAnswers = Some(userAnswers))
@@ -204,7 +205,7 @@ class SealIdentityControllerSpec extends SpecBase with MockitoSugar with Nunjuck
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val seal        = arbitrary[Seal].sample.value
+      val seal        = arbitrary[SealDomain].sample.value
       val userAnswers = emptyUserAnswers.set(SealIdentityPage(eventIndex, sealIndex), seal).success.value
 
       val nextIndex   = Index(1)

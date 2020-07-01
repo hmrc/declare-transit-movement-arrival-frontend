@@ -18,6 +18,7 @@ package base
 
 import config.FrontendAppConfig
 import controllers.actions._
+import models.domain.{ContainerDomain, SealDomain}
 import models.messages.{Container, Seal}
 import models.{Address, Index, MovementReferenceNumber, UserAnswers}
 import org.mockito.Mockito
@@ -61,8 +62,10 @@ trait SpecBase
   val containerIndex: Index = Index(0)
   val sealIndex: Index      = Index(0)
 
-  val seal: Seal           = Seal("sealNumber")
-  val container: Container = Container("containerNumber")
+  val seal: Seal                       = Seal("sealNumber")
+  val sealDomain: SealDomain           = SealDomain("sealNumber")
+  val container: Container             = Container("containerNumber")
+  val domainContainer: ContainerDomain = ContainerDomain("containerNumber")
 
   val eoriNumber: String         = "EOriNumber"
   val traderName: String         = "traderName"

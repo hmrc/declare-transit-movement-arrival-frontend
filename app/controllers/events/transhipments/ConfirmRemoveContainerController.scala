@@ -21,12 +21,12 @@ import derivable.DeriveNumberOfContainers
 import forms.events.transhipments.ConfirmRemoveContainerFormProvider
 import handlers.ErrorHandler
 import javax.inject.Inject
-import models.messages.Container
+import models.domain.ContainerDomain
 import models.requests.DataRequest
 import models.{Index, Mode, MovementReferenceNumber, UserAnswers}
 import navigation.Navigator
 import pages.events.transhipments.{ConfirmRemoveContainerPage, ContainerNumberPage}
-import play.api.data.{Field, Form}
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -93,7 +93,7 @@ class ConfirmRemoveContainerController @Inject()(
         }
     }
 
-  private def renderPage(mrn: MovementReferenceNumber, eventIndex: Index, containerIndex: Index, form: Form[Boolean], mode: Mode, container: Container)(
+  private def renderPage(mrn: MovementReferenceNumber, eventIndex: Index, containerIndex: Index, form: Form[Boolean], mode: Mode, container: ContainerDomain)(
     implicit request: DataRequest[AnyContent]): Future[Html] = {
 
     val json = Json.obj(
