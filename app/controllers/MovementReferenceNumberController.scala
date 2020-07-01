@@ -19,7 +19,7 @@ package controllers
 import controllers.actions._
 import forms.MovementReferenceNumberFormProvider
 import javax.inject.Inject
-import models.{EoriNumber, NormalMode, UserAnswers}
+import models.{NormalMode, UserAnswers}
 import navigation.Navigator
 import pages.MovementReferenceNumberPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -64,7 +64,7 @@ class MovementReferenceNumberController @Inject()(override val messagesApi: Mess
             renderer.render("movementReferenceNumber.njk", json).map(BadRequest(_))
           },
           value =>
-            sessionRepository.set(UserAnswers(id = value, eoriNumber = Some(EoriNumber(request.eoriNumber)))) map {
+            sessionRepository.set(UserAnswers(id = value, eoriNumber = Some(request.eoriNumber))) map {
               _ =>
                 Redirect(navigator.nextPage(MovementReferenceNumberPage, NormalMode, UserAnswers(value)))
           }

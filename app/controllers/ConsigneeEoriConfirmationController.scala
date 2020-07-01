@@ -93,7 +93,7 @@ class ConsigneeEoriConfirmationController @Inject()(
               value =>
                 for {
                   ua <- if (value) {
-                    Future.fromTry(request.userAnswers.set(ConsigneeEoriNumberPage, request.eoriNumber))
+                    Future.fromTry(request.userAnswers.set(ConsigneeEoriNumberPage, request.eoriNumber.value))
                   } else {
                     Future.successful(request.userAnswers)
                   }

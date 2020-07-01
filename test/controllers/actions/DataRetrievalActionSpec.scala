@@ -19,8 +19,7 @@ package controllers.actions
 import generators.Generators
 import models.requests.IdentifierRequest
 import models.requests.OptionalDataRequest
-import models.MovementReferenceNumber
-import models.UserAnswers
+import models.{EoriNumber, MovementReferenceNumber, UserAnswers}
 import org.mockito.Matchers._
 import org.mockito.Mockito._
 import org.scalacheck.Arbitrary.arbitrary
@@ -70,7 +69,7 @@ class DataRetrievalActionSpec
 
     actionProvider(mrn)
       .invokeBlock(
-        IdentifierRequest(FakeRequest(GET, "/").asInstanceOf[Request[AnyContent]], ""), {
+        IdentifierRequest(FakeRequest(GET, "/").asInstanceOf[Request[AnyContent]], EoriNumber("")), {
           request: OptionalDataRequest[AnyContent] =>
             f(request)
             Future.successful(Results.Ok)

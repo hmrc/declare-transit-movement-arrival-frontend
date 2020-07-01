@@ -343,6 +343,14 @@ trait MessagesModelGenerators extends Generators {
       (expected, trader)
     }
 
+  implicit lazy val arbitraryEoriNumber: Arbitrary[EoriNumber] = {
+    Arbitrary {
+      for {
+        number <- arbitrary[String]
+      } yield EoriNumber(number)
+    }
+  }
+
   val incidentWithInformation: Gen[Incident] = for {
     information <- stringsWithMaxLength(Incident.Constants.informationLength)
   } yield Incident(Some(information))
