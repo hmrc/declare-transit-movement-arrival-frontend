@@ -18,7 +18,7 @@ package generators
 
 import java.time.{LocalDate, LocalTime}
 
-import models.{domain, messages, MovementReferenceNumber, NormalProcedureFlag, ProcedureTypeFlag, SimplifiedProcedureFlag}
+import models.{domain, messages, EoriNumber, MovementReferenceNumber, NormalProcedureFlag, ProcedureTypeFlag, SimplifiedProcedureFlag}
 import models.domain._
 import models.messages.ErrorType.{GenericError, MRNError}
 import models.messages._
