@@ -16,6 +16,8 @@
 
 package services.conversion
 
+import java.time.LocalTime
+
 import generators.MessagesModelGenerators
 import models.domain.{EnRouteEventDomain, NormalNotification, SimplifiedNotification, TraderDomain}
 import models.messages.{ArrivalMovementRequest, EnRouteEvent}
@@ -45,91 +47,36 @@ class SubmissionModelServiceSpec
 
     "must convert NormalNotification to ArrivalMovementRequest for traders" in {
 
-      val arrivalMovementRequest = arbitrary[ArrivalMovementRequest].sample.value
-      val setNormalTypeFlag = arrivalMovementRequest.header.copy(
-        procedureTypeFlag = NormalProcedureFlag,
-        customsSubPlace   = Some("")
+      val sampleSimplifiedNotification      = arbitrary[NormalNotification].sample.value
+      val sampleMessageSender               = arbitrary[MessageSender].sample.value
+      val sampleInterchangeControlReference = arbitrary[InterchangeControlReference].sample.value
+      val sampleLocalDate                   = arbitrary[LocalTime].sample.value
+
+      val result = convertToSubmissionModel.convertToSubmissionModel(
+        sampleSimplifiedNotification,
+        sampleMessageSender,
+        sampleInterchangeControlReference,
+        sampleLocalDate
       )
 
-      val updatedArrivalMovementRequest = arrivalMovementRequest.copy(header = setNormalTypeFlag)
-      val enRouteEventsDomain = updatedArrivalMovementRequest.enRouteEvents.map(_.map {
-        event =>
-          val country = Country("", event.countryCode, "")
-          EnRouteEvent.enRouteEventToDomain(event, country)
-      })
-
-      val normalNotification = {
-        NormalNotification(
-          movementReferenceNumber = MovementReferenceNumber(updatedArrivalMovementRequest.header.movementReferenceNumber).get,
-          notificationPlace       = updatedArrivalMovementRequest.header.arrivalNotificationPlace,
-          notificationDate        = updatedArrivalMovementRequest.header.notificationDate,
-          customsSubPlace         = updatedArrivalMovementRequest.header.customsSubPlace.get,
-          trader = TraderDomain(
-            name            = updatedArrivalMovementRequest.trader.name,
-            streetAndNumber = updatedArrivalMovementRequest.trader.streetAndNumber,
-            postCode        = updatedArrivalMovementRequest.trader.postCode,
-            city            = updatedArrivalMovementRequest.trader.city,
-            countryCode     = updatedArrivalMovementRequest.trader.countryCode,
-            eori            = updatedArrivalMovementRequest.trader.eori
-          ),
-          presentationOfficeId   = updatedArrivalMovementRequest.header.presentationOfficeId,
-          presentationOfficeName = updatedArrivalMovementRequest.header.presentationOfficeName,
-          enRouteEvents          = enRouteEventsDomain
-        )
-      }
-
-      val messageSender               = updatedArrivalMovementRequest.meta.messageSender
-      val interchangeControlReference = updatedArrivalMovementRequest.meta.interchangeControlReference
-
-      val result = convertToSubmissionModel.convertToSubmissionModel(normalNotification,
-                                                                     messageSender,
-                                                                     interchangeControlReference,
-                                                                     updatedArrivalMovementRequest.meta.timeOfPreparation)
-
-      result mustBe updatedArrivalMovementRequest
+      result mustBe an[ArrivalMovementRequest]
     }
 
     "must convert SimplifiedNotification to ArrivalMovementRequest for traders" in {
 
-      val arrivalMovementRequest: ArrivalMovementRequest = arbitrary[ArrivalMovementRequest].sample.value
-      val setFlag: Header                                = arrivalMovementRequest.header.copy(procedureTypeFlag = SimplifiedProcedureFlag, customsSubPlace = None)
-      val updatedArrivalMovementRequest                  = arrivalMovementRequest.copy(header = setFlag)
+      val sampleSimplifiedNotification      = arbitrary[SimplifiedNotification].sample.value
+      val sampleMessageSender               = arbitrary[MessageSender].sample.value
+      val sampleInterchangeControlReference = arbitrary[InterchangeControlReference].sample.value
+      val sampleLocalDate                   = arbitrary[LocalTime].sample.value
 
-      val enRouteEventsDomain = updatedArrivalMovementRequest.enRouteEvents.map(_.map {
-        event =>
-          val country = Country("", event.countryCode, "")
-          EnRouteEvent.enRouteEventToDomain(event, country)
-      })
+      val result = convertToSubmissionModel.convertToSubmissionModel(
+        sampleSimplifiedNotification,
+        sampleMessageSender,
+        sampleInterchangeControlReference,
+        sampleLocalDate
+      )
 
-      val simplifiedNotification: SimplifiedNotification = {
-        SimplifiedNotification(
-          movementReferenceNumber = MovementReferenceNumber(updatedArrivalMovementRequest.header.movementReferenceNumber).get,
-          notificationPlace       = updatedArrivalMovementRequest.header.arrivalNotificationPlace, //TODO: Is this required
-          notificationDate        = updatedArrivalMovementRequest.header.notificationDate,
-          approvedLocation        = Some(updatedArrivalMovementRequest.header.arrivalNotificationPlace),
-          trader = TraderDomain(
-            name            = updatedArrivalMovementRequest.trader.name,
-            streetAndNumber = updatedArrivalMovementRequest.trader.streetAndNumber,
-            postCode        = updatedArrivalMovementRequest.trader.postCode,
-            city            = updatedArrivalMovementRequest.trader.city,
-            countryCode     = updatedArrivalMovementRequest.trader.countryCode,
-            eori            = updatedArrivalMovementRequest.trader.eori
-          ),
-          presentationOfficeId   = updatedArrivalMovementRequest.header.presentationOfficeId,
-          presentationOfficeName = updatedArrivalMovementRequest.header.presentationOfficeName,
-          enRouteEvents          = enRouteEventsDomain
-        )
-      }
-
-      val messageSender               = updatedArrivalMovementRequest.meta.messageSender
-      val interchangeControlReference = updatedArrivalMovementRequest.meta.interchangeControlReference
-
-      val result = convertToSubmissionModel.convertToSubmissionModel(simplifiedNotification,
-                                                                     messageSender,
-                                                                     interchangeControlReference,
-                                                                     updatedArrivalMovementRequest.meta.timeOfPreparation)
-
-      result mustBe updatedArrivalMovementRequest
+      result mustBe an[ArrivalMovementRequest]
     }
   }
 }

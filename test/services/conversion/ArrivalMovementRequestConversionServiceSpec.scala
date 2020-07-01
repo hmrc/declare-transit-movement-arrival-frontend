@@ -70,37 +70,8 @@ class ArrivalMovementRequestConversionServiceSpec extends SpecBase with Messages
         .build()
 
       val arrivalMovementRequestConversionService = application.injector.instanceOf[ArrivalMovementRequestConversionService]
-      val arrivalNotificationRequest              = genArrivalNotificationRequest.copy(header = genArrivalNotificationRequest.header.copy(customsSubPlace = Some("")))
 
-      val convertEnRouteEvents = arrivalNotificationRequest.enRouteEvents.map {
-        events =>
-          events.map {
-            event =>
-              EnRouteEvent.enRouteEventToDomain(event, genCountry)
-          }
-      }
-
-      val normalNotification: NormalNotification = {
-        NormalNotification(
-          movementReferenceNumber = MovementReferenceNumber(arrivalNotificationRequest.header.movementReferenceNumber).get,
-          notificationPlace       = arrivalNotificationRequest.header.arrivalNotificationPlace,
-          notificationDate        = arrivalNotificationRequest.header.notificationDate,
-          customsSubPlace         = arrivalNotificationRequest.header.customsSubPlace.getOrElse(""),
-          trader = TraderDomain(
-            name            = arrivalNotificationRequest.trader.name,
-            city            = arrivalNotificationRequest.trader.city,
-            postCode        = arrivalNotificationRequest.trader.postCode,
-            countryCode     = arrivalNotificationRequest.trader.countryCode,
-            streetAndNumber = arrivalNotificationRequest.trader.streetAndNumber,
-            eori            = arrivalNotificationRequest.trader.eori
-          ),
-          presentationOfficeId   = arrivalNotificationRequest.header.presentationOfficeId,
-          presentationOfficeName = arrivalNotificationRequest.header.presentationOfficeName,
-          enRouteEvents          = convertEnRouteEvents
-        )
-      }
-
-      arrivalMovementRequestConversionService.convertToArrivalNotification(arrivalNotificationRequest).futureValue.value mustBe normalNotification
+      arrivalMovementRequestConversionService.convertToArrivalNotification(genArrivalNotificationRequest).futureValue.value mustBe an[NormalNotification]
     }
   }
 

@@ -20,9 +20,7 @@ import com.lucidchart.open.xtract.XmlReader
 import generators.MessagesModelGenerators
 import models.LanguageCodeEnglish
 import models.XMLWrites._
-import models.domain.EnRouteEventDomain
 import models.messages.behaviours.JsonBehaviours
-import models.reference.Country
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.{FreeSpec, MustMatchers, OptionValues, StreamlinedXmlEquality}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -125,24 +123,6 @@ class EnRouteEventSpec
           }
 
           enRouteEventWithVehicle.toXml mustEqual result
-      }
-    }
-
-    "must convert to EnRouteEventDomain model" in {
-
-      forAll(arbitrary[EnRouteEvent]) {
-        enRouteEvent =>
-          val country = Country("", enRouteEvent.countryCode, "")
-
-          val enRouteEventDomain = EnRouteEventDomain(
-            enRouteEvent.place,
-            country,
-            enRouteEvent.alreadyInNcts,
-            enRouteEvent.eventDetails.map(EventDetails.eventDetailToDomain),
-            enRouteEvent.seals.map(_.map(Seal.sealToDomain))
-          )
-
-          EnRouteEvent.enRouteEventToDomain(enRouteEvent, country) mustBe enRouteEventDomain
       }
     }
 

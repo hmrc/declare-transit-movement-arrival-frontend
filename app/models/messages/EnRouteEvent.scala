@@ -21,7 +21,7 @@ import com.lucidchart.open.xtract.XmlReader._
 import com.lucidchart.open.xtract.{XmlReader, __ => xmlPath}
 import models.XMLReads._
 import models.XMLWrites._
-import models.domain.EnRouteEventDomain
+import models.domain.{EnRouteEventDomain, EventDetailsDomain}
 import models.reference.Country
 import models.{LanguageCodeEnglish, XMLWrites}
 
@@ -37,16 +37,16 @@ object EnRouteEvent {
     val sealsLength       = 20
   }
 
-  def enRouteEventToDomain(enRouteEvent: EnRouteEvent, country: Country): EnRouteEventDomain =
+  def enRouteEventToDomain(enRouteEvent: EnRouteEvent, eventCountry: Country, eventDetailsDomain: Option[EventDetailsDomain]): EnRouteEventDomain =
     EnRouteEvent
       .unapply(enRouteEvent)
       .map {
-        case _ @(place, _, alreadyInNct, eventDetails, seals) =>
+        case _ @(place, _, alreadyInNct, _, seals) =>
           EnRouteEventDomain(
             place,
-            country,
+            eventCountry,
             alreadyInNct,
-            eventDetails.map(EventDetails.eventDetailToDomain),
+            eventDetailsDomain,
             seals.map(_.map(Seal.sealToDomain))
           )
       }

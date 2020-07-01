@@ -22,6 +22,7 @@ import models.LanguageCodeEnglish
 import models.XMLWrites._
 import models.domain.{ContainerTranshipmentDomain, IncidentDomain, VehicularTranshipmentDomain}
 import models.messages.behaviours.JsonBehaviours
+import models.reference.Country
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.OptionValues._
 import org.scalatest.{FreeSpec, MustMatchers, StreamlinedXmlEquality}
@@ -37,34 +38,6 @@ class EventDetailsSpec
     with MessagesModelGenerators
     with JsonBehaviours
     with StreamlinedXmlEquality {
-
-  "EventDetails" - {
-
-    "must convert Incident event to IncidentDomain" in {
-
-      forAll(arbitrary[Incident]) {
-        incident =>
-          EventDetails.eventDetailToDomain(incident: EventDetails) mustBe an[IncidentDomain]
-      }
-    }
-
-    "must convert ContainerTranshipment event to ContainerTranshipmentDomain" in {
-
-      forAll(arbitrary[ContainerTranshipment]) {
-        containerTranshipment =>
-          EventDetails.eventDetailToDomain(containerTranshipment: EventDetails) mustBe an[ContainerTranshipmentDomain]
-      }
-    }
-
-    "must convert VehicularTranshipment event to VehicularTranshipmentDomain" in {
-
-      forAll(arbitrary[VehicularTranshipment]) {
-        vehicularTranshipment =>
-          EventDetails.eventDetailToDomain(vehicularTranshipment: EventDetails) mustBe an[VehicularTranshipmentDomain]
-      }
-    }
-
-  }
 
   "Incident" - {
 
@@ -525,7 +498,8 @@ class EventDetailsSpec
     "must convert to VehicularTranshipment model" in {
       forAll(arbitrary[VehicularTranshipment]) {
         vehicularTranshipment =>
-          val result = VehicularTranshipment.vehicularTranshipmentToDomain(vehicularTranshipment)
+          val sampleCountry = arbitrary[Country].sample.value
+          val result        = VehicularTranshipment.vehicularTranshipmentToDomain(vehicularTranshipment, sampleCountry)
 
           result mustBe an[VehicularTranshipmentDomain]
       }

@@ -35,13 +35,6 @@ sealed trait EventDetails
 
 object EventDetails {
 
-  def eventDetailToDomain(eventDetails: EventDetails): EventDetailsDomain =
-    eventDetails match {
-      case incident: Incident                           => Incident.incidentToDomain(incident)
-      case container: ContainerTranshipment             => ContainerTranshipment.containerTranshipmentToDomain(container)
-      case vehicularTranshipment: VehicularTranshipment => VehicularTranshipment.vehicularTranshipmentToDomain(vehicularTranshipment)
-    }
-
   object Constants {
     val authorityLength = 35
     val placeLength     = 35
@@ -153,14 +146,14 @@ object VehicularTranshipment {
     val transportCountryLength  = 2
   }
 
-  def vehicularTranshipmentToDomain(transhipment: VehicularTranshipment): VehicularTranshipmentDomain =
+  def vehicularTranshipmentToDomain(transhipment: VehicularTranshipment, country: Country): VehicularTranshipmentDomain =
     VehicularTranshipment
       .unapply(transhipment)
       .map {
         case _ @(transportIdentity, transportCountry, containers, _, _, _, _) =>
           VehicularTranshipmentDomain(
             transportIdentity,
-            Country("", transportCountry, ""),
+            country,
             containers.map(_.map(Container.containerToDomain))
           )
       }
