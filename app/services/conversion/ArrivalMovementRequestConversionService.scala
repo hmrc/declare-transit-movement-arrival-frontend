@@ -30,8 +30,12 @@ class ArrivalMovementRequestConversionService @Inject()(referenceDataConnector: 
 
   def convertToArrivalNotification(arrivalMovementRequest: ArrivalMovementRequest)(implicit ec: ExecutionContext,
                                                                                    hc: HeaderCarrier): Future[Option[NormalNotification]] =
-    MovementReferenceNumber(arrivalMovementRequest.header.movementReferenceNumber) traverse {
-      mrn =>
+    (
+      MovementReferenceNumber(arrivalMovementRequest.header.movementReferenceNumber),
+      arrivalMovementRequest.header.customsSubPlace
+    ).tupled.traverse {
+
+      case (mrn, customsSubPlace) =>
         val buildEnrouteEvents: Future[Option[Seq[EnRouteEventDomain]]] = arrivalMovementRequest.enRouteEvents.traverse {
           events =>
             Future.sequence(events.map(buildEnRouteEventDomain))
@@ -43,7 +47,7 @@ class ArrivalMovementRequestConversionService @Inject()(referenceDataConnector: 
               mrn,
               arrivalMovementRequest.header.arrivalNotificationPlace,
               arrivalMovementRequest.header.notificationDate,
-              arrivalMovementRequest.header.customsSubPlace.get, // TODO need to address the case when there is no subsplace
+              customsSubPlace,
               Trader.messagesTraderToDomainTrader(arrivalMovementRequest.trader),
               arrivalMovementRequest.header.presentationOfficeId,
               arrivalMovementRequest.header.presentationOfficeName,
