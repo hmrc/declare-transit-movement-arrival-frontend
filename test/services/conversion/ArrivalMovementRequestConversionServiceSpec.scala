@@ -19,12 +19,12 @@ package services.conversion
 import base.SpecBase
 import connectors.ReferenceDataConnector
 import generators.MessagesModelGenerators
-import models.MovementReferenceNumber
-import models.domain.{NormalNotification, TraderDomain}
-import models.messages.{ArrivalMovementRequest, EnRouteEvent, Header}
+import models.domain.{NormalNotification, TranshipmentDomain, VehicularTranshipmentDomain}
+import models.messages.{ArrivalMovementRequest, EnRouteEvent, Header, Transhipment, VehicularTranshipment}
 import models.reference.Country
 import org.mockito.Matchers.any
 import org.mockito.Mockito._
+import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.bind
@@ -72,6 +72,17 @@ class ArrivalMovementRequestConversionServiceSpec extends SpecBase with Messages
       val arrivalMovementRequestConversionService = application.injector.instanceOf[ArrivalMovementRequestConversionService]
 
       arrivalMovementRequestConversionService.convertToArrivalNotification(genArrivalNotificationRequest).futureValue.value mustBe an[NormalNotification]
+    }
+
+    "must fail when call to reference data is unsuccessful" in {
+
+      val genArrivalNotificationRequest           = arbitrary[ArrivalMovementRequest].sample.value
+      val arrivalMovementRequestConversionService = applicationBuilder().injector.instanceOf[ArrivalMovementRequestConversionService]
+      val result                                  = arrivalMovementRequestConversionService.convertToArrivalNotification(genArrivalNotificationRequest)
+
+      whenReady(result.failed) {
+        _ mustBe an[Exception]
+      }
     }
   }
 
