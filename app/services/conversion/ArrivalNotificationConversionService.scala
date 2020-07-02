@@ -136,7 +136,7 @@ class ArrivalNotificationConversionService {
             } yield {
               EnRouteEventDomain(
                 place         = place,
-                country       = country.code,
+                country       = country,
                 alreadyInNcts = isReported,
                 eventDetails  = eventDetails(incidentInformation, transportIdentity, transportCountry, containers),
                 seals         = userAnswers.get(SealsQuery(eventIndex))

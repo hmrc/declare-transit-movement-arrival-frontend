@@ -50,7 +50,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
   private val navigator: Navigator = app.injector.instanceOf[Navigator]
 
-  private val country: CountryCode = CountryCode("Valid", "GB", "United Kingdom")
+  private val country: CountryCode = Country("GB", "United Kingdom")
 
   "Navigator in Check mode" - {
     "must go from a page that doesn't exist in the edit route map  to Check Your Answers" in {

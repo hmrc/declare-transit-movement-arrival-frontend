@@ -21,6 +21,11 @@ import play.api.libs.json._
 case class CountryCode(code: String) extends AnyVal
 
 object CountryCode {
+
+  object Constants {
+    val countryCodeLength = 2
+  }
+
   implicit val format: Format[CountryCode] =
     new Format[CountryCode] {
       override def writes(o: CountryCode): JsValue = JsString(o.code)

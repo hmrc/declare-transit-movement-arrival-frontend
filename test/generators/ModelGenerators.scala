@@ -67,13 +67,17 @@ trait ModelGenerators {
     }
   }
 
-  implicit lazy val arbitraryCountry: Arbitrary[Country] = {
+  implicit lazy val arbitraryCountryCode: Arbitrary[CountryCode] =
+    Arbitrary {
+      Gen.pick(CountryCode.Constants.countryCodeLength, 'A' to 'Z').map(code => CountryCode(code.mkString))
+    }
 
+  implicit lazy val arbitraryCountry: Arbitrary[Country] = {
     Arbitrary {
       for {
-        code  <- Gen.pick(2, 'A' to 'Z')
-        name  <- arbitrary[String]
-      } yield Country(CountryCode(code.mkString), name)
+        code <- arbitrary[CountryCode]
+        name <- arbitrary[String]
+      } yield Country(code, name)
     }
   }
 }

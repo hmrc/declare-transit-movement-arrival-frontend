@@ -20,9 +20,8 @@ import base.SpecBase
 import connectors.ReferenceDataConnector
 import forms.events.EventCountryFormProvider
 import matchers.JsonMatchers
-import models.NormalMode
-import models.UserAnswers
-import models.reference.CountryCode
+import models.{CountryList, NormalMode, UserAnswers}
+import models.reference.{Country, CountryCode}
 import navigation.FakeNavigator
 import navigation.Navigator
 import org.mockito.ArgumentCaptor
@@ -50,9 +49,9 @@ class EventCountryControllerSpec extends SpecBase with MockitoSugar with Nunjuck
   def onwardRoute: Call = Call("GET", "/foo")
 
   val formProvider                                       = new EventCountryFormProvider()
-  private val country: CountryCode                       = CountryCode("valid", "GB", "United Kingdom")
-  val countries                                          = Seq(country)
-  val form: Form[CountryCode]                            = formProvider(countries)
+  private val country                                    = Country(CountryCode("GB"), "United Kingdom")
+  val countries                                          = CountryList(Vector(country))
+  val form                                               = formProvider(countries)
   val mockReferenceDataConnector: ReferenceDataConnector = mock[ReferenceDataConnector]
   lazy val eventCountryRoute: String                     = routes.EventCountryController.onPageLoad(mrn, eventIndex, NormalMode).url
 
@@ -63,7 +62,7 @@ class EventCountryControllerSpec extends SpecBase with MockitoSugar with Nunjuck
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
-      val userAnswers = UserAnswers(mrn).set(EventCountryPage(eventIndex), country).success.value
+      val userAnswers = UserAnswers(mrn).set(EventCountryPage(eventIndex), country.code).success.value
       val filledForm  = form.bind(Map("value" -> "GB"))
 
       verifyOnPageLoad(Some(userAnswers), filledForm, true)
@@ -171,7 +170,7 @@ class EventCountryControllerSpec extends SpecBase with MockitoSugar with Nunjuck
     }
   }
 
-  private def verifyOnPageLoad(userAnswers: Option[UserAnswers], form1: Form[CountryCode], preSelected: Boolean): Future[_] = {
+  private def verifyOnPageLoad(userAnswers: Option[UserAnswers], form1: Form[Country], preSelected: Boolean): Future[_] = {
     when(mockRenderer.render(any(), any())(any()))
       .thenReturn(Future.successful(Html("")))
 

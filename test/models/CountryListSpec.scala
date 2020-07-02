@@ -23,7 +23,6 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
-
 class CountryListSpec extends SpecBase with ScalaCheckPropertyChecks with MessagesModelGenerators {
 
   "CountryList" - {

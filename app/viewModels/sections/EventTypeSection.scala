@@ -18,7 +18,7 @@ package viewModels.sections
 
 import derivable.DeriveNumberOfContainers
 import models.TranshipmentType.{DifferentContainer, DifferentContainerAndVehicle, DifferentVehicle}
-import models.{Index, UserAnswers}
+import models.{CountryList, Index, UserAnswers}
 import pages.events.transhipments.TranshipmentTypePage
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, Text}
 import utils.CheckEventAnswersHelper
@@ -31,24 +31,24 @@ object EventTypeSection extends NunjucksSupport {
   val differentContainerAndVehicleTitleKey: Text =
     msg"checkEventAnswers.section.title.differentContainerAndVehicle"
 
-  def apply(userAnswers: UserAnswers, eventIndex: Index, isTranshipment: Boolean): Seq[Section] =
+  def apply(userAnswers: UserAnswers, eventIndex: Index, isTranshipment: Boolean, codeList: CountryList): Seq[Section] =
     userAnswers
       .get(TranshipmentTypePage(eventIndex))
       .map {
         case DifferentVehicle =>
-          DifferentVehicleSection(userAnswers, eventIndex, isTranshipment)
+          DifferentVehicleSection(userAnswers, eventIndex, isTranshipment, codeList)
         case DifferentContainer =>
           DifferentContainerSection(userAnswers, eventIndex, isTranshipment, differentContainerTitleKey)
         case DifferentContainerAndVehicle =>
           DifferentContainerSection(userAnswers, eventIndex, isTranshipment, differentContainerAndVehicleTitleKey) ++
-            VehicleInformationSection(userAnswers, eventIndex)
+            VehicleInformationSection(userAnswers, eventIndex, codeList)
       }
       .getOrElse(Seq.empty)
 }
 
 object VehicleInformationSection extends NunjucksSupport {
 
-  def apply(userAnswers: UserAnswers, eventIndex: Index): Seq[Section] = {
+  def apply(userAnswers: UserAnswers, eventIndex: Index, codeList: CountryList): Seq[Section] = {
 
     val helper = new CheckEventAnswersHelper(userAnswers)
 
@@ -57,7 +57,7 @@ object VehicleInformationSection extends NunjucksSupport {
         msg"checkEventAnswers.section.title.vehicleInformation",
         Seq(
           helper.transportIdentity(eventIndex),
-          helper.transportNationality(eventIndex)
+          helper.transportNationality(eventIndex)(codeList)
         ).flatten
       ))
   }
@@ -90,7 +90,7 @@ object DifferentContainerSection extends NunjucksSupport {
 
 object DifferentVehicleSection extends NunjucksSupport {
 
-  def apply(userAnswers: UserAnswers, eventIndex: Index, isTranshipment: Boolean): Seq[Section] = {
+  def apply(userAnswers: UserAnswers, eventIndex: Index, isTranshipment: Boolean, codeList: CountryList): Seq[Section] = {
 
     val helper: CheckEventAnswersHelper = new CheckEventAnswersHelper(userAnswers)
 
@@ -101,7 +101,7 @@ object DifferentVehicleSection extends NunjucksSupport {
           if (isTranshipment) { helper.isTranshipment(eventIndex) } else None,
           helper.transhipmentType(eventIndex),
           helper.transportIdentity(eventIndex),
-          helper.transportNationality(eventIndex)
+          helper.transportNationality(eventIndex)(codeList)
         ).flatten
       ))
   }

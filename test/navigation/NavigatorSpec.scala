@@ -42,7 +42,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
   // format: off
   val navigator: Navigator = app.injector.instanceOf[Navigator]
 
-  val country: CountryCode = CountryCode("Valid", "GB", "United Kingdom")
+  val country: CountryCode = Country("GB", "United Kingdom")
 
   "Navigator" - {
 
@@ -821,7 +821,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
                   .set(IncidentOnRoutePage, true)
                   .success
                   .value
-                  .set(EventCountryPage(eventIndex), CountryCode("Valid", countryCode, "Some country"))
+                  .set(EventCountryPage(eventIndex), Country(countryCode, "Some country"))
                   .success
                   .value
                   .set(EventPlacePage(eventIndex), place)

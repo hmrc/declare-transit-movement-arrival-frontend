@@ -27,14 +27,19 @@ import models.{LanguageCodeEnglish, XMLWrites}
 
 import scala.xml.NodeSeq
 
-final case class EnRouteEvent(place: String, countryCode: String, alreadyInNcts: Boolean, eventDetails: Option[EventDetails], seals: Option[Seq[Seal]])
+final case class EnRouteEvent(
+  place: String,
+  countryCode: CountryCode,
+  alreadyInNcts: Boolean,
+  eventDetails: Option[EventDetails],
+  seals: Option[Seq[Seal]]
+)
 
 object EnRouteEvent {
 
   object Constants {
-    val placeLength       = 35
-    val countryCodeLength = 2
-    val sealsLength       = 20
+    val placeLength = 35
+    val sealsLength = 20
   }
 
   def enRouteEventToDomain(enRouteEvent: EnRouteEvent, eventCountry: CountryCode, eventDetailsDomain: Option[EventDetailsDomain]): EnRouteEventDomain =
@@ -44,7 +49,7 @@ object EnRouteEvent {
         case _ @(place, _, alreadyInNct, _, seals) =>
           EnRouteEventDomain(
             place,
-            eventCountry.code,
+            eventCountry,
             alreadyInNct,
             eventDetailsDomain,
             seals.map(_.map(Seal.sealToDomain))
@@ -88,7 +93,7 @@ object EnRouteEvent {
 
   implicit lazy val xmlReader: XmlReader[EnRouteEvent] = (
     (xmlPath \ "PlaTEV10").read[String],
-    (xmlPath \ "CouTEV13").read[String],
+    (xmlPath \ "CouTEV13").read[String].map(CountryCode(_)),
     (xmlPath \ "CTLCTL" \ "AlrInNCTCTL29").read(booleanFromIntReader),
     xmlPath.read[EventDetails].optional,
     (xmlPath \ "SEAINFSF1" \ "SEAIDSI1").read(strictReadOptionSeq[Seal])

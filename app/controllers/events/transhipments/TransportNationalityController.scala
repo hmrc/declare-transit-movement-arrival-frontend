@@ -85,7 +85,7 @@ class TransportNationalityController @Inject()(override val messagesApi: Message
       }
   }
 
-  private def renderPage(mrn: MovementReferenceNumber, mode: Mode, form: Form[Country], countries: Vector[Country], status: Status, eventIndex: Index)(
+  private def renderPage(mrn: MovementReferenceNumber, mode: Mode, form: Form[Country], countries: Seq[Country], status: Status, eventIndex: Index)(
     implicit request: Request[AnyContent]): Future[Result] = {
     val json = Json.obj(
       "form"        -> form,
@@ -98,7 +98,7 @@ class TransportNationalityController @Inject()(override val messagesApi: Message
     renderer.render("events/transhipments/transportNationality.njk", json).map(status(_))
   }
 
-  private def countryJsonList(value: Option[Country], countries: Vector[Country]): Seq[JsObject] = {
+  private def countryJsonList(value: Option[Country], countries: Seq[Country]): Seq[JsObject] = {
     val countryJsonList = countries.map {
       country =>
         Json.obj("text" -> country.description, "value" -> country.code, "selected" -> value.contains(country))

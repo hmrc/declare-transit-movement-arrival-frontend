@@ -22,6 +22,7 @@ import connectors.ReferenceDataConnector
 import models.MovementReferenceNumber
 import models.domain.{EnRouteEventDomain, EventDetailsDomain, NormalNotification}
 import models.messages._
+import models.reference.Country
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -58,7 +59,10 @@ class ArrivalMovementRequestConversionService @Inject()(referenceDataConnector: 
   private def buildEnRouteEventDomain(enRouteEvent: EnRouteEvent)(implicit hc: HeaderCarrier): Future[EnRouteEventDomain] =
     referenceDataConnector
       .getCountry(enRouteEvent.countryCode)
-      .map(EnRouteEvent.enRouteEventToDomain(enRouteEvent, _, enRouteEvent.eventDetails.map(buildEventDetailsDomain)))
+      .map {
+        case Country(code, _) =>
+          EnRouteEvent.enRouteEventToDomain(enRouteEvent, code, enRouteEvent.eventDetails.map(buildEventDetailsDomain))
+      }
 
   private def buildEventDetailsDomain(eventDetails: EventDetails)(implicit hc: HeaderCarrier): EventDetailsDomain =
     eventDetails match {

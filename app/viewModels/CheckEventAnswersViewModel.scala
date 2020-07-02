@@ -16,7 +16,7 @@
 
 package viewModels
 
-import models.{Index, Mode, UserAnswers}
+import models.{CountryList, Index, Mode, UserAnswers}
 import pages.events.IsTranshipmentPage
 import play.api.i18n.Messages
 import play.api.libs.json.{Json, OWrites}
@@ -26,13 +26,13 @@ case class CheckEventAnswersViewModel(sections: Seq[Section])
 
 object CheckEventAnswersViewModel {
 
-  def apply(userAnswers: UserAnswers, eventIndex: Index, mode: Mode): CheckEventAnswersViewModel = {
+  def apply(userAnswers: UserAnswers, eventIndex: Index, mode: Mode, codeList: CountryList): CheckEventAnswersViewModel = {
 
     val isTranshipment: Boolean = userAnswers.get(IsTranshipmentPage(eventIndex)).getOrElse(false)
 
-    val eventInfoSection: Section = EventInfoSection(userAnswers, eventIndex, isTranshipment)
+    val eventInfoSection: Section = EventInfoSection(userAnswers, eventIndex, isTranshipment, codeList)
 
-    val eventTypeSection: Seq[Section] = EventTypeSection(userAnswers, eventIndex, isTranshipment)
+    val eventTypeSection: Seq[Section] = EventTypeSection(userAnswers, eventIndex, isTranshipment, codeList)
 
     val sealSection: Section = SealSection(userAnswers, eventIndex)
 

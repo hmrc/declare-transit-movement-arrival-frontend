@@ -19,9 +19,10 @@ package models.domain
 import models.messages._
 import play.api.libs.json.{JsObject, Json, OWrites}
 import models._
+import models.reference.CountryCode
 
 final case class EnRouteEventDomain(place: String,
-                                    country: String,
+                                    country: CountryCode,
                                     alreadyInNcts: Boolean,
                                     eventDetails: Option[EventDetailsDomain], //TODO does this need to be an option
                                     seals: Option[Seq[SealDomain]])
@@ -30,7 +31,7 @@ object EnRouteEventDomain {
 
   object Constants {
     val placeLength       = 35
-    val countryCodeLength = 2
+    val countryCodeLength = 2 // TODO: remove
     val sealsLength       = 20
   }
 
