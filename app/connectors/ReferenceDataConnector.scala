@@ -33,7 +33,7 @@ class ReferenceDataConnector @Inject()(config: FrontendAppConfig, http: HttpClie
 
   def getCountryList()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[CountryList] = {
     val serviceUrl = s"${config.referenceDataUrl}/countries-full-list"
-    http.GET[Seq[Country]](serviceUrl).map(CountryList(_))
+    http.GET[Vector[Country]](serviceUrl).map(CountryList(_))
   }
 
   //TODO Chat with design if we get a 404 (invalid code) as this is technically not a failure

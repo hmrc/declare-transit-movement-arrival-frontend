@@ -18,12 +18,12 @@ package models
 
 import models.reference.{Country, CountryCode}
 
-class CountryList(countries: Seq[Country]) {
-  def fullList: Seq[Country] = ???
+class CountryList(countries: Vector[Country]) {
+  def fullList: Vector[Country] = ???
 
-  def getCountry(countryCode: CountryCode): Country = ???
+  def getCountry(countryCode: CountryCode): Option[Country] = ???
 }
 
 object CountryList {
-  def apply(countries: Seq[Country]): CountryList = new CountryList(countries)
+  def apply(countries: Vector[Country]): CountryList = new CountryList(countries)
 }

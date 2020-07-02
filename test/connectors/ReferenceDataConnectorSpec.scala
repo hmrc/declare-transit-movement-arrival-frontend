@@ -20,7 +20,7 @@ import base.SpecBase
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, okJson, urlEqualTo}
 import generators.MessagesModelGenerators
 import helper.WireMockServerHandler
-import models.reference.{CountryCode, CustomsOffice}
+import models.reference.{Country, CountryCode, CustomsOffice}
 import org.scalacheck.Gen
 import org.scalatest.Assertion
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -120,8 +120,8 @@ class ReferenceDataConnectorSpec extends SpecBase with WireMockServerHandler wit
         )
 
         val expectedResult = Seq(
-          CountryCode("valid", "GB", "United Kingdom"),
-          CountryCode("valid", "AD", "Andorra")
+          CountryCode("GB"),
+          CountryCode("AD")
         )
 
         connector.getCountryList.futureValue mustBe expectedResult
@@ -137,21 +137,21 @@ class ReferenceDataConnectorSpec extends SpecBase with WireMockServerHandler wit
 
       "must return a Country when successful" in {
 
-        val code = "GB"
+        val code = CountryCode("GB")
 
         server.stubFor(
           get(urlEqualTo(s"/$startUrl/countries/$code"))
             .willReturn(okJson(gbCountryJson))
         )
 
-        val expectedResult = CountryCode("valid", "GB", "United Kingdom")
+        val expectedResult = Country(code, "United Kingdom")
 
         connector.getCountry(code).futureValue mustBe expectedResult
       }
 
       "must return an exception when an error response is returned" in {
 
-        val invalidCode = "ZZ"
+        val invalidCode = CountryCode("ZZ")
 
         checkErrorResponse(s"/$startUrl/countries/$invalidCode", connector.getCountry(invalidCode))
       }

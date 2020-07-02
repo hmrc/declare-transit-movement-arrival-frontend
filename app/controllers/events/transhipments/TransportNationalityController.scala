@@ -20,9 +20,10 @@ import connectors.ReferenceDataConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalActionProvider, IdentifierAction}
 import forms.events.transhipments.TransportNationalityFormProvider
 import javax.inject.Inject
-import models.reference.CountryCode
+import models.reference.{Country, CountryCode}
 import models.{Index, Mode, MovementReferenceNumber}
 import navigation.Navigator
+import pages.events.EventCountryPage
 import pages.events.transhipments.TransportNationalityPage
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -53,13 +54,15 @@ class TransportNationalityController @Inject()(override val messagesApi: Message
     implicit request =>
       referenceDataConnector.getCountryList() flatMap {
         countries =>
-          val form = formProvider(Seq.empty)
-          val preparedForm = request.userAnswers.get(TransportNationalityPage(eventIndex)) match {
-            case None        => form
-            case Some(value) => form.fill(value)
-          }
+          val form = formProvider(countries)
 
-          renderPage(mrn, mode, preparedForm, countries, Ok, eventIndex)
+          val preparedForm = request.userAnswers
+            .get(TransportNationalityPage(eventIndex))
+            .flatMap(countries.getCountry)
+            .map(form.fill)
+            .getOrElse(form)
+
+          renderPage(mrn, mode, preparedForm, countries.fullList, Ok, eventIndex)
       }
   }
 
@@ -72,17 +75,17 @@ class TransportNationalityController @Inject()(override val messagesApi: Message
           form
             .bindFromRequest()
             .fold(
-              formWithErrors => renderPage(mrn, mode, formWithErrors, countries, BadRequest, eventIndex),
+              formWithErrors => renderPage(mrn, mode, formWithErrors, countries.fullList, BadRequest, eventIndex),
               value =>
                 for {
-                  updatedAnswers <- Future.fromTry(request.userAnswers.set(TransportNationalityPage(eventIndex), value))
+                  updatedAnswers <- Future.fromTry(request.userAnswers.set(TransportNationalityPage(eventIndex), value.code))
                   _              <- sessionRepository.set(updatedAnswers)
                 } yield Redirect(navigator.nextPage(TransportNationalityPage(eventIndex), mode, updatedAnswers))
             )
       }
   }
 
-  private def renderPage(mrn: MovementReferenceNumber, mode: Mode, form: Form[CountryCode], countries: Seq[CountryCode], status: Status, eventIndex: Index)(
+  private def renderPage(mrn: MovementReferenceNumber, mode: Mode, form: Form[Country], countries: Vector[Country], status: Status, eventIndex: Index)(
     implicit request: Request[AnyContent]): Future[Result] = {
     val json = Json.obj(
       "form"        -> form,
@@ -95,7 +98,7 @@ class TransportNationalityController @Inject()(override val messagesApi: Message
     renderer.render("events/transhipments/transportNationality.njk", json).map(status(_))
   }
 
-  private def countryJsonList(value: Option[CountryCode], countries: Seq[CountryCode]): Seq[JsObject] = {
+  private def countryJsonList(value: Option[Country], countries: Vector[Country]): Seq[JsObject] = {
     val countryJsonList = countries.map {
       country =>
         Json.obj("text" -> country.description, "value" -> country.code, "selected" -> value.contains(country))

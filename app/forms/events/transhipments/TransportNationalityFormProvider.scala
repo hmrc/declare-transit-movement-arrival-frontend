@@ -18,15 +18,16 @@ package forms.events.transhipments
 
 import forms.mappings.Mappings
 import javax.inject.Inject
-import models.reference.CountryCode
+import models.CountryList
+import models.reference.Country
 import play.api.data.Form
 
 class TransportNationalityFormProvider @Inject() extends Mappings {
 
-  def apply(countryList: Seq[CountryCode]): Form[CountryCode] =
+  def apply(countryList: CountryList): Form[Country] =
     Form(
       "value" -> text("transportNationality.error.required")
-        .verifying("eventCountry.error.required", value => countryList.exists(_.code == value))
-        .transform[CountryCode](value => countryList.find(_.code == value).get, _.code)
+        .verifying("eventCountry.error.required", value => countryList.fullList.exists(_.code.code == value))
+        .transform[Country](value => countryList.fullList.find(_.code.code == value).get, _.code.code)
     )
 }
