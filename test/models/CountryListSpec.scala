@@ -18,7 +18,7 @@ package models
 
 import base.SpecBase
 import generators.MessagesModelGenerators
-import models.reference.Country
+import models.reference.{Country, CountryCode}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -52,12 +52,37 @@ class CountryListSpec extends SpecBase with ScalaCheckPropertyChecks with Messag
 
         forAll(arbitrary[Vector[Country]]) {
           countries =>
-            val genCountry: Gen[Country] = arbitrary[Country].suchThat(!countries.contains(_))
+            val genCountry: Gen[Country] = arbitrary[Country].suchThat(value => !countries.exists(_.code == value.code))
             forAll(genCountry) {
               country =>
-                CountryList(countries).getCountry(country.code).value mustBe None
+                CountryList(countries).getCountry(country.code) mustBe None
             }
         }
+      }
+    }
+
+    "equals" - {
+
+      "returns true if both CountryLists are the same" in {
+        val c1 = CountryList(Seq(Country(CountryCode("a"), "a")))
+        val c2 = CountryList(Seq(Country(CountryCode("a"), "a")))
+        c1 == c2 mustEqual true
+      }
+
+      "returns false if the rhs is not a CountryList" in {
+        CountryList(Seq()) == 1 mustEqual false
+      }
+
+      "returns false if the rhs has a different list of countries" in {
+        val c1 = CountryList(Seq(Country(CountryCode("a"), "a")))
+        val c2 = CountryList(Seq(Country(CountryCode("b"), "b")))
+        c1 == c2 mustEqual false
+      }
+
+      "returns false if the rhs has a different list of countries with duplicates" in {
+        val c1 = CountryList(Seq(Country(CountryCode("a"), "a"), Country(CountryCode("a"), "a")))
+        val c2 = CountryList(Seq(Country(CountryCode("a"), "a")))
+        c1 == c2 mustEqual false
       }
     }
   }

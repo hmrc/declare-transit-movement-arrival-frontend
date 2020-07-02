@@ -17,6 +17,7 @@
 package forms.events
 
 import forms.behaviours.StringFieldBehaviours
+import models.CountryList
 import models.reference.{Country, CountryCode}
 import play.api.data.FormError
 
@@ -26,7 +27,7 @@ class EventCountryFormProviderSpec extends StringFieldBehaviours {
   val lengthKey   = "eventCountry.error.length"
   val maxLength   = 2
 
-  val countries = Seq(Country(CountryCode("AD"), "Andorra"))
+  val countries = CountryList(Seq(Country(CountryCode("AD"), "Andorra")))
   val form      = new EventCountryFormProvider()(countries)
 
   ".value" - {

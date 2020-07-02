@@ -131,7 +131,7 @@ object Transhipment {
 
 final case class VehicularTranshipment(
   transportIdentity: String,
-  transportCountry: String,
+  transportCountry: CountryCode,
   containers: Option[Seq[Container]],
   date: Option[LocalDate]   = None,
   authority: Option[String] = None,
@@ -165,7 +165,7 @@ object VehicularTranshipment {
         {
           <NewTraMeaIdeSHP26>{escapeXml(transhipment.transportIdentity)}</NewTraMeaIdeSHP26> ++
             <NewTraMeaIdeSHP26LNG>{Header.Constants.languageCode.code}</NewTraMeaIdeSHP26LNG> ++
-            <NewTraMeaNatSHP54>{escapeXml(transhipment.transportCountry)}</NewTraMeaNatSHP54> ++ {
+            <NewTraMeaNatSHP54>{escapeXml(transhipment.transportCountry.code)}</NewTraMeaNatSHP54> ++ {
             transhipment.date.fold(NodeSeq.Empty)(date =>
               <EndDatSHP60> {Format.dateFormatted(date)} </EndDatSHP60>
             )
@@ -190,7 +190,7 @@ object VehicularTranshipment {
 
   implicit lazy val xmlReader: XmlReader[VehicularTranshipment] = (
     (xmlPath \ "NewTraMeaIdeSHP26").read[String],
-    (xmlPath \ "NewTraMeaNatSHP54").read[String],
+    (xmlPath \ "NewTraMeaNatSHP54").read[String].map(CountryCode(_)),
     (xmlPath \ "CONNR3").read(strictReadOptionSeq[Container]),
     (xmlPath \ "EndDatSHP60").read[LocalDate].optional,
     (xmlPath \ "EndAutSHP61").read[String].optional,

@@ -100,7 +100,7 @@ trait MessagesModelGenerators extends Generators {
       for {
 
         transportIdentity <- stringsWithMaxLength(VehicularTranshipment.Constants.transportIdentityLength)
-        transportCountry  <- stringsWithMaxLength(VehicularTranshipment.Constants.transportCountryLength)
+        transportCountry  <- arbitrary[CountryCode]
         containers        <- Gen.option(listWithMaxLength[Container](2))
       } yield VehicularTranshipment(transportIdentity = transportIdentity, transportCountry = transportCountry, containers = containers)
     }
@@ -205,12 +205,13 @@ trait MessagesModelGenerators extends Generators {
       }
     }
 
+  //TODO is the sealsOpt correct?
   implicit lazy val arbitraryDomainEnRouteEvent: Arbitrary[EnRouteEventDomain] =
     Arbitrary {
 
       for {
         place         <- stringsWithMaxLength(EnRouteEvent.Constants.placeLength)
-        country       <- arbitrary[CountryCode].map(_.code)
+        country       <- arbitrary[CountryCode]
         alreadyInNcts <- arbitrary[Boolean]
         eventDetails  <- arbitrary[Option[EventDetailsDomain]]
         seals         <- listWithMaxLength[SealDomain](1)

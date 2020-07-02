@@ -111,7 +111,7 @@ class ArrivalNotificationConversionService {
         Some(
           VehicularTranshipmentDomain(
             transportIdentity = transportIdentity,
-            transportCountry  = transportCountry.code,
+            transportCountry  = transportCountry,
             containers        = containers
           ))
       case (None, None, None, Some(containers)) =>

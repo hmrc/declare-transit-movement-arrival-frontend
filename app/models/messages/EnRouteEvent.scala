@@ -74,7 +74,7 @@ object EnRouteEvent {
         {
           <PlaTEV10>{ escapeXml(enRouteEvent.place)}</PlaTEV10> ++
           <PlaTEV10LNG>{ LanguageCodeEnglish.code}</PlaTEV10LNG> ++
-          <CouTEV13>{ enRouteEvent.countryCode }</CouTEV13>
+          <CouTEV13>{ enRouteEvent.countryCode.code }</CouTEV13>
         }
         <CTLCTL>
           {

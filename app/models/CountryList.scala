@@ -18,10 +18,16 @@ package models
 
 import models.reference.{Country, CountryCode}
 
-class CountryList(countries: Seq[Country]) {
-  def fullList: Seq[Country] = ???
+class CountryList(val countries: Seq[Country]) {
 
-  def getCountry(countryCode: CountryCode): Option[Country] = ???
+  def fullList: Seq[Country]                                = countries
+  def getCountry(countryCode: CountryCode): Option[Country] = countries.find(_.code == countryCode)
+
+  override def equals(obj: Any): Boolean =
+    obj match {
+      case value: CountryList => value.countries == countries
+      case _                  => false
+    }
 }
 
 object CountryList {

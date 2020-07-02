@@ -17,8 +17,11 @@
 package controllers.events
 
 import base.SpecBase
+import connectors.ReferenceDataConnector
+import generators.MessagesModelGenerators
 import matchers.JsonMatchers
-import models.NormalMode
+import models.{CountryList, NormalMode}
+import models.reference.Country
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.times
@@ -28,19 +31,29 @@ import play.api.libs.json.JsObject
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
+import org.scalacheck.Arbitrary.arbitrary
+import play.api.inject.bind
 
 import scala.concurrent.Future
 
-class CheckEventAnswersControllerSpec extends SpecBase with JsonMatchers {
+class CheckEventAnswersControllerSpec extends SpecBase with JsonMatchers with MessagesModelGenerators {
 
   "Check Event Answers Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
+      val sampleCountryList          = arbitrary[Seq[Country]].sample.value
+      val mockReferenceDataConnector = mock[ReferenceDataConnector]
+
+      when(mockReferenceDataConnector.getCountryList()(any(), any()))
+        .thenReturn(Future.successful(CountryList(sampleCountryList)))
+
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .overrides(bind[ReferenceDataConnector].toInstance(mockReferenceDataConnector))
+        .build()
 
       val request = FakeRequest(GET, routes.CheckEventAnswersController.onPageLoad(mrn, eventIndex).url)
 

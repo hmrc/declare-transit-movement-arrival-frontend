@@ -319,7 +319,7 @@ class EventDetailsSpec
             <TRASHP>
               <NewTraMeaIdeSHP26>{vehicularTranshipment.transportIdentity}</NewTraMeaIdeSHP26>
               <NewTraMeaIdeSHP26LNG>{LanguageCodeEnglish.code}</NewTraMeaIdeSHP26LNG>
-              <NewTraMeaNatSHP54>{vehicularTranshipment.transportCountry}</NewTraMeaNatSHP54>
+              <NewTraMeaNatSHP54>{vehicularTranshipment.transportCountry.code}</NewTraMeaNatSHP54>
               {
               endorsementDateNode.getOrElse(NodeSeq.Empty) ++
                 endorsementAuthority.getOrElse(NodeSeq.Empty)
@@ -364,7 +364,7 @@ class EventDetailsSpec
             <TRASHP>
               <NewTraMeaIdeSHP26>{vehicularTranshipment.transportIdentity}</NewTraMeaIdeSHP26>
               <NewTraMeaIdeSHP26LNG>{LanguageCodeEnglish.code}</NewTraMeaIdeSHP26LNG>
-              <NewTraMeaNatSHP54>{vehicularTranshipment.transportCountry}</NewTraMeaNatSHP54>
+              <NewTraMeaNatSHP54>{vehicularTranshipment.transportCountry.code}</NewTraMeaNatSHP54>
               {
               endorsementDateNode.getOrElse(NodeSeq.Empty) ++
                 endorsementAuthority.getOrElse(NodeSeq.Empty)
@@ -410,7 +410,7 @@ class EventDetailsSpec
             <TRASHP>
               <NewTraMeaIdeSHP26>{vehicularTranshipment.transportIdentity}</NewTraMeaIdeSHP26>
               <NewTraMeaIdeSHP26LNG>{LanguageCodeEnglish.code}</NewTraMeaIdeSHP26LNG>
-              <NewTraMeaNatSHP54>{vehicularTranshipment.transportCountry}</NewTraMeaNatSHP54>
+              <NewTraMeaNatSHP54>{vehicularTranshipment.transportCountry.code}</NewTraMeaNatSHP54>
               {
               endorsementDateNode.getOrElse(NodeSeq.Empty) ++
                 endorsementAuthority.getOrElse(NodeSeq.Empty)
@@ -435,7 +435,7 @@ class EventDetailsSpec
       }
     }
 
-    "must reade xml as Vehicular transhipment with containers" in {
+    "must read xml as Vehicular transhipment with containers" in {
       forAll(arbitrary[VehicularTranshipment], arbitrary[Container], arbitrary[Container]) {
         (transhipment, container1, container2) =>
           val vehicularTranshipment = transhipment.copy(containers = Some(Seq(container1, container2)))
@@ -461,7 +461,7 @@ class EventDetailsSpec
             <TRASHP>
               <NewTraMeaIdeSHP26>{vehicularTranshipment.transportIdentity}</NewTraMeaIdeSHP26>
               <NewTraMeaIdeSHP26LNG>{LanguageCodeEnglish.code}</NewTraMeaIdeSHP26LNG>
-              <NewTraMeaNatSHP54>{vehicularTranshipment.transportCountry}</NewTraMeaNatSHP54>
+              <NewTraMeaNatSHP54>{vehicularTranshipment.transportCountry.code}</NewTraMeaNatSHP54>
               {
               endorsementDateNode.getOrElse(NodeSeq.Empty) ++
                 endorsementAuthority.getOrElse(NodeSeq.Empty)

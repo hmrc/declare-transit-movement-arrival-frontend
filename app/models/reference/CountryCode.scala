@@ -18,7 +18,7 @@ package models.reference
 
 import play.api.libs.json._
 
-case class CountryCode(code: String) extends AnyVal
+case class CountryCode(code: String)
 
 object CountryCode {
 

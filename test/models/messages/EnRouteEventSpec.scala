@@ -46,7 +46,7 @@ class EnRouteEventSpec
             <ENROUEVETEV>
               <PlaTEV10>{enRouteEventWithSealAndIncident.place}</PlaTEV10>
               <PlaTEV10LNG>{LanguageCodeEnglish.code}</PlaTEV10LNG>
-              <CouTEV13>{enRouteEventWithSealAndIncident.countryCode}</CouTEV13>
+              <CouTEV13>{enRouteEventWithSealAndIncident.countryCode.code}</CouTEV13>
               <CTLCTL>
                 <AlrInNCTCTL29>{if (enRouteEventWithSealAndIncident.alreadyInNcts) 1 else 0}</AlrInNCTCTL29>
               </CTLCTL>
@@ -76,7 +76,7 @@ class EnRouteEventSpec
             <ENROUEVETEV>
               <PlaTEV10>{enRouteEventWithContainer.place}</PlaTEV10>
               <PlaTEV10LNG>{LanguageCodeEnglish.code}</PlaTEV10LNG>
-              <CouTEV13>{enRouteEventWithContainer.countryCode}</CouTEV13>
+              <CouTEV13>{enRouteEventWithContainer.countryCode.code}</CouTEV13>
               <CTLCTL>
                 <AlrInNCTCTL29>{if (enRouteEventWithContainer.alreadyInNcts) 1 else 0}</AlrInNCTCTL29>
               </CTLCTL>
@@ -106,7 +106,7 @@ class EnRouteEventSpec
             <ENROUEVETEV>
               <PlaTEV10>{enRouteEventWithVehicle.place}</PlaTEV10>
               <PlaTEV10LNG>{LanguageCodeEnglish.code}</PlaTEV10LNG>
-              <CouTEV13>{enRouteEventWithVehicle.countryCode}</CouTEV13>
+              <CouTEV13>{enRouteEventWithVehicle.countryCode.code}</CouTEV13>
               <CTLCTL>
                 <AlrInNCTCTL29>{if (enRouteEventWithVehicle.alreadyInNcts) 1 else 0}</AlrInNCTCTL29>
               </CTLCTL>
@@ -138,7 +138,7 @@ class EnRouteEventSpec
               <ENROUEVETEV>
                 <PlaTEV10>{enRouteEventWithVehicle.place}</PlaTEV10>
                 <PlaTEV10LNG>{LanguageCodeEnglish.code}</PlaTEV10LNG>
-                <CouTEV13>{enRouteEventWithVehicle.countryCode}</CouTEV13>
+                <CouTEV13>{enRouteEventWithVehicle.countryCode.code}</CouTEV13>
                 <CTLCTL><AlrInNCTCTL29>{alreadyInNcts}</AlrInNCTCTL29></CTLCTL>
                 <SEAINFSF1>
                   <SeaNumSF12>1</SeaNumSF12>{seal.toXml}
@@ -161,7 +161,7 @@ class EnRouteEventSpec
               <ENROUEVETEV>
                 <PlaTEV10>{enRouteEventWithContainer.place}</PlaTEV10>
                 <PlaTEV10LNG>{LanguageCodeEnglish.code}</PlaTEV10LNG>
-                <CouTEV13>{enRouteEventWithContainer.countryCode}</CouTEV13>
+                <CouTEV13>{enRouteEventWithContainer.countryCode.code}</CouTEV13>
                 <CTLCTL>
                   <AlrInNCTCTL29>{if (enRouteEventWithContainer.alreadyInNcts) 1 else 0}</AlrInNCTCTL29>
                 </CTLCTL>
@@ -193,7 +193,7 @@ class EnRouteEventSpec
               <ENROUEVETEV>
                 <PlaTEV10>{enRouteEventWithSealAndIncident.place}</PlaTEV10>
                 <PlaTEV10LNG>{LanguageCodeEnglish.code}</PlaTEV10LNG>
-                <CouTEV13>{enRouteEventWithSealAndIncident.countryCode}</CouTEV13>
+                <CouTEV13>{enRouteEventWithSealAndIncident.countryCode.code}</CouTEV13>
                 <CTLCTL>
                   <AlrInNCTCTL29>{if (enRouteEventWithSealAndIncident.alreadyInNcts) 1 else 0}</AlrInNCTCTL29>
                 </CTLCTL>

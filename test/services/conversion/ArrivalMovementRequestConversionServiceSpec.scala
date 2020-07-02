@@ -19,17 +19,15 @@ package services.conversion
 import base.SpecBase
 import connectors.ReferenceDataConnector
 import generators.MessagesModelGenerators
-import models.domain.{NormalNotification, TranshipmentDomain, VehicularTranshipmentDomain}
-import models.messages.{ArrivalMovementRequest, EnRouteEvent, Header, Transhipment, VehicularTranshipment}
-import models.reference.CountryCode
+import models.domain.NormalNotification
+import models.messages.{ArrivalMovementRequest, Header}
+import models.reference.Country
 import org.mockito.Matchers.any
 import org.mockito.Mockito._
-import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.bind
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class ArrivalMovementRequestConversionServiceSpec extends SpecBase with MessagesModelGenerators with ScalaCheckPropertyChecks {
@@ -40,7 +38,7 @@ class ArrivalMovementRequestConversionServiceSpec extends SpecBase with Messages
 
     "must return None if MRN is malformed" in {
 
-      val genCountry: CountryCode                        = arbitrary[CountryCode].sample.value
+      val genCountry                                     = arbitrary[Country].sample.value
       val arrivalMovementRequest: ArrivalMovementRequest = arbitrary[ArrivalMovementRequest].sample.value
 
       when(mockReferenceDataConnector.getCountry(any())(any(), any()))
@@ -71,7 +69,7 @@ class ArrivalMovementRequestConversionServiceSpec extends SpecBase with Messages
 
     "must convert ArrivalMovementRequest to NormalNotification for trader" in {
 
-      val genCountry: CountryCode       = arbitrary[CountryCode].sample.value
+      val genCountry: Country           = arbitrary[Country].sample.value
       val genArrivalNotificationRequest = arbitrary[ArrivalMovementRequest].sample.value
 
       when(mockReferenceDataConnector.getCountry(any())(any(), any()))
@@ -84,17 +82,6 @@ class ArrivalMovementRequestConversionServiceSpec extends SpecBase with Messages
       val arrivalMovementRequestConversionService = application.injector.instanceOf[ArrivalMovementRequestConversionService]
 
       arrivalMovementRequestConversionService.convertToArrivalNotification(genArrivalNotificationRequest).futureValue.value mustBe an[NormalNotification]
-    }
-
-    "must fail when call to reference data is unsuccessful" in {
-
-      val genArrivalNotificationRequest           = arbitrary[ArrivalMovementRequest].sample.value
-      val arrivalMovementRequestConversionService = applicationBuilder().injector.instanceOf[ArrivalMovementRequestConversionService]
-      val result                                  = arrivalMovementRequestConversionService.convertToArrivalNotification(genArrivalNotificationRequest)
-
-      whenReady(result.failed) {
-        _ mustBe an[Exception]
-      }
     }
   }
 
