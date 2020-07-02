@@ -87,7 +87,7 @@ class TranshipmentTypeControllerSpec extends SpecBase with MockitoSugar with Nun
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers    = UserAnswers(mrn).set(TranshipmentTypePage(eventIndex), TranshipmentType.values.head).success.value
+      val userAnswers    = emptyUserAnswers.set(TranshipmentTypePage(eventIndex), TranshipmentType.values.head).success.value
       val application    = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request        = FakeRequest(GET, transhipmentTypeRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])

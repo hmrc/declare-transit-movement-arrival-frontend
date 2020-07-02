@@ -26,12 +26,14 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
+import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class MovementReferenceNumberController @Inject()(override val messagesApi: MessagesApi,
+                                                  sessionRepository: SessionRepository,
                                                   navigator: Navigator,
                                                   identify: IdentifierAction,
                                                   formProvider: MovementReferenceNumberFormProvider,
@@ -61,7 +63,11 @@ class MovementReferenceNumberController @Inject()(override val messagesApi: Mess
 
             renderer.render("movementReferenceNumber.njk", json).map(BadRequest(_))
           },
-          value => Future(Redirect(navigator.nextPage(MovementReferenceNumberPage, NormalMode, UserAnswers(value))))
+          value =>
+            sessionRepository.set(UserAnswers(id = value, eoriNumber = request.eoriNumber)) map {
+              _ =>
+                Redirect(navigator.nextPage(MovementReferenceNumberPage, NormalMode, UserAnswers(value, request.eoriNumber)))
+          }
         )
   }
 }

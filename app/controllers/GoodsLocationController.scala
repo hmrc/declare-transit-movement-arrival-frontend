@@ -21,8 +21,7 @@ import controllers.actions._
 import forms.GoodsLocationFormProvider
 import javax.inject.Inject
 import models.GoodsLocation.{AuthorisedConsigneesLocation, BorderForceOffice}
-import models.{GoodsLocation, Mode, MovementReferenceNumber, NormalMode, UserAnswers}
-import navigation.Navigator
+import models.{GoodsLocation, Mode, MovementReferenceNumber}
 import pages.GoodsLocationPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -36,9 +35,9 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class GoodsLocationController @Inject()(override val messagesApi: MessagesApi,
                                         sessionRepository: SessionRepository,
-                                        navigator: Navigator,
                                         identify: IdentifierAction,
                                         getData: DataRetrievalActionProvider,
+                                        requireData: DataRequiredAction,
                                         formProvider: GoodsLocationFormProvider,
                                         val controllerComponents: MessagesControllerComponents,
                                         renderer: Renderer,
@@ -49,9 +48,9 @@ class GoodsLocationController @Inject()(override val messagesApi: MessagesApi,
 
   private val form = formProvider()
 
-  def onPageLoad(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn)).async {
+  def onPageLoad(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
-      val preparedForm = request.userAnswers.getOrElse(UserAnswers(mrn)).get(GoodsLocationPage) match {
+      val preparedForm = request.userAnswers.get(GoodsLocationPage) match {
         case None        => form
         case Some(value) => form.fill(value)
       }
@@ -66,7 +65,7 @@ class GoodsLocationController @Inject()(override val messagesApi: MessagesApi,
       renderer.render("goodsLocation.njk", json).map(Ok(_))
   }
 
-  def onSubmit(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn)).async {
+  def onSubmit(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
       form
         .bindFromRequest()
@@ -84,7 +83,7 @@ class GoodsLocationController @Inject()(override val messagesApi: MessagesApi,
           },
           value =>
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(mrn)).set(GoodsLocationPage, value))
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(GoodsLocationPage, value))
               _              <- sessionRepository.set(updatedAnswers)
             } yield
               (value, frontendAppConfig.featureToggleSimplifiedJourney) match {

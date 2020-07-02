@@ -21,9 +21,9 @@ import java.time.LocalDate
 import base.SpecBase
 import connectors.ArrivalMovementConnector
 import generators.MessagesModelGenerators
-import models.{ArrivalId, NormalProcedureFlag}
 import models.domain.{NormalNotification, TraderDomain}
-import models.messages.{ArrivalMovementRequest, InterchangeControlReference}
+import models.messages.InterchangeControlReference
+import models.{ArrivalId, EoriNumber}
 import org.mockito.Matchers.any
 import org.mockito.Mockito._
 import org.scalacheck.Arbitrary.arbitrary
@@ -45,7 +45,7 @@ class ArrivalSubmissionServiceSpec extends SpecBase with MessagesModelGenerators
   private val traderWithoutEori  = TraderDomain("", "", "", "", "", "")
   private val normalNotification = NormalNotification(mrn, "", LocalDate.now(), "", traderWithoutEori, "", "", None)
 
-  private val userEoriNumber = arbitrary[String].sample.value
+  private val userEoriNumber = arbitrary[EoriNumber].sample.value
 
   override def beforeEach: Unit = {
     super.beforeEach()

@@ -68,7 +68,7 @@ class PresentationOfficeControllerSpec extends SpecBase with MockitoSugar with N
     "must populate the view correctly on a GET when the question has previously been answered" in {
       val officeId   = "officeId"
       val officeName = "someName"
-      val userAnswers = UserAnswers(mrn)
+      val userAnswers = emptyUserAnswers
         .set(PresentationOfficePage, CustomsOffice(officeId, officeName, Seq.empty, None))
         .success
         .value

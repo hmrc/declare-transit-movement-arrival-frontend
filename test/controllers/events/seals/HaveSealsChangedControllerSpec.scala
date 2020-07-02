@@ -84,7 +84,7 @@ class HaveSealsChangedControllerSpec extends SpecBase with MockitoSugar with Nun
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers    = UserAnswers(mrn).set(HaveSealsChangedPage(eventIndex), true).success.value
+      val userAnswers    = emptyUserAnswers.set(HaveSealsChangedPage(eventIndex), true).success.value
       val application    = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request        = FakeRequest(GET, haveSealsChangedRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])

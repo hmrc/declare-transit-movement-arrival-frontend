@@ -21,7 +21,7 @@ import controllers.actions.{DataRequiredAction, DataRetrievalActionProvider, Ide
 import derivable.DeriveNumberOfEvents
 import handlers.ErrorHandler
 import models.GoodsLocation.{AuthorisedConsigneesLocation, BorderForceOffice}
-import models.{Index, MovementReferenceNumber, UserAnswers}
+import models.{EoriNumber, Index, MovementReferenceNumber, UserAnswers}
 import pages.{ConsigneeEoriConfirmationPage, GoodsLocationPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -75,7 +75,7 @@ class CheckYourAnswersController @Inject()(override val messagesApi: MessagesApi
         }
     }
 
-  private def createSections(userAnswers: UserAnswers, eori: String): Seq[Section] = {
+  private def createSections(userAnswers: UserAnswers, eori: EoriNumber): Seq[Section] = {
     val helper = new CheckYourAnswersHelper(userAnswers)
     val mrn    = Section(Seq(helper.movementReferenceNumber))
 

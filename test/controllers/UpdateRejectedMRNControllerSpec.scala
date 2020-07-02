@@ -138,7 +138,7 @@ class UpdateRejectedMRNControllerSpec extends SpecBase with MessagesModelGenerat
       val mrn                    = "99IT9876AB88901209"
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-      when(mockUserAnswersService.getUserAnswers(any())(any())) thenReturn Future.successful(Some(emptyUserAnswers))
+      when(mockUserAnswersService.getUserAnswers(any(), any())(any())) thenReturn Future.successful(Some(emptyUserAnswers))
 
       val application =
         applicationBuilder(userAnswers = None)
@@ -157,7 +157,7 @@ class UpdateRejectedMRNControllerSpec extends SpecBase with MessagesModelGenerat
 
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual onwardRoute.url
-      verify(mockUserAnswersService, times(1)).getUserAnswers(any())(any())
+      verify(mockUserAnswersService, times(1)).getUserAnswers(any(), any())(any())
       verify(mockSessionRepository, times(1)).set(meq(emptyUserAnswers.copy(id = MovementReferenceNumber(mrn).get, arrivalId = Some(arrivalId))))
 
       application.stop()
@@ -169,7 +169,7 @@ class UpdateRejectedMRNControllerSpec extends SpecBase with MessagesModelGenerat
       val mockUserAnswersService = mock[UserAnswersService]
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-      when(mockUserAnswersService.getUserAnswers(any())(any())) thenReturn Future.successful(None)
+      when(mockUserAnswersService.getUserAnswers(any(), any())(any())) thenReturn Future.successful(None)
 
       val application =
         applicationBuilder(userAnswers = None)
@@ -189,7 +189,7 @@ class UpdateRejectedMRNControllerSpec extends SpecBase with MessagesModelGenerat
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual routes.TechnicalDifficultiesController.onPageLoad().url
 
-      verify(mockUserAnswersService, times(1)).getUserAnswers(any())(any())
+      verify(mockUserAnswersService, times(1)).getUserAnswers(any(), any())(any())
       verify(mockSessionRepository, never()).set(any())
 
       application.stop()

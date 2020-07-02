@@ -21,7 +21,7 @@ import java.time.LocalTime
 import config.FrontendAppConfig
 import connectors.ArrivalMovementConnector
 import javax.inject.Inject
-import models.UserAnswers
+import models.{EoriNumber, UserAnswers}
 import models.messages.MessageSender
 import play.api.Logger
 import repositories.InterchangeControlReferenceIdRepository
@@ -38,10 +38,10 @@ class ArrivalSubmissionService @Inject()(
   interchangeControlReferenceIdRepository: InterchangeControlReferenceIdRepository
 )(implicit ec: ExecutionContext) {
 
-  def submit(userAnswers: UserAnswers, eori: String)(implicit hc: HeaderCarrier): Future[Option[HttpResponse]] =
+  def submit(userAnswers: UserAnswers, eori: EoriNumber)(implicit hc: HeaderCarrier): Future[Option[HttpResponse]] =
     converterService.convertToArrivalNotification(userAnswers) match {
       case Some(notification) =>
-        val messageSender = MessageSender(appConfig.env, eori)
+        val messageSender = MessageSender(appConfig.env, eori.value)
 
         interchangeControlReferenceIdRepository
           .nextInterchangeControlReferenceId()
