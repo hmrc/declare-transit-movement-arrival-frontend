@@ -25,7 +25,7 @@ import models.XMLReads._
 import models.XMLWrites
 import models.XMLWrites._
 import models.domain.{ContainerTranshipmentDomain, EventDetailsDomain, IncidentDomain, VehicularTranshipmentDomain}
-import models.reference.Country
+import models.reference.CountryCode
 import utils.Format
 
 import scala.language.implicitConversions

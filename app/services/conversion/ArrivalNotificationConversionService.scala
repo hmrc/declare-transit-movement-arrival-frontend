@@ -20,7 +20,7 @@ import java.time.LocalDate
 
 import derivable.DeriveNumberOfEvents
 import models.domain._
-import models.reference.Country
+import models.reference.CountryCode
 import models.GoodsLocation.{AuthorisedConsigneesLocation, BorderForceOffice}
 import models.messages._
 import models.{Index, UserAnswers}
@@ -101,7 +101,7 @@ class ArrivalNotificationConversionService {
   private def eventDetails(
     incidentInformation: Option[String],
     transportIdentity: Option[String],
-    transportCountry: Option[Country],
+    transportCountry: Option[CountryCode],
     containers: Option[Seq[ContainerDomain]]
   ): Option[EventDetailsDomain] =
     (incidentInformation, transportIdentity, transportCountry, containers) match {

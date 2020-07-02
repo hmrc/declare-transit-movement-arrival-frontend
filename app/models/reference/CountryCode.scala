@@ -16,10 +16,19 @@
 
 package models.reference
 
-case class Country(code: CountryCode, description: String)
+import play.api.libs.json._
 
-object Country {
-  import play.api.libs.json.OFormat
-  import play.api.libs.json.Json
-  implicit val format: OFormat[Country] = Json.format[Country]
+case class CountryCode(code: String) extends AnyVal
+
+object CountryCode {
+  implicit val format: Format[CountryCode] =
+    new Format[CountryCode] {
+      override def writes(o: CountryCode): JsValue = JsString(o.code)
+
+      override def reads(json: JsValue): JsResult[CountryCode] = json match {
+        case JsString(code) => JsSuccess(CountryCode(code))
+        case x              => JsError(s"Expected a string, got a ${x.getClass}")
+      }
+    }
+
 }

@@ -26,7 +26,7 @@ import models.GoodsLocation.BorderForceOffice
 import models.TranshipmentType.{DifferentContainer, DifferentContainerAndVehicle, DifferentVehicle}
 import models.domain.{ContainerDomain, SealDomain}
 import models.messages.{Container, CustomsOfficeOfPresentation, Seal}
-import models.reference.{Country, CustomsOffice}
+import models.reference.{CountryCode, CustomsOffice}
 import models.{Address, CheckMode, GoodsLocation, Index, NormalMode, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
@@ -50,7 +50,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
   private val navigator: Navigator = app.injector.instanceOf[Navigator]
 
-  private val country: Country = Country("Valid", "GB", "United Kingdom")
+  private val country: CountryCode = CountryCode("Valid", "GB", "United Kingdom")
 
   "Navigator in Check mode" - {
     "must go from a page that doesn't exist in the edit route map  to Check Your Answers" in {
@@ -662,7 +662,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
         }
 
         "to CheckEventAnswers when 'Both' is selected and ContainerNumber and vehicle identity and nationality questions have been answered" in {
-          forAll(arbitrary[UserAnswers], arbitrary[ContainerDomain], arbitrary[String], arbitrary[Country]) {
+          forAll(arbitrary[UserAnswers], arbitrary[ContainerDomain], arbitrary[String], arbitrary[CountryCode]) {
             (answers, container, transportIdentity, transportNationality) =>
               val updatedUserAnswers = answers
                 .set(TranshipmentTypePage(eventIndex), DifferentContainerAndVehicle).success.value
@@ -749,7 +749,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
         }
 
         "to CheckEventAnswersPage when TransportNationality has been answered" in {
-          forAll(arbitrary[UserAnswers], arbitrary[String], arbitrary[Country]) {
+          forAll(arbitrary[UserAnswers], arbitrary[String], arbitrary[CountryCode]) {
             (answers, transportIdentity, transportNationality) =>
               val updatedUserAnswers = answers
                 .set(TransportIdentityPage(eventIndex), transportIdentity).success.value

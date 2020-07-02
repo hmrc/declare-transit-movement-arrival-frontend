@@ -20,7 +20,7 @@ import base.SpecBase
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, okJson, urlEqualTo}
 import generators.MessagesModelGenerators
 import helper.WireMockServerHandler
-import models.reference.{Country, CustomsOffice}
+import models.reference.{CountryCode, CustomsOffice}
 import org.scalacheck.Gen
 import org.scalatest.Assertion
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -120,8 +120,8 @@ class ReferenceDataConnectorSpec extends SpecBase with WireMockServerHandler wit
         )
 
         val expectedResult = Seq(
-          Country("valid", "GB", "United Kingdom"),
-          Country("valid", "AD", "Andorra")
+          CountryCode("valid", "GB", "United Kingdom"),
+          CountryCode("valid", "AD", "Andorra")
         )
 
         connector.getCountryList.futureValue mustBe expectedResult
@@ -144,7 +144,7 @@ class ReferenceDataConnectorSpec extends SpecBase with WireMockServerHandler wit
             .willReturn(okJson(gbCountryJson))
         )
 
-        val expectedResult = Country("valid", "GB", "United Kingdom")
+        val expectedResult = CountryCode("valid", "GB", "United Kingdom")
 
         connector.getCountry(code).futureValue mustBe expectedResult
       }

@@ -21,7 +21,7 @@ import connectors.ReferenceDataConnector
 import generators.MessagesModelGenerators
 import models.domain.{NormalNotification, TranshipmentDomain, VehicularTranshipmentDomain}
 import models.messages.{ArrivalMovementRequest, EnRouteEvent, Header, Transhipment, VehicularTranshipment}
-import models.reference.Country
+import models.reference.CountryCode
 import org.mockito.Matchers.any
 import org.mockito.Mockito._
 import org.scalacheck.Arbitrary
@@ -40,7 +40,7 @@ class ArrivalMovementRequestConversionServiceSpec extends SpecBase with Messages
 
     "must return None if MRN is malformed" in {
 
-      val genCountry: Country                            = arbitrary[Country].sample.value
+      val genCountry: CountryCode                        = arbitrary[CountryCode].sample.value
       val arrivalMovementRequest: ArrivalMovementRequest = arbitrary[ArrivalMovementRequest].sample.value
 
       when(mockReferenceDataConnector.getCountry(any())(any(), any()))
@@ -71,7 +71,7 @@ class ArrivalMovementRequestConversionServiceSpec extends SpecBase with Messages
 
     "must convert ArrivalMovementRequest to NormalNotification for trader" in {
 
-      val genCountry: Country           = arbitrary[Country].sample.value
+      val genCountry: CountryCode       = arbitrary[CountryCode].sample.value
       val genArrivalNotificationRequest = arbitrary[ArrivalMovementRequest].sample.value
 
       when(mockReferenceDataConnector.getCountry(any())(any(), any()))

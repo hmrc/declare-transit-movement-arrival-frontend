@@ -17,7 +17,7 @@
 package generators
 
 import models._
-import models.reference.{Country, CustomsOffice}
+import models.reference.{CountryCode, CustomsOffice}
 import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
@@ -67,14 +67,14 @@ trait ModelGenerators {
     }
   }
 
-  implicit lazy val arbitraryCountry: Arbitrary[Country] = {
+  implicit lazy val arbitraryCountry: Arbitrary[CountryCode] = {
 
     Arbitrary {
       for {
         state <- Gen.oneOf(Seq("Valid", "Invalid"))
         code  <- Gen.pick(2, 'A' to 'Z')
         name  <- arbitrary[String]
-      } yield Country(state, code.mkString, name)
+      } yield CountryCode(state, code.mkString, name)
     }
   }
 }

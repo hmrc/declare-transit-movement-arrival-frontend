@@ -20,7 +20,7 @@ import connectors.ReferenceDataConnector
 import controllers.actions._
 import forms.events.EventCountryFormProvider
 import javax.inject.Inject
-import models.reference.Country
+import models.reference.{Country, CountryCode}
 import models.{Index, Mode, MovementReferenceNumber}
 import navigation.Navigator
 import pages.events.EventCountryPage
@@ -54,12 +54,14 @@ class EventCountryController @Inject()(override val messagesApi: MessagesApi,
       implicit request =>
         referenceDataConnector.getCountryList() flatMap {
           countries =>
-            val form = formProvider(countries)
-            val preparedForm = request.userAnswers.get(EventCountryPage(eventIndex)) match {
-              case None        => form
-              case Some(value) => form.fill(value)
-            }
-            renderPage(mrn, mode, preparedForm, countries, Results.Ok, eventIndex)
+            val form                                = formProvider(countries)
+            val preparedForm: Future[Form[Country]] = ???
+//              request.userAnswers.get(EventCountryPage(eventIndex)) match {
+//                case None        => form
+//                case Some(value) => form.fill(value)
+//              }
+            preparedForm.flatMap(renderPage(mrn, mode, _, countries, Results.Ok, eventIndex))
+
         }
     }
 
@@ -68,7 +70,8 @@ class EventCountryController @Inject()(override val messagesApi: MessagesApi,
       implicit request =>
         referenceDataConnector.getCountryList() flatMap {
           countries =>
-            val form = formProvider(countries)
+            val form: Future[Form[Country]] = ???
+            // formProvider(countries)
 
             form
               .bindFromRequest()
@@ -76,7 +79,7 @@ class EventCountryController @Inject()(override val messagesApi: MessagesApi,
                 formWithErrors => renderPage(mrn, mode, formWithErrors, countries, Results.BadRequest, eventIndex),
                 value =>
                   for {
-                    updatedAnswers <- Future.fromTry(request.userAnswers.set(EventCountryPage(eventIndex), value))
+                    updatedAnswers <- Future.fromTry(request.userAnswers.set(EventCountryPage(eventIndex), value.code))
                     _              <- sessionRepository.set(updatedAnswers)
                   } yield Redirect(navigator.nextPage(EventCountryPage(eventIndex), mode, updatedAnswers))
               )

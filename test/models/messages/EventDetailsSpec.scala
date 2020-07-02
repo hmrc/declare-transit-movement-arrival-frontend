@@ -22,7 +22,7 @@ import models.LanguageCodeEnglish
 import models.XMLWrites._
 import models.domain.{ContainerTranshipmentDomain, IncidentDomain, VehicularTranshipmentDomain}
 import models.messages.behaviours.JsonBehaviours
-import models.reference.Country
+import models.reference.CountryCode
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.OptionValues._
 import org.scalatest.{FreeSpec, MustMatchers, StreamlinedXmlEquality}

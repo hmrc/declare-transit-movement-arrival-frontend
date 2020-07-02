@@ -22,7 +22,7 @@ import models.{CheckMode, Index}
 import models.TranshipmentType._
 import models.domain.{ContainerDomain, SealDomain}
 import models.messages.{Container, Seal}
-import models.reference.Country
+import models.reference.CountryCode
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.IncidentOnRoutePage
 import pages.events._
@@ -46,7 +46,7 @@ class CheckEventAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChe
     "and hasn't been reported and did not move to different vehicle/container and no seals changed" in {
       val ua = emptyUserAnswers
         .set(IncidentOnRoutePage, true).success.value
-        .set(EventCountryPage(eventIndex), Country("Valid", "value", "Country Name")).success.value
+        .set(EventCountryPage(eventIndex), CountryCode("Valid", "value", "Country Name")).success.value
         .set(EventPlacePage(eventIndex), "value").success.value
         .set(EventReportedPage(eventIndex), false).success.value
         .set(IsTranshipmentPage(eventIndex), false).success.value
@@ -63,7 +63,7 @@ class CheckEventAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChe
     "and has been reported, did not move to different vehicle/container and no seals changed" in {
       val ua = emptyUserAnswers
         .set(IncidentOnRoutePage, true).success.value
-        .set(EventCountryPage(eventIndex), Country("Valid", "value", "Country Name")).success.value
+        .set(EventCountryPage(eventIndex), CountryCode("Valid", "value", "Country Name")).success.value
         .set(EventPlacePage(eventIndex), "value").success.value
         .set(EventReportedPage(eventIndex), false).success.value
         .set(IsTranshipmentPage(eventIndex), false).success.value
@@ -79,7 +79,7 @@ class CheckEventAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChe
     "and has been reported, did not move to different vehicle/container and seals changed" in {
       val ua = emptyUserAnswers
         .set(IncidentOnRoutePage, true).success.value
-        .set(EventCountryPage(eventIndex), Country("Valid", "value", "Country Name")).success.value
+        .set(EventCountryPage(eventIndex), CountryCode("Valid", "value", "Country Name")).success.value
         .set(EventPlacePage(eventIndex), "value").success.value
         .set(EventReportedPage(eventIndex), false).success.value
         .set(IsTranshipmentPage(eventIndex), false).success.value
@@ -97,7 +97,7 @@ class CheckEventAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChe
     "and has been reported and did not move to different vehicle/container show the event info only" in {
       val ua = emptyUserAnswers
         .set(IncidentOnRoutePage, true).success.value
-        .set(EventCountryPage(eventIndex), Country("Valid", "value", "Country Name")).success.value
+        .set(EventCountryPage(eventIndex), CountryCode("Valid", "value", "Country Name")).success.value
         .set(EventPlacePage(eventIndex), "value").success.value
         .set(EventReportedPage(eventIndex), true).success.value
         .set(IsTranshipmentPage(eventIndex), false).success.value
@@ -114,13 +114,13 @@ class CheckEventAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChe
     "and the goods have moved to different vehicle display event info and vehicle info sections" in {
       val ua = emptyUserAnswers
         .set(IncidentOnRoutePage, true).success.value
-        .set(EventCountryPage(eventIndex), Country("Valid", "value", "Country Name")).success.value
+        .set(EventCountryPage(eventIndex), CountryCode("Valid", "value", "Country Name")).success.value
         .set(EventPlacePage(eventIndex), "value").success.value
         .set(EventReportedPage(eventIndex), false).success.value
         .set(IsTranshipmentPage(eventIndex), true).success.value
         .set(TranshipmentTypePage(eventIndex), DifferentVehicle).success.value
         .set(TransportIdentityPage(eventIndex), "value").success.value
-        .set(TransportNationalityPage(eventIndex), Country("Valid","TT","Some country")).success.value
+        .set(TransportNationalityPage(eventIndex), CountryCode("Valid","TT","Some country")).success.value
         .set(HaveSealsChangedPage(eventIndex), false).success.value
 
       val vm = CheckEventAnswersViewModel(ua, eventIndex, CheckMode)
@@ -134,7 +134,7 @@ class CheckEventAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChe
     "and the goods have moved to different container display event info and container info sections" in {
       val ua = emptyUserAnswers
         .set(IncidentOnRoutePage, true).success.value
-        .set(EventCountryPage(eventIndex), Country("Valid", "value", "Country Name")).success.value
+        .set(EventCountryPage(eventIndex), CountryCode("Valid", "value", "Country Name")).success.value
         .set(EventPlacePage(eventIndex), "value").success.value
         .set(EventReportedPage(eventIndex), false).success.value
         .set(IsTranshipmentPage(eventIndex), true).success.value
@@ -154,7 +154,7 @@ class CheckEventAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChe
     "and the goods have moved to both different containers and vehicles  display event info and vehicle and containers info sections" in {
       val ua = emptyUserAnswers
         .set(IncidentOnRoutePage, true).success.value
-        .set(EventCountryPage(eventIndex), Country("Valid", "value", "Country Name")).success.value
+        .set(EventCountryPage(eventIndex), CountryCode("Valid", "value", "Country Name")).success.value
         .set(EventPlacePage(eventIndex), "value").success.value
         .set(EventReportedPage(eventIndex), false).success.value
         .set(IsTranshipmentPage(eventIndex), true).success.value
@@ -163,7 +163,7 @@ class CheckEventAnswersViewModelSpec extends SpecBase with ScalaCheckPropertyChe
         .set(ContainerNumberPage(eventIndex, Index(1)), ContainerDomain("value")).success.value
         .set(ContainerNumberPage(eventIndex, Index(2)), ContainerDomain("value")).success.value
         .set(TransportIdentityPage(eventIndex), "value").success.value
-        .set(TransportNationalityPage(eventIndex), Country("Valid","TT","Some country")).success.value
+        .set(TransportNationalityPage(eventIndex), CountryCode("Valid","TT","Some country")).success.value
         .set(HaveSealsChangedPage(eventIndex), false).success.value
 
       val vm = CheckEventAnswersViewModel(ua, eventIndex, CheckMode)

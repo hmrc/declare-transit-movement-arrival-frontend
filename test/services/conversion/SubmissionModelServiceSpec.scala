@@ -21,7 +21,7 @@ import java.time.LocalTime
 import generators.MessagesModelGenerators
 import models.domain.{EnRouteEventDomain, NormalNotification, SimplifiedNotification, TraderDomain}
 import models.messages.{ArrivalMovementRequest, EnRouteEvent}
-import models.reference.Country
+import models.reference.CountryCode
 import models.{domain, MovementReferenceNumber, NormalProcedureFlag}
 import models.{MovementReferenceNumber, NormalProcedureFlag, SimplifiedProcedureFlag}
 import models.messages._

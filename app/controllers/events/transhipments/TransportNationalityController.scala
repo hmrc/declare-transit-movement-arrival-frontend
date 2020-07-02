@@ -20,7 +20,7 @@ import connectors.ReferenceDataConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalActionProvider, IdentifierAction}
 import forms.events.transhipments.TransportNationalityFormProvider
 import javax.inject.Inject
-import models.reference.Country
+import models.reference.CountryCode
 import models.{Index, Mode, MovementReferenceNumber}
 import navigation.Navigator
 import pages.events.transhipments.TransportNationalityPage
@@ -82,7 +82,7 @@ class TransportNationalityController @Inject()(override val messagesApi: Message
       }
   }
 
-  private def renderPage(mrn: MovementReferenceNumber, mode: Mode, form: Form[Country], countries: Seq[Country], status: Status, eventIndex: Index)(
+  private def renderPage(mrn: MovementReferenceNumber, mode: Mode, form: Form[CountryCode], countries: Seq[CountryCode], status: Status, eventIndex: Index)(
     implicit request: Request[AnyContent]): Future[Result] = {
     val json = Json.obj(
       "form"        -> form,
@@ -95,7 +95,7 @@ class TransportNationalityController @Inject()(override val messagesApi: Message
     renderer.render("events/transhipments/transportNationality.njk", json).map(status(_))
   }
 
-  private def countryJsonList(value: Option[Country], countries: Seq[Country]): Seq[JsObject] = {
+  private def countryJsonList(value: Option[CountryCode], countries: Seq[CountryCode]): Seq[JsObject] = {
     val countryJsonList = countries.map {
       country =>
         Json.obj("text" -> country.description, "value" -> country.code, "selected" -> value.contains(country))

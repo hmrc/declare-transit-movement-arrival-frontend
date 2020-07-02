@@ -22,7 +22,7 @@ import models.{domain, messages, MovementReferenceNumber, NormalProcedureFlag, P
 import models.domain._
 import models.messages.ErrorType.{GenericError, MRNError}
 import models.messages._
-import models.reference.Country
+import models.reference.CountryCode
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 import utils.Format._
@@ -89,7 +89,7 @@ trait MessagesModelGenerators extends Generators {
       for {
 
         transportIdentity <- stringsWithMaxLength(VehicularTranshipment.Constants.transportIdentityLength)
-        transportCountry  <- arbitrary[Country].map(_.code)
+        transportCountry  <- arbitrary[CountryCode].map(_.code)
         containers        <- Gen.option(listWithMaxLength[ContainerDomain](2))
       } yield VehicularTranshipmentDomain(transportIdentity = transportIdentity, transportCountry = transportCountry, containers = containers)
     }
@@ -210,7 +210,7 @@ trait MessagesModelGenerators extends Generators {
 
       for {
         place         <- stringsWithMaxLength(EnRouteEvent.Constants.placeLength)
-        country       <- arbitrary[Country].map(_.code)
+        country       <- arbitrary[CountryCode].map(_.code)
         alreadyInNcts <- arbitrary[Boolean]
         eventDetails  <- arbitrary[Option[EventDetailsDomain]]
         seals         <- listWithMaxLength[SealDomain](1)

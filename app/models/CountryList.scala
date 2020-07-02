@@ -14,12 +14,16 @@
  * limitations under the License.
  */
 
-package models.reference
+package models
 
-case class Country(code: CountryCode, description: String)
+import models.reference.{Country, CountryCode}
 
-object Country {
-  import play.api.libs.json.OFormat
-  import play.api.libs.json.Json
-  implicit val format: OFormat[Country] = Json.format[Country]
+class CountryList(countries: Seq[Country]) {
+  def fullList: Seq[Country] = ???
+
+  def getCountry(countryCode: CountryCode): Country = ???
+}
+
+object CountryList {
+  def apply(countries: Seq[Country]): CountryList = new CountryList(countries)
 }

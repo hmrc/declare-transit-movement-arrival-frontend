@@ -18,15 +18,16 @@ package forms.events
 
 import forms.mappings.Mappings
 import javax.inject.Inject
+import models.reference.{Country, CountryCode}
 import play.api.data.Form
-import models.reference.Country
 
 class EventCountryFormProvider @Inject() extends Mappings {
 
+  // TODO revist
   def apply(countryList: Seq[Country]): Form[Country] =
     Form(
       "value" -> text("eventCountry.error.required")
-        .verifying("eventCountry.error.required", value => countryList.exists(_.code == value))
-        .transform[Country](value => countryList.find(_.code == value).get, _.code)
+        .verifying("eventCountry.error.required", value => countryList.exists(_.code.code == value))
+        .transform[Country](value => countryList.find(_.code.code == value).get, _.code.code)
     )
 }

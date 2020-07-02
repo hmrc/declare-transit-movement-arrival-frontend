@@ -22,7 +22,7 @@ import com.lucidchart.open.xtract.{XmlReader, __ => xmlPath}
 import models.XMLReads._
 import models.XMLWrites._
 import models.domain.{EnRouteEventDomain, EventDetailsDomain}
-import models.reference.Country
+import models.reference.CountryCode
 import models.{LanguageCodeEnglish, XMLWrites}
 
 import scala.xml.NodeSeq
@@ -37,7 +37,7 @@ object EnRouteEvent {
     val sealsLength       = 20
   }
 
-  def enRouteEventToDomain(enRouteEvent: EnRouteEvent, eventCountry: Country, eventDetailsDomain: Option[EventDetailsDomain]): EnRouteEventDomain =
+  def enRouteEventToDomain(enRouteEvent: EnRouteEvent, eventCountry: CountryCode, eventDetailsDomain: Option[EventDetailsDomain]): EnRouteEventDomain =
     EnRouteEvent
       .unapply(enRouteEvent)
       .map {
