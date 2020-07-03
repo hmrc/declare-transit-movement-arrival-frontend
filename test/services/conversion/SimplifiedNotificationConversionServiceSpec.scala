@@ -23,7 +23,7 @@ import generators.MessagesModelGenerators
 import models.GoodsLocation.{AuthorisedConsigneesLocation, BorderForceOffice}
 import models.domain.{ContainerDomain, ContainerTranshipmentDomain, EnRouteEventDomain, SealDomain, SimplifiedNotification, TraderDomain}
 import models.messages._
-import models.reference.{Country, CustomsOffice}
+import models.reference.{CountryCode, CustomsOffice}
 import models.{Address, Index, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen

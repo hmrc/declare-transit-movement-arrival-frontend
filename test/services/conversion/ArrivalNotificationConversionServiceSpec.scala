@@ -21,7 +21,7 @@ import generators.MessagesModelGenerators
 import models.GoodsLocation.BorderForceOffice
 import models.domain.{ContainerTranshipmentDomain, EnRouteEventDomain, NormalNotification, SealDomain, TraderDomain}
 import models.messages.{ContainerTranshipment, EnRouteEvent, Seal}
-import models.reference.{Country, CustomsOffice}
+import models.reference.{CountryCode, CustomsOffice}
 import models.{Address, Index, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
@@ -165,11 +165,11 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
           val userAnswers: UserAnswers = createBasicUserAnswers(trader, arrivalNotification, isIncidentOnRoute = true)
             .set(IsTranshipmentPage(eventIndex), false).success.value
             .set(EventPlacePage(eventIndex), routeEvent1.place).success.value
-            .set(EventCountryPage(eventIndex), routeEvent1.country).success.value
+            .set(EventCountryPage(eventIndex), enRouteEvent1.country).success.value
             .set(EventReportedPage(eventIndex), routeEvent1.alreadyInNcts).success.value
             .set(IsTranshipmentPage(eventIndex2), false).success.value
             .set(EventPlacePage(eventIndex2), routeEvent2.place).success.value
-            .set(EventCountryPage(eventIndex2), routeEvent2.country).success.value
+            .set(EventCountryPage(eventIndex2), enRouteEvent2.country).success.value
             .set(EventReportedPage(eventIndex2), routeEvent2.alreadyInNcts).success.value
 
           val updatedAnswers1 = incident1.incidentInformation.fold[UserAnswers](userAnswers) {

@@ -16,35 +16,29 @@
 
 package services.conversion
 
+import cats.implicits._
 import models.MovementReferenceNumber
-import models.domain.{ArrivalNotificationDomain, EnRouteEventDomain, NormalNotification}
-import models.messages.{ArrivalMovementRequest, EnRouteEvent, Trader}
-import models.reference.Country
+import models.domain.NormalNotification
+import models.messages._
 
 object ArrivalMovementRequestConversionService {
 
-  def convertToArrivalNotification(arrivalMovementRequest: ArrivalMovementRequest): Option[ArrivalNotificationDomain] =
-    MovementReferenceNumber(arrivalMovementRequest.header.movementReferenceNumber) map {
-      mrn =>
-        // TODO How do we handle the call to the connector here???
-        val buildEnrouteEvents: Option[Seq[EnRouteEventDomain]] = arrivalMovementRequest.enRouteEvents.map {
-          events =>
-            events.map {
-              event =>
-                val country = Country("", event.countryCode, "")
-                EnRouteEvent.enRouteEventToDomain(event, country)
-            }
-        }
+  def convertToArrivalNotification(arrivalMovementRequest: ArrivalMovementRequest): Option[NormalNotification] =
+    (
+      MovementReferenceNumber(arrivalMovementRequest.header.movementReferenceNumber),
+      arrivalMovementRequest.header.customsSubPlace
+    ).tupled.map {
 
+      case (mrn, customsSubPlace) =>
         NormalNotification(
           mrn,
           arrivalMovementRequest.header.arrivalNotificationPlace,
           arrivalMovementRequest.header.notificationDate,
-          arrivalMovementRequest.header.customsSubPlace.get, // TODO need to address the case when there is no subsplace
+          customsSubPlace,
           Trader.messagesTraderToDomainTrader(arrivalMovementRequest.trader),
           arrivalMovementRequest.header.presentationOfficeId,
           arrivalMovementRequest.header.presentationOfficeName,
-          buildEnrouteEvents
+          arrivalMovementRequest.enRouteEvents.map(_.map(EnRouteEvent.enRouteEventToDomain))
         )
     }
 }

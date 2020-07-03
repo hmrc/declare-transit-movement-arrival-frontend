@@ -20,8 +20,8 @@ import base.SpecBase
 import connectors.ReferenceDataConnector
 import forms.events.transhipments.TransportNationalityFormProvider
 import matchers.JsonMatchers
-import models.reference.Country
-import models.{NormalMode, UserAnswers}
+import models.reference.{Country, CountryCode}
+import models.{CountryList, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
@@ -44,10 +44,10 @@ class TransportNationalityControllerSpec extends SpecBase with MockitoSugar with
 
   def onwardRoute: Call = Call("GET", "/foo")
 
-  val formProvider             = new TransportNationalityFormProvider()
-  private val country: Country = Country("valid", "GB", "United Kingdom")
-  val countries                = Seq(country)
-  val form: Form[Country]      = formProvider(countries)
+  val formProvider    = new TransportNationalityFormProvider()
+  private val country = Country(CountryCode("GB"), "United Kingdom")
+  val countries       = CountryList(Seq(country))
+  val form            = formProvider(countries)
 
   val mockReferenceDataConnector: ReferenceDataConnector = mock[ReferenceDataConnector]
   lazy val transportNationalityRoute: String             = routes.TransportNationalityController.onPageLoad(mrn, eventIndex, NormalMode).url
@@ -63,7 +63,7 @@ class TransportNationalityControllerSpec extends SpecBase with MockitoSugar with
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
       val filledForm  = form.bind(Map("value" -> "GB"))
-      val userAnswers = emptyUserAnswers.set(TransportNationalityPage(eventIndex), country).success.value
+      val userAnswers = UserAnswers(mrn, eoriNumber).set(TransportNationalityPage(eventIndex), country.code).success.value
 
       verifyOnPageLoad(filledForm, userAnswers, preSelect = true)
     }

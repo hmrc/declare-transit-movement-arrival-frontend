@@ -17,6 +17,7 @@
 package forms.events.transhipments
 
 import forms.behaviours.StringFieldBehaviours
+import models.CountryList
 import models.messages.VehicularTranshipment
 import play.api.data.FormError
 import models.reference._
@@ -25,8 +26,9 @@ class TransportNationalityFormProviderSpec extends StringFieldBehaviours {
 
   val requiredKey    = "transportNationality.error.required"
   val lengthKey      = "transportNationality.error.length"
-  val maxLength: Int = VehicularTranshipment.Constants.transportCountryLength
-  val form           = new TransportNationalityFormProvider()(Seq(Country("valid", "AD", "Andorra")))
+  val maxLength: Int = CountryCode.Constants.countryCodeLength
+  val countryList    = CountryList(Seq(Country(CountryCode("AD"), "Andorra")))
+  val form           = new TransportNationalityFormProvider()(countryList)
 
   ".value" - {
 

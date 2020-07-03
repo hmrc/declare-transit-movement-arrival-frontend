@@ -23,15 +23,10 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class UserAnswersService @Inject()(arrivalNotificationMessageService: ArrivalNotificationMessageService)(implicit ec: ExecutionContext) {
+class UserAnswersService @Inject()(arrivalNotificationMessageService: ArrivalNotificationMessageService) {
 
-  def getUserAnswers(arrivalId: ArrivalId, eoriNumber: EoriNumber)(implicit hc: HeaderCarrier): Future[Option[UserAnswers]] =
+  def getUserAnswers(arrivalId: ArrivalId, eoriNumber: EoriNumber)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[UserAnswers]] =
     arrivalNotificationMessageService
       .getArrivalNotificationMessage(arrivalId)
-      .map(
-        _.flatMap {
-          arrivalMovementRequest =>
-            ArrivalMovementRequestToUserAnswersService.apply(arrivalMovementRequest, eoriNumber)
-        }
-      )
+      .map(_.flatMap(ArrivalMovementRequestToUserAnswersService.apply(_, eoriNumber)))
 }

@@ -76,7 +76,6 @@ class AddEventController @Inject()(override val messagesApi: MessagesApi,
         )
   }
 
-  // TODO Move to viewmodel
   private def renderView(mrn: MovementReferenceNumber, mode: Mode, form: Form[Boolean], status: Results.Status)(
     implicit request: DataRequest[AnyContent]): Future[Result] = {
 
@@ -84,7 +83,7 @@ class AddEventController @Inject()(override val messagesApi: MessagesApi,
 
     val cyaHelper            = new AddEventsHelper(request.userAnswers)
     val listOfEvents         = List.range(0, numberOfEvents).map(Index(_))
-    val eventsRows: Seq[Row] = listOfEvents.flatMap(cyaHelper.listOfEvent) // TODO: Test rendering of this!
+    val eventsRows: Seq[Row] = listOfEvents.flatMap(cyaHelper.listOfEvent)
 
     val title =
       if (numberOfEvents == 1)

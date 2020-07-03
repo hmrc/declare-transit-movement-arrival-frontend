@@ -34,7 +34,7 @@ class ArrivalSubmissionService @Inject()(
   converterService: ArrivalNotificationConversionService,
   connector: ArrivalMovementConnector,
   appConfig: FrontendAppConfig,
-  submissionModelService: SubmissionModelService,
+  arrivalNotificationMessageService: ArrivalNotificationMessageService,
   interchangeControlReferenceIdRepository: InterchangeControlReferenceIdRepository
 )(implicit ec: ExecutionContext) {
 
@@ -48,7 +48,7 @@ class ArrivalSubmissionService @Inject()(
           .flatMap {
             referenceId =>
               val arrivalMovementRequest = {
-                submissionModelService
+                SubmissionModelService
                   .convertToSubmissionModel(
                     arrivalNotification         = notification,
                     messageSender               = messageSender,

@@ -14,15 +14,22 @@
  * limitations under the License.
  */
 
-package services.conversion
+package models
 
-import models.{EoriNumber, UserAnswers}
-import models.messages.ArrivalMovementRequest
+import models.reference.{Country, CountryCode}
 
-object ArrivalMovementRequestToUserAnswersService {
+class CountryList(val countries: Seq[Country]) {
 
-  def apply(arrivalMovementRequest: ArrivalMovementRequest, eoriNumber: EoriNumber): Option[UserAnswers] =
-    ArrivalMovementRequestConversionService
-      .convertToArrivalNotification(arrivalMovementRequest)
-      .flatMap(UserAnswersConversionService.convertToUserAnswers(_, eoriNumber))
+  def fullList: Seq[Country]                                = countries
+  def getCountry(countryCode: CountryCode): Option[Country] = countries.find(_.code == countryCode)
+
+  override def equals(obj: Any): Boolean =
+    obj match {
+      case value: CountryList => value.countries == countries
+      case _                  => false
+    }
+}
+
+object CountryList {
+  def apply(countries: Seq[Country]): CountryList = new CountryList(countries)
 }

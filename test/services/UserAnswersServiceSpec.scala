@@ -24,12 +24,14 @@ import org.mockito.Matchers.any
 import org.mockito.Mockito._
 import org.scalacheck.Arbitrary.arbitrary
 import play.api.inject.bind
+import services.conversion.ArrivalMovementRequestToUserAnswersService
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class UserAnswersServiceSpec extends SpecBase with MessagesModelGenerators {
 
-  val mockArrivalNotificationMessageService: ArrivalNotificationMessageService = mock[ArrivalNotificationMessageService]
+  val mockArrivalNotificationMessageService = mock[ArrivalNotificationMessageService]
 
   override def beforeEach: Unit = {
     super.beforeEach()
@@ -47,9 +49,9 @@ class UserAnswersServiceSpec extends SpecBase with MessagesModelGenerators {
       val application = applicationBuilder(Some(emptyUserAnswers))
         .overrides(bind[ArrivalNotificationMessageService].toInstance(mockArrivalNotificationMessageService))
         .build()
+
       val userAnswersService = application.injector.instanceOf[UserAnswersService]
       userAnswersService.getUserAnswers(ArrivalId(1), eoriNumber).futureValue.value mustBe a[UserAnswers]
-
     }
 
     "must return None for invalid request" in {

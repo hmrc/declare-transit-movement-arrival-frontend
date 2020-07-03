@@ -20,7 +20,7 @@ import java.time.LocalDate
 
 import derivable.DeriveNumberOfEvents
 import models.domain._
-import models.reference.Country
+import models.reference.CountryCode
 import models.GoodsLocation.{AuthorisedConsigneesLocation, BorderForceOffice}
 import models.messages._
 import models.{Index, UserAnswers}
@@ -56,7 +56,7 @@ class ArrivalNotificationConversionService {
         movementReferenceNumber = userAnswers.id,
         notificationPlace       = notificationPlace, //TODO: This needs removing from SimplifiedNotification - isn't used
         notificationDate        = LocalDate.now(),
-        approvedLocation        = Some(notificationPlace),
+        approvedLocation        = Some(notificationPlace), // TODO: This is not optional since we always collect this
         trader = TraderDomain(
           eori            = traderEori,
           name            = traderName,
@@ -101,7 +101,7 @@ class ArrivalNotificationConversionService {
   private def eventDetails(
     incidentInformation: Option[String],
     transportIdentity: Option[String],
-    transportCountry: Option[Country],
+    transportCountry: Option[CountryCode],
     containers: Option[Seq[ContainerDomain]]
   ): Option[EventDetailsDomain] =
     (incidentInformation, transportIdentity, transportCountry, containers) match {

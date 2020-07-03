@@ -71,7 +71,7 @@ class CheckYourAnswersController @Inject()(override val messagesApi: MessagesApi
               case status if is4xx(status) => errorHandler.onClientError(request, status)
               case _                       => Future.successful(Redirect(routes.TechnicalDifficultiesController.onPageLoad()))
             }
-          case None => errorHandler.onClientError(request, BAD_REQUEST) //TODO waiting for design
+          case None => errorHandler.onClientError(request, BAD_REQUEST)
         }
     }
 

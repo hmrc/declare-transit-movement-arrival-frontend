@@ -19,7 +19,7 @@ package utils
 import controllers.events.seals.{routes => sealRoutes}
 import controllers.events.transhipments.{routes => transhipmentRoutes}
 import controllers.events.{routes => eventRoutes}
-import models.{Address, CheckMode, Index, MovementReferenceNumber, UserAnswers}
+import models.{Address, CheckMode, CountryList, Index, MovementReferenceNumber, UserAnswers}
 import pages.events._
 import pages.events.seals._
 import pages.events.transhipments._
@@ -76,21 +76,26 @@ class CheckEventAnswersHelper(userAnswers: UserAnswers) {
       )
   }
 
-  def eventCountry(eventIndex: Index): Option[Row] = userAnswers.get(EventCountryPage(eventIndex)) map {
-    answer =>
-      Row(
-        key   = Key(msg"eventCountry.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value = Value(lit"${answer.description}"),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = eventRoutes.EventCountryController.onPageLoad(mrn, eventIndex, CheckMode).url,
-            visuallyHiddenText = Some(msg"eventCountry.change.hidden"),
-            attributes         = Map("id" -> s"""change-event-country-${eventIndex.display}""")
+  def eventCountry(eventIndex: Index)(codeList: CountryList): Option[Row] =
+    userAnswers
+      .get(EventCountryPage(eventIndex))
+      .map({
+        answer =>
+          val countryName = codeList.getCountry(answer).map(_.description).getOrElse(answer.code)
+
+          Row(
+            key   = Key(msg"eventCountry.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+            value = Value(lit"$countryName"),
+            actions = List(
+              Action(
+                content            = msg"site.edit",
+                href               = eventRoutes.EventCountryController.onPageLoad(mrn, eventIndex, CheckMode).url,
+                visuallyHiddenText = Some(msg"eventCountry.change.hidden"),
+                attributes         = Map("id" -> s"""change-event-country-${eventIndex.display}""")
+              )
+            )
           )
-        )
-      )
-  }
+      })
 
   def eventPlace(eventIndex: Index): Option[Row] = userAnswers.get(EventPlacePage(eventIndex)) map {
     answer =>
@@ -156,11 +161,13 @@ class CheckEventAnswersHelper(userAnswers: UserAnswers) {
       )
   }
 
-  def transportNationality(eventIndex: Index): Option[Row] = userAnswers.get(TransportNationalityPage(eventIndex)) map {
+  def transportNationality(eventIndex: Index)(codeList: CountryList): Option[Row] = userAnswers.get(TransportNationalityPage(eventIndex)) map {
     answer =>
+      val countryName = codeList.getCountry(answer).map(_.description).getOrElse(answer.code)
+
       Row(
         key   = Key(msg"transportNationality.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value = Value(lit"${answer.description}"),
+        value = Value(lit"$countryName"),
         actions = List(
           Action(
             content            = msg"site.edit",

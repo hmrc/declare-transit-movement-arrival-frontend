@@ -17,65 +17,48 @@
 package services.conversion
 
 import base.SpecBase
+import connectors.ReferenceDataConnector
 import generators.MessagesModelGenerators
-import models.{domain, MovementReferenceNumber}
-import models.domain.{NormalNotification, TraderDomain}
-import models.messages.{ArrivalMovementRequest, EnRouteEvent, Header}
+import models.domain.NormalNotification
+import models.messages.{ArrivalMovementRequest, Header}
 import models.reference.Country
+import org.mockito.Matchers.any
+import org.mockito.Mockito._
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import play.api.inject.bind
+
+import scala.concurrent.Future
 
 class ArrivalMovementRequestConversionServiceSpec extends SpecBase with MessagesModelGenerators with ScalaCheckPropertyChecks {
 
-  val arrivalMovementRequestConversionService: ArrivalMovementRequestConversionService.type = ArrivalMovementRequestConversionService
+  private val arrivalMovementRequestConversionService = ArrivalMovementRequestConversionService
 
-  "ArrivalMovementRequest" - {
+  "convertToArrivalNotification" - {
 
     "must return None if MRN is malformed" in {
-      val arrivalMovementRequest: ArrivalMovementRequest = arbitrary[ArrivalMovementRequest].sample.value
 
-      val header: Header = arrivalMovementRequest.header.copy(movementReferenceNumber = "Invalid MRN")
-
+      val arrivalMovementRequest: ArrivalMovementRequest                 = arbitrary[ArrivalMovementRequest].sample.value
+      val header: Header                                                 = arrivalMovementRequest.header.copy(movementReferenceNumber = "Invalid MRN")
       val arrivalMovementRequestWithMalformedMrn: ArrivalMovementRequest = arrivalMovementRequest.copy(header = header)
 
       arrivalMovementRequestConversionService.convertToArrivalNotification(arrivalMovementRequestWithMalformedMrn) mustBe None
     }
 
+    "must return None when the CustomsSubPlace is not defined" in {
+
+      val arrivalMovementRequest: ArrivalMovementRequest                = arbitrary[ArrivalMovementRequest].sample.value
+      val header: Header                                                = arrivalMovementRequest.header.copy(customsSubPlace = None)
+      val arrivalMovementRequestWithoutSubplace: ArrivalMovementRequest = arrivalMovementRequest.copy(header = header)
+
+      arrivalMovementRequestConversionService.convertToArrivalNotification(arrivalMovementRequestWithoutSubplace) mustBe None
+    }
+
     "must convert ArrivalMovementRequest to NormalNotification for trader" in {
 
       val genArrivalNotificationRequest = arbitrary[ArrivalMovementRequest].sample.value
-      val arrivalNotificationRequest    = genArrivalNotificationRequest.copy(header = genArrivalNotificationRequest.header.copy(customsSubPlace = Some("")))
 
-      val convertEnRouteEvents = arrivalNotificationRequest.enRouteEvents.map {
-        events =>
-          events.map {
-            event =>
-              val country = Country("", event.countryCode, "")
-              EnRouteEvent.enRouteEventToDomain(event, country)
-          }
-      }
-
-      val normalNotification: NormalNotification = {
-        domain.NormalNotification(
-          movementReferenceNumber = MovementReferenceNumber(arrivalNotificationRequest.header.movementReferenceNumber).get,
-          notificationPlace       = arrivalNotificationRequest.header.arrivalNotificationPlace,
-          notificationDate        = arrivalNotificationRequest.header.notificationDate,
-          customsSubPlace         = arrivalNotificationRequest.header.customsSubPlace.getOrElse(""),
-          trader = TraderDomain(
-            name            = arrivalNotificationRequest.trader.name,
-            city            = arrivalNotificationRequest.trader.city,
-            postCode        = arrivalNotificationRequest.trader.postCode,
-            countryCode     = arrivalNotificationRequest.trader.countryCode,
-            streetAndNumber = arrivalNotificationRequest.trader.streetAndNumber,
-            eori            = arrivalNotificationRequest.trader.eori
-          ),
-          presentationOfficeId   = arrivalNotificationRequest.header.presentationOfficeId,
-          presentationOfficeName = arrivalNotificationRequest.header.presentationOfficeName,
-          enRouteEvents          = convertEnRouteEvents
-        )
-      }
-
-      arrivalMovementRequestConversionService.convertToArrivalNotification(arrivalNotificationRequest) mustBe Some(normalNotification)
+      arrivalMovementRequestConversionService.convertToArrivalNotification(genArrivalNotificationRequest).value mustBe an[NormalNotification]
     }
   }
 

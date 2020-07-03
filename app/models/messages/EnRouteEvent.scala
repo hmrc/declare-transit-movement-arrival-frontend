@@ -22,31 +22,36 @@ import com.lucidchart.open.xtract.{XmlReader, __ => xmlPath}
 import models.XMLReads._
 import models.XMLWrites._
 import models.domain.EnRouteEventDomain
-import models.reference.Country
+import models.reference.CountryCode
 import models.{LanguageCodeEnglish, XMLWrites}
 
 import scala.xml.NodeSeq
 
-final case class EnRouteEvent(place: String, countryCode: String, alreadyInNcts: Boolean, eventDetails: Option[EventDetails], seals: Option[Seq[Seal]])
+final case class EnRouteEvent(
+  place: String,
+  countryCode: CountryCode,
+  alreadyInNcts: Boolean,
+  eventDetails: Option[EventDetails],
+  seals: Option[Seq[Seal]]
+)
 
 object EnRouteEvent {
 
   object Constants {
-    val placeLength       = 35
-    val countryCodeLength = 2
-    val sealsLength       = 20
+    val placeLength = 35
+    val sealsLength = 20
   }
 
-  def enRouteEventToDomain(enRouteEvent: EnRouteEvent, country: Country): EnRouteEventDomain =
+  def enRouteEventToDomain(enRouteEvent: EnRouteEvent): EnRouteEventDomain =
     EnRouteEvent
       .unapply(enRouteEvent)
       .map {
-        case _ @(place, _, alreadyInNct, eventDetails, seals) =>
+        case _ @(place, country, alreadyInNct, eventDetails, seals) =>
           EnRouteEventDomain(
             place,
             country,
             alreadyInNct,
-            eventDetails.map(EventDetails.eventDetailToDomain),
+            eventDetails.map(EventDetails.buildEventDetailsDomain),
             seals.map(_.map(Seal.sealToDomain))
           )
       }
@@ -69,7 +74,7 @@ object EnRouteEvent {
         {
           <PlaTEV10>{ escapeXml(enRouteEvent.place)}</PlaTEV10> ++
           <PlaTEV10LNG>{ LanguageCodeEnglish.code}</PlaTEV10LNG> ++
-          <CouTEV13>{ enRouteEvent.countryCode }</CouTEV13>
+          <CouTEV13>{ enRouteEvent.countryCode.code }</CouTEV13>
         }
         <CTLCTL>
           {
@@ -88,7 +93,7 @@ object EnRouteEvent {
 
   implicit lazy val xmlReader: XmlReader[EnRouteEvent] = (
     (xmlPath \ "PlaTEV10").read[String],
-    (xmlPath \ "CouTEV13").read[String],
+    (xmlPath \ "CouTEV13").read[String].map(CountryCode(_)),
     (xmlPath \ "CTLCTL" \ "AlrInNCTCTL29").read(booleanFromIntReader),
     xmlPath.read[EventDetails].optional,
     (xmlPath \ "SEAINFSF1" \ "SEAIDSI1").read(strictReadOptionSeq[Seal])

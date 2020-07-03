@@ -55,11 +55,14 @@ class EventCountryController @Inject()(override val messagesApi: MessagesApi,
         referenceDataConnector.getCountryList() flatMap {
           countries =>
             val form = formProvider(countries)
-            val preparedForm = request.userAnswers.get(EventCountryPage(eventIndex)) match {
-              case None        => form
-              case Some(value) => form.fill(value)
-            }
-            renderPage(mrn, mode, preparedForm, countries, Results.Ok, eventIndex)
+
+            val preparedForm = request.userAnswers
+              .get(EventCountryPage(eventIndex))
+              .flatMap(countries.getCountry)
+              .map(form.fill)
+              .getOrElse(form)
+
+            renderPage(mrn, mode, preparedForm, countries.fullList, Results.Ok, eventIndex)
         }
     }
 
@@ -68,15 +71,13 @@ class EventCountryController @Inject()(override val messagesApi: MessagesApi,
       implicit request =>
         referenceDataConnector.getCountryList() flatMap {
           countries =>
-            val form = formProvider(countries)
-
-            form
+            formProvider(countries)
               .bindFromRequest()
               .fold(
-                formWithErrors => renderPage(mrn, mode, formWithErrors, countries, Results.BadRequest, eventIndex),
+                formWithErrors => renderPage(mrn, mode, formWithErrors, countries.fullList, Results.BadRequest, eventIndex),
                 value =>
                   for {
-                    updatedAnswers <- Future.fromTry(request.userAnswers.set(EventCountryPage(eventIndex), value))
+                    updatedAnswers <- Future.fromTry(request.userAnswers.set(EventCountryPage(eventIndex), value.code))
                     _              <- sessionRepository.set(updatedAnswers)
                   } yield Redirect(navigator.nextPage(EventCountryPage(eventIndex), mode, updatedAnswers))
               )

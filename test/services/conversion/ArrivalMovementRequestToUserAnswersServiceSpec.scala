@@ -19,35 +19,37 @@ package services.conversion
 import base.SpecBase
 import generators.MessagesModelGenerators
 import models.UserAnswers
-import models.messages.ArrivalMovementRequest
+import models.domain.{ArrivalNotificationDomain, NormalNotification}
+import models.messages.{ArrivalMovementRequest, Header}
+import org.mockito.Matchers.any
+import org.mockito.Mockito.when
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import play.api.inject.bind
+
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 class ArrivalMovementRequestToUserAnswersServiceSpec extends SpecBase with MessagesModelGenerators with ScalaCheckPropertyChecks {
 
+  private val arrivalMovementRequestToUserAnswersService = ArrivalMovementRequestToUserAnswersService
+
   "when we can go from ArrivalMovementRequest to UserAnswers" in {
+    val sampleMovementRequest = arbitrary[ArrivalMovementRequest].sample.value
 
-    forAll(arbitrary[ArrivalMovementRequest]) {
-      arrivalMovementRequest =>
-        val result = ArrivalMovementRequestToUserAnswersService.apply(arrivalMovementRequest, eoriNumber)
+    val result = arrivalMovementRequestToUserAnswersService.apply(sampleMovementRequest, eoriNumber)
 
-        result must be(defined)
-        result.value mustBe an[UserAnswers]
-    }
+    result.value mustBe an[UserAnswers]
   }
 
-  "when we cannot go from ArrivalMovementRequest to NormalNotification we get a None" in {
-    val failingArrivalMovementRequest = arbitrary[ArrivalMovementRequest].map {
-      amr =>
-        amr.copy(header = amr.header.copy(movementReferenceNumber = "asdf"))
-    }
+  "return None when ArrivalMovementRequest cannot be converted to ArrivalNotification" in {
 
-    forAll(failingArrivalMovementRequest) {
-      arrivalMovementRequest =>
-        val result = ArrivalMovementRequestToUserAnswersService.apply(arrivalMovementRequest, eoriNumber)
+    val arrivalMovementRequest: ArrivalMovementRequest                 = arbitrary[ArrivalMovementRequest].sample.value
+    val header: Header                                                 = arrivalMovementRequest.header.copy(movementReferenceNumber = "Invalid MRN")
+    val arrivalMovementRequestWithMalformedMrn: ArrivalMovementRequest = arrivalMovementRequest.copy(header = header)
 
-        result must not be (defined)
-    }
+    val result = arrivalMovementRequestToUserAnswersService.apply(arrivalMovementRequestWithMalformedMrn, eoriNumber)
+
+    result must not be defined
   }
-
 }

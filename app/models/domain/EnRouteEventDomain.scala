@@ -19,23 +19,22 @@ package models.domain
 import models.messages._
 import play.api.libs.json.{JsObject, Json, OWrites}
 import models._
-import models.reference.Country
+import models.reference.CountryCode
 
-final case class EnRouteEventDomain(place: String,
-                                    country: Country,
-                                    alreadyInNcts: Boolean,
-                                    eventDetails: Option[EventDetailsDomain], //TODO does this need to be an option
-                                    seals: Option[Seq[SealDomain]])
+final case class EnRouteEventDomain(
+  place: String,
+  country: CountryCode,
+  alreadyInNcts: Boolean,
+  eventDetails: Option[EventDetailsDomain], //<CouTEV13>{enRouteEventWithContainer.countryCode.code}</CouTEV13> does this need to be an option
+  seals: Option[Seq[SealDomain]])
 
 object EnRouteEventDomain {
 
   object Constants {
-    val placeLength       = 35
-    val countryCodeLength = 2
-    val sealsLength       = 20
+    val placeLength = 35
+    val sealsLength = 20
   }
 
-  //TODO Revisit this...
   def domainEnrouteEventToEnrouteEvent(enrouteEventDomain: EnRouteEventDomain): EnRouteEvent =
     EnRouteEventDomain
       .unapply(enrouteEventDomain)
@@ -43,7 +42,7 @@ object EnRouteEventDomain {
         case _ @(place, country, alreadyInNct, eventDetails, seals) =>
           EnRouteEvent(
             place,
-            country.code,
+            country,
             alreadyInNct,
             eventDetails.map(EventDetailsDomain.eventDetailsDomainToEventDetails),
             seals.map(_.map(SealDomain.domainSealToSeal))

@@ -20,6 +20,9 @@ import java.time.LocalDateTime
 
 import base.SpecBase
 import generators.MessagesModelGenerators
+import models.domain.{ContainerDomain, EnRouteEventDomain, NormalNotification, SealDomain, TraderDomain}
+import models.messages.{Container, Seal}
+import models.reference.{CountryCode, CustomsOffice}
 import models.domain._
 import models.reference.CustomsOffice
 import models.{Address, GoodsLocation, Index, TranshipmentType, UserAnswers}
@@ -114,7 +117,7 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
             .set(IsTranshipmentPage(eventIndex), true).success.value
             .set(TranshipmentTypePage(eventIndex), TranshipmentType.DifferentVehicle).success.value
             .set(TransportIdentityPage(eventIndex), vehicularTranshipment.transportIdentity).success.value
-            .set(TransportNationalityPage(eventIndex), vehicularTranshipment.transportCountry).success.value
+            .set(TransportNationalityPage(eventIndex),  vehicularTranshipment.transportCountry).success.value
             .set(HaveSealsChangedPage(eventIndex), true).success.value
             .set(SealsQuery(eventIndex), Seq(seal)).success.value
           // format: on
@@ -136,7 +139,7 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
           // format: off
           val userAnswers: UserAnswers = createBasicUserAnswers(trader, arrivalNotification, lastUpdated)
             .set(EventPlacePage(eventIndex), enRouteEvent.place).success.value
-            .set(EventCountryPage(eventIndex), enRouteEvent.country).success.value
+            .set(EventCountryPage(eventIndex), routeEvent.country).success.value
             .set(EventReportedPage(eventIndex), enRouteEvent.alreadyInNcts).success.value
             .set(IsTranshipmentPage(eventIndex), true).success.value
             .set(TranshipmentTypePage(eventIndex), TranshipmentType.DifferentContainer).success.value
@@ -174,7 +177,7 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
             .set(EventReportedPage(eventIndex), routeEvent1.alreadyInNcts).success.value
             .set(IsTranshipmentPage(eventIndex), false).success.value
             .set(EventPlacePage(eventIndex2), routeEvent2.place).success.value
-            .set(EventCountryPage(eventIndex2),routeEvent2.country).success.value
+            .set(EventCountryPage(eventIndex2), routeEvent2.country).success.value
             .set(EventReportedPage(eventIndex2), routeEvent2.alreadyInNcts).success.value
             .set(IsTranshipmentPage(eventIndex2), false).success.value
             .set(IncidentInformationPage(eventIndex), incident1.incidentInformation.getOrElse("")).success.value
@@ -256,7 +259,7 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
           // format: off
           val userAnswers: UserAnswers = createBasicUserAnswers(trader, arrivalNotification, lastUpdated)
             .set(EventPlacePage(eventIndex), enRouteEvent1.place).success.value
-            .set(EventCountryPage(eventIndex), enRouteEvent1.country).success.value
+            .set(EventCountryPage(eventIndex), routeEvent1.country).success.value
             .set(EventReportedPage(eventIndex), enRouteEvent1.alreadyInNcts).success.value
             .set(IsTranshipmentPage(eventIndex), true).success.value
             .set(TranshipmentTypePage(eventIndex), TranshipmentType.DifferentContainer).success.value
@@ -264,7 +267,7 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
             .set(HaveSealsChangedPage(eventIndex), true).success.value
             .set(SealsQuery(eventIndex), Seq(seal)).success.value
             .set(EventPlacePage(eventIndex2), enRouteEvent2.place).success.value
-            .set(EventCountryPage(eventIndex2), enRouteEvent2.country).success.value
+            .set(EventCountryPage(eventIndex2), routeEvent2.country).success.value
             .set(EventReportedPage(eventIndex2), enRouteEvent2.alreadyInNcts).success.value
             .set(IsTranshipmentPage(eventIndex2), true).success.value
             .set(TranshipmentTypePage(eventIndex2), TranshipmentType.DifferentContainer).success.value

@@ -27,7 +27,7 @@ import pages.events.transhipments.TransportNationalityPage
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request, Result}
+import play.api.mvc._
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
@@ -53,13 +53,15 @@ class TransportNationalityController @Inject()(override val messagesApi: Message
     implicit request =>
       referenceDataConnector.getCountryList() flatMap {
         countries =>
-          val form = formProvider(Seq.empty)
-          val preparedForm = request.userAnswers.get(TransportNationalityPage(eventIndex)) match {
-            case None        => form
-            case Some(value) => form.fill(value)
-          }
+          val form = formProvider(countries)
 
-          renderPage(mrn, mode, preparedForm, countries, Ok, eventIndex)
+          val preparedForm = request.userAnswers
+            .get(TransportNationalityPage(eventIndex))
+            .flatMap(countries.getCountry)
+            .map(form.fill)
+            .getOrElse(form)
+
+          renderPage(mrn, mode, preparedForm, countries.fullList, Ok, eventIndex)
       }
   }
 
@@ -72,10 +74,10 @@ class TransportNationalityController @Inject()(override val messagesApi: Message
           form
             .bindFromRequest()
             .fold(
-              formWithErrors => renderPage(mrn, mode, formWithErrors, countries, BadRequest, eventIndex),
+              formWithErrors => renderPage(mrn, mode, formWithErrors, countries.fullList, BadRequest, eventIndex),
               value =>
                 for {
-                  updatedAnswers <- Future.fromTry(request.userAnswers.set(TransportNationalityPage(eventIndex), value))
+                  updatedAnswers <- Future.fromTry(request.userAnswers.set(TransportNationalityPage(eventIndex), value.code))
                   _              <- sessionRepository.set(updatedAnswers)
                 } yield Redirect(navigator.nextPage(TransportNationalityPage(eventIndex), mode, updatedAnswers))
             )

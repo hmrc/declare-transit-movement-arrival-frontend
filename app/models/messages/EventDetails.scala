@@ -25,7 +25,8 @@ import models.XMLReads._
 import models.XMLWrites
 import models.XMLWrites._
 import models.domain.{ContainerTranshipmentDomain, EventDetailsDomain, IncidentDomain, VehicularTranshipmentDomain}
-import models.reference.Country
+import models.reference.CountryCode
+import uk.gov.hmrc.http.HeaderCarrier
 import utils.Format
 
 import scala.language.implicitConversions
@@ -35,18 +36,17 @@ sealed trait EventDetails
 
 object EventDetails {
 
-  def eventDetailToDomain(eventDetails: EventDetails): EventDetailsDomain =
-    eventDetails match {
-      case incident: Incident                           => Incident.incidentToDomain(incident)
-      case container: ContainerTranshipment             => ContainerTranshipment.containerTranshipmentToDomain(container)
-      case vehicularTranshipment: VehicularTranshipment => VehicularTranshipment.vehicularTranshipmentToDomain(vehicularTranshipment)
-    }
-
   object Constants {
     val authorityLength = 35
     val placeLength     = 35
-    val countryLength   = 2
   }
+
+  def buildEventDetailsDomain(eventDetails: EventDetails): EventDetailsDomain =
+    eventDetails match {
+      case vehicularTranshipment: VehicularTranshipment => VehicularTranshipment.vehicularTranshipmentToDomain(vehicularTranshipment)
+      case incident: Incident                           => Incident.incidentToDomain(incident)
+      case containerTranshipment: ContainerTranshipment => ContainerTranshipment.containerTranshipmentToDomain(containerTranshipment)
+    }
 
   implicit def xmlReader: XmlReader[EventDetails] = XmlReader {
     xml =>
@@ -138,7 +138,7 @@ object Transhipment {
 
 final case class VehicularTranshipment(
   transportIdentity: String,
-  transportCountry: String,
+  transportCountry: CountryCode,
   containers: Option[Seq[Container]],
   date: Option[LocalDate]   = None,
   authority: Option[String] = None,
@@ -150,7 +150,6 @@ object VehicularTranshipment {
 
   object Constants {
     val transportIdentityLength = 27
-    val transportCountryLength  = 2
   }
 
   def vehicularTranshipmentToDomain(transhipment: VehicularTranshipment): VehicularTranshipmentDomain =
@@ -160,7 +159,7 @@ object VehicularTranshipment {
         case _ @(transportIdentity, transportCountry, containers, _, _, _, _) =>
           VehicularTranshipmentDomain(
             transportIdentity,
-            Country("", transportCountry, ""),
+            transportCountry,
             containers.map(_.map(Container.containerToDomain))
           )
       }
@@ -172,7 +171,7 @@ object VehicularTranshipment {
         {
           <NewTraMeaIdeSHP26>{escapeXml(transhipment.transportIdentity)}</NewTraMeaIdeSHP26> ++
             <NewTraMeaIdeSHP26LNG>{Header.Constants.languageCode.code}</NewTraMeaIdeSHP26LNG> ++
-            <NewTraMeaNatSHP54>{escapeXml(transhipment.transportCountry)}</NewTraMeaNatSHP54> ++ {
+            <NewTraMeaNatSHP54>{escapeXml(transhipment.transportCountry.code)}</NewTraMeaNatSHP54> ++ {
             transhipment.date.fold(NodeSeq.Empty)(date =>
               <EndDatSHP60> {Format.dateFormatted(date)} </EndDatSHP60>
             )
@@ -197,7 +196,7 @@ object VehicularTranshipment {
 
   implicit lazy val xmlReader: XmlReader[VehicularTranshipment] = (
     (xmlPath \ "NewTraMeaIdeSHP26").read[String],
-    (xmlPath \ "NewTraMeaNatSHP54").read[String],
+    (xmlPath \ "NewTraMeaNatSHP54").read[String].map(CountryCode(_)),
     (xmlPath \ "CONNR3").read(strictReadOptionSeq[Container]),
     (xmlPath \ "EndDatSHP60").read[LocalDate].optional,
     (xmlPath \ "EndAutSHP61").read[String].optional,

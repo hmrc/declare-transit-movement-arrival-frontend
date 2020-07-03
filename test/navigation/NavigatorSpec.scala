@@ -27,7 +27,7 @@ import models.TranshipmentType.{DifferentContainer, DifferentContainerAndVehicle
 import models._
 import models.domain.{ContainerDomain, SealDomain}
 import models.messages.{Container, EnRouteEvent, Seal}
-import models.reference.Country
+import models.reference.{Country, CountryCode}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -42,7 +42,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
   // format: off
   val navigator: Navigator = app.injector.instanceOf[Navigator]
 
-  val country: Country = Country("Valid", "GB", "United Kingdom")
+  val country: CountryCode = CountryCode("GB")
 
   "Navigator" - {
 
@@ -821,7 +821,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
                   .set(IncidentOnRoutePage, true)
                   .success
                   .value
-                  .set(EventCountryPage(eventIndex), Country("Valid", countryCode, "Some country"))
+                  .set(EventCountryPage(eventIndex), countryCode)
                   .success
                   .value
                   .set(EventPlacePage(eventIndex), place)
