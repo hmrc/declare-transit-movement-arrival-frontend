@@ -81,7 +81,7 @@ class CheckEventAnswersHelper(userAnswers: UserAnswers) {
       .get(EventCountryPage(eventIndex))
       .map({
         answer =>
-          val countryName = codeList.getCountry(answer).getOrElse(answer.code)
+          val countryName = codeList.getCountry(answer).map(_.description).getOrElse(answer.code)
 
           Row(
             key   = Key(msg"eventCountry.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
@@ -163,7 +163,7 @@ class CheckEventAnswersHelper(userAnswers: UserAnswers) {
 
   def transportNationality(eventIndex: Index)(codeList: CountryList): Option[Row] = userAnswers.get(TransportNationalityPage(eventIndex)) map {
     answer =>
-      val countryName = codeList.getCountry(answer).getOrElse(answer.code)
+      val countryName = codeList.getCountry(answer).map(_.description).getOrElse(answer.code)
 
       Row(
         key   = Key(msg"transportNationality.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
