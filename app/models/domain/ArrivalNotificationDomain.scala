@@ -106,22 +106,4 @@ object SimplifiedNotification {
     val maxNumberOfEnRouteEvents = 9
     val authorisedLocationRegex  = "^[a-zA-Z0-9]*$"
   }
-
-  implicit lazy val writes: OWrites[SimplifiedNotification] = {
-    OWrites[SimplifiedNotification] {
-      notification =>
-        Json
-          .obj(
-            "procedure"               -> Json.toJson(notification.procedure),
-            "movementReferenceNumber" -> notification.movementReferenceNumber,
-            "notificationPlace"       -> notification.notificationPlace,
-            "notificationDate"        -> notification.notificationDate,
-            "approvedLocation"        -> notification.approvedLocation,
-            "trader"                  -> Json.toJson(notification.trader),
-            "presentationOfficeId"    -> notification.presentationOfficeId,
-            "presentationOfficeName"  -> notification.presentationOfficeName,
-            "enRouteEvents"           -> Json.toJson(notification.enRouteEvents)
-          )
-    }
-  }
 }

@@ -16,6 +16,7 @@
 
 package services.conversion
 
+import models.domain.NormalNotification
 import models.{EoriNumber, MovementReferenceNumber, UserAnswers}
 import models.messages.ArrivalMovementRequest
 import play.api.libs.json.Json
