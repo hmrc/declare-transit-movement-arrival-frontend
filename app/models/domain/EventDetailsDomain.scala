@@ -40,7 +40,6 @@ object EventDetailsDomain {
   object Constants {
     val authorityLength = 35
     val placeLength     = 35
-    val countryLength   = 2
   }
 
   implicit lazy val writes: OWrites[EventDetailsDomain] = OWrites {
@@ -49,7 +48,7 @@ object EventDetailsDomain {
   }
 }
 
-//TODO Split out into two different models (one with information, one without)
+//<CouTEV13>{enRouteEventWithContainer.countryCode.code}</CouTEV13> Split out into two different models (one with information, one without)
 final case class IncidentDomain(incidentInformation: Option[String]) extends EventDetailsDomain
 
 object IncidentDomain {
@@ -105,7 +104,6 @@ object VehicularTranshipmentDomain {
 
   object Constants {
     val transportIdentityLength = 27
-    val transportCountryLength  = 2
   }
 
   def domainVehicularTranshipmentToVehicularTranshipment(transhipment: VehicularTranshipmentDomain): VehicularTranshipment =

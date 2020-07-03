@@ -20,8 +20,8 @@ import connectors.ReferenceDataConnector
 import controllers.actions._
 import forms.events.EventCountryFormProvider
 import javax.inject.Inject
-import models.reference.{Country, CountryCode}
-import models.{CountryList, Index, Mode, MovementReferenceNumber}
+import models.reference.Country
+import models.{Index, Mode, MovementReferenceNumber}
 import navigation.Navigator
 import pages.events.EventCountryPage
 import play.api.data.Form

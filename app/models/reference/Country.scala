@@ -16,10 +16,11 @@
 
 package models.reference
 
+import play.api.libs.json.OFormat
+import play.api.libs.json.Json
+
 case class Country(code: CountryCode, description: String)
 
 object Country {
-  import play.api.libs.json.OFormat
-  import play.api.libs.json.Json
   implicit val format: OFormat[Country] = Json.format[Country]
 }

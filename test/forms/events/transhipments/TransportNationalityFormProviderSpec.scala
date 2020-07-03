@@ -26,7 +26,7 @@ class TransportNationalityFormProviderSpec extends StringFieldBehaviours {
 
   val requiredKey    = "transportNationality.error.required"
   val lengthKey      = "transportNationality.error.length"
-  val maxLength: Int = VehicularTranshipment.Constants.transportCountryLength
+  val maxLength: Int = CountryCode.Constants.countryCodeLength
   val countryList    = CountryList(Seq(Country(CountryCode("AD"), "Andorra")))
   val form           = new TransportNationalityFormProvider()(countryList)
 

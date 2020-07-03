@@ -76,15 +76,6 @@ class ReferenceDataConnectorSpec extends SpecBase with WireMockServerHandler wit
       |]
       |""".stripMargin
 
-  private val gbCountryJson: String =
-    """
-      |{
-      |   "code":"GB",
-      |   "state":"valid",
-      |   "description":"United Kingdom"
-      |}
-      |""".stripMargin
-
   val errorResponses: Gen[Int] = Gen.chooseNum(400, 599)
 
   "Reference Data" - {

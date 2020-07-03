@@ -32,7 +32,6 @@ object TraderDomain {
     val streetAndNumberLength = 35
     val postCodeLength        = 9
     val cityLength            = 35
-    val countryCodeLength     = 2 // TODO remove
   }
 
   val eoriRegex = "[A-Z]{2}[^\n\r]{1,}"

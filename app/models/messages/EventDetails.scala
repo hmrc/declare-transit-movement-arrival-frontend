@@ -39,7 +39,6 @@ object EventDetails {
   object Constants {
     val authorityLength = 35
     val placeLength     = 35
-    val countryLength   = 2
   }
 
   def buildEventDetailsDomain(eventDetails: EventDetails): EventDetailsDomain =
@@ -151,7 +150,6 @@ object VehicularTranshipment {
 
   object Constants {
     val transportIdentityLength = 27
-    val transportCountryLength  = 2
   }
 
   def vehicularTranshipmentToDomain(transhipment: VehicularTranshipment): VehicularTranshipmentDomain =

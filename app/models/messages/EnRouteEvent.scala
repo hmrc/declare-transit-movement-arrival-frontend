@@ -21,7 +21,7 @@ import com.lucidchart.open.xtract.XmlReader._
 import com.lucidchart.open.xtract.{XmlReader, __ => xmlPath}
 import models.XMLReads._
 import models.XMLWrites._
-import models.domain.{EnRouteEventDomain, EventDetailsDomain}
+import models.domain.EnRouteEventDomain
 import models.reference.CountryCode
 import models.{LanguageCodeEnglish, XMLWrites}
 

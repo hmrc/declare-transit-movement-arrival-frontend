@@ -20,15 +20,14 @@ import connectors.ReferenceDataConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalActionProvider, IdentifierAction}
 import forms.events.transhipments.TransportNationalityFormProvider
 import javax.inject.Inject
-import models.reference.{Country, CountryCode}
+import models.reference.Country
 import models.{Index, Mode, MovementReferenceNumber}
 import navigation.Navigator
-import pages.events.EventCountryPage
 import pages.events.transhipments.TransportNationalityPage
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request, Result}
+import play.api.mvc._
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController

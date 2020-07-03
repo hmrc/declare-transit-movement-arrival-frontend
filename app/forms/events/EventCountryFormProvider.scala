@@ -24,7 +24,6 @@ import play.api.data.Form
 
 class EventCountryFormProvider @Inject() extends Mappings {
 
-  // TODO revist
   def apply(countryList: CountryList): Form[Country] =
     Form(
       "value" -> text("eventCountry.error.required")

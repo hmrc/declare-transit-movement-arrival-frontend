@@ -36,5 +36,4 @@ class ReferenceDataConnector @Inject()(config: FrontendAppConfig, http: HttpClie
     val serviceUrl = s"${config.referenceDataUrl}/countries-full-list"
     http.GET[Vector[Country]](serviceUrl).map(CountryList(_))
   }
-
 }
