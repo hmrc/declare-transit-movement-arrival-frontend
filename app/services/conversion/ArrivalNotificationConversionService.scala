@@ -56,7 +56,7 @@ class ArrivalNotificationConversionService {
         movementReferenceNumber = userAnswers.id,
         notificationPlace       = notificationPlace, //TODO: This needs removing from SimplifiedNotification - isn't used
         notificationDate        = LocalDate.now(),
-        approvedLocation        = Some(notificationPlace), // TODO: This is not optional since we always collect this
+        approvedLocation        = notificationPlace,
         trader = TraderDomain(
           eori            = traderEori,
           name            = traderName,

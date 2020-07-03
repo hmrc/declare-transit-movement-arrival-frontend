@@ -75,7 +75,7 @@ object SubmissionModelService {
     Header(
       movementReferenceNumber  = arrivalNotification.movementReferenceNumber.toString,
       customsSubPlace          = None,
-      arrivalNotificationPlace = arrivalNotification.approvedLocation.getOrElse(""),
+      arrivalNotificationPlace = arrivalNotification.approvedLocation,
       presentationOfficeId     = arrivalNotification.presentationOfficeId,
       presentationOfficeName   = arrivalNotification.presentationOfficeName,
       procedureTypeFlag        = procedureTypeFlag,

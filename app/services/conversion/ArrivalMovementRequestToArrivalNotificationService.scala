@@ -47,7 +47,7 @@ object ArrivalMovementRequestToArrivalNotificationService {
             mrn,
             arrivalMovementRequest.header.arrivalNotificationPlace,
             arrivalMovementRequest.header.notificationDate,
-            Some(arrivalMovementRequest.header.arrivalNotificationPlace), //TODO Check this??
+            arrivalMovementRequest.header.arrivalNotificationPlace,
             Trader.messagesTraderToDomainTrader(arrivalMovementRequest.trader),
             arrivalMovementRequest.header.presentationOfficeId,
             arrivalMovementRequest.header.presentationOfficeName,

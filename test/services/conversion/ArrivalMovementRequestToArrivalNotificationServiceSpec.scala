@@ -19,7 +19,7 @@ package services.conversion
 import base.SpecBase
 import connectors.ReferenceDataConnector
 import generators.MessagesModelGenerators
-import models.domain.NormalNotification
+import models.domain.{ArrivalNotificationDomain, NormalNotification}
 import models.messages.{ArrivalMovementRequest, Header}
 import models.reference.Country
 import org.mockito.Matchers.any
@@ -45,20 +45,11 @@ class ArrivalMovementRequestToArrivalNotificationServiceSpec extends SpecBase wi
       arrivalMovementRequestConversionService.convertToArrivalNotification(arrivalMovementRequestWithMalformedMrn) mustBe None
     }
 
-    "must return None when the CustomsSubPlace is not defined" in {
-
-      val arrivalMovementRequest: ArrivalMovementRequest                = arbitrary[ArrivalMovementRequest].sample.value
-      val header: Header                                                = arrivalMovementRequest.header.copy(customsSubPlace = None)
-      val arrivalMovementRequestWithoutSubplace: ArrivalMovementRequest = arrivalMovementRequest.copy(header = header)
-
-      arrivalMovementRequestConversionService.convertToArrivalNotification(arrivalMovementRequestWithoutSubplace) mustBe None
-    }
-
     "must convert ArrivalMovementRequest to NormalNotification for trader" in {
 
       val genArrivalNotificationRequest = arbitrary[ArrivalMovementRequest].sample.value
 
-      arrivalMovementRequestConversionService.convertToArrivalNotification(genArrivalNotificationRequest).value mustBe an[NormalNotification]
+      arrivalMovementRequestConversionService.convertToArrivalNotification(genArrivalNotificationRequest).value mustBe an[ArrivalNotificationDomain]
     }
   }
 

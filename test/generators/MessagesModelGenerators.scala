@@ -245,7 +245,7 @@ trait MessagesModelGenerators extends Generators {
         mrn                    <- arbitrary[MovementReferenceNumber]
         place                  <- stringsWithMaxLength(SimplifiedNotification.Constants.notificationPlaceLength)
         date                   <- localDateGen
-        approvedLocation       <- Gen.option(stringsWithMaxLength(SimplifiedNotification.Constants.approvedLocationLength))
+        approvedLocation       <- stringsWithMaxLength(SimplifiedNotification.Constants.approvedLocationLength)
         trader                 <- arbitrary[TraderDomain]
         presentationOfficeId   <- stringsWithMaxLength(SimplifiedNotification.Constants.presentationOfficeLength)
         presentationOfficeName <- stringsWithMaxLength(SimplifiedNotification.Constants.presentationOfficeLength)
@@ -432,4 +432,23 @@ trait MessagesModelGenerators extends Generators {
     generatedEnRouteEvent <- arbitrary[EnRouteEventDomain]
     containerTranshipment <- arbitrary[ContainerTranshipmentDomain]
   } yield (generatedEnRouteEvent.copy(eventDetails = Some(containerTranshipment)), containerTranshipment)
+
+  val simplifiedNotificationWithSubplace: Gen[(SimplifiedNotification, TraderDomain)] =
+    for {
+      base             <- arbitrary[SimplifiedNotification]
+      trader           <- arbitrary[TraderDomain]
+      mrn              <- arbitrary[MovementReferenceNumber]
+      approvedLocation <- stringsWithMaxLength(SimplifiedNotification.Constants.approvedLocationLength)
+    } yield {
+
+      val expected: SimplifiedNotification = base
+        .copy(movementReferenceNumber = mrn)
+        .copy(trader = trader)
+        .copy(notificationDate = LocalDate.now())
+        .copy(approvedLocation = approvedLocation)
+        .copy(notificationPlace = approvedLocation) //TODO: Don't need this setting for simplified
+
+      (expected, trader)
+    }
+
 }

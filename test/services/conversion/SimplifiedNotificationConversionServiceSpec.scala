@@ -38,24 +38,6 @@ class SimplifiedNotificationConversionServiceSpec extends SpecBase with ScalaChe
   // format: off
   private val service = injector.instanceOf[ArrivalNotificationConversionService]
 
-  //TODO: Move this into MessagesModelGenerators
-  private val simplifiedNotificationWithSubplace: Gen[(SimplifiedNotification, TraderDomain)] =
-    for {
-      base     <- arbitrary[SimplifiedNotification]
-      trader   <- arbitrary[TraderDomain]
-      approvedLocation <- stringsWithMaxLength(SimplifiedNotification.Constants.approvedLocationLength)
-    } yield {
-
-      val expected: SimplifiedNotification = base
-        .copy(movementReferenceNumber = mrn)
-        .copy(trader = trader)
-        .copy(notificationDate = LocalDate.now())
-        .copy(approvedLocation = Some(approvedLocation))
-        .copy(notificationPlace = approvedLocation) //TODO: Don't need this setting for simplified
-
-      (expected, trader)
-    }
-
   "ArrivalNotificationConversionService" - {
     "return 'Simplified Arrival Notification' message" - {
       "when there are no EventDetails on route" in {
@@ -152,7 +134,7 @@ class SimplifiedNotificationConversionServiceSpec extends SpecBase with ScalaChe
               .copy(id = expectedArrivalNotification.movementReferenceNumber)
               .set(GoodsLocationPage, AuthorisedConsigneesLocation).success.value
               .set(PresentationOfficePage, CustomsOffice(id = expectedArrivalNotification.presentationOfficeId, name = expectedArrivalNotification.presentationOfficeName, roles = Seq.empty, None)).success.value
-              .set(AuthorisedLocationPage, expectedArrivalNotification.approvedLocation.value).success.value
+              .set(AuthorisedLocationPage, expectedArrivalNotification.approvedLocation).success.value
               .set(ConsigneeNamePage, trader.name).success.value
               .set(ConsigneeAddressPage, Address(buildingAndStreet = trader.streetAndNumber, city = trader.city, postcode = trader.postCode)).success.value
               .set(ConsigneeEoriNumberPage, trader.eori).success.value
@@ -233,7 +215,7 @@ class SimplifiedNotificationConversionServiceSpec extends SpecBase with ScalaChe
     emptyUserAnswers
       .copy(id = arrivalNotification.movementReferenceNumber)
       .set(GoodsLocationPage, AuthorisedConsigneesLocation).success.value
-      .set(AuthorisedLocationPage,arrivalNotification.approvedLocation.value).success.value
+      .set(AuthorisedLocationPage,arrivalNotification.approvedLocation).success.value
       .set(ConsigneeNamePage, trader.name).success.value
       .set(ConsigneeEoriConfirmationPage,false).success.value
       .set(ConsigneeEoriNumberPage, trader.eori).success.value

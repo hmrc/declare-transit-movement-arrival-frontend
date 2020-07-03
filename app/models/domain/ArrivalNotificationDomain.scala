@@ -87,7 +87,7 @@ final case class SimplifiedNotification(
   movementReferenceNumber: MovementReferenceNumber,
   notificationPlace: String,
   notificationDate: LocalDate,
-  approvedLocation: Option[String],
+  approvedLocation: String,
   trader: TraderDomain,
   presentationOfficeId: String,
   presentationOfficeName: String,
