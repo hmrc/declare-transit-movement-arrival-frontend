@@ -20,7 +20,7 @@ import base.SpecBase
 import generators.MessagesModelGenerators
 import models.UserAnswers
 import models.domain.{ArrivalNotificationDomain, NormalNotification}
-import models.messages.ArrivalMovementRequest
+import models.messages.{ArrivalMovementRequest, Header}
 import org.mockito.Matchers.any
 import org.mockito.Mockito.when
 import org.scalacheck.Arbitrary.arbitrary
@@ -32,47 +32,24 @@ import scala.concurrent.Future
 
 class ArrivalMovementRequestToUserAnswersServiceSpec extends SpecBase with MessagesModelGenerators with ScalaCheckPropertyChecks {
 
+  private val arrivalMovementRequestToUserAnswersService = ArrivalMovementRequestToUserAnswersService
+
   "when we can go from ArrivalMovementRequest to UserAnswers" in {
+    val sampleMovementRequest = arbitrary[ArrivalMovementRequest].sample.value
 
-    val mockArrivalMovementRequestConversionService = mock[ArrivalMovementRequestConversionService]
+    val result = arrivalMovementRequestToUserAnswersService.apply(sampleMovementRequest)
 
-    val sampleNotificationDomain = arbitrary[NormalNotification].sample.value
-    val sampleMovementRequest    = arbitrary[ArrivalMovementRequest].sample.value
-
-    val application = applicationBuilder(Some(emptyUserAnswers))
-      .overrides(bind[ArrivalMovementRequestConversionService].toInstance(mockArrivalMovementRequestConversionService))
-      .build()
-
-    val arrivalMovementRequestToUserAnswers = application.injector.instanceOf[ArrivalMovementRequestToUserAnswersService]
-
-    when(mockArrivalMovementRequestConversionService.convertToArrivalNotification(any())(any()))
-      .thenReturn(Future.successful(Some(sampleNotificationDomain)))
-
-    val result = arrivalMovementRequestToUserAnswers.apply(sampleMovementRequest)
-
-    result.futureValue must be(defined)
-    result.futureValue.value mustBe an[UserAnswers]
+    result.value mustBe an[UserAnswers]
   }
 
-  "when we cannot go from ArrivalMovementRequest to NormalNotification we get a None" in {
+  "return None when ArrivalMovementRequest cannot be converted to ArrivalNotification" in {
 
-    val mockArrivalMovementRequestConversionService = mock[ArrivalMovementRequestConversionService]
+    val arrivalMovementRequest: ArrivalMovementRequest                 = arbitrary[ArrivalMovementRequest].sample.value
+    val header: Header                                                 = arrivalMovementRequest.header.copy(movementReferenceNumber = "Invalid MRN")
+    val arrivalMovementRequestWithMalformedMrn: ArrivalMovementRequest = arrivalMovementRequest.copy(header = header)
 
-    val sampleNotificationDomain = arbitrary[NormalNotification].sample.value
-    val sampleMovementRequest    = arbitrary[ArrivalMovementRequest].sample.value
+    val result = arrivalMovementRequestToUserAnswersService.apply(arrivalMovementRequestWithMalformedMrn)
 
-    val application = applicationBuilder(Some(emptyUserAnswers))
-      .overrides(bind[ArrivalMovementRequestConversionService].toInstance(mockArrivalMovementRequestConversionService))
-      .build()
-
-    val arrivalMovementRequestToUserAnswers = application.injector.instanceOf[ArrivalMovementRequestToUserAnswersService]
-
-    when(mockArrivalMovementRequestConversionService.convertToArrivalNotification(any())(any()))
-      .thenReturn(Future.successful(None))
-
-    val result = arrivalMovementRequestToUserAnswers.apply(sampleMovementRequest)
-
-    result.futureValue must not be defined
+    result must not be defined
   }
-
 }

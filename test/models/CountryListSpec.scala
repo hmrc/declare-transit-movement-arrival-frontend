@@ -44,7 +44,7 @@ class CountryListSpec extends SpecBase with ScalaCheckPropertyChecks with Messag
         forAll(arbitrary[Vector[Country]], arbitrary[Country]) {
           (countries, country) =>
             val fullList: Vector[Country] = countries :+ country
-            CountryList(fullList).getCountry(country.code).value mustBe country
+            CountryList(fullList).getCountry(country.code).value mustEqual country
         }
       }
 

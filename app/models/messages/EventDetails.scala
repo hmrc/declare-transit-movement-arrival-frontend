@@ -26,6 +26,7 @@ import models.XMLWrites
 import models.XMLWrites._
 import models.domain.{ContainerTranshipmentDomain, EventDetailsDomain, IncidentDomain, VehicularTranshipmentDomain}
 import models.reference.CountryCode
+import uk.gov.hmrc.http.HeaderCarrier
 import utils.Format
 
 import scala.language.implicitConversions
@@ -40,6 +41,13 @@ object EventDetails {
     val placeLength     = 35
     val countryLength   = 2
   }
+
+  def buildEventDetailsDomain(eventDetails: EventDetails): EventDetailsDomain =
+    eventDetails match {
+      case vehicularTranshipment: VehicularTranshipment => VehicularTranshipment.vehicularTranshipmentToDomain(vehicularTranshipment)
+      case incident: Incident                           => Incident.incidentToDomain(incident)
+      case containerTranshipment: ContainerTranshipment => ContainerTranshipment.containerTranshipmentToDomain(containerTranshipment)
+    }
 
   implicit def xmlReader: XmlReader[EventDetails] = XmlReader {
     xml =>

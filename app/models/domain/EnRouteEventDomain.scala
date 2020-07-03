@@ -35,7 +35,6 @@ object EnRouteEventDomain {
     val sealsLength       = 20
   }
 
-  //TODO Revisit this...
   def domainEnrouteEventToEnrouteEvent(enrouteEventDomain: EnRouteEventDomain): EnRouteEvent =
     EnRouteEventDomain
       .unapply(enrouteEventDomain)

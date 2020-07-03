@@ -16,7 +16,6 @@
 
 package services
 
-import cats.implicits._
 import javax.inject.Inject
 import models.{ArrivalId, UserAnswers}
 import services.conversion.ArrivalMovementRequestToUserAnswersService
@@ -24,15 +23,10 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class UserAnswersService @Inject()(
-  arrivalNotificationMessageService: ArrivalNotificationMessageService,
-  arrivalMovementRequestToUserAnswersService: ArrivalMovementRequestToUserAnswersService
-) {
+class UserAnswersService @Inject()(arrivalNotificationMessageService: ArrivalNotificationMessageService) {
 
   def getUserAnswers(arrivalId: ArrivalId)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[UserAnswers]] =
     arrivalNotificationMessageService
       .getArrivalNotificationMessage(arrivalId)
-      .flatMap(
-        _.flatTraverse(arrivalMovementRequestToUserAnswersService.apply) //Like traverse but with inner flatten
-      )
+      .map(_.flatMap(ArrivalMovementRequestToUserAnswersService.apply))
 }

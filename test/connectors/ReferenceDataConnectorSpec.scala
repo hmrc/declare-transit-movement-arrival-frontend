@@ -27,7 +27,6 @@ import org.scalatest.Assertion
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.test.Helpers._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -135,31 +134,6 @@ class ReferenceDataConnectorSpec extends SpecBase with WireMockServerHandler wit
         checkErrorResponse(s"/$startUrl/countries-full-list", connector.getCountryList)
       }
     }
-
-    "getCountry" - {
-
-      "must return a Country when successful" in {
-
-        val code = CountryCode("GB")
-
-        server.stubFor(
-          get(urlEqualTo(s"/$startUrl/countries/${code.code}"))
-            .willReturn(okJson(gbCountryJson))
-        )
-
-        val expectedResult = Country(code, "United Kingdom")
-
-        connector.getCountry(code).futureValue mustBe expectedResult
-      }
-
-      "must return an exception when an error response is returned" in {
-
-        val invalidCode = CountryCode("ZZ")
-
-        checkErrorResponse(s"/$startUrl/countries/$invalidCode", connector.getCountry(invalidCode))
-      }
-    }
-
   }
 
   private def checkErrorResponse(url: String, result: Future[_]): Assertion =

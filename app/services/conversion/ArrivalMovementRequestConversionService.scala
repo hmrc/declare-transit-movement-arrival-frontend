@@ -17,57 +17,28 @@
 package services.conversion
 
 import cats.implicits._
-import com.google.inject.Inject
-import connectors.ReferenceDataConnector
 import models.MovementReferenceNumber
-import models.domain.{EnRouteEventDomain, EventDetailsDomain, NormalNotification}
+import models.domain.NormalNotification
 import models.messages._
-import models.reference.Country
-import uk.gov.hmrc.http.HeaderCarrier
 
-import scala.concurrent.{ExecutionContext, Future}
+object ArrivalMovementRequestConversionService {
 
-class ArrivalMovementRequestConversionService @Inject()(referenceDataConnector: ReferenceDataConnector)(implicit ec: ExecutionContext) {
-
-  def convertToArrivalNotification(arrivalMovementRequest: ArrivalMovementRequest)(implicit hc: HeaderCarrier): Future[Option[NormalNotification]] =
+  def convertToArrivalNotification(arrivalMovementRequest: ArrivalMovementRequest): Option[NormalNotification] =
     (
       MovementReferenceNumber(arrivalMovementRequest.header.movementReferenceNumber),
       arrivalMovementRequest.header.customsSubPlace
-    ).tupled.traverse {
+    ).tupled.map {
 
       case (mrn, customsSubPlace) =>
-        val buildEnrouteEvents: Future[Option[Seq[EnRouteEventDomain]]] = arrivalMovementRequest.enRouteEvents.traverse {
-          events =>
-            Future.sequence(events.map(buildEnRouteEventDomain))
-        }
-
-        buildEnrouteEvents.map {
-          enRouteEvents =>
-            NormalNotification(
-              mrn,
-              arrivalMovementRequest.header.arrivalNotificationPlace,
-              arrivalMovementRequest.header.notificationDate,
-              customsSubPlace,
-              Trader.messagesTraderToDomainTrader(arrivalMovementRequest.trader),
-              arrivalMovementRequest.header.presentationOfficeId,
-              arrivalMovementRequest.header.presentationOfficeName,
-              enRouteEvents
-            )
-        }
-    }
-
-  private def buildEnRouteEventDomain(enRouteEvent: EnRouteEvent)(implicit hc: HeaderCarrier): Future[EnRouteEventDomain] =
-    referenceDataConnector
-      .getCountry(enRouteEvent.countryCode)
-      .map {
-        case Country(code, _) =>
-          EnRouteEvent.enRouteEventToDomain(enRouteEvent, code, enRouteEvent.eventDetails.map(buildEventDetailsDomain))
-      }
-
-  private def buildEventDetailsDomain(eventDetails: EventDetails)(implicit hc: HeaderCarrier): EventDetailsDomain =
-    eventDetails match {
-      case vehicularTranshipment: VehicularTranshipment => VehicularTranshipment.vehicularTranshipmentToDomain(vehicularTranshipment)
-      case incident: Incident                           => Incident.incidentToDomain(incident)
-      case containerTranshipment: ContainerTranshipment => ContainerTranshipment.containerTranshipmentToDomain(containerTranshipment)
+        NormalNotification(
+          mrn,
+          arrivalMovementRequest.header.arrivalNotificationPlace,
+          arrivalMovementRequest.header.notificationDate,
+          customsSubPlace,
+          Trader.messagesTraderToDomainTrader(arrivalMovementRequest.trader),
+          arrivalMovementRequest.header.presentationOfficeId,
+          arrivalMovementRequest.header.presentationOfficeName,
+          arrivalMovementRequest.enRouteEvents.map(_.map(EnRouteEvent.enRouteEventToDomain))
+        )
     }
 }

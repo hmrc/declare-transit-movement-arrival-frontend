@@ -42,16 +42,16 @@ object EnRouteEvent {
     val sealsLength = 20
   }
 
-  def enRouteEventToDomain(enRouteEvent: EnRouteEvent, eventCountry: CountryCode, eventDetailsDomain: Option[EventDetailsDomain]): EnRouteEventDomain =
+  def enRouteEventToDomain(enRouteEvent: EnRouteEvent): EnRouteEventDomain =
     EnRouteEvent
       .unapply(enRouteEvent)
       .map {
-        case _ @(place, _, alreadyInNct, _, seals) =>
+        case _ @(place, country, alreadyInNct, eventDetails, seals) =>
           EnRouteEventDomain(
             place,
-            eventCountry,
+            country,
             alreadyInNct,
-            eventDetailsDomain,
+            eventDetails.map(EventDetails.buildEventDetailsDomain),
             seals.map(_.map(Seal.sealToDomain))
           )
       }

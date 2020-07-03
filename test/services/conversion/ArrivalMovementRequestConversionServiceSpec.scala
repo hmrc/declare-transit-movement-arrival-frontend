@@ -32,56 +32,33 @@ import scala.concurrent.Future
 
 class ArrivalMovementRequestConversionServiceSpec extends SpecBase with MessagesModelGenerators with ScalaCheckPropertyChecks {
 
-  private val mockReferenceDataConnector = mock[ReferenceDataConnector]
+  private val arrivalMovementRequestConversionService = ArrivalMovementRequestConversionService
 
   "convertToArrivalNotification" - {
 
     "must return None if MRN is malformed" in {
 
-      val genCountry                                     = arbitrary[Country].sample.value
-      val arrivalMovementRequest: ArrivalMovementRequest = arbitrary[ArrivalMovementRequest].sample.value
-
-      when(mockReferenceDataConnector.getCountry(any())(any(), any()))
-        .thenReturn(Future.successful(genCountry))
-
-      val application = applicationBuilder(Some(emptyUserAnswers))
-        .overrides(bind[ReferenceDataConnector].toInstance(mockReferenceDataConnector))
-        .build()
-
-      val arrivalMovementRequestConversionService                        = application.injector.instanceOf[ArrivalMovementRequestConversionService]
+      val arrivalMovementRequest: ArrivalMovementRequest                 = arbitrary[ArrivalMovementRequest].sample.value
       val header: Header                                                 = arrivalMovementRequest.header.copy(movementReferenceNumber = "Invalid MRN")
       val arrivalMovementRequestWithMalformedMrn: ArrivalMovementRequest = arrivalMovementRequest.copy(header = header)
 
-      arrivalMovementRequestConversionService.convertToArrivalNotification(arrivalMovementRequestWithMalformedMrn).futureValue mustBe None
+      arrivalMovementRequestConversionService.convertToArrivalNotification(arrivalMovementRequestWithMalformedMrn) mustBe None
     }
 
     "must return None when the CustomsSubPlace is not defined" in {
-      val application                             = applicationBuilder(Some(emptyUserAnswers)).build()
-      val arrivalMovementRequestConversionService = application.injector.instanceOf[ArrivalMovementRequestConversionService]
 
-      val arrivalMovementRequest = {
-        val sample = arbitrary[ArrivalMovementRequest].sample.value
-        sample.copy(header = sample.header.copy(customsSubPlace = None))
-      }
+      val arrivalMovementRequest: ArrivalMovementRequest                = arbitrary[ArrivalMovementRequest].sample.value
+      val header: Header                                                = arrivalMovementRequest.header.copy(customsSubPlace = None)
+      val arrivalMovementRequestWithoutSubplace: ArrivalMovementRequest = arrivalMovementRequest.copy(header = header)
 
-      arrivalMovementRequestConversionService.convertToArrivalNotification(arrivalMovementRequest).futureValue mustBe None
+      arrivalMovementRequestConversionService.convertToArrivalNotification(arrivalMovementRequestWithoutSubplace) mustBe None
     }
 
     "must convert ArrivalMovementRequest to NormalNotification for trader" in {
 
-      val genCountry: Country           = arbitrary[Country].sample.value
       val genArrivalNotificationRequest = arbitrary[ArrivalMovementRequest].sample.value
 
-      when(mockReferenceDataConnector.getCountry(any())(any(), any()))
-        .thenReturn(Future.successful(genCountry))
-
-      val application = applicationBuilder(Some(emptyUserAnswers))
-        .overrides(bind[ReferenceDataConnector].toInstance(mockReferenceDataConnector))
-        .build()
-
-      val arrivalMovementRequestConversionService = application.injector.instanceOf[ArrivalMovementRequestConversionService]
-
-      arrivalMovementRequestConversionService.convertToArrivalNotification(genArrivalNotificationRequest).futureValue.value mustBe an[NormalNotification]
+      arrivalMovementRequestConversionService.convertToArrivalNotification(genArrivalNotificationRequest).value mustBe an[NormalNotification]
     }
   }
 

@@ -31,13 +31,11 @@ import scala.concurrent.Future
 
 class UserAnswersServiceSpec extends SpecBase with MessagesModelGenerators {
 
-  val mockArrivalNotificationMessageService          = mock[ArrivalNotificationMessageService]
-  val mockArrivalMovementRequestToUserAnswersService = mock[ArrivalMovementRequestToUserAnswersService]
+  val mockArrivalNotificationMessageService = mock[ArrivalNotificationMessageService]
 
   override def beforeEach: Unit = {
     super.beforeEach()
     reset(mockArrivalNotificationMessageService)
-    reset(mockArrivalMovementRequestToUserAnswersService)
   }
 
   "UserAnswers" - {
@@ -48,12 +46,8 @@ class UserAnswersServiceSpec extends SpecBase with MessagesModelGenerators {
       when(mockArrivalNotificationMessageService.getArrivalNotificationMessage(any())(any(), any()))
         .thenReturn(Future.successful(Some(arrivalMovementRequest)))
 
-      when(mockArrivalMovementRequestToUserAnswersService.apply(any())(any(), any()))
-        .thenReturn(Future.successful(Some(emptyUserAnswers)))
-
       val application = applicationBuilder(Some(emptyUserAnswers))
         .overrides(bind[ArrivalNotificationMessageService].toInstance(mockArrivalNotificationMessageService))
-        .overrides(bind[ArrivalMovementRequestToUserAnswersService].toInstance(mockArrivalMovementRequestToUserAnswersService))
         .build()
 
       val userAnswersService = application.injector.instanceOf[UserAnswersService]
