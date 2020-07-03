@@ -18,7 +18,7 @@ package services.conversion
 
 import base.SpecBase
 import generators.MessagesModelGenerators
-import models.UserAnswers
+import models.{MovementReferenceNumber, UserAnswers}
 import models.domain.{ArrivalNotificationDomain, NormalNotification}
 import models.messages.{ArrivalMovementRequest, Header}
 import org.mockito.Matchers.any
@@ -35,20 +35,22 @@ class ArrivalMovementRequestToUserAnswersServiceSpec extends SpecBase with Messa
   private val arrivalMovementRequestToUserAnswersService = ArrivalMovementRequestToUserAnswersService
 
   "when we can go from ArrivalMovementRequest to UserAnswers" in {
+    val sampleMrn             = arbitrary[MovementReferenceNumber].sample.value
     val sampleMovementRequest = arbitrary[ArrivalMovementRequest].sample.value
 
-    val result = arrivalMovementRequestToUserAnswersService.apply(sampleMovementRequest, eoriNumber)
+    val result = arrivalMovementRequestToUserAnswersService.convertToUserAnswers(sampleMovementRequest, eoriNumber, sampleMrn)
 
     result.value mustBe an[UserAnswers]
   }
 
   "return None when ArrivalMovementRequest cannot be converted to ArrivalNotification" in {
 
+    val sampleMrn                                                      = arbitrary[MovementReferenceNumber].sample.value
     val arrivalMovementRequest: ArrivalMovementRequest                 = arbitrary[ArrivalMovementRequest].sample.value
     val header: Header                                                 = arrivalMovementRequest.header.copy(movementReferenceNumber = "Invalid MRN")
     val arrivalMovementRequestWithMalformedMrn: ArrivalMovementRequest = arrivalMovementRequest.copy(header = header)
 
-    val result = arrivalMovementRequestToUserAnswersService.apply(arrivalMovementRequestWithMalformedMrn, eoriNumber)
+    val result = arrivalMovementRequestToUserAnswersService.convertToUserAnswers(arrivalMovementRequestWithMalformedMrn, eoriNumber, sampleMrn)
 
     result must not be defined
   }

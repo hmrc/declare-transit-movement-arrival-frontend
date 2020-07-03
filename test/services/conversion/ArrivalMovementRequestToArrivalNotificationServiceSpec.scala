@@ -30,9 +30,9 @@ import play.api.inject.bind
 
 import scala.concurrent.Future
 
-class ArrivalMovementRequestConversionServiceSpec extends SpecBase with MessagesModelGenerators with ScalaCheckPropertyChecks {
+class ArrivalMovementRequestToArrivalNotificationServiceSpec extends SpecBase with MessagesModelGenerators with ScalaCheckPropertyChecks {
 
-  private val arrivalMovementRequestConversionService = ArrivalMovementRequestConversionService
+  private val arrivalMovementRequestConversionService = ArrivalMovementRequestToArrivalNotificationService
 
   "convertToArrivalNotification" - {
 

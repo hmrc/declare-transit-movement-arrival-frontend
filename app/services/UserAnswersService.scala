@@ -17,7 +17,7 @@
 package services
 
 import javax.inject.Inject
-import models.{ArrivalId, EoriNumber, UserAnswers}
+import models.{ArrivalId, EoriNumber, MovementReferenceNumber, UserAnswers}
 import services.conversion.ArrivalMovementRequestToUserAnswersService
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -28,5 +28,13 @@ class UserAnswersService @Inject()(arrivalNotificationMessageService: ArrivalNot
   def getUserAnswers(arrivalId: ArrivalId, eoriNumber: EoriNumber)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[UserAnswers]] =
     arrivalNotificationMessageService
       .getArrivalNotificationMessage(arrivalId)
-      .map(_.flatMap(ArrivalMovementRequestToUserAnswersService.apply(_, eoriNumber)))
+      .map(
+        _.flatMap {
+          arrivalMovementRequest =>
+            MovementReferenceNumber(arrivalMovementRequest.header.movementReferenceNumber).flatMap(
+              ArrivalMovementRequestToUserAnswersService.convertToUserAnswers(arrivalMovementRequest, eoriNumber, _)
+            )
+        }
+      )
+
 }

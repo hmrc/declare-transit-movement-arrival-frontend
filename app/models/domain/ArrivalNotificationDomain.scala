@@ -31,9 +31,9 @@ sealed trait ArrivalNotificationDomain
 
 object ArrivalNotificationDomain {
 
-  implicit lazy val writes: Writes[ArrivalNotificationDomain] = Writes {
-    case n: NormalNotification     => Json.toJson(n)(NormalNotification.writes)
-    case s: SimplifiedNotification => Json.toJson(s)(SimplifiedNotification.writes)
+  implicit lazy val writes: OWrites[ArrivalNotificationDomain] = OWrites {
+    case n: NormalNotification     => Json.toJsObject(n)(NormalNotification.writes)
+    case s: SimplifiedNotification => Json.toJsObject(s)(SimplifiedNotification.writes)
   }
 }
 
