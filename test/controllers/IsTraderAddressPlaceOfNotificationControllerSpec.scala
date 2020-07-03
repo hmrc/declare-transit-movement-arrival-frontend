@@ -20,21 +20,14 @@ import base.SpecBase
 import forms.IsTraderAddressPlaceOfNotificationFormProvider
 import matchers.JsonMatchers
 import models.NormalMode
-import models.UserAnswers
-import navigation.FakeNavigator
-import navigation.Navigator
+import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
-import org.mockito.Mockito.times
-import org.mockito.Mockito.verify
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.IsTraderAddressPlaceOfNotificationPage
-import pages.TraderAddressPage
-import play.api.data.Form
+import pages.{IsTraderAddressPlaceOfNotificationPage, TraderAddressPage}
 import play.api.inject.bind
-import play.api.libs.json.JsObject
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -42,7 +35,6 @@ import play.twirl.api.Html
 import repositories.SessionRepository
 import uk.gov.hmrc.nunjucks.NunjucksSupport
 import uk.gov.hmrc.viewmodels.Radios
-import wiremock.net.minidev.json.JSONValue
 
 import scala.concurrent.Future
 
@@ -94,7 +86,7 @@ class IsTraderAddressPlaceOfNotificationControllerSpec extends SpecBase with Moc
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(mrn)
+      val userAnswers = emptyUserAnswers
         .set(IsTraderAddressPlaceOfNotificationPage, true)
         .success
         .value

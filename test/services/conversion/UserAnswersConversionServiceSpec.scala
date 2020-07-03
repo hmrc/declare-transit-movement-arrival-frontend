@@ -23,6 +23,8 @@ import generators.MessagesModelGenerators
 import models.domain.{ContainerDomain, EnRouteEventDomain, NormalNotification, SealDomain, TraderDomain}
 import models.messages.{Container, Seal}
 import models.reference.{CountryCode, CustomsOffice}
+import models.domain._
+import models.reference.CustomsOffice
 import models.{Address, GoodsLocation, Index, TranshipmentType, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -46,11 +48,11 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
         case (arbArrivalNotification, trader) =>
           val arrivalNotification: NormalNotification = arbArrivalNotification.copy(enRouteEvents = None)
 
-          val result = userAnswersConversionService.convertToUserAnswers(arrivalNotification).value
+          val result = userAnswersConversionService.convertToUserAnswers(arrivalNotification, eoriNumber).value
 
           val userAnswers: UserAnswers =
             // format: off
-            UserAnswers(arrivalNotification.movementReferenceNumber)
+            UserAnswers(arrivalNotification.movementReferenceNumber, eoriNumber)
               .copy(lastUpdated = result.lastUpdated)
               .set(GoodsLocationPage, GoodsLocation.BorderForceOffice).success.value
               .set(IsTraderAddressPlaceOfNotificationPage, trader.postCode.equalsIgnoreCase(arrivalNotification.notificationPlace)).success.value
@@ -91,7 +93,7 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
             .set(SealsQuery(eventIndex), Seq(seal)).success.value
           // format: on
 
-          val result = userAnswersConversionService.convertToUserAnswers(arrivalNotification).value
+          val result = userAnswersConversionService.convertToUserAnswers(arrivalNotification, eoriNumber).value
 
           result.data mustBe userAnswers.data
           result.id mustBe userAnswers.id
@@ -120,7 +122,7 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
             .set(SealsQuery(eventIndex), Seq(seal)).success.value
           // format: on
 
-          val result = userAnswersConversionService.convertToUserAnswers(arrivalNotification).value.copy(lastUpdated = lastUpdated)
+          val result = userAnswersConversionService.convertToUserAnswers(arrivalNotification, eoriNumber).value.copy(lastUpdated = lastUpdated)
           result mustBe userAnswers
       }
     }
@@ -147,7 +149,7 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
 
           // format: on
 
-          val result = userAnswersConversionService.convertToUserAnswers(arrivalNotification).value.copy(lastUpdated = lastUpdated)
+          val result = userAnswersConversionService.convertToUserAnswers(arrivalNotification, eoriNumber).value.copy(lastUpdated = lastUpdated)
           result mustBe userAnswers
       }
     }
@@ -186,7 +188,7 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
             .set(SealsQuery(eventIndex2), Seq(seal)).success.value
           // format: on
 
-          val result = userAnswersConversionService.convertToUserAnswers(arrivalNotification).value.copy(lastUpdated = lastUpdated)
+          val result = userAnswersConversionService.convertToUserAnswers(arrivalNotification, eoriNumber).value.copy(lastUpdated = lastUpdated)
           result mustBe userAnswers
       }
     }
@@ -230,7 +232,7 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
 
           // format: on
 
-          val result = userAnswersConversionService.convertToUserAnswers(arrivalNotification).value.copy(lastUpdated = lastUpdated)
+          val result = userAnswersConversionService.convertToUserAnswers(arrivalNotification, eoriNumber).value.copy(lastUpdated = lastUpdated)
           result mustBe userAnswers
       }
     }
@@ -275,7 +277,7 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
 
           // format: on
 
-          val result = userAnswersConversionService.convertToUserAnswers(arrivalNotification).value.copy(lastUpdated = lastUpdated)
+          val result = userAnswersConversionService.convertToUserAnswers(arrivalNotification, eoriNumber).value.copy(lastUpdated = lastUpdated)
           result mustBe userAnswers
       }
     }
@@ -283,7 +285,7 @@ class UserAnswersConversionServiceSpec extends SpecBase with ScalaCheckPropertyC
 
   private def createBasicUserAnswers(trader: TraderDomain, arrivalNotification: NormalNotification, timeStamp: LocalDateTime): UserAnswers =
     // format: off
-    UserAnswers(mrn, Json.obj("events" -> JsArray(Seq.empty)))
+    UserAnswers(mrn, eoriNumber, Json.obj("events" -> JsArray(Seq.empty)))
       .copy(id = arrivalNotification.movementReferenceNumber)
       .copy(lastUpdated = timeStamp)
       .set(GoodsLocationPage, GoodsLocation.BorderForceOffice).success.value

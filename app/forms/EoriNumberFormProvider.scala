@@ -18,15 +18,14 @@ package forms
 
 import forms.mappings.Mappings
 import javax.inject.Inject
-import play.api.data.Form
 import models.domain.TraderDomain.Constants.eoriLength
 import models.domain.TraderDomain.eoriRegex
+import play.api.data.Form
 
 class EoriNumberFormProvider @Inject() extends Mappings {
 
   def apply(consigneeName: String): Form[String] =
     Form(
       "value" -> text("eoriNumber.error.required", args = Seq(consigneeName))
-        .verifying(maxLength(eoriLength, "eoriNumber.error.length"), regexp(eoriRegex, "eoriNumber.error.invalid"))
-    )
+        .verifying(maxLength(eoriLength, "eoriNumber.error.length"), regexp(eoriRegex, "eoriNumber.error.invalid")))
 }

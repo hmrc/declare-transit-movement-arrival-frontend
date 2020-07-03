@@ -74,10 +74,10 @@ class UpdateRejectedMRNController @Inject()(override val messagesApi: MessagesAp
             renderer.render("updateMovementReferenceNumber.njk", json).map(BadRequest(_))
           },
           value =>
-            userAnswersService.getUserAnswers(arrivalId) map {
+            userAnswersService.getUserAnswers(arrivalId, request.eoriNumber) map {
               case Some(userAnswers) =>
-                sessionRepository.set(userAnswers.copy(id = value))
-                Redirect(navigator.nextRejectionPage(UpdateRejectedMRNPage, value, arrivalId))
+                sessionRepository.set(userAnswers.copy(id = value, arrivalId = Some(arrivalId)))
+                Redirect(navigator.nextRejectionPage(UpdateRejectedMRNPage, value))
               case _ => Redirect(routes.TechnicalDifficultiesController.onPageLoad())
           }
         )

@@ -125,9 +125,9 @@ class Navigator @Inject()() {
       }
   }
 
-  def nextRejectionPage(page: Page, mrn: MovementReferenceNumber, arrivalId: ArrivalId): Call = 
+  def nextRejectionPage(page: Page, mrn: MovementReferenceNumber): Call =
     page match {
-      case UpdateRejectedMRNPage => routes.CheckYourAnswersRejectionsController.onPageLoad(mrn, arrivalId)
+      case UpdateRejectedMRNPage => routes.CheckYourAnswersController.onPageLoad(mrn)
       case _ => routes.TechnicalDifficultiesController.onPageLoad()
     }
   

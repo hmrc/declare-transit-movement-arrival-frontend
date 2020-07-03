@@ -21,19 +21,18 @@ import controllers.actions.{DataRequiredAction, DataRetrievalActionProvider, Ide
 import derivable.DeriveNumberOfEvents
 import handlers.ErrorHandler
 import models.GoodsLocation.{AuthorisedConsigneesLocation, BorderForceOffice}
-import models.{GoodsLocation, Index, MovementReferenceNumber, UserAnswers}
-import pages.{AuthorisedLocationPage, ConsigneeEoriConfirmationPage, GoodsLocationPage}
+import models.{EoriNumber, Index, MovementReferenceNumber, UserAnswers}
+import pages.{ConsigneeEoriConfirmationPage, GoodsLocationPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.Results.BadRequest
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import services.ArrivalSubmissionService
+import uk.gov.hmrc.http.HttpErrorFunctions
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, SummaryList}
 import utils.{AddEventsHelper, CheckYourAnswersHelper}
 import viewModels.sections.Section
-import uk.gov.hmrc.http.HttpErrorFunctions
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -76,7 +75,7 @@ class CheckYourAnswersController @Inject()(override val messagesApi: MessagesApi
         }
     }
 
-  private def createSections(userAnswers: UserAnswers, eori: String): Seq[Section] = {
+  private def createSections(userAnswers: UserAnswers, eori: EoriNumber): Seq[Section] = {
     val helper = new CheckYourAnswersHelper(userAnswers)
     val mrn    = Section(Seq(helper.movementReferenceNumber))
 

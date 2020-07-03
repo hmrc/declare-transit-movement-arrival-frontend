@@ -25,7 +25,11 @@ import queries.Gettable
 
 import scala.util.{Failure, Success, Try}
 
-final case class UserAnswers(id: MovementReferenceNumber, data: JsObject = Json.obj(), lastUpdated: LocalDateTime = LocalDateTime.now) {
+final case class UserAnswers(id: MovementReferenceNumber,
+                             eoriNumber: EoriNumber,
+                             data: JsObject               = Json.obj(),
+                             lastUpdated: LocalDateTime   = LocalDateTime.now,
+                             arrivalId: Option[ArrivalId] = None) {
 
   def get[A](gettable: Gettable[A])(implicit rds: Reads[A]): Option[A] =
     Reads.optionNoError(Reads.at(gettable.path)).reads(data).getOrElse(None)
@@ -71,8 +75,10 @@ object UserAnswers {
 
     (
       (__ \ "_id").read[MovementReferenceNumber] and
+        (__ \ "eoriNumber").read[EoriNumber] and
         (__ \ "data").read[JsObject] and
-        (__ \ "lastUpdated").read(MongoDateTimeFormats.localDateTimeRead)
+        (__ \ "lastUpdated").read(MongoDateTimeFormats.localDateTimeRead) and
+        (__ \ "arrivalId").readNullable[ArrivalId]
     )(UserAnswers.apply _)
   }
 
@@ -82,8 +88,10 @@ object UserAnswers {
 
     (
       (__ \ "_id").write[MovementReferenceNumber] and
+        (__ \ "eoriNumber").write[EoriNumber] and
         (__ \ "data").write[JsObject] and
-        (__ \ "lastUpdated").write(MongoDateTimeFormats.localDateTimeWrite)
+        (__ \ "lastUpdated").write(MongoDateTimeFormats.localDateTimeWrite) and
+        (__ \ "arrivalId").writeNullable[ArrivalId]
     )(unlift(UserAnswers.unapply))
   }
 }

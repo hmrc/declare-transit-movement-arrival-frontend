@@ -16,10 +16,12 @@
 
 package models
 
+import base.SpecBase
 import org.scalatest.{EitherValues, FreeSpec, MustMatchers}
+import play.api.libs.json.{JsNumber, Json}
 import play.api.mvc.PathBindable
 
-class ArrivalIdSpec extends FreeSpec with MustMatchers with EitherValues {
+class ArrivalIdSpec extends SpecBase with EitherValues {
 
   "Arrival Id" - {
     "must bind from url" in {
@@ -36,6 +38,11 @@ class ArrivalIdSpec extends FreeSpec with MustMatchers with EitherValues {
 
       val bindValue = pathBindable.unbind("arrivalId", arrivalId)
       bindValue mustBe "12"
+    }
+
+    "must serialize and deserialize" in {
+      val arrivalId = ArrivalId(1)
+      Json.toJson(arrivalId).validate[ArrivalId].asOpt.value mustBe arrivalId
     }
   }
 }

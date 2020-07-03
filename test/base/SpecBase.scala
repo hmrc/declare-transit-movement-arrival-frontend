@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import controllers.actions._
 import models.domain.{ContainerDomain, SealDomain}
 import models.messages.{Container, Seal}
-import models.{Address, Index, MovementReferenceNumber, UserAnswers}
+import models.{Address, EoriNumber, Index, MovementReferenceNumber, UserAnswers}
 import org.mockito.Mockito
 import org.scalatest._
 import org.scalatest.concurrent.IntegrationPatience
@@ -54,9 +54,10 @@ trait SpecBase
     Mockito.reset(mockRenderer)
   }
 
+  val eoriNumber: EoriNumber       = EoriNumber("EOriNumber")
   val mrn: MovementReferenceNumber = MovementReferenceNumber("19", "GB", "1234567890123")
 
-  val emptyUserAnswers: UserAnswers = UserAnswers(mrn, Json.obj())
+  val emptyUserAnswers: UserAnswers = UserAnswers(mrn, eoriNumber, Json.obj())
 
   val eventIndex: Index     = Index(0)
   val containerIndex: Index = Index(0)
@@ -67,7 +68,6 @@ trait SpecBase
   val container: Container             = Container("containerNumber")
   val domainContainer: ContainerDomain = ContainerDomain("containerNumber")
 
-  val eoriNumber: String         = "EOriNumber"
   val traderName: String         = "traderName"
   val consigneeName: String      = "consigneeName"
   val presentationOffice: String = "presentationOffice"

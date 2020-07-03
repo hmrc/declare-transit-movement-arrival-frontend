@@ -168,9 +168,12 @@ class ConfirmRemoveEventControllerSpec extends SpecBase with MockitoSugar with N
 
       redirectLocation(result).value mustEqual onwardRoute.url
 
-      val uaRemoveEvent = UserAnswers(userAnswersWithEventPlace.id,
-                                      userAnswersWithEventPlace.remove(EventQuery(eventIndex)).success.value.data,
-                                      userAnswersWithEventPlace.lastUpdated)
+      val uaRemoveEvent = UserAnswers(
+        userAnswersWithEventPlace.id,
+        userAnswersWithEventPlace.eoriNumber,
+        userAnswersWithEventPlace.remove(EventQuery(eventIndex)).success.value.data,
+        userAnswersWithEventPlace.lastUpdated
+      )
 
       verify(mockSessionRepository, times(1)).set(uaRemoveEvent)
 
@@ -201,9 +204,12 @@ class ConfirmRemoveEventControllerSpec extends SpecBase with MockitoSugar with N
 
       redirectLocation(result).value mustEqual onwardRoute.url
 
-      val uaRemoveEvent = UserAnswers(userAnswersWithEventPlace.id,
-                                      userAnswersWithEventPlace.remove(EventQuery(eventIndex)).success.value.data,
-                                      userAnswersWithEventPlace.lastUpdated)
+      val uaRemoveEvent = UserAnswers(
+        userAnswersWithEventPlace.id,
+        userAnswersWithEventPlace.eoriNumber,
+        userAnswersWithEventPlace.remove(EventQuery(eventIndex)).success.value.data,
+        userAnswersWithEventPlace.lastUpdated
+      )
 
       verify(mockSessionRepository, times(0)).set(uaRemoveEvent)
 

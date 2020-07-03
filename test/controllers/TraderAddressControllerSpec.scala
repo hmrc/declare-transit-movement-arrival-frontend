@@ -19,21 +19,15 @@ package controllers
 import base.SpecBase
 import forms.TraderAddressFormProvider
 import matchers.JsonMatchers
-import models.NormalMode
-import models.Address
-import models.UserAnswers
-import navigation.FakeNavigator
-import navigation.Navigator
+import models.{NormalMode, UserAnswers}
+import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
-import org.mockito.Mockito.times
-import org.mockito.Mockito.verify
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.TraderAddressPage
 import play.api.inject.bind
-import play.api.libs.json.JsObject
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -54,6 +48,7 @@ class TraderAddressControllerSpec extends SpecBase with MockitoSugar with Nunjuc
 
   val userAnswers = UserAnswers(
     mrn,
+    eoriNumber,
     Json.obj(
       TraderAddressPage.toString -> Json.obj(
         "buildingAndStreet" -> "value 1",

@@ -443,7 +443,8 @@ eoriNumber.title =What is the EORI number of the authorised consignee?
 eoriNumber.heading =  What is the EORI number for {0}?
 eoriNumber.checkYourAnswersLabel =   What is the EORI number for {0}?
 eoriNumber.error.required = Enter the EORI number for {0}
-eoriNumber.error.length =  EORI mumber must be 35 characters or less
+eoriNumber.error.length =  EORI mumber must be 17 characters or less
+eoriNumber.error.invalid =  EORI number must start with 2 letters followed by up to 15 numbers
 
 consigneeAddress.title = What is the address of the authorised consignee
 consigneeAddress.heading =  What is the address for {0}?

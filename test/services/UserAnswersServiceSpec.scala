@@ -51,8 +51,7 @@ class UserAnswersServiceSpec extends SpecBase with MessagesModelGenerators {
         .build()
 
       val userAnswersService = application.injector.instanceOf[UserAnswersService]
-
-      userAnswersService.getUserAnswers(ArrivalId(1)).futureValue.value mustBe a[UserAnswers]
+      userAnswersService.getUserAnswers(ArrivalId(1), eoriNumber).futureValue.value mustBe a[UserAnswers]
     }
 
     "must return None for invalid request" in {
@@ -63,7 +62,7 @@ class UserAnswersServiceSpec extends SpecBase with MessagesModelGenerators {
         .overrides(bind[ArrivalNotificationMessageService].toInstance(mockArrivalNotificationMessageService))
         .build()
       val userAnswersService = application.injector.instanceOf[UserAnswersService]
-      userAnswersService.getUserAnswers(ArrivalId(1)).futureValue mustBe None
+      userAnswersService.getUserAnswers(ArrivalId(1), eoriNumber).futureValue mustBe None
     }
   }
 }

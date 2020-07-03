@@ -19,8 +19,7 @@ package utils
 import java.time.format.DateTimeFormatter
 
 import controllers.routes
-import models.GoodsLocation.BorderForceOffice
-import models.{CheckMode, UserAnswers}
+import models.{CheckMode, EoriNumber, UserAnswers}
 import pages._
 import uk.gov.hmrc.viewmodels.SummaryList._
 import uk.gov.hmrc.viewmodels._
@@ -49,10 +48,10 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswers
       case _ => None
     }
 
-  def eoriConfirmation(eoriNumber: String): Option[Row] = userAnswers.get(ConsigneeEoriConfirmationPage) map {
+  def eoriConfirmation(eoriNumber: EoriNumber): Option[Row] = userAnswers.get(ConsigneeEoriConfirmationPage) map {
     answer =>
       val consigneeName = userAnswers.get(ConsigneeNamePage).getOrElse("")
-      val messages      = msg"eoriConfirmation.checkYourAnswersLabel".withArgs(eoriNumber, consigneeName)
+      val messages      = msg"eoriConfirmation.checkYourAnswersLabel".withArgs(eoriNumber.value, consigneeName)
       Row(
         key   = Key(messages, classes = Seq("govuk-!-width-one-half")),
         value = Value(yesOrNo(answer)),

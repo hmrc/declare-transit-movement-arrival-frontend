@@ -53,6 +53,14 @@ trait ModelGenerators {
       } yield MovementReferenceNumber(year, country.mkString, serial.mkString)
     }
 
+  implicit lazy val arbitraryEoriNumber: Arbitrary[EoriNumber] = {
+    Arbitrary {
+      for {
+        number <- arbitrary[String]
+      } yield EoriNumber(number)
+    }
+  }
+
   implicit lazy val arbitraryCustomsOffice: Arbitrary[CustomsOffice] = {
 
     val genRoles = Gen.someOf(Seq("TRA", "DEP", "DES"))

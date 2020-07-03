@@ -37,7 +37,7 @@ class ArrivalMovementRequestToUserAnswersServiceSpec extends SpecBase with Messa
   "when we can go from ArrivalMovementRequest to UserAnswers" in {
     val sampleMovementRequest = arbitrary[ArrivalMovementRequest].sample.value
 
-    val result = arrivalMovementRequestToUserAnswersService.apply(sampleMovementRequest)
+    val result = arrivalMovementRequestToUserAnswersService.apply(sampleMovementRequest, eoriNumber)
 
     result.value mustBe an[UserAnswers]
   }
@@ -48,7 +48,7 @@ class ArrivalMovementRequestToUserAnswersServiceSpec extends SpecBase with Messa
     val header: Header                                                 = arrivalMovementRequest.header.copy(movementReferenceNumber = "Invalid MRN")
     val arrivalMovementRequestWithMalformedMrn: ArrivalMovementRequest = arrivalMovementRequest.copy(header = header)
 
-    val result = arrivalMovementRequestToUserAnswersService.apply(arrivalMovementRequestWithMalformedMrn)
+    val result = arrivalMovementRequestToUserAnswersService.apply(arrivalMovementRequestWithMalformedMrn, eoriNumber)
 
     result must not be defined
   }

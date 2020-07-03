@@ -22,11 +22,12 @@ import generators.MessagesModelGenerators
 import matchers.JsonMatchers
 import models.domain.SealDomain
 import models.messages.Seal
-import models.{Index, NormalMode, UserAnswers}
+import models.{Index, NormalMode}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
+import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.mockito.MockitoSugar
 import pages.events.seals.SealIdentityPage
 import play.api.data.Form
@@ -40,7 +41,6 @@ import repositories.SessionRepository
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
-import org.scalacheck.Arbitrary.arbitrary
 
 class SealIdentityControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers with MessagesModelGenerators {
 
@@ -87,7 +87,7 @@ class SealIdentityControllerSpec extends SpecBase with MockitoSugar with Nunjuck
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers    = UserAnswers(mrn).set(SealIdentityPage(eventIndex, sealIndex), sealDomain).success.value
+      val userAnswers    = emptyUserAnswers.set(SealIdentityPage(eventIndex, sealIndex), sealDomain).success.value
       val application    = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request        = FakeRequest(GET, sealIdentityRoute())
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])

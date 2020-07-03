@@ -55,7 +55,7 @@ class UserAnswersSpec extends SpecBase {
         )
       }
 
-      result mustBe UserAnswers(mrn, data, result.lastUpdated)
+      result mustBe UserAnswers(mrn, eoriNumber, data, result.lastUpdated)
     }
 
     s"must not run cleanup when the new answer is equal to the existing answer" in {
@@ -76,7 +76,7 @@ class UserAnswersSpec extends SpecBase {
         )
       }
 
-      result mustBe UserAnswers(mrn, data, result.lastUpdated)
+      result mustBe UserAnswers(mrn, eoriNumber, data, result.lastUpdated)
     }
   }
 

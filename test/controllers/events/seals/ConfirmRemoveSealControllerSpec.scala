@@ -17,11 +17,10 @@
 package controllers.events.seals
 
 import base.SpecBase
+import controllers.events.seals.{routes => sealRoutes}
 import forms.events.seals.ConfirmRemoveSealFormProvider
 import matchers.JsonMatchers
-import controllers.events.seals.{routes => sealRoutes}
 import models.{Index, NormalMode, UserAnswers}
-import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
@@ -178,7 +177,8 @@ class ConfirmRemoveSealControllerSpec extends SpecBase with MockitoSugar with Nu
       redirectLocation(result).value mustEqual onwardRoute.url
 
       val newUserAnswers = UserAnswers(
-        id = userAnswersWithSeal.id,
+        id         = userAnswersWithSeal.id,
+        eoriNumber = userAnswersWithSeal.eoriNumber,
         userAnswersWithSeal.remove(SealIdentityPage(eventIndex, sealIndex)).success.value.data,
         userAnswersWithSeal.lastUpdated
       )
