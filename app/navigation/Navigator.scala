@@ -145,7 +145,7 @@ class Navigator @Inject()() {
       case (Some(true), NormalMode, _, _)       => Some(routes.ConsigneeAddressController.onPageLoad(ua.id, mode))
       case (Some(true), CheckMode, _, None)     => Some(routes.ConsigneeAddressController.onPageLoad(ua.id, mode))
       case (Some(true), CheckMode, _, _)        => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
-      case (Some(false), CheckMode, Some(_), _) => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
+      case (Some(false), CheckMode, Some(_), _) => Some(routes.ConsigneeEoriNumberController.onPageLoad(ua.id, mode))
       case (Some(false), _, _, _)               => Some(routes.ConsigneeEoriNumberController.onPageLoad(ua.id, mode))
       case _                                    => None
     }

@@ -361,7 +361,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
             }
           }
 
-          "'CheckYourAnswersController' when the answer is false and the consigneeEoriNumber is populated" in {
+          "'ConsigneeEoriNumberController' when the answer is false and the consigneeEoriNumber is populated" in {
             forAll(arbitrary[UserAnswers]) {
               answers =>
                 val updatedAnswers =
@@ -370,7 +370,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
                     .set(ConsigneeEoriNumberPage, eoriNumber.value).success.value
                 navigator
                   .nextPage(ConsigneeEoriConfirmationPage, CheckMode, updatedAnswers)
-                  .mustBe(routes.CheckYourAnswersController.onPageLoad(answers.id))
+                  .mustBe(routes.ConsigneeEoriNumberController.onPageLoad(answers.id, CheckMode))
             }
           }
 
