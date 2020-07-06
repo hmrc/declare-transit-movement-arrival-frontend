@@ -40,7 +40,7 @@ class ArrivalSubmissionService @Inject()(
   def submit(userAnswers: UserAnswers, eori: EoriNumber)(implicit hc: HeaderCarrier): Future[Option[HttpResponse]] =
     converterService.convertToArrivalNotification(userAnswers) match {
       case Some(notification) =>
-        val messageSender = MessageSender(appConfig.env, eori.value)
+        val messageSender = MessageSender(appConfig.env, eori)
 
         interchangeControlReferenceIdRepository
           .nextInterchangeControlReferenceId()

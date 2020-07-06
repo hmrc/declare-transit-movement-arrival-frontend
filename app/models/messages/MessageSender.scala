@@ -17,17 +17,17 @@
 package models.messages
 
 import com.lucidchart.open.xtract._
-import models.XMLWrites
+import models.{EoriNumber, XMLWrites}
 
 import scala.xml.NodeSeq
 
-case class MessageSender(environment: String, eori: String)
+case class MessageSender(environment: String, eori: EoriNumber)
 
 object MessageSender {
 
   implicit val writes: XMLWrites[MessageSender] =
     XMLWrites(
-      a => <MesSenMES3>{escapeXml(s"${a.environment}-${a.eori}")}</MesSenMES3>
+      a => <MesSenMES3>{escapeXml(s"${a.environment}-${a.eori.value}")}</MesSenMES3>
     )
 
   implicit val xmlMessageSenderReads: XmlReader[MessageSender] = {
@@ -37,7 +37,7 @@ object MessageSender {
 
       override def read(xml: NodeSeq): ParseResult[MessageSender] =
         xml.text.split("-") match {
-          case Array(environment, eori) => ParseSuccess(MessageSender(environment, eori))
+          case Array(environment, eori) => ParseSuccess(MessageSender(environment, EoriNumber(eori)))
           case _                        => ParseFailure(MessageSenderParseFailure(s"Failed to parse the following value to MessageSender: ${xml.text}"))
         }
     }

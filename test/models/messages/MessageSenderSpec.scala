@@ -31,10 +31,11 @@ class MessageSenderSpec extends SpecBase with ScalaCheckPropertyChecks with Stre
   "MessageSender" - {
 
     "must convert to xml and convert to correct format" in {
+      // TODO: This test is replicating the implementation and needs to be re-written
       forAll(arbitrary[MessageSender]) {
         messageSender =>
           val expectedResult: NodeSeq =
-            <MesSenMES3>{escapeXml(s"${messageSender.environment}-${messageSender.eori}")}</MesSenMES3>
+            <MesSenMES3>{escapeXml(s"${messageSender.environment}-${messageSender.eori.value}")}</MesSenMES3>
 
           messageSender.toXml mustEqual expectedResult
       }
