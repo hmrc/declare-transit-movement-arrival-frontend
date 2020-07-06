@@ -69,7 +69,7 @@ class ArrivalSubmissionServiceSpec extends SpecBase with MessagesModelGenerators
 
         val arrivalNotificationService = application.injector.instanceOf[ArrivalSubmissionService]
 
-        arrivalNotificationService.submit(emptyUserAnswers, userEoriNumber).futureValue mustBe None
+        arrivalNotificationService.submit(emptyUserAnswers).futureValue mustBe None
       }
 
       "must create arrival notification for valid xml input" in {
@@ -91,7 +91,7 @@ class ArrivalSubmissionServiceSpec extends SpecBase with MessagesModelGenerators
 
         val arrivalNotificationService = application.injector.instanceOf[ArrivalSubmissionService]
 
-        val response = arrivalNotificationService.submit(emptyUserAnswers, userEoriNumber).futureValue.get
+        val response = arrivalNotificationService.submit(emptyUserAnswers).futureValue.get
         response.status mustBe ACCEPTED
         verify(mockArrivalMovementConnector, times(1)).submitArrivalMovement(any())(any())
 
@@ -118,29 +118,9 @@ class ArrivalSubmissionServiceSpec extends SpecBase with MessagesModelGenerators
 
         val arrivalNotificationService = application.injector.instanceOf[ArrivalSubmissionService]
 
-        val response = arrivalNotificationService.submit(userAnswersWithArrivalId, userEoriNumber).futureValue.get
+        val response = arrivalNotificationService.submit(userAnswersWithArrivalId).futureValue.get
         response.status mustBe ACCEPTED
         verify(mockArrivalMovementConnector, times(1)).updateArrivalMovement(any(), any())(any())
-      }
-
-      "must return None if interchangeControlReferenceIdRepository fails" in {
-
-        when(mockInterchangeControllerReference.nextInterchangeControlReferenceId())
-          .thenReturn(Future.failed(new Exception("failed to get nextInterchange reference id")))
-
-        when(mockConverterService.convertToArrivalNotification(any()))
-          .thenReturn(Some(normalNotification))
-
-        val application = applicationBuilder(Some(emptyUserAnswers))
-          .overrides(bind[InterchangeControlReferenceIdRepository].toInstance(mockInterchangeControllerReference))
-          .overrides(bind[ArrivalNotificationConversionService].toInstance(mockConverterService))
-          .overrides(bind[ArrivalMovementConnector].toInstance(mockArrivalMovementConnector))
-          .build()
-
-        val arrivalNotificationService = application.injector.instanceOf[ArrivalSubmissionService]
-
-        arrivalNotificationService.submit(emptyUserAnswers, userEoriNumber).futureValue mustBe None
-
       }
     }
   }

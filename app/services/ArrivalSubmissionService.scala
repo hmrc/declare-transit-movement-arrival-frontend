@@ -16,57 +16,31 @@
 
 package services
 
-import java.time.LocalTime
-
-import config.FrontendAppConfig
+import cats.implicits._
 import connectors.ArrivalMovementConnector
 import javax.inject.Inject
 import models.{EoriNumber, UserAnswers}
-import models.messages.MessageSender
-import play.api.Logger
-import repositories.InterchangeControlReferenceIdRepository
-import services.conversion.{ArrivalNotificationConversionService, SubmissionModelService}
+import services.conversion.UserAnswersToArrivalMovementRequestService
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class ArrivalSubmissionService @Inject()(
-  converterService: ArrivalNotificationConversionService,
   connector: ArrivalMovementConnector,
-  appConfig: FrontendAppConfig,
-  interchangeControlReferenceIdRepository: InterchangeControlReferenceIdRepository
+  userAnswersToArrivalMovementRequestService: UserAnswersToArrivalMovementRequestService
 )(implicit ec: ExecutionContext) {
 
-  def submit(userAnswers: UserAnswers, eori: EoriNumber)(implicit hc: HeaderCarrier): Future[Option[HttpResponse]] =
-    converterService.convertToArrivalNotification(userAnswers) match {
-      case Some(notification) =>
-        val messageSender = MessageSender(appConfig.env, eori)
+  def submit(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[Option[HttpResponse]] =
+    userAnswersToArrivalMovementRequestService
+      .convert(userAnswers)
+      .traverse(
+        _.flatMap(
+          arrivalMovementRequest =>
+            userAnswers.arrivalId match {
+              case Some(arrivalId) => connector.updateArrivalMovement(arrivalId, arrivalMovementRequest)
+              case _               => connector.submitArrivalMovement(arrivalMovementRequest)
 
-        interchangeControlReferenceIdRepository
-          .nextInterchangeControlReferenceId()
-          .flatMap {
-            referenceId =>
-              val arrivalMovementRequest = {
-                SubmissionModelService
-                  .convertToSubmissionModel(
-                    arrivalNotification         = notification,
-                    messageSender               = messageSender,
-                    interchangeControlReference = referenceId,
-                    timeOfPresentation          = LocalTime.now()
-                  )
-              }
-              userAnswers.arrivalId match {
-                case Some(arrivalId) => connector.updateArrivalMovement(arrivalId, arrivalMovementRequest).map(Some(_))
-                case _               => connector.submitArrivalMovement(arrivalMovementRequest).map(Some(_))
-
-              }
           }
-          .recover {
-            case ex =>
-              Logger.error(s"${ex.getMessage}")
-              None
-          }
-
-      case None => Future.successful(None)
-    }
+        )
+      )
 }
