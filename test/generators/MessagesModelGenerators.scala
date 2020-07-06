@@ -433,6 +433,15 @@ trait MessagesModelGenerators extends Generators {
     containerTranshipment <- arbitrary[ContainerTranshipmentDomain]
   } yield (generatedEnRouteEvent.copy(eventDetails = Some(containerTranshipment)), containerTranshipment)
 
+  val enRouteEventContainerTranshipmentWithoutSeals: Gen[(EnRouteEventDomain, ContainerTranshipmentDomain)] = for {
+    generatedEnRouteEvent <- arbitrary[EnRouteEventDomain]
+    containerTranshipment <- arbitrary[ContainerTranshipmentDomain]
+  } yield {
+    val enRouteEvent = generatedEnRouteEvent.copy(eventDetails = Some(containerTranshipment), seals = None)
+
+    (enRouteEvent, containerTranshipment)
+  }
+
   val simplifiedNotificationWithSubplace: Gen[(SimplifiedNotification, TraderDomain)] =
     for {
       base             <- arbitrary[SimplifiedNotification]
@@ -450,5 +459,4 @@ trait MessagesModelGenerators extends Generators {
 
       (expected, trader)
     }
-
 }

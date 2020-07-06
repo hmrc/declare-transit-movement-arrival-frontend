@@ -16,14 +16,12 @@
 
 package services.conversion
 
-import java.time.LocalDate
-
 import base.SpecBase
 import generators.MessagesModelGenerators
-import models.GoodsLocation.{AuthorisedConsigneesLocation, BorderForceOffice}
-import models.domain.{ContainerDomain, ContainerTranshipmentDomain, EnRouteEventDomain, SealDomain, SimplifiedNotification, TraderDomain}
+import models.GoodsLocation.AuthorisedConsigneesLocation
+import models.domain._
 import models.messages._
-import models.reference.{CountryCode, CustomsOffice}
+import models.reference.CustomsOffice
 import models.{Address, Index, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen

@@ -35,12 +35,9 @@ class ArrivalNotificationConversionService {
 
   def convertToArrivalNotification(userAnswers: UserAnswers): Option[ArrivalNotificationDomain] =
     userAnswers.get(GoodsLocationPage) match {
-      case Some(BorderForceOffice) =>
-        createNormalNotification(userAnswers)
-      case Some(AuthorisedConsigneesLocation) =>
-        createSimplifiedNotification(userAnswers)
-      case _ =>
-        None
+      case Some(BorderForceOffice)            => createNormalNotification(userAnswers)
+      case Some(AuthorisedConsigneesLocation) => createSimplifiedNotification(userAnswers)
+      case _                                  => None
     }
 
   private def createSimplifiedNotification(userAnswers: UserAnswers): Option[SimplifiedNotification] =

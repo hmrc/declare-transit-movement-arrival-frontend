@@ -42,7 +42,7 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
         case (arbArrivalNotification, trader) =>
           val expectedArrivalNotification: NormalNotification = arbArrivalNotification.copy(enRouteEvents = None)
 
-          val userAnswers: UserAnswers = createBasicUserAnswers(trader, expectedArrivalNotification)
+          val userAnswers: UserAnswers = createNormalNotification(trader, expectedArrivalNotification)
 
           service.convertToArrivalNotification(userAnswers).value mustEqual expectedArrivalNotification
       }
@@ -55,7 +55,7 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
             .copy(enRouteEvents = None)
             .copy(notificationPlace = trader.postCode)
 
-          val userAnswers: UserAnswers = createBasicUserAnswers(trader, expectedArrivalNotification)
+          val userAnswers: UserAnswers = createNormalNotification(trader, expectedArrivalNotification)
             .remove(PlaceOfNotificationPage)
             .success
             .value
@@ -73,7 +73,7 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
 
           val arrivalNotification: NormalNotification = arbArrivalNotification.copy(enRouteEvents = Some(Seq(routeEvent)))
 
-          val userAnswers: UserAnswers = createBasicUserAnswers(trader, arrivalNotification, isIncidentOnRoute = true)
+          val userAnswers: UserAnswers = createNormalNotification(trader, arrivalNotification, isIncidentOnRoute = true)
             .set(IsTranshipmentPage(eventIndex), false).success.value
             .set(EventPlacePage(eventIndex), routeEvent.place).success.value
             .set(EventCountryPage(eventIndex), routeEvent.country).success.value
@@ -96,7 +96,7 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
             .copy(eventDetails = Some(vehicularTranshipment.copy(containers = None)))
 
           val arrivalNotification: NormalNotification = arbArrivalNotification.copy(enRouteEvents = Some(Seq(routeEvent)))
-          val userAnswers: UserAnswers = createBasicUserAnswers(trader, arrivalNotification, isIncidentOnRoute = true)
+          val userAnswers: UserAnswers = createNormalNotification(trader, arrivalNotification, isIncidentOnRoute = true)
             .set(IsTranshipmentPage(eventIndex), true).success.value
             .set(EventPlacePage(eventIndex), routeEvent.place).success.value
             .set(EventCountryPage(eventIndex), routeEvent.country).success.value
@@ -110,17 +110,8 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
       }
     }
 
-    val enRouteEventContainerTranshipment: Gen[(EnRouteEventDomain, ContainerTranshipmentDomain)] = for {
-      generatedEnRouteEvent <- arbitrary[EnRouteEventDomain]
-      containerTranshipment <- arbitrary[ContainerTranshipmentDomain]
-    } yield {
-      val enRouteEvent = generatedEnRouteEvent.copy(eventDetails = Some(containerTranshipment), seals = None)
-
-      (enRouteEvent, containerTranshipment)
-    }
-
     "must return 'Normal Arrival Notification' message when there is one container transhipment on route" in {
-      forAll(arrivalNotificationWithSubplace, enRouteEventContainerTranshipment) {
+      forAll(arrivalNotificationWithSubplace, enRouteEventContainerTranshipmentWithoutSeals) {
         case ((arbArrivalNotification, trader), (enRouteEvent, containerTranshipment)) =>
 
           val expectedArrivalNotification = arbArrivalNotification.copy(enRouteEvents = Some(Seq(enRouteEvent)))
@@ -162,7 +153,7 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
 
           val eventIndex2 = Index(1)
 
-          val userAnswers: UserAnswers = createBasicUserAnswers(trader, arrivalNotification, isIncidentOnRoute = true)
+          val userAnswers: UserAnswers = createNormalNotification(trader, arrivalNotification, isIncidentOnRoute = true)
             .set(IsTranshipmentPage(eventIndex), false).success.value
             .set(EventPlacePage(eventIndex), routeEvent1.place).success.value
             .set(EventCountryPage(eventIndex), enRouteEvent1.country).success.value
@@ -208,7 +199,7 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
     }
   }
 
-  private def createBasicUserAnswers(trader: TraderDomain, arrivalNotification: NormalNotification, isIncidentOnRoute: Boolean = false): UserAnswers =
+  private def createNormalNotification(trader: TraderDomain, arrivalNotification: NormalNotification, isIncidentOnRoute: Boolean = false): UserAnswers =
     emptyUserAnswers
       .copy(id = arrivalNotification.movementReferenceNumber)
       .set(GoodsLocationPage, BorderForceOffice).success.value

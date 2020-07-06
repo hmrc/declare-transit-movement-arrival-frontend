@@ -106,4 +106,28 @@ object SimplifiedNotification {
     val maxNumberOfEnRouteEvents = 9
     val authorisedLocationRegex  = "^[a-zA-Z0-9]*$"
   }
+
+  implicit lazy val writes: OWrites[SimplifiedNotification] = {
+    OWrites[SimplifiedNotification] {
+      notification =>
+        Json
+          .obj(
+            GoodsLocationPage.toString             -> GoodsLocation.AuthorisedConsigneesLocation.toString,
+            AuthorisedLocationPage.toString        -> notification.notificationPlace,
+            ConsigneeNamePage.toString             -> notification.trader.name,
+            ConsigneeEoriConfirmationPage.toString -> false, //TODO have a word with design, can we just show the EORI number page?
+            ConsigneeEoriNumberPage.toString       -> notification.trader.eori,
+            ConsigneeAddressPage.toString -> Json.obj(
+              "buildingAndStreet" -> notification.trader.streetAndNumber,
+              "city"              -> notification.trader.city,
+              "postcode"          -> notification.trader.postCode
+            ),
+            PresentationOfficePage.toString -> Json.toJson(
+              CustomsOffice(notification.presentationOfficeId, notification.presentationOfficeName, Seq.empty, None)
+            ),
+            IncidentOnRoutePage.toString -> notification.enRouteEvents.isDefined,
+            EventsQuery.toString         -> Json.toJson(notification.enRouteEvents)
+          )
+    }
+  }
 }
