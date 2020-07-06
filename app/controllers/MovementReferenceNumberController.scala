@@ -58,15 +58,17 @@ class MovementReferenceNumberController @Inject()(override val messagesApi: Mess
         .bindFromRequest()
         .fold(
           formWithErrors => {
-
             val json = Json.obj("form" -> formWithErrors)
-
             renderer.render("movementReferenceNumber.njk", json).map(BadRequest(_))
           },
           value =>
-            sessionRepository.set(UserAnswers(id = value, eoriNumber = request.eoriNumber)) map {
-              _ =>
-                Redirect(navigator.nextPage(MovementReferenceNumberPage, NormalMode, UserAnswers(value, request.eoriNumber)))
+            sessionRepository.get(id = value.toString, eoriNumber = request.eoriNumber) flatMap {
+              ua =>
+                val userAnswers: UserAnswers = ua.getOrElse(UserAnswers(id = value, eoriNumber = request.eoriNumber))
+                sessionRepository.set(userAnswers) map {
+                  _ =>
+                    Redirect(navigator.nextPage(MovementReferenceNumberPage, NormalMode, UserAnswers(value, request.eoriNumber)))
+                }
           }
         )
   }
