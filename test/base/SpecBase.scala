@@ -50,9 +50,8 @@ trait SpecBase
     with MockitoSugar
     with BeforeAndAfterEach {
 
-  override def beforeEach {
+  override def beforeEach: Unit =
     Mockito.reset(mockRenderer)
-  }
 
   val eoriNumber: EoriNumber       = EoriNumber("EOriNumber")
   val mrn: MovementReferenceNumber = MovementReferenceNumber("19", "GB", "1234567890123")
