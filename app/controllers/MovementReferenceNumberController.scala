@@ -19,7 +19,7 @@ package controllers
 import controllers.actions._
 import forms.MovementReferenceNumberFormProvider
 import javax.inject.Inject
-import models.{EoriNumber, MovementReferenceNumber, NormalMode, UserAnswers}
+import models.{NormalMode, UserAnswers}
 import navigation.Navigator
 import pages.MovementReferenceNumberPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -27,16 +27,18 @@ import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
+import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class MovementReferenceNumberController @Inject()(override val messagesApi: MessagesApi,
                                                   sessionRepository: SessionRepository,
                                                   navigator: Navigator,
                                                   identify: IdentifierAction,
                                                   formProvider: MovementReferenceNumberFormProvider,
+                                                  userAnswersService: UserAnswersService,
                                                   val controllerComponents: MessagesControllerComponents,
                                                   renderer: Renderer)(implicit ec: ExecutionContext)
     extends FrontendBaseController
@@ -63,18 +65,10 @@ class MovementReferenceNumberController @Inject()(override val messagesApi: Mess
           },
           value =>
             for {
-              userAnswers <- getUserAnswers(request.eoriNumber, value)
+              userAnswers <- userAnswersService.getOrCreateUserAnswers(request.eoriNumber, value)
               _           <- sessionRepository.set(userAnswers)
             } yield Redirect(navigator.nextPage(MovementReferenceNumberPage, NormalMode, UserAnswers(value, request.eoriNumber)))
         )
   }
 
-  private def getUserAnswers(eoriNumber: EoriNumber, value: MovementReferenceNumber): Future[UserAnswers] = {
-    val initialUserAnswers = UserAnswers(id = value, eoriNumber = eoriNumber)
-
-    sessionRepository.get(id = value.toString, eoriNumber = eoriNumber) map {
-      userAnswers =>
-        userAnswers getOrElse initialUserAnswers
-    }
-  }
 }

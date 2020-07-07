@@ -19,7 +19,7 @@ package controllers
 import base.SpecBase
 import forms.MovementReferenceNumberFormProvider
 import matchers.JsonMatchers
-import models.{EoriNumber, UserAnswers}
+import models.UserAnswers
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
@@ -32,6 +32,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import repositories.SessionRepository
+import services.UserAnswersService
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
@@ -76,49 +77,18 @@ class MovementReferenceNumberControllerSpec extends SpecBase with MockitoSugar w
     "must redirect to the next page when valid data is submitted and sessionRepository returns UserAnswers value as Some(_)" in {
 
       val mockSessionRepository  = mock[SessionRepository]
+      val mockUserAnswersService = mock[UserAnswersService]
       val userAnswersCaptor      = ArgumentCaptor.forClass(classOf[UserAnswers])
-      val eoriNumber: EoriNumber = EoriNumber("123")
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-      when(mockSessionRepository.get(any(), any())) thenReturn Future.successful(Some(emptyUserAnswers.copy(eoriNumber = eoriNumber)))
+      when(mockUserAnswersService.getOrCreateUserAnswers(any(), any())) thenReturn Future.successful(emptyUserAnswers)
 
       val application =
         applicationBuilder(userAnswers = None)
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
-
-      val request =
-        FakeRequest(POST, movementReferenceNumberRoute)
-          .withFormUrlEncodedBody(("value", mrn.toString))
-
-      val result = route(application, request).value
-
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual onwardRoute.url
-      verify(mockSessionRepository).set(userAnswersCaptor.capture())
-
-      userAnswersCaptor.getValue.id mustBe mrn
-      userAnswersCaptor.getValue.eoriNumber mustBe eoriNumber
-
-      application.stop()
-    }
-
-    "must redirect to the next page when valid data is submitted and sessionRepository returns UserAnswers value as None" in {
-
-      val mockSessionRepository = mock[SessionRepository]
-      val userAnswersCaptor     = ArgumentCaptor.forClass(classOf[UserAnswers])
-
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-      when(mockSessionRepository.get(any(), any())) thenReturn Future.successful(None)
-
-      val application =
-        applicationBuilder(userAnswers = None)
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[UserAnswersService].toInstance(mockUserAnswersService)
           )
           .build()
 
