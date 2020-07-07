@@ -17,16 +17,27 @@
 package services
 
 import javax.inject.Inject
-import models.{ArrivalId, EoriNumber, UserAnswers}
+import models.{ArrivalId, EoriNumber, MovementReferenceNumber, UserAnswers}
+import repositories.SessionRepository
 import services.conversion.ArrivalMovementRequestToUserAnswersService
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class UserAnswersService @Inject()(arrivalNotificationMessageService: ArrivalNotificationMessageService) {
+class UserAnswersService @Inject()(arrivalNotificationMessageService: ArrivalNotificationMessageService, sessionRepository: SessionRepository)(
+  implicit ec: ExecutionContext) {
 
-  def getUserAnswers(arrivalId: ArrivalId, eoriNumber: EoriNumber)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[UserAnswers]] =
+  def getUserAnswers(arrivalId: ArrivalId, eoriNumber: EoriNumber)(implicit hc: HeaderCarrier): Future[Option[UserAnswers]] =
     arrivalNotificationMessageService
       .getArrivalNotificationMessage(arrivalId)
       .map(_.flatMap(ArrivalMovementRequestToUserAnswersService.apply(_, eoriNumber)))
+
+  def getOrCreateUserAnswers(eoriNumber: EoriNumber, value: MovementReferenceNumber): Future[UserAnswers] = {
+    val initialUserAnswers = UserAnswers(id = value, eoriNumber = eoriNumber)
+
+    sessionRepository.get(id = value.toString, eoriNumber = eoriNumber) map {
+      userAnswers =>
+        userAnswers getOrElse initialUserAnswers
+    }
+  }
 }

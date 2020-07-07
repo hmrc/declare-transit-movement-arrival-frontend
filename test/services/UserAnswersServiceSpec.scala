@@ -19,19 +19,19 @@ package services
 import base.SpecBase
 import generators.MessagesModelGenerators
 import models.messages.ArrivalMovementRequest
-import models.{ArrivalId, UserAnswers}
+import models.{ArrivalId, EoriNumber, UserAnswers}
 import org.mockito.Matchers.any
 import org.mockito.Mockito._
 import org.scalacheck.Arbitrary.arbitrary
 import play.api.inject.bind
-import services.conversion.ArrivalMovementRequestToUserAnswersService
+import repositories.SessionRepository
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class UserAnswersServiceSpec extends SpecBase with MessagesModelGenerators {
 
   val mockArrivalNotificationMessageService = mock[ArrivalNotificationMessageService]
+  val mockSessionRepository                 = mock[SessionRepository]
 
   override def beforeEach: Unit = {
     super.beforeEach()
@@ -63,6 +63,35 @@ class UserAnswersServiceSpec extends SpecBase with MessagesModelGenerators {
         .build()
       val userAnswersService = application.injector.instanceOf[UserAnswersService]
       userAnswersService.getUserAnswers(ArrivalId(1), eoriNumber).futureValue mustBe None
+    }
+
+    "must return existing UserAnswers from repository if condition matches" in {
+
+      val application = applicationBuilder()
+        .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+        .build()
+      val eoriNumber          = EoriNumber("123")
+      val existingUserAnswers = emptyUserAnswers.copy(eoriNumber = eoriNumber)
+      when(mockSessionRepository.get(any(), any())) thenReturn Future.successful(Some(existingUserAnswers))
+
+      val userAnswersService = application.injector.instanceOf[UserAnswersService]
+      userAnswersService.getOrCreateUserAnswers(eoriNumber, mrn).futureValue mustBe existingUserAnswers
+    }
+
+    "must return basic UserAnswers with eori numbar and mrn if there is no record exist" in {
+
+      val application = applicationBuilder()
+        .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+        .build()
+
+      when(mockSessionRepository.get(any(), any())) thenReturn Future.successful(None)
+
+      val userAnswersService  = application.injector.instanceOf[UserAnswersService]
+      val result: UserAnswers = userAnswersService.getOrCreateUserAnswers(eoriNumber, mrn).futureValue
+
+      result.eoriNumber mustBe emptyUserAnswers.eoriNumber
+      result.id mustBe mrn
+
     }
   }
 }

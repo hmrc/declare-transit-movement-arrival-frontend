@@ -32,6 +32,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import repositories.SessionRepository
+import services.UserAnswersService
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
@@ -73,18 +74,21 @@ class MovementReferenceNumberControllerSpec extends SpecBase with MockitoSugar w
       application.stop()
     }
 
-    "must redirect to the next page when valid data is submitted" in {
+    "must redirect to the next page when valid data is submitted and sessionRepository returns UserAnswers value as Some(_)" in {
 
-      val mockSessionRepository = mock[SessionRepository]
-      val userAnswersCaptor     = ArgumentCaptor.forClass(classOf[UserAnswers])
+      val mockSessionRepository  = mock[SessionRepository]
+      val mockUserAnswersService = mock[UserAnswersService]
+      val userAnswersCaptor      = ArgumentCaptor.forClass(classOf[UserAnswers])
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockUserAnswersService.getOrCreateUserAnswers(any(), any())) thenReturn Future.successful(emptyUserAnswers)
 
       val application =
         applicationBuilder(userAnswers = None)
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[UserAnswersService].toInstance(mockUserAnswersService)
           )
           .build()
 
