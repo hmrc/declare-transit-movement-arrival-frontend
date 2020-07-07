@@ -27,7 +27,7 @@ import uk.gov.hmrc.viewmodels._
 class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswersHelper(userAnswers) {
 
   def eoriNumber: Option[Row] =
-    (userAnswers.get(ConsigneeEoriConfirmationPage), userAnswers.get(ConsigneeEoriNumberPage)) match {
+    (userAnswers.get(ConsigneeEoriConfirmationPage), userAnswers.get(ConsigneeNamePage)) match {
       case (Some(false), Some(consigneeName)) =>
         userAnswers.get(ConsigneeEoriNumberPage) map {
           answer =>
