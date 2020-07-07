@@ -73,42 +73,69 @@ class MovementReferenceNumberControllerSpec extends SpecBase with MockitoSugar w
       application.stop()
     }
 
-    Seq(
-      (Some(emptyUserAnswers.copy(eoriNumber = EoriNumber("123"))), EoriNumber("123")),
-      (None, eoriNumber)
-    ).foreach {
-      case (userAnswers, eoriNumber) =>
-        s"must redirect to the next page when valid data is submitted and sessionRepository returns UserAnswers value as $userAnswers" in {
+    "must redirect to the next page when valid data is submitted and sessionRepository returns UserAnswers value as Some(_)" in {
 
-          val mockSessionRepository = mock[SessionRepository]
-          val userAnswersCaptor     = ArgumentCaptor.forClass(classOf[UserAnswers])
+      val mockSessionRepository  = mock[SessionRepository]
+      val userAnswersCaptor      = ArgumentCaptor.forClass(classOf[UserAnswers])
+      val eoriNumber: EoriNumber = EoriNumber("123")
 
-          when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-          when(mockSessionRepository.get(any(), any())) thenReturn Future.successful(userAnswers)
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockSessionRepository.get(any(), any())) thenReturn Future.successful(Some(emptyUserAnswers.copy(eoriNumber = eoriNumber)))
 
-          val application =
-            applicationBuilder(userAnswers = None)
-              .overrides(
-                bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-                bind[SessionRepository].toInstance(mockSessionRepository)
-              )
-              .build()
+      val application =
+        applicationBuilder(userAnswers = None)
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
 
-          val request =
-            FakeRequest(POST, movementReferenceNumberRoute)
-              .withFormUrlEncodedBody(("value", mrn.toString))
+      val request =
+        FakeRequest(POST, movementReferenceNumberRoute)
+          .withFormUrlEncodedBody(("value", mrn.toString))
 
-          val result = route(application, request).value
+      val result = route(application, request).value
 
-          status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual onwardRoute.url
-          verify(mockSessionRepository).set(userAnswersCaptor.capture())
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual onwardRoute.url
+      verify(mockSessionRepository).set(userAnswersCaptor.capture())
 
-          userAnswersCaptor.getValue.id mustBe mrn
-          userAnswersCaptor.getValue.eoriNumber mustBe eoriNumber
+      userAnswersCaptor.getValue.id mustBe mrn
+      userAnswersCaptor.getValue.eoriNumber mustBe eoriNumber
 
-          application.stop()
-        }
+      application.stop()
+    }
+
+    "must redirect to the next page when valid data is submitted and sessionRepository returns UserAnswers value as None" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+      val userAnswersCaptor     = ArgumentCaptor.forClass(classOf[UserAnswers])
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockSessionRepository.get(any(), any())) thenReturn Future.successful(None)
+
+      val application =
+        applicationBuilder(userAnswers = None)
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      val request =
+        FakeRequest(POST, movementReferenceNumberRoute)
+          .withFormUrlEncodedBody(("value", mrn.toString))
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual onwardRoute.url
+      verify(mockSessionRepository).set(userAnswersCaptor.capture())
+
+      userAnswersCaptor.getValue.id mustBe mrn
+      userAnswersCaptor.getValue.eoriNumber mustBe eoriNumber
+
+      application.stop()
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
