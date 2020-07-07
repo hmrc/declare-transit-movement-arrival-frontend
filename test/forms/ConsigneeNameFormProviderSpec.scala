@@ -17,13 +17,14 @@
 package forms
 
 import forms.behaviours.StringFieldBehaviours
+import models.domain.TraderDomain.Constants.nameLength
 import play.api.data.FormError
 
 class ConsigneeNameFormProviderSpec extends StringFieldBehaviours {
 
   val requiredKey = "consigneeName.error.required"
   val lengthKey   = "consigneeName.error.length"
-  val maxLength   = 17
+  val maxLength   = nameLength
 
   val form = new ConsigneeNameFormProvider()()
 
