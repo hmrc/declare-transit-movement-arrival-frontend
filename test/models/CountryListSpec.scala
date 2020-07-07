@@ -41,10 +41,15 @@ class CountryListSpec extends SpecBase with ScalaCheckPropertyChecks with Messag
     "getCountry" - {
       "must return correct country when in the fullList" in {
 
-        forAll(arbitrary[Vector[Country]], arbitrary[Country]) {
-          (countries, country) =>
-            val fullList: Vector[Country] = countries :+ country
-            CountryList(fullList).getCountry(country.code).value mustEqual country
+        forAll(arbitrary[Country]) {
+          country =>
+            val genUniqueCountryVector = arbitrary[Vector[Country]] suchThat (!_.exists(_.code == country.code))
+
+            forAll(genUniqueCountryVector) {
+              countries =>
+                val fullList: Vector[Country] = countries :+ country
+                CountryList(fullList).getCountry(country.code).value mustEqual country
+            }
         }
       }
 
