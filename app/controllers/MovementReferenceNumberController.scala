@@ -62,18 +62,19 @@ class MovementReferenceNumberController @Inject()(override val messagesApi: Mess
             renderer.render("movementReferenceNumber.njk", json).map(BadRequest(_))
           },
           value =>
-          for  {
-            userAnswers <- getUserAnswers(request.eoriNumber, value)
-            _ <- sessionRepository.set(userAnswers)
-          } yield Redirect(navigator.nextPage(MovementReferenceNumberPage, NormalMode, UserAnswers(value, request.eoriNumber)))
+            for {
+              userAnswers <- getUserAnswers(request.eoriNumber, value)
+              _           <- sessionRepository.set(userAnswers)
+            } yield Redirect(navigator.nextPage(MovementReferenceNumberPage, NormalMode, UserAnswers(value, request.eoriNumber)))
         )
   }
 
   private def getUserAnswers(eoriNumber: EoriNumber, value: MovementReferenceNumber): Future[UserAnswers] = {
     val initialUserAnswers = UserAnswers(id = value, eoriNumber = eoriNumber)
+
     sessionRepository.get(id = value.toString, eoriNumber = eoriNumber) map {
-      uaOption =>
-        uaOption.getOrElse(initialUserAnswers)
+      userAnswers =>
+        userAnswers getOrElse initialUserAnswers
     }
   }
 }
