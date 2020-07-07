@@ -19,7 +19,7 @@ package controllers
 import controllers.actions._
 import forms.MovementReferenceNumberFormProvider
 import javax.inject.Inject
-import models.{NormalMode, UserAnswers}
+import models.{EoriNumber, MovementReferenceNumber, NormalMode, UserAnswers}
 import navigation.Navigator
 import pages.MovementReferenceNumberPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -30,7 +30,7 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class MovementReferenceNumberController @Inject()(override val messagesApi: MessagesApi,
                                                   sessionRepository: SessionRepository,
@@ -62,14 +62,18 @@ class MovementReferenceNumberController @Inject()(override val messagesApi: Mess
             renderer.render("movementReferenceNumber.njk", json).map(BadRequest(_))
           },
           value =>
-            sessionRepository.get(id = value.toString, eoriNumber = request.eoriNumber) flatMap {
-              ua =>
-                val userAnswers: UserAnswers = ua.getOrElse(UserAnswers(id = value, eoriNumber = request.eoriNumber))
-                sessionRepository.set(userAnswers) map {
-                  _ =>
-                    Redirect(navigator.nextPage(MovementReferenceNumberPage, NormalMode, UserAnswers(value, request.eoriNumber)))
-                }
-          }
+          for  {
+            userAnswers <- getUserAnswers(request.eoriNumber, value)
+            _ <- sessionRepository.set(userAnswers)
+          } yield Redirect(navigator.nextPage(MovementReferenceNumberPage, NormalMode, UserAnswers(value, request.eoriNumber)))
         )
+  }
+
+  private def getUserAnswers(eoriNumber: EoriNumber, value: MovementReferenceNumber): Future[UserAnswers] = {
+    val initialUserAnswers = UserAnswers(id = value, eoriNumber = eoriNumber)
+    sessionRepository.get(id = value.toString, eoriNumber = eoriNumber) map {
+      uaOption =>
+        uaOption.getOrElse(initialUserAnswers)
+    }
   }
 }
