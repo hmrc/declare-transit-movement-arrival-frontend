@@ -21,12 +21,11 @@ import play.api.libs.json.{JsObject, Json, OWrites}
 import models._
 import models.reference.CountryCode
 
-final case class EnRouteEventDomain(
-  place: String,
-  country: CountryCode,
-  alreadyInNcts: Boolean,
-  eventDetails: Option[EventDetailsDomain], //<CouTEV13>{enRouteEventWithContainer.countryCode.code}</CouTEV13> does this need to be an option
-  seals: Option[Seq[SealDomain]])
+final case class EnRouteEventDomain(place: String,
+                                    country: CountryCode,
+                                    alreadyInNcts: Boolean,
+                                    eventDetails: Option[EventDetailsDomain], //TODO does this need to be an option
+                                    seals: Option[Seq[SealDomain]])
 
 object EnRouteEventDomain {
 

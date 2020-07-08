@@ -18,7 +18,7 @@ package models.domain
 
 import java.time.LocalDate
 
-import models.messages.ProcedureType
+import models.messages.{ProcedureType, Trader}
 import models.reference.CustomsOffice
 import models.{GoodsLocation, MovementReferenceNumber}
 import pages._
@@ -27,7 +27,9 @@ import queries.EventsQuery
 
 import scala.language.implicitConversions
 
-sealed trait ArrivalNotificationDomain
+sealed trait ArrivalNotificationDomain {
+  def trader: TraderDomain
+}
 
 object ArrivalNotificationDomain {
 

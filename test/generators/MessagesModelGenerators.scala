@@ -67,20 +67,11 @@ trait MessagesModelGenerators extends Generators {
   private val localDateGen: Gen[LocalDate] =
     datesBetween(LocalDate.of(1900, 1, 1), LocalDate.now)
 
-  implicit lazy val arbitraryIncident: Arbitrary[Incident] =
+  implicit lazy val arbitraryIncidentWithInformationDomain: Arbitrary[IncidentWithInformationDomain] =
     Arbitrary {
-
       for {
-        information <- Gen.option(stringsWithMaxLength(Incident.Constants.informationLength))
-      } yield Incident(information)
-    }
-
-  implicit lazy val arbitraryIncidentDomain: Arbitrary[IncidentDomain] =
-    Arbitrary {
-
-      for {
-        information <- Gen.option(stringsWithMaxLength(Incident.Constants.informationLength))
-      } yield IncidentDomain(information)
+        information <- stringsWithMaxLength(IncidentWithInformation.Constants.informationLength)
+      } yield IncidentWithInformationDomain(information)
     }
 
   implicit lazy val arbitraryVehicularTranshipmentDomain: Arbitrary[VehicularTranshipmentDomain] =
@@ -155,10 +146,17 @@ trait MessagesModelGenerators extends Generators {
       )
     }
 
+  implicit lazy val incidentWithInformation: Arbitrary[IncidentWithInformation] =
+    Arbitrary {
+      for {
+        information <- stringsWithMaxLength(IncidentWithInformation.Constants.informationLength)
+      } yield IncidentWithInformation(information)
+    }
+
   implicit lazy val arbitraryEventDetails: Arbitrary[EventDetails] =
     Arbitrary {
       Gen.oneOf[EventDetails](
-        arbitrary[Incident],
+        arbitrary[IncidentWithInformation],
         arbitrary[Transhipment]
       )
     }
@@ -166,7 +164,7 @@ trait MessagesModelGenerators extends Generators {
   implicit lazy val arbitraryEventDetailsDomain: Arbitrary[EventDetailsDomain] =
     Arbitrary {
       Gen.oneOf[EventDetailsDomain](
-        arbitrary[IncidentDomain],
+        arbitrary[IncidentWithInformationDomain],
         arbitrary[TranshipmentDomain]
       )
     }
@@ -282,9 +280,8 @@ trait MessagesModelGenerators extends Generators {
   implicit lazy val arbitraryMessageSender: Arbitrary[MessageSender] = {
     Arbitrary {
       for {
-        environment <- Gen.oneOf(Seq("LOCAL", "QA", "STAGING", "PRODUCTION"))
-        eori        <- arbitrary[EoriNumber]
-      } yield MessageSender(environment, eori)
+        eori <- arbitrary[EoriNumber]
+      } yield MessageSender("LOCAL", eori)
     }
   }
 
@@ -357,13 +354,20 @@ trait MessagesModelGenerators extends Generators {
   implicit lazy val arbitraryArrivalMovementRequest: Arbitrary[ArrivalMovementRequest] = {
     Arbitrary {
       for {
+        eori <- arbitrary[EoriNumber]
         meta <- arbitrary[Meta]
         header <- arbitrary[Header].map(header =>
           header.copy(notificationDate = meta.dateOfPreparation, customsSubPlace = Some(header.customsSubPlace.getOrElse(""))))
         trader        <- arbitrary[Trader]
         customsOffice <- arbitrary[CustomsOfficeOfPresentation].map(_.copy(presentationOffice = header.presentationOfficeId))
         enRouteEvents <- Gen.option(listWithMaxLength[EnRouteEvent](1))
-      } yield ArrivalMovementRequest(meta, header, trader, customsOffice, enRouteEvents)
+      } yield {
+        val messageSender  = meta.messageSender.copy(eori = eori)
+        val metaWithEori   = meta.copy(messageSender      = messageSender)
+        val traderWithEori = trader.copy(eori             = eori.value)
+
+        ArrivalMovementRequest(metaWithEori, header, traderWithEori, customsOffice, enRouteEvents)
+      }
     }
   }
 
@@ -414,13 +418,9 @@ trait MessagesModelGenerators extends Generators {
       (expected, trader)
     }
 
-  val incidentWithInformation: Gen[Incident] = for {
-    information <- stringsWithMaxLength(Incident.Constants.informationLength)
-  } yield Incident(Some(information))
-
-  val enRouteEventIncident: Gen[(EnRouteEventDomain, IncidentDomain)] = for {
+  val enRouteEventIncident: Gen[(EnRouteEventDomain, IncidentWithInformationDomain)] = for {
     enRouteEvent <- arbitrary[EnRouteEventDomain]
-    incident     <- arbitrary[IncidentDomain]
+    incident     <- arbitrary[IncidentWithInformationDomain]
   } yield (enRouteEvent.copy(eventDetails = Some(incident)), incident)
 
   val enRouteEventVehicularTranshipment: Gen[(EnRouteEventDomain, VehicularTranshipmentDomain)] = for {

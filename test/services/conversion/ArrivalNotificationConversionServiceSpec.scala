@@ -69,7 +69,7 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
       }
     }
 
-    "must return 'Normal Arrival Notification' message when there is one incident on route" in {
+    "must return 'Normal Arrival Notification' message when there is one IncidentWithInformation on route" in {
       forAll(arrivalNotificationWithSubplace, enRouteEventIncident) {
         case ((arbArrivalNotification, trader), (enRouteEvent, incident)) =>
           val routeEvent: EnRouteEventDomain = enRouteEvent
@@ -84,10 +84,7 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
             .set(EventCountryPage(eventIndex), routeEvent.country).success.value
             .set(EventReportedPage(eventIndex), routeEvent.alreadyInNcts).success.value
 
-          val updatedAnswers = incident.incidentInformation.fold[UserAnswers](userAnswers) {
-            _ =>
-              userAnswers.set(IncidentInformationPage(eventIndex), incident.incidentInformation.value).success.value
-          }
+          val updatedAnswers = userAnswers.set(IncidentInformationPage(eventIndex), incident.incidentInformation).success.value
 
           service.convertToArrivalNotification(updatedAnswers).value mustEqual arrivalNotification
       }
@@ -168,15 +165,10 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
             .set(EventCountryPage(eventIndex2), enRouteEvent2.country).success.value
             .set(EventReportedPage(eventIndex2), routeEvent2.alreadyInNcts).success.value
 
-          val updatedAnswers1 = incident1.incidentInformation.fold[UserAnswers](userAnswers) {
-            _ =>
-              userAnswers.set(IncidentInformationPage(eventIndex), incident1.incidentInformation.value).success.value
-          }
+          val updatedAnswers1 = userAnswers.set(IncidentInformationPage(eventIndex), incident1.incidentInformation).success.value
 
-          val updatedAnswers = incident2.incidentInformation.fold[UserAnswers](updatedAnswers1) {
-            _ =>
-              updatedAnswers1.set(IncidentInformationPage(eventIndex2), incident2.incidentInformation.value).success.value
-          }
+          val updatedAnswers = updatedAnswers1.set(IncidentInformationPage(eventIndex2), incident2.incidentInformation).success.value
+
 
           service.convertToArrivalNotification(updatedAnswers).value mustEqual arrivalNotification
       }

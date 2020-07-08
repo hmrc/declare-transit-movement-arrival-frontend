@@ -83,9 +83,9 @@ object EnRouteEvent {
         </CTLCTL>
         {
           enRouteEvent.eventDetails.map {
-            case incident: Incident                           => incident.toXml ++ buildSealsXml
-            case containerTranshipment: ContainerTranshipment => buildSealsXml ++ containerTranshipment.toXml
-            case vehicularTranshipment: VehicularTranshipment => buildSealsXml ++ vehicularTranshipment.toXml
+            case incidentWithInformation: IncidentWithInformation => incidentWithInformation.toXml ++ buildSealsXml
+            case containerTranshipment: ContainerTranshipment     => buildSealsXml ++ containerTranshipment.toXml
+            case vehicularTranshipment: VehicularTranshipment     => buildSealsXml ++ vehicularTranshipment.toXml
           }.getOrElse(NodeSeq.Empty)
         }
       </ENROUEVETEV>

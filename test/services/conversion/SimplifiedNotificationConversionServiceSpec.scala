@@ -64,7 +64,7 @@ class SimplifiedNotificationConversionServiceSpec extends SpecBase with ScalaChe
         }
       }
 
-      "when there is one incident on route" in {
+      "when there is one IncidentWithInformation on route" in {
         forAll(simplifiedNotificationWithSubplace, enRouteEventIncident) {
           case ((arbArrivalNotification, trader), (enRouteEvent, incident)) =>
             val routeEvent: EnRouteEventDomain = enRouteEvent
@@ -79,10 +79,7 @@ class SimplifiedNotificationConversionServiceSpec extends SpecBase with ScalaChe
               .set(EventCountryPage(eventIndex), routeEvent.country).success.value
               .set(EventReportedPage(eventIndex), routeEvent.alreadyInNcts).success.value
 
-            val updatedAnswers = incident.incidentInformation.fold[UserAnswers](userAnswers) {
-              _ =>
-                userAnswers.set(IncidentInformationPage(eventIndex), incident.incidentInformation.value).success.value
-            }
+            val updatedAnswers = userAnswers.set(IncidentInformationPage(eventIndex), incident.incidentInformation).success.value
 
             service.convertToArrivalNotification(updatedAnswers).value mustEqual arrivalNotification
         }
@@ -147,7 +144,7 @@ class SimplifiedNotificationConversionServiceSpec extends SpecBase with ScalaChe
         }
       }
 
-      "when there multiple incidents on route" in {
+      "when there multiple IncidentWithInformation on route" in {
         forAll(simplifiedNotificationWithSubplace, enRouteEventIncident, enRouteEventIncident) {
           case ((arbArrivalNotification, trader), (enRouteEvent1, incident1), (enRouteEvent2, incident2)) =>
             val routeEvent1: EnRouteEventDomain = enRouteEvent1
@@ -172,15 +169,11 @@ class SimplifiedNotificationConversionServiceSpec extends SpecBase with ScalaChe
               .set(EventCountryPage(eventIndex2), routeEvent2.country).success.value
               .set(EventReportedPage(eventIndex2), routeEvent2.alreadyInNcts).success.value
 
-            val updatedAnswers1 = incident1.incidentInformation.fold[UserAnswers](userAnswers) {
-              _ =>
-                userAnswers.set(IncidentInformationPage(eventIndex), incident1.incidentInformation.value).success.value
-            }
+            val updatedAnswers1 = userAnswers.set(IncidentInformationPage(eventIndex), incident1.incidentInformation).success.value
 
-            val updatedAnswers = incident2.incidentInformation.fold[UserAnswers](updatedAnswers1) {
-              _ =>
-                updatedAnswers1.set(IncidentInformationPage(eventIndex2), incident2.incidentInformation.value).success.value
-            }
+
+            val updatedAnswers = updatedAnswers1.set(IncidentInformationPage(eventIndex2), incident2.incidentInformation).success.value
+
 
             service.convertToArrivalNotification(updatedAnswers).value mustEqual arrivalNotification
         }

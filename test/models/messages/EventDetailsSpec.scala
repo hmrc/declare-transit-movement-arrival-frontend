@@ -20,16 +20,15 @@ import com.lucidchart.open.xtract.XmlReader
 import generators.MessagesModelGenerators
 import models.LanguageCodeEnglish
 import models.XMLWrites._
-import models.domain.{ContainerTranshipmentDomain, IncidentDomain, VehicularTranshipmentDomain}
+import models.domain.{ContainerTranshipmentDomain, IncidentWithInformationDomain, VehicularTranshipmentDomain}
 import models.messages.behaviours.JsonBehaviours
-import models.reference.CountryCode
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.OptionValues._
 import org.scalatest.{FreeSpec, MustMatchers, StreamlinedXmlEquality}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import utils.Format
 
-import scala.xml.{Elem, NodeSeq}
+import scala.xml.NodeSeq
 
 class EventDetailsSpec
     extends FreeSpec
@@ -39,20 +38,12 @@ class EventDetailsSpec
     with JsonBehaviours
     with StreamlinedXmlEquality {
 
-  "Incident" - {
+  "IncidentWithInformation" - {
 
     "must create valid xml" in {
 
-      forAll(arbitrary[Incident]) {
+      forAll(arbitrary[IncidentWithInformation]) {
         incident =>
-          val incidentInformationOrFlagNode = incident.incidentInformation
-            .map {
-              information =>
-                <IncInfINC4>{information}</IncInfINC4>
-            }
-            .getOrElse {
-              <IncFlaINC3>1</IncFlaINC3>
-            }
           val endorsementDateNode = incident.date.map {
             date =>
               <EndDatINC6>{Format.dateFormatted(date)}</EndDatINC6>
@@ -72,9 +63,7 @@ class EventDetailsSpec
 
           val expectedResult =
             <INCINC>
-              {
-              incidentInformationOrFlagNode
-              }
+              <IncInfINC4>{incident.incidentInformation}</IncInfINC4>
               <IncInfINC4LNG>{LanguageCodeEnglish.code}</IncInfINC4LNG>
               {
               endorsementDateNode.getOrElse(NodeSeq.Empty) ++
@@ -96,16 +85,8 @@ class EventDetailsSpec
 
     "must read xml into valid model" in {
 
-      forAll(arbitrary[Incident]) {
+      forAll(arbitrary[IncidentWithInformation]) {
         incident =>
-          val incidentInformationOrFlagNode: Elem = incident.incidentInformation
-            .map {
-              information =>
-                <IncInfINC4>{information}</IncInfINC4>
-            }
-            .getOrElse {
-              <IncFlaINC3>1</IncFlaINC3>
-            }
           val endorsementDateNode = incident.date.map {
             date =>
               <EndDatINC6>{Format.dateFormatted(date)}</EndDatINC6>
@@ -125,9 +106,7 @@ class EventDetailsSpec
 
           val inputXml =
             <INCINC>
-              {
-              incidentInformationOrFlagNode
-              }
+              <IncInfINC4>{incident.incidentInformation}</IncInfINC4>
               <IncInfINC4LNG>{LanguageCodeEnglish.code}</IncInfINC4LNG>
               {
               endorsementDateNode.getOrElse(NodeSeq.Empty) ++
@@ -143,28 +122,28 @@ class EventDetailsSpec
               }
             </INCINC>
 
-          val result = XmlReader.of[Incident].read(inputXml).toOption.value
+          val result = XmlReader.of[IncidentWithInformation].read(inputXml).toOption.value
           result mustEqual incident
       }
     }
 
-    "must write to xml and read xml as Incident" in {
-      forAll(arbitrary[Incident]) {
+    "must write to xml and read xml as IncidentWithInformation" in {
+      forAll(arbitrary[IncidentWithInformation]) {
         incident =>
-          val result = XmlReader.of[Incident].read(incident.toXml).toOption.value
+          val result = XmlReader.of[IncidentWithInformation].read(incident.toXml).toOption.value
           result mustEqual incident
       }
     }
 
-    "must convert to IncidentDomain model" in {
-      forAll(arbitrary[Incident]) {
+    "must convert to IncidentWithInformationDomain model" in {
+      forAll(arbitrary[IncidentWithInformation]) {
         incident =>
-          Incident.incidentToDomain(incident) mustBe an[IncidentDomain]
+          IncidentWithInformation.incidentWithInformationToDomain(incident) mustBe an[IncidentWithInformationDomain]
       }
     }
   }
 
-  "Container transhipment" - {
+  "ContainerTranshipment" - {
 
     "must create valid xml" in {
 
@@ -217,7 +196,7 @@ class EventDetailsSpec
       }
     }
 
-    "must read xml as Container Transshipment model" in {
+    "must read xml as Container Transhipment model" in {
 
       forAll(arbitrary[ContainerTranshipment], arbitrary[Container], arbitrary[Container]) {
         (transhipment, container1, container2) =>
@@ -291,7 +270,7 @@ class EventDetailsSpec
     }
   }
 
-  "Vehicular transhipment" - {
+  "VehicularTranshipment" - {
 
     "must create valid xml without containers" in {
       forAll(arbitrary[VehicularTranshipment]) {

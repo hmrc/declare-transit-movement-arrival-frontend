@@ -20,7 +20,7 @@ import java.time.LocalTime
 
 import config.FrontendAppConfig
 import javax.inject.Inject
-import models.UserAnswers
+import models.{EoriNumber, UserAnswers}
 import models.messages.{ArrivalMovementRequest, MessageSender}
 import repositories.InterchangeControlReferenceIdRepository
 
@@ -34,7 +34,7 @@ class UserAnswersToArrivalMovementRequestService @Inject()(
   def convert(userAnswers: UserAnswers): Option[Future[ArrivalMovementRequest]] =
     converterService.convertToArrivalNotification(userAnswers).map {
       notification =>
-        val messageSender = MessageSender(appConfig.env, userAnswers.eoriNumber)
+        val messageSender = MessageSender(appConfig.env, EoriNumber(notification.trader.eori))
 
         interchangeControlReferenceIdRepository
           .nextInterchangeControlReferenceId()

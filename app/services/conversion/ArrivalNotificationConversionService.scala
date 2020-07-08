@@ -19,10 +19,9 @@ package services.conversion
 import java.time.LocalDate
 
 import derivable.DeriveNumberOfEvents
+import models.GoodsLocation.{AuthorisedConsigneesLocation, BorderForceOffice}
 import models.domain._
 import models.reference.CountryCode
-import models.GoodsLocation.{AuthorisedConsigneesLocation, BorderForceOffice}
-import models.messages._
 import models.{Index, UserAnswers}
 import pages._
 import pages.events._
@@ -102,8 +101,8 @@ class ArrivalNotificationConversionService {
     containers: Option[Seq[ContainerDomain]]
   ): Option[EventDetailsDomain] =
     (incidentInformation, transportIdentity, transportCountry, containers) match {
-      case (incidentInformation, None, None, None) =>
-        Some(IncidentDomain(incidentInformation))
+      case (Some(incidentInformation), None, None, None) =>
+        Some(IncidentWithInformationDomain(incidentInformation))
       case (None, Some(transportIdentity), Some(transportCountry), _) =>
         Some(
           VehicularTranshipmentDomain(

@@ -20,7 +20,7 @@ import base.SpecBase
 import generators.MessagesModelGenerators
 import models.domain.{EnRouteEventDomain, NormalNotification, TraderDomain}
 import models.messages.{ArrivalMovementRequest, InterchangeControlReference}
-import models.{Index, UserAnswers}
+import models.{EoriNumber, Index, MovementReferenceNumber, UserAnswers}
 import org.mockito.Mockito
 import org.mockito.Mockito.when
 import org.scalacheck.Arbitrary.arbitrary
@@ -44,24 +44,6 @@ class UserAnswersToArrivalMovementRequestServiceSpec extends SpecBase with Messa
   private def applicationWithMockIcr =
     applicationBuilder(None).overrides(bind[InterchangeControlReferenceIdRepository].toInstance(mockIcrRepo)).build()
 
-  // TODO: There is technical debt on how we construct these UserAnswers and it's dependent method
-  def userAnswerBuilder(trader: TraderDomain,
-                        normalNotification: NormalNotification,
-                        isIncidentOnRoute: Boolean,
-                        routeEvent1: EnRouteEventDomain): UserAnswers = {
-
-    val eventIndex: Index = Index(0)
-
-    // format: off
-    ArrivalNotificationConversionServiceSpec.createNormalNotification(emptyUserAnswers)(trader, normalNotification, isIncidentOnRoute)
-      .set(IsTranshipmentPage(eventIndex), false).success.value
-      .set(EventPlacePage(eventIndex), routeEvent1.place).success.value
-      .set(EventCountryPage(eventIndex), routeEvent1.country).success.value
-      .set(EventReportedPage(eventIndex), routeEvent1.alreadyInNcts).success.value
-
-    // format: on
-  }
-
   "UserAnswersToArrivalMovementRequestService" - {
 
     "must convert UserAnswers to ArrivalMovementRequest for a valid set of user answers and given an InterchangeControlReference" in {
@@ -70,13 +52,21 @@ class UserAnswersToArrivalMovementRequestServiceSpec extends SpecBase with Messa
       running(app) {
         val service = app.injector.instanceOf[UserAnswersToArrivalMovementRequestService]
 
-        forAll(arbitrary[TraderDomain], arbitrary[NormalNotification], arbitrary[EnRouteEventDomain]) {
-          (trader, normalNotification, enRouteEvent) =>
-            val userAnswers = userAnswerBuilder(trader, normalNotification, true, enRouteEvent)
-
+        forAll(arbitrary[ArrivalMovementRequest]) {
+          arrivalMovementRequest =>
             when(mockIcrRepo.nextInterchangeControlReferenceId()).thenReturn(Future.successful(InterchangeControlReference("", 1)))
 
-            service.convert(userAnswers).value.futureValue mustBe a[ArrivalMovementRequest] // TODO: Make this a round trip test
+            val userAnswers: UserAnswers = ArrivalMovementRequestToUserAnswersService
+              .convertToUserAnswers(
+                arrivalMovementRequest,
+                EoriNumber(arrivalMovementRequest.trader.eori),
+                MovementReferenceNumber(arrivalMovementRequest.header.movementReferenceNumber).value
+              )
+              .value
+
+            val result: ArrivalMovementRequest = service.convert(userAnswers).value.futureValue
+
+            result mustBe arrivalMovementRequest
         }
       }
 

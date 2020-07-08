@@ -36,9 +36,9 @@ class EnRouteEventSpec
 
   "EnRouteEvent" - {
 
-    "must create valid xml with Incident and seal" in {
+    "must create valid xml with IncidentWithInformation and seal" in {
 
-      forAll(arbitrary[EnRouteEvent], arbitrary[Seal], arbitrary[Incident]) {
+      forAll(arbitrary[EnRouteEvent], arbitrary[Seal], arbitrary[IncidentWithInformation]) {
         (enRouteEvent, seal, incident) =>
           val enRouteEventWithSealAndIncident = enRouteEvent.copy(seals = Some(Seq(seal)), eventDetails = Some(incident))
 
@@ -183,9 +183,9 @@ class EnRouteEventSpec
         }
       }
 
-      "must read xml as Incident and seal" in {
+      "must read xml as IncidentWithInformation and seal" in {
 
-        forAll(arbitrary[EnRouteEvent], arbitrary[Seal], arbitrary[Incident]) {
+        forAll(arbitrary[EnRouteEvent], arbitrary[Seal], arbitrary[IncidentWithInformation]) {
           (enRouteEvent, seal, incident) =>
             val enRouteEventWithSealAndIncident = enRouteEvent.copy(seals = Some(Seq(seal)), eventDetails = Some(incident))
 
