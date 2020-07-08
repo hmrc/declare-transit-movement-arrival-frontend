@@ -24,7 +24,7 @@ import models.reference.CountryCode
 final case class EnRouteEventDomain(place: String,
                                     country: CountryCode,
                                     alreadyInNcts: Boolean,
-                                    eventDetails: Option[EventDetailsDomain], //TODO does this need to be an option
+                                    eventDetails: Option[EventDetailsDomain],
                                     seals: Option[Seq[SealDomain]])
 
 object EnRouteEventDomain {

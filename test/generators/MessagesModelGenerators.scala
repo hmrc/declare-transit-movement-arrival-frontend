@@ -74,6 +74,11 @@ trait MessagesModelGenerators extends Generators {
       } yield IncidentWithInformationDomain(information)
     }
 
+  implicit lazy val arbitraryIncidentWithoutInformationDomain: Arbitrary[IncidentWithoutInformationDomain] =
+    Arbitrary {
+      IncidentWithoutInformationDomain()
+    }
+
   implicit lazy val arbitraryVehicularTranshipmentDomain: Arbitrary[VehicularTranshipmentDomain] =
     Arbitrary {
 
@@ -151,6 +156,11 @@ trait MessagesModelGenerators extends Generators {
       for {
         information <- stringsWithMaxLength(IncidentWithInformation.Constants.informationLength)
       } yield IncidentWithInformation(information)
+    }
+
+  implicit lazy val incidentWithoutInformation: Arbitrary[IncidentWithoutInformation] =
+    Arbitrary {
+      IncidentWithoutInformation()
     }
 
   implicit lazy val arbitraryEventDetails: Arbitrary[EventDetails] =

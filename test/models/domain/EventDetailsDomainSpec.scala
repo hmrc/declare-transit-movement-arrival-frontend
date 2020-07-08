@@ -26,14 +26,34 @@ import play.api.libs.json.{JsObject, Json}
 
 class EventDetailsDomainSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with MessagesModelGenerators {
 
+  "IncidentDomain" - {
+
+    "must serialise from an IncidentWithInformation" in {
+      forAll(arbitrary[IncidentWithInformationDomain]) {
+        incidentWithInformationDomain =>
+          val json = Json.obj("incidentInformation" -> incidentWithInformationDomain.incidentInformation, "isTranshipment" -> false)
+          Json.toJson(incidentWithInformationDomain: IncidentDomain)(IncidentDomain.incidentDomainJsonWrites) mustEqual json
+      }
+    }
+
+    "must serialise from an IncidentWithoutInformation" in {
+      forAll(arbitrary[IncidentWithoutInformationDomain]) {
+        incidentWithoutInformationDomain =>
+          val json = Json.obj("isTranshipment" -> false)
+          Json.toJson(incidentWithoutInformationDomain: IncidentDomain)(IncidentDomain.incidentDomainJsonWrites) mustEqual json
+      }
+    }
+
+  }
+
   "IncidentWithInformation" - {
 
     "must serialise" in {
 
       forAll(arbitrary[IncidentWithInformationDomain]) {
-        incidentDomain =>
-          val json = Json.obj("incidentInformation" -> incidentDomain.incidentInformation, "isTranshipment" -> false)
-          Json.toJson(incidentDomain)(IncidentDomain.incidentJsonWrites) mustEqual json
+        incidentWithInformationDomain =>
+          val json = Json.obj("incidentInformation" -> incidentWithInformationDomain.incidentInformation, "isTranshipment" -> false)
+          Json.toJson(incidentWithInformationDomain)(IncidentWithInformationDomain.incidentWithInformationJsonWrites) mustEqual json
       }
     }
 
@@ -41,10 +61,21 @@ class EventDetailsDomainSpec extends FreeSpec with MustMatchers with ScalaCheckP
 
       forAll(arbitrary[IncidentWithInformationDomain]) {
         incidentDomain =>
-          IncidentDomain.domainIncidentToIncident(incidentDomain) mustBe an[IncidentWithInformation]
+          IncidentWithInformationDomain.domainIncidentToIncident(incidentDomain) mustBe an[IncidentWithInformation]
       }
     }
+  }
 
+  "IncidentWithoutInformation" - {
+
+    "must serialise" in {
+
+      forAll(arbitrary[IncidentWithoutInformationDomain]) {
+        incidentWithoutInformationDomain =>
+          val json = Json.obj("isTranshipment" -> false)
+          Json.toJson(incidentWithoutInformationDomain)(IncidentWithoutInformationDomain.incidentWithoutInformationJsonWrites) mustEqual json
+      }
+    }
   }
 
   "ContainerTranshipmentDomain" - {

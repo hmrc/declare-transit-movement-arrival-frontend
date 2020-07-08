@@ -17,7 +17,7 @@
 package models.domain
 
 import models._
-import models.messages.{ContainerTranshipment, EventDetails, IncidentWithInformation, VehicularTranshipment}
+import models.messages.{ContainerTranshipment, EventDetails, IncidentWithInformation, IncidentWithoutInformation, VehicularTranshipment}
 import models.reference.CountryCode
 import play.api.libs.json._
 
@@ -29,12 +29,14 @@ object EventDetailsDomain {
 
   def eventDetailsDomainToEventDetails(eventDetailsDomain: EventDetailsDomain): EventDetails =
     eventDetailsDomain match {
-      case incident: IncidentWithInformationDomain =>
-        IncidentDomain.domainIncidentToIncident(incident)
       case container: ContainerTranshipmentDomain =>
         ContainerTranshipmentDomain.domainContainerTranshipmenttoContainerTranshipment(container)
       case vehicularTranshipment: VehicularTranshipmentDomain =>
         VehicularTranshipmentDomain.domainVehicularTranshipmentToVehicularTranshipment(vehicularTranshipment)
+      case incidentWithInformation: IncidentWithInformationDomain =>
+        IncidentWithInformationDomain.domainIncidentToIncident(incidentWithInformation)
+      case _: IncidentWithoutInformationDomain =>
+        IncidentWithoutInformation()
     }
 
   object Constants {
@@ -43,15 +45,35 @@ object EventDetailsDomain {
   }
 
   implicit lazy val writes: OWrites[EventDetailsDomain] = OWrites {
-    case i: IncidentWithInformationDomain => Json.toJsObject(i)(IncidentDomain.incidentJsonWrites)
-    case t: TranshipmentDomain            => Json.toJsObject(t)(TranshipmentDomain.transhipmentJsonWrites)
+    case i: IncidentDomain     => Json.toJsObject(i)(IncidentDomain.incidentDomainJsonWrites)
+    case t: TranshipmentDomain => Json.toJsObject(t)(TranshipmentDomain.transhipmentJsonWrites)
   }
 }
 
-// Split out into two different models (one with information, one without)
-final case class IncidentWithInformationDomain(incidentInformation: String) extends EventDetailsDomain
+sealed trait IncidentDomain extends EventDetailsDomain
 
 object IncidentDomain {
+
+  implicit lazy val incidentDomainJsonWrites: OWrites[IncidentDomain] = OWrites {
+    case i: IncidentWithInformationDomain    => Json.toJsObject(i)(IncidentWithInformationDomain.incidentWithInformationJsonWrites)
+    case i: IncidentWithoutInformationDomain => Json.toJsObject(i)(IncidentWithoutInformationDomain.incidentWithoutInformationJsonWrites)
+  }
+}
+
+final case class IncidentWithoutInformationDomain() extends IncidentDomain
+
+object IncidentWithoutInformationDomain {
+
+  implicit lazy val incidentWithoutInformationJsonWrites: OWrites[IncidentWithoutInformationDomain] = OWrites[IncidentWithoutInformationDomain] {
+    _ =>
+      Json.obj("isTranshipment" -> false)
+  }
+
+}
+
+final case class IncidentWithInformationDomain(incidentInformation: String) extends IncidentDomain
+
+object IncidentWithInformationDomain {
 
   def domainIncidentToIncident(incident: IncidentWithInformationDomain): IncidentWithInformation =
     IncidentWithInformationDomain
@@ -68,14 +90,13 @@ object IncidentDomain {
     val informationLength = 350
   }
 
-  implicit lazy val incidentJsonWrites: OWrites[IncidentWithInformationDomain] = OWrites[IncidentWithInformationDomain] {
+  implicit lazy val incidentWithInformationJsonWrites: OWrites[IncidentWithInformationDomain] = OWrites[IncidentWithInformationDomain] {
     incident =>
       Json
         .obj(
           "incidentInformation" -> incident.incidentInformation,
           "isTranshipment"      -> false
         )
-        .filterNulls
   }
 }
 

@@ -18,7 +18,7 @@ package models.messages
 
 import com.lucidchart.open.xtract.XmlReader
 import generators.MessagesModelGenerators
-import models.LanguageCodeEnglish
+import models.{LanguageCodeEnglish, MovementReferenceNumber}
 import models.XMLWrites._
 import models.domain.{ContainerTranshipmentDomain, IncidentWithInformationDomain, VehicularTranshipmentDomain}
 import models.messages.behaviours.JsonBehaviours
@@ -38,96 +38,31 @@ class EventDetailsSpec
     with JsonBehaviours
     with StreamlinedXmlEquality {
 
+  "Incident" - {
+
+    "must read an IncidentWithInformation XML" in {
+      forAll(arbitrary[IncidentWithInformation]) {
+        incidentWithInformation =>
+          val result = XmlReader.of[Incident].read(incidentWithInformation.toXml).toOption.value
+
+          result mustBe incidentWithInformation
+      }
+    }
+
+    "must read an IncidentWithoutInformation XML" in {
+      forAll(arbitrary[IncidentWithoutInformation]) {
+        incidentWithoutInformation =>
+          val result = XmlReader.of[Incident].read(incidentWithoutInformation.toXml).toOption.value
+
+          result mustBe incidentWithoutInformation
+      }
+    }
+
+  }
+
   "IncidentWithInformation" - {
 
-    "must create valid xml" in {
-
-      forAll(arbitrary[IncidentWithInformation]) {
-        incident =>
-          val endorsementDateNode = incident.date.map {
-            date =>
-              <EndDatINC6>{Format.dateFormatted(date)}</EndDatINC6>
-          }
-          val endorsementAuthority = incident.authority.map {
-            authority =>
-              <EndAutINC7>{authority}</EndAutINC7>
-          }
-          val endorsementPlace = incident.place.map {
-            place =>
-              <EndPlaINC10>{place}</EndPlaINC10>
-          }
-          val endorsementCountry = incident.country.map {
-            country =>
-              <EndCouINC12>{country}</EndCouINC12>
-          }
-
-          val expectedResult =
-            <INCINC>
-              <IncInfINC4>{incident.incidentInformation}</IncInfINC4>
-              <IncInfINC4LNG>{LanguageCodeEnglish.code}</IncInfINC4LNG>
-              {
-              endorsementDateNode.getOrElse(NodeSeq.Empty) ++
-                endorsementAuthority.getOrElse(NodeSeq.Empty)
-              }
-              <EndAutINC7LNG>{LanguageCodeEnglish.code}</EndAutINC7LNG>
-              {
-              endorsementPlace.getOrElse(NodeSeq.Empty)
-              }
-              <EndPlaINC10LNG>{LanguageCodeEnglish.code}</EndPlaINC10LNG>
-              {
-              endorsementCountry.getOrElse(NodeSeq.Empty)
-              }
-            </INCINC>
-
-          incident.toXml mustEqual expectedResult
-      }
-    }
-
-    "must read xml into valid model" in {
-
-      forAll(arbitrary[IncidentWithInformation]) {
-        incident =>
-          val endorsementDateNode = incident.date.map {
-            date =>
-              <EndDatINC6>{Format.dateFormatted(date)}</EndDatINC6>
-          }
-          val endorsementAuthority = incident.authority.map {
-            authority =>
-              <EndAutINC7>{authority}</EndAutINC7>
-          }
-          val endorsementPlace = incident.place.map {
-            place =>
-              <EndPlaINC10>{place}</EndPlaINC10>
-          }
-          val endorsementCountry = incident.country.map {
-            country =>
-              <EndCouINC12>{country}</EndCouINC12>
-          }
-
-          val inputXml =
-            <INCINC>
-              <IncInfINC4>{incident.incidentInformation}</IncInfINC4>
-              <IncInfINC4LNG>{LanguageCodeEnglish.code}</IncInfINC4LNG>
-              {
-              endorsementDateNode.getOrElse(NodeSeq.Empty) ++
-                endorsementAuthority.getOrElse(NodeSeq.Empty)
-              }
-              <EndAutINC7LNG>{LanguageCodeEnglish.code}</EndAutINC7LNG>
-              {
-              endorsementPlace.getOrElse(NodeSeq.Empty)
-              }
-              <EndPlaINC10LNG>{LanguageCodeEnglish.code}</EndPlaINC10LNG>
-              {
-              endorsementCountry.getOrElse(NodeSeq.Empty)
-              }
-            </INCINC>
-
-          val result = XmlReader.of[IncidentWithInformation].read(inputXml).toOption.value
-          result mustEqual incident
-      }
-    }
-
-    "must write to xml and read xml as IncidentWithInformation" in {
+    "must serialise to xml and deserialise xml" in {
       forAll(arbitrary[IncidentWithInformation]) {
         incident =>
           val result = XmlReader.of[IncidentWithInformation].read(incident.toXml).toOption.value
@@ -139,6 +74,17 @@ class EventDetailsSpec
       forAll(arbitrary[IncidentWithInformation]) {
         incident =>
           IncidentWithInformation.incidentWithInformationToDomain(incident) mustBe an[IncidentWithInformationDomain]
+      }
+    }
+  }
+
+  "IncidentWithoutInformation" - {
+
+    "must serialise to xml and deserialise xml" in {
+      forAll(arbitrary[IncidentWithoutInformation]) {
+        incident =>
+          val result = XmlReader.of[IncidentWithoutInformation].read(incident.toXml).toOption.value
+          result mustEqual incident
       }
     }
   }
