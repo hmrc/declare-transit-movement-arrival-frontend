@@ -20,7 +20,7 @@ import base.SpecBase
 import generators.MessagesModelGenerators
 import models.domain.{EnRouteEventDomain, NormalNotification, TraderDomain}
 import models.messages.{ArrivalMovementRequest, InterchangeControlReference}
-import models.{EoriNumber, Index, MovementReferenceNumber, UserAnswers}
+import models.{EoriNumber, Index, MovementReferenceNumber, NormalProcedureFlag, UserAnswers}
 import org.mockito.Mockito
 import org.mockito.Mockito.when
 import org.scalacheck.Arbitrary.arbitrary
@@ -66,7 +66,16 @@ class UserAnswersToArrivalMovementRequestServiceSpec extends SpecBase with Messa
 
             val result: ArrivalMovementRequest = service.convert(userAnswers).value.futureValue
 
-            result mustBe arrivalMovementRequest
+            val dateOfPreperation = result.meta.dateOfPreparation
+            val timeOfPreperation = result.meta.timeOfPreparation
+
+            val expectedResult: ArrivalMovementRequest =
+              arrivalMovementRequest.copy(
+                meta   = arrivalMovementRequest.meta.copy(dateOfPreparation  = dateOfPreperation, timeOfPreparation = timeOfPreperation),
+                header = arrivalMovementRequest.header.copy(notificationDate = dateOfPreperation)
+              )
+
+            result mustBe expectedResult
         }
       }
 

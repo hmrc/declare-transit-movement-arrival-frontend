@@ -338,31 +338,36 @@ trait MessagesModelGenerators extends Generators {
     Arbitrary {
       for {
         movementReferenceNumber  <- arbitrary[MovementReferenceNumber].map(_.toString())
-        customsSubPlace          <- Gen.option(stringsWithMaxLength(Header.Constants.customsSubPlaceLength))
         arrivalNotificationPlace <- stringsWithMaxLength(Header.Constants.arrivalNotificationPlaceLength)
         procedureTypeFlag        <- arbitrary[ProcedureTypeFlag]
+        customsSubPlace          <- stringsWithMaxLength(Header.Constants.customsSubPlaceLength)
         notificationDate         <- arbitrary[LocalDate]
         presentationOfficeId     <- stringsWithMaxLength(CustomsOfficeOfPresentation.Constants.presentationOfficeLength)
         presentationOfficeName   <- stringsWithMaxLength(35)
-      } yield
-        Header(movementReferenceNumber,
-               customsSubPlace,
-               arrivalNotificationPlace,
-               presentationOfficeId,
-               presentationOfficeName,
-               None,
-               procedureTypeFlag,
-               notificationDate)
+      } yield {
+
+        val customsSubPlaceToggle = if (procedureTypeFlag == NormalProcedureFlag) Some(customsSubPlace) else None
+
+        Header(
+          movementReferenceNumber,
+          customsSubPlaceToggle,
+          arrivalNotificationPlace,
+          presentationOfficeId,
+          presentationOfficeName,
+          None,
+          procedureTypeFlag,
+          notificationDate
+        )
+      }
     }
   }
 
   implicit lazy val arbitraryArrivalMovementRequest: Arbitrary[ArrivalMovementRequest] = {
     Arbitrary {
       for {
-        eori <- arbitrary[EoriNumber]
-        meta <- arbitrary[Meta]
-        header <- arbitrary[Header].map(header =>
-          header.copy(notificationDate = meta.dateOfPreparation, customsSubPlace = Some(header.customsSubPlace.getOrElse(""))))
+        eori          <- arbitrary[EoriNumber]
+        meta          <- arbitrary[Meta]
+        header        <- arbitrary[Header].map(header => header.copy(notificationDate = meta.dateOfPreparation))
         trader        <- arbitrary[Trader]
         customsOffice <- arbitrary[CustomsOfficeOfPresentation].map(_.copy(presentationOffice = header.presentationOfficeId))
         enRouteEvents <- Gen.option(listWithMaxLength[EnRouteEvent](1))
