@@ -18,7 +18,7 @@ package services.conversion
 
 import base.SpecBase
 import generators.MessagesModelGenerators
-import models.{MovementReferenceNumber, UserAnswers}
+import models.{EoriNumber, MovementReferenceNumber, UserAnswers}
 import models.domain.{ArrivalNotificationDomain, NormalNotification}
 import models.messages.{ArrivalMovementRequest, Header}
 import org.mockito.Matchers.any
@@ -34,24 +34,34 @@ class ArrivalMovementRequestToUserAnswersServiceSpec extends SpecBase with Messa
 
   private val arrivalMovementRequestToUserAnswersService = ArrivalMovementRequestToUserAnswersService
 
-  "when we can go from ArrivalMovementRequest to UserAnswers" in {
-    val sampleMrn             = arbitrary[MovementReferenceNumber].sample.value
-    val sampleMovementRequest = arbitrary[ArrivalMovementRequest].sample.value
+  "convertToUserAnswers" - {
 
-    val result = arrivalMovementRequestToUserAnswersService.convertToUserAnswers(sampleMovementRequest, eoriNumber, sampleMrn)
+    "must convert ArrivalMovementRequest to UserAnswers" in {
 
-    result.value mustBe an[UserAnswers]
-  }
+      forAll(arbitrary[ArrivalMovementRequest], arbitrary[MovementReferenceNumber], arbitrary[EoriNumber]) {
+        (arrivalMovementRequest, movementReferenceNumber, eoriNumber) =>
+          val result = arrivalMovementRequestToUserAnswersService.convertToUserAnswers(arrivalMovementRequest, eoriNumber, movementReferenceNumber).value
 
-  "return None when ArrivalMovementRequest cannot be converted to ArrivalNotification" in {
+          result mustBe an[UserAnswers]
+      }
+    }
 
-    val sampleMrn                                                      = arbitrary[MovementReferenceNumber].sample.value
-    val arrivalMovementRequest: ArrivalMovementRequest                 = arbitrary[ArrivalMovementRequest].sample.value
-    val header: Header                                                 = arrivalMovementRequest.header.copy(movementReferenceNumber = "Invalid MRN")
-    val arrivalMovementRequestWithMalformedMrn: ArrivalMovementRequest = arrivalMovementRequest.copy(header = header)
+    "return None when ArrivalMovementRequest cannot be converted to UserAnswers" in {
 
-    val result = arrivalMovementRequestToUserAnswersService.convertToUserAnswers(arrivalMovementRequestWithMalformedMrn, eoriNumber, sampleMrn)
+      forAll(arbitrary[ArrivalMovementRequest], arbitrary[MovementReferenceNumber], arbitrary[EoriNumber]) {
+        (arrivalMovementRequest, movementReferenceNumber, eoriNumber) =>
+          val header: Header                                                 = arrivalMovementRequest.header.copy(movementReferenceNumber = "Invalid MRN")
+          val arrivalMovementRequestWithMalformedMrn: ArrivalMovementRequest = arrivalMovementRequest.copy(header                         = header)
 
-    result must not be defined
+          val result = arrivalMovementRequestToUserAnswersService.convertToUserAnswers(
+            arrivalMovementRequestWithMalformedMrn,
+            eoriNumber,
+            movementReferenceNumber
+          )
+
+          result must not be defined
+      }
+    }
+
   }
 }

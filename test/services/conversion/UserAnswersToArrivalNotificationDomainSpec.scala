@@ -32,7 +32,7 @@ class UserAnswersToArrivalNotificationDomainSpec extends SpecBase with ScalaChec
 
   "UserAnswersToArrivalNotificationDomain" - {
 
-    "must convert an UnswerAnswers to ArrivalNotificationDomain" in {
+    "must convert an UserAnswers to ArrivalNotificationDomain" in {
 
       forAll(arbitrary[ArrivalNotificationDomain], arbitrary[MessageSender], arbitrary[InterchangeControlReference]) {
         (arrivalNotificationDomain, messageSender, interchangeControlReference) =>
