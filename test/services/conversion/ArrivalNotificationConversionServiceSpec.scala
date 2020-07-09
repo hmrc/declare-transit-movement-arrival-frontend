@@ -74,7 +74,7 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
         case ((arbArrivalNotification, trader), (enRouteEvent, incident)) =>
           val routeEvent: EnRouteEventDomain = enRouteEvent
             .copy(seals = None)
-            .copy(eventDetails = Some(incident))
+            .copy(eventDetails = incident)
 
           val arrivalNotification: NormalNotification = arbArrivalNotification.copy(enRouteEvents = Some(Seq(routeEvent)))
 
@@ -95,7 +95,7 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
         case ((arbArrivalNotification, trader), (enRouteEvent, vehicularTranshipment)) =>
           val routeEvent = enRouteEvent
             .copy(seals = Some(Seq(SealDomain("seal 1"), SealDomain("seal 2"))))
-            .copy(eventDetails = Some(vehicularTranshipment.copy(containers = None)))
+            .copy(eventDetails = vehicularTranshipment.copy(containers = None))
 
           val arrivalNotification: NormalNotification = arbArrivalNotification.copy(enRouteEvents = Some(Seq(routeEvent)))
           val userAnswers: UserAnswers = userAnswerBuilder(trader, arrivalNotification, true)
@@ -145,11 +145,11 @@ class ArrivalNotificationConversionServiceSpec extends SpecBase with ScalaCheckP
         case ((arbArrivalNotification, trader), (enRouteEvent1, incident1), (enRouteEvent2, incident2)) =>
           val routeEvent1: EnRouteEventDomain = enRouteEvent1
             .copy(seals = None)
-            .copy(eventDetails = Some(incident1))
+            .copy(eventDetails = incident1)
 
           val routeEvent2: EnRouteEventDomain = enRouteEvent2
             .copy(seals = None)
-            .copy(eventDetails = Some(incident2))
+            .copy(eventDetails = incident2)
 
           val arrivalNotification: NormalNotification = arbArrivalNotification.copy(enRouteEvents = Some(Seq(routeEvent1, routeEvent2)))
 

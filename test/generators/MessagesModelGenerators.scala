@@ -203,17 +203,14 @@ trait MessagesModelGenerators extends Generators {
         place         <- stringsWithMaxLength(EnRouteEvent.Constants.placeLength)
         countryCode   <- arbitrary[CountryCode]
         alreadyInNcts <- arbitrary[Boolean]
-        eventDetails  <- arbitrary[Option[EventDetails]]
-        seals         <- listWithMaxLength[Seal](1)
+        eventDetails  <- arbitrary[EventDetails]
+        seals         <- Gen.option(listWithMaxLength[Seal](1))
       } yield {
 
-        val sealsOpt = if (eventDetails.isDefined) Some(seals) else None
-
-        EnRouteEvent(place, countryCode, alreadyInNcts, eventDetails, sealsOpt)
+        EnRouteEvent(place, countryCode, alreadyInNcts, eventDetails, seals)
       }
     }
 
-  //TODO is the sealsOpt correct?
   implicit lazy val arbitraryDomainEnRouteEvent: Arbitrary[EnRouteEventDomain] =
     Arbitrary {
 
@@ -221,13 +218,11 @@ trait MessagesModelGenerators extends Generators {
         place         <- stringsWithMaxLength(EnRouteEvent.Constants.placeLength)
         country       <- arbitrary[CountryCode]
         alreadyInNcts <- arbitrary[Boolean]
-        eventDetails  <- arbitrary[Option[EventDetailsDomain]]
-        seals         <- listWithMaxLength[SealDomain](1)
+        eventDetails  <- arbitrary[EventDetailsDomain]
+        seals         <- Gen.option(listWithMaxLength[SealDomain](1))
       } yield {
 
-        val sealsOpt = if (eventDetails.isDefined) Some(seals) else None
-
-        EnRouteEventDomain(place, country, alreadyInNcts, eventDetails, sealsOpt)
+        EnRouteEventDomain(place, country, alreadyInNcts, eventDetails, seals)
       }
     }
 
@@ -431,23 +426,23 @@ trait MessagesModelGenerators extends Generators {
   val enRouteEventIncident: Gen[(EnRouteEventDomain, IncidentWithInformationDomain)] = for {
     enRouteEvent <- arbitrary[EnRouteEventDomain]
     incident     <- arbitrary[IncidentWithInformationDomain]
-  } yield (enRouteEvent.copy(eventDetails = Some(incident)), incident)
+  } yield (enRouteEvent.copy(eventDetails = incident), incident)
 
   val enRouteEventVehicularTranshipment: Gen[(EnRouteEventDomain, VehicularTranshipmentDomain)] = for {
     enRouteEvent          <- arbitrary[EnRouteEventDomain]
     vehicularTranshipment <- arbitrary[VehicularTranshipmentDomain]
-  } yield (enRouteEvent.copy(eventDetails = Some(vehicularTranshipment)), vehicularTranshipment)
+  } yield (enRouteEvent.copy(eventDetails = vehicularTranshipment), vehicularTranshipment)
 
   val enRouteEventContainerTranshipment: Gen[(EnRouteEventDomain, ContainerTranshipmentDomain)] = for {
     generatedEnRouteEvent <- arbitrary[EnRouteEventDomain]
     containerTranshipment <- arbitrary[ContainerTranshipmentDomain]
-  } yield (generatedEnRouteEvent.copy(eventDetails = Some(containerTranshipment)), containerTranshipment)
+  } yield (generatedEnRouteEvent.copy(eventDetails = containerTranshipment), containerTranshipment)
 
   val enRouteEventContainerTranshipmentWithoutSeals: Gen[(EnRouteEventDomain, ContainerTranshipmentDomain)] = for {
     generatedEnRouteEvent <- arbitrary[EnRouteEventDomain]
     containerTranshipment <- arbitrary[ContainerTranshipmentDomain]
   } yield {
-    val enRouteEvent = generatedEnRouteEvent.copy(eventDetails = Some(containerTranshipment), seals = None)
+    val enRouteEvent = generatedEnRouteEvent.copy(eventDetails = containerTranshipment, seals = None)
 
     (enRouteEvent, containerTranshipment)
   }

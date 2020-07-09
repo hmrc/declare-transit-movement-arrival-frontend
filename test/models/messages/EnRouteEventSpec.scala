@@ -40,7 +40,7 @@ class EnRouteEventSpec
 
       forAll(arbitrary[EnRouteEvent], arbitrary[Seal], arbitrary[IncidentWithInformation]) {
         (enRouteEvent, seal, incident) =>
-          val enRouteEventWithSealAndIncident = enRouteEvent.copy(seals = Some(Seq(seal)), eventDetails = Some(incident))
+          val enRouteEventWithSealAndIncident = enRouteEvent.copy(seals = Some(Seq(seal)), eventDetails = incident)
 
           val result = {
             <ENROUEVETEV>
@@ -70,7 +70,7 @@ class EnRouteEventSpec
 
       forAll(arbitrary[EnRouteEvent], arbitrary[Seal], arbitrary[ContainerTranshipment]) {
         (enRouteEvent, seal, containerTranshipment) =>
-          val enRouteEventWithContainer = enRouteEvent.copy(seals = Some(Seq(seal)), eventDetails = Some(containerTranshipment))
+          val enRouteEventWithContainer = enRouteEvent.copy(seals = Some(Seq(seal)), eventDetails = containerTranshipment)
 
           val result = {
             <ENROUEVETEV>
@@ -100,7 +100,7 @@ class EnRouteEventSpec
 
       forAll(arbitrary[EnRouteEvent], arbitrary[Seal], arbitrary[VehicularTranshipment]) {
         (enRouteEvent, seal, vehicularTranshipment) =>
-          val enRouteEventWithVehicle = enRouteEvent.copy(seals = Some(Seq(seal)), eventDetails = Some(vehicularTranshipment))
+          val enRouteEventWithVehicle = enRouteEvent.copy(seals = Some(Seq(seal)), eventDetails = vehicularTranshipment)
 
           val result = {
             <ENROUEVETEV>
@@ -132,7 +132,7 @@ class EnRouteEventSpec
 
         forAll(arbitrary[EnRouteEvent], arbitrary[Seal], arbitrary[VehicularTranshipment]) {
           (enRouteEvent, seal, vehicularTranshipment) =>
-            val enRouteEventWithVehicle = enRouteEvent.copy(seals = Some(Seq(seal)), eventDetails = Some(vehicularTranshipment))
+            val enRouteEventWithVehicle = enRouteEvent.copy(seals = Some(Seq(seal)), eventDetails = vehicularTranshipment)
             val alreadyInNcts: Int      = if (enRouteEventWithVehicle.alreadyInNcts) 1 else 0
             val xml = {
               <ENROUEVETEV>
@@ -155,7 +155,7 @@ class EnRouteEventSpec
 
         forAll(arbitrary[EnRouteEvent], arbitrary[Seal], arbitrary[ContainerTranshipment]) {
           (enRouteEvent, seal, containerTranshipment) =>
-            val enRouteEventWithContainer = enRouteEvent.copy(seals = Some(Seq(seal)), eventDetails = Some(containerTranshipment))
+            val enRouteEventWithContainer = enRouteEvent.copy(seals = Some(Seq(seal)), eventDetails = containerTranshipment)
 
             val xml = {
               <ENROUEVETEV>
@@ -187,7 +187,7 @@ class EnRouteEventSpec
 
         forAll(arbitrary[EnRouteEvent], arbitrary[Seal], arbitrary[IncidentWithInformation]) {
           (enRouteEvent, seal, incident) =>
-            val enRouteEventWithSealAndIncident = enRouteEvent.copy(seals = Some(Seq(seal)), eventDetails = Some(incident))
+            val enRouteEventWithSealAndIncident = enRouteEvent.copy(seals = Some(Seq(seal)), eventDetails = incident)
 
             val xml = {
               <ENROUEVETEV>
@@ -218,10 +218,8 @@ class EnRouteEventSpec
       "must write and read xml as EnRouteEvent" in {
         forAll(arbitrary[EnRouteEvent]) {
           enRouteEvent =>
-            val updatedEnRouteEvent = if (enRouteEvent.eventDetails.isEmpty) enRouteEvent.copy(seals = None) else enRouteEvent
-
-            val result = XmlReader.of[EnRouteEvent].read(updatedEnRouteEvent.toXml).toOption.value
-            result mustBe updatedEnRouteEvent
+            val result = XmlReader.of[EnRouteEvent].read(enRouteEvent.toXml).toOption.value
+            result mustBe enRouteEvent
         }
       }
     }

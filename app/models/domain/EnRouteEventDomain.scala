@@ -24,7 +24,7 @@ import models.reference.CountryCode
 final case class EnRouteEventDomain(place: String,
                                     country: CountryCode,
                                     alreadyInNcts: Boolean,
-                                    eventDetails: Option[EventDetailsDomain],
+                                    eventDetails: EventDetailsDomain,
                                     seals: Option[Seq[SealDomain]])
 
 object EnRouteEventDomain {
@@ -43,7 +43,7 @@ object EnRouteEventDomain {
             place,
             country,
             alreadyInNct,
-            eventDetails.map(EventDetailsDomain.eventDetailsDomainToEventDetails),
+            EventDetailsDomain.eventDetailsDomainToEventDetails(eventDetails),
             seals.map(_.map(SealDomain.domainSealToSeal))
           )
       }
@@ -59,12 +59,8 @@ object EnRouteEventDomain {
             "eventCountry"     -> event.country,
             "seals"            -> Json.toJson(event.seals),
             "haveSealsChanged" -> event.seals.isDefined
-          ) ++ event.eventDetails
-          .map {
-            result =>
-              Json.toJsObject(result).filterNulls
-          }
-          .getOrElse(JsObject.empty)
+          ) ++
+          Json.toJsObject(event.eventDetails).filterNulls
 
     }
 

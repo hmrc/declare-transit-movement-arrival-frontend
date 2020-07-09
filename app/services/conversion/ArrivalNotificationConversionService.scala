@@ -99,20 +99,19 @@ class ArrivalNotificationConversionService {
     transportIdentity: Option[String],
     transportCountry: Option[CountryCode],
     containers: Option[Seq[ContainerDomain]]
-  ): Option[EventDetailsDomain] =
+  ): EventDetailsDomain =
     (incidentInformation, transportIdentity, transportCountry, containers) match {
-      case (Some(incidentInformation), None, None, None) =>
-        Some(IncidentWithInformationDomain(incidentInformation))
-      case (None, Some(transportIdentity), Some(transportCountry), _) =>
-        Some(
-          VehicularTranshipmentDomain(
-            transportIdentity = transportIdentity,
-            transportCountry  = transportCountry,
-            containers        = containers
-          ))
+      case (None, Some(transportIdentity), Some(transportCountry), containers) =>
+        VehicularTranshipmentDomain(
+          transportIdentity = transportIdentity,
+          transportCountry  = transportCountry,
+          containers        = containers
+        )
       case (None, None, None, Some(containers)) =>
-        Some(ContainerTranshipmentDomain(containers = containers))
-      case _ => None
+        ContainerTranshipmentDomain(containers = containers)
+      case (Some(incidentInformation), None, None, None) =>
+        IncidentWithInformationDomain(incidentInformation)
+      case _ => IncidentWithoutInformationDomain()
     }
 
   private def enRouteEvents(userAnswers: UserAnswers): Option[Seq[EnRouteEventDomain]] =

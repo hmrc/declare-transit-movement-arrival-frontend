@@ -69,7 +69,7 @@ class SimplifiedNotificationConversionServiceSpec extends SpecBase with ScalaChe
           case ((arbArrivalNotification, trader), (enRouteEvent, incident)) =>
             val routeEvent: EnRouteEventDomain = enRouteEvent
               .copy(seals = None)
-              .copy(eventDetails = Some(incident))
+              .copy(eventDetails = incident)
 
             val arrivalNotification: SimplifiedNotification = arbArrivalNotification.copy(enRouteEvents = Some(Seq(routeEvent)))
 
@@ -90,7 +90,7 @@ class SimplifiedNotificationConversionServiceSpec extends SpecBase with ScalaChe
           case ((arbArrivalNotification, trader), (enRouteEvent, vehicularTranshipment)) =>
             val routeEvent: EnRouteEventDomain = enRouteEvent
               .copy(seals = Some(Seq(SealDomain("seal 1"), SealDomain("seal 2"))))
-              .copy(eventDetails = Some(vehicularTranshipment.copy(containers = None)))
+              .copy(eventDetails = vehicularTranshipment.copy(containers = None))
 
             val arrivalNotification: SimplifiedNotification = arbArrivalNotification.copy(enRouteEvents = Some(Seq(routeEvent)))
             val userAnswers: UserAnswers = basicUserAnswers(trader, arrivalNotification, isIncidentOnRoute = true)
@@ -112,7 +112,7 @@ class SimplifiedNotificationConversionServiceSpec extends SpecBase with ScalaChe
         containerTranshipment <- arbitrary[ContainerTranshipmentDomain]
       } yield {
 
-        val enRouteEvent = generatedEnRouteEvent.copy(eventDetails = Some(containerTranshipment), seals = None)
+        val enRouteEvent = generatedEnRouteEvent.copy(eventDetails = containerTranshipment, seals = None)
 
         (enRouteEvent, containerTranshipment)
       }
@@ -149,11 +149,11 @@ class SimplifiedNotificationConversionServiceSpec extends SpecBase with ScalaChe
           case ((arbArrivalNotification, trader), (enRouteEvent1, incident1), (enRouteEvent2, incident2)) =>
             val routeEvent1: EnRouteEventDomain = enRouteEvent1
               .copy(seals = None)
-              .copy(eventDetails = Some(incident1))
+              .copy(eventDetails = incident1)
 
             val routeEvent2: EnRouteEventDomain = enRouteEvent2
               .copy(seals = None)
-              .copy(eventDetails = Some(incident2))
+              .copy(eventDetails = incident2)
 
             val arrivalNotification: SimplifiedNotification = arbArrivalNotification.copy(enRouteEvents = Some(Seq(routeEvent1, routeEvent2)))
 

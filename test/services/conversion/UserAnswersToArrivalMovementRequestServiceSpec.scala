@@ -54,7 +54,7 @@ class UserAnswersToArrivalMovementRequestServiceSpec extends SpecBase with Messa
 
         forAll(arbitrary[ArrivalMovementRequest]) {
           arrivalMovementRequest =>
-            when(mockIcrRepo.nextInterchangeControlReferenceId()).thenReturn(Future.successful(InterchangeControlReference("", 1)))
+            when(mockIcrRepo.nextInterchangeControlReferenceId()).thenReturn(Future.successful(arrivalMovementRequest.meta.interchangeControlReference))
 
             val userAnswers: UserAnswers = ArrivalMovementRequestToUserAnswersService
               .convertToUserAnswers(
