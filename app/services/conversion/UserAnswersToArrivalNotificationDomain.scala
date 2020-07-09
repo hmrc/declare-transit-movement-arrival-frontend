@@ -28,7 +28,7 @@ import pages.events._
 import pages.events.transhipments._
 import queries.{ContainersQuery, SealsQuery}
 
-class ArrivalNotificationConversionService {
+class UserAnswersToArrivalNotificationDomain {
 
   val countryCode_GB = "GB"
 
@@ -50,7 +50,6 @@ class ArrivalNotificationConversionService {
 
       SimplifiedNotification(
         movementReferenceNumber = userAnswers.id,
-        notificationPlace       = notificationPlace, //TODO: This needs removing from SimplifiedNotification - isn't used
         notificationDate        = LocalDate.now(),
         approvedLocation        = notificationPlace,
         trader = TraderDomain(

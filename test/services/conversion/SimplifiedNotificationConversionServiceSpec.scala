@@ -34,7 +34,7 @@ import queries.ContainersQuery
 
 class SimplifiedNotificationConversionServiceSpec extends SpecBase with ScalaCheckPropertyChecks with MessagesModelGenerators {
   // format: off
-  private val service = injector.instanceOf[ArrivalNotificationConversionService]
+  private val service = injector.instanceOf[UserAnswersToArrivalNotificationDomain]
 
   "ArrivalNotificationConversionService" - {
     "return 'Simplified Arrival Notification' message" - {

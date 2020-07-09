@@ -28,7 +28,9 @@ import queries.EventsQuery
 import scala.language.implicitConversions
 
 sealed trait ArrivalNotificationDomain {
+  def movementReferenceNumber: MovementReferenceNumber
   def trader: TraderDomain
+  def notificationDate: LocalDate
 }
 
 object ArrivalNotificationDomain {
@@ -87,7 +89,6 @@ object NormalNotification {
 
 final case class SimplifiedNotification(
   movementReferenceNumber: MovementReferenceNumber,
-  notificationPlace: String,
   notificationDate: LocalDate,
   approvedLocation: String,
   trader: TraderDomain,
@@ -115,7 +116,7 @@ object SimplifiedNotification {
         Json
           .obj(
             GoodsLocationPage.toString             -> GoodsLocation.AuthorisedConsigneesLocation.toString,
-            AuthorisedLocationPage.toString        -> notification.notificationPlace,
+            AuthorisedLocationPage.toString        -> notification.approvedLocation,
             ConsigneeNamePage.toString             -> notification.trader.name,
             ConsigneeEoriConfirmationPage.toString -> false, //TODO have a word with design, can we just show the EORI number page?
             ConsigneeEoriNumberPage.toString       -> notification.trader.eori,

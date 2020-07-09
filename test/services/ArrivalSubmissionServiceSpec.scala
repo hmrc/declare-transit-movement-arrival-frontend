@@ -30,14 +30,14 @@ import org.scalacheck.Arbitrary.arbitrary
 import play.api.http.Status._
 import play.api.inject.bind
 import repositories.InterchangeControlReferenceIdRepository
-import services.conversion.ArrivalNotificationConversionService
+import services.conversion.UserAnswersToArrivalNotificationDomain
 import uk.gov.hmrc.http.HttpResponse
 
 import scala.concurrent.Future
 
 class ArrivalSubmissionServiceSpec extends SpecBase with MessagesModelGenerators {
 
-  private val mockConverterService                  = mock[ArrivalNotificationConversionService]
+  private val mockConverterService                  = mock[UserAnswersToArrivalNotificationDomain]
   private val mockArrivalMovementConnector          = mock[ArrivalMovementConnector]
   private val mockInterchangeControllerReference    = mock[InterchangeControlReferenceIdRepository]
   private val mockArrivalNotificationMessageService = mock[ArrivalNotificationMessageService]
@@ -64,7 +64,7 @@ class ArrivalSubmissionServiceSpec extends SpecBase with MessagesModelGenerators
           .thenReturn(None)
 
         val application = applicationBuilder(Some(emptyUserAnswers))
-          .overrides(bind[ArrivalNotificationConversionService].toInstance(mockConverterService))
+          .overrides(bind[UserAnswersToArrivalNotificationDomain].toInstance(mockConverterService))
           .build()
 
         val arrivalNotificationService = application.injector.instanceOf[ArrivalSubmissionService]
@@ -85,7 +85,7 @@ class ArrivalSubmissionServiceSpec extends SpecBase with MessagesModelGenerators
 
         val application = applicationBuilder(Some(emptyUserAnswers))
           .overrides(bind[InterchangeControlReferenceIdRepository].toInstance(mockInterchangeControllerReference))
-          .overrides(bind[ArrivalNotificationConversionService].toInstance(mockConverterService))
+          .overrides(bind[UserAnswersToArrivalNotificationDomain].toInstance(mockConverterService))
           .overrides(bind[ArrivalMovementConnector].toInstance(mockArrivalMovementConnector))
           .build()
 
@@ -112,7 +112,7 @@ class ArrivalSubmissionServiceSpec extends SpecBase with MessagesModelGenerators
 
         val application = applicationBuilder(Some(userAnswersWithArrivalId))
           .overrides(bind[InterchangeControlReferenceIdRepository].toInstance(mockInterchangeControllerReference))
-          .overrides(bind[ArrivalNotificationConversionService].toInstance(mockConverterService))
+          .overrides(bind[UserAnswersToArrivalNotificationDomain].toInstance(mockConverterService))
           .overrides(bind[ArrivalMovementConnector].toInstance(mockArrivalMovementConnector))
           .build()
 

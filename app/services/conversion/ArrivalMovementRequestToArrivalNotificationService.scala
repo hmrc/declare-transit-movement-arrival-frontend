@@ -45,7 +45,6 @@ object ArrivalMovementRequestToArrivalNotificationService {
         Some(
           SimplifiedNotification(
             mrn,
-            arrivalMovementRequest.header.arrivalNotificationPlace,
             arrivalMovementRequest.header.notificationDate,
             arrivalMovementRequest.header.arrivalNotificationPlace,
             Trader.messagesTraderToDomainTrader(arrivalMovementRequest.trader),

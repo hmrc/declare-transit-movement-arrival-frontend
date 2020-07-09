@@ -28,7 +28,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class UserAnswersToArrivalMovementRequestService @Inject()(
   appConfig: FrontendAppConfig,
-  converterService: ArrivalNotificationConversionService,
+  converterService: UserAnswersToArrivalNotificationDomain,
   interchangeControlReferenceIdRepository: InterchangeControlReferenceIdRepository)(implicit ec: ExecutionContext) {
 
   def convert(userAnswers: UserAnswers): Option[Future[ArrivalMovementRequest]] =

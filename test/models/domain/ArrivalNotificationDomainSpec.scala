@@ -95,7 +95,7 @@ class ArrivalNotificationDomainSpec extends FreeSpec with MustMatchers with Scal
   private def createSimplifiedNotificationJson(notification: SimplifiedNotification): JsObject =
     Json.obj(
       GoodsLocationPage.toString             -> GoodsLocation.AuthorisedConsigneesLocation.toString,
-      AuthorisedLocationPage.toString        -> notification.notificationPlace,
+      AuthorisedLocationPage.toString        -> notification.approvedLocation,
       ConsigneeNamePage.toString             -> notification.trader.name,
       ConsigneeEoriConfirmationPage.toString -> false,
       ConsigneeEoriNumberPage.toString       -> notification.trader.eori,
