@@ -52,7 +52,7 @@ object EnRouteEventDomain {
   implicit lazy val writes: OWrites[EnRouteEventDomain] =
     OWrites[EnRouteEventDomain] {
       event =>
-        Json
+        val json = Json
           .obj(
             "eventPlace"       -> event.place,
             "eventReported"    -> event.alreadyInNcts,
@@ -60,8 +60,9 @@ object EnRouteEventDomain {
             "seals"            -> Json.toJson(event.seals),
             "haveSealsChanged" -> event.seals.isDefined
           ) ++
-          Json.toJsObject(event.eventDetails).filterNulls
+          Json.toJsObject(event.eventDetails)
 
+        json.filterNulls
     }
 
 }
