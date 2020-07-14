@@ -47,7 +47,8 @@ class UserAnswersToArrivalNotificationDomainSpec extends SpecBase with ScalaChec
             .convertToUserAnswers(
               arrivalMovementRequest,
               messageSender.eori,
-              arrivalNotificationDomain.movementReferenceNumber
+              arrivalNotificationDomain.movementReferenceNumber,
+              arrivalNotificationDomain.presentationOffice
             )
             .value
 

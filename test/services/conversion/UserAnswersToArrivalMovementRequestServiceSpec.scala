@@ -20,6 +20,7 @@ import base.SpecBase
 import generators.MessagesModelGenerators
 import models.domain.{EnRouteEventDomain, NormalNotification, TraderDomain}
 import models.messages.{ArrivalMovementRequest, InterchangeControlReference}
+import models.reference.CustomsOffice
 import models.{EoriNumber, Index, MovementReferenceNumber, NormalProcedureFlag, UserAnswers}
 import org.mockito.Mockito
 import org.mockito.Mockito.when
@@ -52,15 +53,18 @@ class UserAnswersToArrivalMovementRequestServiceSpec extends SpecBase with Messa
       running(app) {
         val service = app.injector.instanceOf[UserAnswersToArrivalMovementRequestService]
 
-        forAll(arbitrary[ArrivalMovementRequest]) {
-          arrivalMovementRequest =>
+        forAll(arbitrary[ArrivalMovementRequest], arbitrary[CustomsOffice]) {
+          (arrivalMovementRequest, customsOffice) =>
+            val setCustomsOffice = customsOffice.copy(id = arrivalMovementRequest.customsOfficeOfPresentation.presentationOffice)
+
             when(mockIcrRepo.nextInterchangeControlReferenceId()).thenReturn(Future.successful(arrivalMovementRequest.meta.interchangeControlReference))
 
             val userAnswers: UserAnswers = ArrivalMovementRequestToUserAnswersService
               .convertToUserAnswers(
                 arrivalMovementRequest,
                 EoriNumber(arrivalMovementRequest.trader.eori),
-                MovementReferenceNumber(arrivalMovementRequest.header.movementReferenceNumber).value
+                MovementReferenceNumber(arrivalMovementRequest.header.movementReferenceNumber).value,
+                setCustomsOffice
               )
               .value
 

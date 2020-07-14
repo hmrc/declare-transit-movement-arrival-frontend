@@ -21,7 +21,7 @@ import connectors.ReferenceDataConnector
 import generators.MessagesModelGenerators
 import models.domain.{ArrivalNotificationDomain, NormalNotification}
 import models.messages.{ArrivalMovementRequest, Header}
-import models.reference.Country
+import models.reference.{Country, CustomsOffice}
 import org.mockito.Matchers.any
 import org.mockito.Mockito._
 import org.scalacheck.Arbitrary.arbitrary
@@ -41,15 +41,19 @@ class ArrivalMovementRequestToArrivalNotificationServiceSpec extends SpecBase wi
       val arrivalMovementRequest: ArrivalMovementRequest                 = arbitrary[ArrivalMovementRequest].sample.value
       val header: Header                                                 = arrivalMovementRequest.header.copy(movementReferenceNumber = "Invalid MRN")
       val arrivalMovementRequestWithMalformedMrn: ArrivalMovementRequest = arrivalMovementRequest.copy(header = header)
+      val customsOffice                                                  = arbitrary[CustomsOffice].sample.value
 
-      arrivalMovementRequestConversionService.convertToArrivalNotification(arrivalMovementRequestWithMalformedMrn) mustBe None
+      arrivalMovementRequestConversionService.convertToArrivalNotification(arrivalMovementRequestWithMalformedMrn, customsOffice) mustBe None
     }
 
     "must convert ArrivalMovementRequest to NormalNotification for trader" in {
 
       val genArrivalNotificationRequest = arbitrary[ArrivalMovementRequest].sample.value
+      val customsOffice                 = arbitrary[CustomsOffice].sample.value
 
-      arrivalMovementRequestConversionService.convertToArrivalNotification(genArrivalNotificationRequest).value mustBe an[ArrivalNotificationDomain]
+      arrivalMovementRequestConversionService
+        .convertToArrivalNotification(genArrivalNotificationRequest, customsOffice)
+        .value mustBe an[ArrivalNotificationDomain]
     }
   }
 

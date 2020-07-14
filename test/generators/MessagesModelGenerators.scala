@@ -22,7 +22,7 @@ import models.{domain, messages, EoriNumber, MovementReferenceNumber, NormalProc
 import models.domain._
 import models.messages.ErrorType.{GenericError, MRNError}
 import models.messages._
-import models.reference.CountryCode
+import models.reference.{CountryCode, CustomsOffice}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 import utils.Format._
@@ -230,29 +230,27 @@ trait MessagesModelGenerators extends Generators {
     Arbitrary {
 
       for {
-        mrn                    <- arbitrary[MovementReferenceNumber]
-        place                  <- stringsWithMaxLength(NormalNotification.Constants.notificationPlaceLength)
-        date                   <- localDateGen
-        subPlace               <- stringsWithMaxLength(NormalNotification.Constants.customsSubPlaceLength)
-        trader                 <- arbitrary[domain.TraderDomain]
-        presentationOfficeId   <- stringsWithMaxLength(NormalNotification.Constants.presentationOfficeLength)
-        presentationOfficeName <- arbitrary[String]
-        events                 <- Gen.option(listWithMaxLength[EnRouteEventDomain](NormalNotification.Constants.maxNumberOfEnRouteEvents))
-      } yield domain.NormalNotification(mrn, place, date, subPlace, trader, presentationOfficeId, presentationOfficeName, events)
+        mrn                <- arbitrary[MovementReferenceNumber]
+        place              <- stringsWithMaxLength(NormalNotification.Constants.notificationPlaceLength)
+        date               <- localDateGen
+        subPlace           <- stringsWithMaxLength(NormalNotification.Constants.customsSubPlaceLength)
+        trader             <- arbitrary[domain.TraderDomain]
+        presentationOffice <- arbitrary[CustomsOffice]
+        events             <- Gen.option(listWithMaxLength[EnRouteEventDomain](NormalNotification.Constants.maxNumberOfEnRouteEvents))
+      } yield domain.NormalNotification(mrn, place, date, subPlace, trader, presentationOffice, events)
     }
 
   implicit lazy val arbitrarySimplifiedNotification: Arbitrary[SimplifiedNotification] =
     Arbitrary {
 
       for {
-        mrn                    <- arbitrary[MovementReferenceNumber]
-        date                   <- localDateGen
-        approvedLocation       <- stringsWithMaxLength(SimplifiedNotification.Constants.approvedLocationLength)
-        trader                 <- arbitrary[TraderDomain]
-        presentationOfficeId   <- stringsWithMaxLength(SimplifiedNotification.Constants.presentationOfficeLength)
-        presentationOfficeName <- stringsWithMaxLength(SimplifiedNotification.Constants.presentationOfficeLength)
-        events                 <- Gen.option(listWithMaxLength[EnRouteEventDomain](NormalNotification.Constants.maxNumberOfEnRouteEvents))
-      } yield SimplifiedNotification(mrn, date, approvedLocation, trader, presentationOfficeId, presentationOfficeName, events)
+        mrn                <- arbitrary[MovementReferenceNumber]
+        date               <- localDateGen
+        approvedLocation   <- stringsWithMaxLength(SimplifiedNotification.Constants.approvedLocationLength)
+        trader             <- arbitrary[TraderDomain]
+        presentationOffice <- arbitrary[CustomsOffice]
+        events             <- Gen.option(listWithMaxLength[EnRouteEventDomain](NormalNotification.Constants.maxNumberOfEnRouteEvents))
+      } yield SimplifiedNotification(mrn, date, approvedLocation, trader, presentationOffice, events)
     }
 
   implicit lazy val arbitraryArrivalNotification: Arbitrary[ArrivalNotificationDomain] =
@@ -351,8 +349,6 @@ trait MessagesModelGenerators extends Generators {
           movementReferenceNumber,
           customsSubPlaceToggle,
           arrivalNotificationPlace,
-          presentationOfficeId,
-          presentationOfficeName,
           None,
           procedureTypeFlag,
           notificationDate
@@ -368,7 +364,7 @@ trait MessagesModelGenerators extends Generators {
         meta          <- arbitrary[Meta]
         header        <- arbitrary[Header].map(header => header.copy(notificationDate = meta.dateOfPreparation))
         trader        <- arbitrary[Trader]
-        customsOffice <- arbitrary[CustomsOfficeOfPresentation].map(_.copy(presentationOffice = header.presentationOfficeId))
+        customsOffice <- arbitrary[CustomsOfficeOfPresentation]
         enRouteEvents <- Gen.option(listWithMaxLength[EnRouteEvent](1))
       } yield {
         val messageSender  = meta.messageSender.copy(eori = eori)

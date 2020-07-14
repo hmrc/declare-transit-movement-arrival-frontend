@@ -31,6 +31,7 @@ sealed trait ArrivalNotificationDomain {
   def movementReferenceNumber: MovementReferenceNumber
   def trader: TraderDomain
   def notificationDate: LocalDate
+  def presentationOffice: CustomsOffice
 }
 
 object ArrivalNotificationDomain {

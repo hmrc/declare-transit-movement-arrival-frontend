@@ -17,8 +17,10 @@
 package services
 
 import base.SpecBase
+import connectors.ReferenceDataConnector
 import generators.MessagesModelGenerators
 import models.messages.ArrivalMovementRequest
+import models.reference.CustomsOffice
 import models.{ArrivalId, EoriNumber, UserAnswers}
 import org.mockito.Matchers.any
 import org.mockito.Mockito._
@@ -31,6 +33,7 @@ import scala.concurrent.Future
 class UserAnswersServiceSpec extends SpecBase with MessagesModelGenerators {
 
   val mockArrivalNotificationMessageService = mock[ArrivalNotificationMessageService]
+  val mockReferenceDataConnector            = mock[ReferenceDataConnector]
   val mockSessionRepository                 = mock[SessionRepository]
 
   override def beforeEach: Unit = {
@@ -42,12 +45,17 @@ class UserAnswersServiceSpec extends SpecBase with MessagesModelGenerators {
     "must return user answers for valid input" in {
 
       val arrivalMovementRequest = arbitrary[ArrivalMovementRequest].sample.value
+      val customsOffice          = arbitrary[CustomsOffice].sample.value.copy(id = arrivalMovementRequest.customsOfficeOfPresentation.presentationOffice)
 
       when(mockArrivalNotificationMessageService.getArrivalNotificationMessage(any())(any(), any()))
         .thenReturn(Future.successful(Some(arrivalMovementRequest)))
 
+      when(mockReferenceDataConnector.getCustomsOffices()(any(), any()))
+        .thenReturn(Future.successful(Seq(customsOffice)))
+
       val application = applicationBuilder(Some(emptyUserAnswers))
         .overrides(bind[ArrivalNotificationMessageService].toInstance(mockArrivalNotificationMessageService))
+        .overrides(bind[ReferenceDataConnector].toInstance(mockReferenceDataConnector))
         .build()
 
       val userAnswersService = application.injector.instanceOf[UserAnswersService]

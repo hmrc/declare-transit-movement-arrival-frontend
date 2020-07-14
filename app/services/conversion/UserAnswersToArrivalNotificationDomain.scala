@@ -60,7 +60,7 @@ class UserAnswersToArrivalNotificationDomain {
           city            = tradersAddress.city,
           countryCode     = countryCode_GB
         ),
-        presentationOffice = CustomsOffice(presentationOffice.id, "", Seq.empty, None),
+        presentationOffice = presentationOffice,
         enRouteEvents      = enRouteEvents(userAnswers)
       )
     }
@@ -87,7 +87,7 @@ class UserAnswersToArrivalNotificationDomain {
           city            = tradersAddress.city,
           countryCode     = countryCode_GB
         ),
-        presentationOffice = CustomsOffice(presentationOffice.id, "", Seq.empty, None),
+        presentationOffice = presentationOffice,
         enRouteEvents      = enRouteEvents(userAnswers)
       )
 

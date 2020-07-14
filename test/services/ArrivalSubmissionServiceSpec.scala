@@ -23,6 +23,7 @@ import connectors.ArrivalMovementConnector
 import generators.MessagesModelGenerators
 import models.domain.{NormalNotification, TraderDomain}
 import models.messages.InterchangeControlReference
+import models.reference.CustomsOffice
 import models.{ArrivalId, EoriNumber}
 import org.mockito.Matchers.any
 import org.mockito.Mockito._
@@ -43,9 +44,7 @@ class ArrivalSubmissionServiceSpec extends SpecBase with MessagesModelGenerators
   private val mockArrivalNotificationMessageService = mock[ArrivalNotificationMessageService]
 
   private val traderWithoutEori  = TraderDomain("", "", "", "", "", "")
-  private val normalNotification = NormalNotification(mrn, "", LocalDate.now(), "", traderWithoutEori, "", "", None)
-
-  private val userEoriNumber = arbitrary[EoriNumber].sample.value
+  private val normalNotification = NormalNotification(mrn, "", LocalDate.now(), "", traderWithoutEori, CustomsOffice("", "", Seq.empty, None), None)
 
   override def beforeEach: Unit = {
     super.beforeEach()
