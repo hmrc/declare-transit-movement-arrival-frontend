@@ -23,7 +23,7 @@ import models.{MovementReferenceNumber, NormalProcedureFlag, SimplifiedProcedure
 
 object ArrivalMovementRequestToArrivalNotificationService {
 
-  def convertToArrivalNotification(arrivalMovementRequest: ArrivalMovementRequest): Option[ArrivalNotificationDomain] =
+  def convertToArrivalNotification(arrivalMovementRequest: ArrivalMovementRequest, customsOffice: CustomsOffice): Option[ArrivalNotificationDomain] =
     (
       arrivalMovementRequest.header.procedureTypeFlag,
       MovementReferenceNumber(arrivalMovementRequest.header.movementReferenceNumber),
@@ -37,7 +37,7 @@ object ArrivalMovementRequestToArrivalNotificationService {
             arrivalMovementRequest.header.notificationDate,
             customsSubPlace,
             Trader.messagesTraderToDomainTrader(arrivalMovementRequest.trader),
-            CustomsOffice(arrivalMovementRequest.customsOfficeOfPresentation.presentationOffice, "", Seq.empty, None), // TODO Lookup
+            customsOffice,
             arrivalMovementRequest.enRouteEvents.map(_.map(EnRouteEvent.enRouteEventToDomain))
           )
         )
@@ -48,7 +48,7 @@ object ArrivalMovementRequestToArrivalNotificationService {
             arrivalMovementRequest.header.notificationDate,
             arrivalMovementRequest.header.arrivalNotificationPlace,
             Trader.messagesTraderToDomainTrader(arrivalMovementRequest.trader),
-            CustomsOffice(arrivalMovementRequest.customsOfficeOfPresentation.presentationOffice, "", Seq.empty, None), // TODO Lookup
+            customsOffice,
             arrivalMovementRequest.enRouteEvents.map(_.map(EnRouteEvent.enRouteEventToDomain))
           )
         )
