@@ -18,6 +18,7 @@ package services.conversion
 
 import models.domain.{ArrivalNotificationDomain, NormalNotification, SimplifiedNotification}
 import models.messages._
+import models.reference.CustomsOffice
 import models.{MovementReferenceNumber, NormalProcedureFlag, SimplifiedProcedureFlag}
 
 object ArrivalMovementRequestToArrivalNotificationService {
@@ -36,8 +37,7 @@ object ArrivalMovementRequestToArrivalNotificationService {
             arrivalMovementRequest.header.notificationDate,
             customsSubPlace,
             Trader.messagesTraderToDomainTrader(arrivalMovementRequest.trader),
-            arrivalMovementRequest.header.presentationOfficeId,
-            arrivalMovementRequest.header.presentationOfficeName,
+            CustomsOffice(arrivalMovementRequest.customsOfficeOfPresentation.presentationOffice, "", Seq.empty, None), // TODO Lookup
             arrivalMovementRequest.enRouteEvents.map(_.map(EnRouteEvent.enRouteEventToDomain))
           )
         )
@@ -48,8 +48,7 @@ object ArrivalMovementRequestToArrivalNotificationService {
             arrivalMovementRequest.header.notificationDate,
             arrivalMovementRequest.header.arrivalNotificationPlace,
             Trader.messagesTraderToDomainTrader(arrivalMovementRequest.trader),
-            arrivalMovementRequest.header.presentationOfficeId,
-            arrivalMovementRequest.header.presentationOfficeName,
+            CustomsOffice(arrivalMovementRequest.customsOfficeOfPresentation.presentationOffice, "", Seq.empty, None), // TODO Lookup
             arrivalMovementRequest.enRouteEvents.map(_.map(EnRouteEvent.enRouteEventToDomain))
           )
         )

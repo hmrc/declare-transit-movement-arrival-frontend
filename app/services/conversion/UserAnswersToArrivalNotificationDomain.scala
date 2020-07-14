@@ -21,7 +21,7 @@ import java.time.LocalDate
 import derivable.DeriveNumberOfEvents
 import models.GoodsLocation.{AuthorisedConsigneesLocation, BorderForceOffice}
 import models.domain._
-import models.reference.CountryCode
+import models.reference.{CountryCode, CustomsOffice}
 import models.{Index, UserAnswers}
 import pages._
 import pages.events._
@@ -60,9 +60,8 @@ class UserAnswersToArrivalNotificationDomain {
           city            = tradersAddress.city,
           countryCode     = countryCode_GB
         ),
-        presentationOfficeId   = presentationOffice.id,
-        presentationOfficeName = presentationOffice.name,
-        enRouteEvents          = enRouteEvents(userAnswers)
+        presentationOffice = CustomsOffice(presentationOffice.id, "", Seq.empty, None),
+        enRouteEvents      = enRouteEvents(userAnswers)
       )
     }
 
@@ -88,9 +87,8 @@ class UserAnswersToArrivalNotificationDomain {
           city            = tradersAddress.city,
           countryCode     = countryCode_GB
         ),
-        presentationOfficeId   = presentationOffice.id,
-        presentationOfficeName = presentationOffice.name,
-        enRouteEvents          = enRouteEvents(userAnswers)
+        presentationOffice = CustomsOffice(presentationOffice.id, "", Seq.empty, None),
+        enRouteEvents      = enRouteEvents(userAnswers)
       )
 
   private def eventDetails(

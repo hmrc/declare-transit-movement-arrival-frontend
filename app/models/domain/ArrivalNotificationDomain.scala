@@ -18,7 +18,7 @@ package models.domain
 
 import java.time.LocalDate
 
-import models.messages.{ProcedureType, Trader}
+import models.messages.ProcedureType
 import models.reference.CustomsOffice
 import models.{GoodsLocation, MovementReferenceNumber}
 import pages._
@@ -46,8 +46,7 @@ final case class NormalNotification(movementReferenceNumber: MovementReferenceNu
                                     notificationDate: LocalDate,
                                     customsSubPlace: String,
                                     trader: TraderDomain,
-                                    presentationOfficeId: String,
-                                    presentationOfficeName: String,
+                                    presentationOffice: CustomsOffice,
                                     enRouteEvents: Option[Seq[EnRouteEventDomain]])
     extends ArrivalNotificationDomain {
 
@@ -77,12 +76,11 @@ object NormalNotification {
               "postcode"          -> notification.trader.postCode
             ),
             IsTraderAddressPlaceOfNotificationPage.toString -> notification.notificationPlace.equalsIgnoreCase(notification.trader.postCode),
-            PresentationOfficePage.toString -> Json.toJson(
-              CustomsOffice(notification.presentationOfficeId, notification.presentationOfficeName, Seq.empty, None)),
-            EventsQuery.toString         -> Json.toJson(notification.enRouteEvents),
-            TraderEoriPage.toString      -> notification.trader.eori,
-            TraderNamePage.toString      -> notification.trader.name,
-            IncidentOnRoutePage.toString -> notification.enRouteEvents.isDefined
+            PresentationOfficePage.toString                 -> Json.toJson(notification.presentationOffice),
+            EventsQuery.toString                            -> Json.toJson(notification.enRouteEvents),
+            TraderEoriPage.toString                         -> notification.trader.eori,
+            TraderNamePage.toString                         -> notification.trader.name,
+            IncidentOnRoutePage.toString                    -> notification.enRouteEvents.isDefined
           )
     }
 }
@@ -92,8 +90,7 @@ final case class SimplifiedNotification(
   notificationDate: LocalDate,
   approvedLocation: String,
   trader: TraderDomain,
-  presentationOfficeId: String,
-  presentationOfficeName: String,
+  presentationOffice: CustomsOffice,
   enRouteEvents: Option[Seq[EnRouteEventDomain]]
 ) extends ArrivalNotificationDomain {
 
@@ -125,11 +122,9 @@ object SimplifiedNotification {
               "city"              -> notification.trader.city,
               "postcode"          -> notification.trader.postCode
             ),
-            PresentationOfficePage.toString -> Json.toJson(
-              CustomsOffice(notification.presentationOfficeId, notification.presentationOfficeName, Seq.empty, None)
-            ),
-            IncidentOnRoutePage.toString -> notification.enRouteEvents.isDefined,
-            EventsQuery.toString         -> Json.toJson(notification.enRouteEvents)
+            PresentationOfficePage.toString -> Json.toJson(notification.presentationOffice),
+            IncidentOnRoutePage.toString    -> notification.enRouteEvents.isDefined,
+            EventsQuery.toString            -> Json.toJson(notification.enRouteEvents)
           )
     }
   }
