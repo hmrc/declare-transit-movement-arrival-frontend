@@ -62,13 +62,38 @@ class UserAnswersServiceSpec extends SpecBase with MessagesModelGenerators {
       userAnswersService.getUserAnswers(ArrivalId(1), eoriNumber).futureValue.value mustBe a[UserAnswers]
     }
 
-    "must return None for invalid request" in {
+    "must return None when getArrivalNotificationMessage cannot get a ArrivalMovementRequest" in {
       when(mockArrivalNotificationMessageService.getArrivalNotificationMessage(any())(any(), any()))
         .thenReturn(Future.successful(None))
 
       val application = applicationBuilder(Some(emptyUserAnswers))
         .overrides(bind[ArrivalNotificationMessageService].toInstance(mockArrivalNotificationMessageService))
         .build()
+      val userAnswersService = application.injector.instanceOf[UserAnswersService]
+      userAnswersService.getUserAnswers(ArrivalId(1), eoriNumber).futureValue mustBe None
+    }
+
+    "must return None when the PresentationOffice cannot be found" in {
+      val arrivalMovementRequest = arbitrary[ArrivalMovementRequest].sample.value
+
+      val customsOffice = arbitrary[CustomsOffice]
+        .suchThat(
+          _.id != arrivalMovementRequest.customsOfficeOfPresentation.presentationOffice
+        )
+        .sample
+        .value
+
+      when(mockArrivalNotificationMessageService.getArrivalNotificationMessage(any())(any(), any()))
+        .thenReturn(Future.successful(Some(arrivalMovementRequest)))
+
+      when(mockReferenceDataConnector.getCustomsOffices()(any(), any()))
+        .thenReturn(Future.successful(Seq(customsOffice)))
+
+      val application = applicationBuilder(Some(emptyUserAnswers))
+        .overrides(bind[ArrivalNotificationMessageService].toInstance(mockArrivalNotificationMessageService))
+        .overrides(bind[ReferenceDataConnector].toInstance(mockReferenceDataConnector))
+        .build()
+
       val userAnswersService = application.injector.instanceOf[UserAnswersService]
       userAnswersService.getUserAnswers(ArrivalId(1), eoriNumber).futureValue mustBe None
     }
