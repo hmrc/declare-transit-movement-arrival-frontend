@@ -108,7 +108,7 @@ class UserAnswersToArrivalNotificationDomain {
         ContainerTranshipmentDomain(containers = containers)
       case (Some(incidentInformation), None, None, None) =>
         IncidentWithInformationDomain(incidentInformation)
-      case _ => IncidentWithoutInformationDomain()
+      case _ => IncidentWithoutInformationDomain
     }
 
   private def enRouteEvents(userAnswers: UserAnswers): Option[Seq[EnRouteEventDomain]] =

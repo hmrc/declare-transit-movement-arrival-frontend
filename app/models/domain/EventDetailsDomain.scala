@@ -35,7 +35,7 @@ object EventDetailsDomain {
         VehicularTranshipmentDomain.domainVehicularTranshipmentToVehicularTranshipment(vehicularTranshipment)
       case incidentWithInformation: IncidentWithInformationDomain =>
         IncidentWithInformationDomain.domainIncidentToIncident(incidentWithInformation)
-      case _: IncidentWithoutInformationDomain =>
+      case _: IncidentWithoutInformationDomain.type =>
         IncidentWithoutInformation()
     }
 
@@ -55,16 +55,14 @@ sealed trait IncidentDomain extends EventDetailsDomain
 object IncidentDomain {
 
   implicit lazy val incidentDomainJsonWrites: OWrites[IncidentDomain] = OWrites {
-    case i: IncidentWithInformationDomain    => Json.toJsObject(i)(IncidentWithInformationDomain.incidentWithInformationJsonWrites)
-    case i: IncidentWithoutInformationDomain => Json.toJsObject(i)(IncidentWithoutInformationDomain.incidentWithoutInformationJsonWrites)
+    case i: IncidentWithInformationDomain         => Json.toJsObject(i)(IncidentWithInformationDomain.incidentWithInformationJsonWrites)
+    case i: IncidentWithoutInformationDomain.type => Json.toJsObject(i)(IncidentWithoutInformationDomain.incidentWithoutInformationJsonWrites)
   }
 }
 
-final case class IncidentWithoutInformationDomain() extends IncidentDomain
+case object IncidentWithoutInformationDomain extends IncidentDomain {
 
-object IncidentWithoutInformationDomain {
-
-  implicit lazy val incidentWithoutInformationJsonWrites: OWrites[IncidentWithoutInformationDomain] = OWrites[IncidentWithoutInformationDomain] {
+  implicit lazy val incidentWithoutInformationJsonWrites: OWrites[IncidentWithoutInformationDomain.type] = OWrites[IncidentWithoutInformationDomain.type] {
     _ =>
       Json.obj("isTranshipment" -> false)
   }

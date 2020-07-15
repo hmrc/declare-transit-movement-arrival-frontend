@@ -37,7 +37,7 @@ class EventDetailsDomainSpec extends FreeSpec with MustMatchers with ScalaCheckP
     }
 
     "must serialise from an IncidentWithoutInformation" in {
-      forAll(arbitrary[IncidentWithoutInformationDomain]) {
+      forAll(arbitrary[IncidentWithoutInformationDomain.type]) {
         incidentWithoutInformationDomain =>
           val json = Json.obj("isTranshipment" -> false)
           Json.toJson(incidentWithoutInformationDomain: IncidentDomain)(IncidentDomain.incidentDomainJsonWrites) mustEqual json
@@ -70,7 +70,7 @@ class EventDetailsDomainSpec extends FreeSpec with MustMatchers with ScalaCheckP
 
     "must serialise" in {
 
-      forAll(arbitrary[IncidentWithoutInformationDomain]) {
+      forAll(arbitrary[IncidentWithoutInformationDomain.type]) {
         incidentWithoutInformationDomain =>
           val json = Json.obj("isTranshipment" -> false)
           Json.toJson(incidentWithoutInformationDomain)(IncidentWithoutInformationDomain.incidentWithoutInformationJsonWrites) mustEqual json

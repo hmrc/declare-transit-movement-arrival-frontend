@@ -21,13 +21,15 @@ import models.{EoriNumber, XMLWrites}
 
 import scala.xml.NodeSeq
 
-case class MessageSender(environment: String, eori: EoriNumber)
+case class MessageSender(environment: String, eori: EoriNumber) {
+  override def toString: String = s"$environment-${eori.value}"
+}
 
 object MessageSender {
 
   implicit val writes: XMLWrites[MessageSender] =
     XMLWrites(
-      a => <MesSenMES3>{escapeXml(s"${a.environment}-${a.eori.value}")}</MesSenMES3>
+      messageSender => <MesSenMES3>{escapeXml(s"${messageSender.toString}")}</MesSenMES3>
     )
 
   implicit val xmlMessageSenderReads: XmlReader[MessageSender] = {

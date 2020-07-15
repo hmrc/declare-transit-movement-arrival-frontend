@@ -40,7 +40,7 @@ object EventDetails {
       case incidentWithInformation: IncidentWithInformation =>
         IncidentWithInformation.incidentWithInformationToDomain(incidentWithInformation)
       case _: IncidentWithoutInformation =>
-        IncidentWithoutInformationDomain()
+        IncidentWithoutInformationDomain
       case vehicularTranshipment: VehicularTranshipment =>
         VehicularTranshipment.vehicularTranshipmentToDomain(vehicularTranshipment)
       case containerTranshipment: ContainerTranshipment =>
