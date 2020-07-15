@@ -16,25 +16,46 @@
 
 package services.conversion
 
+import java.time.LocalTime
+
 import base.SpecBase
-import connectors.ReferenceDataConnector
 import generators.MessagesModelGenerators
-import models.domain.{ArrivalNotificationDomain, NormalNotification}
-import models.messages.{ArrivalMovementRequest, Header}
-import models.reference.{Country, CustomsOffice}
-import org.mockito.Matchers.any
-import org.mockito.Mockito._
+import models.domain.ArrivalNotificationDomain
+import models.messages.{ArrivalMovementRequest, Header, InterchangeControlReference, MessageSender}
+import models.reference.CustomsOffice
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.inject.bind
-
-import scala.concurrent.Future
 
 class ArrivalMovementRequestToArrivalNotificationServiceSpec extends SpecBase with MessagesModelGenerators with ScalaCheckPropertyChecks {
 
   private val arrivalMovementRequestConversionService = ArrivalMovementRequestToArrivalNotificationService
 
   "convertToArrivalNotification" - {
+
+    "must convert ArrivalMovementRequest to NormalNotification" in {
+
+      forAll(
+        arbitrary[ArrivalNotificationDomain],
+        arbitrary[MessageSender],
+        arbitrary[InterchangeControlReference],
+        arbitrary[LocalTime]
+      ) {
+        (arrivalNotificationDomain, messageSender, interchangeControlReference, timeOfPresentation) =>
+          val arrivalMovementRequest = ArrivalNotificationDomainToArrivalMovementRequestService
+            .convertToSubmissionModel(
+              arrivalNotificationDomain,
+              messageSender,
+              interchangeControlReference,
+              timeOfPresentation
+            )
+
+          val result = arrivalMovementRequestConversionService
+            .convertToArrivalNotification(arrivalMovementRequest, arrivalNotificationDomain.presentationOffice)
+            .value
+
+          result mustBe arrivalNotificationDomain
+      }
+    }
 
     "must return None if MRN is malformed" in {
 
@@ -44,16 +65,6 @@ class ArrivalMovementRequestToArrivalNotificationServiceSpec extends SpecBase wi
       val customsOffice                                                  = arbitrary[CustomsOffice].sample.value
 
       arrivalMovementRequestConversionService.convertToArrivalNotification(arrivalMovementRequestWithMalformedMrn, customsOffice) mustBe None
-    }
-
-    "must convert ArrivalMovementRequest to NormalNotification for trader" in {
-
-      val genArrivalNotificationRequest = arbitrary[ArrivalMovementRequest].sample.value
-      val customsOffice                 = arbitrary[CustomsOffice].sample.value
-
-      arrivalMovementRequestConversionService
-        .convertToArrivalNotification(genArrivalNotificationRequest, customsOffice)
-        .value mustBe an[ArrivalNotificationDomain]
     }
   }
 

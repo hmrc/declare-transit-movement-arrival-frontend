@@ -26,9 +26,10 @@ class ContainerDomainSpec extends FreeSpec with MustMatchers with ScalaCheckProp
 
   "must convert to Container model" in {
 
-    forAll(arbitrary[ContainerDomain]) {
-      containerDomain =>
-        ContainerDomain.domainContainerToContainer(containerDomain) mustBe an[Container]
+    forAll(arbitrary[Container]) {
+      container =>
+        val containerToDomain: ContainerDomain = Container.containerToDomain(container)
+        ContainerDomain.domainContainerToContainer(containerToDomain) mustBe container
     }
   }
 

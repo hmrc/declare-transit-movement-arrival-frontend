@@ -36,12 +36,14 @@ class UserAnswersToArrivalNotificationDomainSpec extends SpecBase with ScalaChec
 
       forAll(arbitrary[ArrivalNotificationDomain], arbitrary[MessageSender], arbitrary[InterchangeControlReference]) {
         (arrivalNotificationDomain, messageSender, interchangeControlReference) =>
-          val arrivalMovementRequest: ArrivalMovementRequest = SubmissionModelService.convertToSubmissionModel(
-            arrivalNotificationDomain,
-            messageSender,
-            interchangeControlReference,
-            LocalTime.now()
-          )
+          val arrivalMovementRequest: ArrivalMovementRequest =
+            ArrivalNotificationDomainToArrivalMovementRequestService
+              .convertToSubmissionModel(
+                arrivalNotificationDomain,
+                messageSender,
+                interchangeControlReference,
+                LocalTime.now()
+              )
 
           val userAnswers: UserAnswers = ArrivalMovementRequestToUserAnswersService
             .convertToUserAnswers(
