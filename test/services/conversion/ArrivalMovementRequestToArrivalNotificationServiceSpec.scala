@@ -20,6 +20,10 @@ import java.time.LocalTime
 
 import base.SpecBase
 import generators.MessagesModelGenerators
+import models.EoriNumber
+import models.domain.ArrivalNotificationDomain
+import models.messages.{ArrivalMovementRequest, Header}
+import models.reference.CustomsOffice
 import models.domain.ArrivalNotificationDomain
 import models.messages.{ArrivalMovementRequest, Header, InterchangeControlReference, MessageSender}
 import models.reference.CustomsOffice

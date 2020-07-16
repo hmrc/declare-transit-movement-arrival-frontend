@@ -19,11 +19,13 @@ package services.conversion
 import models.domain.{ArrivalNotificationDomain, NormalNotification, SimplifiedNotification}
 import models.messages._
 import models.reference.CustomsOffice
-import models.{MovementReferenceNumber, NormalProcedureFlag, SimplifiedProcedureFlag}
+import models.{EoriNumber, MovementReferenceNumber, NormalProcedureFlag, SimplifiedProcedureFlag}
 
 object ArrivalMovementRequestToArrivalNotificationService {
 
-  def convertToArrivalNotification(arrivalMovementRequest: ArrivalMovementRequest, customsOffice: CustomsOffice): Option[ArrivalNotificationDomain] =
+  def convertToArrivalNotification(arrivalMovementRequest: ArrivalMovementRequest,
+                                   customsOffice: CustomsOffice,
+                                   authEoriNumber: EoriNumber): Option[ArrivalNotificationDomain] =
     (
       arrivalMovementRequest.header.procedureTypeFlag,
       MovementReferenceNumber(arrivalMovementRequest.header.movementReferenceNumber),
@@ -49,7 +51,8 @@ object ArrivalMovementRequestToArrivalNotificationService {
             arrivalMovementRequest.header.arrivalNotificationPlace,
             Trader.messagesTraderToDomainTrader(arrivalMovementRequest.trader),
             customsOffice,
-            arrivalMovementRequest.enRouteEvents.map(_.map(EnRouteEvent.enRouteEventToDomain))
+            arrivalMovementRequest.enRouteEvents.map(_.map(EnRouteEvent.enRouteEventToDomain)),
+            authEoriNumber
           )
         )
       case _ => None
