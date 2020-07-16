@@ -55,8 +55,9 @@ class UserAnswersToArrivalNotificationDomainSpec extends SpecBase with ScalaChec
           val result = service.convertToArrivalNotification(userAnswers).value
 
           val expectedResult = arrivalNotificationDomain match {
-            case normalNotification: NormalNotification         => normalNotification.copy(notificationDate     = result.notificationDate)
-            case simplifiedNotification: SimplifiedNotification => simplifiedNotification.copy(notificationDate = result.notificationDate)
+            case normalNotification: NormalNotification => normalNotification.copy(notificationDate = result.notificationDate)
+            case simplifiedNotification: SimplifiedNotification =>
+              simplifiedNotification.copy(notificationDate = result.notificationDate, authedEori = userAnswers.eoriNumber)
           }
 
           result mustEqual expectedResult

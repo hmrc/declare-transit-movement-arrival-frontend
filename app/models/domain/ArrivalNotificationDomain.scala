@@ -20,7 +20,7 @@ import java.time.LocalDate
 
 import models.messages.ProcedureType
 import models.reference.CustomsOffice
-import models.{GoodsLocation, MovementReferenceNumber}
+import models.{EoriNumber, GoodsLocation, MovementReferenceNumber}
 import pages._
 import play.api.libs.json._
 import queries.EventsQuery
@@ -92,7 +92,8 @@ final case class SimplifiedNotification(
   approvedLocation: String,
   trader: TraderDomain,
   presentationOffice: CustomsOffice,
-  enRouteEvents: Option[Seq[EnRouteEventDomain]]
+  enRouteEvents: Option[Seq[EnRouteEventDomain]],
+  authedEori: EoriNumber
 ) extends ArrivalNotificationDomain {
 
   val procedure: ProcedureType = ProcedureType.Simplified
@@ -108,25 +109,23 @@ object SimplifiedNotification {
     val authorisedLocationRegex  = "^[a-zA-Z0-9]*$"
   }
 
-  implicit lazy val writes: OWrites[SimplifiedNotification] = {
-    OWrites[SimplifiedNotification] {
-      notification =>
-        Json
-          .obj(
-            GoodsLocationPage.toString             -> GoodsLocation.AuthorisedConsigneesLocation.toString,
-            AuthorisedLocationPage.toString        -> notification.approvedLocation,
-            ConsigneeNamePage.toString             -> notification.trader.name,
-            ConsigneeEoriConfirmationPage.toString -> false, //TODO have a word with design, can we just show the EORI number page?
-            ConsigneeEoriNumberPage.toString       -> notification.trader.eori,
-            ConsigneeAddressPage.toString -> Json.obj(
-              "buildingAndStreet" -> notification.trader.streetAndNumber,
-              "city"              -> notification.trader.city,
-              "postcode"          -> notification.trader.postCode
-            ),
-            PresentationOfficePage.toString -> Json.toJson(notification.presentationOffice),
-            IncidentOnRoutePage.toString    -> notification.enRouteEvents.isDefined,
-            EventsQuery.toString            -> Json.toJson(notification.enRouteEvents)
-          )
-    }
+  implicit lazy val writes: OWrites[SimplifiedNotification] = OWrites[SimplifiedNotification] {
+    notification =>
+      Json
+        .obj(
+          GoodsLocationPage.toString             -> GoodsLocation.AuthorisedConsigneesLocation.toString,
+          AuthorisedLocationPage.toString        -> notification.approvedLocation,
+          ConsigneeNamePage.toString             -> notification.trader.name,
+          ConsigneeEoriConfirmationPage.toString -> (notification.authedEori.value == notification.trader.eori),
+          ConsigneeEoriNumberPage.toString       -> notification.trader.eori,
+          ConsigneeAddressPage.toString -> Json.obj(
+            "buildingAndStreet" -> notification.trader.streetAndNumber,
+            "city"              -> notification.trader.city,
+            "postcode"          -> notification.trader.postCode
+          ),
+          PresentationOfficePage.toString -> Json.toJson(notification.presentationOffice),
+          IncidentOnRoutePage.toString    -> notification.enRouteEvents.isDefined,
+          EventsQuery.toString            -> Json.toJson(notification.enRouteEvents)
+        )
   }
 }

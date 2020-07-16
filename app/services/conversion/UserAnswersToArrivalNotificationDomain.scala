@@ -61,7 +61,8 @@ class UserAnswersToArrivalNotificationDomain {
           countryCode     = countryCode_GB
         ),
         presentationOffice = presentationOffice,
-        enRouteEvents      = enRouteEvents(userAnswers)
+        enRouteEvents      = enRouteEvents(userAnswers),
+        authedEori         = userAnswers.eoriNumber
       )
     }
 

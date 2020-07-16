@@ -101,10 +101,7 @@ class CheckYourAnswersController @Inject()(override val messagesApi: MessagesApi
       Seq(
         helper.consigneeName,
         helper.eoriConfirmation(eori),
-        userAnswers.get(ConsigneeEoriConfirmationPage) match {
-          case Some(false) => helper.eoriNumber
-          case _           => None
-        },
+        helper.eoriNumber,
         helper.consigneeAddress,
         helper.presentationOffice
       ).flatten

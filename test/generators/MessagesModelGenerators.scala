@@ -250,7 +250,8 @@ trait MessagesModelGenerators extends Generators {
         trader             <- arbitrary[TraderDomain]
         presentationOffice <- arbitrary[CustomsOffice]
         events             <- Gen.option(listWithMaxLength[EnRouteEventDomain](NormalNotification.Constants.maxNumberOfEnRouteEvents))
-      } yield SimplifiedNotification(mrn, date, approvedLocation, trader, presentationOffice, events)
+        authedEoriNumber   <- arbitrary[EoriNumber]
+      } yield SimplifiedNotification(mrn, date, approvedLocation, trader, presentationOffice, events, authedEoriNumber)
     }
 
   implicit lazy val arbitraryArrivalNotification: Arbitrary[ArrivalNotificationDomain] =

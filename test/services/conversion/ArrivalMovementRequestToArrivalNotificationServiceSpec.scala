@@ -17,18 +17,13 @@
 package services.conversion
 
 import base.SpecBase
-import connectors.ReferenceDataConnector
 import generators.MessagesModelGenerators
-import models.domain.{ArrivalNotificationDomain, NormalNotification}
+import models.EoriNumber
+import models.domain.ArrivalNotificationDomain
 import models.messages.{ArrivalMovementRequest, Header}
-import models.reference.{Country, CustomsOffice}
-import org.mockito.Matchers.any
-import org.mockito.Mockito._
+import models.reference.CustomsOffice
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.inject.bind
-
-import scala.concurrent.Future
 
 class ArrivalMovementRequestToArrivalNotificationServiceSpec extends SpecBase with MessagesModelGenerators with ScalaCheckPropertyChecks {
 
@@ -42,17 +37,19 @@ class ArrivalMovementRequestToArrivalNotificationServiceSpec extends SpecBase wi
       val header: Header                                                 = arrivalMovementRequest.header.copy(movementReferenceNumber = "Invalid MRN")
       val arrivalMovementRequestWithMalformedMrn: ArrivalMovementRequest = arrivalMovementRequest.copy(header = header)
       val customsOffice                                                  = arbitrary[CustomsOffice].sample.value
+      val authedEoriNumber                                               = arbitrary[EoriNumber].sample.value
 
-      arrivalMovementRequestConversionService.convertToArrivalNotification(arrivalMovementRequestWithMalformedMrn, customsOffice) mustBe None
+      arrivalMovementRequestConversionService.convertToArrivalNotification(arrivalMovementRequestWithMalformedMrn, customsOffice, authedEoriNumber) mustBe None
     }
 
     "must convert ArrivalMovementRequest to NormalNotification for trader" in {
 
       val genArrivalNotificationRequest = arbitrary[ArrivalMovementRequest].sample.value
       val customsOffice                 = arbitrary[CustomsOffice].sample.value
+      val authedEoriNumber              = arbitrary[EoriNumber].sample.value
 
       arrivalMovementRequestConversionService
-        .convertToArrivalNotification(genArrivalNotificationRequest, customsOffice)
+        .convertToArrivalNotification(genArrivalNotificationRequest, customsOffice, authedEoriNumber)
         .value mustBe an[ArrivalNotificationDomain]
     }
   }
