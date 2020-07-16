@@ -17,6 +17,7 @@
 package services.conversion
 
 import generators.MessagesModelGenerators
+import models.EoriNumber
 import models.messages.ArrivalMovementRequest
 import models.reference.CustomsOffice
 import org.scalacheck.Arbitrary.arbitrary
@@ -39,15 +40,16 @@ class ArrivalNotificationDomainToArrivalMovementRequestServiceSpec
 
     "must convert NormalNotification to ArrivalMovementRequest" in {
 
-      forAll(arbitrary[ArrivalMovementRequest], arbitrary[CustomsOffice]) {
-        (arrivalMovementRequest, customsOffice) =>
+      forAll(arbitrary[ArrivalMovementRequest], arbitrary[CustomsOffice], arbitrary[EoriNumber]) {
+        (arrivalMovementRequest, customsOffice, eoriNumber) =>
           val customsOfficeWithMatchingId: CustomsOffice = customsOffice
             .copy(id = arrivalMovementRequest.customsOfficeOfPresentation.presentationOffice)
 
           val arrivalNotificationDomain = ArrivalMovementRequestToArrivalNotificationService
             .convertToArrivalNotification(
               arrivalMovementRequest,
-              customsOfficeWithMatchingId
+              customsOfficeWithMatchingId,
+              eoriNumber
             )
             .value
 
