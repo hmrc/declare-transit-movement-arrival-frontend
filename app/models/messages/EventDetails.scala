@@ -137,18 +137,18 @@ object IncidentWithoutInformation {
       <INCINC>
         {
           <IncFlaINC3>1</IncFlaINC3>
-          <IncInfINC4LNG>{Header.Constants.languageCode.code}</IncInfINC4LNG> ++ //TODO Do we need this???
+          <IncInfINC4LNG>{Header.Constants.languageCode.code}</IncInfINC4LNG> ++
           incident.date.fold[NodeSeq](NodeSeq.Empty)(date =>
             <EndDatINC6>{Format.dateFormatted(date)}</EndDatINC6>
           ) ++
           incident.authority.fold[NodeSeq](NodeSeq.Empty)(authority =>
             <EndAutINC7>{escapeXml(authority)}</EndAutINC7>
           ) ++
-          <EndAutINC7LNG>{Header.Constants.languageCode.code}</EndAutINC7LNG> ++ //TODO or this
+          <EndAutINC7LNG>{Header.Constants.languageCode.code}</EndAutINC7LNG> ++ //TODO This potentially needs to be included in the above fold as the elements are paired
           incident.place.fold(NodeSeq.Empty)(place =>
             <EndPlaINC10>{escapeXml(place)}</EndPlaINC10>
           ) ++
-          <EndPlaINC10LNG>{Header.Constants.languageCode.code}</EndPlaINC10LNG> ++ //TODO or this
+          <EndPlaINC10LNG>{Header.Constants.languageCode.code}</EndPlaINC10LNG> ++
           incident.country.fold(NodeSeq.Empty)(country =>
             <EndCouINC12>{escapeXml(country)}</EndCouINC12>
           )
