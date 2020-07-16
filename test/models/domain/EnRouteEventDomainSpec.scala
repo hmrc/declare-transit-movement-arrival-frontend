@@ -36,14 +36,9 @@ class EnRouteEventDomainSpec extends FreeSpec with MustMatchers with ScalaCheckP
           "eventCountry"     -> enRouteEvent.country,
           "seals"            -> Json.toJson(enRouteEvent.seals),
           "haveSealsChanged" -> enRouteEvent.seals.isDefined
-        ) ++ enRouteEvent.eventDetails
-          .map {
-            result =>
-              Json.toJsObject(result).filterNulls
-          }
-          .getOrElse(JsObject.empty)
+        ) ++ Json.toJsObject(enRouteEvent.eventDetails)
 
-        Json.toJson(enRouteEvent) mustEqual json
+        Json.toJson(enRouteEvent) mustEqual json.filterNulls
     }
   }
 

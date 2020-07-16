@@ -41,9 +41,7 @@ class HeaderSpec extends SpecBase with ScalaCheckPropertyChecks with MessagesMod
             movementReferenceNumber  = header.movementReferenceNumber,
             procedureTypeFlag        = NormalProcedureFlag,
             arrivalNotificationPlace = header.arrivalNotificationPlace,
-            notificationDate         = arrivalNotificationDate,
-            presentationOfficeId     = header.presentationOfficeId,
-            presentationOfficeName   = header.presentationOfficeName
+            notificationDate         = arrivalNotificationDate
           )
 
           val expectedResult: NodeSeq =
@@ -51,9 +49,6 @@ class HeaderSpec extends SpecBase with ScalaCheckPropertyChecks with MessagesMod
               <DocNumHEA5>{escapeXml(minimalHeader.movementReferenceNumber)}</DocNumHEA5>
               <ArrNotPlaHEA60>{escapeXml(minimalHeader.arrivalNotificationPlace)}</ArrNotPlaHEA60>
               <ArrNotPlaHEA60LNG>{LanguageCodeEnglish.code}</ArrNotPlaHEA60LNG>
-              <ArrAgrLocCodHEA62>{escapeXml(minimalHeader.presentationOfficeId)}</ArrAgrLocCodHEA62>
-              <ArrAgrLocOfGooHEA63>{escapeXml(minimalHeader.presentationOfficeName)}</ArrAgrLocOfGooHEA63>
-              <ArrAgrLocOfGooHEA63LNG>{LanguageCodeEnglish.code}</ArrAgrLocOfGooHEA63LNG>
               <SimProFlaHEA132>{escapeXml(minimalHeader.procedureTypeFlag.code)}</SimProFlaHEA132>
               <ArrNotDatHEA141>{Format.dateFormatted(arrivalNotificationDate)}</ArrNotDatHEA141>
             </HEAHEA>
@@ -82,9 +77,6 @@ class HeaderSpec extends SpecBase with ScalaCheckPropertyChecks with MessagesMod
               {customsSubPlaceNode.getOrElse(NodeSeq.Empty)}
               <ArrNotPlaHEA60>{escapeXml(normalHeader.arrivalNotificationPlace)}</ArrNotPlaHEA60>
               <ArrNotPlaHEA60LNG>{LanguageCodeEnglish.code}</ArrNotPlaHEA60LNG>
-              <ArrAgrLocCodHEA62>{escapeXml(normalHeader.presentationOfficeId)}</ArrAgrLocCodHEA62>
-              <ArrAgrLocOfGooHEA63>{escapeXml(normalHeader.presentationOfficeName)}</ArrAgrLocOfGooHEA63>
-              <ArrAgrLocOfGooHEA63LNG>{LanguageCodeEnglish.code}</ArrAgrLocOfGooHEA63LNG>
               {authorisedLocationOfGoods.getOrElse(NodeSeq.Empty)}
               <SimProFlaHEA132>{normalHeader.procedureTypeFlag.code}</SimProFlaHEA132>
               <ArrNotDatHEA141>{Format.dateFormatted(normalHeader.notificationDate)}</ArrNotDatHEA141>
@@ -94,9 +86,7 @@ class HeaderSpec extends SpecBase with ScalaCheckPropertyChecks with MessagesMod
       }
     }
 
-    //TODO: This isn't needed at the moment but the build xml on the
-    //TODO: Header model needs refactoring when it goes back in
-    "must deserialize from xml" ignore {
+    "must deserialize from xml" in {
       forAll(arbitrary[Header]) {
         header =>
           val xml    = header.toXml

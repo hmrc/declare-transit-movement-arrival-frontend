@@ -19,28 +19,24 @@ package services.conversion
 import java.time.LocalDate
 
 import derivable.DeriveNumberOfEvents
-import models.domain._
-import models.reference.CountryCode
 import models.GoodsLocation.{AuthorisedConsigneesLocation, BorderForceOffice}
-import models.messages._
+import models.domain._
+import models.reference.{CountryCode, CustomsOffice}
 import models.{Index, UserAnswers}
 import pages._
 import pages.events._
 import pages.events.transhipments._
 import queries.{ContainersQuery, SealsQuery}
 
-class ArrivalNotificationConversionService {
+class UserAnswersToArrivalNotificationDomain {
 
   val countryCode_GB = "GB"
 
   def convertToArrivalNotification(userAnswers: UserAnswers): Option[ArrivalNotificationDomain] =
     userAnswers.get(GoodsLocationPage) match {
-      case Some(BorderForceOffice) =>
-        createNormalNotification(userAnswers)
-      case Some(AuthorisedConsigneesLocation) =>
-        createSimplifiedNotification(userAnswers)
-      case _ =>
-        None
+      case Some(BorderForceOffice)            => createNormalNotification(userAnswers)
+      case Some(AuthorisedConsigneesLocation) => createSimplifiedNotification(userAnswers)
+      case _                                  => None
     }
 
   private def createSimplifiedNotification(userAnswers: UserAnswers): Option[SimplifiedNotification] =
@@ -54,9 +50,8 @@ class ArrivalNotificationConversionService {
 
       SimplifiedNotification(
         movementReferenceNumber = userAnswers.id,
-        notificationPlace       = notificationPlace, //TODO: This needs removing from SimplifiedNotification - isn't used
         notificationDate        = LocalDate.now(),
-        approvedLocation        = Some(notificationPlace), // TODO: This is not optional since we always collect this
+        approvedLocation        = notificationPlace,
         trader = TraderDomain(
           eori            = traderEori,
           name            = traderName,
@@ -65,9 +60,9 @@ class ArrivalNotificationConversionService {
           city            = tradersAddress.city,
           countryCode     = countryCode_GB
         ),
-        presentationOfficeId   = presentationOffice.id,
-        presentationOfficeName = presentationOffice.name,
-        enRouteEvents          = enRouteEvents(userAnswers)
+        presentationOffice = presentationOffice,
+        enRouteEvents      = enRouteEvents(userAnswers),
+        authedEori         = userAnswers.eoriNumber
       )
     }
 
@@ -93,9 +88,8 @@ class ArrivalNotificationConversionService {
           city            = tradersAddress.city,
           countryCode     = countryCode_GB
         ),
-        presentationOfficeId   = presentationOffice.id,
-        presentationOfficeName = presentationOffice.name,
-        enRouteEvents          = enRouteEvents(userAnswers)
+        presentationOffice = presentationOffice,
+        enRouteEvents      = enRouteEvents(userAnswers)
       )
 
   private def eventDetails(
@@ -103,20 +97,19 @@ class ArrivalNotificationConversionService {
     transportIdentity: Option[String],
     transportCountry: Option[CountryCode],
     containers: Option[Seq[ContainerDomain]]
-  ): Option[EventDetailsDomain] =
+  ): EventDetailsDomain =
     (incidentInformation, transportIdentity, transportCountry, containers) match {
-      case (incidentInformation, None, None, None) =>
-        Some(IncidentDomain(incidentInformation))
-      case (None, Some(transportIdentity), Some(transportCountry), _) =>
-        Some(
-          VehicularTranshipmentDomain(
-            transportIdentity = transportIdentity,
-            transportCountry  = transportCountry,
-            containers        = containers
-          ))
+      case (None, Some(transportIdentity), Some(transportCountry), containers) =>
+        VehicularTranshipmentDomain(
+          transportIdentity = transportIdentity,
+          transportCountry  = transportCountry,
+          containers        = containers
+        )
       case (None, None, None, Some(containers)) =>
-        Some(ContainerTranshipmentDomain(containers = containers))
-      case _ => None
+        ContainerTranshipmentDomain(containers = containers)
+      case (Some(incidentInformation), None, None, None) =>
+        IncidentWithInformationDomain(incidentInformation)
+      case _ => IncidentWithoutInformationDomain
     }
 
   private def enRouteEvents(userAnswers: UserAnswers): Option[Seq[EnRouteEventDomain]] =

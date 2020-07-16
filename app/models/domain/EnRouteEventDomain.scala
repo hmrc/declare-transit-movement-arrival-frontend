@@ -21,12 +21,11 @@ import play.api.libs.json.{JsObject, Json, OWrites}
 import models._
 import models.reference.CountryCode
 
-final case class EnRouteEventDomain(
-  place: String,
-  country: CountryCode,
-  alreadyInNcts: Boolean,
-  eventDetails: Option[EventDetailsDomain], //<CouTEV13>{enRouteEventWithContainer.countryCode.code}</CouTEV13> does this need to be an option
-  seals: Option[Seq[SealDomain]])
+final case class EnRouteEventDomain(place: String,
+                                    country: CountryCode,
+                                    alreadyInNcts: Boolean,
+                                    eventDetails: EventDetailsDomain,
+                                    seals: Option[Seq[SealDomain]])
 
 object EnRouteEventDomain {
 
@@ -44,7 +43,7 @@ object EnRouteEventDomain {
             place,
             country,
             alreadyInNct,
-            eventDetails.map(EventDetailsDomain.eventDetailsDomainToEventDetails),
+            EventDetailsDomain.eventDetailsDomainToEventDetails(eventDetails),
             seals.map(_.map(SealDomain.domainSealToSeal))
           )
       }
@@ -53,20 +52,17 @@ object EnRouteEventDomain {
   implicit lazy val writes: OWrites[EnRouteEventDomain] =
     OWrites[EnRouteEventDomain] {
       event =>
-        Json
+        val json = Json
           .obj(
             "eventPlace"       -> event.place,
             "eventReported"    -> event.alreadyInNcts,
             "eventCountry"     -> event.country,
             "seals"            -> Json.toJson(event.seals),
             "haveSealsChanged" -> event.seals.isDefined
-          ) ++ event.eventDetails
-          .map {
-            result =>
-              Json.toJsObject(result).filterNulls
-          }
-          .getOrElse(JsObject.empty)
+          ) ++
+          Json.toJsObject(event.eventDetails)
 
+        json.filterNulls
     }
 
 }

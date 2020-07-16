@@ -37,7 +37,7 @@ import java.time.LocalDate
 import cats.syntax.all._
 import com.lucidchart.open.xtract.{__, XmlReader}
 import models.XMLReads._
-import models.{LanguageCode, LanguageCodeEnglish, NormalProcedureFlag, ProcedureTypeFlag, XMLWrites}
+import models.{LanguageCode, LanguageCodeEnglish, ProcedureTypeFlag, XMLWrites}
 import utils.Format
 
 import scala.xml.NodeSeq
@@ -45,8 +45,6 @@ import scala.xml.NodeSeq
 case class Header(movementReferenceNumber: String,
                   customsSubPlace: Option[String] = None,
                   arrivalNotificationPlace: String,
-                  presentationOfficeId: String,
-                  presentationOfficeName: String,
                   arrivalAgreedLocationOfGoods: Option[String] = None,
                   procedureTypeFlag: ProcedureTypeFlag,
                   notificationDate: LocalDate)
@@ -69,15 +67,7 @@ object Header {
               }
           }
           <ArrNotPlaHEA60>{escapeXml(header.arrivalNotificationPlace)}</ArrNotPlaHEA60>
-
           <ArrNotPlaHEA60LNG>{Header.Constants.languageCode.code}</ArrNotPlaHEA60LNG>
-          {
-            if(header.procedureTypeFlag == NormalProcedureFlag) {
-              <ArrAgrLocCodHEA62>{escapeXml(header.presentationOfficeId)}</ArrAgrLocCodHEA62>
-              <ArrAgrLocOfGooHEA63>{escapeXml(header.presentationOfficeName)}</ArrAgrLocOfGooHEA63>
-              <ArrAgrLocOfGooHEA63LNG>{Header.Constants.languageCode.code}</ArrAgrLocOfGooHEA63LNG>
-            }
-          }
           {
             header.arrivalAgreedLocationOfGoods.fold(NodeSeq.Empty) { location =>
                 <ArrAutLocOfGooHEA65>{escapeXml(location)}</ArrAutLocOfGooHEA65>
@@ -92,8 +82,6 @@ object Header {
     (__ \ "DocNumHEA5").read[String],
     (__ \ "CusSubPlaHEA66").read[String].optional,
     (__ \ "ArrNotPlaHEA60").read[String],
-    (__ \ "ArrAgrLocCodHEA62").read[String],
-    (__ \ "ArrAgrLocOfGooHEA63").read[String],
     (__ \ "ArrAutLocOfGooHEA65").read[String].optional,
     (__ \ "SimProFlaHEA132").read[ProcedureTypeFlag],
     (__ \ "ArrNotDatHEA141").read[LocalDate]

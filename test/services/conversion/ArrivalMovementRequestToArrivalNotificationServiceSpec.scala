@@ -17,22 +17,17 @@
 package services.conversion
 
 import base.SpecBase
-import connectors.ReferenceDataConnector
 import generators.MessagesModelGenerators
-import models.domain.NormalNotification
+import models.EoriNumber
+import models.domain.ArrivalNotificationDomain
 import models.messages.{ArrivalMovementRequest, Header}
-import models.reference.Country
-import org.mockito.Matchers.any
-import org.mockito.Mockito._
+import models.reference.CustomsOffice
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.inject.bind
 
-import scala.concurrent.Future
+class ArrivalMovementRequestToArrivalNotificationServiceSpec extends SpecBase with MessagesModelGenerators with ScalaCheckPropertyChecks {
 
-class ArrivalMovementRequestConversionServiceSpec extends SpecBase with MessagesModelGenerators with ScalaCheckPropertyChecks {
-
-  private val arrivalMovementRequestConversionService = ArrivalMovementRequestConversionService
+  private val arrivalMovementRequestConversionService = ArrivalMovementRequestToArrivalNotificationService
 
   "convertToArrivalNotification" - {
 
@@ -41,24 +36,21 @@ class ArrivalMovementRequestConversionServiceSpec extends SpecBase with Messages
       val arrivalMovementRequest: ArrivalMovementRequest                 = arbitrary[ArrivalMovementRequest].sample.value
       val header: Header                                                 = arrivalMovementRequest.header.copy(movementReferenceNumber = "Invalid MRN")
       val arrivalMovementRequestWithMalformedMrn: ArrivalMovementRequest = arrivalMovementRequest.copy(header = header)
+      val customsOffice                                                  = arbitrary[CustomsOffice].sample.value
+      val authedEoriNumber                                               = arbitrary[EoriNumber].sample.value
 
-      arrivalMovementRequestConversionService.convertToArrivalNotification(arrivalMovementRequestWithMalformedMrn) mustBe None
-    }
-
-    "must return None when the CustomsSubPlace is not defined" in {
-
-      val arrivalMovementRequest: ArrivalMovementRequest                = arbitrary[ArrivalMovementRequest].sample.value
-      val header: Header                                                = arrivalMovementRequest.header.copy(customsSubPlace = None)
-      val arrivalMovementRequestWithoutSubplace: ArrivalMovementRequest = arrivalMovementRequest.copy(header = header)
-
-      arrivalMovementRequestConversionService.convertToArrivalNotification(arrivalMovementRequestWithoutSubplace) mustBe None
+      arrivalMovementRequestConversionService.convertToArrivalNotification(arrivalMovementRequestWithMalformedMrn, customsOffice, authedEoriNumber) mustBe None
     }
 
     "must convert ArrivalMovementRequest to NormalNotification for trader" in {
 
       val genArrivalNotificationRequest = arbitrary[ArrivalMovementRequest].sample.value
+      val customsOffice                 = arbitrary[CustomsOffice].sample.value
+      val authedEoriNumber              = arbitrary[EoriNumber].sample.value
 
-      arrivalMovementRequestConversionService.convertToArrivalNotification(genArrivalNotificationRequest).value mustBe an[NormalNotification]
+      arrivalMovementRequestConversionService
+        .convertToArrivalNotification(genArrivalNotificationRequest, customsOffice, authedEoriNumber)
+        .value mustBe an[ArrivalNotificationDomain]
     }
   }
 

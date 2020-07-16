@@ -24,9 +24,8 @@ import com.lucidchart.open.xtract.{ParseFailure, XmlReader, __ => xmlPath}
 import models.XMLReads._
 import models.XMLWrites
 import models.XMLWrites._
-import models.domain.{ContainerTranshipmentDomain, EventDetailsDomain, IncidentDomain, VehicularTranshipmentDomain}
+import models.domain._
 import models.reference.CountryCode
-import uk.gov.hmrc.http.HeaderCarrier
 import utils.Format
 
 import scala.language.implicitConversions
@@ -36,16 +35,16 @@ sealed trait EventDetails
 
 object EventDetails {
 
-  object Constants {
-    val authorityLength = 35
-    val placeLength     = 35
-  }
-
   def buildEventDetailsDomain(eventDetails: EventDetails): EventDetailsDomain =
     eventDetails match {
-      case vehicularTranshipment: VehicularTranshipment => VehicularTranshipment.vehicularTranshipmentToDomain(vehicularTranshipment)
-      case incident: Incident                           => Incident.incidentToDomain(incident)
-      case containerTranshipment: ContainerTranshipment => ContainerTranshipment.containerTranshipmentToDomain(containerTranshipment)
+      case incidentWithInformation: IncidentWithInformation =>
+        IncidentWithInformation.incidentWithInformationToDomain(incidentWithInformation)
+      case _: IncidentWithoutInformation =>
+        IncidentWithoutInformationDomain
+      case vehicularTranshipment: VehicularTranshipment =>
+        VehicularTranshipment.vehicularTranshipmentToDomain(vehicularTranshipment)
+      case containerTranshipment: ContainerTranshipment =>
+        ContainerTranshipment.containerTranshipmentToDomain(containerTranshipment)
     }
 
   implicit def xmlReader: XmlReader[EventDetails] = XmlReader {
@@ -61,39 +60,40 @@ object EventDetails {
   }
 }
 
-final case class Incident(
-  incidentInformation: Option[String],
+sealed trait Incident extends EventDetails
+
+object Incident {
+  implicit lazy val xmlReader: XmlReader[Incident] = IncidentWithInformation.xmlReader or IncidentWithoutInformation.xmlReader
+}
+
+final case class IncidentWithInformation(
+  incidentInformation: String,
   date: Option[LocalDate]   = None,
   authority: Option[String] = None,
   place: Option[String]     = None,
   country: Option[String]   = None
-) extends EventDetails
+) extends Incident
 
-object Incident {
+object IncidentWithInformation {
 
   object Constants {
     val informationLength = 350
   }
 
-  def incidentToDomain(incident: Incident): IncidentDomain =
-    Incident
+  def incidentWithInformationToDomain(incident: IncidentWithInformation): IncidentWithInformationDomain =
+    IncidentWithInformation
       .unapply(incident)
       .map {
-        case _ @(incidentInformation, _, _, _, _) =>
-          IncidentDomain(incidentInformation)
+        case (incidentInformation, _, _, _, _) =>
+          IncidentWithInformationDomain(incidentInformation)
       }
       .get
 
-  implicit def xmlWrites: XMLWrites[Incident] = XMLWrites[Incident] {
+  implicit def xmlWrites: XMLWrites[IncidentWithInformation] = XMLWrites[IncidentWithInformation] {
     incident =>
       <INCINC>
       {
-      incident.incidentInformation.map(
-        information =>
-        <IncInfINC4>{escapeXml(information)}</IncInfINC4>
-      ).getOrElse(
-        <IncFlaINC3>1</IncFlaINC3>
-      ) ++
+        <IncInfINC4>{escapeXml(incident.incidentInformation)}</IncInfINC4>
         <IncInfINC4LNG>{Header.Constants.languageCode.code}</IncInfINC4LNG> ++
         incident.date.fold[NodeSeq](NodeSeq.Empty)(date =>
           <EndDatINC6>{Format.dateFormatted(date)}</EndDatINC6>
@@ -113,15 +113,56 @@ object Incident {
     </INCINC>
   }
 
-  implicit val xmlReader: XmlReader[Incident] =
+  implicit val xmlReader: XmlReader[IncidentWithInformation] =
     (
-      (xmlPath \ "IncInfINC4").read[String].optional,
+      (xmlPath \ "IncInfINC4").read[String],
       (xmlPath \ "EndDatINC6").read[LocalDate].optional,
       (xmlPath \ "EndAutINC7").read[String].optional,
       (xmlPath \ "EndPlaINC10").read[String].optional,
       (xmlPath \ "EndCouINC12").read[String].optional
     ).mapN(apply)
+}
 
+final case class IncidentWithoutInformation(
+  date: Option[LocalDate]   = None,
+  authority: Option[String] = None,
+  place: Option[String]     = None,
+  country: Option[String]   = None
+) extends Incident
+
+object IncidentWithoutInformation {
+
+  implicit def xmlWrites: XMLWrites[IncidentWithoutInformation] = XMLWrites[IncidentWithoutInformation] {
+    incident =>
+      <INCINC>
+        {
+          <IncFlaINC3>1</IncFlaINC3>
+          <IncInfINC4LNG>{Header.Constants.languageCode.code}</IncInfINC4LNG> ++
+          incident.date.fold[NodeSeq](NodeSeq.Empty)(date =>
+            <EndDatINC6>{Format.dateFormatted(date)}</EndDatINC6>
+          ) ++
+          incident.authority.fold[NodeSeq](NodeSeq.Empty)(authority =>
+            <EndAutINC7>{escapeXml(authority)}</EndAutINC7>
+          ) ++
+          <EndAutINC7LNG>{Header.Constants.languageCode.code}</EndAutINC7LNG> ++ //TODO This potentially needs to be included in the above fold as the elements are paired
+          incident.place.fold(NodeSeq.Empty)(place =>
+            <EndPlaINC10>{escapeXml(place)}</EndPlaINC10>
+          ) ++
+          <EndPlaINC10LNG>{Header.Constants.languageCode.code}</EndPlaINC10LNG> ++
+          incident.country.fold(NodeSeq.Empty)(country =>
+            <EndCouINC12>{escapeXml(country)}</EndCouINC12>
+          )
+        }
+      </INCINC>
+  }
+
+  implicit val xmlReader: XmlReader[IncidentWithoutInformation] =
+    (
+      (xmlPath \ "EndDatINC6").read[LocalDate].optional,
+      (xmlPath \ "EndAutINC7").read[String].optional,
+      (xmlPath \ "EndPlaINC10").read[String].optional,
+      (xmlPath \ "EndCouINC12").read[String].optional
+    ).mapN(apply)
 }
 
 sealed trait Transhipment extends EventDetails

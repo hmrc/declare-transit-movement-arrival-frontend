@@ -83,7 +83,7 @@ class ArrivalNotificationDomainSpec extends FreeSpec with MustMatchers with Scal
         "city"              -> notification.trader.city,
         "postcode"          -> notification.trader.postCode
       ),
-      PresentationOfficePage.toString                 -> Json.toJson(CustomsOffice(notification.presentationOfficeId, notification.presentationOfficeName, Seq.empty, None)),
+      PresentationOfficePage.toString                 -> Json.toJson(notification.presentationOffice),
       EventsQuery.toString                            -> Json.toJson(notification.enRouteEvents),
       TraderEoriPage.toString                         -> notification.trader.eori,
       TraderNamePage.toString                         -> notification.trader.name,
@@ -94,14 +94,18 @@ class ArrivalNotificationDomainSpec extends FreeSpec with MustMatchers with Scal
 
   private def createSimplifiedNotificationJson(notification: SimplifiedNotification): JsObject =
     Json.obj(
-      "procedure"               -> notification.procedure,
-      "movementReferenceNumber" -> notification.movementReferenceNumber,
-      "notificationPlace"       -> notification.notificationPlace,
-      "notificationDate"        -> notification.notificationDate,
-      "enRouteEvents"           -> Json.toJson(notification.enRouteEvents),
-      "approvedLocation"        -> Json.toJson(notification.approvedLocation),
-      "trader"                  -> Json.toJson(notification.trader),
-      "presentationOfficeId"    -> notification.presentationOfficeId,
-      "presentationOfficeName"  -> notification.presentationOfficeName
+      GoodsLocationPage.toString             -> GoodsLocation.AuthorisedConsigneesLocation.toString,
+      AuthorisedLocationPage.toString        -> notification.approvedLocation,
+      ConsigneeNamePage.toString             -> notification.trader.name,
+      ConsigneeEoriConfirmationPage.toString -> (notification.authedEori.value == notification.trader.eori),
+      ConsigneeEoriNumberPage.toString       -> notification.trader.eori,
+      ConsigneeAddressPage.toString -> Json.obj(
+        "buildingAndStreet" -> notification.trader.streetAndNumber,
+        "city"              -> notification.trader.city,
+        "postcode"          -> notification.trader.postCode
+      ),
+      PresentationOfficePage.toString -> Json.toJson(notification.presentationOffice),
+      IncidentOnRoutePage.toString    -> notification.enRouteEvents.isDefined,
+      EventsQuery.toString            -> Json.toJson(notification.enRouteEvents)
     )
 }

@@ -20,20 +20,25 @@ import java.time.LocalDate
 
 import models.messages.ProcedureType
 import models.reference.CustomsOffice
-import models.{GoodsLocation, MovementReferenceNumber}
+import models.{EoriNumber, GoodsLocation, MovementReferenceNumber}
 import pages._
 import play.api.libs.json._
 import queries.EventsQuery
 
 import scala.language.implicitConversions
 
-sealed trait ArrivalNotificationDomain
+sealed trait ArrivalNotificationDomain {
+  def movementReferenceNumber: MovementReferenceNumber
+  def trader: TraderDomain
+  def notificationDate: LocalDate
+  def presentationOffice: CustomsOffice
+}
 
 object ArrivalNotificationDomain {
 
-  implicit lazy val writes: Writes[ArrivalNotificationDomain] = Writes {
-    case n: NormalNotification     => Json.toJson(n)(NormalNotification.writes)
-    case s: SimplifiedNotification => Json.toJson(s)(SimplifiedNotification.writes)
+  implicit lazy val writes: OWrites[ArrivalNotificationDomain] = OWrites {
+    case n: NormalNotification     => Json.toJsObject(n)(NormalNotification.writes)
+    case s: SimplifiedNotification => Json.toJsObject(s)(SimplifiedNotification.writes)
   }
 }
 
@@ -42,8 +47,7 @@ final case class NormalNotification(movementReferenceNumber: MovementReferenceNu
                                     notificationDate: LocalDate,
                                     customsSubPlace: String,
                                     trader: TraderDomain,
-                                    presentationOfficeId: String,
-                                    presentationOfficeName: String,
+                                    presentationOffice: CustomsOffice,
                                     enRouteEvents: Option[Seq[EnRouteEventDomain]])
     extends ArrivalNotificationDomain {
 
@@ -73,25 +77,23 @@ object NormalNotification {
               "postcode"          -> notification.trader.postCode
             ),
             IsTraderAddressPlaceOfNotificationPage.toString -> notification.notificationPlace.equalsIgnoreCase(notification.trader.postCode),
-            PresentationOfficePage.toString -> Json.toJson(
-              CustomsOffice(notification.presentationOfficeId, notification.presentationOfficeName, Seq.empty, None)),
-            EventsQuery.toString         -> Json.toJson(notification.enRouteEvents),
-            TraderEoriPage.toString      -> notification.trader.eori,
-            TraderNamePage.toString      -> notification.trader.name,
-            IncidentOnRoutePage.toString -> notification.enRouteEvents.isDefined
+            PresentationOfficePage.toString                 -> Json.toJson(notification.presentationOffice),
+            EventsQuery.toString                            -> Json.toJson(notification.enRouteEvents),
+            TraderEoriPage.toString                         -> notification.trader.eori,
+            TraderNamePage.toString                         -> notification.trader.name,
+            IncidentOnRoutePage.toString                    -> notification.enRouteEvents.isDefined
           )
     }
 }
 
 final case class SimplifiedNotification(
   movementReferenceNumber: MovementReferenceNumber,
-  notificationPlace: String,
   notificationDate: LocalDate,
-  approvedLocation: Option[String],
+  approvedLocation: String,
   trader: TraderDomain,
-  presentationOfficeId: String,
-  presentationOfficeName: String,
-  enRouteEvents: Option[Seq[EnRouteEventDomain]]
+  presentationOffice: CustomsOffice,
+  enRouteEvents: Option[Seq[EnRouteEventDomain]],
+  authedEori: EoriNumber
 ) extends ArrivalNotificationDomain {
 
   val procedure: ProcedureType = ProcedureType.Simplified
@@ -107,21 +109,23 @@ object SimplifiedNotification {
     val authorisedLocationRegex  = "^[a-zA-Z0-9]*$"
   }
 
-  implicit lazy val writes: OWrites[SimplifiedNotification] = {
-    OWrites[SimplifiedNotification] {
-      notification =>
-        Json
-          .obj(
-            "procedure"               -> Json.toJson(notification.procedure),
-            "movementReferenceNumber" -> notification.movementReferenceNumber,
-            "notificationPlace"       -> notification.notificationPlace,
-            "notificationDate"        -> notification.notificationDate,
-            "approvedLocation"        -> notification.approvedLocation,
-            "trader"                  -> Json.toJson(notification.trader),
-            "presentationOfficeId"    -> notification.presentationOfficeId,
-            "presentationOfficeName"  -> notification.presentationOfficeName,
-            "enRouteEvents"           -> Json.toJson(notification.enRouteEvents)
-          )
-    }
+  implicit lazy val writes: OWrites[SimplifiedNotification] = OWrites[SimplifiedNotification] {
+    notification =>
+      Json
+        .obj(
+          GoodsLocationPage.toString             -> GoodsLocation.AuthorisedConsigneesLocation.toString,
+          AuthorisedLocationPage.toString        -> notification.approvedLocation,
+          ConsigneeNamePage.toString             -> notification.trader.name,
+          ConsigneeEoriConfirmationPage.toString -> (notification.authedEori.value == notification.trader.eori),
+          ConsigneeEoriNumberPage.toString       -> notification.trader.eori,
+          ConsigneeAddressPage.toString -> Json.obj(
+            "buildingAndStreet" -> notification.trader.streetAndNumber,
+            "city"              -> notification.trader.city,
+            "postcode"          -> notification.trader.postCode
+          ),
+          PresentationOfficePage.toString -> Json.toJson(notification.presentationOffice),
+          IncidentOnRoutePage.toString    -> notification.enRouteEvents.isDefined,
+          EventsQuery.toString            -> Json.toJson(notification.enRouteEvents)
+        )
   }
 }

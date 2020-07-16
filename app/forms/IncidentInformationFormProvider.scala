@@ -19,7 +19,7 @@ package forms
 import forms.mappings.Mappings
 import javax.inject.Inject
 import play.api.data.Form
-import models.messages.Incident.Constants.informationLength
+import models.messages.IncidentWithInformation.Constants.informationLength
 
 class IncidentInformationFormProvider @Inject() extends Mappings {
 

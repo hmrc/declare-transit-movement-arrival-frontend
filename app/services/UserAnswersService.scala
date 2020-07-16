@@ -16,6 +16,7 @@
 
 package services
 
+import connectors.ReferenceDataConnector
 import javax.inject.Inject
 import models.{ArrivalId, EoriNumber, MovementReferenceNumber, UserAnswers}
 import repositories.SessionRepository
@@ -24,13 +25,26 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class UserAnswersService @Inject()(arrivalNotificationMessageService: ArrivalNotificationMessageService, sessionRepository: SessionRepository)(
-  implicit ec: ExecutionContext) {
+class UserAnswersService @Inject()(arrivalNotificationMessageService: ArrivalNotificationMessageService,
+                                   sessionRepository: SessionRepository,
+                                   referenceDataConnector: ReferenceDataConnector)(implicit ec: ExecutionContext) {
 
   def getUserAnswers(arrivalId: ArrivalId, eoriNumber: EoriNumber)(implicit hc: HeaderCarrier): Future[Option[UserAnswers]] =
-    arrivalNotificationMessageService
-      .getArrivalNotificationMessage(arrivalId)
-      .map(_.flatMap(ArrivalMovementRequestToUserAnswersService.apply(_, eoriNumber)))
+    for {
+      customsOffices         <- referenceDataConnector.getCustomsOffices()
+      arrivalMovementRequest <- arrivalNotificationMessageService.getArrivalNotificationMessage(arrivalId)
+    } yield {
+      arrivalMovementRequest.flatMap {
+        arrivalMovementRequest =>
+          MovementReferenceNumber(arrivalMovementRequest.header.movementReferenceNumber).flatMap {
+            movementReferenceNumber =>
+              customsOffices.find(_.id == arrivalMovementRequest.customsOfficeOfPresentation.presentationOffice).flatMap {
+                customsOffice =>
+                  ArrivalMovementRequestToUserAnswersService.convertToUserAnswers(arrivalMovementRequest, eoriNumber, movementReferenceNumber, customsOffice)
+              }
+          }
+      }
+    }
 
   def getOrCreateUserAnswers(eoriNumber: EoriNumber, value: MovementReferenceNumber): Future[UserAnswers] = {
     val initialUserAnswers = UserAnswers(id = value, eoriNumber = eoriNumber)

@@ -17,10 +17,10 @@
 package models.domain
 
 import generators.MessagesModelGenerators
-import models.messages.{ContainerTranshipment, Incident, VehicularTranshipment}
+import models.messages.{ContainerTranshipment, IncidentWithInformation, VehicularTranshipment}
 import models.{TranshipmentType, _}
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalatest.{FreeSpec, MustMatchers, OptionValues}
+import org.scalatest.{FreeSpec, MustMatchers}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.{JsObject, Json}
 
@@ -28,23 +28,54 @@ class EventDetailsDomainSpec extends FreeSpec with MustMatchers with ScalaCheckP
 
   "IncidentDomain" - {
 
+    "must serialise from an IncidentWithInformation" in {
+      forAll(arbitrary[IncidentWithInformationDomain]) {
+        incidentWithInformationDomain =>
+          val json = Json.obj("incidentInformation" -> incidentWithInformationDomain.incidentInformation, "isTranshipment" -> false)
+          Json.toJson(incidentWithInformationDomain: IncidentDomain)(IncidentDomain.incidentDomainJsonWrites) mustEqual json
+      }
+    }
+
+    "must serialise from an IncidentWithoutInformation" in {
+      forAll(arbitrary[IncidentWithoutInformationDomain.type]) {
+        incidentWithoutInformationDomain =>
+          val json = Json.obj("isTranshipment" -> false)
+          Json.toJson(incidentWithoutInformationDomain: IncidentDomain)(IncidentDomain.incidentDomainJsonWrites) mustEqual json
+      }
+    }
+
+  }
+
+  "IncidentWithInformation" - {
+
     "must serialise" in {
 
-      forAll(arbitrary[IncidentDomain]) {
-        incidentDomain =>
-          val json = incidentDomainJson(incidentDomain)
-          Json.toJson(incidentDomain)(IncidentDomain.incidentJsonWrites) mustEqual json
+      forAll(arbitrary[IncidentWithInformationDomain]) {
+        incidentWithInformationDomain =>
+          val json = Json.obj("incidentInformation" -> incidentWithInformationDomain.incidentInformation, "isTranshipment" -> false)
+          Json.toJson(incidentWithInformationDomain)(IncidentWithInformationDomain.incidentWithInformationJsonWrites) mustEqual json
       }
     }
 
-    "must convert to Incident model" in {
+    "must convert to IncidentWithInformation model" in {
 
-      forAll(arbitrary[IncidentDomain]) {
+      forAll(arbitrary[IncidentWithInformationDomain]) {
         incidentDomain =>
-          IncidentDomain.domainIncidentToIncident(incidentDomain) mustBe an[Incident]
+          IncidentWithInformationDomain.domainIncidentToIncident(incidentDomain) mustBe an[IncidentWithInformation]
       }
     }
+  }
 
+  "IncidentWithoutInformation" - {
+
+    "must serialise" in {
+
+      forAll(arbitrary[IncidentWithoutInformationDomain.type]) {
+        incidentWithoutInformationDomain =>
+          val json = Json.obj("isTranshipment" -> false)
+          Json.toJson(incidentWithoutInformationDomain)(IncidentWithoutInformationDomain.incidentWithoutInformationJsonWrites) mustEqual json
+      }
+    }
   }
 
   "ContainerTranshipmentDomain" - {
@@ -119,10 +150,10 @@ class EventDetailsDomainSpec extends FreeSpec with MustMatchers with ScalaCheckP
 
     "must serialise from an Incident" in {
 
-      forAll(arbitrary[IncidentDomain]) {
-        incident =>
-          val json = incidentDomainJson(incident)
-          Json.toJson(incident: EventDetailsDomain) mustEqual json
+      forAll(arbitrary[IncidentWithInformationDomain]) {
+        incidentDomain =>
+          val json = Json.obj("incidentInformation" -> incidentDomain.incidentInformation, "isTranshipment" -> false)
+          Json.toJson(incidentDomain: EventDetailsDomain) mustEqual json
       }
     }
 
@@ -145,14 +176,6 @@ class EventDetailsDomainSpec extends FreeSpec with MustMatchers with ScalaCheckP
       }
     }
   }
-
-  private def incidentDomainJson(incident: IncidentDomain): JsObject =
-    incident.incidentInformation match {
-      case Some(information) =>
-        Json.obj("incidentInformation" -> information, "isTranshipment" -> false)
-      case _ =>
-        Json.obj("isTranshipment" -> false)
-    }
 
   private def vehicularTranshipmentJson(vehicularTranshipment: VehicularTranshipmentDomain): JsObject = {
     val transhipmentType = if (vehicularTranshipment.containers.isDefined) {

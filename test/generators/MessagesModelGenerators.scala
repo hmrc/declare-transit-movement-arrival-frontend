@@ -22,7 +22,7 @@ import models.{domain, messages, EoriNumber, MovementReferenceNumber, NormalProc
 import models.domain._
 import models.messages.ErrorType.{GenericError, MRNError}
 import models.messages._
-import models.reference.CountryCode
+import models.reference.{CountryCode, CustomsOffice}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 import utils.Format._
@@ -67,20 +67,16 @@ trait MessagesModelGenerators extends Generators {
   private val localDateGen: Gen[LocalDate] =
     datesBetween(LocalDate.of(1900, 1, 1), LocalDate.now)
 
-  implicit lazy val arbitraryIncident: Arbitrary[Incident] =
+  implicit lazy val arbitraryIncidentWithInformationDomain: Arbitrary[IncidentWithInformationDomain] =
     Arbitrary {
-
       for {
-        information <- Gen.option(stringsWithMaxLength(Incident.Constants.informationLength))
-      } yield Incident(information)
+        information <- stringsWithMaxLength(IncidentWithInformation.Constants.informationLength)
+      } yield IncidentWithInformationDomain(information)
     }
 
-  implicit lazy val arbitraryIncidentDomain: Arbitrary[IncidentDomain] =
+  implicit lazy val arbitraryIncidentWithoutInformationDomain: Arbitrary[IncidentWithoutInformationDomain.type] =
     Arbitrary {
-
-      for {
-        information <- Gen.option(stringsWithMaxLength(Incident.Constants.informationLength))
-      } yield IncidentDomain(information)
+      IncidentWithoutInformationDomain
     }
 
   implicit lazy val arbitraryVehicularTranshipmentDomain: Arbitrary[VehicularTranshipmentDomain] =
@@ -155,10 +151,22 @@ trait MessagesModelGenerators extends Generators {
       )
     }
 
+  implicit lazy val incidentWithInformation: Arbitrary[IncidentWithInformation] =
+    Arbitrary {
+      for {
+        information <- stringsWithMaxLength(IncidentWithInformation.Constants.informationLength)
+      } yield IncidentWithInformation(information)
+    }
+
+  implicit lazy val incidentWithoutInformation: Arbitrary[IncidentWithoutInformation] =
+    Arbitrary {
+      IncidentWithoutInformation()
+    }
+
   implicit lazy val arbitraryEventDetails: Arbitrary[EventDetails] =
     Arbitrary {
       Gen.oneOf[EventDetails](
-        arbitrary[Incident],
+        arbitrary[IncidentWithInformation],
         arbitrary[Transhipment]
       )
     }
@@ -166,7 +174,7 @@ trait MessagesModelGenerators extends Generators {
   implicit lazy val arbitraryEventDetailsDomain: Arbitrary[EventDetailsDomain] =
     Arbitrary {
       Gen.oneOf[EventDetailsDomain](
-        arbitrary[IncidentDomain],
+        arbitrary[IncidentWithInformationDomain],
         arbitrary[TranshipmentDomain]
       )
     }
@@ -195,17 +203,14 @@ trait MessagesModelGenerators extends Generators {
         place         <- stringsWithMaxLength(EnRouteEvent.Constants.placeLength)
         countryCode   <- arbitrary[CountryCode]
         alreadyInNcts <- arbitrary[Boolean]
-        eventDetails  <- arbitrary[Option[EventDetails]]
-        seals         <- listWithMaxLength[Seal](1)
+        eventDetails  <- arbitrary[EventDetails]
+        seals         <- Gen.option(listWithMaxLength[Seal](1))
       } yield {
 
-        val sealsOpt = if (eventDetails.isDefined) Some(seals) else None
-
-        EnRouteEvent(place, countryCode, alreadyInNcts, eventDetails, sealsOpt)
+        EnRouteEvent(place, countryCode, alreadyInNcts, eventDetails, seals)
       }
     }
 
-  //TODO is the sealsOpt correct?
   implicit lazy val arbitraryDomainEnRouteEvent: Arbitrary[EnRouteEventDomain] =
     Arbitrary {
 
@@ -213,13 +218,11 @@ trait MessagesModelGenerators extends Generators {
         place         <- stringsWithMaxLength(EnRouteEvent.Constants.placeLength)
         country       <- arbitrary[CountryCode]
         alreadyInNcts <- arbitrary[Boolean]
-        eventDetails  <- arbitrary[Option[EventDetailsDomain]]
-        seals         <- listWithMaxLength[SealDomain](1)
+        eventDetails  <- arbitrary[EventDetailsDomain]
+        seals         <- Gen.option(listWithMaxLength[SealDomain](1))
       } yield {
 
-        val sealsOpt = if (eventDetails.isDefined) Some(seals) else None
-
-        EnRouteEventDomain(place, country, alreadyInNcts, eventDetails, sealsOpt)
+        EnRouteEventDomain(place, country, alreadyInNcts, eventDetails, seals)
       }
     }
 
@@ -227,30 +230,28 @@ trait MessagesModelGenerators extends Generators {
     Arbitrary {
 
       for {
-        mrn                    <- arbitrary[MovementReferenceNumber]
-        place                  <- stringsWithMaxLength(NormalNotification.Constants.notificationPlaceLength)
-        date                   <- localDateGen
-        subPlace               <- stringsWithMaxLength(NormalNotification.Constants.customsSubPlaceLength)
-        trader                 <- arbitrary[domain.TraderDomain]
-        presentationOfficeId   <- stringsWithMaxLength(NormalNotification.Constants.presentationOfficeLength)
-        presentationOfficeName <- arbitrary[String]
-        events                 <- Gen.option(listWithMaxLength[EnRouteEventDomain](NormalNotification.Constants.maxNumberOfEnRouteEvents))
-      } yield domain.NormalNotification(mrn, place, date, subPlace, trader, presentationOfficeId, presentationOfficeName, events)
+        mrn                <- arbitrary[MovementReferenceNumber]
+        place              <- stringsWithMaxLength(NormalNotification.Constants.notificationPlaceLength)
+        date               <- localDateGen
+        subPlace           <- stringsWithMaxLength(NormalNotification.Constants.customsSubPlaceLength)
+        trader             <- arbitrary[domain.TraderDomain]
+        presentationOffice <- arbitrary[CustomsOffice]
+        events             <- Gen.option(listWithMaxLength[EnRouteEventDomain](NormalNotification.Constants.maxNumberOfEnRouteEvents))
+      } yield domain.NormalNotification(mrn, place, date, subPlace, trader, presentationOffice, events)
     }
 
   implicit lazy val arbitrarySimplifiedNotification: Arbitrary[SimplifiedNotification] =
     Arbitrary {
 
       for {
-        mrn                    <- arbitrary[MovementReferenceNumber]
-        place                  <- stringsWithMaxLength(SimplifiedNotification.Constants.notificationPlaceLength)
-        date                   <- localDateGen
-        approvedLocation       <- Gen.option(stringsWithMaxLength(SimplifiedNotification.Constants.approvedLocationLength))
-        trader                 <- arbitrary[TraderDomain]
-        presentationOfficeId   <- stringsWithMaxLength(SimplifiedNotification.Constants.presentationOfficeLength)
-        presentationOfficeName <- stringsWithMaxLength(SimplifiedNotification.Constants.presentationOfficeLength)
-        events                 <- Gen.option(listWithMaxLength[EnRouteEventDomain](NormalNotification.Constants.maxNumberOfEnRouteEvents))
-      } yield SimplifiedNotification(mrn, place, date, approvedLocation, trader, presentationOfficeId, presentationOfficeName, events)
+        mrn                <- arbitrary[MovementReferenceNumber]
+        date               <- localDateGen
+        approvedLocation   <- stringsWithMaxLength(SimplifiedNotification.Constants.approvedLocationLength)
+        trader             <- arbitrary[TraderDomain]
+        presentationOffice <- arbitrary[CustomsOffice]
+        events             <- Gen.option(listWithMaxLength[EnRouteEventDomain](NormalNotification.Constants.maxNumberOfEnRouteEvents))
+        authedEoriNumber   <- arbitrary[EoriNumber]
+      } yield SimplifiedNotification(mrn, date, approvedLocation, trader, presentationOffice, events, authedEoriNumber)
     }
 
   implicit lazy val arbitraryArrivalNotification: Arbitrary[ArrivalNotificationDomain] =
@@ -282,9 +283,8 @@ trait MessagesModelGenerators extends Generators {
   implicit lazy val arbitraryMessageSender: Arbitrary[MessageSender] = {
     Arbitrary {
       for {
-        environment <- Gen.oneOf(Seq("LOCAL", "QA", "STAGING", "PRODUCTION"))
-        eori        <- stringsWithMaxLength(domain.TraderDomain.Constants.eoriLength)
-      } yield MessageSender(environment, eori)
+        eori <- arbitrary[EoriNumber]
+      } yield MessageSender("LOCAL", eori)
     }
   }
 
@@ -336,34 +336,44 @@ trait MessagesModelGenerators extends Generators {
     Arbitrary {
       for {
         movementReferenceNumber  <- arbitrary[MovementReferenceNumber].map(_.toString())
-        customsSubPlace          <- Gen.option(stringsWithMaxLength(Header.Constants.customsSubPlaceLength))
         arrivalNotificationPlace <- stringsWithMaxLength(Header.Constants.arrivalNotificationPlaceLength)
         procedureTypeFlag        <- arbitrary[ProcedureTypeFlag]
+        customsSubPlace          <- stringsWithMaxLength(Header.Constants.customsSubPlaceLength)
         notificationDate         <- arbitrary[LocalDate]
         presentationOfficeId     <- stringsWithMaxLength(CustomsOfficeOfPresentation.Constants.presentationOfficeLength)
         presentationOfficeName   <- stringsWithMaxLength(35)
-      } yield
-        Header(movementReferenceNumber,
-               customsSubPlace,
-               arrivalNotificationPlace,
-               presentationOfficeId,
-               presentationOfficeName,
-               None,
-               procedureTypeFlag,
-               notificationDate)
+      } yield {
+
+        val customsSubPlaceToggle = if (procedureTypeFlag == NormalProcedureFlag) Some(customsSubPlace) else None
+
+        Header(
+          movementReferenceNumber,
+          customsSubPlaceToggle,
+          arrivalNotificationPlace,
+          None,
+          procedureTypeFlag,
+          notificationDate
+        )
+      }
     }
   }
 
   implicit lazy val arbitraryArrivalMovementRequest: Arbitrary[ArrivalMovementRequest] = {
     Arbitrary {
       for {
-        meta <- arbitrary[Meta]
-        header <- arbitrary[Header].map(header =>
-          header.copy(notificationDate = meta.dateOfPreparation, customsSubPlace = Some(header.customsSubPlace.getOrElse(""))))
+        eori          <- arbitrary[EoriNumber]
+        meta          <- arbitrary[Meta]
+        header        <- arbitrary[Header].map(header => header.copy(notificationDate = meta.dateOfPreparation))
         trader        <- arbitrary[Trader]
-        customsOffice <- arbitrary[CustomsOfficeOfPresentation].map(_.copy(presentationOffice = header.presentationOfficeId))
+        customsOffice <- arbitrary[CustomsOfficeOfPresentation]
         enRouteEvents <- Gen.option(listWithMaxLength[EnRouteEvent](1))
-      } yield ArrivalMovementRequest(meta, header, trader, customsOffice, enRouteEvents)
+      } yield {
+        val messageSender  = meta.messageSender.copy(eori = eori)
+        val metaWithEori   = meta.copy(messageSender      = messageSender)
+        val traderWithEori = trader.copy(eori             = eori.value)
+
+        ArrivalMovementRequest(metaWithEori, header, traderWithEori, customsOffice, enRouteEvents)
+      }
     }
   }
 
@@ -414,22 +424,44 @@ trait MessagesModelGenerators extends Generators {
       (expected, trader)
     }
 
-  val incidentWithInformation: Gen[Incident] = for {
-    information <- stringsWithMaxLength(Incident.Constants.informationLength)
-  } yield Incident(Some(information))
-
-  val enRouteEventIncident: Gen[(EnRouteEventDomain, IncidentDomain)] = for {
+  val enRouteEventIncident: Gen[(EnRouteEventDomain, IncidentWithInformationDomain)] = for {
     enRouteEvent <- arbitrary[EnRouteEventDomain]
-    incident     <- arbitrary[IncidentDomain]
-  } yield (enRouteEvent.copy(eventDetails = Some(incident)), incident)
+    incident     <- arbitrary[IncidentWithInformationDomain]
+  } yield (enRouteEvent.copy(eventDetails = incident), incident)
 
   val enRouteEventVehicularTranshipment: Gen[(EnRouteEventDomain, VehicularTranshipmentDomain)] = for {
     enRouteEvent          <- arbitrary[EnRouteEventDomain]
     vehicularTranshipment <- arbitrary[VehicularTranshipmentDomain]
-  } yield (enRouteEvent.copy(eventDetails = Some(vehicularTranshipment)), vehicularTranshipment)
+  } yield (enRouteEvent.copy(eventDetails = vehicularTranshipment), vehicularTranshipment)
 
   val enRouteEventContainerTranshipment: Gen[(EnRouteEventDomain, ContainerTranshipmentDomain)] = for {
     generatedEnRouteEvent <- arbitrary[EnRouteEventDomain]
     containerTranshipment <- arbitrary[ContainerTranshipmentDomain]
-  } yield (generatedEnRouteEvent.copy(eventDetails = Some(containerTranshipment)), containerTranshipment)
+  } yield (generatedEnRouteEvent.copy(eventDetails = containerTranshipment), containerTranshipment)
+
+  val enRouteEventContainerTranshipmentWithoutSeals: Gen[(EnRouteEventDomain, ContainerTranshipmentDomain)] = for {
+    generatedEnRouteEvent <- arbitrary[EnRouteEventDomain]
+    containerTranshipment <- arbitrary[ContainerTranshipmentDomain]
+  } yield {
+    val enRouteEvent = generatedEnRouteEvent.copy(eventDetails = containerTranshipment, seals = None)
+
+    (enRouteEvent, containerTranshipment)
+  }
+
+  val simplifiedNotificationWithSubplace: Gen[(SimplifiedNotification, TraderDomain)] =
+    for {
+      base             <- arbitrary[SimplifiedNotification]
+      trader           <- arbitrary[TraderDomain]
+      mrn              <- arbitrary[MovementReferenceNumber]
+      approvedLocation <- stringsWithMaxLength(SimplifiedNotification.Constants.approvedLocationLength)
+    } yield {
+
+      val expected: SimplifiedNotification = base
+        .copy(movementReferenceNumber = mrn)
+        .copy(trader = trader)
+        .copy(notificationDate = LocalDate.now())
+        .copy(approvedLocation = approvedLocation)
+
+      (expected, trader)
+    }
 }

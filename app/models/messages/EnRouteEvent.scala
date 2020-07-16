@@ -31,7 +31,7 @@ final case class EnRouteEvent(
   place: String,
   countryCode: CountryCode,
   alreadyInNcts: Boolean,
-  eventDetails: Option[EventDetails],
+  eventDetails: EventDetails,
   seals: Option[Seq[Seal]]
 )
 
@@ -51,7 +51,7 @@ object EnRouteEvent {
             place,
             country,
             alreadyInNct,
-            eventDetails.map(EventDetails.buildEventDetailsDomain),
+            EventDetails.buildEventDetailsDomain(eventDetails),
             seals.map(_.map(Seal.sealToDomain))
           )
       }
@@ -82,11 +82,12 @@ object EnRouteEvent {
           }
         </CTLCTL>
         {
-          enRouteEvent.eventDetails.map {
-            case incident: Incident                           => incident.toXml ++ buildSealsXml
-            case containerTranshipment: ContainerTranshipment => buildSealsXml ++ containerTranshipment.toXml
-            case vehicularTranshipment: VehicularTranshipment => buildSealsXml ++ vehicularTranshipment.toXml
-          }.getOrElse(NodeSeq.Empty)
+          enRouteEvent.eventDetails match {
+            case incidentWithInformation: IncidentWithInformation       => incidentWithInformation.toXml ++ buildSealsXml
+            case incidentWithoutInformation: IncidentWithoutInformation => incidentWithoutInformation.toXml ++ buildSealsXml
+            case containerTranshipment: ContainerTranshipment           => buildSealsXml ++ containerTranshipment.toXml
+            case vehicularTranshipment: VehicularTranshipment           => buildSealsXml ++ vehicularTranshipment.toXml
+          }
         }
       </ENROUEVETEV>
   }
@@ -95,7 +96,7 @@ object EnRouteEvent {
     (xmlPath \ "PlaTEV10").read[String],
     (xmlPath \ "CouTEV13").read[String].map(CountryCode(_)),
     (xmlPath \ "CTLCTL" \ "AlrInNCTCTL29").read(booleanFromIntReader),
-    xmlPath.read[EventDetails].optional,
+    xmlPath.read[EventDetails],
     (xmlPath \ "SEAINFSF1" \ "SEAIDSI1").read(strictReadOptionSeq[Seal])
   ).mapN(apply)
 }
