@@ -60,7 +60,8 @@ class ContainerNumberFormProviderSpec extends StringFieldBehaviours with Message
 
       forAll(listWithMaxLength[ContainerDomain](10)) {
         containers =>
-          val result = form(containerIndex, containers).bind(Map(fieldName -> containers.head.containerNumber)).apply(fieldName)
+          val containersWithoutDuplicates = containers.distinct
+          val result                      = form(containerIndex, containersWithoutDuplicates).bind(Map(fieldName -> containers.head.containerNumber)).apply(fieldName)
 
           result.hasErrors mustEqual false
       }
@@ -80,20 +81,11 @@ class ContainerNumberFormProviderSpec extends StringFieldBehaviours with Message
     }
 
     "no errors if there are no existing container number" in {
-      forAll(listWithMaxLength[ContainerDomain](10)) {
-        containers =>
-          val containersWithDuplicatesRemoved = {
-            containers.toSet.filterNot(_.containerNumber == container.containerNumber).toSeq
-          }
 
-          val result = {
-            form(containerIndex, containersWithDuplicatesRemoved)
-              .bind(Map(fieldName -> container.containerNumber))
-              .apply(fieldName)
-          }
+      val result = form(containerIndex, Seq.empty).bind(Map(fieldName -> container.containerNumber)).apply(fieldName)
 
-          result.hasErrors mustEqual false
-      }
+      result.hasErrors mustEqual false
     }
   }
+
 }
