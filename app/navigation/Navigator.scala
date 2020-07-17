@@ -125,6 +125,7 @@ class Navigator @Inject()() {
       }
   }
 
+  @deprecated("All navigation should rely on the nextPage method", "")
   def nextRejectionPage(page: Page, mrn: MovementReferenceNumber): Call =
     page match {
       case UpdateRejectedMRNPage => routes.CheckYourAnswersController.onPageLoad(mrn)
