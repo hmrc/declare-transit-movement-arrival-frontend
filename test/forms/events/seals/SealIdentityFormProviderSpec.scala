@@ -60,7 +60,8 @@ class SealIdentityFormProviderSpec extends StringFieldBehaviours with MessagesMo
 
     forAll(listWithMaxLength[SealDomain](10)) {
       seals =>
-        val result = form(sealIndex, seals).bind(Map(fieldName -> seals.head.numberOrMark)).apply(fieldName)
+        val sealsWithoutDuplicates = seals.distinct
+        val result                 = form(sealIndex, sealsWithoutDuplicates).bind(Map(fieldName -> seals.head.numberOrMark)).apply(fieldName)
 
         result.hasErrors mustEqual false
     }
@@ -79,13 +80,10 @@ class SealIdentityFormProviderSpec extends StringFieldBehaviours with MessagesMo
   }
 
   "no errors if there are no existing seal numbers or marks" in {
-    forAll(listWithMaxLength[SealDomain](10)) {
-      seals =>
-        val sealsWithDuplicatesRemoved = seals.toSet.filterNot(_.numberOrMark == seal.numberOrMark).toSeq
-        val result                     = form(sealIndex, sealsWithDuplicatesRemoved).bind(Map(fieldName -> seal.numberOrMark)).apply(fieldName)
 
-        result.hasErrors mustEqual false
-    }
+    val result = form(sealIndex, Seq.empty).bind(Map(fieldName -> seal.numberOrMark)).apply(fieldName)
+
+    result.hasErrors mustEqual false
   }
 
 }
