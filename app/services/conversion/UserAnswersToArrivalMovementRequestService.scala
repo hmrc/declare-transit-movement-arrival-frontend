@@ -40,7 +40,7 @@ class UserAnswersToArrivalMovementRequestService @Inject()(
           .nextInterchangeControlReferenceId()
           .map {
             referenceId =>
-              SubmissionModelService
+              ArrivalNotificationDomainToArrivalMovementRequestService
                 .convertToSubmissionModel(
                   arrivalNotification         = notification,
                   messageSender               = messageSender,

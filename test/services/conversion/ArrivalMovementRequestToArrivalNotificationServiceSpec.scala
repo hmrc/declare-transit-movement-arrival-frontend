@@ -16,11 +16,13 @@
 
 package services.conversion
 
+import java.time.LocalTime
+
 import base.SpecBase
 import generators.MessagesModelGenerators
 import models.EoriNumber
-import models.domain.ArrivalNotificationDomain
-import models.messages.{ArrivalMovementRequest, Header}
+import models.domain.{ArrivalNotificationDomain, NormalNotification, SimplifiedNotification}
+import models.messages.{ArrivalMovementRequest, Header, InterchangeControlReference, MessageSender}
 import models.reference.CustomsOffice
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -31,26 +33,46 @@ class ArrivalMovementRequestToArrivalNotificationServiceSpec extends SpecBase wi
 
   "convertToArrivalNotification" - {
 
+    "must convert ArrivalMovementRequest to NormalNotification" in {
+
+      forAll(
+        arbitrary[ArrivalNotificationDomain],
+        arbitrary[MessageSender],
+        arbitrary[InterchangeControlReference],
+        arbitrary[LocalTime],
+        arbitrary[EoriNumber]
+      ) {
+        (arrivalNotificationDomain, messageSender, interchangeControlReference, timeOfPresentation, eoriNumber) =>
+          val arrivalMovementRequest = ArrivalNotificationDomainToArrivalMovementRequestService
+            .convertToSubmissionModel(
+              arrivalNotificationDomain,
+              messageSender,
+              interchangeControlReference,
+              timeOfPresentation
+            )
+
+          val expectedResult: ArrivalNotificationDomain = arrivalNotificationDomain match {
+            case simplifiedNotification: SimplifiedNotification => simplifiedNotification.copy(authedEori = eoriNumber)
+            case _                                              => arrivalNotificationDomain
+          }
+
+          val result = arrivalMovementRequestConversionService
+            .convertToArrivalNotification(arrivalMovementRequest, arrivalNotificationDomain.presentationOffice, eoriNumber)
+            .value
+
+          result mustBe expectedResult
+      }
+    }
+
     "must return None if MRN is malformed" in {
 
       val arrivalMovementRequest: ArrivalMovementRequest                 = arbitrary[ArrivalMovementRequest].sample.value
       val header: Header                                                 = arrivalMovementRequest.header.copy(movementReferenceNumber = "Invalid MRN")
       val arrivalMovementRequestWithMalformedMrn: ArrivalMovementRequest = arrivalMovementRequest.copy(header = header)
       val customsOffice                                                  = arbitrary[CustomsOffice].sample.value
-      val authedEoriNumber                                               = arbitrary[EoriNumber].sample.value
+      val eoriNumber                                                     = arbitrary[EoriNumber].sample.value
 
-      arrivalMovementRequestConversionService.convertToArrivalNotification(arrivalMovementRequestWithMalformedMrn, customsOffice, authedEoriNumber) mustBe None
-    }
-
-    "must convert ArrivalMovementRequest to NormalNotification for trader" in {
-
-      val genArrivalNotificationRequest = arbitrary[ArrivalMovementRequest].sample.value
-      val customsOffice                 = arbitrary[CustomsOffice].sample.value
-      val authedEoriNumber              = arbitrary[EoriNumber].sample.value
-
-      arrivalMovementRequestConversionService
-        .convertToArrivalNotification(genArrivalNotificationRequest, customsOffice, authedEoriNumber)
-        .value mustBe an[ArrivalNotificationDomain]
+      arrivalMovementRequestConversionService.convertToArrivalNotification(arrivalMovementRequestWithMalformedMrn, customsOffice, eoriNumber) mustBe None
     }
   }
 

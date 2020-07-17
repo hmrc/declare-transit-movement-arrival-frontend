@@ -22,7 +22,7 @@ import models.domain._
 import models.messages._
 import models.{NormalProcedureFlag, ProcedureTypeFlag, SimplifiedProcedureFlag}
 
-object SubmissionModelService {
+object ArrivalNotificationDomainToArrivalMovementRequestService {
 
   def convertToSubmissionModel(
     arrivalNotification: ArrivalNotificationDomain,
@@ -78,7 +78,3 @@ object SubmissionModelService {
       notificationDate         = arrivalNotification.notificationDate
     )
 }
-
-sealed trait ModelConversionError
-
-object FailedToConvertModel extends ModelConversionError
