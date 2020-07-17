@@ -73,16 +73,11 @@ class ContainerSpec
     }
 
     "must convert to ContainerDomain model" in {
-
-      forAll(arbitrary[Container]) {
-        container =>
-          val containerDomain = ContainerDomain(
-            container.containerNumber
-          )
-
+      forAll(arbitrary[ContainerDomain]) {
+        containerDomain =>
+          val container = ContainerDomain.domainContainerToContainer(containerDomain)
           Container.containerToDomain(container) mustBe containerDomain
       }
     }
   }
-
 }
