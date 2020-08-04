@@ -439,8 +439,9 @@ eoriConfirmation.heading = Is {0} the EORI number for {1}?
 eoriConfirmation.checkYourAnswersLabel = Is {0} the EORI number for {1}?
 eoriConfirmation.error.required = Select yes if this is the correct EORI number for {0}
 
-eoriNumber.title =What is the EORI number of the authorised consignee?
+eoriNumber.title = What is the EORI number of the authorised consignee?
 eoriNumber.heading =  What is the EORI number for {0}?
+eoriNumber.hint = The first 2 letters are the country code, like 'GB'. This is followed by up to 12 numbers, like GB123456123456.
 eoriNumber.checkYourAnswersLabel =   What is the EORI number for {0}?
 eoriNumber.error.required = Enter the EORI number for {0}
 eoriNumber.error.length =  EORI mumber must be 17 characters or less
