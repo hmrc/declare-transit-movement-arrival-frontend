@@ -218,6 +218,7 @@ traderAddress.change.hidden = address of trader
 
 traderEori.title = What is the EORI number of the trader at the destination?
 traderEori.heading = What is the EORI number of the trader at the destination?
+traderEori.hint = The first 2 letters are the country code, like 'GB'. This is followed by up to 12 numbers, like GB123456123456.
 traderEori.checkYourAnswersLabel = EORI number
 traderEori.error.required = Enter the EORI number of the trader at the destination
 traderEori.error.length = EORI number must be 17 characters or less
