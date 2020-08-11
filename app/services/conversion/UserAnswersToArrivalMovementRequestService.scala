@@ -27,7 +27,6 @@ import repositories.InterchangeControlReferenceIdRepository
 import scala.concurrent.{ExecutionContext, Future}
 
 class UserAnswersToArrivalMovementRequestService @Inject()(
-  appConfig: FrontendAppConfig,
   converterService: UserAnswersToArrivalNotificationDomain,
   interchangeControlReferenceIdRepository: InterchangeControlReferenceIdRepository)(implicit ec: ExecutionContext) {
 
