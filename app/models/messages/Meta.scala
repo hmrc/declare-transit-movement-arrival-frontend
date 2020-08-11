@@ -27,8 +27,7 @@ import cats.syntax.all._
 
 import scala.xml.NodeSeq
 
-case class Meta(messageSender: MessageSender,
-                interchangeControlReference: InterchangeControlReference,
+case class Meta(interchangeControlReference: InterchangeControlReference,
                 dateOfPreparation: LocalDate,
                 timeOfPreparation: LocalTime,
                 senderIdentificationCodeQualifier: Option[String]    = None,
@@ -49,8 +48,6 @@ object Meta {
       a =>
         <SynIdeMES1>UNOC</SynIdeMES1>
         <SynVerNumMES2>3</SynVerNumMES2> ++ {
-          a.messageSender.toXml
-        } ++ {
           a.senderIdentificationCodeQualifier.fold(NodeSeq.Empty) {
             senderIdentificationCodeQualifier =>
               <SenIdeCodQuaMES4>{escapeXml(senderIdentificationCodeQualifier)}</SenIdeCodQuaMES4>
@@ -119,7 +116,6 @@ object Meta {
       })
 
   implicit val reads: XmlReader[Meta] = (
-    (__ \ "MesSenMES3").read[MessageSender],
     (__ \ "IntConRefMES11").read[InterchangeControlReference],
     (__ \ "DatOfPreMES9").read[LocalDate],
     (__ \ "TimOfPreMES10").read[LocalTime],
