@@ -173,8 +173,8 @@ movementReferenceNumber.error.invalid = Enter a real movement reference number
 
 goodsLocation.title = Where are the goods?
 goodsLocation.heading = Where are the goods?
-goodsLocation.borderForceOffice = Customs-approved location
-goodsLocation.authorisedConsigneesLocation = Authorised consignee’s location
+goodsLocation.borderForceOffice = Customs-approved location (normal)
+goodsLocation.authorisedConsigneesLocation = Authorised consignee’s location (simplified)
 goodsLocation.checkYourAnswersLabel = Where are the goods?
 goodsLocation.error.required = Select where the goods are
 goodsLocation.change.hidden = where the goods are
