@@ -16,7 +16,6 @@
 
 package controllers
 
-import config.FrontendAppConfig
 import controllers.actions._
 import forms.GoodsLocationFormProvider
 import javax.inject.Inject
@@ -40,8 +39,7 @@ class GoodsLocationController @Inject()(override val messagesApi: MessagesApi,
                                         requireData: DataRequiredAction,
                                         formProvider: GoodsLocationFormProvider,
                                         val controllerComponents: MessagesControllerComponents,
-                                        renderer: Renderer,
-                                        frontendAppConfig: FrontendAppConfig)(implicit ec: ExecutionContext)
+                                        renderer: Renderer)(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
     with NunjucksSupport {
@@ -86,11 +84,9 @@ class GoodsLocationController @Inject()(override val messagesApi: MessagesApi,
               updatedAnswers <- Future.fromTry(request.userAnswers.set(GoodsLocationPage, value))
               _              <- sessionRepository.set(updatedAnswers)
             } yield
-              (value, frontendAppConfig.featureToggleSimplifiedJourney) match {
-                case (BorderForceOffice, _)                => Redirect(routes.CustomsSubPlaceController.onPageLoad(updatedAnswers.id, mode))
-                case (AuthorisedConsigneesLocation, true)  => Redirect(routes.AuthorisedLocationController.onPageLoad(updatedAnswers.id, mode))
-                case (AuthorisedConsigneesLocation, false) => Redirect(routes.UseDifferentServiceController.onPageLoad(updatedAnswers.id))
-
+              value match {
+                case BorderForceOffice            => Redirect(routes.CustomsSubPlaceController.onPageLoad(updatedAnswers.id, mode))
+                case AuthorisedConsigneesLocation => Redirect(routes.AuthorisedLocationController.onPageLoad(updatedAnswers.id, mode))
             }
         )
   }
