@@ -196,6 +196,7 @@ customsSubPlace.change.hidden = the customs sub-place or approved location
 customsSubPlace.error.invalid = Enter a real customs sub-place or approved location
 
 authorisedLocation.title = What is the authorised location code?
+authorisedLocation.hintText = The code can be found in the registration documents.
 authorisedLocation.heading = What is the authorised location code?
 authorisedLocation.checkYourAnswersLabel = Authorised location
 authorisedLocation.error.required = Enter authorised location code
