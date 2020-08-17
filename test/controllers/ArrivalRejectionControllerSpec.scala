@@ -57,7 +57,7 @@ class ArrivalRejectionControllerSpec extends SpecBase with MockitoSugar with Jso
       (InvalidMrn, "Invalid MRN", "movementReferenceNumberRejection.error.invalid")
     ) foreach {
       case (errorType, errorPointer, errorKey) =>
-        s"return OK and the correct $errorPointer Rejection view for a GET when 'arrivalRejection' feature toggle set to true" in {
+        s"return OK and the correct $errorPointer Rejection view for a GET" in {
 
           when(mockRenderer.render(any(), any())(any()))
             .thenReturn(Future.successful(Html("")))
@@ -68,7 +68,6 @@ class ArrivalRejectionControllerSpec extends SpecBase with MockitoSugar with Jso
             .thenReturn(Future.successful(Some(ArrivalNotificationRejectionMessage(mrn.toString, LocalDate.now, None, None, errors))))
 
           val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-            .configure(Configuration("feature-toggles.arrivalRejection" -> true))
             .overrides(
               bind[ArrivalRejectionService].toInstance(mockArrivalRejectionService)
             )
@@ -98,7 +97,7 @@ class ArrivalRejectionControllerSpec extends SpecBase with MockitoSugar with Jso
         }
     }
 
-    "return OK and the correct arrivalGeneralRejection view for a GET when 'arrivalRejection' feature toggle set to true" in {
+    "return OK and the correct arrivalGeneralRejection view for a GET" in {
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
@@ -109,7 +108,6 @@ class ArrivalRejectionControllerSpec extends SpecBase with MockitoSugar with Jso
         .thenReturn(Future.successful(Some(ArrivalNotificationRejectionMessage(mrn.toString, LocalDate.now, None, None, errors))))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .configure(Configuration("feature-toggles.arrivalRejection" -> true))
         .overrides(
           bind[ArrivalRejectionService].toInstance(mockArrivalRejectionService)
         )
@@ -144,7 +142,6 @@ class ArrivalRejectionControllerSpec extends SpecBase with MockitoSugar with Jso
         .thenReturn(Future.successful(None))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .configure(Configuration("feature-toggles.arrivalRejection" -> true))
         .overrides(
           bind[ArrivalRejectionService].toInstance(mockArrivalRejectionService)
         )
@@ -160,18 +157,6 @@ class ArrivalRejectionControllerSpec extends SpecBase with MockitoSugar with Jso
       application.stop()
     }
 
-    "redirect to Unauthorised page when 'arrivalRejection' feature toggle set to false" in {
-
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .configure(Configuration("feature-toggles.arrivalRejection" -> false))
-        .build()
-      val request = FakeRequest(GET, routes.ArrivalRejectionController.onPageLoad(arrivalId).url)
-
-      val result = route(application, request).value
-
-      status(result) mustEqual SEE_OTHER
-
-      application.stop()
-    }
   }
+
 }

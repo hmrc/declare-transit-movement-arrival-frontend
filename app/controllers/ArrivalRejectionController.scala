@@ -44,15 +44,11 @@ class ArrivalRejectionController @Inject()(
 
   def onPageLoad(arrivalId: ArrivalId): Action[AnyContent] = identify.async {
     implicit request =>
-      if (frontendAppConfig.featureToggleArrivalRejection) {
-        arrivalRejectionService.arrivalRejectionMessage(arrivalId).flatMap {
-          case Some(rejectionMessage) =>
-            val ArrivalRejectionViewModel(page, json) = ArrivalRejectionViewModel(rejectionMessage, appConfig.nctsEnquiriesUrl, arrivalId)
-            renderer.render(page, json).map(Ok(_))
-          case _ => Future.successful(Redirect(routes.TechnicalDifficultiesController.onPageLoad()))
-        }
-      } else {
-        Future.successful(Redirect(routes.UnauthorisedController.onPageLoad()))
+      arrivalRejectionService.arrivalRejectionMessage(arrivalId).flatMap {
+        case Some(rejectionMessage) =>
+          val ArrivalRejectionViewModel(page, json) = ArrivalRejectionViewModel(rejectionMessage, appConfig.nctsEnquiriesUrl, arrivalId)
+          renderer.render(page, json).map(Ok(_))
+        case _ => Future.successful(Redirect(routes.TechnicalDifficultiesController.onPageLoad()))
       }
   }
 }
