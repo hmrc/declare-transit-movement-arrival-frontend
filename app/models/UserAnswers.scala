@@ -26,12 +26,12 @@ import queries.Gettable
 import scala.util.{Failure, Success, Try}
 
 final case class UserAnswers(
-  ref: ArrivalUniqueRef,
   id: MovementReferenceNumber,
   eoriNumber: EoriNumber,
   data: JsObject               = Json.obj(),
   lastUpdated: LocalDateTime   = LocalDateTime.now,
-  arrivalId: Option[ArrivalId] = None
+  arrivalId: Option[ArrivalId] = None,
+  ref: ArrivalUniqueRef        = ArrivalUniqueRef()
 ) {
 
   def get[A](gettable: Gettable[A])(implicit rds: Reads[A]): Option[A] =
@@ -77,12 +77,12 @@ object UserAnswers {
     import play.api.libs.functional.syntax._
 
     (
-      (__ \ "ref").read[ArrivalUniqueRef] and
-        (__ \ "_id").read[MovementReferenceNumber] and
+      (__ \ "_id").read[MovementReferenceNumber] and
         (__ \ "eoriNumber").read[EoriNumber] and
         (__ \ "data").read[JsObject] and
         (__ \ "lastUpdated").read(MongoDateTimeFormats.localDateTimeRead) and
-        (__ \ "arrivalId").readNullable[ArrivalId]
+        (__ \ "arrivalId").readNullable[ArrivalId] and
+        (__ \ "ref").read[ArrivalUniqueRef]
     )(UserAnswers.apply _)
   }
 
@@ -91,12 +91,12 @@ object UserAnswers {
     import play.api.libs.functional.syntax._
 
     (
-      (__ \ "ref").write[ArrivalUniqueRef] and
-        (__ \ "_id").write[MovementReferenceNumber] and
+      (__ \ "_id").write[MovementReferenceNumber] and
         (__ \ "eoriNumber").write[EoriNumber] and
         (__ \ "data").write[JsObject] and
         (__ \ "lastUpdated").write(MongoDateTimeFormats.localDateTimeWrite) and
-        (__ \ "arrivalId").writeNullable[ArrivalId]
+        (__ \ "arrivalId").writeNullable[ArrivalId] and
+        (__ \ "ref").write[ArrivalUniqueRef]
     )(unlift(UserAnswers.unapply))
   }
 }

@@ -67,7 +67,7 @@ class MovementReferenceNumberController @Inject()(override val messagesApi: Mess
             for {
               userAnswers <- userAnswersService.getOrCreateUserAnswers(request.eoriNumber, value)
               _           <- sessionRepository.set(userAnswers)
-            } yield Redirect(navigator.nextPage(MovementReferenceNumberPage, NormalMode, UserAnswers(ArrivalUniqueRef(), value, request.eoriNumber)))
+            } yield Redirect(navigator.nextPage(MovementReferenceNumberPage, NormalMode, UserAnswers(value, request.eoriNumber)))
         )
   }
 
