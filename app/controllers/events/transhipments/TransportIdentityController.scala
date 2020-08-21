@@ -66,7 +66,7 @@ class TransportIdentityController @Inject()(
       renderer.render("events/transhipments/transportIdentity.njk", json).map(Ok(_))
   }
 
-  def onSubmit(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onSubmit(ref: ArrivalUniqueRef, eventIndex: Index, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
       form
         .bindFromRequest()

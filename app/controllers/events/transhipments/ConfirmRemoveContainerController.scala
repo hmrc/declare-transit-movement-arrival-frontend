@@ -69,7 +69,7 @@ class ConfirmRemoveContainerController @Inject()(
 
     }
 
-  def onSubmit(mrn: MovementReferenceNumber, eventIndex: Index, containerIndex: Index, mode: Mode): Action[AnyContent] =
+  def onSubmit(ref: ArrivalUniqueRef, eventIndex: Index, containerIndex: Index, mode: Mode): Action[AnyContent] =
     (identify andThen getData(mrn) andThen requireData).async {
       implicit request =>
         request.userAnswers.get(ContainerNumberPage(eventIndex, containerIndex)) match {

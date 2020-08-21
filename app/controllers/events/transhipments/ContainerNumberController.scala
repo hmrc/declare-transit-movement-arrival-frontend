@@ -67,7 +67,7 @@ class ContainerNumberController @Inject()(
         renderer.render("events/transhipments/containerNumber.njk", json).map(Ok(_))
     }
 
-  def onSubmit(mrn: MovementReferenceNumber, eventIndex: Index, containerIndex: Index, mode: Mode): Action[AnyContent] =
+  def onSubmit(ref: ArrivalUniqueRef, eventIndex: Index, containerIndex: Index, mode: Mode): Action[AnyContent] =
     (identify andThen getData(mrn) andThen requireData).async {
       implicit request =>
         val containers = request.userAnswers.get(ContainersQuery(eventIndex)).getOrElse(Seq.empty)

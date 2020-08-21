@@ -65,7 +65,7 @@ class SealIdentityController @Inject()(
         renderView(mrn, mode, preparedForm, eventIndex, sealIndex).map(Ok(_))
     }
 
-  def onSubmit(mrn: MovementReferenceNumber, eventIndex: Index, sealIndex: Index, mode: Mode): Action[AnyContent] =
+  def onSubmit(ref: ArrivalUniqueRef, eventIndex: Index, sealIndex: Index, mode: Mode): Action[AnyContent] =
     (identify andThen getData(mrn) andThen requireData).async {
       implicit request =>
         val seals = request.userAnswers.get(SealsQuery(eventIndex)).getOrElse(Seq.empty)

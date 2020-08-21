@@ -25,11 +25,14 @@ import queries.Gettable
 
 import scala.util.{Failure, Success, Try}
 
-final case class UserAnswers(id: MovementReferenceNumber,
-                             eoriNumber: EoriNumber,
-                             data: JsObject               = Json.obj(),
-                             lastUpdated: LocalDateTime   = LocalDateTime.now,
-                             arrivalId: Option[ArrivalId] = None) {
+final case class UserAnswers(
+  ref: ArrivalUniqueRef,
+  id: MovementReferenceNumber,
+  eoriNumber: EoriNumber,
+  data: JsObject               = Json.obj(),
+  lastUpdated: LocalDateTime   = LocalDateTime.now,
+  arrivalId: Option[ArrivalId] = None
+) {
 
   def get[A](gettable: Gettable[A])(implicit rds: Reads[A]): Option[A] =
     Reads.optionNoError(Reads.at(gettable.path)).reads(data).getOrElse(None)

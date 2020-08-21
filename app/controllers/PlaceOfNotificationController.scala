@@ -64,7 +64,7 @@ class PlaceOfNotificationController @Inject()(override val messagesApi: Messages
         renderer.render("placeOfNotification.njk", json).map(Ok(_))
     }
 
-  def onSubmit(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] =
+  def onSubmit(ref: ArrivalUniqueRef, mode: Mode): Action[AnyContent] =
     (identify andThen getData(mrn) andThen requireData).async {
       implicit request =>
         form

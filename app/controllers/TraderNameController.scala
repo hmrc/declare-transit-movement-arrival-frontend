@@ -64,7 +64,7 @@ class TraderNameController @Inject()(override val messagesApi: MessagesApi,
         renderer.render("traderName.njk", json).map(Ok(_))
     }
 
-  def onSubmit(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] =
+  def onSubmit(ref: ArrivalUniqueRef, mode: Mode): Action[AnyContent] =
     (identify andThen getData(mrn) andThen requireData).async {
       implicit request =>
         form

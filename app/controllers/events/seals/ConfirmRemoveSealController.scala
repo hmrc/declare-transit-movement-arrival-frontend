@@ -69,7 +69,7 @@ class ConfirmRemoveSealController @Inject()(
         }
     }
 
-  def onSubmit(mrn: MovementReferenceNumber, eventIndex: Index, sealIndex: Index, mode: Mode): Action[AnyContent] =
+  def onSubmit(ref: ArrivalUniqueRef, eventIndex: Index, sealIndex: Index, mode: Mode): Action[AnyContent] =
     (identify andThen getData(mrn) andThen requireData).async {
       implicit request =>
         request.userAnswers.get(SealIdentityPage(eventIndex, sealIndex)) match {

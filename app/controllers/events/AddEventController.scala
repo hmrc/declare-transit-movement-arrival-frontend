@@ -61,7 +61,7 @@ class AddEventController @Inject()(override val messagesApi: MessagesApi,
       renderView(mrn, mode, preparedForm, Results.Ok)
   }
 
-  def onSubmit(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onSubmit(ref: ArrivalUniqueRef, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
       form
         .bindFromRequest()

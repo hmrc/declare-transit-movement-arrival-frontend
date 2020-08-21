@@ -65,7 +65,7 @@ class EventPlaceController @Inject()(override val messagesApi: MessagesApi,
         renderer.render("events/eventPlace.njk", json).map(Ok(_))
     }
 
-  def onSubmit(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode): Action[AnyContent] =
+  def onSubmit(ref: ArrivalUniqueRef, eventIndex: Index, mode: Mode): Action[AnyContent] =
     (identify andThen getData(mrn) andThen requireData).async {
       implicit request =>
         form

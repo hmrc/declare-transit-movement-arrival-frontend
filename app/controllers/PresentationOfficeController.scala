@@ -91,7 +91,7 @@ class PresentationOfficeController @Inject()(override val messagesApi: MessagesA
     renderer.render("presentationOffice.njk", json).map(status(_))
   }
 
-  def onSubmit(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] =
+  def onSubmit(ref: ArrivalUniqueRef, mode: Mode): Action[AnyContent] =
     (identify andThen getData(mrn) andThen requireData).async {
       implicit request =>
         val locationName = (request.userAnswers.get(CustomsSubPlacePage), request.userAnswers.get(ConsigneeNamePage)) match {

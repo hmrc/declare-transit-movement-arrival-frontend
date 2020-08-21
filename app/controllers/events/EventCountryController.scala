@@ -66,7 +66,7 @@ class EventCountryController @Inject()(override val messagesApi: MessagesApi,
         }
     }
 
-  def onSubmit(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode): Action[AnyContent] =
+  def onSubmit(ref: ArrivalUniqueRef, eventIndex: Index, mode: Mode): Action[AnyContent] =
     (identify andThen getData(mrn) andThen requireData).async {
       implicit request =>
         referenceDataConnector.getCountryList() flatMap {
