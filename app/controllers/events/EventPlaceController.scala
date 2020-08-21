@@ -19,7 +19,7 @@ package controllers.events
 import controllers.actions._
 import forms.events.EventPlaceFormProvider
 import javax.inject.Inject
-import models.{Index, Mode, MovementReferenceNumber}
+import models.{ArrivalUniqueRef, Index, Mode, MovementReferenceNumber}
 import navigation.Navigator
 import pages.events.EventPlacePage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -47,8 +47,8 @@ class EventPlaceController @Inject()(override val messagesApi: MessagesApi,
 
   private val form = formProvider()
 
-  def onPageLoad(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode): Action[AnyContent] =
-    (identify andThen getData(mrn) andThen requireData).async {
+  def onPageLoad(ref: ArrivalUniqueRef, eventIndex: Index, mode: Mode): Action[AnyContent] =
+    (identify andThen getData(ref) andThen requireData).async {
       implicit request =>
         val preparedForm = request.userAnswers.get(EventPlacePage(eventIndex)) match {
           case None        => form
@@ -57,16 +57,16 @@ class EventPlaceController @Inject()(override val messagesApi: MessagesApi,
 
         val json = Json.obj(
           "form"        -> preparedForm,
-          "mrn"         -> mrn,
+          "ref"         -> ref,
           "mode"        -> mode,
-          "onSubmitUrl" -> routes.EventPlaceController.onSubmit(mrn, eventIndex, mode).url
+          "onSubmitUrl" -> routes.EventPlaceController.onSubmit(ref, eventIndex, mode).url
         )
 
         renderer.render("events/eventPlace.njk", json).map(Ok(_))
     }
 
   def onSubmit(ref: ArrivalUniqueRef, eventIndex: Index, mode: Mode): Action[AnyContent] =
-    (identify andThen getData(mrn) andThen requireData).async {
+    (identify andThen getData(ref) andThen requireData).async {
       implicit request =>
         form
           .bindFromRequest()
@@ -75,9 +75,9 @@ class EventPlaceController @Inject()(override val messagesApi: MessagesApi,
 
               val json = Json.obj(
                 "form"        -> formWithErrors,
-                "mrn"         -> mrn,
+                "ref"         -> ref,
                 "mode"        -> mode,
-                "onSubmitUrl" -> routes.EventPlaceController.onSubmit(mrn, eventIndex, mode).url
+                "onSubmitUrl" -> routes.EventPlaceController.onSubmit(ref, eventIndex, mode).url
               )
 
               renderer.render("events/eventPlace.njk", json).map(BadRequest(_))

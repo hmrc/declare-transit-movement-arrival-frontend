@@ -77,7 +77,8 @@ object UserAnswers {
     import play.api.libs.functional.syntax._
 
     (
-      (__ \ "_id").read[MovementReferenceNumber] and
+      (__ \ "ref").read[ArrivalUniqueRef] and
+        (__ \ "_id").read[MovementReferenceNumber] and
         (__ \ "eoriNumber").read[EoriNumber] and
         (__ \ "data").read[JsObject] and
         (__ \ "lastUpdated").read(MongoDateTimeFormats.localDateTimeRead) and
@@ -90,7 +91,8 @@ object UserAnswers {
     import play.api.libs.functional.syntax._
 
     (
-      (__ \ "_id").write[MovementReferenceNumber] and
+      (__ \ "ref").write[ArrivalUniqueRef] and
+        (__ \ "_id").write[MovementReferenceNumber] and
         (__ \ "eoriNumber").write[EoriNumber] and
         (__ \ "data").write[JsObject] and
         (__ \ "lastUpdated").write(MongoDateTimeFormats.localDateTimeWrite) and

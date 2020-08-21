@@ -19,7 +19,7 @@ package controllers.events
 import controllers.actions._
 import forms.events.EventReportedFormProvider
 import javax.inject.Inject
-import models.{Index, Mode, MovementReferenceNumber}
+import models.{ArrivalUniqueRef, Index, Mode, MovementReferenceNumber}
 import navigation.Navigator
 import pages.events.EventReportedPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -47,7 +47,7 @@ class EventReportedController @Inject()(override val messagesApi: MessagesApi,
 
   private val form = formProvider()
 
-  def onPageLoad(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onPageLoad(ref: ArrivalUniqueRef, eventIndex: Index, mode: Mode): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
     implicit request =>
       val preparedForm = request.userAnswers.get(EventReportedPage(eventIndex)) match {
         case None        => form
@@ -57,16 +57,16 @@ class EventReportedController @Inject()(override val messagesApi: MessagesApi,
       val json = Json.obj(
         "form"        -> preparedForm,
         "mode"        -> mode,
-        "mrn"         -> mrn,
+        "ref"         -> ref,
         "radios"      -> Radios.yesNo(preparedForm("value")),
-        "onSubmitUrl" -> routes.EventReportedController.onSubmit(mrn, eventIndex, mode).url
+        "onSubmitUrl" -> routes.EventReportedController.onSubmit(ref, eventIndex, mode).url
       )
 
       renderer.render("events/eventReported.njk", json).map(Ok(_))
   }
 
   def onSubmit(ref: ArrivalUniqueRef, eventIndex: Index, mode: Mode): Action[AnyContent] =
-    (identify andThen getData(mrn) andThen requireData).async {
+    (identify andThen getData(ref) andThen requireData).async {
       implicit request =>
         form
           .bindFromRequest()
@@ -76,9 +76,9 @@ class EventReportedController @Inject()(override val messagesApi: MessagesApi,
               val json = Json.obj(
                 "form"        -> formWithErrors,
                 "mode"        -> mode,
-                "mrn"         -> mrn,
+                "ref"         -> ref,
                 "radios"      -> Radios.yesNo(formWithErrors("value")),
-                "onSubmitUrl" -> routes.EventReportedController.onSubmit(mrn, eventIndex, mode).url
+                "onSubmitUrl" -> routes.EventReportedController.onSubmit(ref, eventIndex, mode).url
               )
 
               renderer.render("events/eventReported.njk", json).map(BadRequest(_))

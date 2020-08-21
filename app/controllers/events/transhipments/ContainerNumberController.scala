@@ -20,7 +20,7 @@ import controllers.actions._
 import forms.events.transhipments.ContainerNumberFormProvider
 import javax.inject.Inject
 import models.domain.ContainerDomain
-import models.{Index, Mode, MovementReferenceNumber}
+import models.{ArrivalUniqueRef, Index, Mode, MovementReferenceNumber}
 import navigation.Navigator
 import pages.events.transhipments.ContainerNumberPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -49,8 +49,8 @@ class ContainerNumberController @Inject()(
     with I18nSupport
     with NunjucksSupport {
 
-  def onPageLoad(mrn: MovementReferenceNumber, eventIndex: Index, containerIndex: Index, mode: Mode): Action[AnyContent] =
-    (identify andThen getData(mrn) andThen requireData).async {
+  def onPageLoad(ref: ArrivalUniqueRef, eventIndex: Index, containerIndex: Index, mode: Mode): Action[AnyContent] =
+    (identify andThen getData(ref) andThen requireData).async {
       implicit request =>
         val preparedForm = request.userAnswers.get(ContainerNumberPage(eventIndex, containerIndex)) match {
           case None        => formProvider(containerIndex)
@@ -59,16 +59,16 @@ class ContainerNumberController @Inject()(
 
         val json = Json.obj(
           "form"        -> preparedForm,
-          "mrn"         -> mrn,
+          "ref"         -> ref,
           "mode"        -> mode,
-          "onSubmitUrl" -> routes.ContainerNumberController.onSubmit(mrn, eventIndex, containerIndex, mode).url
+          "onSubmitUrl" -> routes.ContainerNumberController.onSubmit(ref, eventIndex, containerIndex, mode).url
         )
 
         renderer.render("events/transhipments/containerNumber.njk", json).map(Ok(_))
     }
 
   def onSubmit(ref: ArrivalUniqueRef, eventIndex: Index, containerIndex: Index, mode: Mode): Action[AnyContent] =
-    (identify andThen getData(mrn) andThen requireData).async {
+    (identify andThen getData(ref) andThen requireData).async {
       implicit request =>
         val containers = request.userAnswers.get(ContainersQuery(eventIndex)).getOrElse(Seq.empty)
 
@@ -79,9 +79,9 @@ class ContainerNumberController @Inject()(
 
               val json = Json.obj(
                 "form"        -> formWithErrors,
-                "mrn"         -> mrn,
+                "ref"         -> ref,
                 "mode"        -> mode,
-                "onSubmitUrl" -> routes.ContainerNumberController.onSubmit(mrn, eventIndex, containerIndex, mode).url
+                "onSubmitUrl" -> routes.ContainerNumberController.onSubmit(ref, eventIndex, containerIndex, mode).url
               )
 
               renderer.render("events/transhipments/containerNumber.njk", json).map(BadRequest(_))

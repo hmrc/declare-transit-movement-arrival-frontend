@@ -20,7 +20,7 @@ class $className$Controller @Inject()(
                                        renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad(mrn: MovementReferenceNumber): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onPageLoad(mrn: MovementReferenceNumber): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
     implicit request =>
 
       val json = Json.obj("mrn" -> mrn)

@@ -21,7 +21,7 @@ import controllers.actions.{DataRequiredAction, DataRetrievalActionProvider, Ide
 import forms.events.transhipments.TransportNationalityFormProvider
 import javax.inject.Inject
 import models.reference.Country
-import models.{Index, Mode, MovementReferenceNumber}
+import models.{ArrivalUniqueRef, Index, Mode, MovementReferenceNumber}
 import navigation.Navigator
 import pages.events.transhipments.TransportNationalityPage
 import play.api.data.Form
@@ -49,7 +49,7 @@ class TransportNationalityController @Inject()(override val messagesApi: Message
     with I18nSupport
     with NunjucksSupport {
 
-  def onPageLoad(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onPageLoad(ref: ArrivalUniqueRef, eventIndex: Index, mode: Mode): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
     implicit request =>
       referenceDataConnector.getCountryList() flatMap {
         countries =>
@@ -61,11 +61,11 @@ class TransportNationalityController @Inject()(override val messagesApi: Message
             .map(form.fill)
             .getOrElse(form)
 
-          renderPage(mrn, mode, preparedForm, countries.fullList, Ok, eventIndex)
+          renderPage(ref, mode, preparedForm, countries.fullList, Ok, eventIndex)
       }
   }
 
-  def onSubmit(ref: ArrivalUniqueRef, eventIndex: Index, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onSubmit(ref: ArrivalUniqueRef, eventIndex: Index, mode: Mode): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
     implicit request =>
       referenceDataConnector.getCountryList() flatMap {
         countries =>
@@ -74,7 +74,7 @@ class TransportNationalityController @Inject()(override val messagesApi: Message
           form
             .bindFromRequest()
             .fold(
-              formWithErrors => renderPage(mrn, mode, formWithErrors, countries.fullList, BadRequest, eventIndex),
+              formWithErrors => renderPage(ref, mode, formWithErrors, countries.fullList, BadRequest, eventIndex),
               value =>
                 for {
                   updatedAnswers <- Future.fromTry(request.userAnswers.set(TransportNationalityPage(eventIndex), value.code))
@@ -84,14 +84,14 @@ class TransportNationalityController @Inject()(override val messagesApi: Message
       }
   }
 
-  private def renderPage(mrn: MovementReferenceNumber, mode: Mode, form: Form[Country], countries: Seq[Country], status: Status, eventIndex: Index)(
+  private def renderPage(ref: ArrivalUniqueRef, mode: Mode, form: Form[Country], countries: Seq[Country], status: Status, eventIndex: Index)(
     implicit request: Request[AnyContent]): Future[Result] = {
     val json = Json.obj(
       "form"        -> form,
-      "mrn"         -> mrn,
+      "ref"         -> ref,
       "mode"        -> mode,
       "countries"   -> countryJsonList(form.value, countries),
-      "onSubmitUrl" -> routes.TransportNationalityController.onSubmit(mrn, eventIndex, mode).url
+      "onSubmitUrl" -> routes.TransportNationalityController.onSubmit(ref, eventIndex, mode).url
     )
 
     renderer.render("events/transhipments/transportNationality.njk", json).map(status(_))
