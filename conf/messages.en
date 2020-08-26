@@ -80,7 +80,7 @@ technicalDifficulties.title = Sorry, there is a problem with the service
 technicalDifficulties.heading = Sorry, there is a problem with the service
 technicalDifficulties.tryAgain = Try again later.
 technicalDifficulties.contact = You can
-technicalDifficulties.contact.link = contact the New Computerised Transit System helpdesk to fix this(opens in a new tab)
+technicalDifficulties.contact.link = contact the New Computerised Transit System helpdesk to fix this (opens in a new tab)
 
 #### Compliance statement
 
@@ -473,7 +473,7 @@ arrivalRejection.you.can = You can:
 arrivalRejection.errorCode = Error code
 arrivalRejection.pointer = Pointer
 arrivalRejection.conflicting.information = There is conflicting information that must be fixed.
-arrivalRejection.contact = contact the New Computerised Transit System helpdesk to fix this(opens in a new tab)
+arrivalRejection.contact = contact the New Computerised Transit System helpdesk to fix this (opens in a new tab)
 arrivalRejection.create.arrival = create a new arrival notification
 
 movementReferenceNumberRejection.error.unknown = The movement reference number cannot be found.
