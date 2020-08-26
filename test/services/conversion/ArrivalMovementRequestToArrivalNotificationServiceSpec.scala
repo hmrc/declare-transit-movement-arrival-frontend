@@ -21,8 +21,8 @@ import java.time.LocalTime
 import base.SpecBase
 import generators.MessagesModelGenerators
 import models.EoriNumber
-import models.domain.{ArrivalNotificationDomain, NormalNotification, SimplifiedNotification}
-import models.messages.{ArrivalMovementRequest, Header, InterchangeControlReference, MessageSender}
+import models.domain.{ArrivalNotificationDomain, SimplifiedNotification}
+import models.messages.{ArrivalMovementRequest, Header, InterchangeControlReference}
 import models.reference.CustomsOffice
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -37,16 +37,14 @@ class ArrivalMovementRequestToArrivalNotificationServiceSpec extends SpecBase wi
 
       forAll(
         arbitrary[ArrivalNotificationDomain],
-        arbitrary[MessageSender],
         arbitrary[InterchangeControlReference],
         arbitrary[LocalTime],
         arbitrary[EoriNumber]
       ) {
-        (arrivalNotificationDomain, messageSender, interchangeControlReference, timeOfPresentation, eoriNumber) =>
+        (arrivalNotificationDomain, interchangeControlReference, timeOfPresentation, eoriNumber) =>
           val arrivalMovementRequest = ArrivalNotificationDomainToArrivalMovementRequestService
             .convertToSubmissionModel(
               arrivalNotificationDomain,
-              messageSender,
               interchangeControlReference,
               timeOfPresentation
             )

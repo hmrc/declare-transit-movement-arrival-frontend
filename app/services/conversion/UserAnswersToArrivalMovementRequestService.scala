@@ -20,22 +20,19 @@ import java.time.LocalTime
 
 import config.FrontendAppConfig
 import javax.inject.Inject
-import models.{EoriNumber, UserAnswers}
-import models.messages.{ArrivalMovementRequest, MessageSender}
+import models.UserAnswers
+import models.messages.ArrivalMovementRequest
 import repositories.InterchangeControlReferenceIdRepository
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class UserAnswersToArrivalMovementRequestService @Inject()(
-  appConfig: FrontendAppConfig,
   converterService: UserAnswersToArrivalNotificationDomain,
   interchangeControlReferenceIdRepository: InterchangeControlReferenceIdRepository)(implicit ec: ExecutionContext) {
 
   def convert(userAnswers: UserAnswers): Option[Future[ArrivalMovementRequest]] =
     converterService.convertToArrivalNotification(userAnswers).map {
       notification =>
-        val messageSender = MessageSender(appConfig.env, EoriNumber(notification.trader.eori))
-
         interchangeControlReferenceIdRepository
           .nextInterchangeControlReferenceId()
           .map {
@@ -43,7 +40,6 @@ class UserAnswersToArrivalMovementRequestService @Inject()(
               ArrivalNotificationDomainToArrivalMovementRequestService
                 .convertToSubmissionModel(
                   arrivalNotification         = notification,
-                  messageSender               = messageSender,
                   interchangeControlReference = referenceId,
                   timeOfPresentation          = LocalTime.now()
                 )

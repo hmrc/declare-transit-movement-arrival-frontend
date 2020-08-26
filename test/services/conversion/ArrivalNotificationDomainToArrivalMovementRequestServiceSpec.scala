@@ -56,7 +56,6 @@ class ArrivalNotificationDomainToArrivalMovementRequestServiceSpec
           val result = ArrivalNotificationDomainToArrivalMovementRequestService
             .convertToSubmissionModel(
               arrivalNotificationDomain,
-              arrivalMovementRequest.meta.messageSender,
               arrivalMovementRequest.meta.interchangeControlReference,
               arrivalMovementRequest.meta.timeOfPreparation
             )

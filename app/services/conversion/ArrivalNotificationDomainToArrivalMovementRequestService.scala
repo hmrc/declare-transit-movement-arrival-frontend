@@ -26,14 +26,12 @@ object ArrivalNotificationDomainToArrivalMovementRequestService {
 
   def convertToSubmissionModel(
     arrivalNotification: ArrivalNotificationDomain,
-    messageSender: MessageSender,
     interchangeControlReference: InterchangeControlReference,
     timeOfPresentation: LocalTime
   ): ArrivalMovementRequest =
     arrivalNotification match {
       case normalNotification: NormalNotification =>
         val meta = Meta(
-          messageSender               = messageSender,
           interchangeControlReference = interchangeControlReference,
           dateOfPreparation           = normalNotification.notificationDate,
           timeOfPreparation           = timeOfPresentation
@@ -47,7 +45,6 @@ object ArrivalNotificationDomainToArrivalMovementRequestService {
 
       case simplifiedNotification: SimplifiedNotification =>
         val meta = Meta(
-          messageSender               = messageSender,
           interchangeControlReference = interchangeControlReference,
           dateOfPreparation           = simplifiedNotification.notificationDate,
           timeOfPreparation           = timeOfPresentation
