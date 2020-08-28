@@ -47,7 +47,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with JsonMatchers {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
-      val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad(mrn).url)
+      val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad(ref).url)
 
       val result = route(application, request).value
 
@@ -67,7 +67,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with JsonMatchers {
 
       val application = applicationBuilder(userAnswers = None).build()
 
-      val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad(mrn).url)
+      val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad(ref).url)
 
       val result = route(application, request).value
 
@@ -86,13 +86,13 @@ class CheckYourAnswersControllerSpec extends SpecBase with JsonMatchers {
 
       when(mockService.submit(any())(any())).thenReturn(Future.successful(Some(HttpResponse(ACCEPTED))))
 
-      val request = FakeRequest(POST, routes.CheckYourAnswersController.onPost(mrn).url)
+      val request = FakeRequest(POST, routes.CheckYourAnswersController.onPost(ref).url)
 
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual routes.ConfirmationController.onPageLoad(mrn).url
+      redirectLocation(result).value mustEqual routes.ConfirmationController.onPageLoad(ref).url
 
       application.stop()
     }
@@ -106,7 +106,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with JsonMatchers {
       when(mockRenderer.render(any(), any())(any())).thenReturn(Future.successful(Html("")))
       when(mockService.submit(any())(any())).thenReturn(Future.successful(Some(HttpResponse(BAD_REQUEST))))
 
-      val request = FakeRequest(POST, routes.CheckYourAnswersController.onPost(mrn).url)
+      val request = FakeRequest(POST, routes.CheckYourAnswersController.onPost(ref).url)
 
       val result = route(application, request).value
 
@@ -130,7 +130,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with JsonMatchers {
       when(mockRenderer.render(any(), any())(any())).thenReturn(Future.successful(Html("")))
       when(mockService.submit(any())(any())).thenReturn(Future.successful(Some(HttpResponse(UNAUTHORIZED))))
 
-      val request = FakeRequest(POST, routes.CheckYourAnswersController.onPost(mrn).url)
+      val request = FakeRequest(POST, routes.CheckYourAnswersController.onPost(ref).url)
 
       val result = route(application, request).value
 
@@ -155,7 +155,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with JsonMatchers {
 
       when(mockService.submit(any())(any())).thenReturn(Future.successful(Some(HttpResponse(genServerError))))
 
-      val request = FakeRequest(POST, routes.CheckYourAnswersController.onPost(mrn).url)
+      val request = FakeRequest(POST, routes.CheckYourAnswersController.onPost(ref).url)
 
       val result = route(application, request).value
 
@@ -173,7 +173,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with JsonMatchers {
       when(mockRenderer.render(any(), any())(any())).thenReturn(Future.successful(Html("")))
       when(mockService.submit(any())(any())).thenReturn(Future.successful(None))
 
-      val request = FakeRequest(POST, routes.CheckYourAnswersController.onPost(mrn).url)
+      val request = FakeRequest(POST, routes.CheckYourAnswersController.onPost(ref).url)
 
       val result = route(application, request).value
 

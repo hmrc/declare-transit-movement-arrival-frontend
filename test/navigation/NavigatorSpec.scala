@@ -989,7 +989,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
       "must go from UpdateRejectionMovementReferenceNumber page to CheckYourAnswers page" in {
         navigator
           .nextRejectionPage(UpdateRejectedMRNPage, mrn)
-          .mustBe(routes.CheckYourAnswersController.onPageLoad(mrn))
+          .mustBe(routes.CheckYourAnswersController.onPageLoad(ref))
       }
     }
 

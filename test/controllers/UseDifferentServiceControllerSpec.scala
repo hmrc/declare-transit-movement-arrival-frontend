@@ -42,7 +42,7 @@ class UseDifferentServiceControllerSpec extends SpecBase with MockitoSugar with 
         .thenReturn(Future.successful(Html("")))
 
       val application    = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request        = FakeRequest(GET, routes.UseDifferentServiceController.onPageLoad(mrn).url)
+      val request        = FakeRequest(GET, routes.UseDifferentServiceController.onPageLoad(ref).url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 

@@ -27,7 +27,7 @@
           }) }}
         {% endif %}
 
-        <form action="{{ routes.controllers.TraderAddressController.onSubmit(mrn, mode).url }}" method="post">
+        <form action="{{ routes.controllers.TraderAddressController.onSubmit(ref, mode).url }}" method="post">
 
           {{ csrf() | safe }}
 

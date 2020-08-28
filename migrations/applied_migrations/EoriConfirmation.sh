@@ -6,10 +6,10 @@ echo "Applying migration EoriConfirmation"
 echo "Adding routes to conf/app.routes"
 
 echo "" >> ../conf/app.routes
-echo "GET        /:mrn/eoriConfirmation                        controllers.EoriConfirmationController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = NormalMode)" >> ../conf/app.routes
+echo "GET        /:mrn/eoriConfirmation                        controllers.EoriConfirmationController.onPageLoad(ref: MovementReferenceNumber, mode: Mode = NormalMode)" >> ../conf/app.routes
 echo "POST       /:mrn/eoriConfirmation                        controllers.EoriConfirmationController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)" >> ../conf/app.routes
 
-echo "GET        /:mrn/changeEoriConfirmation                  controllers.EoriConfirmationController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)" >> ../conf/app.routes
+echo "GET        /:mrn/changeEoriConfirmation                  controllers.EoriConfirmationController.onPageLoad(ref: MovementReferenceNumber, mode: Mode = CheckMode)" >> ../conf/app.routes
 echo "POST       /:mrn/changeEoriConfirmation                  controllers.EoriConfirmationController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)" >> ../conf/app.routes
 
 echo "Adding messages to conf.messages"
@@ -58,7 +58,7 @@ awk '/class CheckYourAnswersHelper/ {\
      print "        actions = List(";\
      print "          Action(";\
      print "            content            = msg\"site.edit\",";\
-     print "            href               = routes.EoriConfirmationController.onPageLoad(mrn, CheckMode).url,";\
+     print "            href               = routes.EoriConfirmationController.onPageLoad(ref, CheckMode).url,";\
      print "            visuallyHiddenText = Some(msg\"site.edit.hidden\".withArgs(msg\"eoriConfirmation.checkYourAnswersLabel\"))";\
      print "          )";\
      print "        )";\

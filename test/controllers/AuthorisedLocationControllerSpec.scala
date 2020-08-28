@@ -44,7 +44,7 @@ class AuthorisedLocationControllerSpec extends SpecBase with MockitoSugar with N
   val formProvider = new AuthorisedLocationFormProvider()
   val form         = formProvider()
 
-  lazy val authorisedLocationRoute = routes.AuthorisedLocationController.onPageLoad(mrn, NormalMode).url
+  lazy val authorisedLocationRoute = routes.AuthorisedLocationController.onPageLoad(ref, NormalMode).url
 
   "AuthorisedLocation Controller" - {
 

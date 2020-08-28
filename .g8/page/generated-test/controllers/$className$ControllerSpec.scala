@@ -23,7 +23,7 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar with JsonMatc
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(GET, routes.$className$Controller.onPageLoad(mrn).url)
+      val request = FakeRequest(GET, routes.$className$Controller.onPageLoad(ref).url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 

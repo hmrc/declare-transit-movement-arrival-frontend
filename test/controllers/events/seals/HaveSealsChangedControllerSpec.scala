@@ -45,7 +45,7 @@ class HaveSealsChangedControllerSpec extends SpecBase with MockitoSugar with Nun
   val formProvider        = new HaveSealsChangedFormProvider()
   val form: Form[Boolean] = formProvider()
 
-  lazy val haveSealsChangedRoute: String = routes.HaveSealsChangedController.onPageLoad(mrn, eventIndex, NormalMode).url
+  lazy val haveSealsChangedRoute: String = routes.HaveSealsChangedController.onPageLoad(ref, eventIndex, NormalMode).url
 
   "HaveSealsChanged Controller" - {
 
@@ -70,7 +70,7 @@ class HaveSealsChangedControllerSpec extends SpecBase with MockitoSugar with Nun
         "mode"        -> NormalMode,
         "mrn"         -> mrn,
         "radios"      -> Radios.yesNo(form("value")),
-        "onSubmitUrl" -> routes.HaveSealsChangedController.onSubmit(mrn, eventIndex, NormalMode).url
+        "onSubmitUrl" -> routes.HaveSealsChangedController.onSubmit(ref, eventIndex, NormalMode).url
       )
 
       templateCaptor.getValue mustEqual "events/seals/haveSealsChanged.njk"
@@ -103,7 +103,7 @@ class HaveSealsChangedControllerSpec extends SpecBase with MockitoSugar with Nun
         "mode"        -> NormalMode,
         "mrn"         -> mrn,
         "radios"      -> Radios.yesNo(filledForm("value")),
-        "onSubmitUrl" -> routes.HaveSealsChangedController.onSubmit(mrn, eventIndex, NormalMode).url
+        "onSubmitUrl" -> routes.HaveSealsChangedController.onSubmit(ref, eventIndex, NormalMode).url
       )
 
       templateCaptor.getValue mustEqual "events/seals/haveSealsChanged.njk"
@@ -161,7 +161,7 @@ class HaveSealsChangedControllerSpec extends SpecBase with MockitoSugar with Nun
         "mode"        -> NormalMode,
         "mrn"         -> mrn,
         "radios"      -> Radios.yesNo(boundForm("value")),
-        "onSubmitUrl" -> routes.HaveSealsChangedController.onSubmit(mrn, eventIndex, NormalMode).url
+        "onSubmitUrl" -> routes.HaveSealsChangedController.onSubmit(ref, eventIndex, NormalMode).url
       )
 
       templateCaptor.getValue mustEqual "events/seals/haveSealsChanged.njk"

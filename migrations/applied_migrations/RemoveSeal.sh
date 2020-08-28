@@ -6,10 +6,10 @@ echo "Applying migration RemoveSeal"
 echo "Adding routes to conf/app.routes"
 
 echo "" >> ../conf/app.routes
-echo "GET        /:mrn/removeSeal                        controllers.events.seals.RemoveSealController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = NormalMode)" >> ../conf/app.routes
+echo "GET        /:mrn/removeSeal                        controllers.events.seals.RemoveSealController.onPageLoad(ref: MovementReferenceNumber, mode: Mode = NormalMode)" >> ../conf/app.routes
 echo "POST       /:mrn/removeSeal                        controllers.events.seals.RemoveSealController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)" >> ../conf/app.routes
 
-echo "GET        /:mrn/changeRemoveSeal                  controllers.events.seals.RemoveSealController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)" >> ../conf/app.routes
+echo "GET        /:mrn/changeRemoveSeal                  controllers.events.seals.RemoveSealController.onPageLoad(ref: MovementReferenceNumber, mode: Mode = CheckMode)" >> ../conf/app.routes
 echo "POST       /:mrn/changeRemoveSeal                  controllers.events.seals.RemoveSealController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)" >> ../conf/app.routes
 
 echo "Adding messages to conf.messages"
@@ -58,7 +58,7 @@ awk '/class CheckYourAnswersHelper/ {\
      print "        actions = List(";\
      print "          Action(";\
      print "            content            = msg\"site.edit\",";\
-     print "            href               = routes.RemoveSealController.onPageLoad(mrn, CheckMode).url,";\
+     print "            href               = routes.RemoveSealController.onPageLoad(ref, CheckMode).url,";\
      print "            visuallyHiddenText = Some(msg\"site.edit.hidden\".withArgs(msg\"removeSeal.checkYourAnswersLabel\"))";\
      print "          )";\
      print "        )";\

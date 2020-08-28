@@ -19,7 +19,7 @@ package controllers.actions
 import generators.Generators
 import models.requests.IdentifierRequest
 import models.requests.OptionalDataRequest
-import models.{EoriNumber, MovementReferenceNumber, UserAnswers}
+import models.{ArrivalUniqueRef, EoriNumber, MovementReferenceNumber, UserAnswers}
 import org.mockito.Matchers._
 import org.mockito.Mockito._
 import org.scalacheck.Arbitrary.arbitrary
@@ -51,6 +51,7 @@ class DataRetrievalActionSpec
 
   val sessionRepository: SessionRepository = mock[SessionRepository]
   val mrn: MovementReferenceNumber         = arbitrary[MovementReferenceNumber].sample.value
+  val ref: ArrivalUniqueRef                = ArrivalUniqueRef()
   val eoriNumber: EoriNumber               = arbitrary[EoriNumber].sample.value
 
   override lazy val app: Application = {
@@ -64,11 +65,11 @@ class DataRetrievalActionSpec
       .build()
   }
 
-  def harness(mrn: MovementReferenceNumber, f: OptionalDataRequest[AnyContent] => Unit): Unit = {
+  def harness(ref: ArrivalUniqueRef, f: OptionalDataRequest[AnyContent] => Unit): Unit = {
 
     lazy val actionProvider = app.injector.instanceOf[DataRetrievalActionProviderImpl]
 
-    actionProvider(mrn)
+    actionProvider(ref)
       .invokeBlock(
         IdentifierRequest(FakeRequest(GET, "/").asInstanceOf[Request[AnyContent]], EoriNumber("")), {
           request: OptionalDataRequest[AnyContent] =>
@@ -87,7 +88,7 @@ class DataRetrievalActionSpec
 
         when(sessionRepository.get(any(), any())) thenReturn Future.successful(None)
 
-        harness(mrn, {
+        harness(ref, {
           request =>
             request.userAnswers must not be defined
         })
@@ -100,7 +101,7 @@ class DataRetrievalActionSpec
 
         when(sessionRepository.get(any(), any())) thenReturn Future.successful(Some(UserAnswers(mrn, eoriNumber)))
 
-        harness(mrn, {
+        harness(ref, {
           request =>
             request.userAnswers mustBe defined
         })

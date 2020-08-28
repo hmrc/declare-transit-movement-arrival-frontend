@@ -44,7 +44,7 @@ class ConfirmRemoveContainerControllerSpec extends SpecBase with MockitoSugar wi
   private val formProvider = new ConfirmRemoveContainerFormProvider()
   private val form         = formProvider(domainContainer)
 
-  private lazy val confirmRemoveContainerRoute    = routes.ConfirmRemoveContainerController.onPageLoad(mrn, eventIndex, containerIndex, NormalMode).url
+  private lazy val confirmRemoveContainerRoute    = routes.ConfirmRemoveContainerController.onPageLoad(ref, eventIndex, containerIndex, NormalMode).url
   private lazy val confirmRemoveContainerTemplate = "events/transhipments/confirmRemoveContainer.njk"
 
   private val presetUserAnswers =
@@ -74,7 +74,7 @@ class ConfirmRemoveContainerControllerSpec extends SpecBase with MockitoSugar wi
         "mrn"             -> mrn,
         "containerNumber" -> container.containerNumber,
         "radios"          -> Radios.yesNo(form("value")),
-        "onSubmitUrl"     -> routes.ConfirmRemoveContainerController.onSubmit(mrn, eventIndex, containerIndex, NormalMode).url
+        "onSubmitUrl"     -> routes.ConfirmRemoveContainerController.onSubmit(ref, eventIndex, containerIndex, NormalMode).url
       )
 
       templateCaptor.getValue mustEqual confirmRemoveContainerTemplate
@@ -103,7 +103,7 @@ class ConfirmRemoveContainerControllerSpec extends SpecBase with MockitoSugar wi
         "pageTitle"    -> msg"concurrent.remove.error.title".withArgs("container"),
         "pageHeading"  -> msg"concurrent.remove.error.heading".withArgs("container"),
         "linkText"     -> msg"concurrent.remove.error.noContainer.link.text",
-        "redirectLink" -> controllers.events.routes.IsTranshipmentController.onPageLoad(mrn, eventIndex, NormalMode).url
+        "redirectLink" -> controllers.events.routes.IsTranshipmentController.onPageLoad(ref, eventIndex, NormalMode).url
       )
 
       templateCaptor.getValue mustEqual "concurrentRemoveError.njk"
@@ -127,7 +127,7 @@ class ConfirmRemoveContainerControllerSpec extends SpecBase with MockitoSugar wi
         .success
         .value
 
-      val removeContainerRoute = routes.ConfirmRemoveContainerController.onPageLoad(mrn, eventIndex, Index(2), NormalMode).url
+      val removeContainerRoute = routes.ConfirmRemoveContainerController.onPageLoad(ref, eventIndex, Index(2), NormalMode).url
 
       val application    = applicationBuilder(userAnswers = Some(updatedAnswer)).build()
       val request        = FakeRequest(GET, removeContainerRoute)
@@ -144,7 +144,7 @@ class ConfirmRemoveContainerControllerSpec extends SpecBase with MockitoSugar wi
         "pageTitle"    -> msg"concurrent.remove.error.title".withArgs("container"),
         "pageHeading"  -> msg"concurrent.remove.error.heading".withArgs("container"),
         "linkText"     -> msg"concurrent.remove.error.multipleContainer.link.text",
-        "redirectLink" -> routes.AddContainerController.onPageLoad(mrn, eventIndex, NormalMode).url
+        "redirectLink" -> routes.AddContainerController.onPageLoad(ref, eventIndex, NormalMode).url
       )
 
       templateCaptor.getValue mustEqual "concurrentRemoveError.njk"
@@ -247,7 +247,7 @@ class ConfirmRemoveContainerControllerSpec extends SpecBase with MockitoSugar wi
         "mode"        -> NormalMode,
         "mrn"         -> mrn,
         "radios"      -> Radios.yesNo(boundForm("value")),
-        "onSubmitUrl" -> routes.ConfirmRemoveContainerController.onSubmit(mrn, eventIndex, containerIndex, NormalMode).url
+        "onSubmitUrl" -> routes.ConfirmRemoveContainerController.onSubmit(ref, eventIndex, containerIndex, NormalMode).url
       )
 
       templateCaptor.getValue mustEqual confirmRemoveContainerTemplate

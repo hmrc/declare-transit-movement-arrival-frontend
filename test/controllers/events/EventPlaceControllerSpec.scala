@@ -50,7 +50,7 @@ class EventPlaceControllerSpec extends SpecBase with MockitoSugar with NunjucksS
   val formProvider: EventPlaceFormProvider = new EventPlaceFormProvider()
   val form: Form[String]                   = formProvider()
 
-  lazy val eventPlaceRoute: String = controllers.events.routes.EventPlaceController.onPageLoad(mrn, eventIndex, NormalMode).url
+  lazy val eventPlaceRoute: String = controllers.events.routes.EventPlaceController.onPageLoad(ref, eventIndex, NormalMode).url
 
   "EventPlace Controller" - {
 
@@ -74,7 +74,7 @@ class EventPlaceControllerSpec extends SpecBase with MockitoSugar with NunjucksS
         "form"        -> form,
         "mrn"         -> mrn,
         "mode"        -> NormalMode,
-        "onSubmitUrl" -> routes.EventPlaceController.onSubmit(mrn, eventIndex, NormalMode).url
+        "onSubmitUrl" -> routes.EventPlaceController.onSubmit(ref, eventIndex, NormalMode).url
       )
 
       templateCaptor.getValue mustEqual "events/eventPlace.njk"
@@ -106,7 +106,7 @@ class EventPlaceControllerSpec extends SpecBase with MockitoSugar with NunjucksS
         "form"        -> filledForm,
         "mrn"         -> mrn,
         "mode"        -> NormalMode,
-        "onSubmitUrl" -> routes.EventPlaceController.onSubmit(mrn, eventIndex, NormalMode).url
+        "onSubmitUrl" -> routes.EventPlaceController.onSubmit(ref, eventIndex, NormalMode).url
       )
 
       templateCaptor.getValue mustEqual "events/eventPlace.njk"
@@ -162,7 +162,7 @@ class EventPlaceControllerSpec extends SpecBase with MockitoSugar with NunjucksS
         "form"        -> boundForm,
         "mrn"         -> mrn,
         "mode"        -> NormalMode,
-        "onSubmitUrl" -> routes.EventPlaceController.onSubmit(mrn, eventIndex, NormalMode).url
+        "onSubmitUrl" -> routes.EventPlaceController.onSubmit(ref, eventIndex, NormalMode).url
       )
 
       templateCaptor.getValue mustEqual "events/eventPlace.njk"

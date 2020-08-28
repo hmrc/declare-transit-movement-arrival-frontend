@@ -6,10 +6,10 @@ echo "Applying migration PlaceOfNotification"
 echo "Adding routes to conf/app.routes"
 
 echo "" >> ../conf/app.routes
-echo "GET        /:mrn/placeOfNotification                        controllers.PlaceOfNotificationController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = NormalMode)" >> ../conf/app.routes
+echo "GET        /:mrn/placeOfNotification                        controllers.PlaceOfNotificationController.onPageLoad(ref: MovementReferenceNumber, mode: Mode = NormalMode)" >> ../conf/app.routes
 echo "POST       /:mrn/placeOfNotification                        controllers.PlaceOfNotificationController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)" >> ../conf/app.routes
 
-echo "GET        /:mrn/changePlaceOfNotification                  controllers.PlaceOfNotificationController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)" >> ../conf/app.routes
+echo "GET        /:mrn/changePlaceOfNotification                  controllers.PlaceOfNotificationController.onPageLoad(ref: MovementReferenceNumber, mode: Mode = CheckMode)" >> ../conf/app.routes
 echo "POST       /:mrn/changePlaceOfNotification                  controllers.PlaceOfNotificationController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)" >> ../conf/app.routes
 
 echo "Adding messages to conf.messages"
@@ -59,7 +59,7 @@ awk '/class CheckYourAnswersHelper/ {\
      print "        actions = List(";\
      print "          Action(";\
      print "            content            = msg\"site.edit\",";\
-     print "            href               = routes.PlaceOfNotificationController.onPageLoad(mrn, CheckMode).url,";\
+     print "            href               = routes.PlaceOfNotificationController.onPageLoad(ref, CheckMode).url,";\
      print "            visuallyHiddenText = Some(msg\"site.edit.hidden\".withArgs(msg\"placeOfNotification.checkYourAnswersLabel\"))";\
      print "          )";\
      print "        )";\

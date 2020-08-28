@@ -55,7 +55,7 @@ class CheckEventAnswersControllerSpec extends SpecBase with JsonMatchers with Me
         .overrides(bind[ReferenceDataConnector].toInstance(mockReferenceDataConnector))
         .build()
 
-      val request = FakeRequest(GET, routes.CheckEventAnswersController.onPageLoad(mrn, eventIndex).url)
+      val request = FakeRequest(GET, routes.CheckEventAnswersController.onPageLoad(ref, eventIndex).url)
 
       val result = route(application, request).value
 
@@ -75,7 +75,7 @@ class CheckEventAnswersControllerSpec extends SpecBase with JsonMatchers with Me
 
       val application = applicationBuilder(userAnswers = None).build()
 
-      val request = FakeRequest(GET, routes.CheckEventAnswersController.onPageLoad(mrn, eventIndex).url)
+      val request = FakeRequest(GET, routes.CheckEventAnswersController.onPageLoad(ref, eventIndex).url)
 
       val result = route(application, request).value
 
@@ -93,13 +93,13 @@ class CheckEventAnswersControllerSpec extends SpecBase with JsonMatchers with Me
 
       when(mockRenderer.render(any(), any())(any())).thenReturn(Future.successful(Html("")))
 
-      val request = FakeRequest(POST, controllers.events.routes.CheckEventAnswersController.onSubmit(mrn, eventIndex).url)
+      val request = FakeRequest(POST, controllers.events.routes.CheckEventAnswersController.onSubmit(ref, eventIndex).url)
 
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual controllers.events.routes.AddEventController.onPageLoad(mrn, NormalMode).url
+      redirectLocation(result).value mustEqual controllers.events.routes.AddEventController.onPageLoad(ref, NormalMode).url
 
       application.stop()
 

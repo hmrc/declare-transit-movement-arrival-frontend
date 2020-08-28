@@ -53,7 +53,7 @@ class EventCountryControllerSpec extends SpecBase with MockitoSugar with Nunjuck
   val countries                                          = CountryList(Vector(country))
   val form                                               = formProvider(countries)
   val mockReferenceDataConnector: ReferenceDataConnector = mock[ReferenceDataConnector]
-  lazy val eventCountryRoute: String                     = routes.EventCountryController.onPageLoad(mrn, eventIndex, NormalMode).url
+  lazy val eventCountryRoute: String                     = routes.EventCountryController.onPageLoad(ref, eventIndex, NormalMode).url
 
   "EventCountry Controller" - {
 
@@ -128,7 +128,7 @@ class EventCountryControllerSpec extends SpecBase with MockitoSugar with Nunjuck
         "mrn"         -> mrn,
         "mode"        -> NormalMode,
         "countries"   -> json,
-        "onSubmitUrl" -> routes.EventCountryController.onSubmit(mrn, eventIndex, NormalMode).url
+        "onSubmitUrl" -> routes.EventCountryController.onSubmit(ref, eventIndex, NormalMode).url
       )
 
       templateCaptor.getValue mustEqual "events/eventCountry.njk"

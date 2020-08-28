@@ -50,7 +50,7 @@ class ConfirmationControllerSpec extends SpecBase with MockitoSugar with JsonMat
       val application = applicationBuilder(userAnswers = Some(userAnswers))
         .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
-      val request        = FakeRequest(GET, routes.ConfirmationController.onPageLoad(mrn).url)
+      val request        = FakeRequest(GET, routes.ConfirmationController.onPageLoad(ref).url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
       val result         = route(application, request).value
@@ -82,7 +82,7 @@ class ConfirmationControllerSpec extends SpecBase with MockitoSugar with JsonMat
       val application = applicationBuilder(userAnswers = Some(userAnswers))
         .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
-      val request        = FakeRequest(GET, routes.ConfirmationController.onPageLoad(mrn).url)
+      val request        = FakeRequest(GET, routes.ConfirmationController.onPageLoad(ref).url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
       val result         = route(application, request).value

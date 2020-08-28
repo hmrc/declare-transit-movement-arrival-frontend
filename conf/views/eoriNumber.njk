@@ -27,7 +27,7 @@
           }) }}
         {% endif %}
 
-        <form action="{{ routes.controllers.ConsigneeEoriNumberController.onSubmit(mrn, mode).url }}" method="post">
+        <form action="{{ routes.controllers.ConsigneeEoriNumberController.onSubmit(ref, mode).url }}" method="post">
 
           {{ csrf() | safe }}
 

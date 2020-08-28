@@ -44,7 +44,7 @@ class TraderNameControllerSpec extends SpecBase with MockitoSugar with NunjucksS
   val formProvider = new TraderNameFormProvider()
   val form         = formProvider()
 
-  lazy val traderNameRoute = routes.TraderNameController.onPageLoad(mrn, NormalMode).url
+  lazy val traderNameRoute = routes.TraderNameController.onPageLoad(ref, NormalMode).url
 
   "TraderName Controller" - {
 

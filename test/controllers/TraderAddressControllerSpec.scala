@@ -44,7 +44,7 @@ class TraderAddressControllerSpec extends SpecBase with MockitoSugar with Nunjuc
   val formProvider = new TraderAddressFormProvider()
   val form         = formProvider()
 
-  lazy val traderAddressRoute = routes.TraderAddressController.onPageLoad(mrn, NormalMode).url
+  lazy val traderAddressRoute = routes.TraderAddressController.onPageLoad(ref, NormalMode).url
 
   val userAnswers = UserAnswers(
     mrn,

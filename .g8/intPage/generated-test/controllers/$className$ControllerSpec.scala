@@ -30,7 +30,7 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar with Nunjucks
 
   val validAnswer = $minimum$
 
-  lazy val $className;format="decap"$Route = routes.$className$Controller.onPageLoad(mrn, NormalMode).url
+  lazy val $className;format="decap"$Route = routes.$className$Controller.onPageLoad(ref, NormalMode).url
 
   "$className$ Controller" - {
 

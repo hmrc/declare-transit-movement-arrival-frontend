@@ -6,10 +6,10 @@ echo "Applying migration EventPlace"
 echo "Adding routes to conf/app.routes"
 
 echo "" >> ../conf/app.routes
-echo "GET        /:mrn/eventPlace                        controllers.events.EventPlaceController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = NormalMode)" >> ../conf/app.routes
+echo "GET        /:mrn/eventPlace                        controllers.events.EventPlaceController.onPageLoad(ref: MovementReferenceNumber, mode: Mode = NormalMode)" >> ../conf/app.routes
 echo "POST       /:mrn/eventPlace                        controllers.events.EventPlaceController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)" >> ../conf/app.routes
 
-echo "GET        /:mrn/changeEventPlace                  controllers.events.EventPlaceController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)" >> ../conf/app.routes
+echo "GET        /:mrn/changeEventPlace                  controllers.events.EventPlaceController.onPageLoad(ref: MovementReferenceNumber, mode: Mode = CheckMode)" >> ../conf/app.routes
 echo "POST       /:mrn/changeEventPlace                  controllers.events.EventPlaceController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)" >> ../conf/app.routes
 
 echo "Adding messages to conf.messages"
@@ -59,7 +59,7 @@ awk '/class CheckYourAnswersHelper/ {\
      print "        actions = List(";\
      print "          Action(";\
      print "            content            = msg\"site.edit\",";\
-     print "            href               = routes.EventPlaceController.onPageLoad(mrn, CheckMode).url,";\
+     print "            href               = routes.EventPlaceController.onPageLoad(ref, CheckMode).url,";\
      print "            visuallyHiddenText = Some(msg\"site.edit.hidden\".withArgs(msg\"eventPlace.checkYourAnswersLabel\"))";\
      print "          )";\
      print "        )";\

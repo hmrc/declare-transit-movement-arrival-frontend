@@ -27,7 +27,7 @@
           }) }}
         {% endif %}
 
-        <form action="{{ routes.controllers.ConsigneeAddressController.onSubmit(mrn, mode).url }}" method="post">
+        <form action="{{ routes.controllers.ConsigneeAddressController.onSubmit(ref, mode).url }}" method="post">
 
           {{ csrf() | safe }}
  <h1 class="govuk-heading-xl">

@@ -50,7 +50,7 @@ class TransportNationalityControllerSpec extends SpecBase with MockitoSugar with
   val form            = formProvider(countries)
 
   val mockReferenceDataConnector: ReferenceDataConnector = mock[ReferenceDataConnector]
-  lazy val transportNationalityRoute: String             = routes.TransportNationalityController.onPageLoad(mrn, eventIndex, NormalMode).url
+  lazy val transportNationalityRoute: String             = routes.TransportNationalityController.onPageLoad(ref, eventIndex, NormalMode).url
   private val transportNationalityTemplate               = "events/transhipments/transportNationality.njk"
 
   "TransportNationality Controller" - {
@@ -123,7 +123,7 @@ class TransportNationalityControllerSpec extends SpecBase with MockitoSugar with
         "mrn"         -> mrn,
         "mode"        -> NormalMode,
         "countries"   -> countriesJson(),
-        "onSubmitUrl" -> routes.TransportNationalityController.onSubmit(mrn, eventIndex, NormalMode).url
+        "onSubmitUrl" -> routes.TransportNationalityController.onSubmit(ref, eventIndex, NormalMode).url
       )
 
       templateCaptor.getValue mustEqual transportNationalityTemplate

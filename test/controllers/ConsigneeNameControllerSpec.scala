@@ -44,7 +44,7 @@ class ConsigneeNameControllerSpec extends SpecBase with MockitoSugar with Nunjuc
   val formProvider = new ConsigneeNameFormProvider()
   val form         = formProvider()
 
-  lazy val consigneeNameRoute = routes.ConsigneeNameController.onPageLoad(mrn, NormalMode).url
+  lazy val consigneeNameRoute = routes.ConsigneeNameController.onPageLoad(ref, NormalMode).url
 
   "ConsigneeName Controller" - {
 

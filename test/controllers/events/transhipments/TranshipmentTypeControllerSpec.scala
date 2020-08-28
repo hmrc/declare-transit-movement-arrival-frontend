@@ -43,7 +43,7 @@ class TranshipmentTypeControllerSpec extends SpecBase with MockitoSugar with Nun
 
   def onwardRoute: Call = Call("GET", "/foo")
 
-  lazy val transhipmentTypeRoute: String = transhipmentRoutes.TranshipmentTypeController.onPageLoad(mrn, eventIndex, NormalMode).url
+  lazy val transhipmentTypeRoute: String = transhipmentRoutes.TranshipmentTypeController.onPageLoad(ref, eventIndex, NormalMode).url
 
   val formProvider                 = new TranshipmentTypeFormProvider()
   val form: Form[TranshipmentType] = formProvider()
@@ -73,7 +73,7 @@ class TranshipmentTypeControllerSpec extends SpecBase with MockitoSugar with Nun
         "mode"        -> NormalMode,
         "mrn"         -> mrn,
         "radios"      -> TranshipmentType.radios(form),
-        "onSubmitUrl" -> routes.TranshipmentTypeController.onSubmit(mrn, eventIndex, NormalMode).url
+        "onSubmitUrl" -> routes.TranshipmentTypeController.onSubmit(ref, eventIndex, NormalMode).url
       )
 
       templateCaptor.getValue mustEqual transhipmentTypeTemplate
@@ -106,7 +106,7 @@ class TranshipmentTypeControllerSpec extends SpecBase with MockitoSugar with Nun
         "mode"        -> NormalMode,
         "mrn"         -> mrn,
         "radios"      -> TranshipmentType.radios(filledForm),
-        "onSubmitUrl" -> routes.TranshipmentTypeController.onSubmit(mrn, eventIndex, NormalMode).url
+        "onSubmitUrl" -> routes.TranshipmentTypeController.onSubmit(ref, eventIndex, NormalMode).url
       )
 
       templateCaptor.getValue mustEqual transhipmentTypeTemplate
@@ -164,7 +164,7 @@ class TranshipmentTypeControllerSpec extends SpecBase with MockitoSugar with Nun
         "mode"        -> NormalMode,
         "mrn"         -> mrn,
         "radios"      -> TranshipmentType.radios(boundForm),
-        "onSubmitUrl" -> routes.TranshipmentTypeController.onSubmit(mrn, eventIndex, NormalMode).url
+        "onSubmitUrl" -> routes.TranshipmentTypeController.onSubmit(ref, eventIndex, NormalMode).url
       )
 
       templateCaptor.getValue mustEqual transhipmentTypeTemplate

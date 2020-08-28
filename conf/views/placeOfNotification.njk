@@ -27,7 +27,7 @@
           }) }}
         {% endif %}
 
-        <form action="{{ routes.controllers.PlaceOfNotificationController.onSubmit(mrn, mode).url }}" method="post">
+        <form action="{{ routes.controllers.PlaceOfNotificationController.onSubmit(ref, mode).url }}" method="post">
 
           {{ csrf() | safe }}
 

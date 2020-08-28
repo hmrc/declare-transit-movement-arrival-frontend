@@ -6,10 +6,10 @@ echo "Applying migration PresentationOffice"
 echo "Adding routes to conf/app.routes"
 
 echo "" >> ../conf/app.routes
-echo "GET        /:mrn/presentationOffice                        controllers.PresentationOfficeController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = NormalMode)" >> ../conf/app.routes
+echo "GET        /:mrn/presentationOffice                        controllers.PresentationOfficeController.onPageLoad(ref: MovementReferenceNumber, mode: Mode = NormalMode)" >> ../conf/app.routes
 echo "POST       /:mrn/presentationOffice                        controllers.PresentationOfficeController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)" >> ../conf/app.routes
 
-echo "GET        /:mrn/changePresentationOffice                  controllers.PresentationOfficeController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)" >> ../conf/app.routes
+echo "GET        /:mrn/changePresentationOffice                  controllers.PresentationOfficeController.onPageLoad(ref: MovementReferenceNumber, mode: Mode = CheckMode)" >> ../conf/app.routes
 echo "POST       /:mrn/changePresentationOffice                  controllers.PresentationOfficeController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)" >> ../conf/app.routes
 
 echo "Adding messages to conf.messages"
@@ -59,7 +59,7 @@ awk '/class CheckYourAnswersHelper/ {\
      print "        actions = List(";\
      print "          Action(";\
      print "            content            = msg\"site.edit\",";\
-     print "            href               = routes.PresentationOfficeController.onPageLoad(mrn, CheckMode).url,";\
+     print "            href               = routes.PresentationOfficeController.onPageLoad(ref, CheckMode).url,";\
      print "            visuallyHiddenText = Some(msg\"site.edit.hidden\".withArgs(msg\"presentationOffice.checkYourAnswersLabel\"))";\
      print "          )";\
      print "        )";\

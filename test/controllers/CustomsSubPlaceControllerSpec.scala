@@ -44,7 +44,7 @@ class CustomsSubPlaceControllerSpec extends SpecBase with MockitoSugar with Nunj
   val formProvider = new CustomsSubPlaceFormProvider()
   val form         = formProvider()
 
-  lazy val customsSubPlaceRoute = routes.CustomsSubPlaceController.onPageLoad(mrn, NormalMode).url
+  lazy val customsSubPlaceRoute = routes.CustomsSubPlaceController.onPageLoad(ref, NormalMode).url
 
   "CustomsSubPlace Controller" - {
 

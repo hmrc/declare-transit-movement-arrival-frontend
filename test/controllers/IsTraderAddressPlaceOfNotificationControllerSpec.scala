@@ -45,7 +45,7 @@ class IsTraderAddressPlaceOfNotificationControllerSpec extends SpecBase with Moc
   private val formProvider = new IsTraderAddressPlaceOfNotificationFormProvider()
   private val form         = formProvider()
 
-  lazy val isTraderAddressPlaceOfNotificationRoute = routes.IsTraderAddressPlaceOfNotificationController.onPageLoad(mrn, NormalMode).url
+  lazy val isTraderAddressPlaceOfNotificationRoute = routes.IsTraderAddressPlaceOfNotificationController.onPageLoad(ref, NormalMode).url
 
   "IsTraderAddressPlaceOfNotification Controller" - {
     "must return OK and the correct view for a GET" in {

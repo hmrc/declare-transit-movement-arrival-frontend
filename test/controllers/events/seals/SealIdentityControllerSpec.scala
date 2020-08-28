@@ -49,7 +49,7 @@ class SealIdentityControllerSpec extends SpecBase with MockitoSugar with Nunjuck
   val formProvider       = new SealIdentityFormProvider()
   val form: Form[String] = formProvider(sealIndex)
 
-  private def sealIdentityRoute(index: Index = sealIndex): String = routes.SealIdentityController.onPageLoad(mrn, eventIndex, index, NormalMode).url
+  private def sealIdentityRoute(index: Index = sealIndex): String = routes.SealIdentityController.onPageLoad(ref, eventIndex, index, NormalMode).url
 
   "SealIdentity Controller" - {
 
@@ -73,7 +73,7 @@ class SealIdentityControllerSpec extends SpecBase with MockitoSugar with Nunjuck
         "form"        -> form,
         "mrn"         -> mrn,
         "mode"        -> NormalMode,
-        "onSubmitUrl" -> routes.SealIdentityController.onSubmit(mrn, eventIndex, sealIndex, NormalMode).url
+        "onSubmitUrl" -> routes.SealIdentityController.onSubmit(ref, eventIndex, sealIndex, NormalMode).url
       )
 
       templateCaptor.getValue mustEqual "events/seals/sealIdentity.njk"
@@ -105,7 +105,7 @@ class SealIdentityControllerSpec extends SpecBase with MockitoSugar with Nunjuck
         "form"        -> filledForm,
         "mrn"         -> mrn,
         "mode"        -> NormalMode,
-        "onSubmitUrl" -> routes.SealIdentityController.onSubmit(mrn, eventIndex, sealIndex, NormalMode).url
+        "onSubmitUrl" -> routes.SealIdentityController.onSubmit(ref, eventIndex, sealIndex, NormalMode).url
       )
 
       templateCaptor.getValue mustEqual "events/seals/sealIdentity.njk"
@@ -190,7 +190,7 @@ class SealIdentityControllerSpec extends SpecBase with MockitoSugar with Nunjuck
         "form"        -> boundForm,
         "mrn"         -> mrn,
         "mode"        -> NormalMode,
-        "onSubmitUrl" -> routes.SealIdentityController.onSubmit(mrn, eventIndex, sealIndex, NormalMode).url
+        "onSubmitUrl" -> routes.SealIdentityController.onSubmit(ref, eventIndex, sealIndex, NormalMode).url
       )
 
       templateCaptor.getValue mustEqual "events/seals/sealIdentity.njk"

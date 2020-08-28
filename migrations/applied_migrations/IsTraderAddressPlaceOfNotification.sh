@@ -6,10 +6,10 @@ echo "Applying migration IsTraderAddressPlaceOfNotification"
 echo "Adding routes to conf/app.routes"
 
 echo "" >> ../conf/app.routes
-echo "GET        /:mrn/isTraderAddressPlaceOfNotification                        controllers.IsTraderAddressPlaceOfNotificationController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = NormalMode)" >> ../conf/app.routes
+echo "GET        /:mrn/isTraderAddressPlaceOfNotification                        controllers.IsTraderAddressPlaceOfNotificationController.onPageLoad(ref: MovementReferenceNumber, mode: Mode = NormalMode)" >> ../conf/app.routes
 echo "POST       /:mrn/isTraderAddressPlaceOfNotification                        controllers.IsTraderAddressPlaceOfNotificationController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)" >> ../conf/app.routes
 
-echo "GET        /:mrn/changeIsTraderAddressPlaceOfNotification                  controllers.IsTraderAddressPlaceOfNotificationController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)" >> ../conf/app.routes
+echo "GET        /:mrn/changeIsTraderAddressPlaceOfNotification                  controllers.IsTraderAddressPlaceOfNotificationController.onPageLoad(ref: MovementReferenceNumber, mode: Mode = CheckMode)" >> ../conf/app.routes
 echo "POST       /:mrn/changeIsTraderAddressPlaceOfNotification                  controllers.IsTraderAddressPlaceOfNotificationController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)" >> ../conf/app.routes
 
 echo "Adding messages to conf.messages"
@@ -58,7 +58,7 @@ awk '/class CheckYourAnswersHelper/ {\
      print "        actions = List(";\
      print "          Action(";\
      print "            content            = msg\"site.edit\",";\
-     print "            href               = routes.IsTraderAddressPlaceOfNotificationController.onPageLoad(mrn, CheckMode).url,";\
+     print "            href               = routes.IsTraderAddressPlaceOfNotificationController.onPageLoad(ref, CheckMode).url,";\
      print "            visuallyHiddenText = Some(msg\"site.edit.hidden\".withArgs(msg\"isTraderAddressPlaceOfNotification.checkYourAnswersLabel\"))";\
      print "          )";\
      print "        )";\

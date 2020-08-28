@@ -6,10 +6,10 @@ echo "Applying migration ConfirmRemoveEvent"
 echo "Adding routes to conf/app.routes"
 
 echo "" >> ../conf/app.routes
-echo "GET        /:mrn/confirmRemoveEvent                        controllers.events.ConfirmRemoveEventController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = NormalMode)" >> ../conf/app.routes
+echo "GET        /:mrn/confirmRemoveEvent                        controllers.events.ConfirmRemoveEventController.onPageLoad(ref: MovementReferenceNumber, mode: Mode = NormalMode)" >> ../conf/app.routes
 echo "POST       /:mrn/confirmRemoveEvent                        controllers.events.ConfirmRemoveEventController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)" >> ../conf/app.routes
 
-echo "GET        /:mrn/changeConfirmRemoveEvent                  controllers.events.ConfirmRemoveEventController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)" >> ../conf/app.routes
+echo "GET        /:mrn/changeConfirmRemoveEvent                  controllers.events.ConfirmRemoveEventController.onPageLoad(ref: MovementReferenceNumber, mode: Mode = CheckMode)" >> ../conf/app.routes
 echo "POST       /:mrn/changeConfirmRemoveEvent                  controllers.events.ConfirmRemoveEventController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)" >> ../conf/app.routes
 
 echo "Adding messages to conf.messages"
@@ -58,7 +58,7 @@ awk '/class CheckYourAnswersHelper/ {\
      print "        actions = List(";\
      print "          Action(";\
      print "            content            = msg\"site.edit\",";\
-     print "            href               = routes.ConfirmRemoveEventController.onPageLoad(mrn, CheckMode).url,";\
+     print "            href               = routes.ConfirmRemoveEventController.onPageLoad(ref, CheckMode).url,";\
      print "            visuallyHiddenText = Some(msg\"site.edit.hidden\".withArgs(msg\"confirmRemoveEvent.checkYourAnswersLabel\"))";\
      print "          )";\
      print "        )";\

@@ -16,12 +16,12 @@
 
 package controllers.events
 
-import derivable.DeriveNumberOfEvents
 import controllers.actions._
+import derivable.DeriveNumberOfEvents
 import forms.events.AddEventFormProvider
 import javax.inject.Inject
 import models.requests.DataRequest
-import models.{ArrivalUniqueRef, Index, Mode, MovementReferenceNumber}
+import models.{ArrivalUniqueRef, Index, Mode}
 import navigation.Navigator
 import pages.events.AddEventPage
 import play.api.data.Form
@@ -29,7 +29,6 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc._
 import renderer.Renderer
-import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.SummaryList.Row
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}

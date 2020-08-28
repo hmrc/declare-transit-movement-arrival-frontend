@@ -45,7 +45,7 @@ class TraderEoriControllerSpec extends SpecBase with MockitoSugar with NunjucksS
   private val form         = formProvider()
   private val validEori    = "AB123456789012345"
 
-  lazy val traderEoriRoute = routes.TraderEoriController.onPageLoad(mrn, NormalMode).url
+  lazy val traderEoriRoute = routes.TraderEoriController.onPageLoad(ref, NormalMode).url
 
   "TraderEori Controller" - {
 

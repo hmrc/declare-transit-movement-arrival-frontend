@@ -50,7 +50,7 @@ class IsTranshipmentControllerSpec extends SpecBase with MockitoSugar with Nunju
   val formProvider = new IsTranshipmentFormProvider()
   val form         = formProvider()
 
-  lazy val isTranshipmentRoute = routes.IsTranshipmentController.onPageLoad(mrn, eventIndex, NormalMode).url
+  lazy val isTranshipmentRoute = routes.IsTranshipmentController.onPageLoad(ref, eventIndex, NormalMode).url
 
   "IsTranshipment Controller" - {
 
@@ -75,7 +75,7 @@ class IsTranshipmentControllerSpec extends SpecBase with MockitoSugar with Nunju
         "mode"        -> NormalMode,
         "mrn"         -> mrn,
         "radios"      -> Radios.yesNo(form("value")),
-        "onSubmitUrl" -> routes.IsTranshipmentController.onSubmit(mrn, eventIndex, NormalMode).url
+        "onSubmitUrl" -> routes.IsTranshipmentController.onSubmit(ref, eventIndex, NormalMode).url
       )
 
       templateCaptor.getValue mustEqual "events/isTranshipment.njk"
@@ -107,7 +107,7 @@ class IsTranshipmentControllerSpec extends SpecBase with MockitoSugar with Nunju
         "mode"        -> NormalMode,
         "mrn"         -> mrn,
         "radios"      -> Radios.yesNo(filledForm("value")),
-        "onSubmitUrl" -> routes.IsTranshipmentController.onSubmit(mrn, eventIndex, NormalMode).url
+        "onSubmitUrl" -> routes.IsTranshipmentController.onSubmit(ref, eventIndex, NormalMode).url
       )
 
       templateCaptor.getValue mustEqual "events/isTranshipment.njk"
@@ -165,7 +165,7 @@ class IsTranshipmentControllerSpec extends SpecBase with MockitoSugar with Nunju
         "mode"        -> NormalMode,
         "mrn"         -> mrn,
         "radios"      -> Radios.yesNo(boundForm("value")),
-        "onSubmitUrl" -> routes.IsTranshipmentController.onSubmit(mrn, eventIndex, NormalMode).url
+        "onSubmitUrl" -> routes.IsTranshipmentController.onSubmit(ref, eventIndex, NormalMode).url
       )
 
       templateCaptor.getValue mustEqual "events/isTranshipment.njk"

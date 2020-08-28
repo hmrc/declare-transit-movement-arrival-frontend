@@ -46,7 +46,7 @@ class AddSealControllerSpec extends SpecBase with MockitoSugar with NunjucksSupp
   val formProvider        = new AddSealFormProvider()
   val form: Form[Boolean] = formProvider()
 
-  lazy val addSealRoute: String = routes.AddSealController.onPageLoad(mrn, eventIndex, NormalMode).url
+  lazy val addSealRoute: String = routes.AddSealController.onPageLoad(ref, eventIndex, NormalMode).url
 
   "AddSeal Controller" - {
 
@@ -76,7 +76,7 @@ class AddSealControllerSpec extends SpecBase with MockitoSugar with NunjucksSupp
         "heading"     -> "You have added 1 seal",
         "seals"       -> Json.toJson(Seq(AddSealHelper.apply(ua).sealRow(eventIndex, sealIndex, NormalMode).value)),
         "radios"      -> Radios.yesNo(form("value")),
-        "onSubmitUrl" -> routes.AddSealController.onSubmit(mrn, eventIndex, NormalMode).url
+        "onSubmitUrl" -> routes.AddSealController.onSubmit(ref, eventIndex, NormalMode).url
       )
 
       templateCaptor.getValue mustEqual "events/seals/addSeal.njk"
@@ -138,7 +138,7 @@ class AddSealControllerSpec extends SpecBase with MockitoSugar with NunjucksSupp
         "heading"     -> "You have added 1 seal",
         "seals"       -> Json.toJson(Seq(AddSealHelper.apply(ua).sealRow(eventIndex, sealIndex, NormalMode).value)),
         "radios"      -> Radios.yesNo(boundForm("value")),
-        "onSubmitUrl" -> routes.AddSealController.onSubmit(mrn, eventIndex, NormalMode).url
+        "onSubmitUrl" -> routes.AddSealController.onSubmit(ref, eventIndex, NormalMode).url
       )
 
       templateCaptor.getValue mustEqual "events/seals/addSeal.njk"

@@ -44,7 +44,7 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar with NunjucksS
   val formProvider = new EoriNumberFormProvider()
   val form         = formProvider(traderName)
 
-  lazy val eoriNumberRoute = routes.ConsigneeEoriNumberController.onPageLoad(mrn, NormalMode).url
+  lazy val eoriNumberRoute = routes.ConsigneeEoriNumberController.onPageLoad(ref, NormalMode).url
 
   "EoriNumber Controller" - {
 

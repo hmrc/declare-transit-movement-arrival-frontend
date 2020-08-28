@@ -40,7 +40,7 @@ class GoodsLocationControllerSpec extends SpecBase with MockitoSugar with Nunjuc
 
   def onwardRoute = Call("GET", "/foo")
 
-  lazy val goodsLocationRoute = routes.GoodsLocationController.onPageLoad(mrn, NormalMode).url
+  lazy val goodsLocationRoute = routes.GoodsLocationController.onPageLoad(ref, NormalMode).url
 
   val formProvider = new GoodsLocationFormProvider()
   val form         = formProvider()
