@@ -61,6 +61,7 @@ class UserAnswersToArrivalMovementRequestServiceSpec extends SpecBase with Messa
 
             val userAnswers: UserAnswers = ArrivalMovementRequestToUserAnswersService
               .convertToUserAnswers(
+                ref,
                 arrivalMovementRequest,
                 EoriNumber(arrivalMovementRequest.trader.eori),
                 MovementReferenceNumber(arrivalMovementRequest.header.movementReferenceNumber).value,

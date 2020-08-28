@@ -16,8 +16,7 @@
 
 package controllers.actions
 
-import models.MovementReferenceNumber
-import models.UserAnswers
+import models.{ArrivalUniqueRef, MovementReferenceNumber, UserAnswers}
 import models.requests.IdentifierRequest
 import models.requests.OptionalDataRequest
 import play.api.mvc.ActionTransformer
@@ -28,6 +27,9 @@ import scala.concurrent.Future
 class FakeDataRetrievalActionProvider(dataToReturn: Option[UserAnswers]) extends DataRetrievalActionProvider {
 
   def apply(mrn: MovementReferenceNumber): ActionTransformer[IdentifierRequest, OptionalDataRequest] =
+    new FakeDataRetrievalAction(dataToReturn)
+
+  override def apply(ref: ArrivalUniqueRef): ActionTransformer[IdentifierRequest, OptionalDataRequest] =
     new FakeDataRetrievalAction(dataToReturn)
 }
 

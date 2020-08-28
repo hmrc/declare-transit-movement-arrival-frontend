@@ -42,7 +42,7 @@ class ArrivalMovementRequestToUserAnswersServiceSpec extends SpecBase with Messa
       forAll(arbitrary[ArrivalMovementRequest], arbitrary[MovementReferenceNumber], arbitrary[EoriNumber], arbitrary[CustomsOffice]) {
         (arrivalMovementRequest, movementReferenceNumber, eoriNumber, customsOffice) =>
           val result = arrivalMovementRequestToUserAnswersService
-            .convertToUserAnswers(arrivalMovementRequest, eoriNumber, movementReferenceNumber, customsOffice)
+            .convertToUserAnswers(ref, arrivalMovementRequest, eoriNumber, movementReferenceNumber, customsOffice)
             .value
 
           result mustBe an[UserAnswers]
@@ -57,6 +57,7 @@ class ArrivalMovementRequestToUserAnswersServiceSpec extends SpecBase with Messa
           val arrivalMovementRequestWithMalformedMrn: ArrivalMovementRequest = arrivalMovementRequest.copy(header                         = header)
 
           val result = arrivalMovementRequestToUserAnswersService.convertToUserAnswers(
+            ref,
             arrivalMovementRequestWithMalformedMrn,
             eoriNumber,
             movementReferenceNumber,
