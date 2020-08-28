@@ -120,7 +120,7 @@ class TransportNationalityControllerSpec extends SpecBase with MockitoSugar with
 
       val expectedJson = Json.obj(
         "form"        -> boundForm,
-        "mrn"         -> mrn,
+        "ref" -> ref,
         "mode"        -> NormalMode,
         "countries"   -> countriesJson(),
         "onSubmitUrl" -> routes.TransportNationalityController.onSubmit(ref, eventIndex, NormalMode).url

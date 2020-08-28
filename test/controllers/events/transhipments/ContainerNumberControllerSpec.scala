@@ -72,7 +72,7 @@ class ContainerNumberControllerSpec extends SpecBase with MockitoSugar with Nunj
 
       val expectedJson = Json.obj(
         "form"        -> form,
-        "mrn"         -> mrn,
+        "ref"         -> ref,
         "mode"        -> NormalMode,
         "onSubmitUrl" -> routes.ContainerNumberController.onSubmit(ref, eventIndex, containerIndex, NormalMode).url
       )
@@ -104,7 +104,7 @@ class ContainerNumberControllerSpec extends SpecBase with MockitoSugar with Nunj
 
       val expectedJson = Json.obj(
         "form"        -> filledForm,
-        "mrn"         -> mrn,
+        "ref" -> ref,
         "mode"        -> NormalMode,
         "onSubmitUrl" -> routes.ContainerNumberController.onSubmit(ref, eventIndex, containerIndex, NormalMode).url
       )

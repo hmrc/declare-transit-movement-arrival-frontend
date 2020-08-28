@@ -66,7 +66,7 @@ class AuthorisedLocationControllerSpec extends SpecBase with MockitoSugar with N
 
       val expectedJson = Json.obj(
         "form" -> form,
-        "mrn"  -> mrn,
+        "ref"  -> ref,
         "mode" -> NormalMode
       )
 

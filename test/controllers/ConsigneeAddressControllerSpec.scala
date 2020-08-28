@@ -69,7 +69,7 @@ class ConsigneeAddressControllerSpec extends SpecBase with MockitoSugar with Nun
 
       val expectedJson = Json.obj(
         "form" -> form,
-        "mrn"  -> mrn,
+        "ref" -> ref,
         "mode" -> NormalMode
       )
 
@@ -114,7 +114,7 @@ class ConsigneeAddressControllerSpec extends SpecBase with MockitoSugar with Nun
 
       val expectedJson = Json.obj(
         "form"          -> filledForm,
-        "mrn"           -> mrn,
+        "ref" -> ref,
         "mode"          -> NormalMode,
         "consigneeName" -> traderName
       )
@@ -180,7 +180,7 @@ class ConsigneeAddressControllerSpec extends SpecBase with MockitoSugar with Nun
 
       val expectedJson = Json.obj(
         "form" -> boundForm,
-        "mrn"  -> mrn,
+        "ref" -> ref,
         "mode" -> NormalMode
       )
 

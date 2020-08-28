@@ -64,8 +64,8 @@ class ConfirmationControllerSpec extends SpecBase with MockitoSugar with JsonMat
 
       val expectedJson =
         Json.obj(
-          "ref" -> ref,
-          "contactUs" -> contactUsMessage,
+          "ref"                       -> ref,
+          "contactUs"                 -> contactUsMessage,
           "manageTransitMovementsUrl" -> frontendAppConfig.manageTransitMovementsUrl
         )
 

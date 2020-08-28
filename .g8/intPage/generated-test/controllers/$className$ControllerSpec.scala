@@ -52,7 +52,7 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar with Nunjucks
 
       val expectedJson = Json.obj(
         "form" -> form,
-        "mrn"  -> mrn,
+        "ref" -> ref,
         "mode" -> NormalMode
       )
 
