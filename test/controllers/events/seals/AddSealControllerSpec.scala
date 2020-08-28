@@ -71,7 +71,7 @@ class AddSealControllerSpec extends SpecBase with MockitoSugar with NunjucksSupp
       val expectedJson = Json.obj(
         "form"        -> form,
         "mode"        -> NormalMode,
-        "mrn"         -> mrn,
+        "ref"         -> ref,
         "pageTitle"   -> "You have added 1 seal",
         "heading"     -> "You have added 1 seal",
         "seals"       -> Json.toJson(Seq(AddSealHelper.apply(ua).sealRow(eventIndex, sealIndex, NormalMode).value)),
@@ -133,7 +133,7 @@ class AddSealControllerSpec extends SpecBase with MockitoSugar with NunjucksSupp
       val expectedJson = Json.obj(
         "form"        -> boundForm,
         "mode"        -> NormalMode,
-        "mrn"         -> mrn,
+        "ref"         -> ref,
         "pageTitle"   -> "You have added 1 seal",
         "heading"     -> "You have added 1 seal",
         "seals"       -> Json.toJson(Seq(AddSealHelper.apply(ua).sealRow(eventIndex, sealIndex, NormalMode).value)),

@@ -84,7 +84,7 @@ class ArrivalRejectionControllerSpec extends SpecBase with MockitoSugar with Jso
           verify(mockArrivalRejectionService, times(1)).arrivalRejectionMessage(eqTo(arrivalId))(any(), any())
 
           val expectedJson = Json.obj(
-            "mrn"                        -> mrn,
+            "ref"                        -> ref,
             "errorKey"                   -> errorKey,
             "contactUrl"                 -> frontendAppConfig.nctsEnquiriesUrl,
             "movementReferenceNumberUrl" -> routes.UpdateRejectedMRNController.onPageLoad(arrivalId).url
@@ -124,7 +124,7 @@ class ArrivalRejectionControllerSpec extends SpecBase with MockitoSugar with Jso
       verify(mockArrivalRejectionService, times(1)).arrivalRejectionMessage(eqTo(arrivalId))(any(), any())
 
       val expectedJson = Json.obj(
-        "ref" -> ref,
+        "ref"              -> ref,
         "errors"           -> errors,
         "contactUrl"       -> frontendAppConfig.nctsEnquiriesUrl,
         "createArrivalUrl" -> routes.MovementReferenceNumberController.onPageLoad().url

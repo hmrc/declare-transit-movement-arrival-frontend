@@ -69,7 +69,7 @@ class IsTraderAddressPlaceOfNotificationControllerSpec extends SpecBase with Moc
       val expectedJson = Json.obj(
         "form"           -> form,
         "mode"           -> NormalMode,
-        "mrn"            -> mrn,
+        "ref"            -> ref,
         "traderLine1"    -> traderAddress.buildingAndStreet,
         "traderTown"     -> traderAddress.city,
         "traderPostcode" -> traderAddress.postcode,
@@ -107,7 +107,7 @@ class IsTraderAddressPlaceOfNotificationControllerSpec extends SpecBase with Moc
       val expectedJson = Json.obj(
         "form"           -> filledForm,
         "mode"           -> NormalMode,
-        "mrn"            -> mrn,
+        "ref"            -> ref,
         "traderLine1"    -> traderAddress.buildingAndStreet,
         "traderTown"     -> traderAddress.city,
         "traderPostcode" -> traderAddress.postcode,
@@ -164,7 +164,7 @@ class IsTraderAddressPlaceOfNotificationControllerSpec extends SpecBase with Moc
       val expectedJson = Json.obj(
         "form"           -> boundForm,
         "mode"           -> NormalMode,
-        "mrn"            -> mrn,
+        "ref"            -> ref,
         "traderLine1"    -> traderAddress.buildingAndStreet,
         "traderTown"     -> traderAddress.city,
         "traderPostcode" -> traderAddress.postcode,

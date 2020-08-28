@@ -71,7 +71,7 @@ class ConfirmRemoveContainerControllerSpec extends SpecBase with MockitoSugar wi
       val expectedJson = Json.obj(
         "form"            -> form,
         "mode"            -> NormalMode,
-        "mrn"             -> mrn,
+        "ref"             -> ref,
         "containerNumber" -> container.containerNumber,
         "radios"          -> Radios.yesNo(form("value")),
         "onSubmitUrl"     -> routes.ConfirmRemoveContainerController.onSubmit(ref, eventIndex, containerIndex, NormalMode).url
@@ -245,7 +245,7 @@ class ConfirmRemoveContainerControllerSpec extends SpecBase with MockitoSugar wi
       val expectedJson = Json.obj(
         "form"        -> boundForm,
         "mode"        -> NormalMode,
-        "mrn"         -> mrn,
+        "ref"         -> ref,
         "radios"      -> Radios.yesNo(boundForm("value")),
         "onSubmitUrl" -> routes.ConfirmRemoveContainerController.onSubmit(ref, eventIndex, containerIndex, NormalMode).url
       )

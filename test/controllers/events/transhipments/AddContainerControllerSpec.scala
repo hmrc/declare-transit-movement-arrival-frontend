@@ -78,7 +78,7 @@ class AddContainerControllerSpec extends SpecBase with MockitoSugar with Nunjuck
       val expectedJson = Json.obj(
         "form"        -> form,
         "mode"        -> NormalMode,
-        "mrn"         -> mrn,
+        "ref"         -> ref,
         "radios"      -> Radios.yesNo(form("value")),
         "containers"  -> Section(Seq(AddContainerHelper(ua).containerRow(eventIndex, containerIndex, NormalMode).value)),
         "onSubmitUrl" -> routes.AddContainerController.onSubmit(ref, eventIndex, NormalMode).url
@@ -137,7 +137,7 @@ class AddContainerControllerSpec extends SpecBase with MockitoSugar with Nunjuck
       val expectedJson = Json.obj(
         "form"        -> boundForm,
         "mode"        -> NormalMode,
-        "mrn"         -> mrn,
+        "ref"         -> ref,
         "radios"      -> Radios.yesNo(boundForm("value")),
         "onSubmitUrl" -> routes.AddContainerController.onSubmit(ref, eventIndex, NormalMode).url
       )

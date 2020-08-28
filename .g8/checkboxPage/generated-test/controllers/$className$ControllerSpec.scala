@@ -50,7 +50,7 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar with Nunjucks
       val expectedJson = Json.obj(
         "form"       -> form,
         "mode"       -> NormalMode,
-        "mrn"        -> mrn,
+        "ref"        -> ref,
         "checkboxes" -> $className$.checkboxes(form)
       )
 
@@ -81,7 +81,7 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar with Nunjucks
       val expectedJson = Json.obj(
         "form"       -> filledForm,
         "mode"       -> NormalMode,
-        "mrn"        -> mrn,
+        "ref"        -> ref,
         "checkboxes" -> $className$.checkboxes(filledForm)
       )
 
@@ -138,7 +138,7 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar with Nunjucks
       val expectedJson = Json.obj(
         "form"       -> boundForm,
         "mode"       -> NormalMode,
-        "mrn"        -> mrn,
+        "ref"        -> ref,
         "checkboxes" -> $className$.checkboxes(boundForm)
       )
 

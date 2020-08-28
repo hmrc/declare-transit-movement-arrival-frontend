@@ -69,7 +69,7 @@ class TransportIdentityControllerSpec extends SpecBase with MockitoSugar with Nu
 
       val expectedJson = Json.obj(
         "form"        -> form,
-        "ref" -> ref,
+        "ref"         -> ref,
         "mode"        -> NormalMode,
         "onSubmitUrl" -> routes.TransportIdentityController.onSubmit(ref, eventIndex, NormalMode).url
       )
@@ -101,7 +101,7 @@ class TransportIdentityControllerSpec extends SpecBase with MockitoSugar with Nu
 
       val expectedJson = Json.obj(
         "form" -> filledForm,
-        "ref" -> ref,
+        "ref"  -> ref,
         "mode" -> NormalMode
       )
 
@@ -156,7 +156,7 @@ class TransportIdentityControllerSpec extends SpecBase with MockitoSugar with Nu
 
       val expectedJson = Json.obj(
         "form" -> boundForm,
-        "ref" -> ref,
+        "ref"  -> ref,
         "mode" -> NormalMode
       )
 

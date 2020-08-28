@@ -66,7 +66,7 @@ class TraderNameControllerSpec extends SpecBase with MockitoSugar with NunjucksS
 
       val expectedJson = Json.obj(
         "form" -> form,
-        "ref" -> ref,
+        "ref"  -> ref,
         "mode" -> NormalMode
       )
 
@@ -97,7 +97,7 @@ class TraderNameControllerSpec extends SpecBase with MockitoSugar with NunjucksS
 
       val expectedJson = Json.obj(
         "form" -> filledForm,
-        "ref" -> ref,
+        "ref"  -> ref,
         "mode" -> NormalMode
       )
 
@@ -152,7 +152,7 @@ class TraderNameControllerSpec extends SpecBase with MockitoSugar with NunjucksS
 
       val expectedJson = Json.obj(
         "form" -> boundForm,
-        "ref" -> ref,
+        "ref"  -> ref,
         "mode" -> NormalMode
       )
 

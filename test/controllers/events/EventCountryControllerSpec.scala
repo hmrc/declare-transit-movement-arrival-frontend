@@ -125,7 +125,7 @@ class EventCountryControllerSpec extends SpecBase with MockitoSugar with Nunjuck
 
       val expectedJson = Json.obj(
         "form"        -> boundForm,
-        "mrn"         -> mrn,
+        "ref"         -> ref,
         "mode"        -> NormalMode,
         "countries"   -> json,
         "onSubmitUrl" -> routes.EventCountryController.onSubmit(ref, eventIndex, NormalMode).url
@@ -199,7 +199,7 @@ class EventCountryControllerSpec extends SpecBase with MockitoSugar with Nunjuck
 
     val expectedJson = Json.obj(
       "form"      -> form1,
-      "mrn"       -> mrn,
+      "ref"       -> ref,
       "mode"      -> NormalMode,
       "countries" -> countriesJson
     )

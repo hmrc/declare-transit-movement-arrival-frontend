@@ -73,7 +73,7 @@ class IsTranshipmentControllerSpec extends SpecBase with MockitoSugar with Nunju
       val expectedJson = Json.obj(
         "form"        -> form,
         "mode"        -> NormalMode,
-        "mrn"         -> mrn,
+        "ref"         -> ref,
         "radios"      -> Radios.yesNo(form("value")),
         "onSubmitUrl" -> routes.IsTranshipmentController.onSubmit(ref, eventIndex, NormalMode).url
       )
@@ -105,7 +105,7 @@ class IsTranshipmentControllerSpec extends SpecBase with MockitoSugar with Nunju
       val expectedJson = Json.obj(
         "form"        -> filledForm,
         "mode"        -> NormalMode,
-        "mrn"         -> mrn,
+        "ref"         -> ref,
         "radios"      -> Radios.yesNo(filledForm("value")),
         "onSubmitUrl" -> routes.IsTranshipmentController.onSubmit(ref, eventIndex, NormalMode).url
       )
@@ -163,7 +163,7 @@ class IsTranshipmentControllerSpec extends SpecBase with MockitoSugar with Nunju
       val expectedJson = Json.obj(
         "form"        -> boundForm,
         "mode"        -> NormalMode,
-        "mrn"         -> mrn,
+        "ref"         -> ref,
         "radios"      -> Radios.yesNo(boundForm("value")),
         "onSubmitUrl" -> routes.IsTranshipmentController.onSubmit(ref, eventIndex, NormalMode).url
       )

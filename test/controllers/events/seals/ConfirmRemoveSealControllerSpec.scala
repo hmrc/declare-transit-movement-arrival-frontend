@@ -70,7 +70,7 @@ class ConfirmRemoveSealControllerSpec extends SpecBase with MockitoSugar with Nu
       val expectedJson = Json.obj(
         "form"        -> form,
         "mode"        -> NormalMode,
-        "mrn"         -> mrn,
+        "ref"         -> ref,
         "sealNumber"  -> seal.numberOrMark,
         "radios"      -> Radios.yesNo(form("value")),
         "onSubmitUrl" -> routes.ConfirmRemoveSealController.onSubmit(ref, eventIndex, sealIndex, NormalMode).url
@@ -208,7 +208,7 @@ class ConfirmRemoveSealControllerSpec extends SpecBase with MockitoSugar with Nu
       val expectedJson = Json.obj(
         "form"        -> boundForm,
         "mode"        -> NormalMode,
-        "mrn"         -> mrn,
+        "ref"         -> ref,
         "sealNumber"  -> seal.numberOrMark,
         "radios"      -> Radios.yesNo(boundForm("value")),
         "onSubmitUrl" -> routes.ConfirmRemoveSealController.onSubmit(ref, eventIndex, sealIndex, NormalMode).url

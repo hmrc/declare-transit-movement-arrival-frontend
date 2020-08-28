@@ -71,7 +71,7 @@ class IncidentInformationControllerSpec extends SpecBase with MockitoSugar with 
 
       val expectedJson = Json.obj(
         "form"        -> form,
-        "mrn"         -> mrn,
+        "ref"         -> ref,
         "mode"        -> NormalMode,
         "onSubmitUrl" -> routes.IncidentInformationController.onSubmit(ref, eventIndex, NormalMode).url
       )
@@ -103,7 +103,7 @@ class IncidentInformationControllerSpec extends SpecBase with MockitoSugar with 
 
       val expectedJson = Json.obj(
         "form"        -> filledForm,
-        "mrn"         -> mrn,
+        "ref"         -> ref,
         "mode"        -> NormalMode,
         "onSubmitUrl" -> routes.IncidentInformationController.onSubmit(ref, eventIndex, NormalMode).url
       )
@@ -159,7 +159,7 @@ class IncidentInformationControllerSpec extends SpecBase with MockitoSugar with 
 
       val expectedJson = Json.obj(
         "form"        -> boundForm,
-        "mrn"         -> mrn,
+        "ref"         -> ref,
         "mode"        -> NormalMode,
         "onSubmitUrl" -> routes.IncidentInformationController.onSubmit(ref, eventIndex, NormalMode).url
       )

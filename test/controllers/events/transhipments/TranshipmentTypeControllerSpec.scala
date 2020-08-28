@@ -71,7 +71,7 @@ class TranshipmentTypeControllerSpec extends SpecBase with MockitoSugar with Nun
       val expectedJson = Json.obj(
         "form"        -> form,
         "mode"        -> NormalMode,
-        "mrn"         -> mrn,
+        "ref"         -> ref,
         "radios"      -> TranshipmentType.radios(form),
         "onSubmitUrl" -> routes.TranshipmentTypeController.onSubmit(ref, eventIndex, NormalMode).url
       )
@@ -104,7 +104,7 @@ class TranshipmentTypeControllerSpec extends SpecBase with MockitoSugar with Nun
       val expectedJson = Json.obj(
         "form"        -> filledForm,
         "mode"        -> NormalMode,
-        "mrn"         -> mrn,
+        "ref"         -> ref,
         "radios"      -> TranshipmentType.radios(filledForm),
         "onSubmitUrl" -> routes.TranshipmentTypeController.onSubmit(ref, eventIndex, NormalMode).url
       )
@@ -162,7 +162,7 @@ class TranshipmentTypeControllerSpec extends SpecBase with MockitoSugar with Nun
       val expectedJson = Json.obj(
         "form"        -> boundForm,
         "mode"        -> NormalMode,
-        "mrn"         -> mrn,
+        "ref"         -> ref,
         "radios"      -> TranshipmentType.radios(boundForm),
         "onSubmitUrl" -> routes.TranshipmentTypeController.onSubmit(ref, eventIndex, NormalMode).url
       )

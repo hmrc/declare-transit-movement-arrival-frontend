@@ -21,9 +21,11 @@ import java.time.LocalDate
 import cats.syntax.all._
 import com.lucidchart.open.xtract.XmlReader._
 import com.lucidchart.open.xtract.{__, XmlReader}
+import models.ArrivalUniqueRef
 import models.XMLReads._
 
 final case class ArrivalNotificationRejectionMessage(
+  //guid: ArrivalUniqueRef,
   movementReferenceNumber: String,
   rejectionDate: LocalDate,
   action: Option[String],

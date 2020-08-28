@@ -72,7 +72,7 @@ class ConfirmRemoveEventControllerSpec extends SpecBase with MockitoSugar with N
       val expectedJson = Json.obj(
         "form"        -> form,
         "mode"        -> NormalMode,
-        "mrn"         -> mrn,
+        "ref"         -> ref,
         "eventTitle"  -> eventTitle,
         "radios"      -> Radios.yesNo(form("value")),
         "onSubmitUrl" -> routes.ConfirmRemoveEventController.onSubmit(ref, eventIndex, NormalMode).url
@@ -236,7 +236,7 @@ class ConfirmRemoveEventControllerSpec extends SpecBase with MockitoSugar with N
       val expectedJson = Json.obj(
         "form"        -> boundForm,
         "mode"        -> NormalMode,
-        "mrn"         -> mrn,
+        "ref"         -> ref,
         "radios"      -> Radios.yesNo(boundForm("value")),
         "onSubmitUrl" -> routes.ConfirmRemoveEventController.onSubmit(ref, eventIndex, NormalMode).url
       )

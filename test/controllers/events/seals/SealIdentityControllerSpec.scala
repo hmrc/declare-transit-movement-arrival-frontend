@@ -71,7 +71,7 @@ class SealIdentityControllerSpec extends SpecBase with MockitoSugar with Nunjuck
 
       val expectedJson = Json.obj(
         "form"        -> form,
-        "mrn"         -> mrn,
+        "ref"         -> ref,
         "mode"        -> NormalMode,
         "onSubmitUrl" -> routes.SealIdentityController.onSubmit(ref, eventIndex, sealIndex, NormalMode).url
       )

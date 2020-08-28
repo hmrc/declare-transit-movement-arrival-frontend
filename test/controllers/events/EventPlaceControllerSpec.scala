@@ -72,7 +72,7 @@ class EventPlaceControllerSpec extends SpecBase with MockitoSugar with NunjucksS
 
       val expectedJson = Json.obj(
         "form"        -> form,
-        "mrn"         -> mrn,
+        "ref"         -> ref,
         "mode"        -> NormalMode,
         "onSubmitUrl" -> routes.EventPlaceController.onSubmit(ref, eventIndex, NormalMode).url
       )
@@ -104,7 +104,7 @@ class EventPlaceControllerSpec extends SpecBase with MockitoSugar with NunjucksS
 
       val expectedJson = Json.obj(
         "form"        -> filledForm,
-        "mrn"         -> mrn,
+        "ref"         -> ref,
         "mode"        -> NormalMode,
         "onSubmitUrl" -> routes.EventPlaceController.onSubmit(ref, eventIndex, NormalMode).url
       )
@@ -160,7 +160,7 @@ class EventPlaceControllerSpec extends SpecBase with MockitoSugar with NunjucksS
 
       val expectedJson = Json.obj(
         "form"        -> boundForm,
-        "mrn"         -> mrn,
+        "ref"         -> ref,
         "mode"        -> NormalMode,
         "onSubmitUrl" -> routes.EventPlaceController.onSubmit(ref, eventIndex, NormalMode).url
       )

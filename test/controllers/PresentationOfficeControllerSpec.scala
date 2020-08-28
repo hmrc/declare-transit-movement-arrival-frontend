@@ -226,7 +226,7 @@ class PresentationOfficeControllerSpec extends SpecBase with MockitoSugar with N
 
     val expectedJson = Json.obj(
       "form"           -> boundForm,
-      "mrn"            -> mrn,
+      "ref"            -> ref,
       "mode"           -> NormalMode,
       "customsOffices" -> customsOfficeJson
     )

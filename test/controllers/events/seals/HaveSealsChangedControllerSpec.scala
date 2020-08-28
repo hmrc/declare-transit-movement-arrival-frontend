@@ -68,7 +68,7 @@ class HaveSealsChangedControllerSpec extends SpecBase with MockitoSugar with Nun
       val expectedJson = Json.obj(
         "form"        -> form,
         "mode"        -> NormalMode,
-        "mrn"         -> mrn,
+        "ref"         -> ref,
         "radios"      -> Radios.yesNo(form("value")),
         "onSubmitUrl" -> routes.HaveSealsChangedController.onSubmit(ref, eventIndex, NormalMode).url
       )
@@ -101,7 +101,7 @@ class HaveSealsChangedControllerSpec extends SpecBase with MockitoSugar with Nun
       val expectedJson = Json.obj(
         "form"        -> filledForm,
         "mode"        -> NormalMode,
-        "mrn"         -> mrn,
+        "ref"         -> ref,
         "radios"      -> Radios.yesNo(filledForm("value")),
         "onSubmitUrl" -> routes.HaveSealsChangedController.onSubmit(ref, eventIndex, NormalMode).url
       )
@@ -159,7 +159,7 @@ class HaveSealsChangedControllerSpec extends SpecBase with MockitoSugar with Nun
       val expectedJson = Json.obj(
         "form"        -> boundForm,
         "mode"        -> NormalMode,
-        "mrn"         -> mrn,
+        "ref"         -> ref,
         "radios"      -> Radios.yesNo(boundForm("value")),
         "onSubmitUrl" -> routes.HaveSealsChangedController.onSubmit(ref, eventIndex, NormalMode).url
       )
