@@ -98,7 +98,7 @@ class TraderEoriControllerSpec extends SpecBase with MockitoSugar with NunjucksS
 
       val expectedJson = Json.obj(
         "form" -> filledForm,
-        "mrn"  -> mrn,
+        "ref"  -> ref,
         "mode" -> NormalMode
       )
 
@@ -153,7 +153,7 @@ class TraderEoriControllerSpec extends SpecBase with MockitoSugar with NunjucksS
 
       val expectedJson = Json.obj(
         "form" -> boundForm,
-        "mrn"  -> mrn,
+        "ref"  -> ref,
         "mode" -> NormalMode
       )
 

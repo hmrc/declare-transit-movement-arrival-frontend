@@ -73,7 +73,7 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar with NunjucksS
 
       val expectedJson = Json.obj(
         "form" -> form,
-        "mrn"  -> mrn,
+        "ref"  -> ref,
         "mode" -> NormalMode
       )
 
@@ -183,7 +183,7 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar with NunjucksS
 
       val expectedJson = Json.obj(
         "form" -> boundForm,
-        "mrn"  -> mrn,
+        "ref"  -> ref,
         "mode" -> NormalMode
       )
 

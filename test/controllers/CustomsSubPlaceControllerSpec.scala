@@ -97,7 +97,7 @@ class CustomsSubPlaceControllerSpec extends SpecBase with MockitoSugar with Nunj
 
       val expectedJson = Json.obj(
         "form" -> filledForm,
-        "mrn"  -> mrn,
+        "ref"  -> ref,
         "mode" -> NormalMode
       )
 
@@ -152,7 +152,7 @@ class CustomsSubPlaceControllerSpec extends SpecBase with MockitoSugar with Nunj
 
       val expectedJson = Json.obj(
         "form" -> boundForm,
-        "mrn"  -> mrn,
+        "ref"  -> ref,
         "mode" -> NormalMode
       )
 

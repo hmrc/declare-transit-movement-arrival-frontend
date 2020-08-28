@@ -41,7 +41,7 @@ class $className;format="cap"$Controller @Inject()(
       val json = Json.obj(
         "form"   -> preparedForm,
         "mode"   -> mode,
-        "mrn"    -> mrn,
+        "ref" -> ref,
         "radios" -> Radios.yesNo(preparedForm("value"))
       )
 

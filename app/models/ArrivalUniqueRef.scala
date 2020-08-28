@@ -22,7 +22,9 @@ import play.api.libs.json.{Json, OFormat}
 import play.api.mvc.PathBindable
 
 import scala.util.{Failure, Success, Try}
-final case class ArrivalUniqueRef(uuid: UUID)
+final case class ArrivalUniqueRef(uuid: UUID) {
+  def value: UUID = uuid
+}
 
 object ArrivalUniqueRef {
 
