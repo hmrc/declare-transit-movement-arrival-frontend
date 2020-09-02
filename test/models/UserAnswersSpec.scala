@@ -56,11 +56,11 @@ class UserAnswersSpec extends SpecBase {
       }
 
       result mustBe UserAnswers(
-        id = mrn,
-        eoriNumber = eoriNumber,
-        data = data,
+        id          = mrn,
+        eoriNumber  = eoriNumber,
+        data        = data,
         lastUpdated = result.lastUpdated,
-        ref = ref
+        ref         = ref
       )
     }
 
@@ -83,11 +83,11 @@ class UserAnswersSpec extends SpecBase {
       }
 
       result mustBe UserAnswers(
-        id = mrn,
-        eoriNumber = eoriNumber,
-        data = data,
+        id          = mrn,
+        eoriNumber  = eoriNumber,
+        data        = data,
         lastUpdated = result.lastUpdated,
-        ref = ref
+        ref         = ref
       )
     }
   }

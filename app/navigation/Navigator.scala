@@ -24,7 +24,7 @@ import controllers.routes
 import derivable.{DeriveNumberOfContainers, DeriveNumberOfEvents, DeriveNumberOfSeals}
 import models.GoodsLocation._
 import models.TranshipmentType.{DifferentContainer, DifferentContainerAndVehicle, DifferentVehicle}
-import models.{ArrivalId, ArrivalUniqueRef, CheckMode, Index, Mode, MovementReferenceNumber, NormalMode, UserAnswers}
+import models.{ArrivalUniqueRef, CheckMode, Index, Mode, NormalMode, UserAnswers}
 import pages._
 import pages.events._
 import pages.events.seals._
@@ -131,7 +131,7 @@ class Navigator @Inject()() {
       case UpdateRejectedMRNPage => routes.CheckYourAnswersController.onPageLoad(ref)
       case _ => routes.TechnicalDifficultiesController.onPageLoad()
     }
-  
+
   // format: on
 
   private def traderAddressRoute(mode: Mode)(ua: UserAnswers) =
@@ -151,25 +151,25 @@ class Navigator @Inject()() {
       case _                                    => None
     }
 
-  private def consigneeEoriNumberRoute(mode: Mode)(ua: UserAnswers) =
+  private[this] def consigneeEoriNumberRoute(mode: Mode)(ua: UserAnswers) =
     (mode, ua.get(ConsigneeAddressPage)) match {
       case (CheckMode, Some(_)) => Some(routes.CheckYourAnswersController.onPageLoad(ua.ref))
       case _                    => Some(routes.ConsigneeAddressController.onPageLoad(ua.ref, mode))
     }
 
-  private def consigneeNameRoute(mode: Mode)(ua: UserAnswers): Option[Call] =
+  private[this] def consigneeNameRoute(mode: Mode)(ua: UserAnswers): Option[Call] =
     (ua.get(ConsigneeEoriConfirmationPage), mode) match {
       case (Some(_), CheckMode) => Some(routes.CheckYourAnswersController.onPageLoad(ua.ref))
       case _                    => Some(routes.ConsigneeEoriConfirmationController.onPageLoad(ua.ref, mode))
     }
 
-  private def consigneeAddressRoute(mode: Mode)(ua: UserAnswers): Option[Call] =
+  private[this] def consigneeAddressRoute(mode: Mode)(ua: UserAnswers): Option[Call] =
     (ua.get(PresentationOfficePage), mode) match {
       case (Some(_), CheckMode) => Some(routes.CheckYourAnswersController.onPageLoad(ua.ref))
       case _                    => Some(routes.PresentationOfficeController.onPageLoad(ua.ref, mode))
     }
 
-  private def presentationOfficeRoute(mode: Mode)(ua: UserAnswers): Option[Call] =
+  private[this] def presentationOfficeRoute(mode: Mode)(ua: UserAnswers): Option[Call] =
     (ua.get(GoodsLocationPage), ua.get(TraderNamePage), mode) match {
       case (Some(BorderForceOffice), Some(_), _)               => Some(routes.CheckYourAnswersController.onPageLoad(ua.ref))
       case (Some(BorderForceOffice), None, _)                  => Some(routes.TraderNameController.onPageLoad(ua.ref, mode))
@@ -177,33 +177,34 @@ class Navigator @Inject()() {
       case (Some(AuthorisedConsigneesLocation), _, _)          => Some(routes.CheckYourAnswersController.onPageLoad(ua.ref))
       case _                                                   => Some(routes.SessionExpiredController.onPageLoad())
     }
-  private def traderNameRoute(mode: Mode)(ua: UserAnswers): Option[Call] =
+  private[this] def traderNameRoute(mode: Mode)(ua: UserAnswers): Option[Call] =
     (ua.get(TraderEoriPage), mode) match {
       case (Some(_), CheckMode) => Some(routes.CheckYourAnswersController.onPageLoad(ua.ref))
       case _                    => Some(routes.TraderEoriController.onPageLoad(ua.ref, mode))
     }
-  private def traderEoriRoute(mode: Mode)(ua: UserAnswers): Option[Call] =
+  private[this] def traderEoriRoute(mode: Mode)(ua: UserAnswers): Option[Call] =
     (ua.get(TraderAddressPage), mode) match {
       case (Some(_), CheckMode) => Some(routes.CheckYourAnswersController.onPageLoad(ua.ref))
       case _                    => Some(routes.TraderAddressController.onPageLoad(ua.ref, mode))
     }
-  private def customsSubPlaceRoute(mode: Mode)(ua: UserAnswers): Option[Call] =
+
+  private[this] def customsSubPlaceRoute(mode: Mode)(ua: UserAnswers): Option[Call] =
     (ua.get(PresentationOfficePage), mode) match {
       case (Some(_), CheckMode) => Some(routes.CheckYourAnswersController.onPageLoad(ua.ref))
       case _                    => Some(routes.PresentationOfficeController.onPageLoad(ua.ref, mode))
     }
-  private def authorisedLocationRoute(mode: Mode)(ua: UserAnswers): Option[Call] =
+  private[this] def authorisedLocationRoute(mode: Mode)(ua: UserAnswers): Option[Call] =
     (ua.get(ConsigneeNamePage), mode) match {
       case (Some(_), CheckMode) => Some(routes.CheckYourAnswersController.onPageLoad(ua.ref))
       case _                    => Some(routes.ConsigneeNameController.onPageLoad(ua.ref, mode))
     }
-  private def transportIdentity(eventIndex: Index)(ua: UserAnswers): Option[Call] =
+  private[this] def transportIdentity(eventIndex: Index)(ua: UserAnswers): Option[Call] =
     ua.get(TransportNationalityPage(eventIndex)) match {
-      case (Some(_)) => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.ref, eventIndex))
-      case _         => Some(transhipmentRoutes.TransportNationalityController.onPageLoad(ua.ref, eventIndex, CheckMode))
+      case Some(_) => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.ref, eventIndex))
+      case _       => Some(transhipmentRoutes.TransportNationalityController.onPageLoad(ua.ref, eventIndex, CheckMode))
     }
 
-  private def removeSeal(eventIndex: Index, mode: Mode)(ua: UserAnswers) =
+  private[this] def removeSeal(eventIndex: Index, mode: Mode)(ua: UserAnswers) =
     ua.get(DeriveNumberOfSeals(eventIndex)) match {
       case None | Some(0) => Some(sealRoutes.HaveSealsChangedController.onPageLoad(ua.ref, eventIndex, mode))
       case _              => Some(sealRoutes.AddSealController.onPageLoad(ua.ref, eventIndex, mode))
@@ -214,13 +215,13 @@ class Navigator @Inject()() {
     case _              => Some(transhipmentRoutes.AddContainerController.onPageLoad(ua.ref, eventIndex, mode))
   }
 
-  private def confirmRemoveEventRoute(eventIndex: Index, mode: Mode)(ua: UserAnswers) = ua.get(DeriveNumberOfEvents) match {
+  private[this] def confirmRemoveEventRoute(eventIndex: Index, mode: Mode)(ua: UserAnswers) = ua.get(DeriveNumberOfEvents) match {
     case Some(0) | None => Some(routes.IncidentOnRouteController.onPageLoad(ua.ref, mode))
     case _              => Some(eventRoutes.AddEventController.onPageLoad(ua.ref, mode))
 
   }
 
-  private def addContainer(eventIndex: Index)(ua: UserAnswers): Option[Call] = ua.get(AddContainerPage(eventIndex)) map {
+  private[this] def addContainer(eventIndex: Index)(ua: UserAnswers): Option[Call] = ua.get(AddContainerPage(eventIndex)) map {
     case true =>
       // TODO: Need to consolidate with same logic for initialsation of eventIndex in transhipmentType
       val nextContainerCount = ua.get(DeriveNumberOfContainers(eventIndex)).getOrElse(0)
@@ -233,7 +234,7 @@ class Navigator @Inject()() {
       }
   }
 
-  private def addContainerCheckRoute(eventIndex: Index)(ua: UserAnswers): Option[Call] = ua.get(AddContainerPage(eventIndex)) map {
+  private[this] def addContainerCheckRoute(eventIndex: Index)(ua: UserAnswers): Option[Call] = ua.get(AddContainerPage(eventIndex)) map {
     case true =>
       val nextContainerCount = ua.get(DeriveNumberOfContainers(eventIndex)).getOrElse(0)
       val nextContainerIndex = Index(nextContainerCount)
@@ -248,7 +249,7 @@ class Navigator @Inject()() {
       }
   }
 
-  private def transhipmentType(eventIndex: Index)(ua: UserAnswers): Option[Call] = ua.get(transhipments.TranshipmentTypePage(eventIndex)) map {
+  private[this] def transhipmentType(eventIndex: Index)(ua: UserAnswers): Option[Call] = ua.get(transhipments.TranshipmentTypePage(eventIndex)) map {
     case DifferentContainer | DifferentContainerAndVehicle =>
       ua.get(DeriveNumberOfContainers(eventIndex)) match {
         case Some(0) | None => transhipmentRoutes.ContainerNumberController.onPageLoad(ua.ref, eventIndex, Index(0), NormalMode)
@@ -257,7 +258,7 @@ class Navigator @Inject()() {
     case DifferentVehicle => transhipmentRoutes.TransportIdentityController.onPageLoad(ua.ref, eventIndex, NormalMode)
   }
 
-  private def transhipmentTypeCheckRoute(eventIndex: Index)(ua: UserAnswers): Option[Call] =
+  private[this] def transhipmentTypeCheckRoute(eventIndex: Index)(ua: UserAnswers): Option[Call] =
     (
       ua.get(TranshipmentTypePage(eventIndex)),
       ua.get(ContainerNumberPage(eventIndex, Index(0))), //todo: confirm the logic here and hard coded 0's
@@ -280,7 +281,7 @@ class Navigator @Inject()() {
         Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.ref, eventIndex))
     }
 
-  private def incidentOnRoute(ua: UserAnswers): Option[Call] =
+  private[this] def incidentOnRoute(ua: UserAnswers): Option[Call] =
     (ua.get(IncidentOnRoutePage), ua.get(DeriveNumberOfEvents)) match {
       case (Some(true), None | Some(0)) => Some(eventRoutes.EventCountryController.onPageLoad(ua.ref, Index(0), NormalMode))
       case (Some(true), Some(_))        => Some(eventRoutes.AddEventController.onPageLoad(ua.ref, NormalMode))
@@ -288,7 +289,7 @@ class Navigator @Inject()() {
       case _                            => None
     }
 
-  private def isTranshipmentRoute(eventIndex: Index)(ua: UserAnswers): Option[Call] =
+  private[this] def isTranshipmentRoute(eventIndex: Index)(ua: UserAnswers): Option[Call] =
     (ua.get(EventReportedPage(eventIndex)), ua.get(IsTranshipmentPage(eventIndex))) match {
       case (_, Some(true))            => Some(transhipmentRoutes.TranshipmentTypeController.onPageLoad(ua.ref, eventIndex, NormalMode))
       case (Some(false), Some(false)) => Some(eventRoutes.IncidentInformationController.onPageLoad(ua.ref, eventIndex, NormalMode))
@@ -296,7 +297,7 @@ class Navigator @Inject()() {
       case _                          => None
     }
 
-  private def isTranshipmentCheckRoute(eventIndex: Index)(ua: UserAnswers): Option[Call] =
+  private[this] def isTranshipmentCheckRoute(eventIndex: Index)(ua: UserAnswers): Option[Call] =
     (
       ua.get(EventReportedPage(eventIndex)),
       ua.get(IsTranshipmentPage(eventIndex)),
@@ -311,7 +312,7 @@ class Navigator @Inject()() {
       case _ => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.ref, eventIndex))
     }
 
-  private def goodsLocationCheckRoute(ua: UserAnswers): Option[Call] =
+  private[this] def goodsLocationCheckRoute(ua: UserAnswers): Option[Call] =
     // TODO: Get the requirements for this sorted out. AuthorisedLocationPage is not actually being used here
     (ua.get(GoodsLocationPage), ua.get(AuthorisedLocationPage), ua.get(CustomsSubPlacePage)) match {
       case (Some(BorderForceOffice), _, None)         => Some(routes.CustomsSubPlaceController.onPageLoad(ua.ref, CheckMode))
@@ -320,21 +321,21 @@ class Navigator @Inject()() {
         Some(routes.CheckYourAnswersController.onPageLoad(ua.ref)) // TODO: This branch is ill defined and needs to be fixed
     }
 
-  private def isTraderAddressPlaceOfNotificationRoute(ua: UserAnswers): Option[Call] =
+  private[this] def isTraderAddressPlaceOfNotificationRoute(ua: UserAnswers): Option[Call] =
     ua.get(IsTraderAddressPlaceOfNotificationPage) match {
       case Some(true)  => Some(routes.IncidentOnRouteController.onPageLoad(ua.ref, NormalMode))
       case Some(false) => Some(routes.PlaceOfNotificationController.onPageLoad(ua.ref, NormalMode))
       case _           => None
     }
 
-  private def isTraderAddressPlaceOfNotificationCheckRoute(ua: UserAnswers): Option[Call] =
+  private[this] def isTraderAddressPlaceOfNotificationCheckRoute(ua: UserAnswers): Option[Call] =
     (ua.get(IsTraderAddressPlaceOfNotificationPage), ua.get(PlaceOfNotificationPage)) match {
       case (Some(false), None) => Some(routes.PlaceOfNotificationController.onPageLoad(ua.ref, CheckMode))
       case (Some(_), _)        => Some(routes.CheckYourAnswersController.onPageLoad(ua.ref))
       case _                   => None
     }
 
-  private def addEventRoute(ua: UserAnswers): Option[Call] =
+  private[this] def addEventRoute(ua: UserAnswers): Option[Call] =
     (ua.get(AddEventPage), ua.get(DeriveNumberOfEvents)) match {
       case (Some(true), Some(eventIndex)) => Some(eventRoutes.EventCountryController.onPageLoad(ua.ref, Index(eventIndex), NormalMode))
       case (Some(true), None)             => Some(eventRoutes.EventCountryController.onPageLoad(ua.ref, Index(0), NormalMode))
@@ -342,13 +343,13 @@ class Navigator @Inject()() {
       case _                              => None
     }
 
-  private def eventReportedCheckRoute(eventIndex: Index)(userAnswers: UserAnswers): Option[Call] =
+  private[this] def eventReportedCheckRoute(eventIndex: Index)(userAnswers: UserAnswers): Option[Call] =
     (userAnswers.get(EventReportedPage(eventIndex)), userAnswers.get(IsTranshipmentPage(eventIndex))) match {
       case (Some(false), Some(false)) => Some(eventRoutes.IncidentInformationController.onPageLoad(userAnswers.ref, eventIndex, CheckMode))
       case _                          => Some(eventRoutes.CheckEventAnswersController.onPageLoad(userAnswers.ref, eventIndex))
     }
 
-  private def haveSealsChanged(eventIndex: Index, mode: Mode)(userAnswers: UserAnswers): Option[Call] =
+  private[this] def haveSealsChanged(eventIndex: Index, mode: Mode)(userAnswers: UserAnswers): Option[Call] =
     userAnswers.get(HaveSealsChangedPage(eventIndex)).map {
       case true =>
         if (userAnswers.get(SealIdentityPage(eventIndex, Index(0))).isDefined) { //todo: hardcoded 0?
@@ -361,7 +362,7 @@ class Navigator @Inject()() {
       case false => eventRoutes.CheckEventAnswersController.onPageLoad(userAnswers.ref, eventIndex)
     }
 
-  private def addSeal(eventIndex: Index, mode: Mode)(userAnswers: UserAnswers): Option[Call] =
+  private[this] def addSeal(eventIndex: Index, mode: Mode)(userAnswers: UserAnswers): Option[Call] =
     userAnswers.get(AddSealPage(eventIndex)).map {
       case true =>
         val sealCount = userAnswers.get(DeriveNumberOfSeals(eventIndex)).getOrElse(0)

@@ -58,10 +58,10 @@ trait SpecBase
   val ref: ArrivalUniqueRef        = ArrivalUniqueRef()
 
   val emptyUserAnswers: UserAnswers = UserAnswers(
-    id = mrn,
+    id         = mrn,
     eoriNumber = eoriNumber,
-    data = Json.obj(),
-    ref = ref
+    data       = Json.obj(),
+    ref        = ref
   )
 
   val eventIndex: Index     = Index(0)
