@@ -57,7 +57,12 @@ trait SpecBase
   val mrn: MovementReferenceNumber = MovementReferenceNumber("19", "GB", "1234567890123")
   val ref: ArrivalUniqueRef        = ArrivalUniqueRef()
 
-  val emptyUserAnswers: UserAnswers = UserAnswers(mrn, eoriNumber, Json.obj())
+  val emptyUserAnswers: UserAnswers = UserAnswers(
+    id = mrn,
+    eoriNumber = eoriNumber,
+    data = Json.obj(),
+    ref = ref
+  )
 
   val eventIndex: Index     = Index(0)
   val containerIndex: Index = Index(0)
