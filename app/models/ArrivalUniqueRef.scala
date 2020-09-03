@@ -24,6 +24,8 @@ import play.api.mvc.PathBindable
 import scala.util.{Failure, Success, Try}
 final case class ArrivalUniqueRef(uuid: UUID) {
   def value: UUID = uuid
+
+  override def toString: String = value.toString
 }
 
 object ArrivalUniqueRef {
