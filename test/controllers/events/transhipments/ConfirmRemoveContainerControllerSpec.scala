@@ -177,7 +177,8 @@ class ConfirmRemoveContainerControllerSpec extends SpecBase with MockitoSugar wi
         id          = presetUserAnswers.id,
         eoriNumber  = presetUserAnswers.eoriNumber,
         data        = presetUserAnswers.remove(ContainerNumberPage(eventIndex, containerIndex)).success.value.data,
-        lastUpdated = presetUserAnswers.lastUpdated
+        lastUpdated = presetUserAnswers.lastUpdated,
+        ref         = ref
       )
 
       status(result) mustEqual SEE_OTHER
