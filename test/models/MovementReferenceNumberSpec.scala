@@ -39,7 +39,7 @@ class MovementReferenceNumberSpec extends FreeSpec with MustMatchers with ScalaC
 
       val ref = ArrivalUniqueRef()
 
-      val result = pathBindable.bind("ref", ArrivalUniqueRef().uuid.toString)
+      val result = pathBindable.bind("ref", ref.uuid.toString)
 
       result.right.value mustEqual ref.value
     }

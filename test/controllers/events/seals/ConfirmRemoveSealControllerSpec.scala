@@ -180,7 +180,8 @@ class ConfirmRemoveSealControllerSpec extends SpecBase with MockitoSugar with Nu
         id         = userAnswersWithSeal.id,
         eoriNumber = userAnswersWithSeal.eoriNumber,
         userAnswersWithSeal.remove(SealIdentityPage(eventIndex, sealIndex)).success.value.data,
-        userAnswersWithSeal.lastUpdated
+        userAnswersWithSeal.lastUpdated,
+        ref = userAnswersWithSeal.ref
       )
 
       verify(mockSessionRepository, times(1)).set(newUserAnswers)

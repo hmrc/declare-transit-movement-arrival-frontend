@@ -96,7 +96,7 @@ class ConfirmationControllerSpec extends SpecBase with MockitoSugar with JsonMat
       status(result) mustEqual OK
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-      verify(mockSessionRepository, times(1)).remove(mrn.toString)
+      verify(mockSessionRepository, times(1)).remove(ref.toString)
 
       val expectedJson = Json.obj("ref" -> ref, "contactUs" -> contactUsMessage)
 
