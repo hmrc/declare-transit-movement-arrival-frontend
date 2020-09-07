@@ -21,7 +21,7 @@ import derivable.DeriveNumberOfSeals
 import forms.events.seals.AddSealFormProvider
 import javax.inject.Inject
 import models.requests.DataRequest
-import models.{Index, Mode, MovementReferenceNumber}
+import models.{ArrivalUniqueRef, Index, Mode, MovementReferenceNumber}
 import navigation.Navigator
 import pages.events.seals.AddSealPage
 import play.api.data.Form
@@ -51,19 +51,19 @@ class AddSealController @Inject()(override val messagesApi: MessagesApi,
 
   private val form = formProvider()
 
-  def onPageLoad(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onPageLoad(ref: ArrivalUniqueRef, eventIndex: Index, mode: Mode): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
     implicit request =>
-      renderPage(mrn, eventIndex, mode, form)
+      renderPage(ref, eventIndex, mode, form)
         .map(Ok(_))
   }
 
-  def onSubmit(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onSubmit(ref: ArrivalUniqueRef, eventIndex: Index, mode: Mode): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
     implicit request =>
       form
         .bindFromRequest()
         .fold(
           formWithErrors =>
-            renderPage(mrn, eventIndex, mode, formWithErrors)
+            renderPage(ref, eventIndex, mode, formWithErrors)
               .map(BadRequest(_)),
           value =>
             for {
@@ -72,8 +72,7 @@ class AddSealController @Inject()(override val messagesApi: MessagesApi,
         )
   }
 
-  private def renderPage(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode, form: Form[Boolean])(
-    implicit request: DataRequest[AnyContent]): Future[Html] = {
+  private def renderPage(ref: ArrivalUniqueRef, eventIndex: Index, mode: Mode, form: Form[Boolean])(implicit request: DataRequest[AnyContent]): Future[Html] = {
 
     val numberOfSeals    = request.userAnswers.get(DeriveNumberOfSeals(eventIndex)).getOrElse(0)
     val listOfSealsIndex = List.range(0, numberOfSeals).map(Index(_))
@@ -88,12 +87,12 @@ class AddSealController @Inject()(override val messagesApi: MessagesApi,
     val json = Json.obj(
       "form"        -> form,
       "mode"        -> mode,
-      "mrn"         -> mrn,
+      "ref"         -> ref,
       "pageTitle"   -> msg"addSeal.title.$singularOrPlural".withArgs(numberOfSeals),
       "heading"     -> msg"addSeal.heading.$singularOrPlural".withArgs(numberOfSeals),
       "seals"       -> sealsRows,
       "radios"      -> Radios.yesNo(form("value")),
-      "onSubmitUrl" -> routes.AddSealController.onSubmit(mrn, eventIndex, mode).url
+      "onSubmitUrl" -> routes.AddSealController.onSubmit(ref, eventIndex, mode).url
     )
 
     renderer.render("events/seals/addSeal.njk", json)

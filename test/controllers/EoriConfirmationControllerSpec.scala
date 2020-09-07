@@ -44,7 +44,7 @@ class EoriConfirmationControllerSpec extends SpecBase with MockitoSugar with Nun
   val formProvider = new EoriConfirmationFormProvider()
   val form         = formProvider(traderName)
 
-  private lazy val consingeeEoriConfirmationRoute = routes.ConsigneeEoriConfirmationController.onPageLoad(mrn, NormalMode).url
+  private lazy val consingeeEoriConfirmationRoute = routes.ConsigneeEoriConfirmationController.onPageLoad(ref, NormalMode).url
 
   "EoriConfirmation Controller" - {
 
@@ -67,7 +67,7 @@ class EoriConfirmationControllerSpec extends SpecBase with MockitoSugar with Nun
       val expectedJson = Json.obj(
         "form"   -> form,
         "mode"   -> NormalMode,
-        "mrn"    -> mrn,
+        "ref"    -> ref,
         "radios" -> Radios.yesNo(form("value"))
       )
 
@@ -105,7 +105,7 @@ class EoriConfirmationControllerSpec extends SpecBase with MockitoSugar with Nun
       val expectedJson = Json.obj(
         "form"   -> filledForm,
         "mode"   -> NormalMode,
-        "mrn"    -> mrn,
+        "ref"    -> ref,
         "radios" -> Radios.yesNo(filledForm("value"))
       )
 
@@ -176,7 +176,7 @@ class EoriConfirmationControllerSpec extends SpecBase with MockitoSugar with Nun
       val expectedJson = Json.obj(
         "form"   -> boundForm,
         "mode"   -> NormalMode,
-        "mrn"    -> mrn,
+        "ref"    -> ref,
         "radios" -> Radios.yesNo(boundForm("value"))
       )
 

@@ -28,7 +28,7 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar with Nunjucks
   val formProvider = new $className$FormProvider()
   val form = formProvider()
 
-  lazy val $className;format="decap"$Route = routes.$className$Controller.onPageLoad(mrn, NormalMode).url
+  lazy val $className;format="decap"$Route = routes.$className$Controller.onPageLoad(ref, NormalMode).url
 
   val userAnswers = UserAnswers(
     mrn,
@@ -60,7 +60,7 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar with Nunjucks
 
       val expectedJson = Json.obj(
         "form" -> form,
-        "mrn"  -> mrn,
+        "ref" -> ref,
         "mode" -> NormalMode
       )
 
@@ -95,7 +95,7 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar with Nunjucks
 
       val expectedJson = Json.obj(
         "form" -> filledForm,
-        "mrn"  -> mrn,
+        "ref" -> ref,
         "mode" -> NormalMode
       )
 
@@ -152,7 +152,7 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar with Nunjucks
 
       val expectedJson = Json.obj(
         "form" -> boundForm,
-        "mrn"  -> mrn,
+        "ref"  -> ref,
         "mode" -> NormalMode
       )
 

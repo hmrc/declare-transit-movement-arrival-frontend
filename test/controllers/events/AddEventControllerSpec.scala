@@ -44,7 +44,7 @@ class AddEventControllerSpec extends SpecBase with MockitoSugar with NunjucksSup
   val formProvider = new AddEventFormProvider()
   val form         = formProvider()
 
-  lazy val addEventRoute = routes.AddEventController.onPageLoad(mrn, NormalMode).url
+  lazy val addEventRoute = routes.AddEventController.onPageLoad(ref, NormalMode).url
 
   "AddEvent Controller" - {
 
@@ -67,7 +67,7 @@ class AddEventControllerSpec extends SpecBase with MockitoSugar with NunjucksSup
       val expectedJson = Json.obj(
         "form"   -> form,
         "mode"   -> NormalMode,
-        "mrn"    -> mrn,
+        "ref"    -> ref,
         "radios" -> Radios.yesNo(form("value"))
       )
 
@@ -99,7 +99,7 @@ class AddEventControllerSpec extends SpecBase with MockitoSugar with NunjucksSup
       val expectedJson = Json.obj(
         "form"   -> filledForm,
         "mode"   -> NormalMode,
-        "mrn"    -> mrn,
+        "ref"    -> ref,
         "radios" -> Radios.yesNo(filledForm("value"))
       )
 
@@ -156,7 +156,7 @@ class AddEventControllerSpec extends SpecBase with MockitoSugar with NunjucksSup
       val expectedJson = Json.obj(
         "form"   -> boundForm,
         "mode"   -> NormalMode,
-        "mrn"    -> mrn,
+        "ref"    -> ref,
         "radios" -> Radios.yesNo(boundForm("value"))
       )
 

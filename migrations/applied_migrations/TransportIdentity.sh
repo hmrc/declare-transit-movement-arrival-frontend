@@ -6,10 +6,10 @@ echo "Applying migration TransportIdentity"
 echo "Adding routes to conf/app.routes"
 
 echo "" >> ../conf/app.routes
-echo "GET        /:mrn/transportIdentity                        controllers.events.transhipments.TransportIdentityController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = NormalMode)" >> ../conf/app.routes
+echo "GET        /:mrn/transportIdentity                        controllers.events.transhipments.TransportIdentityController.onPageLoad(ref: MovementReferenceNumber, mode: Mode = NormalMode)" >> ../conf/app.routes
 echo "POST       /:mrn/transportIdentity                        controllers.events.transhipments.TransportIdentityController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)" >> ../conf/app.routes
 
-echo "GET        /:mrn/changeTransportIdentity                  controllers.events.transhipments.TransportIdentityController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)" >> ../conf/app.routes
+echo "GET        /:mrn/changeTransportIdentity                  controllers.events.transhipments.TransportIdentityController.onPageLoad(ref: MovementReferenceNumber, mode: Mode = CheckMode)" >> ../conf/app.routes
 echo "POST       /:mrn/changeTransportIdentity                  controllers.events.transhipments.TransportIdentityController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)" >> ../conf/app.routes
 
 echo "Adding messages to conf.messages"
@@ -59,7 +59,7 @@ awk '/class CheckYourAnswersHelper/ {\
      print "        actions = List(";\
      print "          Action(";\
      print "            content            = msg\"site.edit\",";\
-     print "            href               = routes.TransportIdentityController.onPageLoad(mrn, CheckMode).url,";\
+     print "            href               = routes.TransportIdentityController.onPageLoad(ref, CheckMode).url,";\
      print "            visuallyHiddenText = Some(msg\"site.edit.hidden\".withArgs(msg\"transportIdentity.checkYourAnswersLabel\"))";\
      print "          )";\
      print "        )";\

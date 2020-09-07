@@ -19,7 +19,7 @@ package controllers.events
 import controllers.actions._
 import forms.IncidentInformationFormProvider
 import javax.inject.Inject
-import models.{Index, Mode, MovementReferenceNumber, NormalMode}
+import models.{ArrivalUniqueRef, Index, Mode, MovementReferenceNumber, NormalMode}
 import navigation.Navigator
 import pages.events.IncidentInformationPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -47,8 +47,8 @@ class IncidentInformationController @Inject()(override val messagesApi: Messages
 
   private val form = formProvider()
 
-  def onPageLoad(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode): Action[AnyContent] =
-    (identify andThen getData(mrn) andThen requireData).async {
+  def onPageLoad(ref: ArrivalUniqueRef, eventIndex: Index, mode: Mode): Action[AnyContent] =
+    (identify andThen getData(ref) andThen requireData).async {
       implicit request =>
         val preparedForm = request.userAnswers.get(IncidentInformationPage(eventIndex)) match {
           case None        => form
@@ -57,15 +57,15 @@ class IncidentInformationController @Inject()(override val messagesApi: Messages
 
         val json = Json.obj(
           "form"        -> preparedForm,
-          "mrn"         -> mrn,
+          "ref"         -> ref,
           "mode"        -> mode,
-          "onSubmitUrl" -> routes.IncidentInformationController.onSubmit(mrn, eventIndex, mode).url
+          "onSubmitUrl" -> routes.IncidentInformationController.onSubmit(ref, eventIndex, mode).url
         )
 
         renderer.render("events/incidentInformation.njk", json).map(Ok(_))
     }
 
-  def onSubmit(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onSubmit(ref: ArrivalUniqueRef, eventIndex: Index, mode: Mode): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
     implicit request =>
       form
         .bindFromRequest()
@@ -74,9 +74,9 @@ class IncidentInformationController @Inject()(override val messagesApi: Messages
 
             val json = Json.obj(
               "form"        -> formWithErrors,
-              "mrn"         -> mrn,
+              "ref"         -> ref,
               "mode"        -> mode,
-              "onSubmitUrl" -> routes.IncidentInformationController.onSubmit(mrn, eventIndex, mode).url
+              "onSubmitUrl" -> routes.IncidentInformationController.onSubmit(ref, eventIndex, mode).url
             )
 
             renderer.render("events/incidentInformation.njk", json).map(BadRequest(_))

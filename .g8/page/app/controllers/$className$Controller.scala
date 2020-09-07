@@ -2,7 +2,7 @@ package controllers
 
 import controllers.actions._
 import javax.inject.Inject
-import models.MovementReferenceNumber
+import models.{ArrivalUniqueRef, MovementReferenceNumber}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -20,10 +20,10 @@ class $className$Controller @Inject()(
                                        renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad(mrn: MovementReferenceNumber): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onPageLoad(ref: ArrivalUniqueRef): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
     implicit request =>
 
-      val json = Json.obj("mrn" -> mrn)
+      val json = Json.obj("ref" -> ref)
 
       renderer.render("$className;format="decap"$.njk", json).map(Ok(_))
   }

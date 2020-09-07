@@ -40,7 +40,7 @@ class GoodsLocationControllerSpec extends SpecBase with MockitoSugar with Nunjuc
 
   def onwardRoute = Call("GET", "/foo")
 
-  lazy val goodsLocationRoute = routes.GoodsLocationController.onPageLoad(mrn, NormalMode).url
+  lazy val goodsLocationRoute = routes.GoodsLocationController.onPageLoad(ref, NormalMode).url
 
   val formProvider = new GoodsLocationFormProvider()
   val form         = formProvider()
@@ -66,7 +66,7 @@ class GoodsLocationControllerSpec extends SpecBase with MockitoSugar with Nunjuc
       val expectedJson = Json.obj(
         "form"   -> form,
         "mode"   -> NormalMode,
-        "mrn"    -> mrn,
+        "ref"    -> ref,
         "radios" -> GoodsLocation.radios(form)
       )
 
@@ -98,7 +98,7 @@ class GoodsLocationControllerSpec extends SpecBase with MockitoSugar with Nunjuc
       val expectedJson = Json.obj(
         "form"   -> filledForm,
         "mode"   -> NormalMode,
-        "mrn"    -> mrn,
+        "ref"    -> ref,
         "radios" -> GoodsLocation.radios(filledForm)
       )
 
@@ -125,7 +125,7 @@ class GoodsLocationControllerSpec extends SpecBase with MockitoSugar with Nunjuc
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual s"/common-transit-convention-trader-arrival/${emptyUserAnswers.id}/goods-approved-location"
+      redirectLocation(result).value mustEqual s"/common-transit-convention-trader-arrival/${emptyUserAnswers.ref}/goods-approved-location"
 
       application.stop()
     }
@@ -147,7 +147,7 @@ class GoodsLocationControllerSpec extends SpecBase with MockitoSugar with Nunjuc
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual s"/common-transit-convention-trader-arrival/${emptyUserAnswers.id}/authorised-location-code"
+      redirectLocation(result).value mustEqual s"/common-transit-convention-trader-arrival/${emptyUserAnswers.ref}/authorised-location-code"
 
       application.stop()
     }
@@ -172,7 +172,7 @@ class GoodsLocationControllerSpec extends SpecBase with MockitoSugar with Nunjuc
       val expectedJson = Json.obj(
         "form"   -> boundForm,
         "mode"   -> NormalMode,
-        "mrn"    -> mrn,
+        "ref"    -> ref,
         "radios" -> GoodsLocation.radios(boundForm)
       )
 

@@ -18,12 +18,13 @@ package services.conversion
 
 import models.messages.ArrivalMovementRequest
 import models.reference.CustomsOffice
-import models.{EoriNumber, MovementReferenceNumber, UserAnswers}
+import models.{ArrivalUniqueRef, EoriNumber, MovementReferenceNumber, UserAnswers}
 import play.api.libs.json.Json
 
 object ArrivalMovementRequestToUserAnswersService {
 
   def convertToUserAnswers(
+    ref: ArrivalUniqueRef,
     arrivalMovementRequest: ArrivalMovementRequest,
     eoriNumber: EoriNumber,
     movementReferenceNumber: MovementReferenceNumber,
@@ -33,6 +34,6 @@ object ArrivalMovementRequestToUserAnswersService {
       .convertToArrivalNotification(arrivalMovementRequest, customsOffice, eoriNumber)
       .map {
         value =>
-          UserAnswers(movementReferenceNumber, eoriNumber, Json.toJsObject(value))
+          UserAnswers(id = movementReferenceNumber, eoriNumber, Json.toJsObject(value), ref = ArrivalUniqueRef.instance)
       }
 }

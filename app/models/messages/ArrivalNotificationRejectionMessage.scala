@@ -21,6 +21,7 @@ import java.time.LocalDate
 import cats.syntax.all._
 import com.lucidchart.open.xtract.XmlReader._
 import com.lucidchart.open.xtract.{__, XmlReader}
+import models.ArrivalUniqueRef
 import models.XMLReads._
 
 final case class ArrivalNotificationRejectionMessage(
@@ -28,7 +29,8 @@ final case class ArrivalNotificationRejectionMessage(
   rejectionDate: LocalDate,
   action: Option[String],
   reason: Option[String],
-  errors: Seq[FunctionalError]
+  errors: Seq[FunctionalError],
+  guid: Option[ArrivalUniqueRef] = None
 )
 
 object ArrivalNotificationRejectionMessage {
@@ -39,5 +41,15 @@ object ArrivalNotificationRejectionMessage {
     (__ \ "HEAHEA" \ "ActToBeTakHEA238").read[String].optional,
     (__ \ "HEAHEA" \ "ArrRejReaHEA242").read[String].optional,
     (__ \ "FUNERRER1").read(strictReadSeq[FunctionalError])
-  ).mapN(apply)
+  ).mapN(
+    (mrn, rd, action, reason, errors) =>
+      apply(
+        movementReferenceNumber = mrn,
+        rejectionDate           = rd,
+        action                  = action,
+        reason                  = reason,
+        errors                  = errors,
+        guid                    = None
+    )
+  )
 }

@@ -6,10 +6,10 @@ echo "Applying migration ContainerNumber"
 echo "Adding routes to conf/app.routes"
 
 echo "" >> ../conf/app.routes
-echo "GET        /:mrn/containerNumber                        controllers.events.transhipments.ContainerNumberController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = NormalMode)" >> ../conf/app.routes
+echo "GET        /:mrn/containerNumber                        controllers.events.transhipments.ContainerNumberController.onPageLoad(ref: MovementReferenceNumber, mode: Mode = NormalMode)" >> ../conf/app.routes
 echo "POST       /:mrn/containerNumber                        controllers.events.transhipments.ContainerNumberController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)" >> ../conf/app.routes
 
-echo "GET        /:mrn/changeContainerNumber                  controllers.events.transhipments.ContainerNumberController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)" >> ../conf/app.routes
+echo "GET        /:mrn/changeContainerNumber                  controllers.events.transhipments.ContainerNumberController.onPageLoad(ref: MovementReferenceNumber, mode: Mode = CheckMode)" >> ../conf/app.routes
 echo "POST       /:mrn/changeContainerNumber                  controllers.events.transhipments.ContainerNumberController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)" >> ../conf/app.routes
 
 echo "Adding messages to conf.messages"
@@ -59,7 +59,7 @@ awk '/class CheckYourAnswersHelper/ {\
      print "        actions = List(";\
      print "          Action(";\
      print "            content            = msg\"site.edit\",";\
-     print "            href               = routes.ContainerNumberController.onPageLoad(mrn, CheckMode).url,";\
+     print "            href               = routes.ContainerNumberController.onPageLoad(ref, CheckMode).url,";\
      print "            visuallyHiddenText = Some(msg\"site.edit.hidden\".withArgs(msg\"containerNumber.checkYourAnswersLabel\"))";\
      print "          )";\
      print "        )";\

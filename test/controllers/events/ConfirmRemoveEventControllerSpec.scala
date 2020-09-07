@@ -46,7 +46,7 @@ class ConfirmRemoveEventControllerSpec extends SpecBase with MockitoSugar with N
   private val formProvider = new ConfirmRemoveEventFormProvider()
   private val form         = formProvider(eventTitle)
 
-  private lazy val confirmRemoveEventRoute = routes.ConfirmRemoveEventController.onPageLoad(mrn, eventIndex, NormalMode).url
+  private lazy val confirmRemoveEventRoute = routes.ConfirmRemoveEventController.onPageLoad(ref, eventIndex, NormalMode).url
   private val confirmRemoveEventTemplate   = "events/confirmRemoveEvent.njk"
 
   private val userAnswersWithEventPlace = emptyUserAnswers.set(EventPlacePage(eventIndex), eventTitle).success.value
@@ -72,10 +72,10 @@ class ConfirmRemoveEventControllerSpec extends SpecBase with MockitoSugar with N
       val expectedJson = Json.obj(
         "form"        -> form,
         "mode"        -> NormalMode,
-        "mrn"         -> mrn,
+        "ref"         -> ref,
         "eventTitle"  -> eventTitle,
         "radios"      -> Radios.yesNo(form("value")),
-        "onSubmitUrl" -> routes.ConfirmRemoveEventController.onSubmit(mrn, eventIndex, NormalMode).url
+        "onSubmitUrl" -> routes.ConfirmRemoveEventController.onSubmit(ref, eventIndex, NormalMode).url
       )
 
       templateCaptor.getValue mustEqual confirmRemoveEventTemplate
@@ -105,7 +105,7 @@ class ConfirmRemoveEventControllerSpec extends SpecBase with MockitoSugar with N
         "pageTitle"    -> msg"concurrent.remove.error.title".withArgs("event"),
         "pageHeading"  -> msg"concurrent.remove.error.heading".withArgs("event"),
         "linkText"     -> msg"concurrent.remove.error.noEvent.link.text",
-        "redirectLink" -> controllers.routes.IncidentOnRouteController.onPageLoad(mrn, NormalMode).url
+        "redirectLink" -> controllers.routes.IncidentOnRouteController.onPageLoad(ref, NormalMode).url
       )
 
       templateCaptor.getValue mustEqual "concurrentRemoveError.njk"
@@ -118,7 +118,7 @@ class ConfirmRemoveEventControllerSpec extends SpecBase with MockitoSugar with N
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val routeWithLastIndex = routes.ConfirmRemoveEventController.onPageLoad(mrn, Index(2), NormalMode).url
+      val routeWithLastIndex = routes.ConfirmRemoveEventController.onPageLoad(ref, Index(2), NormalMode).url
       val updatedAnswer      = userAnswersWithEventPlace.set(EventPlacePage(Index(1)), "place").success.value
 
       val application    = applicationBuilder(userAnswers = Some(updatedAnswer)).build()
@@ -136,7 +136,7 @@ class ConfirmRemoveEventControllerSpec extends SpecBase with MockitoSugar with N
         "pageTitle"    -> msg"concurrent.remove.error.title".withArgs("event"),
         "pageHeading"  -> msg"concurrent.remove.error.heading".withArgs("event"),
         "linkText"     -> msg"concurrent.remove.error.multipleEvent.link.text",
-        "redirectLink" -> routes.AddEventController.onPageLoad(mrn, NormalMode).url
+        "redirectLink" -> routes.AddEventController.onPageLoad(ref, NormalMode).url
       )
 
       templateCaptor.getValue mustEqual "concurrentRemoveError.njk"
@@ -169,10 +169,11 @@ class ConfirmRemoveEventControllerSpec extends SpecBase with MockitoSugar with N
       redirectLocation(result).value mustEqual onwardRoute.url
 
       val uaRemoveEvent = UserAnswers(
-        userAnswersWithEventPlace.id,
-        userAnswersWithEventPlace.eoriNumber,
-        userAnswersWithEventPlace.remove(EventQuery(eventIndex)).success.value.data,
-        userAnswersWithEventPlace.lastUpdated
+        id          = userAnswersWithEventPlace.id,
+        eoriNumber  = userAnswersWithEventPlace.eoriNumber,
+        data        = userAnswersWithEventPlace.remove(EventQuery(eventIndex)).success.value.data,
+        lastUpdated = userAnswersWithEventPlace.lastUpdated,
+        ref         = userAnswersWithEventPlace.ref
       )
 
       verify(mockSessionRepository, times(1)).set(uaRemoveEvent)
@@ -236,9 +237,9 @@ class ConfirmRemoveEventControllerSpec extends SpecBase with MockitoSugar with N
       val expectedJson = Json.obj(
         "form"        -> boundForm,
         "mode"        -> NormalMode,
-        "mrn"         -> mrn,
+        "ref"         -> ref,
         "radios"      -> Radios.yesNo(boundForm("value")),
-        "onSubmitUrl" -> routes.ConfirmRemoveEventController.onSubmit(mrn, eventIndex, NormalMode).url
+        "onSubmitUrl" -> routes.ConfirmRemoveEventController.onSubmit(ref, eventIndex, NormalMode).url
       )
 
       templateCaptor.getValue mustEqual confirmRemoveEventTemplate

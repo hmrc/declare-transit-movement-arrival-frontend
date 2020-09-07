@@ -48,7 +48,7 @@ class PresentationOfficeControllerSpec extends SpecBase with MockitoSugar with N
   val customsOffices            = Seq(CustomsOffice("id", "name", Seq.empty, None), CustomsOffice("officeId", "someName", Seq.empty, None))
   val form: Form[CustomsOffice] = formProvider("sub place", customsOffices)
 
-  lazy val presentationOfficeRoute: String = routes.PresentationOfficeController.onPageLoad(mrn, NormalMode).url
+  lazy val presentationOfficeRoute: String = routes.PresentationOfficeController.onPageLoad(ref, NormalMode).url
 
   private val mockRefDataConnector: ReferenceDataConnector = mock[ReferenceDataConnector]
   val templateCaptor: ArgumentCaptor[String]               = ArgumentCaptor.forClass(classOf[String])
@@ -226,7 +226,7 @@ class PresentationOfficeControllerSpec extends SpecBase with MockitoSugar with N
 
     val expectedJson = Json.obj(
       "form"           -> boundForm,
-      "mrn"            -> mrn,
+      "ref"            -> ref,
       "mode"           -> NormalMode,
       "customsOffices" -> customsOfficeJson
     )

@@ -50,7 +50,7 @@ class ConfirmationControllerSpec extends SpecBase with MockitoSugar with JsonMat
       val application = applicationBuilder(userAnswers = Some(userAnswers))
         .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
-      val request        = FakeRequest(GET, routes.ConfirmationController.onPageLoad(mrn).url)
+      val request        = FakeRequest(GET, routes.ConfirmationController.onPageLoad(ref).url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
       val result         = route(application, request).value
@@ -60,10 +60,14 @@ class ConfirmationControllerSpec extends SpecBase with MockitoSugar with JsonMat
       status(result) mustEqual OK
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-      verify(mockSessionRepository, times(1)).remove(mrn.toString)
+      verify(mockSessionRepository, times(1)).remove(ref.uuid.toString)
 
       val expectedJson =
-        Json.obj("mrn" -> mrn, "contactUs" -> contactUsMessage, "manageTransitMovementsUrl" -> frontendAppConfig.manageTransitMovementsUrl)
+        Json.obj(
+          "ref"                       -> ref,
+          "contactUs"                 -> contactUsMessage,
+          "manageTransitMovementsUrl" -> frontendAppConfig.manageTransitMovementsUrl
+        )
 
       templateCaptor.getValue mustEqual "arrivalComplete.njk"
       jsonCaptor.getValue must containJson(expectedJson)
@@ -82,7 +86,7 @@ class ConfirmationControllerSpec extends SpecBase with MockitoSugar with JsonMat
       val application = applicationBuilder(userAnswers = Some(userAnswers))
         .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
-      val request        = FakeRequest(GET, routes.ConfirmationController.onPageLoad(mrn).url)
+      val request        = FakeRequest(GET, routes.ConfirmationController.onPageLoad(ref).url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
       val result         = route(application, request).value
@@ -92,9 +96,9 @@ class ConfirmationControllerSpec extends SpecBase with MockitoSugar with JsonMat
       status(result) mustEqual OK
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-      verify(mockSessionRepository, times(1)).remove(mrn.toString)
+      verify(mockSessionRepository, times(1)).remove(ref.toString)
 
-      val expectedJson = Json.obj("mrn" -> mrn, "contactUs" -> contactUsMessage)
+      val expectedJson = Json.obj("ref" -> ref, "contactUs" -> contactUsMessage)
 
       templateCaptor.getValue mustEqual "arrivalComplete.njk"
       jsonCaptor.getValue must containJson(expectedJson)

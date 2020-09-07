@@ -6,10 +6,10 @@ echo "Applying migration IsTranshipment"
 echo "Adding routes to conf/app.routes"
 
 echo "" >> ../conf/app.routes
-echo "GET        /:mrn/isTranshipment                        controllers.events.IsTranshipmentController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = NormalMode)" >> ../conf/app.routes
+echo "GET        /:mrn/isTranshipment                        controllers.events.IsTranshipmentController.onPageLoad(ref: MovementReferenceNumber, mode: Mode = NormalMode)" >> ../conf/app.routes
 echo "POST       /:mrn/isTranshipment                        controllers.events.IsTranshipmentController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)" >> ../conf/app.routes
 
-echo "GET        /:mrn/changeIsTranshipment                  controllers.events.IsTranshipmentController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)" >> ../conf/app.routes
+echo "GET        /:mrn/changeIsTranshipment                  controllers.events.IsTranshipmentController.onPageLoad(ref: MovementReferenceNumber, mode: Mode = CheckMode)" >> ../conf/app.routes
 echo "POST       /:mrn/changeIsTranshipment                  controllers.events.IsTranshipmentController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)" >> ../conf/app.routes
 
 echo "Adding messages to conf.messages"
@@ -58,7 +58,7 @@ awk '/class CheckYourAnswersHelper/ {\
      print "        actions = List(";\
      print "          Action(";\
      print "            content            = msg\"site.edit\",";\
-     print "            href               = routes.IsTranshipmentController.onPageLoad(mrn, CheckMode).url,";\
+     print "            href               = routes.IsTranshipmentController.onPageLoad(ref, CheckMode).url,";\
      print "            visuallyHiddenText = Some(msg\"site.edit.hidden\".withArgs(msg\"isTranshipment.checkYourAnswersLabel\"))";\
      print "          )";\
      print "        )";\

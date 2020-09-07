@@ -24,7 +24,7 @@ import javax.inject.Inject
 import models.domain.SealDomain
 import models.messages.Seal
 import models.requests.DataRequest
-import models.{Index, Mode, MovementReferenceNumber, UserAnswers}
+import models.{ArrivalUniqueRef, Index, Mode, MovementReferenceNumber, UserAnswers}
 import navigation.Navigator
 import pages.events.seals.{ConfirmRemoveSealPage, SealIdentityPage}
 import play.api.data.Form
@@ -57,27 +57,27 @@ class ConfirmRemoveSealController @Inject()(
 
   private val confirmRemoveSealTemplate = "events/seals/confirmRemoveSeal.njk"
 
-  def onPageLoad(mrn: MovementReferenceNumber, eventIndex: Index, sealIndex: Index, mode: Mode): Action[AnyContent] =
-    (identify andThen getData(mrn) andThen requireData).async {
+  def onPageLoad(ref: ArrivalUniqueRef, eventIndex: Index, sealIndex: Index, mode: Mode): Action[AnyContent] =
+    (identify andThen getData(ref) andThen requireData).async {
       implicit request =>
         request.userAnswers.get(SealIdentityPage(eventIndex, sealIndex)) match {
           case Some(seal) =>
             val form = formProvider(seal)
-            renderPage(mrn, eventIndex, sealIndex, mode, form, seal).map(Ok(_))
+            renderPage(ref, eventIndex, sealIndex, mode, form, seal).map(Ok(_))
           case _ =>
             renderErrorPage(eventIndex, mode)
         }
     }
 
-  def onSubmit(mrn: MovementReferenceNumber, eventIndex: Index, sealIndex: Index, mode: Mode): Action[AnyContent] =
-    (identify andThen getData(mrn) andThen requireData).async {
+  def onSubmit(ref: ArrivalUniqueRef, eventIndex: Index, sealIndex: Index, mode: Mode): Action[AnyContent] =
+    (identify andThen getData(ref) andThen requireData).async {
       implicit request =>
         request.userAnswers.get(SealIdentityPage(eventIndex, sealIndex)) match {
           case Some(seal) =>
             formProvider(seal)
               .bindFromRequest()
               .fold(
-                formWithErrors => renderPage(mrn, eventIndex, sealIndex, mode, formWithErrors, seal).map(BadRequest(_)),
+                formWithErrors => renderPage(ref, eventIndex, sealIndex, mode, formWithErrors, seal).map(BadRequest(_)),
                 value =>
                   if (value) {
                     for {
@@ -93,15 +93,15 @@ class ConfirmRemoveSealController @Inject()(
         }
     }
 
-  private def renderPage(mrn: MovementReferenceNumber, eventIndex: Index, sealIndex: Index, mode: Mode, form: Form[Boolean], seal: SealDomain)(
+  private def renderPage(ref: ArrivalUniqueRef, eventIndex: Index, sealIndex: Index, mode: Mode, form: Form[Boolean], seal: SealDomain)(
     implicit request: DataRequest[AnyContent]): Future[Html] = {
     val json = Json.obj(
       "form"        -> form,
       "mode"        -> mode,
-      "mrn"         -> mrn,
+      "ref"         -> ref,
       "sealNumber"  -> seal.numberOrMark,
       "radios"      -> Radios.yesNo(form("value")),
-      "onSubmitUrl" -> routes.ConfirmRemoveSealController.onSubmit(mrn, eventIndex, sealIndex, mode).url
+      "onSubmitUrl" -> routes.ConfirmRemoveSealController.onSubmit(ref, eventIndex, sealIndex, mode).url
     )
     renderer.render(confirmRemoveSealTemplate, json)
 

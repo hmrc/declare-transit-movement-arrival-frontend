@@ -6,10 +6,10 @@ echo "Applying migration TransportNationality"
 echo "Adding routes to conf/app.routes"
 
 echo "" >> ../conf/app.routes
-echo "GET        /:mrn/transportNationality                        controllers.events.transhipments.TransportNationalityController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = NormalMode)" >> ../conf/app.routes
+echo "GET        /:mrn/transportNationality                        controllers.events.transhipments.TransportNationalityController.onPageLoad(ref: MovementReferenceNumber, mode: Mode = NormalMode)" >> ../conf/app.routes
 echo "POST       /:mrn/transportNationality                        controllers.events.transhipments.TransportNationalityController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)" >> ../conf/app.routes
 
-echo "GET        /:mrn/changeTransportNationality                  controllers.events.transhipments.TransportNationalityController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)" >> ../conf/app.routes
+echo "GET        /:mrn/changeTransportNationality                  controllers.events.transhipments.TransportNationalityController.onPageLoad(ref: MovementReferenceNumber, mode: Mode = CheckMode)" >> ../conf/app.routes
 echo "POST       /:mrn/changeTransportNationality                  controllers.events.transhipments.TransportNationalityController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)" >> ../conf/app.routes
 
 echo "Adding messages to conf.messages"
@@ -59,7 +59,7 @@ awk '/class CheckYourAnswersHelper/ {\
      print "        actions = List(";\
      print "          Action(";\
      print "            content            = msg\"site.edit\",";\
-     print "            href               = routes.TransportNationalityController.onPageLoad(mrn, CheckMode).url,";\
+     print "            href               = routes.TransportNationalityController.onPageLoad(ref, CheckMode).url,";\
      print "            visuallyHiddenText = Some(msg\"site.edit.hidden\".withArgs(msg\"transportNationality.checkYourAnswersLabel\"))";\
      print "          )";\
      print "        )";\

@@ -19,7 +19,7 @@ package controllers
 import controllers.actions._
 import forms.TraderEoriFormProvider
 import javax.inject.Inject
-import models.{Mode, MovementReferenceNumber}
+import models.{ArrivalUniqueRef, Mode, MovementReferenceNumber}
 import navigation.Navigator
 import pages.{ConsigneeNamePage, TraderEoriPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -47,8 +47,8 @@ class TraderEoriController @Inject()(override val messagesApi: MessagesApi,
 
   private val form = formProvider()
 
-  def onPageLoad(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] =
-    (identify andThen getData(mrn) andThen requireData).async {
+  def onPageLoad(ref: ArrivalUniqueRef, mode: Mode): Action[AnyContent] =
+    (identify andThen getData(ref) andThen requireData).async {
       implicit request =>
         val preparedForm = request.userAnswers.get(TraderEoriPage) match {
           case None        => form
@@ -57,15 +57,15 @@ class TraderEoriController @Inject()(override val messagesApi: MessagesApi,
 
         val json = Json.obj(
           "form" -> preparedForm,
-          "mrn"  -> mrn,
+          "ref"  -> ref,
           "mode" -> mode
         )
 
         renderer.render("traderEori.njk", json).map(Ok(_))
     }
 
-  def onSubmit(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] =
-    (identify andThen getData(mrn) andThen requireData).async {
+  def onSubmit(ref: ArrivalUniqueRef, mode: Mode): Action[AnyContent] =
+    (identify andThen getData(ref) andThen requireData).async {
       implicit request =>
         form
           .bindFromRequest()
@@ -74,7 +74,7 @@ class TraderEoriController @Inject()(override val messagesApi: MessagesApi,
 
               val json = Json.obj(
                 "form" -> formWithErrors,
-                "mrn"  -> mrn,
+                "ref"  -> ref,
                 "mode" -> mode
               )
 

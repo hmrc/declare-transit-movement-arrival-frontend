@@ -19,7 +19,7 @@ package controllers
 import controllers.actions._
 import forms.EoriNumberFormProvider
 import javax.inject.Inject
-import models.{Mode, MovementReferenceNumber}
+import models.{ArrivalUniqueRef, Mode, MovementReferenceNumber}
 import navigation.Navigator
 import pages.{ConsigneeAddressPage, ConsigneeEoriConfirmationPage, ConsigneeEoriNumberPage, ConsigneeNamePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -47,7 +47,7 @@ class ConsigneeEoriNumberController @Inject()(
     with I18nSupport
     with NunjucksSupport {
 
-  def onPageLoad(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onPageLoad(ref: ArrivalUniqueRef, mode: Mode): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
     implicit request =>
       request.userAnswers.get(ConsigneeNamePage) match {
         case Some(consigneeName) =>
@@ -57,7 +57,7 @@ class ConsigneeEoriNumberController @Inject()(
           }
           val json = Json.obj(
             "form"          -> preparedForm,
-            "mrn"           -> mrn,
+            "ref"           -> ref,
             "mode"          -> mode,
             "eoriNumber"    -> request.eoriNumber,
             "consigneeName" -> consigneeName
@@ -70,7 +70,7 @@ class ConsigneeEoriNumberController @Inject()(
       }
   }
 
-  def onSubmit(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onSubmit(ref: ArrivalUniqueRef, mode: Mode): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
     implicit request =>
       request.userAnswers.get(ConsigneeNamePage) match {
         case Some(consigneeName) =>
@@ -81,7 +81,7 @@ class ConsigneeEoriNumberController @Inject()(
 
                 val json = Json.obj(
                   "form"          -> formWithErrors,
-                  "mrn"           -> mrn,
+                  "ref"           -> ref,
                   "mode"          -> mode,
                   "eoriNumber"    -> request.eoriNumber,
                   "consigneeName" -> consigneeName

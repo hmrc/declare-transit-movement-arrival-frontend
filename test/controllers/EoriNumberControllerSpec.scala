@@ -44,7 +44,7 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar with NunjucksS
   val formProvider = new EoriNumberFormProvider()
   val form         = formProvider(traderName)
 
-  lazy val eoriNumberRoute = routes.ConsigneeEoriNumberController.onPageLoad(mrn, NormalMode).url
+  lazy val eoriNumberRoute = routes.ConsigneeEoriNumberController.onPageLoad(ref, NormalMode).url
 
   "EoriNumber Controller" - {
 
@@ -73,7 +73,7 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar with NunjucksS
 
       val expectedJson = Json.obj(
         "form" -> form,
-        "mrn"  -> mrn,
+        "ref"  -> ref,
         "mode" -> NormalMode
       )
 
@@ -113,7 +113,7 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar with NunjucksS
 
       val expectedJson = Json.obj(
         "form"       -> filledForm,
-        "mrn"        -> mrn,
+        "ref"        -> ref,
         "mode"       -> NormalMode,
         "eoriNumber" -> eoriNumber
       )
@@ -183,7 +183,7 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar with NunjucksS
 
       val expectedJson = Json.obj(
         "form" -> boundForm,
-        "mrn"  -> mrn,
+        "ref"  -> ref,
         "mode" -> NormalMode
       )
 
