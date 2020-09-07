@@ -64,7 +64,7 @@ class ArrivalRejectionControllerSpec extends SpecBase with MockitoSugar with Jso
 
           val errors = Seq(FunctionalError(errorType, ErrorPointer(errorPointer), None, None))
 
-          when(mockArrivalRejectionService.arrivalRejectionMessage((any()))(any(), any()))
+          when(mockArrivalRejectionService.arrivalRejectionMessage(any())(any(), any()))
             .thenReturn(Future.successful(Some(ArrivalNotificationRejectionMessage(mrn.toString, LocalDate.now, None, None, errors))))
 
           val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))

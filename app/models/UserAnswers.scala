@@ -31,7 +31,7 @@ final case class UserAnswers(
   data: JsObject               = Json.obj(),
   lastUpdated: LocalDateTime   = LocalDateTime.now,
   arrivalId: Option[ArrivalId] = None,
-  ref: ArrivalUniqueRef        = ArrivalUniqueRef()
+  ref: ArrivalUniqueRef        = ArrivalUniqueRef.instance
 ) {
 
   def get[A](gettable: Gettable[A])(implicit rds: Reads[A]): Option[A] =

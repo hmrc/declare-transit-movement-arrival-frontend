@@ -30,7 +30,7 @@ final case class ArrivalUniqueRef(uuid: UUID) {
 
 object ArrivalUniqueRef {
 
-  def apply(): ArrivalUniqueRef = ArrivalUniqueRef(UUID.randomUUID())
+  def instance: ArrivalUniqueRef = ArrivalUniqueRef(UUID.randomUUID())
 
   implicit val jsonFormat: OFormat[ArrivalUniqueRef] = Json.format[ArrivalUniqueRef]
 

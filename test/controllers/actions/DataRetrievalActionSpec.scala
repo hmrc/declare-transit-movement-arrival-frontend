@@ -51,7 +51,7 @@ class DataRetrievalActionSpec
 
   val sessionRepository: SessionRepository = mock[SessionRepository]
   val mrn: MovementReferenceNumber         = arbitrary[MovementReferenceNumber].sample.value
-  val ref: ArrivalUniqueRef                = ArrivalUniqueRef()
+  val ref: ArrivalUniqueRef                = ArrivalUniqueRef.instance
   val eoriNumber: EoriNumber               = arbitrary[EoriNumber].sample.value
 
   override lazy val app: Application = {

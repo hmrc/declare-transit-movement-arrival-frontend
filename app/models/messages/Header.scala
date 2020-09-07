@@ -42,12 +42,14 @@ import utils.Format
 
 import scala.xml.NodeSeq
 
-case class Header(movementReferenceNumber: String,
-                  customsSubPlace: Option[String] = None,
-                  arrivalNotificationPlace: String,
-                  arrivalAgreedLocationOfGoods: Option[String] = None,
-                  procedureTypeFlag: ProcedureTypeFlag,
-                  notificationDate: LocalDate)
+case class Header(
+  movementReferenceNumber: String,
+  customsSubPlace: Option[String] = None,
+  arrivalNotificationPlace: String,
+  arrivalAgreedLocationOfGoods: Option[String] = None,
+  procedureTypeFlag: ProcedureTypeFlag,
+  notificationDate: LocalDate
+)
 
 object Header {
 
