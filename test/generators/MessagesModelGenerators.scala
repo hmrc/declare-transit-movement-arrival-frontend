@@ -280,14 +280,6 @@ trait MessagesModelGenerators extends Generators {
     }
   }
 
-  implicit lazy val arbitraryMessageSender: Arbitrary[MessageSender] = {
-    Arbitrary {
-      for {
-        eori <- arbitrary[EoriNumber]
-      } yield MessageSender("LOCAL", eori)
-    }
-  }
-
   implicit lazy val arbitraryInterchangeControlReference: Arbitrary[InterchangeControlReference] = {
     Arbitrary {
       for {
@@ -300,13 +292,11 @@ trait MessagesModelGenerators extends Generators {
   implicit lazy val arbitraryMeta: Arbitrary[Meta] = {
     Arbitrary {
       for {
-        messageSender               <- arbitrary[MessageSender]
         interchangeControlReference <- arbitrary[InterchangeControlReference]
         date                        <- arbitrary[LocalDate]
         time                        <- arbitrary[LocalTime]
       } yield
         Meta(
-          messageSender,
           interchangeControlReference,
           date,
           LocalTime.of(time.getHour, time.getMinute),
@@ -368,11 +358,9 @@ trait MessagesModelGenerators extends Generators {
         customsOffice <- arbitrary[CustomsOfficeOfPresentation]
         enRouteEvents <- Gen.option(listWithMaxLength[EnRouteEvent](1))
       } yield {
-        val messageSender  = meta.messageSender.copy(eori = eori)
-        val metaWithEori   = meta.copy(messageSender      = messageSender)
-        val traderWithEori = trader.copy(eori             = eori.value)
+        val traderWithEori = trader.copy(eori = eori.value)
 
-        ArrivalMovementRequest(metaWithEori, header, traderWithEori, customsOffice, enRouteEvents)
+        ArrivalMovementRequest(meta, header, traderWithEori, customsOffice, enRouteEvents)
       }
     }
   }
