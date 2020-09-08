@@ -430,9 +430,9 @@ confirmRemoveEvent.error.required = Select yes if you are sure you want to remov
 arrivalRejection.title = There is an error in this arrival notification
 arrivalRejection.heading = There is an error in this arrival notification
 
-consigneeName.title = What is the name of the authorised consignee?
-consigneeName.heading = What is the name of the authorised consignee?
-consigneeName.checkYourAnswersLabel =What is the name of the authorised consignee?
+consigneeName.title = What is the authorised consignee's name?
+consigneeName.heading = What is the authorised consignee's name?
+consigneeName.checkYourAnswersLabel = What is the name of the authorised consignee?
 consigneeName.error.required = Enter the name of the authorised consignee
 consigneeName.error.length = Authorised consignee name must be 35 characters or less
 
