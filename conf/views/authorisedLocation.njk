@@ -31,15 +31,9 @@
 
           {{ csrf() | safe }}
 
+          <h1 class="govuk-heading govuk-heading-xl">{{messages('authorisedLocation.heading')}}</h1>
+          <p class="govuk-body-l">{{messages('authorisedLocation.hintText')}}</p>
           {{ govukInput({
-            label: {
-              text: messages('authorisedLocation.heading'),
-              isPageHeading: true,
-              classes: "govuk-input--width-20"
-            },
-            hint: {
-              text: messages('authorisedLocation.hintText')
-            },
             id: "value",
             name: "value",
             value: form.value.value,
