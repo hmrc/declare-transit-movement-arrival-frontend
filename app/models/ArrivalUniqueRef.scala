@@ -18,7 +18,7 @@ package models
 
 import java.util.UUID
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.json.{Format, JsError, JsObject, JsResult, JsString, JsValue, Json, OFormat}
 import play.api.mvc.PathBindable
 
 import scala.util.{Failure, Success, Try}
@@ -32,7 +32,16 @@ object ArrivalUniqueRef {
 
   def instance: ArrivalUniqueRef = ArrivalUniqueRef(UUID.randomUUID())
 
-  implicit val jsonFormat: OFormat[ArrivalUniqueRef] = Json.format[ArrivalUniqueRef]
+  implicit val jsonFormat: Format[ArrivalUniqueRef] = new Format[ArrivalUniqueRef] {
+    override def writes(o: ArrivalUniqueRef): JsValue = JsString(o.uuid.toString)
+
+    override def reads(json: JsValue): JsResult[ArrivalUniqueRef] = {
+      json match {
+        case xs @ JsString(_) => xs.validate[UUID].map(ArrivalUniqueRef.apply)
+        case json => JsError(s"Expected type JsString containing single UUID toString value, got ${json.toString()} instead.")
+      }
+    }
+  }
 
   implicit def pathBindable: PathBindable[ArrivalUniqueRef] = new PathBindable[ArrivalUniqueRef] {
 

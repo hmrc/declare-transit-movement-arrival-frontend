@@ -61,7 +61,7 @@ class $className$Controller @Inject()(
           val json = Json.obj(
             "form" -> formWithErrors,
             "mode" -> mode,
-            "ref"  -> refF,
+            "ref"  -> ref,
             "date" -> viewModel
           )
 
