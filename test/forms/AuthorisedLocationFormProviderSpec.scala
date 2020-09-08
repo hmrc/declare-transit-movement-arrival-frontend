@@ -24,7 +24,6 @@ import wolfendale.scalacheck.regexp.RegexpGen
 class AuthorisedLocationFormProviderSpec extends StringFieldBehaviours {
 
   private val requiredKey = "authorisedLocation.error.required"
-  private val invalidKey  = "authorisedLocation.error.invalid"
   private val maxLength   = 17
 
   private val form      = new AuthorisedLocationFormProvider()()
@@ -42,17 +41,5 @@ class AuthorisedLocationFormProviderSpec extends StringFieldBehaviours {
       fieldName,
       requiredError = FormError(fieldName, requiredKey)
     )
-  }
-  "must not bind strings that do not match regex" in {
-    val generator: Gen[String] = RegexpGen.from("[^a-zA-Z0-9]\n{2}[^\n\r]{1,15}")
-
-    val validRegex    = "^[a-zA-Z0-9]*$"
-    val expectedError = FormError(fieldName, invalidKey, Seq(validRegex))
-
-    forAll(generator) {
-      invalidString =>
-        val result: Field = form.bind(Map(fieldName -> invalidString)).apply(fieldName)
-        result.errors must contain(expectedError)
-    }
   }
 }

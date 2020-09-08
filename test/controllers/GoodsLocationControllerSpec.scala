@@ -108,19 +108,14 @@ class GoodsLocationControllerSpec extends SpecBase with MockitoSugar with Nunjuc
       application.stop()
     }
 
-    "must redirect to the correct page when Border Force is submitted and Simplified Journey toggle is false" in {
+    "must redirect to the correct page for Border Force Office when valid data is submitted" in {
 
       val mockSessionRepository = mock[SessionRepository]
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .configure(Map("feature-toggles.simplifiedJourney" -> false))
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
+      val userAnswers = emptyUserAnswers.set(GoodsLocationPage, GoodsLocation.values.head).success.value
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       val request =
         FakeRequest(POST, goodsLocationRoute)
@@ -135,73 +130,14 @@ class GoodsLocationControllerSpec extends SpecBase with MockitoSugar with Nunjuc
       application.stop()
     }
 
-    "must redirect to the correct page when AuthorisedConsignee is submitted and Simplified Journey toggle is false" in {
+    "must redirect to the correct page for Authorised Consignees Location when valid data is submitted" in {
 
       val mockSessionRepository = mock[SessionRepository]
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .configure(Map("feature-toggles.simplifiedJourney" -> false))
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
-
-      val request =
-        FakeRequest(POST, goodsLocationRoute)
-          .withFormUrlEncodedBody(("value", GoodsLocation.AuthorisedConsigneesLocation.toString))
-
-      val result = route(application, request).value
-
-      status(result) mustEqual SEE_OTHER
-
-      redirectLocation(result).value mustEqual s"/common-transit-convention-trader-arrival/${emptyUserAnswers.id}/use-ncts-service"
-
-      application.stop()
-    }
-
-    "must redirect to the correct page for Border Force Office when valid data is submitted and Simplified Journey toggle is true" in {
-
-      val mockSessionRepository = mock[SessionRepository]
-
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .configure(Map("feature-toggles.simplifiedJourney" -> true))
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
-
-      val request =
-        FakeRequest(POST, goodsLocationRoute)
-          .withFormUrlEncodedBody(("value", GoodsLocation.BorderForceOffice.toString))
-
-      val result = route(application, request).value
-
-      status(result) mustEqual SEE_OTHER
-
-      redirectLocation(result).value mustEqual s"/common-transit-convention-trader-arrival/${emptyUserAnswers.id}/goods-approved-location"
-
-      application.stop()
-    }
-
-    "must redirect to the correct page for Authorised Consignees Location when valid data is submitted and Simplified Journey toggle is true" in {
-
-      val mockSessionRepository = mock[SessionRepository]
-
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .configure(Map("feature-toggles.simplifiedJourney" -> true))
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
+      val userAnswers = emptyUserAnswers.set(GoodsLocationPage, GoodsLocation.values.head).success.value
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       val request =
         FakeRequest(POST, goodsLocationRoute)

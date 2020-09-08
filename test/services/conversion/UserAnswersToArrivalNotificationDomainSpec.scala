@@ -20,9 +20,9 @@ import java.time.LocalTime
 
 import base.SpecBase
 import generators.MessagesModelGenerators
-import models.UserAnswers
 import models.domain._
-import models.messages.{ArrivalMovementRequest, InterchangeControlReference, MessageSender}
+import models.messages.{ArrivalMovementRequest, InterchangeControlReference}
+import models.{EoriNumber, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
@@ -34,13 +34,12 @@ class UserAnswersToArrivalNotificationDomainSpec extends SpecBase with ScalaChec
 
     "must convert an UserAnswers to ArrivalNotificationDomain" in {
 
-      forAll(arbitrary[ArrivalNotificationDomain], arbitrary[MessageSender], arbitrary[InterchangeControlReference]) {
-        (arrivalNotificationDomain, messageSender, interchangeControlReference) =>
+      forAll(arbitrary[ArrivalNotificationDomain], arbitrary[EoriNumber], arbitrary[InterchangeControlReference]) {
+        (arrivalNotificationDomain, eori, interchangeControlReference) =>
           val arrivalMovementRequest: ArrivalMovementRequest =
             ArrivalNotificationDomainToArrivalMovementRequestService
               .convertToSubmissionModel(
                 arrivalNotificationDomain,
-                messageSender,
                 interchangeControlReference,
                 LocalTime.now()
               )
@@ -48,7 +47,7 @@ class UserAnswersToArrivalNotificationDomainSpec extends SpecBase with ScalaChec
           val userAnswers: UserAnswers = ArrivalMovementRequestToUserAnswersService
             .convertToUserAnswers(
               arrivalMovementRequest,
-              messageSender.eori,
+              eori,
               arrivalNotificationDomain.movementReferenceNumber,
               arrivalNotificationDomain.presentationOffice
             )
