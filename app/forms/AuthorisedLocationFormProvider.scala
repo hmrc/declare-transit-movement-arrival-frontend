@@ -27,8 +27,7 @@ class AuthorisedLocationFormProvider @Inject() extends Mappings {
     Form(
       "value" -> text("authorisedLocation.error.required")
         .verifying(
-          maxLength(SimplifiedNotification.Constants.approvedLocationLength, "authorisedLocation.error.length"),
-          regexp(SimplifiedNotification.Constants.authorisedLocationRegex, "authorisedLocation.error.invalid")
+          maxLength(SimplifiedNotification.Constants.approvedLocationLength, "authorisedLocation.error.length")
         )
     )
 }
