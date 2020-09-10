@@ -25,7 +25,7 @@ class EoriConfirmationFormProviderSpec extends BooleanFieldBehaviours with SpecB
   val requiredKey = "eoriConfirmation.error.required"
   val invalidKey  = "error.boolean"
 
-  val form = new EoriConfirmationFormProvider()(traderName)
+  val form = new EoriConfirmationFormProvider()(traderName, eoriNumber)
 
   ".value" - {
 
