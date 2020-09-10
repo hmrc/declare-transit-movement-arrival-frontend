@@ -17,14 +17,20 @@
 package forms
 
 import javax.inject.Inject
-
 import forms.mappings.Mappings
+import models.EoriNumber
 import play.api.data.Form
 
 class EoriConfirmationFormProvider @Inject() extends Mappings {
 
-  def apply(traderName: String): Form[Boolean] =
+  def apply(
+    traderName: String,
+    eoriNumber: EoriNumber
+  ): Form[Boolean] =
     Form(
-      "value" -> boolean(requiredKey = "eoriConfirmation.error.required", args = Seq(traderName))
+      "value" -> boolean(
+        requiredKey = "eoriConfirmation.error.required",
+        args = Seq(eoriNumber.value, traderName)
+      )
     )
 }
