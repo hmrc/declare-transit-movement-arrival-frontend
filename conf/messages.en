@@ -203,8 +203,8 @@ authorisedLocation.error.required = Enter authorised location code
 authorisedLocation.error.length = Authorised location code must be 17 characters or less
 authorisedLocation.error.invalid = Authorised location code must only contain letters a to z or numbers 0 to 9
 
-traderAddress.title = What is the address of the trader at the destination?
-traderAddress.heading = What is the address of the trader at the destination?
+traderAddress.title = What is the destination trader’s address?
+traderAddress.heading = What is {0}’s address?
 traderAddress.buildingAndStreet = Building and street
 traderAddress.city = Town or city
 traderAddress.postcode = Postcode
