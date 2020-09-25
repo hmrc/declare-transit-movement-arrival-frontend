@@ -21,7 +21,7 @@ import forms.TraderAddressFormProvider
 import javax.inject.Inject
 import models.{Mode, MovementReferenceNumber}
 import navigation.Navigator
-import pages.TraderAddressPage
+import pages.{TraderAddressPage, TraderNamePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -58,7 +58,8 @@ class TraderAddressController @Inject()(override val messagesApi: MessagesApi,
         val json = Json.obj(
           "form" -> preparedForm,
           "mrn"  -> mrn,
-          "mode" -> mode
+          "mode" -> mode,
+          "name" -> request.userAnswers.get(TraderNamePage).getOrElse("Unknown name??")
         )
 
         renderer.render("traderAddress.njk", json).map(Ok(_))
