@@ -32,7 +32,7 @@
           {{ csrf() | safe }}
 
         <h1 class="govuk-heading-xl">
-          {{ messages("traderAddress.heading", form.)}}
+          {{ messages("traderAddress.heading", traderName)}}
         </h1>
 
           {{ govukInput({

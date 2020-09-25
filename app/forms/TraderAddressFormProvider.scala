@@ -25,7 +25,7 @@ import models.domain.TraderDomain.Constants.{cityLength, postCodeLength, streetA
 
 class TraderAddressFormProvider @Inject() extends Mappings {
 
-  def apply(traderName: String): Form[Address] = Form(
+  def apply(): Form[Address] = Form(
     mapping(
       "buildingAndStreet" -> text("traderAddress.error.buildingAndStreet.required")
         .verifying(maxLength(streetAndNumberLength, "traderAddress.error.buildingAndStreet.length"))

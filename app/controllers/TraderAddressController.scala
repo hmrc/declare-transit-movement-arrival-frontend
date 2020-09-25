@@ -76,7 +76,8 @@ class TraderAddressController @Inject()(override val messagesApi: MessagesApi,
               val json = Json.obj(
                 "form" -> formWithErrors,
                 "mrn"  -> mrn,
-                "mode" -> mode
+                "mode" -> mode,
+                "name" -> request.userAnswers.get(TraderNamePage).getOrElse("Unknown name??")
               )
 
               renderer.render("traderAddress.njk", json).map(BadRequest(_))
