@@ -30,7 +30,6 @@ class TraderAddressFormProvider @Inject() extends Mappings {
       "buildingAndStreet" -> text("traderAddress.error.buildingAndStreet.required")
         .verifying(maxLength(streetAndNumberLength, "traderAddress.error.buildingAndStreet.length"))
         .verifying(minLength(1, "traderAddress.error.empty")),
-
       "city" -> text("traderAddress.error.city.required")
         .verifying(maxLength(cityLength, "traderAddress.error.city.length"))
         .verifying(minLength(1, "traderAddress.error.empty")),

@@ -50,6 +50,7 @@ class TraderAddressController @Inject()(override val messagesApi: MessagesApi,
   def onPageLoad(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] =
     (identify andThen getData(mrn) andThen requireData).async {
       implicit request =>
+        val traderName = request.userAnswers.get(TraderNamePage).getOrElse("")
         val preparedForm = request.userAnswers.get(TraderAddressPage) match {
           case None        => form
           case Some(value) => form.fill(value)
@@ -59,7 +60,7 @@ class TraderAddressController @Inject()(override val messagesApi: MessagesApi,
           "form" -> preparedForm,
           "mrn"  -> mrn,
           "mode" -> mode,
-          "name" -> request.userAnswers.get(TraderNamePage).getOrElse("Unknown name??")
+          "name" -> traderName
         )
 
         renderer.render("traderAddress.njk", json).map(Ok(_))
@@ -72,12 +73,12 @@ class TraderAddressController @Inject()(override val messagesApi: MessagesApi,
           .bindFromRequest()
           .fold(
             formWithErrors => {
-
+              val traderName = request.userAnswers.get(TraderNamePage).getOrElse("")
               val json = Json.obj(
                 "form" -> formWithErrors,
                 "mrn"  -> mrn,
                 "mode" -> mode,
-                "name" -> request.userAnswers.get(TraderNamePage).getOrElse("Unknown name??")
+                "name" -> traderName
               )
 
               renderer.render("traderAddress.njk", json).map(BadRequest(_))
