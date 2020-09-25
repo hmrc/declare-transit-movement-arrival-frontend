@@ -60,7 +60,7 @@ class TraderAddressController @Inject()(override val messagesApi: MessagesApi,
           "form" -> preparedForm,
           "mrn"  -> mrn,
           "mode" -> mode,
-          "name" -> traderName
+          "traderName" -> traderName
         )
 
         renderer.render("traderAddress.njk", json).map(Ok(_))
@@ -78,7 +78,7 @@ class TraderAddressController @Inject()(override val messagesApi: MessagesApi,
                 "form" -> formWithErrors,
                 "mrn"  -> mrn,
                 "mode" -> mode,
-                "name" -> traderName
+                "traderName" -> traderName
               )
 
               renderer.render("traderAddress.njk", json).map(BadRequest(_))
