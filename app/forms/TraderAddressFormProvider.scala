@@ -23,7 +23,23 @@ import play.api.data.Form
 import play.api.data.Forms._
 import models.domain.TraderDomain.Constants.{cityLength, postCodeLength, streetAndNumberLength}
 
+import scala.util.matching.Regex
+
 class TraderAddressFormProvider @Inject() extends Mappings {
+
+  /**
+   * letters a to z
+   * numbers 0 to 9
+   * ampersands (&)
+   * apostrophes
+   * asterisks,
+   * forward slashes
+   * full stops
+   * hyphens
+   * question marks
+   * and greater than (>) and less than (<) signs
+   */
+  val inputRegex: Regex = "[a-zA-Z0-9&'*/.\\-?<>]*".r
 
   def apply(traderName: String): Form[Address] = Form(
     mapping(
@@ -40,7 +56,13 @@ class TraderAddressFormProvider @Inject() extends Mappings {
           minLength(
             1,
             "traderAddress.error.empty",
-            Seq("Building and street name", traderName)
+            Seq("building and street name", traderName)
+          )
+        ).verifying(
+          regexp(
+            inputRegex,
+            "traderAddress.error.invalid",
+            Seq("building and street name", traderName)
           )
         ),
       "city" -> text("traderAddress.error.city.required", args = Seq(traderName))
@@ -50,11 +72,22 @@ class TraderAddressFormProvider @Inject() extends Mappings {
             "traderAddress.error.max_length",
             args = Seq("city", traderName))
         )
-        .verifying(minLength(1, "traderAddress.error.empty", Seq("city", traderName))),
+        .verifying(
+          minLength(1,
+            "traderAddress.error.empty",
+            Seq("city", traderName)
+          )
+        ).verifying(
+          regexp(
+            inputRegex,
+            "traderAddress.error.invalid",
+            Seq("city", traderName)
+          )
+        ),
       "postcode" -> text("traderAddress.error.postcode.required", args = Seq(traderName))
         .verifying(maxLength(postCodeLength, "traderAddress.error.postcode.length", args = Seq(traderName)))
         .verifying(minLength(1, "traderAddress.error.empty", args = Seq("postcode", traderName)))
-        .verifying(regexp("[a-z,A-Z,0-9]*", "traderAddress.error.postcode.invalid", args = Seq(traderName)))
+        .verifying(regexp("[a-zA-Z0-9]*".r, "traderAddress.error.postcode.invalid", args = Seq(traderName)))
     )(Address.apply)(Address.unapply)
   )
 }

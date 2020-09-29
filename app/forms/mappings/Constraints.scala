@@ -22,6 +22,8 @@ import com.google.common.base.CharMatcher
 import models.Index
 import play.api.data.validation.{Constraint, Invalid, Valid}
 
+import scala.util.matching.Regex
+
 trait Constraints {
 
   protected def firstError[A](constraints: Constraint[A]*): Constraint[A] =
@@ -69,9 +71,9 @@ trait Constraints {
         }
     }
 
-  protected def regexp(regex: String, errorKey: String, args: Any*): Constraint[String] =
+  protected def regexp(regex: Regex, errorKey: String, args: Any*): Constraint[String] =
     Constraint {
-      case str if str.matches(regex) =>
+      case str if str.matches(regex.pattern.pattern()) =>
         Valid
       case _ =>
         Invalid(errorKey, args)
