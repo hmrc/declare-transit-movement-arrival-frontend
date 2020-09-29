@@ -19,7 +19,7 @@ package utils
 import controllers.events.seals.{routes => sealRoutes}
 import controllers.events.transhipments.{routes => transhipmentRoutes}
 import controllers.events.{routes => eventRoutes}
-import models.{Address, DraftArrivalRef, CheckMode, CountryList, Index, MovementReferenceNumber, UserAnswers}
+import models.{Address, CheckMode, CountryList, DraftArrivalRef, Index, MovementReferenceNumber, UserAnswers}
 import pages.events._
 import pages.events.seals._
 import pages.events.transhipments._
@@ -224,7 +224,7 @@ class CheckEventAnswersHelper(userAnswers: UserAnswers) {
     }
 
   def mrn: MovementReferenceNumber = userAnswers.id
-  def ref: DraftArrivalRef        = userAnswers.ref
+  def ref: DraftArrivalRef         = userAnswers.ref
 
   def addressHtml(address: Address): Html = Html(
     Seq(address.buildingAndStreet, address.city, address.postcode)

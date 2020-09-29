@@ -35,12 +35,11 @@ object DraftArrivalRef {
   implicit val jsonFormat: Format[DraftArrivalRef] = new Format[DraftArrivalRef] {
     override def writes(o: DraftArrivalRef): JsValue = JsString(o.uuid.toString)
 
-    override def reads(json: JsValue): JsResult[DraftArrivalRef] = {
+    override def reads(json: JsValue): JsResult[DraftArrivalRef] =
       json match {
         case xs @ JsString(_) => xs.validate[UUID].map(DraftArrivalRef.apply)
-        case json => JsError(s"Expected type JsString containing single UUID toString value, got ${json.toString()} instead.")
+        case json             => JsError(s"Expected type JsString containing single UUID toString value, got ${json.toString()} instead.")
       }
-    }
   }
 
   implicit def pathBindable: PathBindable[DraftArrivalRef] = new PathBindable[DraftArrivalRef] {

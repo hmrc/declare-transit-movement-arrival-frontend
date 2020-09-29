@@ -55,7 +55,7 @@ trait SpecBase
 
   val eoriNumber: EoriNumber       = EoriNumber("EOriNumber")
   val mrn: MovementReferenceNumber = MovementReferenceNumber("19", "GB", "1234567890123")
-  val ref: DraftArrivalRef        = DraftArrivalRef.instance
+  val ref: DraftArrivalRef         = DraftArrivalRef.instance
 
   val emptyUserAnswers: UserAnswers = UserAnswers(
     id         = mrn,
