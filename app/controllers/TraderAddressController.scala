@@ -45,13 +45,10 @@ class TraderAddressController @Inject()(override val messagesApi: MessagesApi,
     with I18nSupport
     with NunjucksSupport {
 
-
-
-  def onPageLoad(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = {
+  def onPageLoad(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] =
     (identify andThen getData(mrn) andThen requireData).async {
       implicit request =>
         val traderName = request.userAnswers.get(TraderNamePage).getOrElse("")
-
 
         val form = formProvider(traderName)
         val preparedForm = request.userAnswers.get(TraderAddressPage) match {
@@ -68,13 +65,12 @@ class TraderAddressController @Inject()(override val messagesApi: MessagesApi,
 
         renderer.render("traderAddress.njk", json).map(Ok(_))
     }
-  }
 
   def onSubmit(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] =
     (identify andThen getData(mrn) andThen requireData).async {
       implicit request =>
         val traderName = request.userAnswers.get(TraderNamePage).getOrElse("")
-        val form = formProvider(traderName)
+        val form       = formProvider(traderName)
 
         form
           .bindFromRequest()

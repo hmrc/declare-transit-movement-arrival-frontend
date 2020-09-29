@@ -21,7 +21,7 @@ import play.api.data.FormError
 
 class TraderAddressFormProviderSpec extends StringFieldBehaviours {
 
-  val form = new TraderAddressFormProvider()()
+  val form = new TraderAddressFormProvider()("trader_name")
 
   ".buildingAndStreet" - {
 
