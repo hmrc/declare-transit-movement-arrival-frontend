@@ -52,8 +52,8 @@ class ConsigneeEoriConfirmationController @Inject()(
       request.userAnswers.get(ConsigneeNamePage) match {
         case Some(consigneeName) =>
           val preparedForm = request.userAnswers.get(ConsigneeEoriConfirmationPage) match {
-            case None        => formProvider(consigneeName)
-            case Some(value) => formProvider(consigneeName).fill(value)
+            case None        => formProvider(consigneeName, request.eoriNumber)
+            case Some(value) => formProvider(consigneeName, request.eoriNumber).fill(value)
           }
 
           val json = Json.obj(
@@ -74,7 +74,7 @@ class ConsigneeEoriConfirmationController @Inject()(
     implicit request =>
       request.userAnswers.get(ConsigneeNamePage) match {
         case Some(consigneeName) =>
-          formProvider(consigneeName)
+          formProvider(consigneeName, request.eoriNumber)
             .bindFromRequest()
             .fold(
               formWithErrors => {
