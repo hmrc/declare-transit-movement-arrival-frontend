@@ -6,11 +6,11 @@ echo "Applying migration $className;format="snake"$"
 echo "Adding routes to conf/app.routes"
 
 echo "" >> ../conf/app.routes
-echo "GET        /:ref/$className;format="decap"$                        controllers.$className$Controller.onPageLoad(ref: ArrivalUniqueRef, mode: Mode = NormalMode)" >> ../conf/app.routes
-echo "POST       /:ref/$className;format="decap"$                        controllers.$className$Controller.onSubmit(mrn: ArrivalUniqueRef, mode: Mode = NormalMode)" >> ../conf/app.routes
+echo "GET        /:ref/$className;format="decap"$                        controllers.$className$Controller.onPageLoad(ref: DraftArrivalRef, mode: Mode = NormalMode)" >> ../conf/app.routes
+echo "POST       /:ref/$className;format="decap"$                        controllers.$className$Controller.onSubmit(ref: DraftArrivalRef, mode: Mode = NormalMode)" >> ../conf/app.routes
 
-echo "GET        /:ref/change$className$                  controllers.$className$Controller.onPageLoad(ref: ArrivalUniqueRef, mode: Mode = CheckMode)" >> ../conf/app.routes
-echo "POST       /:ref/change$className$                  controllers.$className$Controller.onSubmit(mrn: ArrivalUniqueRef, mode: Mode = CheckMode)" >> ../conf/app.routes
+echo "GET        /:ref/change$className$                  controllers.$className$Controller.onPageLoad(ref: DraftArrivalRef, mode: Mode = CheckMode)" >> ../conf/app.routes
+echo "POST       /:ref/change$className$                  controllers.$className$Controller.onSubmit(ref: DraftArrivalRef, mode: Mode = CheckMode)" >> ../conf/app.routes
 
 echo "Adding messages to conf.messages"
 echo "" >> ../conf/messages.en

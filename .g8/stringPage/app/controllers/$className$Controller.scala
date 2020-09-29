@@ -30,7 +30,7 @@ class $className$Controller @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(ref: ArrivalUniqueRef, mode: Mode): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
+  def onPageLoad(ref: DraftArrivalRef, mode: Mode): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
     implicit request =>
 
       val preparedForm = request.userAnswers.get($className$Page) match {
@@ -47,7 +47,7 @@ class $className$Controller @Inject()(
       renderer.render("$className;format="decap"$.njk", json).map(Ok(_))
   }
 
-  def onSubmit(ref: ArrivalUniqueRef, mode: Mode): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
+  def onSubmit(ref: DraftArrivalRef, mode: Mode): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(

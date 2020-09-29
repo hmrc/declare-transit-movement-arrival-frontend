@@ -47,7 +47,7 @@ object DraftArrivalRef {
 
     override def bind(key: String, value: String): Either[String, DraftArrivalRef] =
       Try(UUID.fromString(value)) match {
-        case Failure(exception) => Left(s"Invalid UUID format for ArrivalUniqueRef: ${exception.getMessage}")
+        case Failure(exception) => Left(s"Invalid UUID format for DraftArrivalRef: ${exception.getMessage}")
         case Success(value)     => Right(DraftArrivalRef(value))
       }
 
