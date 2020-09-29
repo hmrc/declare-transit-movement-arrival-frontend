@@ -39,7 +39,7 @@ class TraderAddressFormProvider @Inject() extends Mappings {
     * question marks
     * and greater than (>) and less than (<) signs
     */
-  val inputRegex: Regex = "[a-zA-Z0-9&'*/.\\-?<>]*".r
+  val inputRegex: Regex = "[\\sa-zA-Z0-9&'*/.\\-?<>]*".r
 
   def apply(traderName: String): Form[Address] = Form(
     mapping(
@@ -82,7 +82,7 @@ class TraderAddressFormProvider @Inject() extends Mappings {
       "postcode" -> text("traderAddress.error.postcode.required", args = Seq(traderName))
         .verifying(maxLength(postCodeLength, "traderAddress.error.postcode.length", args = Seq(traderName)))
         .verifying(minLength(1, "traderAddress.error.empty", args = Seq("postcode", traderName)))
-        .verifying(regexp("[a-zA-Z0-9]*".r, "traderAddress.error.postcode.invalid", args = Seq(traderName)))
+        .verifying(regexp("[\\sa-zA-Z0-9]*".r, "traderAddress.error.postcode.invalid", args = Seq(traderName)))
     )(Address.apply)(Address.unapply)
   )
 }
