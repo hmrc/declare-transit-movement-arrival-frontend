@@ -43,7 +43,7 @@ class TraderAddressFormProvider @Inject() extends Mappings {
 
   def apply(traderName: String): Form[Address] = Form(
     mapping(
-      "buildingAndStreet" -> text("traderAddress.error.buildingAndStreet.required", args = Seq(traderName))
+      "buildingAndStreet" -> text("traderAddress.error.buildingAndStreet.required", Seq(traderName))
         .verifying(
           maxLength(
             streetAndNumberLength,
