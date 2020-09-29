@@ -20,7 +20,7 @@ import controllers.actions._
 import forms.events.seals.HaveSealsChangedFormProvider
 import javax.inject.Inject
 import models.requests.DataRequest
-import models.{ArrivalUniqueRef, Index, Mode, MovementReferenceNumber}
+import models.{DraftArrivalRef, Index, Mode, MovementReferenceNumber}
 import navigation.Navigator
 import pages.events.seals.HaveSealsChangedPage
 import play.api.data.Form
@@ -52,7 +52,7 @@ class HaveSealsChangedController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(ref: ArrivalUniqueRef, eventIndex: Index, mode: Mode): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
+  def onPageLoad(ref: DraftArrivalRef, eventIndex: Index, mode: Mode): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
     implicit request =>
       val preparedForm = request.userAnswers.get(HaveSealsChangedPage(eventIndex)) match {
         case None        => form
@@ -62,7 +62,7 @@ class HaveSealsChangedController @Inject()(
       renderView(ref, eventIndex, mode, preparedForm).map(Ok(_))
   }
 
-  def onSubmit(ref: ArrivalUniqueRef, eventIndex: Index, mode: Mode): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
+  def onSubmit(ref: DraftArrivalRef, eventIndex: Index, mode: Mode): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
     implicit request =>
       form
         .bindFromRequest()
@@ -76,7 +76,7 @@ class HaveSealsChangedController @Inject()(
         )
   }
 
-  private def renderView(ref: ArrivalUniqueRef, eventIndex: Index, mode: Mode, preparedForm: Form[Boolean])(
+  private def renderView(ref: DraftArrivalRef, eventIndex: Index, mode: Mode, preparedForm: Form[Boolean])(
     implicit request: DataRequest[AnyContent]): Future[Html] = {
     val json = Json.obj(
       "form"        -> preparedForm,

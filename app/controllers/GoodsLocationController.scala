@@ -20,7 +20,7 @@ import controllers.actions._
 import forms.GoodsLocationFormProvider
 import javax.inject.Inject
 import models.GoodsLocation.{AuthorisedConsigneesLocation, BorderForceOffice}
-import models.{ArrivalUniqueRef, GoodsLocation, Mode, MovementReferenceNumber}
+import models.{DraftArrivalRef, GoodsLocation, Mode, MovementReferenceNumber}
 import pages.GoodsLocationPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -46,7 +46,7 @@ class GoodsLocationController @Inject()(override val messagesApi: MessagesApi,
 
   private val form = formProvider()
 
-  def onPageLoad(ref: ArrivalUniqueRef, mode: Mode): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
+  def onPageLoad(ref: DraftArrivalRef, mode: Mode): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
     implicit request =>
       val preparedForm = request.userAnswers.get(GoodsLocationPage) match {
         case None        => form
@@ -63,7 +63,7 @@ class GoodsLocationController @Inject()(override val messagesApi: MessagesApi,
       renderer.render("goodsLocation.njk", json).map(Ok(_))
   }
 
-  def onSubmit(ref: ArrivalUniqueRef, mode: Mode): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
+  def onSubmit(ref: DraftArrivalRef, mode: Mode): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
     implicit request =>
       form
         .bindFromRequest()

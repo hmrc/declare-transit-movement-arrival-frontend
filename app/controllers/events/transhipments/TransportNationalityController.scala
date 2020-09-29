@@ -21,7 +21,7 @@ import controllers.actions.{DataRequiredAction, DataRetrievalActionProvider, Ide
 import forms.events.transhipments.TransportNationalityFormProvider
 import javax.inject.Inject
 import models.reference.Country
-import models.{ArrivalUniqueRef, Index, Mode, MovementReferenceNumber}
+import models.{DraftArrivalRef, Index, Mode, MovementReferenceNumber}
 import navigation.Navigator
 import pages.events.transhipments.TransportNationalityPage
 import play.api.data.Form
@@ -49,7 +49,7 @@ class TransportNationalityController @Inject()(override val messagesApi: Message
     with I18nSupport
     with NunjucksSupport {
 
-  def onPageLoad(ref: ArrivalUniqueRef, eventIndex: Index, mode: Mode): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
+  def onPageLoad(ref: DraftArrivalRef, eventIndex: Index, mode: Mode): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
     implicit request =>
       referenceDataConnector.getCountryList() flatMap {
         countries =>
@@ -65,7 +65,7 @@ class TransportNationalityController @Inject()(override val messagesApi: Message
       }
   }
 
-  def onSubmit(ref: ArrivalUniqueRef, eventIndex: Index, mode: Mode): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
+  def onSubmit(ref: DraftArrivalRef, eventIndex: Index, mode: Mode): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
     implicit request =>
       referenceDataConnector.getCountryList() flatMap {
         countries =>
@@ -84,7 +84,7 @@ class TransportNationalityController @Inject()(override val messagesApi: Message
       }
   }
 
-  private def renderPage(ref: ArrivalUniqueRef, mode: Mode, form: Form[Country], countries: Seq[Country], status: Status, eventIndex: Index)(
+  private def renderPage(ref: DraftArrivalRef, mode: Mode, form: Form[Country], countries: Seq[Country], status: Status, eventIndex: Index)(
     implicit request: Request[AnyContent]): Future[Result] = {
     val json = Json.obj(
       "form"        -> form,

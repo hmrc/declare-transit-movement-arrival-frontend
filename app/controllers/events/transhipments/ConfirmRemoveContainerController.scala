@@ -23,7 +23,7 @@ import handlers.ErrorHandler
 import javax.inject.Inject
 import models.domain.ContainerDomain
 import models.requests.DataRequest
-import models.{ArrivalUniqueRef, Index, Mode, MovementReferenceNumber, UserAnswers}
+import models.{DraftArrivalRef, Index, Mode, MovementReferenceNumber, UserAnswers}
 import navigation.Navigator
 import pages.events.transhipments.{ConfirmRemoveContainerPage, ContainerNumberPage}
 import play.api.data.Form
@@ -56,7 +56,7 @@ class ConfirmRemoveContainerController @Inject()(
 
   private val confirmRemoveContainerTemplate = "events/transhipments/confirmRemoveContainer.njk"
 
-  def onPageLoad(ref: ArrivalUniqueRef, eventIndex: Index, containerIndex: Index, mode: Mode): Action[AnyContent] =
+  def onPageLoad(ref: DraftArrivalRef, eventIndex: Index, containerIndex: Index, mode: Mode): Action[AnyContent] =
     (identify andThen getData(ref) andThen requireData).async {
       implicit request =>
         request.userAnswers.get(ContainerNumberPage(eventIndex, containerIndex)) match {
@@ -69,7 +69,7 @@ class ConfirmRemoveContainerController @Inject()(
 
     }
 
-  def onSubmit(ref: ArrivalUniqueRef, eventIndex: Index, containerIndex: Index, mode: Mode): Action[AnyContent] =
+  def onSubmit(ref: DraftArrivalRef, eventIndex: Index, containerIndex: Index, mode: Mode): Action[AnyContent] =
     (identify andThen getData(ref) andThen requireData).async {
       implicit request =>
         request.userAnswers.get(ContainerNumberPage(eventIndex, containerIndex)) match {
@@ -93,7 +93,7 @@ class ConfirmRemoveContainerController @Inject()(
         }
     }
 
-  private def renderPage(ref: ArrivalUniqueRef, eventIndex: Index, containerIndex: Index, form: Form[Boolean], mode: Mode, container: ContainerDomain)(
+  private def renderPage(ref: DraftArrivalRef, eventIndex: Index, containerIndex: Index, form: Form[Boolean], mode: Mode, container: ContainerDomain)(
     implicit request: DataRequest[AnyContent]): Future[Html] = {
 
     val json = Json.obj(

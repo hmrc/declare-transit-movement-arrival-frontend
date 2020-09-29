@@ -24,7 +24,7 @@ import controllers.routes
 import derivable.{DeriveNumberOfContainers, DeriveNumberOfEvents, DeriveNumberOfSeals}
 import models.GoodsLocation._
 import models.TranshipmentType.{DifferentContainer, DifferentContainerAndVehicle, DifferentVehicle}
-import models.{ArrivalUniqueRef, CheckMode, Index, Mode, NormalMode, UserAnswers}
+import models.{DraftArrivalRef, CheckMode, Index, Mode, NormalMode, UserAnswers}
 import pages._
 import pages.events._
 import pages.events.seals._
@@ -126,7 +126,7 @@ class Navigator @Inject()() {
   }
 
   @deprecated("All navigation should rely on the nextPage method", "")
-  def nextRejectionPage(page: Page, ref: ArrivalUniqueRef): Call =
+  def nextRejectionPage(page: Page, ref: DraftArrivalRef): Call =
     page match {
       case UpdateRejectedMRNPage => routes.CheckYourAnswersController.onPageLoad(ref)
       case _ => routes.TechnicalDifficultiesController.onPageLoad()

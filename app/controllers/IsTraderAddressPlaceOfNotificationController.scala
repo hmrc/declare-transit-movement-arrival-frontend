@@ -50,7 +50,7 @@ class IsTraderAddressPlaceOfNotificationController @Inject()(override val messag
 
   private val form = formProvider()
 
-  def onPageLoad(ref: ArrivalUniqueRef, mode: Mode): Action[AnyContent] =
+  def onPageLoad(ref: DraftArrivalRef, mode: Mode): Action[AnyContent] =
     (identify andThen getData(ref) andThen requireData).async {
       implicit request =>
         request.userAnswers.get(TraderAddressPage) match {
@@ -69,7 +69,7 @@ class IsTraderAddressPlaceOfNotificationController @Inject()(override val messag
 
     }
 
-  def onSubmit(ref: ArrivalUniqueRef, mode: Mode): Action[AnyContent] =
+  def onSubmit(ref: DraftArrivalRef, mode: Mode): Action[AnyContent] =
     (identify andThen getData(ref) andThen requireData).async {
       implicit request =>
         request.userAnswers.get(TraderAddressPage) match {

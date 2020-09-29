@@ -16,7 +16,7 @@
 
 package navigation
 
-import models.{ArrivalUniqueRef, Mode, NormalMode, UserAnswers}
+import models.{DraftArrivalRef, Mode, NormalMode, UserAnswers}
 import pages._
 import play.api.mvc.Call
 
@@ -25,6 +25,6 @@ class FakeNavigator(desiredRoute: Call, mode: Mode = NormalMode) extends Navigat
   override def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call =
     desiredRoute
 
-  override def nextRejectionPage(page: Page, ref: ArrivalUniqueRef): Call =
+  override def nextRejectionPage(page: Page, ref: DraftArrivalRef): Call =
     desiredRoute
 }

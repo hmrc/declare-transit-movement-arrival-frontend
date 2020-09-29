@@ -21,7 +21,7 @@ import java.time.LocalDate
 import cats.syntax.all._
 import com.lucidchart.open.xtract.XmlReader._
 import com.lucidchart.open.xtract.{__, XmlReader}
-import models.ArrivalUniqueRef
+import models.DraftArrivalRef
 import models.XMLReads._
 
 final case class ArrivalNotificationRejectionMessage(
@@ -30,7 +30,7 @@ final case class ArrivalNotificationRejectionMessage(
   action: Option[String],
   reason: Option[String],
   errors: Seq[FunctionalError],
-  guid: Option[ArrivalUniqueRef] = None
+  guid: Option[DraftArrivalRef] = None
 )
 
 object ArrivalNotificationRejectionMessage {

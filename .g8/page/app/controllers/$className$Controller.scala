@@ -2,7 +2,7 @@ package controllers
 
 import controllers.actions._
 import javax.inject.Inject
-import models.{ArrivalUniqueRef, MovementReferenceNumber}
+import models.{DraftArrivalRef, MovementReferenceNumber}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -20,7 +20,7 @@ class $className$Controller @Inject()(
                                        renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad(ref: ArrivalUniqueRef): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
+  def onPageLoad(ref: DraftArrivalRef): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
     implicit request =>
 
       val json = Json.obj("ref" -> ref)

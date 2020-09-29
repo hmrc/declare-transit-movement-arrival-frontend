@@ -21,7 +21,7 @@ import derivable.DeriveNumberOfSeals
 import forms.events.seals.AddSealFormProvider
 import javax.inject.Inject
 import models.requests.DataRequest
-import models.{ArrivalUniqueRef, Index, Mode, MovementReferenceNumber}
+import models.{DraftArrivalRef, Index, Mode, MovementReferenceNumber}
 import navigation.Navigator
 import pages.events.seals.AddSealPage
 import play.api.data.Form
@@ -51,13 +51,13 @@ class AddSealController @Inject()(override val messagesApi: MessagesApi,
 
   private val form = formProvider()
 
-  def onPageLoad(ref: ArrivalUniqueRef, eventIndex: Index, mode: Mode): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
+  def onPageLoad(ref: DraftArrivalRef, eventIndex: Index, mode: Mode): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
     implicit request =>
       renderPage(ref, eventIndex, mode, form)
         .map(Ok(_))
   }
 
-  def onSubmit(ref: ArrivalUniqueRef, eventIndex: Index, mode: Mode): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
+  def onSubmit(ref: DraftArrivalRef, eventIndex: Index, mode: Mode): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
     implicit request =>
       form
         .bindFromRequest()
@@ -72,7 +72,7 @@ class AddSealController @Inject()(override val messagesApi: MessagesApi,
         )
   }
 
-  private def renderPage(ref: ArrivalUniqueRef, eventIndex: Index, mode: Mode, form: Form[Boolean])(implicit request: DataRequest[AnyContent]): Future[Html] = {
+  private def renderPage(ref: DraftArrivalRef, eventIndex: Index, mode: Mode, form: Form[Boolean])(implicit request: DataRequest[AnyContent]): Future[Html] = {
 
     val numberOfSeals    = request.userAnswers.get(DeriveNumberOfSeals(eventIndex)).getOrElse(0)
     val listOfSealsIndex = List.range(0, numberOfSeals).map(Index(_))

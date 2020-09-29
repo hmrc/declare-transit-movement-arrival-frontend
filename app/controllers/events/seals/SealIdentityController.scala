@@ -21,7 +21,7 @@ import forms.events.seals.SealIdentityFormProvider
 import javax.inject.Inject
 import models.domain.SealDomain
 import models.requests.DataRequest
-import models.{ArrivalUniqueRef, Index, Mode, MovementReferenceNumber}
+import models.{DraftArrivalRef, Index, Mode, MovementReferenceNumber}
 import navigation.Navigator
 import pages.events.seals.SealIdentityPage
 import play.api.data.Form
@@ -54,7 +54,7 @@ class SealIdentityController @Inject()(
 
   private val form = formProvider
 
-  def onPageLoad(ref: ArrivalUniqueRef, eventIndex: Index, sealIndex: Index, mode: Mode): Action[AnyContent] =
+  def onPageLoad(ref: DraftArrivalRef, eventIndex: Index, sealIndex: Index, mode: Mode): Action[AnyContent] =
     (identify andThen getData(ref) andThen requireData).async {
       implicit request =>
         val preparedForm = request.userAnswers.get(SealIdentityPage(eventIndex, sealIndex)) match {
@@ -65,7 +65,7 @@ class SealIdentityController @Inject()(
         renderView(ref, mode, preparedForm, eventIndex, sealIndex).map(Ok(_))
     }
 
-  def onSubmit(ref: ArrivalUniqueRef, eventIndex: Index, sealIndex: Index, mode: Mode): Action[AnyContent] =
+  def onSubmit(ref: DraftArrivalRef, eventIndex: Index, sealIndex: Index, mode: Mode): Action[AnyContent] =
     (identify andThen getData(ref) andThen requireData).async {
       implicit request =>
         val seals = request.userAnswers.get(SealsQuery(eventIndex)).getOrElse(Seq.empty)
@@ -82,7 +82,7 @@ class SealIdentityController @Inject()(
           )
     }
 
-  private def renderView(ref: ArrivalUniqueRef, mode: Mode, preparedForm: Form[String], eventIndex: Index, sealIndex: Index)(
+  private def renderView(ref: DraftArrivalRef, mode: Mode, preparedForm: Form[String], eventIndex: Index, sealIndex: Index)(
     implicit request: DataRequest[AnyContent]) = {
     val json = Json.obj(
       "form"        -> preparedForm,

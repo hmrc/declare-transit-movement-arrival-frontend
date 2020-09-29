@@ -24,7 +24,7 @@ import javax.inject.Inject
 import models.domain.SealDomain
 import models.messages.Seal
 import models.requests.DataRequest
-import models.{ArrivalUniqueRef, Index, Mode, MovementReferenceNumber, UserAnswers}
+import models.{DraftArrivalRef, Index, Mode, MovementReferenceNumber, UserAnswers}
 import navigation.Navigator
 import pages.events.seals.{ConfirmRemoveSealPage, SealIdentityPage}
 import play.api.data.Form
@@ -57,7 +57,7 @@ class ConfirmRemoveSealController @Inject()(
 
   private val confirmRemoveSealTemplate = "events/seals/confirmRemoveSeal.njk"
 
-  def onPageLoad(ref: ArrivalUniqueRef, eventIndex: Index, sealIndex: Index, mode: Mode): Action[AnyContent] =
+  def onPageLoad(ref: DraftArrivalRef, eventIndex: Index, sealIndex: Index, mode: Mode): Action[AnyContent] =
     (identify andThen getData(ref) andThen requireData).async {
       implicit request =>
         request.userAnswers.get(SealIdentityPage(eventIndex, sealIndex)) match {
@@ -69,7 +69,7 @@ class ConfirmRemoveSealController @Inject()(
         }
     }
 
-  def onSubmit(ref: ArrivalUniqueRef, eventIndex: Index, sealIndex: Index, mode: Mode): Action[AnyContent] =
+  def onSubmit(ref: DraftArrivalRef, eventIndex: Index, sealIndex: Index, mode: Mode): Action[AnyContent] =
     (identify andThen getData(ref) andThen requireData).async {
       implicit request =>
         request.userAnswers.get(SealIdentityPage(eventIndex, sealIndex)) match {
@@ -93,7 +93,7 @@ class ConfirmRemoveSealController @Inject()(
         }
     }
 
-  private def renderPage(ref: ArrivalUniqueRef, eventIndex: Index, sealIndex: Index, mode: Mode, form: Form[Boolean], seal: SealDomain)(
+  private def renderPage(ref: DraftArrivalRef, eventIndex: Index, sealIndex: Index, mode: Mode, form: Form[Boolean], seal: SealDomain)(
     implicit request: DataRequest[AnyContent]): Future[Html] = {
     val json = Json.obj(
       "form"        -> form,

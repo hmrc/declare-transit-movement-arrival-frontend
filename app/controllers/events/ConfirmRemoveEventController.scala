@@ -22,7 +22,7 @@ import forms.events.ConfirmRemoveEventFormProvider
 import handlers.ErrorHandler
 import javax.inject.Inject
 import models.requests.DataRequest
-import models.{ArrivalUniqueRef, Index, Mode, MovementReferenceNumber, NormalMode, UserAnswers}
+import models.{DraftArrivalRef, Index, Mode, MovementReferenceNumber, NormalMode, UserAnswers}
 import navigation.Navigator
 import pages.events.{ConfirmRemoveEventPage, EventCountryPage, EventPlacePage}
 import play.api.data.Form
@@ -56,7 +56,7 @@ class ConfirmRemoveEventController @Inject()(
 
   private val confirmRemoveEventTemplate = "events/confirmRemoveEvent.njk"
 
-  def onPageLoad(ref: ArrivalUniqueRef, eventIndex: Index, mode: Mode): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
+  def onPageLoad(ref: DraftArrivalRef, eventIndex: Index, mode: Mode): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
     implicit request =>
       eventPlaceOrCountry(request.userAnswers, eventIndex) match {
         case Some(placeOrCountry) =>
@@ -65,7 +65,7 @@ class ConfirmRemoveEventController @Inject()(
       }
   }
 
-  def onSubmit(ref: ArrivalUniqueRef, eventIndex: Index, mode: Mode): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
+  def onSubmit(ref: DraftArrivalRef, eventIndex: Index, mode: Mode): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
     implicit request =>
       eventPlaceOrCountry(request.userAnswers, eventIndex) match {
         case Some(placeOrCountry) =>
@@ -97,7 +97,7 @@ class ConfirmRemoveEventController @Inject()(
       case _            => userAnswers.get(EventCountryPage(eventIndex)).map(_.code)
     }
 
-  private def renderPage(ref: ArrivalUniqueRef, eventIndex: Index, mode: Mode, form: Form[Boolean], eventTitle: String)(
+  private def renderPage(ref: DraftArrivalRef, eventIndex: Index, mode: Mode, form: Form[Boolean], eventTitle: String)(
     implicit request: DataRequest[AnyContent]): Future[Html] = {
     val json = Json.obj(
       "form"        -> form,

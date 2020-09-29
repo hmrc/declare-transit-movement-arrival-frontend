@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import controllers.actions._
 import models.domain.{ContainerDomain, SealDomain}
 import models.messages.{Container, Seal}
-import models.{Address, ArrivalUniqueRef, EoriNumber, Index, MovementReferenceNumber, UserAnswers}
+import models.{Address, DraftArrivalRef, EoriNumber, Index, MovementReferenceNumber, UserAnswers}
 import org.mockito.Mockito
 import org.scalatest._
 import org.scalatest.concurrent.IntegrationPatience
@@ -55,7 +55,7 @@ trait SpecBase
 
   val eoriNumber: EoriNumber       = EoriNumber("EOriNumber")
   val mrn: MovementReferenceNumber = MovementReferenceNumber("19", "GB", "1234567890123")
-  val ref: ArrivalUniqueRef        = ArrivalUniqueRef.instance
+  val ref: DraftArrivalRef        = DraftArrivalRef.instance
 
   val emptyUserAnswers: UserAnswers = UserAnswers(
     id         = mrn,

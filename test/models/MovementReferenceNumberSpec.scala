@@ -33,11 +33,11 @@ class MovementReferenceNumberSpec extends FreeSpec with MustMatchers with ScalaC
 
   "a Movement Reference Number" - {
 
-    val pathBindable = implicitly[PathBindable[ArrivalUniqueRef]]
+    val pathBindable = implicitly[PathBindable[DraftArrivalRef]]
 
     "must bind from a url" in {
 
-      val ref = ArrivalUniqueRef.instance
+      val ref = DraftArrivalRef.instance
 
       val result = pathBindable.bind("ref", ref.uuid.toString)
 

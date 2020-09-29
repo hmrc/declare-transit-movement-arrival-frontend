@@ -16,7 +16,7 @@
 
 package controllers.actions
 
-import models.{ArrivalUniqueRef, MovementReferenceNumber, UserAnswers}
+import models.{DraftArrivalRef, MovementReferenceNumber, UserAnswers}
 import models.requests.IdentifierRequest
 import models.requests.OptionalDataRequest
 import play.api.mvc.ActionTransformer
@@ -29,7 +29,7 @@ class FakeDataRetrievalActionProvider(dataToReturn: Option[UserAnswers]) extends
   def apply(mrn: MovementReferenceNumber): ActionTransformer[IdentifierRequest, OptionalDataRequest] =
     new FakeDataRetrievalAction(dataToReturn)
 
-  override def apply(ref: ArrivalUniqueRef): ActionTransformer[IdentifierRequest, OptionalDataRequest] =
+  override def apply(ref: DraftArrivalRef): ActionTransformer[IdentifierRequest, OptionalDataRequest] =
     new FakeDataRetrievalAction(dataToReturn)
 }
 

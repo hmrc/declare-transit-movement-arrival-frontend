@@ -21,7 +21,7 @@ import controllers.actions.{DataRequiredAction, DataRetrievalActionProvider, Ide
 import derivable.DeriveNumberOfEvents
 import handlers.ErrorHandler
 import models.GoodsLocation.{AuthorisedConsigneesLocation, BorderForceOffice}
-import models.{ArrivalUniqueRef, EoriNumber, Index, MovementReferenceNumber, UserAnswers}
+import models.{DraftArrivalRef, EoriNumber, Index, MovementReferenceNumber, UserAnswers}
 import pages.{ConsigneeEoriConfirmationPage, GoodsLocationPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -49,7 +49,7 @@ class CheckYourAnswersController @Inject()(override val messagesApi: MessagesApi
     with NunjucksSupport
     with HttpErrorFunctions {
 
-  def onPageLoad(ref: ArrivalUniqueRef): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
+  def onPageLoad(ref: DraftArrivalRef): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
     implicit request =>
       val answers: Seq[Section] = createSections(request.userAnswers, request.eoriNumber)
 
@@ -61,7 +61,7 @@ class CheckYourAnswersController @Inject()(override val messagesApi: MessagesApi
       renderer.render("check-your-answers.njk", json).map(Ok(_))
   }
 
-  def onPost(ref: ArrivalUniqueRef): Action[AnyContent] =
+  def onPost(ref: DraftArrivalRef): Action[AnyContent] =
     (identify andThen getData(ref) andThen requireData).async {
       implicit request =>
         service.submit(request.userAnswers) flatMap {

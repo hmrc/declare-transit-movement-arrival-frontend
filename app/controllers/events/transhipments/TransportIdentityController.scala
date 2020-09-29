@@ -19,7 +19,7 @@ package controllers.events.transhipments
 import controllers.actions._
 import forms.events.transhipments.TransportIdentityFormProvider
 import javax.inject.Inject
-import models.{ArrivalUniqueRef, Index, Mode}
+import models.{DraftArrivalRef, Index, Mode}
 import navigation.Navigator
 import pages.events.transhipments.TransportIdentityPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -49,7 +49,7 @@ class TransportIdentityController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(ref: ArrivalUniqueRef, eventIndex: Index, mode: Mode): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
+  def onPageLoad(ref: DraftArrivalRef, eventIndex: Index, mode: Mode): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
     implicit request =>
       val preparedForm = request.userAnswers.get(TransportIdentityPage(eventIndex)) match {
         case None        => form
@@ -66,7 +66,7 @@ class TransportIdentityController @Inject()(
       renderer.render("events/transhipments/transportIdentity.njk", json).map(Ok(_))
   }
 
-  def onSubmit(ref: ArrivalUniqueRef, eventIndex: Index, mode: Mode): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
+  def onSubmit(ref: DraftArrivalRef, eventIndex: Index, mode: Mode): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
     implicit request =>
       form
         .bindFromRequest()

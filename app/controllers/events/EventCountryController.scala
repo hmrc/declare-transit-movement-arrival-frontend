@@ -21,7 +21,7 @@ import controllers.actions._
 import forms.events.EventCountryFormProvider
 import javax.inject.Inject
 import models.reference.Country
-import models.{ArrivalUniqueRef, Index, Mode, MovementReferenceNumber}
+import models.{DraftArrivalRef, Index, Mode, MovementReferenceNumber}
 import navigation.Navigator
 import pages.events.EventCountryPage
 import play.api.data.Form
@@ -49,7 +49,7 @@ class EventCountryController @Inject()(override val messagesApi: MessagesApi,
     with I18nSupport
     with NunjucksSupport {
 
-  def onPageLoad(ref: ArrivalUniqueRef, eventIndex: Index, mode: Mode): Action[AnyContent] =
+  def onPageLoad(ref: DraftArrivalRef, eventIndex: Index, mode: Mode): Action[AnyContent] =
     (identify andThen getData(ref) andThen requireData).async {
       implicit request =>
         referenceDataConnector.getCountryList() flatMap {
@@ -66,7 +66,7 @@ class EventCountryController @Inject()(override val messagesApi: MessagesApi,
         }
     }
 
-  def onSubmit(ref: ArrivalUniqueRef, eventIndex: Index, mode: Mode): Action[AnyContent] =
+  def onSubmit(ref: DraftArrivalRef, eventIndex: Index, mode: Mode): Action[AnyContent] =
     (identify andThen getData(ref) andThen requireData).async {
       implicit request =>
         referenceDataConnector.getCountryList() flatMap {
@@ -84,7 +84,7 @@ class EventCountryController @Inject()(override val messagesApi: MessagesApi,
         }
     }
 
-  private def renderPage(ref: ArrivalUniqueRef, mode: Mode, form: Form[Country], countries: Seq[Country], status: Results.Status, eventIndex: Index)(
+  private def renderPage(ref: DraftArrivalRef, mode: Mode, form: Form[Country], countries: Seq[Country], status: Results.Status, eventIndex: Index)(
     implicit request: Request[AnyContent]): Future[Result] = {
     val json = Json.obj(
       "form"        -> form,

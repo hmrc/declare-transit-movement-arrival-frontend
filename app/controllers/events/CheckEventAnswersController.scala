@@ -19,7 +19,7 @@ package controllers.events
 import com.google.inject.Inject
 import connectors.ReferenceDataConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalActionProvider, IdentifierAction}
-import models.{ArrivalUniqueRef, CheckMode, CountryList, Index, MovementReferenceNumber, NormalMode}
+import models.{DraftArrivalRef, CheckMode, CountryList, Index, MovementReferenceNumber, NormalMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -41,7 +41,7 @@ class CheckEventAnswersController @Inject()(override val messagesApi: MessagesAp
     with I18nSupport
     with NunjucksSupport {
 
-  def onPageLoad(ref: ArrivalUniqueRef, eventIndex: Index): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
+  def onPageLoad(ref: DraftArrivalRef, eventIndex: Index): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
     implicit request =>
       referenceDataConnector
         .getCountryList()
@@ -59,7 +59,7 @@ class CheckEventAnswersController @Inject()(override val messagesApi: MessagesAp
 
   }
 
-  def onSubmit(ref: ArrivalUniqueRef, eventIndex: Index): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
+  def onSubmit(ref: DraftArrivalRef, eventIndex: Index): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
     implicit request =>
       Future.successful(Redirect(controllers.events.routes.AddEventController.onPageLoad(ref, NormalMode)))
   }

@@ -19,7 +19,7 @@ package controllers.events
 import controllers.actions._
 import forms.events.EventPlaceFormProvider
 import javax.inject.Inject
-import models.{ArrivalUniqueRef, Index, Mode, MovementReferenceNumber}
+import models.{DraftArrivalRef, Index, Mode, MovementReferenceNumber}
 import navigation.Navigator
 import pages.events.EventPlacePage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -47,7 +47,7 @@ class EventPlaceController @Inject()(override val messagesApi: MessagesApi,
 
   private val form = formProvider()
 
-  def onPageLoad(ref: ArrivalUniqueRef, eventIndex: Index, mode: Mode): Action[AnyContent] =
+  def onPageLoad(ref: DraftArrivalRef, eventIndex: Index, mode: Mode): Action[AnyContent] =
     (identify andThen getData(ref) andThen requireData).async {
       implicit request =>
         val preparedForm = request.userAnswers.get(EventPlacePage(eventIndex)) match {
@@ -65,7 +65,7 @@ class EventPlaceController @Inject()(override val messagesApi: MessagesApi,
         renderer.render("events/eventPlace.njk", json).map(Ok(_))
     }
 
-  def onSubmit(ref: ArrivalUniqueRef, eventIndex: Index, mode: Mode): Action[AnyContent] =
+  def onSubmit(ref: DraftArrivalRef, eventIndex: Index, mode: Mode): Action[AnyContent] =
     (identify andThen getData(ref) andThen requireData).async {
       implicit request =>
         form

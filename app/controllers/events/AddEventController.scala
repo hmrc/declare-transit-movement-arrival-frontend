@@ -21,7 +21,7 @@ import derivable.DeriveNumberOfEvents
 import forms.events.AddEventFormProvider
 import javax.inject.Inject
 import models.requests.DataRequest
-import models.{ArrivalUniqueRef, Index, Mode}
+import models.{DraftArrivalRef, Index, Mode}
 import navigation.Navigator
 import pages.events.AddEventPage
 import play.api.data.Form
@@ -50,7 +50,7 @@ class AddEventController @Inject()(override val messagesApi: MessagesApi,
 
   private val form = formProvider()
 
-  def onPageLoad(ref: ArrivalUniqueRef, mode: Mode): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
+  def onPageLoad(ref: DraftArrivalRef, mode: Mode): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
     implicit request =>
       val preparedForm = request.userAnswers.get(AddEventPage) match {
         case None        => form
@@ -59,7 +59,7 @@ class AddEventController @Inject()(override val messagesApi: MessagesApi,
       renderView(ref, mode, preparedForm, Results.Ok)
   }
 
-  def onSubmit(ref: ArrivalUniqueRef, mode: Mode): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
+  def onSubmit(ref: DraftArrivalRef, mode: Mode): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
     implicit request =>
       form
         .bindFromRequest()
@@ -74,7 +74,7 @@ class AddEventController @Inject()(override val messagesApi: MessagesApi,
         )
   }
 
-  private def renderView(ref: ArrivalUniqueRef, mode: Mode, form: Form[Boolean], status: Results.Status)(
+  private def renderView(ref: DraftArrivalRef, mode: Mode, form: Form[Boolean], status: Results.Status)(
     implicit request: DataRequest[AnyContent]): Future[Result] = {
 
     val numberOfEvents = request.userAnswers.get(DeriveNumberOfEvents).getOrElse(0)

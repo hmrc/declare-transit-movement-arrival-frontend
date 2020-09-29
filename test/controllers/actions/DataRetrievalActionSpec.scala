@@ -19,7 +19,7 @@ package controllers.actions
 import generators.Generators
 import models.requests.IdentifierRequest
 import models.requests.OptionalDataRequest
-import models.{ArrivalUniqueRef, EoriNumber, MovementReferenceNumber, UserAnswers}
+import models.{DraftArrivalRef, EoriNumber, MovementReferenceNumber, UserAnswers}
 import org.mockito.Matchers._
 import org.mockito.Mockito._
 import org.scalacheck.Arbitrary.arbitrary
@@ -51,7 +51,7 @@ class DataRetrievalActionSpec
 
   val sessionRepository: SessionRepository = mock[SessionRepository]
   val mrn: MovementReferenceNumber         = arbitrary[MovementReferenceNumber].sample.value
-  val ref: ArrivalUniqueRef                = ArrivalUniqueRef.instance
+  val ref: DraftArrivalRef                = DraftArrivalRef.instance
   val eoriNumber: EoriNumber               = arbitrary[EoriNumber].sample.value
 
   override lazy val app: Application = {
@@ -65,7 +65,7 @@ class DataRetrievalActionSpec
       .build()
   }
 
-  def harness(ref: ArrivalUniqueRef, f: OptionalDataRequest[AnyContent] => Unit): Unit = {
+  def harness(ref: DraftArrivalRef, f: OptionalDataRequest[AnyContent] => Unit): Unit = {
 
     lazy val actionProvider = app.injector.instanceOf[DataRetrievalActionProviderImpl]
 

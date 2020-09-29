@@ -20,7 +20,7 @@ import controllers.actions._
 import forms.events.transhipments.ContainerNumberFormProvider
 import javax.inject.Inject
 import models.domain.ContainerDomain
-import models.{ArrivalUniqueRef, Index, Mode, MovementReferenceNumber}
+import models.{DraftArrivalRef, Index, Mode, MovementReferenceNumber}
 import navigation.Navigator
 import pages.events.transhipments.ContainerNumberPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -49,7 +49,7 @@ class ContainerNumberController @Inject()(
     with I18nSupport
     with NunjucksSupport {
 
-  def onPageLoad(ref: ArrivalUniqueRef, eventIndex: Index, containerIndex: Index, mode: Mode): Action[AnyContent] =
+  def onPageLoad(ref: DraftArrivalRef, eventIndex: Index, containerIndex: Index, mode: Mode): Action[AnyContent] =
     (identify andThen getData(ref) andThen requireData).async {
       implicit request =>
         val preparedForm = request.userAnswers.get(ContainerNumberPage(eventIndex, containerIndex)) match {
@@ -67,7 +67,7 @@ class ContainerNumberController @Inject()(
         renderer.render("events/transhipments/containerNumber.njk", json).map(Ok(_))
     }
 
-  def onSubmit(ref: ArrivalUniqueRef, eventIndex: Index, containerIndex: Index, mode: Mode): Action[AnyContent] =
+  def onSubmit(ref: DraftArrivalRef, eventIndex: Index, containerIndex: Index, mode: Mode): Action[AnyContent] =
     (identify andThen getData(ref) andThen requireData).async {
       implicit request =>
         val containers = request.userAnswers.get(ContainersQuery(eventIndex)).getOrElse(Seq.empty)

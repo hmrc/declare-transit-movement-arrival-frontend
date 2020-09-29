@@ -19,7 +19,7 @@ package controllers
 import config.FrontendAppConfig
 import controllers.actions._
 import javax.inject.Inject
-import models.{ArrivalUniqueRef, MovementReferenceNumber}
+import models.{DraftArrivalRef, MovementReferenceNumber}
 import pages.PresentationOfficePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -43,7 +43,7 @@ class ConfirmationController @Inject()(override val messagesApi: MessagesApi,
     with I18nSupport
     with NunjucksSupport {
 
-  def onPageLoad(ref: ArrivalUniqueRef): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
+  def onPageLoad(ref: DraftArrivalRef): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
     implicit request =>
       request.userAnswers.get(PresentationOfficePage) match {
         case Some(presentationOffice) =>

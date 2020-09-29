@@ -19,7 +19,7 @@ package controllers
 import controllers.actions._
 import forms.EoriNumberFormProvider
 import javax.inject.Inject
-import models.{ArrivalUniqueRef, Mode, MovementReferenceNumber}
+import models.{DraftArrivalRef, Mode, MovementReferenceNumber}
 import navigation.Navigator
 import pages.{ConsigneeAddressPage, ConsigneeEoriConfirmationPage, ConsigneeEoriNumberPage, ConsigneeNamePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -47,7 +47,7 @@ class ConsigneeEoriNumberController @Inject()(
     with I18nSupport
     with NunjucksSupport {
 
-  def onPageLoad(ref: ArrivalUniqueRef, mode: Mode): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
+  def onPageLoad(ref: DraftArrivalRef, mode: Mode): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
     implicit request =>
       request.userAnswers.get(ConsigneeNamePage) match {
         case Some(consigneeName) =>
@@ -70,7 +70,7 @@ class ConsigneeEoriNumberController @Inject()(
       }
   }
 
-  def onSubmit(ref: ArrivalUniqueRef, mode: Mode): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
+  def onSubmit(ref: DraftArrivalRef, mode: Mode): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
     implicit request =>
       request.userAnswers.get(ConsigneeNamePage) match {
         case Some(consigneeName) =>

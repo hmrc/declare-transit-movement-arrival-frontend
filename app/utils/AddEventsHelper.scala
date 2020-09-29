@@ -17,7 +17,7 @@
 package utils
 
 import controllers.events.{routes => eventRoutes}
-import models.{ArrivalUniqueRef, Index, NormalMode, UserAnswers}
+import models.{DraftArrivalRef, Index, NormalMode, UserAnswers}
 import pages.events._
 import uk.gov.hmrc.viewmodels.SummaryList.{Action, Key, Row, Value}
 import uk.gov.hmrc.viewmodels._
@@ -69,5 +69,5 @@ class AddEventsHelper(userAnswers: UserAnswers) {
       case _            => userAnswers.get(EventCountryPage(eventIndex)).map(_.code)
     }
 
-  private def ref: ArrivalUniqueRef = userAnswers.ref
+  private def ref: DraftArrivalRef = userAnswers.ref
 }

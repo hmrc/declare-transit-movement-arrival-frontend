@@ -19,7 +19,7 @@ package controllers
 import controllers.actions._
 import forms.TraderNameFormProvider
 import javax.inject.Inject
-import models.{ArrivalUniqueRef, Mode, MovementReferenceNumber}
+import models.{DraftArrivalRef, Mode, MovementReferenceNumber}
 import navigation.Navigator
 import pages.TraderNamePage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -47,7 +47,7 @@ class TraderNameController @Inject()(override val messagesApi: MessagesApi,
 
   private val form = formProvider()
 
-  def onPageLoad(ref: ArrivalUniqueRef, mode: Mode): Action[AnyContent] =
+  def onPageLoad(ref: DraftArrivalRef, mode: Mode): Action[AnyContent] =
     (identify andThen getData(ref) andThen requireData).async {
       implicit request =>
         val preparedForm = request.userAnswers.get(TraderNamePage) match {
@@ -64,7 +64,7 @@ class TraderNameController @Inject()(override val messagesApi: MessagesApi,
         renderer.render("traderName.njk", json).map(Ok(_))
     }
 
-  def onSubmit(ref: ArrivalUniqueRef, mode: Mode): Action[AnyContent] =
+  def onSubmit(ref: DraftArrivalRef, mode: Mode): Action[AnyContent] =
     (identify andThen getData(ref) andThen requireData).async {
       implicit request =>
         form

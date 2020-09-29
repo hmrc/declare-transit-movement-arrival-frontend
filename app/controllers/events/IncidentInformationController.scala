@@ -19,7 +19,7 @@ package controllers.events
 import controllers.actions._
 import forms.IncidentInformationFormProvider
 import javax.inject.Inject
-import models.{ArrivalUniqueRef, Index, Mode, MovementReferenceNumber, NormalMode}
+import models.{DraftArrivalRef, Index, Mode, MovementReferenceNumber, NormalMode}
 import navigation.Navigator
 import pages.events.IncidentInformationPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -47,7 +47,7 @@ class IncidentInformationController @Inject()(override val messagesApi: Messages
 
   private val form = formProvider()
 
-  def onPageLoad(ref: ArrivalUniqueRef, eventIndex: Index, mode: Mode): Action[AnyContent] =
+  def onPageLoad(ref: DraftArrivalRef, eventIndex: Index, mode: Mode): Action[AnyContent] =
     (identify andThen getData(ref) andThen requireData).async {
       implicit request =>
         val preparedForm = request.userAnswers.get(IncidentInformationPage(eventIndex)) match {
@@ -65,7 +65,7 @@ class IncidentInformationController @Inject()(override val messagesApi: Messages
         renderer.render("events/incidentInformation.njk", json).map(Ok(_))
     }
 
-  def onSubmit(ref: ArrivalUniqueRef, eventIndex: Index, mode: Mode): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
+  def onSubmit(ref: DraftArrivalRef, eventIndex: Index, mode: Mode): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
     implicit request =>
       form
         .bindFromRequest()

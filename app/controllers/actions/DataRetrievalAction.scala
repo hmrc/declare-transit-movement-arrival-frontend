@@ -17,7 +17,7 @@
 package controllers.actions
 
 import javax.inject.Inject
-import models.{ArrivalUniqueRef, MovementReferenceNumber}
+import models.{DraftArrivalRef, MovementReferenceNumber}
 import models.requests.{IdentifierRequest, OptionalDataRequest}
 import play.api.mvc.ActionTransformer
 import repositories.SessionRepository
@@ -26,17 +26,17 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class DataRetrievalActionProviderImpl @Inject()(sessionRepository: SessionRepository, ec: ExecutionContext) extends DataRetrievalActionProvider {
 
-  def apply(mrn: ArrivalUniqueRef): ActionTransformer[IdentifierRequest, OptionalDataRequest] =
+  def apply(mrn: DraftArrivalRef): ActionTransformer[IdentifierRequest, OptionalDataRequest] =
     new DataRetrievalAction(mrn, ec, sessionRepository)
 }
 
 trait DataRetrievalActionProvider {
 
-  def apply(ref: ArrivalUniqueRef): ActionTransformer[IdentifierRequest, OptionalDataRequest]
+  def apply(ref: DraftArrivalRef): ActionTransformer[IdentifierRequest, OptionalDataRequest]
 }
 
 class DataRetrievalAction(
-  ref: ArrivalUniqueRef,
+  ref: DraftArrivalRef,
   implicit protected val executionContext: ExecutionContext,
   sessionRepository: SessionRepository
 ) extends ActionTransformer[IdentifierRequest, OptionalDataRequest] {

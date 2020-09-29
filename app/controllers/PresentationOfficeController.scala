@@ -22,7 +22,7 @@ import forms.PresentationOfficeFormProvider
 import javax.inject.Inject
 import models.GoodsLocation.BorderForceOffice
 import models.reference.CustomsOffice
-import models.{ArrivalUniqueRef, Mode, MovementReferenceNumber}
+import models.{DraftArrivalRef, Mode, MovementReferenceNumber}
 import navigation.Navigator
 import pages.{ConsigneeNamePage, CustomsSubPlacePage, PresentationOfficePage}
 import play.api.data.Form
@@ -50,7 +50,7 @@ class PresentationOfficeController @Inject()(override val messagesApi: MessagesA
     with I18nSupport
     with NunjucksSupport {
 
-  def onPageLoad(ref: ArrivalUniqueRef, mode: Mode): Action[AnyContent] =
+  def onPageLoad(ref: DraftArrivalRef, mode: Mode): Action[AnyContent] =
     (identify andThen getData(ref) andThen requireData).async {
       implicit request =>
         val locationName = (request.userAnswers.get(CustomsSubPlacePage), request.userAnswers.get(ConsigneeNamePage)) match {
@@ -74,7 +74,7 @@ class PresentationOfficeController @Inject()(override val messagesApi: MessagesA
         }
     }
 
-  private def renderView(ref: ArrivalUniqueRef,
+  private def renderView(ref: DraftArrivalRef,
                          mode: Mode,
                          presentationOffice: String,
                          form: Form[CustomsOffice],
@@ -91,7 +91,7 @@ class PresentationOfficeController @Inject()(override val messagesApi: MessagesA
     renderer.render("presentationOffice.njk", json).map(status(_))
   }
 
-  def onSubmit(ref: ArrivalUniqueRef, mode: Mode): Action[AnyContent] =
+  def onSubmit(ref: DraftArrivalRef, mode: Mode): Action[AnyContent] =
     (identify andThen getData(ref) andThen requireData).async {
       implicit request =>
         val locationName = (request.userAnswers.get(CustomsSubPlacePage), request.userAnswers.get(ConsigneeNamePage)) match {

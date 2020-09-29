@@ -22,36 +22,36 @@ import play.api.libs.json.{Format, JsError, JsObject, JsResult, JsString, JsValu
 import play.api.mvc.PathBindable
 
 import scala.util.{Failure, Success, Try}
-final case class ArrivalUniqueRef(uuid: UUID) {
+final case class DraftArrivalRef(uuid: UUID) {
   def value: UUID = uuid
 
   override def toString: String = value.toString
 }
 
-object ArrivalUniqueRef {
+object DraftArrivalRef {
 
-  def instance: ArrivalUniqueRef = ArrivalUniqueRef(UUID.randomUUID())
+  def instance: DraftArrivalRef = DraftArrivalRef(UUID.randomUUID())
 
-  implicit val jsonFormat: Format[ArrivalUniqueRef] = new Format[ArrivalUniqueRef] {
-    override def writes(o: ArrivalUniqueRef): JsValue = JsString(o.uuid.toString)
+  implicit val jsonFormat: Format[DraftArrivalRef] = new Format[DraftArrivalRef] {
+    override def writes(o: DraftArrivalRef): JsValue = JsString(o.uuid.toString)
 
-    override def reads(json: JsValue): JsResult[ArrivalUniqueRef] = {
+    override def reads(json: JsValue): JsResult[DraftArrivalRef] = {
       json match {
-        case xs @ JsString(_) => xs.validate[UUID].map(ArrivalUniqueRef.apply)
+        case xs @ JsString(_) => xs.validate[UUID].map(DraftArrivalRef.apply)
         case json => JsError(s"Expected type JsString containing single UUID toString value, got ${json.toString()} instead.")
       }
     }
   }
 
-  implicit def pathBindable: PathBindable[ArrivalUniqueRef] = new PathBindable[ArrivalUniqueRef] {
+  implicit def pathBindable: PathBindable[DraftArrivalRef] = new PathBindable[DraftArrivalRef] {
 
-    override def bind(key: String, value: String): Either[String, ArrivalUniqueRef] =
+    override def bind(key: String, value: String): Either[String, DraftArrivalRef] =
       Try(UUID.fromString(value)) match {
         case Failure(exception) => Left(s"Invalid UUID format for ArrivalUniqueRef: ${exception.getMessage}")
-        case Success(value)     => Right(ArrivalUniqueRef(value))
+        case Success(value)     => Right(DraftArrivalRef(value))
       }
 
-    override def unbind(key: String, value: ArrivalUniqueRef): String =
+    override def unbind(key: String, value: DraftArrivalRef): String =
       value.uuid.toString
   }
 }

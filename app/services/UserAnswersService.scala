@@ -18,7 +18,7 @@ package services
 
 import connectors.ReferenceDataConnector
 import javax.inject.Inject
-import models.{ArrivalId, ArrivalUniqueRef, EoriNumber, MovementReferenceNumber, UserAnswers}
+import models.{ArrivalId, DraftArrivalRef, EoriNumber, MovementReferenceNumber, UserAnswers}
 import repositories.SessionRepository
 import services.conversion.ArrivalMovementRequestToUserAnswersService
 import uk.gov.hmrc.http.HeaderCarrier
@@ -41,7 +41,7 @@ class UserAnswersService @Inject()(arrivalNotificationMessageService: ArrivalNot
               customsOffices.find(_.id == arrivalMovementRequest.customsOfficeOfPresentation.presentationOffice).flatMap {
                 customsOffice =>
                   ArrivalMovementRequestToUserAnswersService.convertToUserAnswers(
-                    ref                     = ArrivalUniqueRef.instance,
+                    ref                     = DraftArrivalRef.instance,
                     arrivalMovementRequest  = arrivalMovementRequest,
                     eoriNumber              = eoriNumber,
                     movementReferenceNumber = movementReferenceNumber,
@@ -53,7 +53,7 @@ class UserAnswersService @Inject()(arrivalNotificationMessageService: ArrivalNot
     }
 
   def getOrCreateUserAnswers(eoriNumber: EoriNumber, value: MovementReferenceNumber): Future[UserAnswers] = {
-    val initialUserAnswers = UserAnswers(ref = ArrivalUniqueRef.instance, id = value, eoriNumber = eoriNumber)
+    val initialUserAnswers = UserAnswers(ref = DraftArrivalRef.instance, id = value, eoriNumber = eoriNumber)
 
     sessionRepository.get(id = value.toString, eoriNumber = eoriNumber) map {
       userAnswers =>
