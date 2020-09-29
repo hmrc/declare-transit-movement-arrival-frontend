@@ -215,7 +215,8 @@ traderAddress.error.postcode.required = Enter the postcode of the trader at the 
 traderAddress.error.buildingAndStreet.length = Building and street must be 35 characters or less
 traderAddress.error.city.length = Town or city must be 35 characters or less
 traderAddress.error.postcode.length = Postcode must be 9 characters or less
-traderAddress.error.empty = Enter the [field label] of [destination trader's name]'s address
+traderAddress.error.postcode.invalid = The postcode of {0}’s address must only include letters A to Z and numbers 0 to 9
+traderAddress.error.empty = Enter the {0} of {1}’s address
 traderAddress.change.hidden = address of trader
 
 traderEori.title = What is the EORI number of the trader at the destination?

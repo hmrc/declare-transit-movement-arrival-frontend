@@ -25,17 +25,19 @@ import models.domain.TraderDomain.Constants.{cityLength, postCodeLength, streetA
 
 class TraderAddressFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[Address] = Form(
+  def apply(traderName: String): Form[Address] = Form(
     mapping(
-      "buildingAndStreet" -> text("traderAddress.error.buildingAndStreet.required")
+      "buildingAndStreet" -> text(
+        "traderAddress.error.buildingAndStreet.required", args = Seq(traderName))
         .verifying(maxLength(streetAndNumberLength, "traderAddress.error.buildingAndStreet.length"))
-        .verifying(minLength(1, "traderAddress.error.empty")),
-      "city" -> text("traderAddress.error.city.required")
+        .verifying(minLength(1, "traderAddress.error.empty", Seq("Building and street name", traderName))),
+      "city" -> text("traderAddress.error.city.required", args = Seq(traderName))
         .verifying(maxLength(cityLength, "traderAddress.error.city.length"))
-        .verifying(minLength(1, "traderAddress.error.empty")),
-      "postcode" -> text("traderAddress.error.postcode.required")
-        .verifying(maxLength(postCodeLength, "traderAddress.error.postcode.length"))
-        .verifying(minLength(1, "traderAddress.error.empty"))
+        .verifying(minLength(1, "traderAddress.error.empty", Seq("city", traderName))),
+      "postcode" -> text("traderAddress.error.postcode.required", args = Seq(traderName))
+        .verifying(maxLength(postCodeLength, "traderAddress.error.postcode.length", args = Seq(traderName)))
+        .verifying(minLength(1, "traderAddress.error.empty", args = Seq("postcode", traderName)))
+        .verifying(regexp("[a-z,A-Z,0-9]*", "traderAddress.error.postcode.invalid", args = Seq(traderName)))
     )(Address.apply)(Address.unapply)
   )
 }
