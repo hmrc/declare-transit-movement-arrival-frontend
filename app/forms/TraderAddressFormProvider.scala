@@ -28,23 +28,22 @@ import scala.util.matching.Regex
 class TraderAddressFormProvider @Inject() extends Mappings {
 
   /**
-   * letters a to z
-   * numbers 0 to 9
-   * ampersands (&)
-   * apostrophes
-   * asterisks,
-   * forward slashes
-   * full stops
-   * hyphens
-   * question marks
-   * and greater than (>) and less than (<) signs
-   */
+    * letters a to z
+    * numbers 0 to 9
+    * ampersands (&)
+    * apostrophes
+    * asterisks,
+    * forward slashes
+    * full stops
+    * hyphens
+    * question marks
+    * and greater than (>) and less than (<) signs
+    */
   val inputRegex: Regex = "[a-zA-Z0-9&'*/.\\-?<>]*".r
 
   def apply(traderName: String): Form[Address] = Form(
     mapping(
-      "buildingAndStreet" -> text(
-        "traderAddress.error.buildingAndStreet.required", args = Seq(traderName))
+      "buildingAndStreet" -> text("traderAddress.error.buildingAndStreet.required", args = Seq(traderName))
         .verifying(
           maxLength(
             streetAndNumberLength,
@@ -58,7 +57,8 @@ class TraderAddressFormProvider @Inject() extends Mappings {
             "traderAddress.error.empty",
             Seq("building and street name", traderName)
           )
-        ).verifying(
+        )
+        .verifying(
           regexp(
             inputRegex,
             "traderAddress.error.invalid",
@@ -67,17 +67,12 @@ class TraderAddressFormProvider @Inject() extends Mappings {
         ),
       "city" -> text("traderAddress.error.city.required", args = Seq(traderName))
         .verifying(
-          maxLength(
-            cityLength,
-            "traderAddress.error.max_length",
-            args = Seq("city", traderName))
+          maxLength(cityLength, "traderAddress.error.max_length", args = Seq("city", traderName))
         )
         .verifying(
-          minLength(1,
-            "traderAddress.error.empty",
-            Seq("city", traderName)
-          )
-        ).verifying(
+          minLength(1, "traderAddress.error.empty", Seq("city", traderName))
+        )
+        .verifying(
           regexp(
             inputRegex,
             "traderAddress.error.invalid",

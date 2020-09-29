@@ -45,39 +45,45 @@ class TraderAddressController @Inject()(override val messagesApi: MessagesApi,
     with I18nSupport
     with NunjucksSupport {
 
-  private val form = formProvider()
 
-  def onPageLoad(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] =
+
+  def onPageLoad(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = {
     (identify andThen getData(mrn) andThen requireData).async {
       implicit request =>
         val traderName = request.userAnswers.get(TraderNamePage).getOrElse("")
+
+
+        val form = formProvider(traderName)
         val preparedForm = request.userAnswers.get(TraderAddressPage) match {
           case None        => form
           case Some(value) => form.fill(value)
         }
 
         val json = Json.obj(
-          "form" -> preparedForm,
-          "mrn"  -> mrn,
-          "mode" -> mode,
+          "form"       -> preparedForm,
+          "mrn"        -> mrn,
+          "mode"       -> mode,
           "traderName" -> traderName
         )
 
         renderer.render("traderAddress.njk", json).map(Ok(_))
     }
+  }
 
   def onSubmit(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] =
     (identify andThen getData(mrn) andThen requireData).async {
       implicit request =>
+        val traderName = request.userAnswers.get(TraderNamePage).getOrElse("")
+        val form = formProvider(traderName)
+
         form
           .bindFromRequest()
           .fold(
             formWithErrors => {
-              val traderName = request.userAnswers.get(TraderNamePage).getOrElse("")
               val json = Json.obj(
-                "form" -> formWithErrors,
-                "mrn"  -> mrn,
-                "mode" -> mode,
+                "form"       -> formWithErrors,
+                "mrn"        -> mrn,
+                "mode"       -> mode,
                 "traderName" -> traderName
               )
 
