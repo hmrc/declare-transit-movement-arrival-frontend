@@ -20,7 +20,7 @@ import controllers.actions._
 import forms.GoodsLocationFormProvider
 import javax.inject.Inject
 import models.GoodsLocation.{AuthorisedConsigneesLocation, BorderForceOffice}
-import models.{GoodsLocation, Mode, MovementReferenceNumber}
+import models.{DraftArrivalRef, GoodsLocation, Mode, MovementReferenceNumber}
 import pages.GoodsLocationPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -46,7 +46,7 @@ class GoodsLocationController @Inject()(override val messagesApi: MessagesApi,
 
   private val form = formProvider()
 
-  def onPageLoad(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onPageLoad(ref: DraftArrivalRef, mode: Mode): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
     implicit request =>
       val preparedForm = request.userAnswers.get(GoodsLocationPage) match {
         case None        => form
@@ -56,14 +56,14 @@ class GoodsLocationController @Inject()(override val messagesApi: MessagesApi,
       val json = Json.obj(
         "form"   -> preparedForm,
         "mode"   -> mode,
-        "mrn"    -> mrn,
+        "ref"    -> ref,
         "radios" -> GoodsLocation.radios(preparedForm)
       )
 
       renderer.render("goodsLocation.njk", json).map(Ok(_))
   }
 
-  def onSubmit(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onSubmit(ref: DraftArrivalRef, mode: Mode): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
     implicit request =>
       form
         .bindFromRequest()
@@ -73,7 +73,7 @@ class GoodsLocationController @Inject()(override val messagesApi: MessagesApi,
             val json = Json.obj(
               "form"   -> formWithErrors,
               "mode"   -> mode,
-              "mrn"    -> mrn,
+              "ref"    -> ref,
               "radios" -> GoodsLocation.radios(formWithErrors)
             )
 
@@ -85,8 +85,8 @@ class GoodsLocationController @Inject()(override val messagesApi: MessagesApi,
               _              <- sessionRepository.set(updatedAnswers)
             } yield
               value match {
-                case BorderForceOffice            => Redirect(routes.CustomsSubPlaceController.onPageLoad(updatedAnswers.id, mode))
-                case AuthorisedConsigneesLocation => Redirect(routes.AuthorisedLocationController.onPageLoad(updatedAnswers.id, mode))
+                case BorderForceOffice            => Redirect(routes.CustomsSubPlaceController.onPageLoad(updatedAnswers.ref, mode))
+                case AuthorisedConsigneesLocation => Redirect(routes.AuthorisedLocationController.onPageLoad(updatedAnswers.ref, mode))
             }
         )
   }

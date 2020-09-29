@@ -49,7 +49,7 @@ class IncidentInformationControllerSpec extends SpecBase with MockitoSugar with 
   val formProvider = new IncidentInformationFormProvider()
   val form         = formProvider()
 
-  lazy val incidentInformationRoute = routes.IncidentInformationController.onPageLoad(mrn, eventIndex, NormalMode).url
+  lazy val incidentInformationRoute = routes.IncidentInformationController.onPageLoad(ref, eventIndex, NormalMode).url
 
   "IncidentInformation Controller" - {
 
@@ -71,9 +71,9 @@ class IncidentInformationControllerSpec extends SpecBase with MockitoSugar with 
 
       val expectedJson = Json.obj(
         "form"        -> form,
-        "mrn"         -> mrn,
+        "ref"         -> ref,
         "mode"        -> NormalMode,
-        "onSubmitUrl" -> routes.IncidentInformationController.onSubmit(mrn, eventIndex, NormalMode).url
+        "onSubmitUrl" -> routes.IncidentInformationController.onSubmit(ref, eventIndex, NormalMode).url
       )
 
       templateCaptor.getValue mustEqual "events/incidentInformation.njk"
@@ -103,9 +103,9 @@ class IncidentInformationControllerSpec extends SpecBase with MockitoSugar with 
 
       val expectedJson = Json.obj(
         "form"        -> filledForm,
-        "mrn"         -> mrn,
+        "ref"         -> ref,
         "mode"        -> NormalMode,
-        "onSubmitUrl" -> routes.IncidentInformationController.onSubmit(mrn, eventIndex, NormalMode).url
+        "onSubmitUrl" -> routes.IncidentInformationController.onSubmit(ref, eventIndex, NormalMode).url
       )
 
       templateCaptor.getValue mustEqual "events/incidentInformation.njk"
@@ -159,9 +159,9 @@ class IncidentInformationControllerSpec extends SpecBase with MockitoSugar with 
 
       val expectedJson = Json.obj(
         "form"        -> boundForm,
-        "mrn"         -> mrn,
+        "ref"         -> ref,
         "mode"        -> NormalMode,
-        "onSubmitUrl" -> routes.IncidentInformationController.onSubmit(mrn, eventIndex, NormalMode).url
+        "onSubmitUrl" -> routes.IncidentInformationController.onSubmit(ref, eventIndex, NormalMode).url
       )
 
       templateCaptor.getValue mustEqual "events/incidentInformation.njk"

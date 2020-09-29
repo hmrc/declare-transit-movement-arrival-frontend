@@ -27,7 +27,7 @@
           }) }}
         {% endif %}
 
-        <form action="{{ routes.controllers.IsTraderAddressPlaceOfNotificationController.onSubmit(mrn, mode).url }}" method="post">
+        <form action="{{ routes.controllers.IsTraderAddressPlaceOfNotificationController.onSubmit(ref, mode).url }}" method="post">
           {{ csrf() | safe }}
 
           <div class="govuk-form-group{% if form.errors.length > 0 %} govuk-form-group--error{% endif %}">

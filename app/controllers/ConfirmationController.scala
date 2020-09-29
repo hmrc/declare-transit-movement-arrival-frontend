@@ -19,7 +19,7 @@ package controllers
 import config.FrontendAppConfig
 import controllers.actions._
 import javax.inject.Inject
-import models.MovementReferenceNumber
+import models.{DraftArrivalRef, MovementReferenceNumber}
 import pages.PresentationOfficePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -43,7 +43,7 @@ class ConfirmationController @Inject()(override val messagesApi: MessagesApi,
     with I18nSupport
     with NunjucksSupport {
 
-  def onPageLoad(mrn: MovementReferenceNumber): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onPageLoad(ref: DraftArrivalRef): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
     implicit request =>
       request.userAnswers.get(PresentationOfficePage) match {
         case Some(presentationOffice) =>
@@ -53,11 +53,11 @@ class ConfirmationController @Inject()(override val messagesApi: MessagesApi,
           }
 
           val json = Json.obj(
-            "mrn"                       -> mrn,
+            "ref"                       -> ref,
             "contactUs"                 -> contactUsMessage,
             "manageTransitMovementsUrl" -> appConfig.manageTransitMovementsUrl
           )
-          sessionRepository.remove(mrn.toString)
+          sessionRepository.remove(ref.uuid.toString)
           renderer.render("arrivalComplete.njk", json).map(Ok(_))
 
         case _ => Future.successful(Redirect(routes.SessionExpiredController.onPageLoad()))

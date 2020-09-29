@@ -45,7 +45,7 @@ class IsTraderAddressPlaceOfNotificationControllerSpec extends SpecBase with Moc
   private val formProvider = new IsTraderAddressPlaceOfNotificationFormProvider()
   private val form         = formProvider()
 
-  lazy val isTraderAddressPlaceOfNotificationRoute = routes.IsTraderAddressPlaceOfNotificationController.onPageLoad(mrn, NormalMode).url
+  lazy val isTraderAddressPlaceOfNotificationRoute = routes.IsTraderAddressPlaceOfNotificationController.onPageLoad(ref, NormalMode).url
 
   "IsTraderAddressPlaceOfNotification Controller" - {
     "must return OK and the correct view for a GET" in {
@@ -69,7 +69,7 @@ class IsTraderAddressPlaceOfNotificationControllerSpec extends SpecBase with Moc
       val expectedJson = Json.obj(
         "form"           -> form,
         "mode"           -> NormalMode,
-        "mrn"            -> mrn,
+        "ref"            -> ref,
         "traderLine1"    -> traderAddress.buildingAndStreet,
         "traderTown"     -> traderAddress.city,
         "traderPostcode" -> traderAddress.postcode,
@@ -107,7 +107,7 @@ class IsTraderAddressPlaceOfNotificationControllerSpec extends SpecBase with Moc
       val expectedJson = Json.obj(
         "form"           -> filledForm,
         "mode"           -> NormalMode,
-        "mrn"            -> mrn,
+        "ref"            -> ref,
         "traderLine1"    -> traderAddress.buildingAndStreet,
         "traderTown"     -> traderAddress.city,
         "traderPostcode" -> traderAddress.postcode,
@@ -164,7 +164,7 @@ class IsTraderAddressPlaceOfNotificationControllerSpec extends SpecBase with Moc
       val expectedJson = Json.obj(
         "form"           -> boundForm,
         "mode"           -> NormalMode,
-        "mrn"            -> mrn,
+        "ref"            -> ref,
         "traderLine1"    -> traderAddress.buildingAndStreet,
         "traderTown"     -> traderAddress.city,
         "traderPostcode" -> traderAddress.postcode,

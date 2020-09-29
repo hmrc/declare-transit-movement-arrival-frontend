@@ -51,7 +51,7 @@ class EventReportedControllerSpec extends SpecBase with MockitoSugar with Nunjuc
   val formProvider        = new EventReportedFormProvider()
   val form: Form[Boolean] = formProvider()
 
-  lazy val eventReportedRoute: String = routes.EventReportedController.onPageLoad(mrn, eventIndex, NormalMode).url
+  lazy val eventReportedRoute: String = routes.EventReportedController.onPageLoad(ref, eventIndex, NormalMode).url
 
   "EventReported Controller" - {
 
@@ -74,9 +74,9 @@ class EventReportedControllerSpec extends SpecBase with MockitoSugar with Nunjuc
       val expectedJson = Json.obj(
         "form"        -> form,
         "mode"        -> NormalMode,
-        "mrn"         -> mrn,
+        "ref"         -> ref,
         "radios"      -> Radios.yesNo(form("value")),
-        "onSubmitUrl" -> routes.EventReportedController.onSubmit(mrn, eventIndex, NormalMode).url
+        "onSubmitUrl" -> routes.EventReportedController.onSubmit(ref, eventIndex, NormalMode).url
       )
 
       templateCaptor.getValue mustEqual "events/eventReported.njk"
@@ -107,9 +107,9 @@ class EventReportedControllerSpec extends SpecBase with MockitoSugar with Nunjuc
       val expectedJson = Json.obj(
         "form"        -> filledForm,
         "mode"        -> NormalMode,
-        "mrn"         -> mrn,
+        "ref"         -> ref,
         "radios"      -> Radios.yesNo(filledForm("value")),
-        "onSubmitUrl" -> routes.EventReportedController.onSubmit(mrn, eventIndex, NormalMode).url
+        "onSubmitUrl" -> routes.EventReportedController.onSubmit(ref, eventIndex, NormalMode).url
       )
 
       templateCaptor.getValue mustEqual "events/eventReported.njk"
@@ -165,9 +165,9 @@ class EventReportedControllerSpec extends SpecBase with MockitoSugar with Nunjuc
       val expectedJson = Json.obj(
         "form"        -> boundForm,
         "mode"        -> NormalMode,
-        "mrn"         -> mrn,
+        "ref"         -> ref,
         "radios"      -> Radios.yesNo(boundForm("value")),
-        "onSubmitUrl" -> routes.EventReportedController.onSubmit(mrn, eventIndex, NormalMode).url
+        "onSubmitUrl" -> routes.EventReportedController.onSubmit(ref, eventIndex, NormalMode).url
       )
 
       templateCaptor.getValue mustEqual "events/eventReported.njk"

@@ -30,7 +30,7 @@ class $className$Controller @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onPageLoad(ref: DraftArrivalRef, mode: Mode): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
     implicit request =>
 
       val preparedForm = request.userAnswers.get($className$Page) match {
@@ -40,14 +40,14 @@ class $className$Controller @Inject()(
 
       val json = Json.obj(
         "form" -> preparedForm,
-        "mrn"  -> mrn,
+        "ref" -> ref,
         "mode" -> mode
       )
 
       renderer.render("$className;format="decap"$.njk", json).map(Ok(_))
   }
 
-  def onSubmit(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onSubmit(ref: DraftArrivalRef, mode: Mode): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -55,7 +55,7 @@ class $className$Controller @Inject()(
 
           val json = Json.obj(
             "form" -> formWithErrors,
-            "mrn"  -> mrn,
+            "ref" -> ref,
             "mode" -> mode
           )
     

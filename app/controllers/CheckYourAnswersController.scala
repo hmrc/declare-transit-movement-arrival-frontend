@@ -21,7 +21,7 @@ import controllers.actions.{DataRequiredAction, DataRetrievalActionProvider, Ide
 import derivable.DeriveNumberOfEvents
 import handlers.ErrorHandler
 import models.GoodsLocation.{AuthorisedConsigneesLocation, BorderForceOffice}
-import models.{EoriNumber, Index, MovementReferenceNumber, UserAnswers}
+import models.{DraftArrivalRef, EoriNumber, Index, MovementReferenceNumber, UserAnswers}
 import pages.{ConsigneeEoriConfirmationPage, GoodsLocationPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -49,25 +49,25 @@ class CheckYourAnswersController @Inject()(override val messagesApi: MessagesApi
     with NunjucksSupport
     with HttpErrorFunctions {
 
-  def onPageLoad(mrn: MovementReferenceNumber): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onPageLoad(ref: DraftArrivalRef): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
     implicit request =>
       val answers: Seq[Section] = createSections(request.userAnswers, request.eoriNumber)
 
       val json = Json.obj(
         "sections"    -> Json.toJson(answers),
-        "mrn"         -> mrn,
-        "onSubmitUrl" -> routes.CheckYourAnswersController.onPost(mrn).url
+        "ref"         -> ref,
+        "onSubmitUrl" -> routes.CheckYourAnswersController.onPost(ref).url
       )
       renderer.render("check-your-answers.njk", json).map(Ok(_))
   }
 
-  def onPost(mrn: MovementReferenceNumber): Action[AnyContent] =
-    (identify andThen getData(mrn) andThen requireData).async {
+  def onPost(ref: DraftArrivalRef): Action[AnyContent] =
+    (identify andThen getData(ref) andThen requireData).async {
       implicit request =>
         service.submit(request.userAnswers) flatMap {
           case Some(result) =>
             result.status match {
-              case status if is2xx(status) => Future.successful(Redirect(routes.ConfirmationController.onPageLoad(mrn)))
+              case status if is2xx(status) => Future.successful(Redirect(routes.ConfirmationController.onPageLoad(ref)))
               case status if is4xx(status) => errorHandler.onClientError(request, status)
               case _                       => Future.successful(Redirect(routes.TechnicalDifficultiesController.onPageLoad()))
             }

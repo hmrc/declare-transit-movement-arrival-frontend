@@ -33,13 +33,13 @@ class AddSealHelper(userAnswers: UserAnswers) {
           actions = List(
             Action(
               content            = msg"site.edit",
-              href               = SealIdentityController.onPageLoad(userAnswers.id, eventIndex, sealIndex, mode).url,
+              href               = SealIdentityController.onPageLoad(userAnswers.ref, eventIndex, sealIndex, mode).url,
               visuallyHiddenText = Some(msg"addSeal.sealList.change.hidden".withArgs(answer.numberOrMark)),
               attributes         = Map("id" -> s"""change-seal-${sealIndex.display}""")
             ),
             Action(
               content            = msg"site.delete",
-              href               = ConfirmRemoveSealController.onPageLoad(userAnswers.id, eventIndex, sealIndex, mode).url,
+              href               = ConfirmRemoveSealController.onPageLoad(userAnswers.ref, eventIndex, sealIndex, mode).url,
               visuallyHiddenText = Some(msg"addSeal.sealList.delete.hidden".withArgs(answer.numberOrMark)),
               attributes         = Map("id" -> s"""remove-seal-${sealIndex.display}""")
             )

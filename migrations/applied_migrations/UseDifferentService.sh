@@ -5,7 +5,7 @@ echo "Applying migration UseDifferentService"
 
 echo "Adding routes to conf/app.routes"
 echo "" >> ../conf/app.routes
-echo "GET        /:mrn/useDifferentService                       controllers.UseDifferentServiceController.onPageLoad(mrn: MovementReferenceNumber)" >> ../conf/app.routes
+echo "GET        /:mrn/useDifferentService                       controllers.UseDifferentServiceController.onPageLoad(ref: MovementReferenceNumber)" >> ../conf/app.routes
 
 echo "Adding messages to conf.messages"
 echo "" >> ../conf/messages.en

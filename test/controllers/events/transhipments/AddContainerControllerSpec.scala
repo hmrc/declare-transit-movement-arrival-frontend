@@ -51,7 +51,7 @@ class AddContainerControllerSpec extends SpecBase with MockitoSugar with Nunjuck
   private val formProvider        = new AddContainerFormProvider()
   private val form: Form[Boolean] = formProvider()
 
-  private lazy val addContainerRoute: String = routes.AddContainerController.onPageLoad(mrn, eventIndex, NormalMode).url
+  private lazy val addContainerRoute: String = routes.AddContainerController.onPageLoad(ref, eventIndex, NormalMode).url
   private lazy val addContainerTemplate      = "events/transhipments/addContainer.njk"
 
   "AddContainer Controller" - {
@@ -78,10 +78,10 @@ class AddContainerControllerSpec extends SpecBase with MockitoSugar with Nunjuck
       val expectedJson = Json.obj(
         "form"        -> form,
         "mode"        -> NormalMode,
-        "mrn"         -> mrn,
+        "ref"         -> ref,
         "radios"      -> Radios.yesNo(form("value")),
         "containers"  -> Section(Seq(AddContainerHelper(ua).containerRow(eventIndex, containerIndex, NormalMode).value)),
-        "onSubmitUrl" -> routes.AddContainerController.onSubmit(mrn, eventIndex, NormalMode).url
+        "onSubmitUrl" -> routes.AddContainerController.onSubmit(ref, eventIndex, NormalMode).url
       )
 
       templateCaptor.getValue mustEqual addContainerTemplate
@@ -137,9 +137,9 @@ class AddContainerControllerSpec extends SpecBase with MockitoSugar with Nunjuck
       val expectedJson = Json.obj(
         "form"        -> boundForm,
         "mode"        -> NormalMode,
-        "mrn"         -> mrn,
+        "ref"         -> ref,
         "radios"      -> Radios.yesNo(boundForm("value")),
-        "onSubmitUrl" -> routes.AddContainerController.onSubmit(mrn, eventIndex, NormalMode).url
+        "onSubmitUrl" -> routes.AddContainerController.onSubmit(ref, eventIndex, NormalMode).url
       )
 
       templateCaptor.getValue mustEqual addContainerTemplate

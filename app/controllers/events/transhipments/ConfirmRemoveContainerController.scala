@@ -23,7 +23,7 @@ import handlers.ErrorHandler
 import javax.inject.Inject
 import models.domain.ContainerDomain
 import models.requests.DataRequest
-import models.{Index, Mode, MovementReferenceNumber, UserAnswers}
+import models.{DraftArrivalRef, Index, Mode, MovementReferenceNumber, UserAnswers}
 import navigation.Navigator
 import pages.events.transhipments.{ConfirmRemoveContainerPage, ContainerNumberPage}
 import play.api.data.Form
@@ -56,28 +56,28 @@ class ConfirmRemoveContainerController @Inject()(
 
   private val confirmRemoveContainerTemplate = "events/transhipments/confirmRemoveContainer.njk"
 
-  def onPageLoad(mrn: MovementReferenceNumber, eventIndex: Index, containerIndex: Index, mode: Mode): Action[AnyContent] =
-    (identify andThen getData(mrn) andThen requireData).async {
+  def onPageLoad(ref: DraftArrivalRef, eventIndex: Index, containerIndex: Index, mode: Mode): Action[AnyContent] =
+    (identify andThen getData(ref) andThen requireData).async {
       implicit request =>
         request.userAnswers.get(ContainerNumberPage(eventIndex, containerIndex)) match {
           case Some(container) =>
             val form = formProvider(container)
-            renderPage(mrn, eventIndex, containerIndex, form, mode, container).map(Ok(_))
+            renderPage(ref, eventIndex, containerIndex, form, mode, container).map(Ok(_))
           case _ =>
             renderErrorPage(eventIndex, mode, request.userAnswers)
         }
 
     }
 
-  def onSubmit(mrn: MovementReferenceNumber, eventIndex: Index, containerIndex: Index, mode: Mode): Action[AnyContent] =
-    (identify andThen getData(mrn) andThen requireData).async {
+  def onSubmit(ref: DraftArrivalRef, eventIndex: Index, containerIndex: Index, mode: Mode): Action[AnyContent] =
+    (identify andThen getData(ref) andThen requireData).async {
       implicit request =>
         request.userAnswers.get(ContainerNumberPage(eventIndex, containerIndex)) match {
           case Some(container) =>
             formProvider(container)
               .bindFromRequest()
               .fold(
-                formWithErrors => renderPage(mrn, eventIndex, containerIndex, formWithErrors, mode, container).map(BadRequest(_)),
+                formWithErrors => renderPage(ref, eventIndex, containerIndex, formWithErrors, mode, container).map(BadRequest(_)),
                 value =>
                   if (value) {
                     for {
@@ -93,16 +93,16 @@ class ConfirmRemoveContainerController @Inject()(
         }
     }
 
-  private def renderPage(mrn: MovementReferenceNumber, eventIndex: Index, containerIndex: Index, form: Form[Boolean], mode: Mode, container: ContainerDomain)(
+  private def renderPage(ref: DraftArrivalRef, eventIndex: Index, containerIndex: Index, form: Form[Boolean], mode: Mode, container: ContainerDomain)(
     implicit request: DataRequest[AnyContent]): Future[Html] = {
 
     val json = Json.obj(
       "form"            -> form,
       "mode"            -> mode,
-      "mrn"             -> mrn,
+      "ref"             -> ref,
       "containerNumber" -> container.containerNumber,
       "radios"          -> Radios.yesNo(form("value")),
-      "onSubmitUrl"     -> routes.ConfirmRemoveContainerController.onSubmit(mrn, eventIndex, containerIndex, mode).url
+      "onSubmitUrl"     -> routes.ConfirmRemoveContainerController.onSubmit(ref, eventIndex, containerIndex, mode).url
     )
 
     renderer.render(confirmRemoveContainerTemplate, json)

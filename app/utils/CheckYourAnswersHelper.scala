@@ -38,7 +38,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswers
               actions = List(
                 Action(
                   content            = msg"site.edit",
-                  href               = routes.ConsigneeEoriNumberController.onPageLoad(mrn, CheckMode).url,
+                  href               = routes.ConsigneeEoriNumberController.onPageLoad(ref, CheckMode).url,
                   visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"eoriNumber.checkYourAnswersLabel")),
                   attributes         = Map("id" -> s"""change-eori-number""")
                 )
@@ -58,7 +58,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswers
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = routes.ConsigneeEoriConfirmationController.onPageLoad(mrn, CheckMode).url,
+            href               = routes.ConsigneeEoriConfirmationController.onPageLoad(ref, CheckMode).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"eoriConfirmation.checkYourAnswersLabel")),
             attributes         = Map("id" -> s"""change-eori-confirmation""")
           )
@@ -74,7 +74,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswers
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = routes.ConsigneeNameController.onPageLoad(mrn, CheckMode).url,
+            href               = routes.ConsigneeNameController.onPageLoad(ref, CheckMode).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"consigneeName.checkYourAnswersLabel")),
             attributes         = Map("id" -> s"""change-consignee-name""")
           )
@@ -90,7 +90,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswers
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = routes.PlaceOfNotificationController.onPageLoad(mrn, CheckMode).url,
+            href               = routes.PlaceOfNotificationController.onPageLoad(ref, CheckMode).url,
             visuallyHiddenText = Some(msg"placeOfNotification.change.hidden"),
             attributes         = Map("id" -> s"""change-place-of-notification""")
           )
@@ -108,7 +108,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswers
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = routes.IsTraderAddressPlaceOfNotificationController.onPageLoad(mrn, CheckMode).url,
+            href               = routes.IsTraderAddressPlaceOfNotificationController.onPageLoad(ref, CheckMode).url,
             visuallyHiddenText = Some(msg"isTraderAddressPlaceOfNotification.change.hidden"),
             attributes         = Map("id" -> s"""change-trader-address-place-of-notification""")
           )
@@ -124,7 +124,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswers
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = routes.IncidentOnRouteController.onPageLoad(mrn, CheckMode).url,
+            href               = routes.IncidentOnRouteController.onPageLoad(ref, CheckMode).url,
             visuallyHiddenText = Some(msg"incidentOnRoute.change.hidden"),
             attributes         = Map("id" -> s"""change-incident-on-route""")
           )
@@ -140,7 +140,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswers
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = routes.TraderNameController.onPageLoad(mrn, CheckMode).url,
+            href               = routes.TraderNameController.onPageLoad(ref, CheckMode).url,
             visuallyHiddenText = Some(msg"traderName.change.hidden"),
             attributes         = Map("id" -> s"""change-trader-name""")
           )
@@ -156,7 +156,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswers
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = routes.TraderEoriController.onPageLoad(mrn, CheckMode).url,
+            href               = routes.TraderEoriController.onPageLoad(ref, CheckMode).url,
             visuallyHiddenText = Some(msg"traderEori.change.hidden"),
             attributes         = Map("id" -> s"""change-trader-eori""")
           )
@@ -172,7 +172,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswers
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = routes.TraderAddressController.onPageLoad(mrn, CheckMode).url,
+            href               = routes.TraderAddressController.onPageLoad(ref, CheckMode).url,
             visuallyHiddenText = Some(msg"traderAddress.change.hidden"),
             attributes         = Map("id" -> s"""change-trader-address""")
           )
@@ -188,7 +188,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswers
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = routes.ConsigneeAddressController.onPageLoad(mrn, CheckMode).url,
+            href               = routes.ConsigneeAddressController.onPageLoad(ref, CheckMode).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"consigneeAddress.checkYourAnswersLabel")),
             attributes         = Map("id" -> s"""change-consignee-address""")
           )
@@ -204,7 +204,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswers
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = routes.AuthorisedLocationController.onPageLoad(mrn, CheckMode).url,
+            href               = routes.AuthorisedLocationController.onPageLoad(ref, CheckMode).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"authorisedLocation.checkYourAnswersLabel")),
             attributes         = Map("id" -> s"""change-authorised-location""")
           )
@@ -220,7 +220,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswers
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = routes.CustomsSubPlaceController.onPageLoad(mrn, CheckMode).url,
+            href               = routes.CustomsSubPlaceController.onPageLoad(ref, CheckMode).url,
             visuallyHiddenText = Some(msg"customsSubPlace.change.hidden"),
             attributes         = Map("id" -> s"""change-customs-sub-place""")
           )
@@ -243,7 +243,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswers
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = routes.PresentationOfficeController.onPageLoad(mrn, CheckMode).url,
+            href               = routes.PresentationOfficeController.onPageLoad(ref, CheckMode).url,
             visuallyHiddenText = Some(msg"presentationOffice.change.hidden".withArgs(location)),
             attributes         = Map("id" -> s"""change-presentation-office""")
           )
@@ -259,7 +259,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswers
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = routes.GoodsLocationController.onPageLoad(mrn, CheckMode).url,
+            href               = routes.GoodsLocationController.onPageLoad(ref, CheckMode).url,
             visuallyHiddenText = Some(msg"goodsLocation.change.hidden"),
             attributes         = Map("id" -> s"""change-goods-location""")
           )

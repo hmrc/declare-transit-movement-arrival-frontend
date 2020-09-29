@@ -6,10 +6,10 @@ echo "Applying migration HaveSealsChanged"
 echo "Adding routes to conf/app.routes"
 
 echo "" >> ../conf/app.routes
-echo "GET        /:mrn/haveSealsChanged                        controllers.events.seals.HaveSealsChangedController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = NormalMode)" >> ../conf/app.routes
+echo "GET        /:mrn/haveSealsChanged                        controllers.events.seals.HaveSealsChangedController.onPageLoad(ref: MovementReferenceNumber, mode: Mode = NormalMode)" >> ../conf/app.routes
 echo "POST       /:mrn/haveSealsChanged                        controllers.events.seals.HaveSealsChangedController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)" >> ../conf/app.routes
 
-echo "GET        /:mrn/changeHaveSealsChanged                  controllers.events.seals.HaveSealsChangedController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)" >> ../conf/app.routes
+echo "GET        /:mrn/changeHaveSealsChanged                  controllers.events.seals.HaveSealsChangedController.onPageLoad(ref: MovementReferenceNumber, mode: Mode = CheckMode)" >> ../conf/app.routes
 echo "POST       /:mrn/changeHaveSealsChanged                  controllers.events.seals.HaveSealsChangedController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)" >> ../conf/app.routes
 
 echo "Adding messages to conf.messages"
@@ -58,7 +58,7 @@ awk '/class CheckYourAnswersHelper/ {\
      print "        actions = List(";\
      print "          Action(";\
      print "            content            = msg\"site.edit\",";\
-     print "            href               = routes.HaveSealsChangedController.onPageLoad(mrn, CheckMode).url,";\
+     print "            href               = routes.HaveSealsChangedController.onPageLoad(ref, CheckMode).url,";\
      print "            visuallyHiddenText = Some(msg\"site.edit.hidden\".withArgs(msg\"haveSealsChanged.checkYourAnswersLabel\"))";\
      print "          )";\
      print "        )";\

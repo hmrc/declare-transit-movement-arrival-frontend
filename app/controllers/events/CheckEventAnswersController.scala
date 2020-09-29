@@ -19,7 +19,7 @@ package controllers.events
 import com.google.inject.Inject
 import connectors.ReferenceDataConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalActionProvider, IdentifierAction}
-import models.{CheckMode, CountryList, Index, MovementReferenceNumber, NormalMode}
+import models.{CheckMode, CountryList, DraftArrivalRef, Index, MovementReferenceNumber, NormalMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -41,15 +41,15 @@ class CheckEventAnswersController @Inject()(override val messagesApi: MessagesAp
     with I18nSupport
     with NunjucksSupport {
 
-  def onPageLoad(mrn: MovementReferenceNumber, eventIndex: Index): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onPageLoad(ref: DraftArrivalRef, eventIndex: Index): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
     implicit request =>
       referenceDataConnector
         .getCountryList()
         .flatMap {
           countryList =>
             val json = Json.obj(
-              "mrn"         -> mrn,
-              "onSubmitUrl" -> routes.CheckEventAnswersController.onSubmit(mrn, eventIndex).url
+              "ref"         -> ref,
+              "onSubmitUrl" -> routes.CheckEventAnswersController.onSubmit(ref, eventIndex).url
             ) ++ Json.toJsObject {
               CheckEventAnswersViewModel(request.userAnswers, eventIndex, CheckMode, countryList)
             }
@@ -59,9 +59,9 @@ class CheckEventAnswersController @Inject()(override val messagesApi: MessagesAp
 
   }
 
-  def onSubmit(mrn: MovementReferenceNumber, eventIndex: Index): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onSubmit(ref: DraftArrivalRef, eventIndex: Index): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
     implicit request =>
-      Future.successful(Redirect(controllers.events.routes.AddEventController.onPageLoad(mrn, NormalMode)))
+      Future.successful(Redirect(controllers.events.routes.AddEventController.onPageLoad(ref, NormalMode)))
   }
 
 }

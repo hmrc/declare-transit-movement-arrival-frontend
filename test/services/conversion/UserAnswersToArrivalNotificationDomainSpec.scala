@@ -46,6 +46,7 @@ class UserAnswersToArrivalNotificationDomainSpec extends SpecBase with ScalaChec
 
           val userAnswers: UserAnswers = ArrivalMovementRequestToUserAnswersService
             .convertToUserAnswers(
+              ref,
               arrivalMovementRequest,
               eori,
               arrivalNotificationDomain.movementReferenceNumber,

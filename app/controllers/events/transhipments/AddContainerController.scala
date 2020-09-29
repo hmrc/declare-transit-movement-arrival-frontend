@@ -17,17 +17,15 @@
 package controllers.events.transhipments
 
 import controllers.actions._
-import derivable.DeriveNumberOfContainers
 import forms.events.transhipments.AddContainerFormProvider
 import javax.inject.Inject
-import models.{Index, Mode, MovementReferenceNumber}
+import models.{DraftArrivalRef, Index, Mode}
 import navigation.Navigator
 import pages.events.transhipments.AddContainerPage
-import play.api.i18n.{I18nSupport, Messages, MessagesApi}
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
-import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 import viewModels.AddContainerViewModel
@@ -36,7 +34,6 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class AddContainerController @Inject()(
   override val messagesApi: MessagesApi,
-  sessionRepository: SessionRepository,
   navigator: Navigator,
   identify: IdentifierAction,
   getData: DataRetrievalActionProvider,
@@ -51,14 +48,14 @@ class AddContainerController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onPageLoad(ref: DraftArrivalRef, eventIndex: Index, mode: Mode): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
     implicit request =>
       val json = Json.obj(
         "form"        -> form,
         "mode"        -> mode,
-        "mrn"         -> mrn,
+        "ref"         -> ref,
         "radios"      -> Radios.yesNo(form("value")),
-        "onSubmitUrl" -> routes.AddContainerController.onSubmit(mrn, eventIndex, mode).url
+        "onSubmitUrl" -> routes.AddContainerController.onSubmit(ref, eventIndex, mode).url
       ) ++ Json.toJsObject {
         AddContainerViewModel(eventIndex, request.userAnswers, mode)
       }
@@ -66,7 +63,7 @@ class AddContainerController @Inject()(
       renderer.render("events/transhipments/addContainer.njk", json).map(Ok(_))
   }
 
-  def onSubmit(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onSubmit(ref: DraftArrivalRef, eventIndex: Index, mode: Mode): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
     implicit request =>
       form
         .bindFromRequest()
@@ -76,9 +73,9 @@ class AddContainerController @Inject()(
             val json = Json.obj(
               "form"        -> formWithErrors,
               "mode"        -> mode,
-              "mrn"         -> mrn,
+              "ref"         -> ref,
               "radios"      -> Radios.yesNo(formWithErrors("value")),
-              "onSubmitUrl" -> routes.AddContainerController.onSubmit(mrn, eventIndex, mode).url
+              "onSubmitUrl" -> routes.AddContainerController.onSubmit(ref, eventIndex, mode).url
             ) ++ Json.toJsObject {
               AddContainerViewModel(eventIndex, request.userAnswers, mode)
             }

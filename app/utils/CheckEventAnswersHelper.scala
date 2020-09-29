@@ -19,7 +19,7 @@ package utils
 import controllers.events.seals.{routes => sealRoutes}
 import controllers.events.transhipments.{routes => transhipmentRoutes}
 import controllers.events.{routes => eventRoutes}
-import models.{Address, CheckMode, CountryList, Index, MovementReferenceNumber, UserAnswers}
+import models.{Address, CheckMode, CountryList, DraftArrivalRef, Index, MovementReferenceNumber, UserAnswers}
 import pages.events._
 import pages.events.seals._
 import pages.events.transhipments._
@@ -36,7 +36,7 @@ class CheckEventAnswersHelper(userAnswers: UserAnswers) {
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = eventRoutes.IsTranshipmentController.onPageLoad(mrn, eventIndex, CheckMode).url,
+            href               = eventRoutes.IsTranshipmentController.onPageLoad(ref, eventIndex, CheckMode).url,
             visuallyHiddenText = Some(msg"isTranshipment.change.hidden"),
             attributes         = Map("id" -> s"""change-is-transhipment-${eventIndex.display}""")
           )
@@ -52,7 +52,7 @@ class CheckEventAnswersHelper(userAnswers: UserAnswers) {
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = transhipmentRoutes.TranshipmentTypeController.onPageLoad(mrn, eventIndex, CheckMode).url,
+            href               = transhipmentRoutes.TranshipmentTypeController.onPageLoad(ref, eventIndex, CheckMode).url,
             visuallyHiddenText = Some(msg"transhipmentType.change.hidden"),
             attributes         = Map("id" -> s"""transhipment-type-${eventIndex.display}""")
           )
@@ -68,7 +68,7 @@ class CheckEventAnswersHelper(userAnswers: UserAnswers) {
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = transhipmentRoutes.ContainerNumberController.onPageLoad(mrn, eventIndex, containerIndex, CheckMode).url,
+            href               = transhipmentRoutes.ContainerNumberController.onPageLoad(ref, eventIndex, containerIndex, CheckMode).url,
             visuallyHiddenText = Some(msg"containerNumber.change.hidden".withArgs(answer.containerNumber)),
             attributes         = Map("id" -> s"""change-container-${containerIndex.display}""")
           )
@@ -89,7 +89,7 @@ class CheckEventAnswersHelper(userAnswers: UserAnswers) {
             actions = List(
               Action(
                 content            = msg"site.edit",
-                href               = eventRoutes.EventCountryController.onPageLoad(mrn, eventIndex, CheckMode).url,
+                href               = eventRoutes.EventCountryController.onPageLoad(ref, eventIndex, CheckMode).url,
                 visuallyHiddenText = Some(msg"eventCountry.change.hidden"),
                 attributes         = Map("id" -> s"""change-event-country-${eventIndex.display}""")
               )
@@ -105,7 +105,7 @@ class CheckEventAnswersHelper(userAnswers: UserAnswers) {
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = eventRoutes.EventPlaceController.onPageLoad(mrn, eventIndex, CheckMode).url,
+            href               = eventRoutes.EventPlaceController.onPageLoad(ref, eventIndex, CheckMode).url,
             visuallyHiddenText = Some(msg"eventPlace.change.hidden"),
             attributes         = Map("id" -> s"""change-event-place-${eventIndex.display}""")
           )
@@ -121,7 +121,7 @@ class CheckEventAnswersHelper(userAnswers: UserAnswers) {
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = eventRoutes.EventReportedController.onPageLoad(mrn, eventIndex, CheckMode).url,
+            href               = eventRoutes.EventReportedController.onPageLoad(ref, eventIndex, CheckMode).url,
             visuallyHiddenText = Some(msg"eventReported.change.hidden"),
             attributes         = Map("id" -> s"""change-event-reported-${eventIndex.display}""")
           )
@@ -137,7 +137,7 @@ class CheckEventAnswersHelper(userAnswers: UserAnswers) {
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = eventRoutes.IncidentInformationController.onPageLoad(mrn, eventIndex, CheckMode).url,
+            href               = eventRoutes.IncidentInformationController.onPageLoad(ref, eventIndex, CheckMode).url,
             visuallyHiddenText = Some(msg"incidentInformation.change.hidden"),
             attributes         = Map("id" -> s"""change-incident-information-${eventIndex.display}""")
           )
@@ -153,7 +153,7 @@ class CheckEventAnswersHelper(userAnswers: UserAnswers) {
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = transhipmentRoutes.TransportIdentityController.onPageLoad(mrn, eventIndex, CheckMode).url,
+            href               = transhipmentRoutes.TransportIdentityController.onPageLoad(ref, eventIndex, CheckMode).url,
             visuallyHiddenText = Some(msg"transportIdentity.change.hidden"),
             attributes         = Map("id" -> s"""transport-identity-${eventIndex.display}""")
           )
@@ -171,7 +171,7 @@ class CheckEventAnswersHelper(userAnswers: UserAnswers) {
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = transhipmentRoutes.TransportNationalityController.onPageLoad(mrn, eventIndex, CheckMode).url,
+            href               = transhipmentRoutes.TransportNationalityController.onPageLoad(ref, eventIndex, CheckMode).url,
             visuallyHiddenText = Some(msg"transportNationality.change.hidden"),
             attributes         = Map("id" -> s"""transport-nationality-${eventIndex.display}""")
           )
@@ -187,7 +187,7 @@ class CheckEventAnswersHelper(userAnswers: UserAnswers) {
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = sealRoutes.HaveSealsChangedController.onPageLoad(mrn, eventIndex, CheckMode).url,
+            href               = sealRoutes.HaveSealsChangedController.onPageLoad(ref, eventIndex, CheckMode).url,
             visuallyHiddenText = Some(msg"haveSealsChanged.change.hidden"),
             attributes         = Map("id" -> s"""seals-changed-${eventIndex.display}""")
           )
@@ -203,7 +203,7 @@ class CheckEventAnswersHelper(userAnswers: UserAnswers) {
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = sealRoutes.SealIdentityController.onPageLoad(mrn, eventIndex, sealIndex, CheckMode).url,
+            href               = sealRoutes.SealIdentityController.onPageLoad(ref, eventIndex, sealIndex, CheckMode).url,
             visuallyHiddenText = Some(msg"sealIdentity.change.hidden".withArgs(answer.numberOrMark)),
             attributes         = Map("id" -> s"""change-seal-${sealIndex.display}""")
           )
@@ -224,6 +224,7 @@ class CheckEventAnswersHelper(userAnswers: UserAnswers) {
     }
 
   def mrn: MovementReferenceNumber = userAnswers.id
+  def ref: DraftArrivalRef         = userAnswers.ref
 
   def addressHtml(address: Address): Html = Html(
     Seq(address.buildingAndStreet, address.city, address.postcode)

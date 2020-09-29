@@ -6,11 +6,11 @@ echo "Applying migration $className;format="snake"$"
 echo "Adding routes to conf/app.routes"
 
 echo "" >> ../conf/app.routes
-echo "GET        /:mrn/$className;format="decap"$                        controllers.$className$Controller.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = NormalMode)" >> ../conf/app.routes
-echo "POST       /:mrn/$className;format="decap"$                        controllers.$className$Controller.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)" >> ../conf/app.routes
+echo "GET        /:ref/$className;format="decap"$                        controllers.$className$Controller.onPageLoad(ref: DraftArrivalRef, mode: Mode = NormalMode)" >> ../conf/app.routes
+echo "POST       /:ref/$className;format="decap"$                        controllers.$className$Controller.onSubmit(ref: DraftArrivalRef, mode: Mode = NormalMode)" >> ../conf/app.routes
 
-echo "GET        /:mrn/change$className$                  controllers.$className$Controller.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)" >> ../conf/app.routes
-echo "POST       /:mrn/change$className$                  controllers.$className$Controller.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)" >> ../conf/app.routes
+echo "GET        /:ref/change$className$                  controllers.$className$Controller.onPageLoad(ref: DraftArrivalRef, mode: Mode = CheckMode)" >> ../conf/app.routes
+echo "POST       /:ref/change$className$                  controllers.$className$Controller.onSubmit(ref: DraftArrivalRef, mode: Mode = CheckMode)" >> ../conf/app.routes
 
 echo "Adding messages to conf.messages"
 echo "" >> ../conf/messages.en
@@ -70,7 +70,7 @@ awk '/class CheckYourAnswersHelper/ {\
      print "        actions = List(";\
      print "          Action(";\
      print "            content            = msg\"site.edit\",";\
-     print "            href               = routes.$className$Controller.onPageLoad(mrn, CheckMode).url,";\
+     print "            href               = routes.$className$Controller.onPageLoad(ref, CheckMode).url,";\
      print "            visuallyHiddenText = Some(msg\"site.edit.hidden\".withArgs(msg\"$className;format="decap"$.checkYourAnswersLabel\"))";\
      print "          )";\
      print "        )";\

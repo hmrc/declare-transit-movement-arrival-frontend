@@ -44,7 +44,7 @@ class TraderAddressControllerSpec extends SpecBase with MockitoSugar with Nunjuc
   val formProvider = new TraderAddressFormProvider()
   val form         = formProvider()
 
-  lazy val traderAddressRoute = routes.TraderAddressController.onPageLoad(mrn, NormalMode).url
+  lazy val traderAddressRoute = routes.TraderAddressController.onPageLoad(ref, NormalMode).url
 
   val userAnswers = UserAnswers(
     mrn,
@@ -78,7 +78,7 @@ class TraderAddressControllerSpec extends SpecBase with MockitoSugar with Nunjuc
 
       val expectedJson = Json.obj(
         "form" -> form,
-        "mrn"  -> mrn,
+        "ref"  -> ref,
         "mode" -> NormalMode
       )
 
@@ -114,7 +114,7 @@ class TraderAddressControllerSpec extends SpecBase with MockitoSugar with Nunjuc
 
       val expectedJson = Json.obj(
         "form" -> filledForm,
-        "mrn"  -> mrn,
+        "ref"  -> ref,
         "mode" -> NormalMode
       )
 
@@ -170,7 +170,7 @@ class TraderAddressControllerSpec extends SpecBase with MockitoSugar with Nunjuc
 
       val expectedJson = Json.obj(
         "form" -> boundForm,
-        "mrn"  -> mrn,
+        "ref"  -> ref,
         "mode" -> NormalMode
       )
 

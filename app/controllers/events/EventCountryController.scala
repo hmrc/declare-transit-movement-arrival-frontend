@@ -21,7 +21,7 @@ import controllers.actions._
 import forms.events.EventCountryFormProvider
 import javax.inject.Inject
 import models.reference.Country
-import models.{Index, Mode, MovementReferenceNumber}
+import models.{DraftArrivalRef, Index, Mode, MovementReferenceNumber}
 import navigation.Navigator
 import pages.events.EventCountryPage
 import play.api.data.Form
@@ -49,8 +49,8 @@ class EventCountryController @Inject()(override val messagesApi: MessagesApi,
     with I18nSupport
     with NunjucksSupport {
 
-  def onPageLoad(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode): Action[AnyContent] =
-    (identify andThen getData(mrn) andThen requireData).async {
+  def onPageLoad(ref: DraftArrivalRef, eventIndex: Index, mode: Mode): Action[AnyContent] =
+    (identify andThen getData(ref) andThen requireData).async {
       implicit request =>
         referenceDataConnector.getCountryList() flatMap {
           countries =>
@@ -62,19 +62,19 @@ class EventCountryController @Inject()(override val messagesApi: MessagesApi,
               .map(form.fill)
               .getOrElse(form)
 
-            renderPage(mrn, mode, preparedForm, countries.fullList, Results.Ok, eventIndex)
+            renderPage(ref, mode, preparedForm, countries.fullList, Results.Ok, eventIndex)
         }
     }
 
-  def onSubmit(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode): Action[AnyContent] =
-    (identify andThen getData(mrn) andThen requireData).async {
+  def onSubmit(ref: DraftArrivalRef, eventIndex: Index, mode: Mode): Action[AnyContent] =
+    (identify andThen getData(ref) andThen requireData).async {
       implicit request =>
         referenceDataConnector.getCountryList() flatMap {
           countries =>
             formProvider(countries)
               .bindFromRequest()
               .fold(
-                formWithErrors => renderPage(mrn, mode, formWithErrors, countries.fullList, Results.BadRequest, eventIndex),
+                formWithErrors => renderPage(ref, mode, formWithErrors, countries.fullList, Results.BadRequest, eventIndex),
                 value =>
                   for {
                     updatedAnswers <- Future.fromTry(request.userAnswers.set(EventCountryPage(eventIndex), value.code))
@@ -84,14 +84,14 @@ class EventCountryController @Inject()(override val messagesApi: MessagesApi,
         }
     }
 
-  private def renderPage(mrn: MovementReferenceNumber, mode: Mode, form: Form[Country], countries: Seq[Country], status: Results.Status, eventIndex: Index)(
+  private def renderPage(ref: DraftArrivalRef, mode: Mode, form: Form[Country], countries: Seq[Country], status: Results.Status, eventIndex: Index)(
     implicit request: Request[AnyContent]): Future[Result] = {
     val json = Json.obj(
       "form"        -> form,
-      "mrn"         -> mrn,
+      "ref"         -> ref,
       "mode"        -> mode,
       "countries"   -> countryJsonList(form.value, countries),
-      "onSubmitUrl" -> routes.EventCountryController.onSubmit(mrn, eventIndex, mode).url
+      "onSubmitUrl" -> routes.EventCountryController.onSubmit(ref, eventIndex, mode).url
     )
 
     renderer.render("events/eventCountry.njk", json).map(status(_))

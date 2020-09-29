@@ -27,7 +27,7 @@
           }) }}
         {% endif %}
 
-        <form action="{{ routes.controllers.CustomsSubPlaceController.onSubmit(mrn, mode).url }}" method="post">
+        <form action="{{ routes.controllers.CustomsSubPlaceController.onSubmit(ref, mode).url }}" method="post">
 
           {{ csrf() | safe }}
 

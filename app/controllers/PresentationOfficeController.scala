@@ -22,7 +22,7 @@ import forms.PresentationOfficeFormProvider
 import javax.inject.Inject
 import models.GoodsLocation.BorderForceOffice
 import models.reference.CustomsOffice
-import models.{Mode, MovementReferenceNumber}
+import models.{DraftArrivalRef, Mode, MovementReferenceNumber}
 import navigation.Navigator
 import pages.{ConsigneeNamePage, CustomsSubPlacePage, PresentationOfficePage}
 import play.api.data.Form
@@ -50,8 +50,8 @@ class PresentationOfficeController @Inject()(override val messagesApi: MessagesA
     with I18nSupport
     with NunjucksSupport {
 
-  def onPageLoad(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] =
-    (identify andThen getData(mrn) andThen requireData).async {
+  def onPageLoad(ref: DraftArrivalRef, mode: Mode): Action[AnyContent] =
+    (identify andThen getData(ref) andThen requireData).async {
       implicit request =>
         val locationName = (request.userAnswers.get(CustomsSubPlacePage), request.userAnswers.get(ConsigneeNamePage)) match {
           case (Some(customsSubPlace), None) => customsSubPlace
@@ -67,14 +67,14 @@ class PresentationOfficeController @Inject()(override val messagesApi: MessagesA
                   case None        => form
                   case Some(value) => form.fill(value)
                 }
-                renderView(mrn, mode, locationName, preparedForm, customsOffices, Results.Ok)
+                renderView(ref, mode, locationName, preparedForm, customsOffices, Results.Ok)
               case _ =>
                 Future.successful(Redirect(routes.SessionExpiredController.onPageLoad()))
             }
         }
     }
 
-  private def renderView(mrn: MovementReferenceNumber,
+  private def renderView(ref: DraftArrivalRef,
                          mode: Mode,
                          presentationOffice: String,
                          form: Form[CustomsOffice],
@@ -83,7 +83,7 @@ class PresentationOfficeController @Inject()(override val messagesApi: MessagesA
 
     val json = Json.obj(
       "form"           -> form,
-      "mrn"            -> mrn,
+      "ref"            -> ref,
       "mode"           -> mode,
       "customsOffices" -> getCustomsOfficesAsJson(form.value, customsOffices),
       "header"         -> msg"presentationOffice.title".withArgs(presentationOffice)
@@ -91,8 +91,8 @@ class PresentationOfficeController @Inject()(override val messagesApi: MessagesA
     renderer.render("presentationOffice.njk", json).map(status(_))
   }
 
-  def onSubmit(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] =
-    (identify andThen getData(mrn) andThen requireData).async {
+  def onSubmit(ref: DraftArrivalRef, mode: Mode): Action[AnyContent] =
+    (identify andThen getData(ref) andThen requireData).async {
       implicit request =>
         val locationName = (request.userAnswers.get(CustomsSubPlacePage), request.userAnswers.get(ConsigneeNamePage)) match {
           case (Some(customsSubPlace), None) => customsSubPlace
@@ -109,7 +109,7 @@ class PresentationOfficeController @Inject()(override val messagesApi: MessagesA
                   .bindFromRequest()
                   .fold(
                     formWithErrors => {
-                      renderView(mrn, mode, locationName, formWithErrors, customsOffices, Results.BadRequest)
+                      renderView(ref, mode, locationName, formWithErrors, customsOffices, Results.BadRequest)
                     },
                     value =>
                       for {

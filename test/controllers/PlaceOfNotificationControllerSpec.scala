@@ -44,7 +44,7 @@ class PlaceOfNotificationControllerSpec extends SpecBase with MockitoSugar with 
   val formProvider = new PlaceOfNotificationFormProvider()
   val form         = formProvider()
 
-  lazy val placeOfNotificationRoute = routes.PlaceOfNotificationController.onPageLoad(mrn, NormalMode).url
+  lazy val placeOfNotificationRoute = routes.PlaceOfNotificationController.onPageLoad(ref, NormalMode).url
 
   "PlaceOfNotification Controller" - {
 
@@ -66,7 +66,7 @@ class PlaceOfNotificationControllerSpec extends SpecBase with MockitoSugar with 
 
       val expectedJson = Json.obj(
         "form" -> form,
-        "mrn"  -> mrn,
+        "ref"  -> ref,
         "mode" -> NormalMode
       )
 
@@ -97,7 +97,7 @@ class PlaceOfNotificationControllerSpec extends SpecBase with MockitoSugar with 
 
       val expectedJson = Json.obj(
         "form" -> filledForm,
-        "mrn"  -> mrn,
+        "ref"  -> ref,
         "mode" -> NormalMode
       )
 
@@ -152,7 +152,7 @@ class PlaceOfNotificationControllerSpec extends SpecBase with MockitoSugar with 
 
       val expectedJson = Json.obj(
         "form" -> boundForm,
-        "mrn"  -> mrn,
+        "ref"  -> ref,
         "mode" -> NormalMode
       )
 

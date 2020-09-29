@@ -46,7 +46,7 @@ class ConfirmRemoveSealControllerSpec extends SpecBase with MockitoSugar with Nu
   private val formProvider        = new ConfirmRemoveSealFormProvider()
   private val form: Form[Boolean] = formProvider(sealDomain)
 
-  private val removeSealRoute: String   = routes.ConfirmRemoveSealController.onPageLoad(mrn, eventIndex, sealIndex, NormalMode).url
+  private val removeSealRoute: String   = routes.ConfirmRemoveSealController.onPageLoad(ref, eventIndex, sealIndex, NormalMode).url
   private val userAnswersWithSeal       = emptyUserAnswers.set(SealIdentityPage(eventIndex, sealIndex), sealDomain).success.value
   private val confirmRemoveSealTemplate = "events/seals/confirmRemoveSeal.njk"
 
@@ -70,10 +70,10 @@ class ConfirmRemoveSealControllerSpec extends SpecBase with MockitoSugar with Nu
       val expectedJson = Json.obj(
         "form"        -> form,
         "mode"        -> NormalMode,
-        "mrn"         -> mrn,
+        "ref"         -> ref,
         "sealNumber"  -> seal.numberOrMark,
         "radios"      -> Radios.yesNo(form("value")),
-        "onSubmitUrl" -> routes.ConfirmRemoveSealController.onSubmit(mrn, eventIndex, sealIndex, NormalMode).url
+        "onSubmitUrl" -> routes.ConfirmRemoveSealController.onSubmit(ref, eventIndex, sealIndex, NormalMode).url
       )
 
       templateCaptor.getValue mustEqual confirmRemoveSealTemplate
@@ -102,7 +102,7 @@ class ConfirmRemoveSealControllerSpec extends SpecBase with MockitoSugar with Nu
         "pageTitle"    -> msg"concurrent.remove.error.title".withArgs("seal"),
         "pageHeading"  -> msg"concurrent.remove.error.heading".withArgs("seal"),
         "linkText"     -> msg"concurrent.remove.error.noSeal.link.text",
-        "redirectLink" -> sealRoutes.HaveSealsChangedController.onPageLoad(mrn, eventIndex, NormalMode).url
+        "redirectLink" -> sealRoutes.HaveSealsChangedController.onPageLoad(ref, eventIndex, NormalMode).url
       )
 
       templateCaptor.getValue mustEqual "concurrentRemoveError.njk"
@@ -126,7 +126,7 @@ class ConfirmRemoveSealControllerSpec extends SpecBase with MockitoSugar with Nu
         .success
         .value
 
-      val sealRoute: String = routes.ConfirmRemoveSealController.onPageLoad(mrn, eventIndex, Index(2), NormalMode).url
+      val sealRoute: String = routes.ConfirmRemoveSealController.onPageLoad(ref, eventIndex, Index(2), NormalMode).url
 
       val application    = applicationBuilder(userAnswers = Some(updatedAnswer)).build()
       val request        = FakeRequest(GET, sealRoute)
@@ -143,7 +143,7 @@ class ConfirmRemoveSealControllerSpec extends SpecBase with MockitoSugar with Nu
         "pageTitle"    -> msg"concurrent.remove.error.title".withArgs("seal"),
         "pageHeading"  -> msg"concurrent.remove.error.heading".withArgs("seal"),
         "linkText"     -> msg"concurrent.remove.error.multipleSeal.link.text",
-        "redirectLink" -> sealRoutes.AddSealController.onPageLoad(mrn, eventIndex, NormalMode).url
+        "redirectLink" -> sealRoutes.AddSealController.onPageLoad(ref, eventIndex, NormalMode).url
       )
 
       templateCaptor.getValue mustEqual "concurrentRemoveError.njk"
@@ -180,7 +180,8 @@ class ConfirmRemoveSealControllerSpec extends SpecBase with MockitoSugar with Nu
         id         = userAnswersWithSeal.id,
         eoriNumber = userAnswersWithSeal.eoriNumber,
         userAnswersWithSeal.remove(SealIdentityPage(eventIndex, sealIndex)).success.value.data,
-        userAnswersWithSeal.lastUpdated
+        userAnswersWithSeal.lastUpdated,
+        ref = userAnswersWithSeal.ref
       )
 
       verify(mockSessionRepository, times(1)).set(newUserAnswers)
@@ -208,10 +209,10 @@ class ConfirmRemoveSealControllerSpec extends SpecBase with MockitoSugar with Nu
       val expectedJson = Json.obj(
         "form"        -> boundForm,
         "mode"        -> NormalMode,
-        "mrn"         -> mrn,
+        "ref"         -> ref,
         "sealNumber"  -> seal.numberOrMark,
         "radios"      -> Radios.yesNo(boundForm("value")),
-        "onSubmitUrl" -> routes.ConfirmRemoveSealController.onSubmit(mrn, eventIndex, sealIndex, NormalMode).url
+        "onSubmitUrl" -> routes.ConfirmRemoveSealController.onSubmit(ref, eventIndex, sealIndex, NormalMode).url
       )
 
       templateCaptor.getValue mustEqual confirmRemoveSealTemplate

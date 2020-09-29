@@ -19,7 +19,7 @@ package controllers
 import controllers.actions._
 import forms.TraderAddressFormProvider
 import javax.inject.Inject
-import models.{Mode, MovementReferenceNumber}
+import models.{DraftArrivalRef, Mode, MovementReferenceNumber}
 import navigation.Navigator
 import pages.TraderAddressPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -47,8 +47,8 @@ class TraderAddressController @Inject()(override val messagesApi: MessagesApi,
 
   private val form = formProvider()
 
-  def onPageLoad(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] =
-    (identify andThen getData(mrn) andThen requireData).async {
+  def onPageLoad(ref: DraftArrivalRef, mode: Mode): Action[AnyContent] =
+    (identify andThen getData(ref) andThen requireData).async {
       implicit request =>
         val preparedForm = request.userAnswers.get(TraderAddressPage) match {
           case None        => form
@@ -57,15 +57,15 @@ class TraderAddressController @Inject()(override val messagesApi: MessagesApi,
 
         val json = Json.obj(
           "form" -> preparedForm,
-          "mrn"  -> mrn,
+          "ref"  -> ref,
           "mode" -> mode
         )
 
         renderer.render("traderAddress.njk", json).map(Ok(_))
     }
 
-  def onSubmit(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] =
-    (identify andThen getData(mrn) andThen requireData).async {
+  def onSubmit(ref: DraftArrivalRef, mode: Mode): Action[AnyContent] =
+    (identify andThen getData(ref) andThen requireData).async {
       implicit request =>
         form
           .bindFromRequest()
@@ -74,7 +74,7 @@ class TraderAddressController @Inject()(override val messagesApi: MessagesApi,
 
               val json = Json.obj(
                 "form" -> formWithErrors,
-                "mrn"  -> mrn,
+                "ref"  -> ref,
                 "mode" -> mode
               )
 

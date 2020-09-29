@@ -20,7 +20,7 @@ import controllers.actions._
 import forms.events.seals.HaveSealsChangedFormProvider
 import javax.inject.Inject
 import models.requests.DataRequest
-import models.{Index, Mode, MovementReferenceNumber}
+import models.{DraftArrivalRef, Index, Mode, MovementReferenceNumber}
 import navigation.Navigator
 import pages.events.seals.HaveSealsChangedPage
 import play.api.data.Form
@@ -52,22 +52,22 @@ class HaveSealsChangedController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onPageLoad(ref: DraftArrivalRef, eventIndex: Index, mode: Mode): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
     implicit request =>
       val preparedForm = request.userAnswers.get(HaveSealsChangedPage(eventIndex)) match {
         case None        => form
         case Some(value) => form.fill(value)
       }
 
-      renderView(mrn, eventIndex, mode, preparedForm).map(Ok(_))
+      renderView(ref, eventIndex, mode, preparedForm).map(Ok(_))
   }
 
-  def onSubmit(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onSubmit(ref: DraftArrivalRef, eventIndex: Index, mode: Mode): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
     implicit request =>
       form
         .bindFromRequest()
         .fold(
-          formWithErrors => renderView(mrn, eventIndex, mode, formWithErrors).map(BadRequest(_)),
+          formWithErrors => renderView(ref, eventIndex, mode, formWithErrors).map(BadRequest(_)),
           value =>
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(HaveSealsChangedPage(eventIndex), value))
@@ -76,14 +76,14 @@ class HaveSealsChangedController @Inject()(
         )
   }
 
-  private def renderView(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode, preparedForm: Form[Boolean])(
+  private def renderView(ref: DraftArrivalRef, eventIndex: Index, mode: Mode, preparedForm: Form[Boolean])(
     implicit request: DataRequest[AnyContent]): Future[Html] = {
     val json = Json.obj(
       "form"        -> preparedForm,
       "mode"        -> mode,
-      "mrn"         -> mrn,
+      "ref"         -> ref,
       "radios"      -> Radios.yesNo(preparedForm("value")),
-      "onSubmitUrl" -> routes.HaveSealsChangedController.onSubmit(mrn, eventIndex, mode).url
+      "onSubmitUrl" -> routes.HaveSealsChangedController.onSubmit(ref, eventIndex, mode).url
     )
     renderer.render("events/seals/haveSealsChanged.njk", json)
   }

@@ -19,7 +19,7 @@ package controllers
 import controllers.actions._
 import forms.IncidentOnRouteFormProvider
 import javax.inject.Inject
-import models.{Mode, MovementReferenceNumber}
+import models.{DraftArrivalRef, Mode, MovementReferenceNumber}
 import navigation.Navigator
 import pages.IncidentOnRoutePage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -47,8 +47,8 @@ class IncidentOnRouteController @Inject()(override val messagesApi: MessagesApi,
 
   private val form = formProvider()
 
-  def onPageLoad(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] =
-    (identify andThen getData(mrn) andThen requireData).async {
+  def onPageLoad(ref: DraftArrivalRef, mode: Mode): Action[AnyContent] =
+    (identify andThen getData(ref) andThen requireData).async {
       implicit request =>
         val preparedForm = request.userAnswers.get(IncidentOnRoutePage) match {
           case None        => form
@@ -58,15 +58,15 @@ class IncidentOnRouteController @Inject()(override val messagesApi: MessagesApi,
         val json = Json.obj(
           "form"   -> preparedForm,
           "mode"   -> mode,
-          "mrn"    -> mrn,
+          "ref"    -> ref,
           "radios" -> Radios.yesNo(preparedForm("value"))
         )
 
         renderer.render("incidentOnRoute.njk", json).map(Ok(_))
     }
 
-  def onSubmit(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] =
-    (identify andThen getData(mrn) andThen requireData).async {
+  def onSubmit(ref: DraftArrivalRef, mode: Mode): Action[AnyContent] =
+    (identify andThen getData(ref) andThen requireData).async {
       implicit request =>
         form
           .bindFromRequest()
@@ -76,7 +76,7 @@ class IncidentOnRouteController @Inject()(override val messagesApi: MessagesApi,
               val json = Json.obj(
                 "form"   -> formWithErrors,
                 "mode"   -> mode,
-                "mrn"    -> mrn,
+                "ref"    -> ref,
                 "radios" -> Radios.yesNo(formWithErrors("value"))
               )
 

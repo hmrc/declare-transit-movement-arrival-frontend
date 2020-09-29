@@ -19,7 +19,7 @@ package controllers
 import controllers.actions._
 import forms.EoriConfirmationFormProvider
 import javax.inject.Inject
-import models.{Mode, MovementReferenceNumber}
+import models.{DraftArrivalRef, Mode, MovementReferenceNumber}
 import navigation.Navigator
 import pages.{ConsigneeEoriConfirmationPage, ConsigneeEoriNumberPage, ConsigneeNamePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -47,7 +47,7 @@ class ConsigneeEoriConfirmationController @Inject()(
     with I18nSupport
     with NunjucksSupport {
 
-  def onPageLoad(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onPageLoad(ref: DraftArrivalRef, mode: Mode): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
     implicit request =>
       request.userAnswers.get(ConsigneeNamePage) match {
         case Some(consigneeName) =>
@@ -59,7 +59,7 @@ class ConsigneeEoriConfirmationController @Inject()(
           val json = Json.obj(
             "form"          -> preparedForm,
             "mode"          -> mode,
-            "mrn"           -> mrn,
+            "ref"           -> ref,
             "radios"        -> Radios.yesNo(preparedForm("value")),
             "consigneeName" -> consigneeName,
             "eoriNumber"    -> request.eoriNumber
@@ -70,7 +70,7 @@ class ConsigneeEoriConfirmationController @Inject()(
       }
   }
 
-  def onSubmit(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onSubmit(ref: DraftArrivalRef, mode: Mode): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
     implicit request =>
       request.userAnswers.get(ConsigneeNamePage) match {
         case Some(consigneeName) =>
@@ -82,7 +82,7 @@ class ConsigneeEoriConfirmationController @Inject()(
                 val json = Json.obj(
                   "form"          -> formWithErrors,
                   "mode"          -> mode,
-                  "mrn"           -> mrn,
+                  "ref"           -> ref,
                   "radios"        -> Radios.yesNo(formWithErrors("value")),
                   "consigneeName" -> consigneeName,
                   "eoriNumber"    -> request.eoriNumber

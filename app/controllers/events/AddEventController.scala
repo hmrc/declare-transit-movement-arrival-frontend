@@ -16,12 +16,12 @@
 
 package controllers.events
 
-import derivable.DeriveNumberOfEvents
 import controllers.actions._
+import derivable.DeriveNumberOfEvents
 import forms.events.AddEventFormProvider
 import javax.inject.Inject
 import models.requests.DataRequest
-import models.{Index, Mode, MovementReferenceNumber}
+import models.{DraftArrivalRef, Index, Mode}
 import navigation.Navigator
 import pages.events.AddEventPage
 import play.api.data.Form
@@ -29,7 +29,6 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc._
 import renderer.Renderer
-import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.SummaryList.Row
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
@@ -38,7 +37,6 @@ import utils.AddEventsHelper
 import scala.concurrent.{ExecutionContext, Future}
 
 class AddEventController @Inject()(override val messagesApi: MessagesApi,
-                                   sessionRepository: SessionRepository,
                                    navigator: Navigator,
                                    identify: IdentifierAction,
                                    getData: DataRetrievalActionProvider,
@@ -52,22 +50,22 @@ class AddEventController @Inject()(override val messagesApi: MessagesApi,
 
   private val form = formProvider()
 
-  def onPageLoad(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onPageLoad(ref: DraftArrivalRef, mode: Mode): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
     implicit request =>
       val preparedForm = request.userAnswers.get(AddEventPage) match {
         case None        => form
         case Some(value) => form.fill(value)
       }
-      renderView(mrn, mode, preparedForm, Results.Ok)
+      renderView(ref, mode, preparedForm, Results.Ok)
   }
 
-  def onSubmit(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onSubmit(ref: DraftArrivalRef, mode: Mode): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
     implicit request =>
       form
         .bindFromRequest()
         .fold(
           formWithErrors => {
-            renderView(mrn, mode, formWithErrors, Results.BadRequest)
+            renderView(ref, mode, formWithErrors, Results.BadRequest)
           },
           value =>
             for {
@@ -76,7 +74,7 @@ class AddEventController @Inject()(override val messagesApi: MessagesApi,
         )
   }
 
-  private def renderView(mrn: MovementReferenceNumber, mode: Mode, form: Form[Boolean], status: Results.Status)(
+  private def renderView(ref: DraftArrivalRef, mode: Mode, form: Form[Boolean], status: Results.Status)(
     implicit request: DataRequest[AnyContent]): Future[Result] = {
 
     val numberOfEvents = request.userAnswers.get(DeriveNumberOfEvents).getOrElse(0)
@@ -100,7 +98,7 @@ class AddEventController @Inject()(override val messagesApi: MessagesApi,
     val json = Json.obj(
       "form"        -> form,
       "mode"        -> mode,
-      "mrn"         -> mrn,
+      "ref"         -> ref,
       "radios"      -> Radios.yesNo(form("value")),
       "titleOfPage" -> title,
       "heading"     -> heading,

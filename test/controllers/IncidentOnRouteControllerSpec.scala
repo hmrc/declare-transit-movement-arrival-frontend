@@ -44,7 +44,7 @@ class IncidentOnRouteControllerSpec extends SpecBase with MockitoSugar with Nunj
   val formProvider = new IncidentOnRouteFormProvider()
   val form         = formProvider()
 
-  lazy val incidentOnRouteRoute = routes.IncidentOnRouteController.onPageLoad(mrn, NormalMode).url
+  lazy val incidentOnRouteRoute = routes.IncidentOnRouteController.onPageLoad(ref, NormalMode).url
 
   "IncidentOnRoute Controller" - {
 
@@ -67,7 +67,7 @@ class IncidentOnRouteControllerSpec extends SpecBase with MockitoSugar with Nunj
       val expectedJson = Json.obj(
         "form"   -> form,
         "mode"   -> NormalMode,
-        "mrn"    -> mrn,
+        "ref"    -> ref,
         "radios" -> Radios.yesNo(form("value"))
       )
 
@@ -99,7 +99,7 @@ class IncidentOnRouteControllerSpec extends SpecBase with MockitoSugar with Nunj
       val expectedJson = Json.obj(
         "form"   -> filledForm,
         "mode"   -> NormalMode,
-        "mrn"    -> mrn,
+        "ref"    -> ref,
         "radios" -> Radios.yesNo(filledForm("value"))
       )
 
@@ -156,7 +156,7 @@ class IncidentOnRouteControllerSpec extends SpecBase with MockitoSugar with Nunj
       val expectedJson = Json.obj(
         "form"   -> boundForm,
         "mode"   -> NormalMode,
-        "mrn"    -> mrn,
+        "ref"    -> ref,
         "radios" -> Radios.yesNo(boundForm("value"))
       )
 
