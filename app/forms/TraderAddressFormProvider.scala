@@ -29,10 +29,27 @@ class TraderAddressFormProvider @Inject() extends Mappings {
     mapping(
       "buildingAndStreet" -> text(
         "traderAddress.error.buildingAndStreet.required", args = Seq(traderName))
-        .verifying(maxLength(streetAndNumberLength, "traderAddress.error.buildingAndStreet.length"))
-        .verifying(minLength(1, "traderAddress.error.empty", Seq("Building and street name", traderName))),
+        .verifying(
+          maxLength(
+            streetAndNumberLength,
+            "traderAddress.error.buildingAndStreet.length",
+            Seq("building and street name", traderName)
+          )
+        )
+        .verifying(
+          minLength(
+            1,
+            "traderAddress.error.empty",
+            Seq("Building and street name", traderName)
+          )
+        ),
       "city" -> text("traderAddress.error.city.required", args = Seq(traderName))
-        .verifying(maxLength(cityLength, "traderAddress.error.city.length"))
+        .verifying(
+          maxLength(
+            cityLength,
+            "traderAddress.error.max_length",
+            args = Seq("city", traderName))
+        )
         .verifying(minLength(1, "traderAddress.error.empty", Seq("city", traderName))),
       "postcode" -> text("traderAddress.error.postcode.required", args = Seq(traderName))
         .verifying(maxLength(postCodeLength, "traderAddress.error.postcode.length", args = Seq(traderName)))
