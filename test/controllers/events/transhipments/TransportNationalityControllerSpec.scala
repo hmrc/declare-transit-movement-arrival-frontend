@@ -20,7 +20,7 @@ import base.SpecBase
 import connectors.ReferenceDataConnector
 import forms.events.transhipments.TransportNationalityFormProvider
 import matchers.JsonMatchers
-import models.reference.{Country, CountryCode}
+import models.reference.{Country, CountryCode, CountryFullList}
 import models.{CountryList, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
@@ -70,7 +70,7 @@ class TransportNationalityControllerSpec extends SpecBase with MockitoSugar with
 
     "must redirect to the next page when valid data is submitted" in {
 
-      when(mockReferenceDataConnector.getCountryList()(any(), any())).thenReturn(Future.successful(countries))
+      when(mockReferenceDataConnector.getCountryList(any())(any(), any())).thenReturn(Future.successful(countries))
       val mockSessionRepository = mock[SessionRepository]
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
@@ -98,7 +98,7 @@ class TransportNationalityControllerSpec extends SpecBase with MockitoSugar with
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      when(mockReferenceDataConnector.getCountryList()(any(), any())).thenReturn(Future.successful(countries))
+      when(mockReferenceDataConnector.getCountryList(any())(any(), any())).thenReturn(Future.successful(countries))
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
@@ -167,7 +167,7 @@ class TransportNationalityControllerSpec extends SpecBase with MockitoSugar with
 
   private def verifyOnPageLoad(form: Form[Country], userAnswers: UserAnswers, preSelect: Boolean): Future[_] = {
 
-    when(mockReferenceDataConnector.getCountryList()(any(), any())).thenReturn(Future.successful(countries))
+    when(mockReferenceDataConnector.getCountryList(any())(any(), any())).thenReturn(Future.successful(countries))
     when(mockRenderer.render(any(), any())(any()))
       .thenReturn(Future.successful(Html("")))
 
