@@ -21,7 +21,8 @@ import play.api.data.FormError
 
 class TraderAddressFormProviderSpec extends StringFieldBehaviours {
 
-  val form = new TraderAddressFormProvider()("trader_name")
+  val traderName = "trader_name"
+  val form       = new TraderAddressFormProvider()(traderName)
 
   ".buildingAndStreet" - {
 
@@ -40,7 +41,7 @@ class TraderAddressFormProviderSpec extends StringFieldBehaviours {
       form,
       fieldName,
       maxLength   = maxLength,
-      lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
+      lengthError = FormError(fieldName, lengthKey, Seq("building and street name", traderName))
     )
 
     behave like mandatoryField(
