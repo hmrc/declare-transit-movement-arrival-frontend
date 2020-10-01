@@ -20,7 +20,7 @@ import connectors.ReferenceDataConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalActionProvider, IdentifierAction}
 import forms.events.transhipments.TransportNationalityFormProvider
 import javax.inject.Inject
-import models.reference.Country
+import models.reference.{Country, CountryFullList}
 import models.{Index, Mode, MovementReferenceNumber}
 import navigation.Navigator
 import pages.events.transhipments.TransportNationalityPage
@@ -51,7 +51,7 @@ class TransportNationalityController @Inject()(override val messagesApi: Message
 
   def onPageLoad(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
-      referenceDataConnector.getCountryList() flatMap {
+      referenceDataConnector.getCountryList(CountryFullList) flatMap {
         countries =>
           val form = formProvider(countries)
 
@@ -67,7 +67,7 @@ class TransportNationalityController @Inject()(override val messagesApi: Message
 
   def onSubmit(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
-      referenceDataConnector.getCountryList() flatMap {
+      referenceDataConnector.getCountryList(CountryFullList) flatMap {
         countries =>
           val form = formProvider(countries)
 

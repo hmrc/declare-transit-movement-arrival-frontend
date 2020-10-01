@@ -21,7 +21,7 @@ import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, okJson, 
 import generators.MessagesModelGenerators
 import helper.WireMockServerHandler
 import models.CountryList
-import models.reference.{Country, CountryCode, CustomsOffice}
+import models.reference._
 import org.scalacheck.Gen
 import org.scalatest.Assertion
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -104,27 +104,54 @@ class ReferenceDataConnectorSpec extends SpecBase with WireMockServerHandler wit
 
     "getCountryList" - {
 
-      "must return Seq of Country when successful" in {
-        server.stubFor(
-          get(urlEqualTo(s"/$startUrl/countries-full-list"))
-            .willReturn(okJson(countryListResponseJson))
-        )
+      "for CountryFullList must" - {
 
-        val expectedResult: CountryList = CountryList(
-          Seq(
-            Country(CountryCode("GB"), "United Kingdom"),
-            Country(CountryCode("AD"), "Andorra")
+        "return Seq of Country when successful" in {
+          server.stubFor(
+            get(urlEqualTo(s"/$startUrl/countries-full-list"))
+              .willReturn(okJson(countryListResponseJson))
           )
-        )
 
-        connector.getCountryList.futureValue mustEqual expectedResult
+          val expectedResult: CountryList = CountryList(
+            Seq(
+              Country(CountryCode("GB"), "United Kingdom"),
+              Country(CountryCode("AD"), "Andorra")
+            )
+          )
+
+          connector.getCountryList(CountryFullList).futureValue mustEqual expectedResult
+        }
+
+        "return an exception when an error response is returned" in {
+          checkErrorResponse(s"/$startUrl/countries-full-list", connector.getCountryList(CountryFullList))
+        }
       }
 
-      "must return an exception when an error response is returned" in {
+      "for CountryTransitList must" - {
 
-        checkErrorResponse(s"/$startUrl/countries-full-list", connector.getCountryList)
+        "return Seq of Country when successful" in {
+          server.stubFor(
+            get(urlEqualTo(s"/$startUrl/transit-countries"))
+              .willReturn(okJson(countryListResponseJson))
+          )
+
+          val expectedResult: CountryList = CountryList(
+            Seq(
+              Country(CountryCode("GB"), "United Kingdom"),
+              Country(CountryCode("AD"), "Andorra")
+            )
+          )
+
+          connector.getCountryList(CountryTransitList).futureValue mustEqual expectedResult
+        }
+
+        "return an exception when an error response is returned" in {
+          checkErrorResponse(s"/$startUrl/transit-countries", connector.getCountryList(CountryTransitList))
+        }
       }
+
     }
+
   }
 
   private def checkErrorResponse(url: String, result: Future[_]): Assertion =
