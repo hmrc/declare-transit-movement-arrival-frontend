@@ -21,7 +21,7 @@ import forms.TraderAddressFormProvider
 import javax.inject.Inject
 import models.{Mode, MovementReferenceNumber}
 import navigation.Navigator
-import pages.TraderAddressPage
+import pages.{TraderAddressPage, TraderNamePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -45,20 +45,22 @@ class TraderAddressController @Inject()(override val messagesApi: MessagesApi,
     with I18nSupport
     with NunjucksSupport {
 
-  private val form = formProvider()
-
   def onPageLoad(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] =
     (identify andThen getData(mrn) andThen requireData).async {
       implicit request =>
+        val traderName = request.userAnswers.get(TraderNamePage).getOrElse("")
+
+        val form = formProvider(traderName)
         val preparedForm = request.userAnswers.get(TraderAddressPage) match {
           case None        => form
           case Some(value) => form.fill(value)
         }
 
         val json = Json.obj(
-          "form" -> preparedForm,
-          "mrn"  -> mrn,
-          "mode" -> mode
+          "form"       -> preparedForm,
+          "mrn"        -> mrn,
+          "mode"       -> mode,
+          "traderName" -> traderName
         )
 
         renderer.render("traderAddress.njk", json).map(Ok(_))
@@ -67,15 +69,18 @@ class TraderAddressController @Inject()(override val messagesApi: MessagesApi,
   def onSubmit(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] =
     (identify andThen getData(mrn) andThen requireData).async {
       implicit request =>
+        val traderName = request.userAnswers.get(TraderNamePage).getOrElse("")
+        val form       = formProvider(traderName)
+
         form
           .bindFromRequest()
           .fold(
             formWithErrors => {
-
               val json = Json.obj(
-                "form" -> formWithErrors,
-                "mrn"  -> mrn,
-                "mode" -> mode
+                "form"       -> formWithErrors,
+                "mrn"        -> mrn,
+                "mode"       -> mode,
+                "traderName" -> traderName
               )
 
               renderer.render("traderAddress.njk", json).map(BadRequest(_))

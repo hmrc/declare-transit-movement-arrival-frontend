@@ -86,8 +86,8 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
   def stringsWithMaxLength(maxLength: Int): Gen[String] =
     for {
       length <- choose(1, maxLength)
-      chars  <- listOfN(length, alphaNumChar)
-    } yield chars.mkString
+      str    <- Gen.alphaNumStr.map(_.take(length))
+    } yield str
 
   def extendedAsciiChar: Gen[Char] = chooseNum(128, 254).map(_.toChar)
 

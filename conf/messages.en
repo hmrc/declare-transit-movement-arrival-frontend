@@ -203,8 +203,8 @@ authorisedLocation.error.required = Enter authorised location code
 authorisedLocation.error.length = Authorised location code must be 17 characters or less
 authorisedLocation.error.invalid = Authorised location code must only contain letters a to z or numbers 0 to 9
 
-traderAddress.title = What is the address of the trader at the destination?
-traderAddress.heading = What is the address of the trader at the destination?
+traderAddress.title = What is the destination trader’s address?
+traderAddress.heading = What is {0}’s address?
 traderAddress.buildingAndStreet = Building and street
 traderAddress.city = Town or city
 traderAddress.postcode = Postcode
@@ -215,6 +215,11 @@ traderAddress.error.postcode.required = Enter the postcode of the trader at the 
 traderAddress.error.buildingAndStreet.length = Building and street must be 35 characters or less
 traderAddress.error.city.length = Town or city must be 35 characters or less
 traderAddress.error.postcode.length = Postcode must be 9 characters or less
+traderAddress.error.postcode.invalid = The postcode of {0}’s address must only include letters A to Z and numbers 0 to 9
+
+traderAddress.error.invalid = The {0} of {1}’s address must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, asterisks, forward slashes, full stops, hyphens, question marks, and greater than (>) and less than (<) signs
+traderAddress.error.empty = Enter the {0} of {1}’s address
+traderAddress.error.max_length = The {0} of {1}’s address must be 35 characters or less
 traderAddress.change.hidden = address of trader
 
 traderEori.title = What is the EORI number of the trader at the destination?
