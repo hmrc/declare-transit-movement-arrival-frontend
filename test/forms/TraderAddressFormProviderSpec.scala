@@ -17,6 +17,7 @@
 package forms
 
 import forms.behaviours.StringFieldBehaviours
+import org.scalacheck.Gen
 import play.api.data.FormError
 
 class TraderAddressFormProviderSpec extends StringFieldBehaviours {
@@ -24,12 +25,18 @@ class TraderAddressFormProviderSpec extends StringFieldBehaviours {
   val traderName = "trader_name"
   val form       = new TraderAddressFormProvider()(traderName)
 
+  val maxLength = 35
+
+  val validAddressStringGenOverLength: Gen[String] = for {
+    num  <- Gen.chooseNum[Int](maxLength + 1, maxLength + 5)
+    list <- Gen.listOfN(num, Gen.alphaNumChar)
+  } yield list.mkString("")
+
   ".buildingAndStreet" - {
 
     val fieldName   = "buildingAndStreet"
     val requiredKey = "traderAddress.error.buildingAndStreet.required"
     val lengthKey   = "traderAddress.error.buildingAndStreet.length"
-    val maxLength   = 35
 
     behave like fieldThatBindsValidData(
       form,
@@ -41,7 +48,8 @@ class TraderAddressFormProviderSpec extends StringFieldBehaviours {
       form,
       fieldName,
       maxLength   = maxLength,
-      lengthError = FormError(fieldName, lengthKey, Seq("building and street name", traderName))
+      lengthError = FormError(fieldName, lengthKey, Seq("building and street name", traderName)),
+      validAddressStringGenOverLength
     )
 
     behave like mandatoryField(
@@ -55,7 +63,7 @@ class TraderAddressFormProviderSpec extends StringFieldBehaviours {
 
     val fieldName   = "city"
     val requiredKey = "traderAddress.error.city.required"
-    val lengthKey   = "traderAddress.error.city.length"
+    val lengthKey   = "traderAddress.error.max_length"
     val maxLength   = 35
 
     behave like fieldThatBindsValidData(
@@ -68,7 +76,8 @@ class TraderAddressFormProviderSpec extends StringFieldBehaviours {
       form,
       fieldName,
       maxLength   = maxLength,
-      lengthError = FormError(fieldName, lengthKey, Seq("city", traderName))
+      lengthError = FormError(fieldName, lengthKey, Seq("city", traderName)),
+      validAddressStringGenOverLength
     )
 
     behave like mandatoryField(
@@ -95,7 +104,8 @@ class TraderAddressFormProviderSpec extends StringFieldBehaviours {
       form,
       fieldName,
       maxLength   = maxLength,
-      lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
+      lengthError = FormError(fieldName, lengthKey, Seq(maxLength)),
+      Gen.alphaNumStr
     )
 
     behave like mandatoryField(
