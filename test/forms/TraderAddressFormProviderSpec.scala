@@ -94,6 +94,11 @@ class TraderAddressFormProviderSpec extends StringFieldBehaviours {
     val lengthKey   = "traderAddress.error.postcode.length"
     val maxLength   = 9
 
+    val validAddressStringGenOverLength: Gen[String] = for {
+      num  <- Gen.chooseNum[Int](maxLength + 1, maxLength + 5)
+      list <- Gen.listOfN(num, Gen.alphaNumChar)
+    } yield list.mkString("")
+
     behave like fieldThatBindsValidData(
       form,
       fieldName,
@@ -104,14 +109,14 @@ class TraderAddressFormProviderSpec extends StringFieldBehaviours {
       form,
       fieldName,
       maxLength   = maxLength,
-      lengthError = FormError(fieldName, lengthKey, Seq(maxLength)),
-      Gen.alphaNumStr
+      lengthError = FormError(fieldName, lengthKey, Seq(traderName)),
+      validAddressStringGenOverLength
     )
 
     behave like mandatoryField(
       form,
       fieldName,
-      requiredError = FormError(fieldName, requiredKey)
+      requiredError = FormError(fieldName, requiredKey, Seq(traderName))
     )
   }
 }
