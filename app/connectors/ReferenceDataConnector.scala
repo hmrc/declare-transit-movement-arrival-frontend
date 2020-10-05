@@ -19,7 +19,7 @@ package connectors
 import config.FrontendAppConfig
 import javax.inject.Inject
 import models.CountryList
-import models.reference.{Country, CustomsOffice}
+import models.reference.{Country, CountryReferenceDataEndpoint, CustomsOffice}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
@@ -32,8 +32,8 @@ class ReferenceDataConnector @Inject()(config: FrontendAppConfig, http: HttpClie
     http.GET[Seq[CustomsOffice]](serviceUrl)
   }
 
-  def getCountryList()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[CountryList] = {
-    val serviceUrl = s"${config.referenceDataUrl}/countries-full-list"
+  def getCountryList(endpoint: CountryReferenceDataEndpoint)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[CountryList] = {
+    val serviceUrl = s"${config.referenceDataUrl}/${endpoint.value}"
     http.GET[Vector[Country]](serviceUrl).map(CountryList(_))
   }
 }
