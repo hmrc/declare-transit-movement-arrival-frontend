@@ -43,7 +43,7 @@ class TraderEoriFormProviderSpec extends StringFieldBehaviours {
     behave like mandatoryField(
       form,
       fieldName,
-      requiredError = FormError(fieldName, requiredKey, traderName)
+      requiredError = FormError(fieldName, requiredKey, Seq(traderName))
     )
 
     "must not bind strings longer than TraderWithEori.Constants.eoriLength characters" in {

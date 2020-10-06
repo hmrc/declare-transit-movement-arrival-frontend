@@ -57,7 +57,7 @@ class TraderEoriFormProvider @Inject() extends Mappings {
 
   def apply(traderName: String): Form[String] =
     Form(
-      "value" -> text("traderEori.error.required")
+      "value" -> text("traderEori.error.required", Seq(traderName))
         .verifying(
           maxLength(eoriLength, "traderEori.error.length", Seq(traderName)),
           regexp(eoriRegex.r, "traderEori.error.invalid", Seq(traderName)),
