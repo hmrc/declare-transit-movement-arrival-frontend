@@ -42,7 +42,7 @@ class TraderEoriControllerSpec extends SpecBase with MockitoSugar with NunjucksS
   def onwardRoute = Call("GET", "/foo")
 
   private val formProvider = new TraderEoriFormProvider()
-  private val form         = formProvider()
+  private val form         = formProvider(traderName)
   private val validEori    = "AB123456789012345"
 
   lazy val traderEoriRoute = routes.TraderEoriController.onPageLoad(mrn, NormalMode).url

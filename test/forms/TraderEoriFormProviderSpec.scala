@@ -26,8 +26,9 @@ class TraderEoriFormProviderSpec extends StringFieldBehaviours {
   private val requiredKey = "traderEori.error.required"
   private val lengthKey   = "traderEori.error.length"
   private val invalidKey  = "traderEori.error.invalid"
+  val traderName          = "trader_name"
 
-  private val form = new TraderEoriFormProvider()()
+  private val form = new TraderEoriFormProvider()(traderName)
 
   ".value" - {
 
