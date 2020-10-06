@@ -58,9 +58,9 @@ class TraderEoriController @Inject()(override val messagesApi: MessagesApi,
         }
 
         val json = Json.obj(
-          "form" -> preparedForm,
-          "mrn"  -> mrn,
-          "mode" -> mode,
+          "form"        -> preparedForm,
+          "mrn"         -> mrn,
+          "mode"        -> mode,
           "trader_name" -> traderName
         )
 
@@ -79,9 +79,9 @@ class TraderEoriController @Inject()(override val messagesApi: MessagesApi,
             formWithErrors => {
 
               val json = Json.obj(
-                "form" -> formWithErrors,
-                "mrn"  -> mrn,
-                "mode" -> mode,
+                "form"        -> formWithErrors,
+                "mrn"         -> mrn,
+                "mode"        -> mode,
                 "trader_name" -> traderName
               )
 

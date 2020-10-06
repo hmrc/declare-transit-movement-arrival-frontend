@@ -25,7 +25,7 @@ import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.TraderEoriPage
+import pages.{TraderEoriPage, TraderNamePage}
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -139,7 +139,9 @@ class TraderEoriControllerSpec extends SpecBase with MockitoSugar with NunjucksS
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application    = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val userAnswers = emptyUserAnswers.set(TraderNamePage, traderName).success.value
+
+      val application    = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request        = FakeRequest(POST, traderEoriRoute).withFormUrlEncodedBody(("value", ""))
       val boundForm      = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -158,15 +160,6 @@ class TraderEoriControllerSpec extends SpecBase with MockitoSugar with NunjucksS
       )
 
       templateCaptor.getValue mustEqual "traderEori.njk"
-      val json = jsonCaptor.getValue
-
-      Console.println("EXPECTED")
-      Console.println(expectedJson.toString())
-
-      Console.println(json.toString())
-
-      (json \ "form") mustEqual (expectedJson \ "form")
-
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
