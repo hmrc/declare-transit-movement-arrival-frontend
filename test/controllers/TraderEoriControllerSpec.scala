@@ -158,6 +158,15 @@ class TraderEoriControllerSpec extends SpecBase with MockitoSugar with NunjucksS
       )
 
       templateCaptor.getValue mustEqual "traderEori.njk"
+      val json = jsonCaptor.getValue
+
+      Console.println("EXPECTED")
+      Console.println(expectedJson.toString())
+
+      Console.println(json.toString())
+
+      (json \ "form") mustEqual (expectedJson \ "form")
+
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
