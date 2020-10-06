@@ -43,12 +43,12 @@ class TraderEoriFormProviderSpec extends StringFieldBehaviours {
     behave like mandatoryField(
       form,
       fieldName,
-      requiredError = FormError(fieldName, requiredKey)
+      requiredError = FormError(fieldName, requiredKey, traderName)
     )
 
     "must not bind strings longer than TraderWithEori.Constants.eoriLength characters" in {
 
-      val expectedError = FormError(fieldName, lengthKey, Seq(eoriLength))
+      val expectedError = FormError(fieldName, lengthKey, Seq(traderName))
 
       forAll(stringsLongerThan(eoriLength + 1)) {
         string =>
@@ -60,7 +60,7 @@ class TraderEoriFormProviderSpec extends StringFieldBehaviours {
     "must not bind strings that do not match regex" in {
 
       val validRegex    = "[A-Z]{2}[^\n\r]{1,}"
-      val expectedError = FormError(fieldName, invalidKey, Seq(validRegex))
+      val expectedError = FormError(fieldName, invalidKey, Seq(traderName))
 
       val genInvalidString: Gen[String] = {
         stringsWithMaxLength(eoriLength) suchThat (!_.matches("[A-Z]{2}[^\n\r]{1,}"))
