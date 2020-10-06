@@ -27,7 +27,7 @@ import java.util.Locale
 
 object TraderEoriUtils {
   val isoCountries: List[String] = Locale.getISOCountries.toList
-  val numericOnlyRegex = "[0-9]*"
+  val numericOnlyRegex           = "[0-9]*"
 }
 
 class TraderEoriFormProvider @Inject() extends Mappings {
@@ -35,14 +35,12 @@ class TraderEoriFormProvider @Inject() extends Mappings {
   def eoriFormat(errorKey: String, args: Seq[Any]): Constraint[String] =
     Constraint {
       str =>
-        val countryCode = str.take(2)
+        val countryCode  = str.take(2)
         val restOfString = str.drop(2)
 
-        if (
-          TraderEoriUtils.isoCountries.contains(countryCode) &&
-          restOfString.length <= (eoriLength - 2) &&
-          restOfString.matches(TraderEoriUtils.numericOnlyRegex)
-        ) {
+        if (TraderEoriUtils.isoCountries.contains(countryCode) &&
+            restOfString.length <= (eoriLength - 2) &&
+            restOfString.matches(TraderEoriUtils.numericOnlyRegex)) {
           Valid
         } else {
           Invalid(errorKey, args: _*)
