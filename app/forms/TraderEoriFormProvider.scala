@@ -26,7 +26,7 @@ import play.api.data.validation.{Constraint, Invalid, Valid}
 import java.util.Locale
 
 object TraderEoriUtils {
-  val isoCountries     = Locale.getISOCountries.toList
+  val isoCountries: List[String] = Locale.getISOCountries.toList
   val numericOnlyRegex = "[0-9]*"
 }
 
@@ -35,20 +35,14 @@ class TraderEoriFormProvider @Inject() extends Mappings {
   def eoriFormat(errorKey: String, args: Seq[Any]): Constraint[String] =
     Constraint {
       str =>
-        // We first breakdown the input string in 2 parts.
-        // The country code.
         val countryCode = str.take(2)
-
-        // And the numeric part of the EORI number.
         val restOfString = str.drop(2)
 
-        if (// Input country code is a valid ISO country.
-            TraderEoriUtils.isoCountries.contains(countryCode) &&
-            // String has to be at most 12 characters
-            restOfString.length <= (eoriLength - 2) &&
-
-            // The rest of the string has only numbers.
-            restOfString.matches(TraderEoriUtils.numericOnlyRegex)) {
+        if (
+          TraderEoriUtils.isoCountries.contains(countryCode) &&
+          restOfString.length <= (eoriLength - 2) &&
+          restOfString.matches(TraderEoriUtils.numericOnlyRegex)
+        ) {
           Valid
         } else {
           Invalid(errorKey, args: _*)
