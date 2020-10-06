@@ -43,7 +43,7 @@ class TraderEoriControllerSpec extends SpecBase with MockitoSugar with NunjucksS
 
   private val formProvider = new TraderEoriFormProvider()
   private val form         = formProvider(traderName)
-  private val validEori    = "AB123456789012345"
+  private val validEori    = "GB123456789012345"
 
   lazy val traderEoriRoute = routes.TraderEoriController.onPageLoad(mrn, NormalMode).url
 
@@ -103,7 +103,20 @@ class TraderEoriControllerSpec extends SpecBase with MockitoSugar with NunjucksS
       )
 
       templateCaptor.getValue mustEqual "traderEori.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
+      val json = jsonCaptor.getValue
+
+      Console.println("ACTUAL JSON")
+      Console.println(
+        json.toString()
+      )
+
+      Console.println("EXPECTED JSON")
+      Console.println(
+        expectedJson.toString()
+      )
+      (json \ "form") mustEqual (expectedJson \ "form")
+
+      json must containJson(expectedJson)
 
       application.stop()
     }
