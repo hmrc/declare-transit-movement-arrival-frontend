@@ -19,7 +19,14 @@ package models.domain
 import models.messages.Trader
 import play.api.libs.json.{Format, Json}
 
-final case class TraderDomain(name: String, streetAndNumber: String, postCode: String, city: String, countryCode: String, eori: String)
+final case class TraderDomain(
+  name: String,
+  streetAndNumber: String,
+  postCode: String,
+  city: String,
+  countryCode: String,
+  eori: String
+)
 
 object TraderDomain {
 
