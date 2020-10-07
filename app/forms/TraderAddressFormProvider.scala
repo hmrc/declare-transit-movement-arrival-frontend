@@ -22,24 +22,9 @@ import models.Address
 import play.api.data.Form
 import play.api.data.Forms._
 import models.domain.TraderDomain.Constants.{cityLength, postCodeLength, streetAndNumberLength}
-
-import scala.util.matching.Regex
+import models.domain.TraderDomain.inputRegex
 
 class TraderAddressFormProvider @Inject() extends Mappings {
-
-  /**
-    * letters a to z
-    * numbers 0 to 9
-    * ampersands (&)
-    * apostrophes
-    * asterisks,
-    * forward slashes
-    * full stops
-    * hyphens
-    * question marks
-    * and greater than (>) and less than (<) signs
-    */
-  val inputRegex: Regex = "[\\sa-zA-Z0-9&'*/.\\-?<>]*".r
 
   def apply(traderName: String): Form[Address] = Form(
     mapping(

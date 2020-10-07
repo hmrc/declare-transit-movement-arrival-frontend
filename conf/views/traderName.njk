@@ -7,7 +7,7 @@
 {% from "macros/title.njk"                         import title %}
 
 {% block pageTitle %}
-  {{ title(messages("traderName.title"), form.errors) }}
+  {{ title(messages("traderAddress.title") + messages("site.title.suffix"), form.errors) }}
 {% endblock %}
 
 {% block mainContent %}
