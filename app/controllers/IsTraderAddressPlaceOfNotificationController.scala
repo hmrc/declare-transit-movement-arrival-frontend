@@ -22,7 +22,7 @@ import javax.inject.Inject
 import models._
 import models.requests.DataRequest
 import navigation.Navigator
-import pages.{IsTraderAddressPlaceOfNotificationPage, TraderAddressPage}
+import pages.{IsTraderAddressPlaceOfNotificationPage, TraderAddressPage, TraderNamePage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -48,13 +48,13 @@ class IsTraderAddressPlaceOfNotificationController @Inject()(override val messag
     with I18nSupport
     with uk.gov.hmrc.nunjucks.NunjucksSupport {
 
-  private val form = formProvider()
-
   def onPageLoad(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] =
     (identify andThen getData(mrn) andThen requireData).async {
       implicit request =>
         request.userAnswers.get(TraderAddressPage) match {
           case Some(traderAddress) => {
+            val traderName = request.userAnswers.get(TraderNamePage).getOrElse("")
+            val form       = formProvider(traderName)
 
             val preparedForm = request.userAnswers.get(IsTraderAddressPlaceOfNotificationPage) match {
               case None        => form
@@ -74,6 +74,8 @@ class IsTraderAddressPlaceOfNotificationController @Inject()(override val messag
       implicit request =>
         request.userAnswers.get(TraderAddressPage) match {
           case Some(traderAddress) => {
+            val traderName = request.userAnswers.get(TraderNamePage).getOrElse("")
+            val form       = formProvider(traderName)
 
             form
               .bindFromRequest()
@@ -99,6 +101,8 @@ class IsTraderAddressPlaceOfNotificationController @Inject()(override val messag
     val addressTown     = traderAddress.city
     val addressPostcode = traderAddress.postcode
 
+    val traderName = request.userAnswers.get(TraderNamePage).getOrElse("")
+
     val json = Json.obj(
       "form"           -> form,
       "mode"           -> mode,
@@ -106,7 +110,8 @@ class IsTraderAddressPlaceOfNotificationController @Inject()(override val messag
       "traderLine1"    -> addressLine1,
       "traderTown"     -> addressTown,
       "traderPostcode" -> addressPostcode,
-      "radios"         -> Radios.yesNo(form("value"))
+      "radios"         -> Radios.yesNo(form("value")),
+      "traderName"     -> traderName
     )
 
     renderer.render("isTraderAddressPlaceOfNotification.njk", json)

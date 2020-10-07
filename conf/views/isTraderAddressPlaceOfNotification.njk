@@ -32,7 +32,7 @@
 
           <div class="govuk-form-group{% if form.errors.length > 0 %} govuk-form-group--error{% endif %}">
 
-            <h1 class="govuk-heading-xl">{{ messages('isTraderAddressPlaceOfNotification.heading') }}</h1>
+            <h1 class="govuk-heading-xl">{{ messages('isTraderAddressPlaceOfNotification.heading', traderName) }}</h1>
 
             <p class="govuk-body-l">
               {{ traderLine1 }} <br>
@@ -45,7 +45,7 @@
               name: 'value',
               fieldset: {
                 legend: {
-                  text: messages('isTraderAddressPlaceOfNotification.title'),
+                  text: messages('isTraderAddressPlaceOfNotification.title', traderName),
                   isPageHeading: false,
                   classes: "govuk-visually-hidden"
                 }
