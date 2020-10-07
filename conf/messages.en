@@ -324,10 +324,10 @@ checkEventAnswers.section.title.differentContainerAndVehicle = Different contain
 checkEventAnswers.section.title.containerNumbers = Container numbers
 checkEventAnswers.section.title.vehicleInformation = Vehicle information
 
-isTraderAddressPlaceOfNotification.title = Are you completing this arrival notification at the trader’s address?
-isTraderAddressPlaceOfNotification.heading = Are you completing this arrival notification at the trader’s address?
+isTraderAddressPlaceOfNotification.title = Are you completing this arrival notification at {0}’s address?
+isTraderAddressPlaceOfNotification.heading = Are you completing this arrival notification at {0}’s address?
 isTraderAddressPlaceOfNotification.checkYourAnswersLabel = Are you completing this arrival notification at the trader’s address?
-isTraderAddressPlaceOfNotification.error.required = Select yes if you are completing this arrival notification at the trader’s address
+isTraderAddressPlaceOfNotification.error.required = Select yes if you are completing this arrival notification at {0}’s address
 isTraderAddressPlaceOfNotification.change.hidden = if you are completing this arrival notification at the trader's address
 
 placeOfNotification.title = Where are you completing this arrival notification?
