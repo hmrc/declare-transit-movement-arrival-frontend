@@ -21,7 +21,15 @@ import play.api.libs.json.{Format, Json}
 
 import scala.util.matching.Regex
 
-final case class TraderDomain(name: String, streetAndNumber: String, postCode: String, city: String, countryCode: String, eori: String)
+
+final case class TraderDomain(
+  name: String,
+  streetAndNumber: String,
+  postCode: String,
+  city: String,
+  countryCode: String,
+  eori: String
+)
 
 object TraderDomain {
 
