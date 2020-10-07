@@ -45,11 +45,9 @@ class TraderEoriController @Inject()(override val messagesApi: MessagesApi,
     with I18nSupport
     with NunjucksSupport {
 
-
   def onPageLoad(ref: DraftArrivalRef, mode: Mode): Action[AnyContent] =
     (identify andThen getData(ref) andThen requireData).async {
       implicit request =>
-
         val traderName = request.userAnswers.get(TraderNamePage).getOrElse("")
 
         val form = formProvider(traderName)
@@ -60,9 +58,9 @@ class TraderEoriController @Inject()(override val messagesApi: MessagesApi,
         }
 
         val json = Json.obj(
-          "form" -> preparedForm,
-          "ref"  -> ref,
-          "mode"        -> mode,
+          "form"       -> preparedForm,
+          "ref"        -> ref,
+          "mode"       -> mode,
           "traderName" -> traderName
         )
 
@@ -81,9 +79,9 @@ class TraderEoriController @Inject()(override val messagesApi: MessagesApi,
             formWithErrors => {
 
               val json = Json.obj(
-                "form"        -> formWithErrors,
-                "ref"  -> ref,
-                "mode"        -> mode,
+                "form"       -> formWithErrors,
+                "ref"        -> ref,
+                "mode"       -> mode,
                 "traderName" -> traderName
               )
 
