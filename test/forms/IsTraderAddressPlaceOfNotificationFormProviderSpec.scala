@@ -35,7 +35,7 @@ class IsTraderAddressPlaceOfNotificationFormProviderSpec extends BooleanFieldBeh
     behave like booleanField(
       form,
       fieldName,
-      invalidError = FormError(fieldName, invalidKey)
+      invalidError = FormError(fieldName, invalidKey, Seq(traderName))
     )
 
     behave like mandatoryField(
