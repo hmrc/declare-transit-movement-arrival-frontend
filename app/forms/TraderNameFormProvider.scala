@@ -20,12 +20,22 @@ import forms.mappings.Mappings
 import javax.inject.Inject
 import play.api.data.Form
 import models.domain.TraderDomain.Constants.nameLength
+import models.domain.TraderDomain.inputRegex
 
 class TraderNameFormProvider @Inject() extends Mappings {
 
   def apply(): Form[String] =
     Form(
       "value" -> text("traderName.error.required")
-        .verifying(maxLength(nameLength, "traderName.error.length"))
+        .verifying(
+          maxLength(nameLength, "traderName.error.length")
+        )
+        .verifying(
+          regexp(
+            inputRegex,
+            "traderAddress.error.invalid",
+            Seq.empty
+          )
+        )
     )
 }
