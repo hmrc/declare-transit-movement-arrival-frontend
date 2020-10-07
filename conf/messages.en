@@ -231,11 +231,12 @@ traderEori.error.length = EORI number must be 17 characters or less
 traderEori.error.invalid = Enter a real EORI number
 traderEori.change.hidden = EORI number of trader
 
-traderName.title = What is the name of the trader at the destination?
-traderName.heading = What is the name of the trader at the destination?
+traderName.title = What is the destination trader’s name?
+traderName.heading = What is the destination trader’s name?
 traderName.checkYourAnswersLabel = Name
-traderName.error.required = Enter the name of the trader at the destination
-traderName.error.length = Name of the trader must be 35 characters or less
+traderName.error.required = Enter destination trader’s name
+traderName.error.invalid = Destination trader's name must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, asterisks, forward slashes, full stops, hyphens, question marks, and greater than (>) and less than (<) signs.
+traderName.error.length = Destination trader’s name must be 35 characters or less
 traderName.change.hidden = name of trader
 
 useDifferentService.title = You need to use a different service
