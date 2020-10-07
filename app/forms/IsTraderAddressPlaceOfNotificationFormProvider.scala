@@ -25,6 +25,6 @@ class IsTraderAddressPlaceOfNotificationFormProvider @Inject() extends Mappings 
 
   def apply(traderName: String): Form[Boolean] =
     Form(
-      "value" -> boolean("isTraderAddressPlaceOfNotification.error.required", traderName)
+      "value" -> boolean("isTraderAddressPlaceOfNotification.error.required", args = Seq(traderName))
     )
 }
