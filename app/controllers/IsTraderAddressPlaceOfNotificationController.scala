@@ -111,7 +111,7 @@ class IsTraderAddressPlaceOfNotificationController @Inject()(override val messag
       "traderTown"     -> addressTown,
       "traderPostcode" -> addressPostcode,
       "radios"         -> Radios.yesNo(form("value")),
-      "trader_name"    -> traderName
+      "traderName"     -> traderName
     )
 
     renderer.render("isTraderAddressPlaceOfNotification.njk", json)
