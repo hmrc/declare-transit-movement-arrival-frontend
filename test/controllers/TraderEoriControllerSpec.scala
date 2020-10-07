@@ -25,7 +25,7 @@ import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.TraderEoriPage
+import pages.{TraderEoriPage, TraderNamePage}
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -42,8 +42,8 @@ class TraderEoriControllerSpec extends SpecBase with MockitoSugar with NunjucksS
   def onwardRoute = Call("GET", "/foo")
 
   private val formProvider = new TraderEoriFormProvider()
-  private val form         = formProvider()
-  private val validEori    = "AB123456789012345"
+  private val form         = formProvider(traderName)
+  private val validEori    = "GB123456789012345"
 
   lazy val traderEoriRoute = routes.TraderEoriController.onPageLoad(ref, NormalMode).url
 
@@ -139,7 +139,9 @@ class TraderEoriControllerSpec extends SpecBase with MockitoSugar with NunjucksS
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application    = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val userAnswers = emptyUserAnswers.set(TraderNamePage, traderName).success.value
+
+      val application    = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request        = FakeRequest(POST, traderEoriRoute).withFormUrlEncodedBody(("value", ""))
       val boundForm      = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])

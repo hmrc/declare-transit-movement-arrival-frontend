@@ -19,9 +19,9 @@ package controllers
 import controllers.actions._
 import forms.TraderEoriFormProvider
 import javax.inject.Inject
-import models.{DraftArrivalRef, Mode, MovementReferenceNumber}
+import models.{DraftArrivalRef, Mode}
 import navigation.Navigator
-import pages.{ConsigneeNamePage, TraderEoriPage}
+import pages.{TraderEoriPage, TraderNamePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -45,11 +45,15 @@ class TraderEoriController @Inject()(override val messagesApi: MessagesApi,
     with I18nSupport
     with NunjucksSupport {
 
-  private val form = formProvider()
 
   def onPageLoad(ref: DraftArrivalRef, mode: Mode): Action[AnyContent] =
     (identify andThen getData(ref) andThen requireData).async {
       implicit request =>
+
+        val traderName = request.userAnswers.get(TraderNamePage).getOrElse("")
+
+        val form = formProvider(traderName)
+
         val preparedForm = request.userAnswers.get(TraderEoriPage) match {
           case None        => form
           case Some(value) => form.fill(value)
@@ -58,7 +62,8 @@ class TraderEoriController @Inject()(override val messagesApi: MessagesApi,
         val json = Json.obj(
           "form" -> preparedForm,
           "ref"  -> ref,
-          "mode" -> mode
+          "mode"        -> mode,
+          "trader_name" -> traderName
         )
 
         renderer.render("traderEori.njk", json).map(Ok(_))
@@ -67,6 +72,9 @@ class TraderEoriController @Inject()(override val messagesApi: MessagesApi,
   def onSubmit(ref: DraftArrivalRef, mode: Mode): Action[AnyContent] =
     (identify andThen getData(ref) andThen requireData).async {
       implicit request =>
+        val traderName = request.userAnswers.get(TraderNamePage).getOrElse("")
+        val form       = formProvider(traderName)
+
         form
           .bindFromRequest()
           .fold(
@@ -75,7 +83,8 @@ class TraderEoriController @Inject()(override val messagesApi: MessagesApi,
               val json = Json.obj(
                 "form" -> formWithErrors,
                 "ref"  -> ref,
-                "mode" -> mode
+                "mode" -> mode,
+                "trader_name" -> traderName
               )
 
               renderer.render("traderEori.njk", json).map(BadRequest(_))

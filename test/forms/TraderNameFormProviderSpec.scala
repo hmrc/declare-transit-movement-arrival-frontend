@@ -17,6 +17,7 @@
 package forms
 
 import forms.behaviours.StringFieldBehaviours
+import org.scalacheck.Gen
 import play.api.data.FormError
 
 class TraderNameFormProviderSpec extends StringFieldBehaviours {
@@ -31,6 +32,11 @@ class TraderNameFormProviderSpec extends StringFieldBehaviours {
 
     val fieldName = "value"
 
+    val validAddressStringGenOverLength: Gen[String] = for {
+      num  <- Gen.chooseNum[Int](maxLength + 1, maxLength + 5)
+      list <- Gen.listOfN(num, Gen.alphaNumChar)
+    } yield list.mkString("")
+
     behave like fieldThatBindsValidData(
       form,
       fieldName,
@@ -41,7 +47,8 @@ class TraderNameFormProviderSpec extends StringFieldBehaviours {
       form,
       fieldName,
       maxLength   = maxLength,
-      lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
+      lengthError = FormError(fieldName, lengthKey, Seq(maxLength)),
+      validAddressStringGenOverLength
     )
 
     behave like mandatoryField(

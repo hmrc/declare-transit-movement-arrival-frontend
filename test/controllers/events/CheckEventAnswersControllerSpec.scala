@@ -21,7 +21,7 @@ import connectors.ReferenceDataConnector
 import generators.MessagesModelGenerators
 import matchers.JsonMatchers
 import models.{CountryList, NormalMode}
-import models.reference.Country
+import models.reference.{Country, CountryFullList, CountryTransitList}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.times
@@ -45,7 +45,7 @@ class CheckEventAnswersControllerSpec extends SpecBase with JsonMatchers with Me
       val sampleCountryList          = arbitrary[Seq[Country]].sample.value
       val mockReferenceDataConnector = mock[ReferenceDataConnector]
 
-      when(mockReferenceDataConnector.getCountryList()(any(), any()))
+      when(mockReferenceDataConnector.getCountryList(any())(any(), any()))
         .thenReturn(Future.successful(CountryList(sampleCountryList)))
 
       when(mockRenderer.render(any(), any())(any()))

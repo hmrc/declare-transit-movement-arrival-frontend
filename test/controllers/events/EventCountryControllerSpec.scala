@@ -21,7 +21,7 @@ import connectors.ReferenceDataConnector
 import forms.events.EventCountryFormProvider
 import matchers.JsonMatchers
 import models.{CountryList, NormalMode, UserAnswers}
-import models.reference.{Country, CountryCode}
+import models.reference.{Country, CountryCode, CountryFullList}
 import navigation.FakeNavigator
 import navigation.Navigator
 import org.mockito.ArgumentCaptor
@@ -73,7 +73,7 @@ class EventCountryControllerSpec extends SpecBase with MockitoSugar with Nunjuck
       val mockSessionRepository = mock[SessionRepository]
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-      when(mockReferenceDataConnector.getCountryList()(any(), any())).thenReturn(Future.successful(countries))
+      when(mockReferenceDataConnector.getCountryList(any())(any(), any())).thenReturn(Future.successful(countries))
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
@@ -100,7 +100,7 @@ class EventCountryControllerSpec extends SpecBase with MockitoSugar with Nunjuck
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
-      when(mockReferenceDataConnector.getCountryList()(any(), any())).thenReturn(Future.successful(countries))
+      when(mockReferenceDataConnector.getCountryList(any())(any(), any())).thenReturn(Future.successful(countries))
 
       val json = Seq(
         Json.obj("text" -> "", "value"               -> ""),
@@ -174,7 +174,7 @@ class EventCountryControllerSpec extends SpecBase with MockitoSugar with Nunjuck
     when(mockRenderer.render(any(), any())(any()))
       .thenReturn(Future.successful(Html("")))
 
-    when(mockReferenceDataConnector.getCountryList()(any(), any())).thenReturn(Future.successful(countries))
+    when(mockReferenceDataConnector.getCountryList(any())(any(), any())).thenReturn(Future.successful(countries))
 
     val countriesJson = Seq(
       Json.obj("text" -> "", "value"               -> ""),

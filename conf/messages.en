@@ -215,22 +215,31 @@ traderAddress.error.postcode.required = Enter the postcode of the trader at the 
 traderAddress.error.buildingAndStreet.length = Building and street must be 35 characters or less
 traderAddress.error.city.length = Town or city must be 35 characters or less
 traderAddress.error.postcode.length = Postcode must be 9 characters or less
+traderAddress.error.postcode.invalid = The postcode of {0}’s address must only include letters A to Z and numbers 0 to 9
+
+traderAddress.error.invalid = The {0} of {1}’s address must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, asterisks, forward slashes, full stops, hyphens, question marks, and greater than (>) and less than (<) signs
+traderAddress.error.empty = Enter the {0} of {1}’s address
+traderAddress.error.max_length = The {0} of {1}’s address must be 35 characters or less
 traderAddress.change.hidden = address of trader
 
-traderEori.title = What is the EORI number of the trader at the destination?
-traderEori.heading = What is the EORI number of the trader at the destination?
+traderEori.title = What is the EORI number of the trader at the destination? - {0} - GOV.UK
+traderEori.heading = What is {0}’s EORI number?
 traderEori.hint = The first 2 letters are the country code, like 'GB'. This is followed by up to 12 numbers, like GB123456123456.
 traderEori.checkYourAnswersLabel = EORI number
-traderEori.error.required = Enter the EORI number of the trader at the destination
+
+traderEori.error.required = What is {0}’s EORI number
 traderEori.error.length = EORI number must be 17 characters or less
+traderEori.error.format = Enter {0}’s EORI number in the right format
+traderEori.error.regexp = {0}’s EORI number must only include letters a to z and numbers 0 to 9
 traderEori.error.invalid = Enter a real EORI number
 traderEori.change.hidden = EORI number of trader
 
-traderName.title = What is the name of the trader at the destination?
-traderName.heading = What is the name of the trader at the destination?
+traderName.title = What is the destination trader’s name?
+traderName.heading = What is the destination trader’s name?
 traderName.checkYourAnswersLabel = Name
-traderName.error.required = Enter the name of the trader at the destination
-traderName.error.length = Name of the trader must be 35 characters or less
+traderName.error.required = Enter destination trader’s name
+traderName.error.invalid = Destination trader's name must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, asterisks, forward slashes, full stops, hyphens, question marks, and greater than (>) and less than (<) signs.
+traderName.error.length = Destination trader’s name must be 35 characters or less
 traderName.change.hidden = name of trader
 
 useDifferentService.title = You need to use a different service

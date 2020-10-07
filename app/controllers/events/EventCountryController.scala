@@ -20,8 +20,8 @@ import connectors.ReferenceDataConnector
 import controllers.actions._
 import forms.events.EventCountryFormProvider
 import javax.inject.Inject
-import models.reference.Country
-import models.{DraftArrivalRef, Index, Mode, MovementReferenceNumber}
+import models.reference.{Country, CountryTransitList}
+import models.{DraftArrivalRef, Index, Mode}
 import navigation.Navigator
 import pages.events.EventCountryPage
 import play.api.data.Form
@@ -52,7 +52,7 @@ class EventCountryController @Inject()(override val messagesApi: MessagesApi,
   def onPageLoad(ref: DraftArrivalRef, eventIndex: Index, mode: Mode): Action[AnyContent] =
     (identify andThen getData(ref) andThen requireData).async {
       implicit request =>
-        referenceDataConnector.getCountryList() flatMap {
+        referenceDataConnector.getCountryList(CountryTransitList) flatMap {
           countries =>
             val form = formProvider(countries)
 
@@ -69,7 +69,7 @@ class EventCountryController @Inject()(override val messagesApi: MessagesApi,
   def onSubmit(ref: DraftArrivalRef, eventIndex: Index, mode: Mode): Action[AnyContent] =
     (identify andThen getData(ref) andThen requireData).async {
       implicit request =>
-        referenceDataConnector.getCountryList() flatMap {
+        referenceDataConnector.getCountryList(CountryTransitList) flatMap {
           countries =>
             formProvider(countries)
               .bindFromRequest()

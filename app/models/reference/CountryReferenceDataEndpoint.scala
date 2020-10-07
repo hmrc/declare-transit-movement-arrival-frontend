@@ -14,28 +14,16 @@
  * limitations under the License.
  */
 
-package forms
+package models.reference
 
-import forms.mappings.Mappings
-import javax.inject.Inject
-import play.api.data.Form
-import models.domain.TraderDomain.Constants.nameLength
-import models.domain.TraderDomain.inputRegex
+sealed trait CountryReferenceDataEndpoint {
+  val value: String
+}
 
-class TraderNameFormProvider @Inject() extends Mappings {
+object CountryFullList extends CountryReferenceDataEndpoint {
+  override val value: String = "countries-full-list"
+}
 
-  def apply(): Form[String] =
-    Form(
-      "value" -> text("traderName.error.required")
-        .verifying(
-          maxLength(nameLength, "traderName.error.length")
-        )
-        .verifying(
-          regexp(
-            inputRegex,
-            "traderAddress.error.invalid",
-            Seq.empty
-          )
-        )
-    )
+object CountryTransitList extends CountryReferenceDataEndpoint {
+  override val value: String = "transit-countries"
 }

@@ -19,9 +19,9 @@ package controllers
 import controllers.actions._
 import forms.TraderAddressFormProvider
 import javax.inject.Inject
-import models.{DraftArrivalRef, Mode, MovementReferenceNumber}
+import models.{DraftArrivalRef, Mode}
 import navigation.Navigator
-import pages.TraderAddressPage
+import pages.{TraderAddressPage, TraderNamePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -45,11 +45,11 @@ class TraderAddressController @Inject()(override val messagesApi: MessagesApi,
     with I18nSupport
     with NunjucksSupport {
 
-  private val form = formProvider()
-
   def onPageLoad(ref: DraftArrivalRef, mode: Mode): Action[AnyContent] =
-    (identify andThen getData(ref) andThen requireData).async {
-      implicit request =>
+    (identify andThen getData(ref) andThen requireData).async { implicit request =>
+        val traderName = request.userAnswers.get(TraderNamePage).getOrElse("")
+        val form = formProvider(traderName)
+
         val preparedForm = request.userAnswers.get(TraderAddressPage) match {
           case None        => form
           case Some(value) => form.fill(value)
@@ -59,6 +59,9 @@ class TraderAddressController @Inject()(override val messagesApi: MessagesApi,
           "form" -> preparedForm,
           "ref"  -> ref,
           "mode" -> mode
+          "form"       -> preparedForm,
+          "mode"       -> mode,
+          "traderName" -> traderName
         )
 
         renderer.render("traderAddress.njk", json).map(Ok(_))
@@ -67,6 +70,9 @@ class TraderAddressController @Inject()(override val messagesApi: MessagesApi,
   def onSubmit(ref: DraftArrivalRef, mode: Mode): Action[AnyContent] =
     (identify andThen getData(ref) andThen requireData).async {
       implicit request =>
+        val traderName = request.userAnswers.get(TraderNamePage).getOrElse("")
+        val form       = formProvider(traderName)
+
         form
           .bindFromRequest()
           .fold(
@@ -75,7 +81,8 @@ class TraderAddressController @Inject()(override val messagesApi: MessagesApi,
               val json = Json.obj(
                 "form" -> formWithErrors,
                 "ref"  -> ref,
-                "mode" -> mode
+                "mode" -> mode,
+                "traderName" -> traderName
               )
 
               renderer.render("traderAddress.njk", json).map(BadRequest(_))

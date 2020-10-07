@@ -42,7 +42,7 @@ class TraderAddressControllerSpec extends SpecBase with MockitoSugar with Nunjuc
   def onwardRoute = Call("GET", "/foo")
 
   val formProvider = new TraderAddressFormProvider()
-  val form         = formProvider()
+  val form         = formProvider("trader_name")
 
   lazy val traderAddressRoute = routes.TraderAddressController.onPageLoad(ref, NormalMode).url
 

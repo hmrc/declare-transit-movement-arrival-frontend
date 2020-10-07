@@ -19,7 +19,8 @@ package controllers.events
 import com.google.inject.Inject
 import connectors.ReferenceDataConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalActionProvider, IdentifierAction}
-import models.{CheckMode, CountryList, DraftArrivalRef, Index, MovementReferenceNumber, NormalMode}
+import models.reference.CountryTransitList
+import models.{CheckMode, DraftArrivalRef, Index, NormalMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -44,7 +45,7 @@ class CheckEventAnswersController @Inject()(override val messagesApi: MessagesAp
   def onPageLoad(ref: DraftArrivalRef, eventIndex: Index): Action[AnyContent] = (identify andThen getData(ref) andThen requireData).async {
     implicit request =>
       referenceDataConnector
-        .getCountryList()
+        .getCountryList(CountryTransitList)
         .flatMap {
           countryList =>
             val json = Json.obj(
