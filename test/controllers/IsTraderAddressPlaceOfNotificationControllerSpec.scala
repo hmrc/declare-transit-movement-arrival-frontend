@@ -43,7 +43,7 @@ class IsTraderAddressPlaceOfNotificationControllerSpec extends SpecBase with Moc
   def onwardRoute = Call("GET", "/foo")
 
   private val formProvider = new IsTraderAddressPlaceOfNotificationFormProvider()
-  private val form         = formProvider()
+  private val form         = formProvider(traderName)
 
   lazy val isTraderAddressPlaceOfNotificationRoute = routes.IsTraderAddressPlaceOfNotificationController.onPageLoad(mrn, NormalMode).url
 
