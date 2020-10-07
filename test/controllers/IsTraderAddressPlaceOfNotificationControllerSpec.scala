@@ -176,7 +176,7 @@ class IsTraderAddressPlaceOfNotificationControllerSpec extends SpecBase with Moc
         "traderTown"     -> traderAddress.city,
         "traderPostcode" -> traderAddress.postcode,
         "radios"         -> Radios.yesNo(boundForm("value")),
-        "trader_name"    -> traderName
+        "traderName"     -> traderName
       )
 
       templateCaptor.getValue mustEqual "isTraderAddressPlaceOfNotification.njk"
