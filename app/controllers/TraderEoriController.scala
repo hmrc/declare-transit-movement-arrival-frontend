@@ -63,7 +63,7 @@ class TraderEoriController @Inject()(override val messagesApi: MessagesApi,
           "form" -> preparedForm,
           "ref"  -> ref,
           "mode"        -> mode,
-          "trader_name" -> traderName
+          "traderName" -> traderName
         )
 
         renderer.render("traderEori.njk", json).map(Ok(_))
@@ -81,10 +81,10 @@ class TraderEoriController @Inject()(override val messagesApi: MessagesApi,
             formWithErrors => {
 
               val json = Json.obj(
-                "form" -> formWithErrors,
+                "form"        -> formWithErrors,
                 "ref"  -> ref,
-                "mode" -> mode,
-                "trader_name" -> traderName
+                "mode"        -> mode,
+                "traderName" -> traderName
               )
 
               renderer.render("traderEori.njk", json).map(BadRequest(_))
