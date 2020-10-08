@@ -34,7 +34,8 @@ class SealIdentityFormProvider @Inject() extends Mappings {
         )
         .verifying(
           regexp(
-            "[a-zA-Z0-9]*", "sealIdentity.error.invalid"
+            "[a-zA-Z0-9]*",
+            "sealIdentity.error.invalid"
           )
         )
     )
