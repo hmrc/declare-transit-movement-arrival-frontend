@@ -249,8 +249,8 @@ useDifferentService.link = New Computerised Transit System (NCTS)
 useDifferentService.guidance.2 = if the goods are at an authorised consignee’s location.
 useDifferentService.guidance.3 = We are improving this service. You will be able to do this in future.
 
-arrivalComplete.title = Application Complete
-arrivalComplete.heading = Sent arrival notification
+arrivalComplete.title = Arrival notification sent
+arrivalComplete.heading = Arrival notification sent
 arrivalComplete.yourReferenceNumber = for movement reference number
 arrivalComplete.subHeading = What happens next
 arrivalComplete.para1 = Send an email to the office where the goods will be presented (also known as the office of destination). Make sure you:
