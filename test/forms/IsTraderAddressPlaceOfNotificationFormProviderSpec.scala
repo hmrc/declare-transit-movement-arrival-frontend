@@ -26,7 +26,7 @@ class IsTraderAddressPlaceOfNotificationFormProviderSpec extends BooleanFieldBeh
   private val invalidKey  = "error.boolean"
 
   private val formProvider = new IsTraderAddressPlaceOfNotificationFormProvider()
-  private val form         = formProvider()
+  private val form         = formProvider(traderName)
 
   ".value" - {
 
@@ -35,13 +35,13 @@ class IsTraderAddressPlaceOfNotificationFormProviderSpec extends BooleanFieldBeh
     behave like booleanField(
       form,
       fieldName,
-      invalidError = FormError(fieldName, invalidKey)
+      invalidError = FormError(fieldName, invalidKey, Seq(traderName))
     )
 
     behave like mandatoryField(
       form,
       fieldName,
-      requiredError = FormError(fieldName, requiredKey)
+      requiredError = FormError(fieldName, requiredKey, Seq(traderName))
     )
   }
 }
