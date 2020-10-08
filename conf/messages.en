@@ -290,10 +290,10 @@ eventPlace.error.required = Enter where the event happened
 eventPlace.error.length = Where the event happened must be 35 characters or less
 eventPlace.change.hidden = where the event happened
 
-eventReported.title = Has this event been reported to customs?
-eventReported.heading = Has this event been reported to customs?
+eventReported.title = Has this event been reported to Customs?
+eventReported.heading = Has this event been reported to Customs?
 eventReported.checkYourAnswersLabel = Has this event been reported to customs?
-eventReported.error.required = Select yes if the event has been reported to customs
+eventReported.error.required = Select yes if this event has been reported to Customs
 eventReported.change.hidden = if this event has been reported to customs
 
 incidentInformation.title = What happened on the journey?
