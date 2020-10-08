@@ -29,6 +29,13 @@ class SealIdentityFormProvider @Inject() extends Mappings {
     Form(
       "value" -> text("sealIdentity.error.required")
         .verifying(maxLength(Seal.Constants.sealNumberOrMarkLength, "sealIdentity.error.length"))
-        .verifying(doesNotExistIn(seals, index, "sealIdentity.error.duplicate"))
+        .verifying(
+          doesNotExistIn(seals, index, "sealIdentity.error.duplicate")
+        )
+        .verifying(
+          regexp(
+            "[a-zA-Z0-9]*", "sealIdentity.error.invalid"
+          )
+        )
     )
 }
