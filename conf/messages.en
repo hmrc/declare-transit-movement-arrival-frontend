@@ -41,7 +41,7 @@ footer.links.privacy = Privacy policy
 footer.links.terms = Terms and conditions
 
 language.cymraeg = Cymraeg
-language.change.cymraeg = Newid yr iaith i'r Gymraeg
+language.change.cymraeg = Newid yr iaith i’r Gymraeg
 language.english = English
 language.change.english = Change the language to English
 language.switcher = Language switcher
@@ -238,7 +238,7 @@ traderName.title = What is the destination trader’s name?
 traderName.heading = What is the destination trader’s name?
 traderName.checkYourAnswersLabel = Name
 traderName.error.required = Enter destination trader’s name
-traderName.error.invalid = Destination trader's name must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, asterisks, forward slashes, full stops, hyphens, question marks, and greater than (>) and less than (<) signs.
+traderName.error.invalid = Destination trader’s name must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, asterisks, forward slashes, full stops, hyphens, question marks, and greater than (>) and less than (<) signs.
 traderName.error.length = Destination trader’s name must be 35 characters or less
 traderName.change.hidden = name of trader
 
@@ -249,8 +249,8 @@ useDifferentService.link = New Computerised Transit System (NCTS)
 useDifferentService.guidance.2 = if the goods are at an authorised consignee’s location.
 useDifferentService.guidance.3 = We are improving this service. You will be able to do this in future.
 
-arrivalComplete.title = Application Complete
-arrivalComplete.heading = Sent arrival notification
+arrivalComplete.title = Arrival notification sent
+arrivalComplete.heading = Arrival notification sent
 arrivalComplete.yourReferenceNumber = for movement reference number
 arrivalComplete.subHeading = What happens next
 arrivalComplete.para1 = Send an email to the office where the goods will be presented (also known as the office of destination). Make sure you:
@@ -328,7 +328,7 @@ isTraderAddressPlaceOfNotification.title = Are you completing this arrival notif
 isTraderAddressPlaceOfNotification.heading = Are you completing this arrival notification at {0}’s address?
 isTraderAddressPlaceOfNotification.checkYourAnswersLabel = Are you completing this arrival notification at the trader’s address?
 isTraderAddressPlaceOfNotification.error.required = Select yes if you are completing this arrival notification at {0}’s address
-isTraderAddressPlaceOfNotification.change.hidden = if you are completing this arrival notification at the trader's address
+isTraderAddressPlaceOfNotification.change.hidden = if you are completing this arrival notification at the trader’s address
 
 placeOfNotification.title = Where are you completing this arrival notification?
 placeOfNotification.heading = Where are you completing this arrival notification?
@@ -440,11 +440,12 @@ confirmRemoveEvent.error.required = Select yes if you are sure you want to remov
 arrivalRejection.title = There is an error in this arrival notification
 arrivalRejection.heading = There is an error in this arrival notification
 
-consigneeName.title = What is the authorised consignee's name?
-consigneeName.heading = What is the authorised consignee's name?
+consigneeName.title = What is the authorised consignee’s name?
+consigneeName.heading = What is the authorised consignee’s name?
 consigneeName.checkYourAnswersLabel = What is the name of the authorised consignee?
-consigneeName.error.required = Enter the name of the authorised consignee
-consigneeName.error.length = Authorised consignee name must be 35 characters or less
+consigneeName.error.required = Enter authorised consignee’s name
+consigneeName.error.invalid = Authorised consignee’s name must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, asterisks, forward slashes, full stops, hyphens, question marks, and greater than (>) and less than (<) signs.
+consigneeName.error.length = Authorised consignee’s name must be 35 characters or less
 
 eoriConfirmation.title = Is this the EORI number for the trader?
 eoriConfirmation.heading = Is {0} the authorised consignee’s EORI number?
@@ -462,7 +463,7 @@ eoriNumber.error.invalid =  EORI number must start with 2 letters followed by up
 consigneeAddress.title = What is the address of the authorised consignee
 consigneeAddress.heading =  What is the address for {0}?
 consigneeAddress.checkYourAnswersLabel =  What is the address for {0}?
-consigneeAddress.error.required = Enter {0}'s Address
+consigneeAddress.error.required = Enter {0}’s Address
 consigneeAddress.error.length = The address for {0} must be 100 characters or less
 
 consigneeAddress.buildingAndStreet = Building and street
