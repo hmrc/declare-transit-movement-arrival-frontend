@@ -187,13 +187,13 @@ presentationOffice.error.required = Enter the Border Force office which supervis
 presentationOffice.error.length = Border Force office must be 8 characters or less
 presentationOffice.change.hidden = which Border Force office supervises {0}
 
-customsSubPlace.title = Which customs sub-place or approved location has the goods?
-customsSubPlace.heading = Which customs sub-place or approved location has the goods?
-customsSubPlace.checkYourAnswersLabel = Which customs sub-place or approved location has the goods?
-customsSubPlace.error.required = Enter the customs sub-place or approved location that has the goods
-customsSubPlace.error.length = Customs sub-place or approved location must be 17 characters or less
+customsSubPlace.title = Which Customs-approved location has the goods?
+customsSubPlace.heading = Which Customs-approved location has the goods?
+customsSubPlace.checkYourAnswersLabel = Which Customs-approved location has the goods?
+customsSubPlace.error.required = Enter the Customs-approved location that has the goods
+customsSubPlace.error.length = Customs-approved location that has the goods must be 17 characters or less
+customsSubPlace.error.invalid = Customs-approved location that has the goods must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, asterisks, forward slashes, full stops, hyphens, question marks, and greater than (>) and less than (<) signs.
 customsSubPlace.change.hidden = the customs sub-place or approved location
-customsSubPlace.error.invalid = Enter a real customs sub-place or approved location
 
 authorisedLocation.title = What is the authorised location code?
 authorisedLocation.hintText = The code can be found in the registration documents.

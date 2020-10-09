@@ -18,6 +18,7 @@ package forms
 
 import forms.behaviours.StringFieldBehaviours
 import generators.Generators
+import org.scalacheck.Gen
 import play.api.data.FormError
 
 class CustomsSubPlaceFormProviderSpec extends StringFieldBehaviours {
@@ -26,6 +27,12 @@ class CustomsSubPlaceFormProviderSpec extends StringFieldBehaviours {
   val lengthKey   = "customsSubPlace.error.length"
   val invalidKey  = "customsSubPlace.error.invalid"
   val maxLength   = 17
+
+
+  val validCustomsSubPlaceOverLength: Gen[String] = for {
+    num  <- Gen.chooseNum[Int](maxLength + 1, maxLength + 5)
+    list <- Gen.listOfN(num, Gen.alphaNumChar)
+  } yield list.mkString("")
 
   val form = new CustomsSubPlaceFormProvider()()
 
@@ -44,7 +51,7 @@ class CustomsSubPlaceFormProviderSpec extends StringFieldBehaviours {
       fieldName,
       maxLength            = maxLength,
       lengthError          = FormError(fieldName, lengthKey, Seq(maxLength)),
-      withoutExtendedAscii = true
+      validCustomsSubPlaceOverLength
     )
 
     behave like mandatoryField(
