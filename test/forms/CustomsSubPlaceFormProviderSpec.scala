@@ -28,7 +28,6 @@ class CustomsSubPlaceFormProviderSpec extends StringFieldBehaviours {
   val invalidKey  = "customsSubPlace.error.invalid"
   val maxLength   = 17
 
-
   val validCustomsSubPlaceOverLength: Gen[String] = for {
     num  <- Gen.chooseNum[Int](maxLength + 1, maxLength + 5)
     list <- Gen.listOfN(num, Gen.alphaNumChar)
@@ -49,8 +48,8 @@ class CustomsSubPlaceFormProviderSpec extends StringFieldBehaviours {
     behave like fieldWithMaxLength(
       form,
       fieldName,
-      maxLength            = maxLength,
-      lengthError          = FormError(fieldName, lengthKey, Seq(maxLength)),
+      maxLength   = maxLength,
+      lengthError = FormError(fieldName, lengthKey, Seq(maxLength)),
       validCustomsSubPlaceOverLength
     )
 
