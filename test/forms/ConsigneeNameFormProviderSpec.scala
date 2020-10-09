@@ -18,13 +18,19 @@ package forms
 
 import forms.behaviours.StringFieldBehaviours
 import models.domain.TraderDomain.Constants.nameLength
+import org.scalacheck.Gen
 import play.api.data.FormError
 
 class ConsigneeNameFormProviderSpec extends StringFieldBehaviours {
 
-  val requiredKey = "consigneeName.error.required"
-  val lengthKey   = "consigneeName.error.length"
-  val maxLength   = nameLength
+  val requiredKey    = "consigneeName.error.required"
+  val lengthKey      = "consigneeName.error.length"
+  val maxLength: Int = nameLength
+
+  val validConsigneeNameStringGenOverLength: Gen[String] = for {
+    num  <- Gen.chooseNum[Int](maxLength + 1, maxLength + 5)
+    list <- Gen.listOfN(num, Gen.alphaNumChar)
+  } yield list.mkString("")
 
   val form = new ConsigneeNameFormProvider()()
 
@@ -42,7 +48,8 @@ class ConsigneeNameFormProviderSpec extends StringFieldBehaviours {
       form,
       fieldName,
       maxLength   = maxLength,
-      lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
+      lengthError = FormError(fieldName, lengthKey, Seq(maxLength)),
+      validConsigneeNameStringGenOverLength
     )
 
     behave like mandatoryField(
