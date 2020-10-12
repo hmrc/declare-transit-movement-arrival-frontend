@@ -35,8 +35,8 @@ POST       /:mrn/change-border-force-office                  controllers.Present
 
 GET        /:mrn/customs-approved-location                   controllers.CustomsSubPlaceController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
 POST       /:mrn/customs-approved-location                   controllers.CustomsSubPlaceController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
-GET        /:mrn/change-goods-approved-location              controllers.CustomsSubPlaceController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
-POST       /:mrn/change-goods-approved-location              controllers.CustomsSubPlaceController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
+GET        /:mrn/change-customs-approved-location            controllers.CustomsSubPlaceController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
+POST       /:mrn/change-customs-approved-location            controllers.CustomsSubPlaceController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
 
 GET        /:mrn/authorised-location-code                    controllers.AuthorisedLocationController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
 POST       /:mrn/authorised-location-code                    controllers.AuthorisedLocationController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
