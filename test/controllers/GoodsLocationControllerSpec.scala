@@ -125,7 +125,7 @@ class GoodsLocationControllerSpec extends SpecBase with MockitoSugar with Nunjuc
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual s"/common-transit-convention-trader-arrival/${emptyUserAnswers.id}/goods-approved-location"
+      redirectLocation(result).value mustEqual s"/common-transit-convention-trader-arrival/${emptyUserAnswers.id}/customs-approved-location"
 
       application.stop()
     }
