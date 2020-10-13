@@ -18,6 +18,7 @@ package forms
 
 import javax.inject.Inject
 import forms.mappings.Mappings
+import models.domain.TraderDomain
 import models.domain.TraderDomain.Constants.nameLength
 import play.api.data.Form
 
@@ -26,6 +27,15 @@ class ConsigneeNameFormProvider @Inject() extends Mappings {
   def apply(): Form[String] =
     Form(
       "value" -> text("consigneeName.error.required")
-        .verifying(maxLength(nameLength, "consigneeName.error.length"))
+        .verifying(
+          maxLength(nameLength, "consigneeName.error.length")
+        )
+        .verifying(
+          regexp(
+            TraderDomain.inputRegex,
+            "consigneeName.error.invalid",
+            Seq.empty
+          )
+        )
     )
 }

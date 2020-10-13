@@ -20,6 +20,7 @@ import forms.mappings.Mappings
 import javax.inject.Inject
 import play.api.data.Form
 import models.domain.NormalNotification.Constants.customsSubPlaceLength
+import models.domain.TraderDomain
 
 class CustomsSubPlaceFormProvider @Inject() extends Mappings {
 
@@ -27,6 +28,6 @@ class CustomsSubPlaceFormProvider @Inject() extends Mappings {
     Form(
       "value" -> text("customsSubPlace.error.required")
         .verifying(maxLength(customsSubPlaceLength, "customsSubPlace.error.length"))
-        .verifying(printableAscii("customsSubPlace.error.invalid"))
+        .verifying(regexp(TraderDomain.inputRegex, "customsSubPlace.error.invalid", Seq.empty))
     )
 }

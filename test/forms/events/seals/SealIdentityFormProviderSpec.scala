@@ -22,6 +22,7 @@ import generators.MessagesModelGenerators
 import models.Index
 import models.domain.SealDomain
 import models.messages.Seal
+import org.scalacheck.Gen
 import play.api.data.FormError
 
 class SealIdentityFormProviderSpec extends StringFieldBehaviours with MessagesModelGenerators with SpecBase {
@@ -31,6 +32,11 @@ class SealIdentityFormProviderSpec extends StringFieldBehaviours with MessagesMo
   val duplicateKey = "sealIdentity.error.duplicate"
   val maxLength    = 20
   val fieldName    = "value"
+
+  val validSealSringGenOverLength: Gen[String] = for {
+    num  <- Gen.chooseNum[Int](maxLength + 1, maxLength + 5)
+    list <- Gen.listOfN(num, Gen.alphaNumChar)
+  } yield list.mkString("")
 
   val form = new SealIdentityFormProvider()
 
@@ -46,7 +52,8 @@ class SealIdentityFormProviderSpec extends StringFieldBehaviours with MessagesMo
       form(sealIndex),
       fieldName,
       maxLength   = maxLength,
-      lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
+      lengthError = FormError(fieldName, lengthKey, Seq(maxLength)),
+      validSealSringGenOverLength
     )
 
     behave like mandatoryField(

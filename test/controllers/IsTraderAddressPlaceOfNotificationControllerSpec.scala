@@ -25,7 +25,7 @@ import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.{IsTraderAddressPlaceOfNotificationPage, TraderAddressPage}
+import pages.{IsTraderAddressPlaceOfNotificationPage, TraderAddressPage, TraderNamePage}
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -43,7 +43,7 @@ class IsTraderAddressPlaceOfNotificationControllerSpec extends SpecBase with Moc
   def onwardRoute = Call("GET", "/foo")
 
   private val formProvider = new IsTraderAddressPlaceOfNotificationFormProvider()
-  private val form         = formProvider()
+  private val form         = formProvider(traderName)
 
   lazy val isTraderAddressPlaceOfNotificationRoute = routes.IsTraderAddressPlaceOfNotificationController.onPageLoad(mrn, NormalMode).url
 
@@ -149,7 +149,14 @@ class IsTraderAddressPlaceOfNotificationControllerSpec extends SpecBase with Moc
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers    = emptyUserAnswers.set(TraderAddressPage, traderAddress).success.value
+      val userAnswers = emptyUserAnswers
+        .set(TraderNamePage, traderName)
+        .success
+        .value
+        .set(TraderAddressPage, traderAddress)
+        .success
+        .value
+
       val application    = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request        = FakeRequest(POST, isTraderAddressPlaceOfNotificationRoute).withFormUrlEncodedBody(("value", ""))
       val boundForm      = form.bind(Map("value" -> ""))
@@ -168,10 +175,12 @@ class IsTraderAddressPlaceOfNotificationControllerSpec extends SpecBase with Moc
         "traderLine1"    -> traderAddress.buildingAndStreet,
         "traderTown"     -> traderAddress.city,
         "traderPostcode" -> traderAddress.postcode,
-        "radios"         -> Radios.yesNo(boundForm("value"))
+        "radios"         -> Radios.yesNo(boundForm("value")),
+        "traderName"     -> traderName
       )
 
       templateCaptor.getValue mustEqual "isTraderAddressPlaceOfNotification.njk"
+
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()

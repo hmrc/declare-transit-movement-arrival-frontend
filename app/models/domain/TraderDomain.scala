@@ -19,7 +19,16 @@ package models.domain
 import models.messages.Trader
 import play.api.libs.json.{Format, Json}
 
-final case class TraderDomain(name: String, streetAndNumber: String, postCode: String, city: String, countryCode: String, eori: String)
+import scala.util.matching.Regex
+
+final case class TraderDomain(
+  name: String,
+  streetAndNumber: String,
+  postCode: String,
+  city: String,
+  countryCode: String,
+  eori: String
+)
 
 object TraderDomain {
 
@@ -33,6 +42,20 @@ object TraderDomain {
     val postCodeLength        = 9
     val cityLength            = 35
   }
+
+  /**
+    * letters a to z
+    * numbers 0 to 9
+    * ampersands (&)
+    * apostrophes
+    * asterisks,
+    * forward slashes
+    * full stops
+    * hyphens
+    * question marks
+    * and greater than (>) and less than (<) signs
+    */
+  val inputRegex: Regex = "[\\sa-zA-Z0-9&'*/.\\-?<>]*".r
 
   val eoriRegex = "[A-Z]{2}[^\n\r]{1,}"
 
