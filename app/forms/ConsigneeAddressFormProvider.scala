@@ -22,17 +22,52 @@ import models.Address
 import play.api.data.Form
 import play.api.data.Forms._
 import models.domain.TraderDomain.Constants.{cityLength, postCodeLength, streetAndNumberLength}
+import models.domain.TraderDomain.inputRegex
 
 class ConsigneeAddressFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[Address] = Form(
+  def apply(authorisedConsignee: String): Form[Address] = Form(
     mapping(
-      "buildingAndStreet" -> text("consigneeAddress.error.buildingAndStreet.required")
-        .verifying(maxLength(streetAndNumberLength, "consigneeAddress.error.buildingAndStreet.length")),
-      "city" -> text("consigneeAddress.error.city.required")
-        .verifying(maxLength(cityLength, "consigneeAddress.error.city.length")),
-      "postcode" -> text("consigneeAddress.error.postcode.required")
-        .verifying(maxLength(postCodeLength, "consigneeAddress.error.postcode.length"))
+      "buildingAndStreet" -> text("consigneeAddress.error.buildingAndStreet.required", Seq(authorisedConsignee))
+        .verifying(
+          maxLength(
+            streetAndNumberLength,
+            "consigneeAddress.error.buildingAndStreet.length",
+            Seq("building and street name", authorisedConsignee)
+          )
+        )
+        .verifying(
+          minLength(
+            1,
+            "consigneeAddress.error.empty",
+            Seq("building and street name", authorisedConsignee)
+          )
+        )
+        .verifying(
+          regexp(
+            inputRegex,
+            "consigneeAddress.error.invalid",
+            Seq("building and street name", authorisedConsignee)
+          )
+        ),
+      "city" -> text("consigneeAddress.error.city.required", args = Seq(authorisedConsignee))
+        .verifying(
+          maxLength(cityLength, "consigneeAddress.error.max_length", args = Seq("city", authorisedConsignee))
+        )
+        .verifying(
+          minLength(1, "consigneeAddress.error.empty", Seq("city", authorisedConsignee))
+        )
+        .verifying(
+          regexp(
+            inputRegex,
+            "consigneeAddress.error.invalid",
+            Seq("city", authorisedConsignee)
+          )
+        ),
+      "postcode" -> text("consigneeAddress.error.postcode.required", args = Seq(authorisedConsignee))
+        .verifying(maxLength(postCodeLength, "consigneeAddress.error.postcode.length", args = Seq(authorisedConsignee)))
+        .verifying(minLength(1, "consigneeAddress.error.empty", args = Seq("postcode", authorisedConsignee)))
+        .verifying(regexp("[\\sa-zA-Z0-9]*".r, "consigneeAddress.error.postcode.invalid", args = Seq(authorisedConsignee)))
     )(Address.apply)(Address.unapply)
   )
 }
