@@ -22,7 +22,7 @@ import play.api.data.FormError
 
 class ConsigneeAddressFormProviderSpec extends StringFieldBehaviours with SpecBase {
 
-  val form = new ConsigneeAddressFormProvider()()
+  val form = new ConsigneeAddressFormProvider()(consigneeName)
 
   ".value" - {
 
