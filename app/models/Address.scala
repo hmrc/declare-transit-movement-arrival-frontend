@@ -26,6 +26,12 @@ object Address {
     val buildingAndStreetLength = 35
     val cityLength              = 35
     val postcodeLength          = 9
+
+    object Fields {
+      val buildingAndStreetName = "building and street name"
+      val city                  = "city"
+      val postcode              = "postcode"
+    }
   }
 
   implicit val format = Json.format[Address]

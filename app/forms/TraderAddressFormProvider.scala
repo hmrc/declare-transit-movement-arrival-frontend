@@ -28,34 +28,36 @@ class TraderAddressFormProvider @Inject() extends Mappings {
 
   def apply(traderName: String): Form[Address] = Form(
     mapping(
-      "buildingAndStreet" -> text("traderAddress.error.buildingAndStreet.required", Seq(traderName))
-        .verifying(
+      "buildingAndStreet" -> text(
+        "traderAddress.error.required",
+        Seq(Address.Constants.Fields.buildingAndStreetName, traderName)
+      ).verifying(
           maxLength(
             streetAndNumberLength,
-            "traderAddress.error.buildingAndStreet.length",
-            Seq("building and street name", traderName)
+            "traderAddress.error.max_length",
+            Seq(Address.Constants.Fields.buildingAndStreetName, traderName)
           )
         )
         .verifying(
           minLength(
             1,
             "traderAddress.error.empty",
-            Seq("building and street name", traderName)
+            Seq(Address.Constants.Fields.buildingAndStreetName, traderName)
           )
         )
         .verifying(
           regexp(
             inputRegex,
             "traderAddress.error.invalid",
-            Seq("building and street name", traderName)
+            Seq(Address.Constants.Fields.buildingAndStreetName, traderName)
           )
         ),
-      "city" -> text("traderAddress.error.city.required", args = Seq(traderName))
+      "city" -> text("traderAddress.error.required", args = Seq(Address.Constants.Fields.city, traderName))
         .verifying(
-          maxLength(cityLength, "traderAddress.error.max_length", args = Seq("city", traderName))
+          maxLength(cityLength, "traderAddress.error.max_length", args = Seq(Address.Constants.Fields.city, traderName))
         )
         .verifying(
-          minLength(1, "traderAddress.error.empty", Seq("city", traderName))
+          minLength(1, "traderAddress.error.required", Seq(Address.Constants.Fields.city, traderName))
         )
         .verifying(
           regexp(
@@ -66,7 +68,7 @@ class TraderAddressFormProvider @Inject() extends Mappings {
         ),
       "postcode" -> text("traderAddress.error.postcode.required", args = Seq(traderName))
         .verifying(maxLength(postCodeLength, "traderAddress.error.postcode.length", args = Seq(traderName)))
-        .verifying(minLength(1, "traderAddress.error.empty", args = Seq("postcode", traderName)))
+        .verifying(minLength(1, "traderAddress.error.empty", args = Seq(Address.Constants.Fields.postcode, traderName)))
         .verifying(regexp("[\\sa-zA-Z0-9]*".r, "traderAddress.error.postcode.invalid", args = Seq(traderName)))
     )(Address.apply)(Address.unapply)
   )

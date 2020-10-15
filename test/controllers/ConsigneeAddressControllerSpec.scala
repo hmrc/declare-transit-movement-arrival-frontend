@@ -42,7 +42,7 @@ class ConsigneeAddressControllerSpec extends SpecBase with MockitoSugar with Nun
   private def onwardRoute = Call("GET", "/foo")
 
   private val formProvider = new ConsigneeAddressFormProvider()
-  private val form         = formProvider()
+  private val form         = formProvider(consigneeName)
 
   private lazy val consigneeAddressRoute = routes.ConsigneeAddressController.onPageLoad(mrn, NormalMode).url
 
@@ -82,10 +82,10 @@ class ConsigneeAddressControllerSpec extends SpecBase with MockitoSugar with Nun
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
       when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html(traderName)))
+        .thenReturn(Future.successful(Html(consigneeName)))
 
       val userAnswers = emptyUserAnswers
-        .set(ConsigneeNamePage, traderName)
+        .set(ConsigneeNamePage, consigneeName)
         .success
         .value
         .set(ConsigneeAddressPage, traderAddress)
@@ -116,7 +116,7 @@ class ConsigneeAddressControllerSpec extends SpecBase with MockitoSugar with Nun
         "form"          -> filledForm,
         "mrn"           -> mrn,
         "mode"          -> NormalMode,
-        "consigneeName" -> traderName
+        "consigneeName" -> consigneeName
       )
 
       templateCaptor.getValue mustEqual "consigneeAddress.njk"
@@ -162,7 +162,7 @@ class ConsigneeAddressControllerSpec extends SpecBase with MockitoSugar with Nun
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers = emptyUserAnswers
-        .set(ConsigneeNamePage, traderName)
+        .set(ConsigneeNamePage, consigneeName)
         .success
         .value
 
@@ -179,9 +179,10 @@ class ConsigneeAddressControllerSpec extends SpecBase with MockitoSugar with Nun
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form" -> boundForm,
-        "mrn"  -> mrn,
-        "mode" -> NormalMode
+        "form"          -> boundForm,
+        "mrn"           -> mrn,
+        "mode"          -> NormalMode,
+        "consigneeName" -> consigneeName
       )
 
       templateCaptor.getValue mustEqual "consigneeAddress.njk"

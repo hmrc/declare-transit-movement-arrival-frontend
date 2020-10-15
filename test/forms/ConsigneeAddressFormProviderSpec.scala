@@ -18,20 +18,29 @@ package forms
 
 import base.SpecBase
 import forms.behaviours.StringFieldBehaviours
+import models.Address
+import org.scalacheck.Gen
 import play.api.data.FormError
 
 class ConsigneeAddressFormProviderSpec extends StringFieldBehaviours with SpecBase {
 
-  val form = new ConsigneeAddressFormProvider()()
+  val form = new ConsigneeAddressFormProvider()(consigneeName)
 
   ".value" - {
 
     ".buildingAndStreet" - {
 
       val fieldName   = "buildingAndStreet"
-      val requiredKey = "consigneeAddress.error.buildingAndStreet.required"
-      val lengthKey   = "consigneeAddress.error.buildingAndStreet.length"
+      val requiredKey = "consigneeAddress.error.required"
+      val lengthKey   = "consigneeAddress.error.max_length"
       val maxLength   = 35
+
+      val validAdressOverLength: Gen[String] = for {
+        num  <- Gen.chooseNum[Int](maxLength + 1, maxLength + 5)
+        list <- Gen.listOfN(num, Gen.alphaNumChar)
+      } yield list.mkString("")
+
+      val args = Seq(Address.Constants.Fields.buildingAndStreetName, consigneeName)
 
       behave like fieldThatBindsValidData(
         form,
@@ -43,22 +52,30 @@ class ConsigneeAddressFormProviderSpec extends StringFieldBehaviours with SpecBa
         form,
         fieldName,
         maxLength   = maxLength,
-        lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
+        lengthError = FormError(fieldName, lengthKey, args),
+        validAdressOverLength
       )
 
       behave like mandatoryField(
         form,
         fieldName,
-        requiredError = FormError(fieldName, requiredKey)
+        requiredError = FormError(fieldName, requiredKey, args)
       )
     }
 
     ".city" - {
 
       val fieldName   = "city"
-      val requiredKey = "consigneeAddress.error.city.required"
-      val lengthKey   = "consigneeAddress.error.city.length"
+      val requiredKey = "consigneeAddress.error.required"
+      val lengthKey   = "consigneeAddress.error.max_length"
       val maxLength   = 35
+
+      val validAdressOverLength: Gen[String] = for {
+        num  <- Gen.chooseNum[Int](maxLength + 1, maxLength + 5)
+        list <- Gen.listOfN(num, Gen.alphaNumChar)
+      } yield list.mkString("")
+
+      val args = Seq(Address.Constants.Fields.city, consigneeName)
 
       behave like fieldThatBindsValidData(
         form,
@@ -70,13 +87,14 @@ class ConsigneeAddressFormProviderSpec extends StringFieldBehaviours with SpecBa
         form,
         fieldName,
         maxLength   = maxLength,
-        lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
+        lengthError = FormError(fieldName, lengthKey, args),
+        validAdressOverLength
       )
 
       behave like mandatoryField(
         form,
         fieldName,
-        requiredError = FormError(fieldName, requiredKey)
+        requiredError = FormError(fieldName, requiredKey, args)
       )
     }
 
@@ -87,6 +105,11 @@ class ConsigneeAddressFormProviderSpec extends StringFieldBehaviours with SpecBa
       val lengthKey   = "consigneeAddress.error.postcode.length"
       val maxLength   = 9
 
+      val validAdressOverLength: Gen[String] = for {
+        num  <- Gen.chooseNum[Int](maxLength + 1, maxLength + 5)
+        list <- Gen.listOfN(num, Gen.alphaNumChar)
+      } yield list.mkString("")
+
       behave like fieldThatBindsValidData(
         form,
         fieldName,
@@ -97,13 +120,14 @@ class ConsigneeAddressFormProviderSpec extends StringFieldBehaviours with SpecBa
         form,
         fieldName,
         maxLength   = maxLength,
-        lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
+        lengthError = FormError(fieldName, lengthKey, Seq(consigneeName)),
+        validAdressOverLength
       )
 
       behave like mandatoryField(
         form,
         fieldName,
-        requiredError = FormError(fieldName, requiredKey)
+        requiredError = FormError(fieldName, requiredKey, Seq(consigneeName))
       )
     }
   }
