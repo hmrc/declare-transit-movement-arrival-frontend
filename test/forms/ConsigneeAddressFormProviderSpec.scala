@@ -49,14 +49,14 @@ class ConsigneeAddressFormProviderSpec extends StringFieldBehaviours with SpecBa
         form,
         fieldName,
         maxLength   = maxLength,
-        lengthError = FormError(fieldName, lengthKey, Seq(consigneeName)),
+        lengthError = FormError(fieldName, lengthKey, Seq("building and street name", consigneeName)),
         validAdressOverLength
       )
 
       behave like mandatoryField(
         form,
         fieldName,
-        requiredError = FormError(fieldName, requiredKey)
+        requiredError = FormError(fieldName, requiredKey, Seq(consigneeName))
       )
     }
 
@@ -64,7 +64,7 @@ class ConsigneeAddressFormProviderSpec extends StringFieldBehaviours with SpecBa
 
       val fieldName   = "city"
       val requiredKey = "consigneeAddress.error.city.required"
-      val lengthKey   = "consigneeAddress.error.city.length"
+      val lengthKey   = "consigneeAddress.error.max_length"
       val maxLength   = 35
 
       val validAdressOverLength: Gen[String] = for {
@@ -82,14 +82,14 @@ class ConsigneeAddressFormProviderSpec extends StringFieldBehaviours with SpecBa
         form,
         fieldName,
         maxLength   = maxLength,
-        lengthError = FormError(fieldName, lengthKey, Seq(consigneeName)),
+        lengthError = FormError(fieldName, lengthKey, Seq("city", consigneeName)),
         validAdressOverLength
       )
 
       behave like mandatoryField(
         form,
         fieldName,
-        requiredError = FormError(fieldName, requiredKey)
+        requiredError = FormError(fieldName, requiredKey, Seq(consigneeName))
       )
     }
 
@@ -122,7 +122,7 @@ class ConsigneeAddressFormProviderSpec extends StringFieldBehaviours with SpecBa
       behave like mandatoryField(
         form,
         fieldName,
-        requiredError = FormError(fieldName, requiredKey)
+        requiredError = FormError(fieldName, requiredKey, Seq(consigneeName))
       )
     }
   }
