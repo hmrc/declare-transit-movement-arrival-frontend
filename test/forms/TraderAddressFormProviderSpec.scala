@@ -23,7 +23,7 @@ import play.api.data.FormError
 
 class TraderAddressFormProviderSpec extends StringFieldBehaviours {
 
-  val traderName = "trader_name"
+  val traderName = "traderName"
   val form       = new TraderAddressFormProvider()(traderName)
 
   val maxLength = 35

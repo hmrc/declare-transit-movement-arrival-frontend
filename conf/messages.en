@@ -214,7 +214,7 @@ traderAddress.error.buildingAndStreet.required = Enter the building and street n
 traderAddress.error.city.required = Enter the town or city of the trader at the destination
 traderAddress.error.city.length = Town or city must be 35 characters or less
 
-traderAddress.error.postcode.required = Enter the postcode of the trader at the destination
+traderAddress.error.postcode.required = Enter the postcode of {0}’s address
 traderAddress.error.postcode.length = Postcode must be 9 characters or less
 traderAddress.error.postcode.invalid = The postcode of {0}’s address must only include letters A to Z and numbers 0 to 9
 
