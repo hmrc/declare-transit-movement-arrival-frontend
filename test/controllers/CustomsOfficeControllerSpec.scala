@@ -48,7 +48,7 @@ class CustomsOfficeControllerSpec extends SpecBase with MockitoSugar with Nunjuc
   val customsOffices            = Seq(CustomsOffice("id", "name", Seq.empty, None), CustomsOffice("officeId", "someName", Seq.empty, None))
   val form: Form[CustomsOffice] = formProvider("sub place", customsOffices)
 
-  lazy val presentationOfficeRoute: String = routes.PresentationOfficeController.onPageLoad(mrn, NormalMode).url
+  lazy val customsOfficeRoute: String = routes.CustomsOfficeController.onPageLoad(mrn, NormalMode).url
 
   private val mockRefDataConnector: ReferenceDataConnector = mock[ReferenceDataConnector]
   val templateCaptor: ArgumentCaptor[String]               = ArgumentCaptor.forClass(classOf[String])
@@ -91,7 +91,7 @@ class CustomsOfficeControllerSpec extends SpecBase with MockitoSugar with Nunjuc
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(bind[ReferenceDataConnector].toInstance(mockRefDataConnector))
         .build()
-      val request = FakeRequest(GET, presentationOfficeRoute)
+      val request = FakeRequest(GET, customsOfficeRoute)
 
       val result = route(application, request).value
 
@@ -119,7 +119,7 @@ class CustomsOfficeControllerSpec extends SpecBase with MockitoSugar with Nunjuc
           .build()
 
       val request =
-        FakeRequest(POST, presentationOfficeRoute)
+        FakeRequest(POST, customsOfficeRoute)
           .withFormUrlEncodedBody(("value", "id"))
 
       val result = route(application, request).value
@@ -145,7 +145,7 @@ class CustomsOfficeControllerSpec extends SpecBase with MockitoSugar with Nunjuc
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(bind[ReferenceDataConnector].toInstance(mockRefDataConnector))
         .build()
-      val request = FakeRequest(POST, presentationOfficeRoute).withFormUrlEncodedBody(("value", ""))
+      val request = FakeRequest(POST, customsOfficeRoute).withFormUrlEncodedBody(("value", ""))
 
       val result = route(application, request).value
 
@@ -160,7 +160,7 @@ class CustomsOfficeControllerSpec extends SpecBase with MockitoSugar with Nunjuc
 
       val application = applicationBuilder(userAnswers = None).build()
 
-      val request = FakeRequest(GET, presentationOfficeRoute)
+      val request = FakeRequest(GET, customsOfficeRoute)
 
       val result = route(application, request).value
 
@@ -176,7 +176,7 @@ class CustomsOfficeControllerSpec extends SpecBase with MockitoSugar with Nunjuc
       val application = applicationBuilder(userAnswers = None).build()
 
       val request =
-        FakeRequest(POST, presentationOfficeRoute)
+        FakeRequest(POST, customsOfficeRoute)
           .withFormUrlEncodedBody(("value", "answer"))
 
       val result = route(application, request).value
@@ -209,7 +209,7 @@ class CustomsOfficeControllerSpec extends SpecBase with MockitoSugar with Nunjuc
           bind[ReferenceDataConnector].toInstance(mockRefDataConnector)
         )
         .build()
-    val request   = FakeRequest(POST, presentationOfficeRoute).withFormUrlEncodedBody(("value", formValue))
+    val request   = FakeRequest(POST, customsOfficeRoute).withFormUrlEncodedBody(("value", formValue))
     val boundForm = form.bind(Map("value" -> formValue))
 
     val result = route(application, request).value
@@ -252,7 +252,7 @@ class CustomsOfficeControllerSpec extends SpecBase with MockitoSugar with Nunjuc
         bind[ReferenceDataConnector].toInstance(mockRefDataConnector)
       }
       .build()
-    val request = FakeRequest(GET, presentationOfficeRoute)
+    val request = FakeRequest(GET, customsOfficeRoute)
 
     val result = route(application, request).value
 

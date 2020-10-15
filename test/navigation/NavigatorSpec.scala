@@ -136,7 +136,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
             navigator
               .nextPage(ConsigneeAddressPage, NormalMode, answers)
-              .mustBe(routes.PresentationOfficeController.onPageLoad(answers.id, NormalMode))
+              .mustBe(routes.CustomsOfficeController.onPageLoad(answers.id, NormalMode))
         }
       }
 
@@ -177,7 +177,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
             navigator
               .nextPage(CustomsSubPlacePage, NormalMode, answers)
-              .mustBe(routes.PresentationOfficeController.onPageLoad(answers.id, NormalMode))
+              .mustBe(routes.CustomsOfficeController.onPageLoad(answers.id, NormalMode))
         }
       }
 

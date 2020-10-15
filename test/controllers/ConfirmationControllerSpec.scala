@@ -45,8 +45,8 @@ class ConfirmationControllerSpec extends SpecBase with MockitoSugar with JsonMat
         .thenReturn(Future.successful(Html("")))
 
       val mockSessionRepository = mock[SessionRepository]
-      val presentationOffice    = CustomsOffice("id", "name", Seq.empty, None)
-      val userAnswers           = emptyUserAnswers.set(CustomsOfficePage, presentationOffice).success.value
+      val customsOffice         = CustomsOffice("id", "name", Seq.empty, None)
+      val userAnswers           = emptyUserAnswers.set(CustomsOfficePage, customsOffice).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers))
         .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
@@ -77,8 +77,8 @@ class ConfirmationControllerSpec extends SpecBase with MockitoSugar with JsonMat
         .thenReturn(Future.successful(Html("")))
 
       val mockSessionRepository = mock[SessionRepository]
-      val presentationOffice    = CustomsOffice("id", "name", Seq.empty, Some("phoneNumber"))
-      val userAnswers           = emptyUserAnswers.set(CustomsOfficePage, presentationOffice).success.value
+      val customsOffice         = CustomsOffice("id", "name", Seq.empty, Some("phoneNumber"))
+      val userAnswers           = emptyUserAnswers.set(CustomsOfficePage, customsOffice).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers))
         .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
