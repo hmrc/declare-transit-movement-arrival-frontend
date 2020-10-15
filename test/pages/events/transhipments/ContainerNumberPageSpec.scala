@@ -19,7 +19,6 @@ package pages.events.transhipments
 import generators.MessagesModelGenerators
 import models.Index
 import models.domain.ContainerDomain
-import models.messages.Container
 import pages.behaviours.PageBehaviours
 
 class ContainerNumberPageSpec extends PageBehaviours with MessagesModelGenerators {

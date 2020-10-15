@@ -19,7 +19,7 @@ package controllers.events
 import com.google.inject.Inject
 import connectors.ReferenceDataConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalActionProvider, IdentifierAction}
-import models.reference.{CountryFullList, CountryTransitList}
+import models.reference.CountryTransitList
 import models.{CheckMode, Index, MovementReferenceNumber, NormalMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json

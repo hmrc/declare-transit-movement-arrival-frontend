@@ -19,7 +19,6 @@ package forms.events.seals
 import forms.mappings.Mappings
 import javax.inject.Inject
 import models.domain.SealDomain
-import models.messages.Seal
 import play.api.data.Form
 
 class ConfirmRemoveSealFormProvider @Inject() extends Mappings {

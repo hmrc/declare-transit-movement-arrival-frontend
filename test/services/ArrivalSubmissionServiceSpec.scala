@@ -21,13 +21,12 @@ import java.time.LocalDate
 import base.SpecBase
 import connectors.ArrivalMovementConnector
 import generators.MessagesModelGenerators
+import models.ArrivalId
 import models.domain.{NormalNotification, TraderDomain}
 import models.messages.InterchangeControlReference
 import models.reference.CustomsOffice
-import models.{ArrivalId, EoriNumber}
 import org.mockito.Matchers.any
 import org.mockito.Mockito._
-import org.scalacheck.Arbitrary.arbitrary
 import play.api.http.Status._
 import play.api.inject.bind
 import repositories.InterchangeControlReferenceIdRepository

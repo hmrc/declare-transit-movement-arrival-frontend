@@ -26,8 +26,8 @@ import models.GoodsLocation.{AuthorisedConsigneesLocation, BorderForceOffice}
 import models.TranshipmentType.{DifferentContainer, DifferentContainerAndVehicle, DifferentVehicle}
 import models._
 import models.domain.{ContainerDomain, SealDomain}
-import models.messages.{Container, EnRouteEvent, Seal}
-import models.reference.{Country, CountryCode}
+import models.messages.EnRouteEvent
+import models.reference.CountryCode
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks

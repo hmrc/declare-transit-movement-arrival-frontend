@@ -70,13 +70,13 @@ class CustomsOfficeController @Inject()(override val messagesApi: MessagesApi,
                   case Some(value) => form.fill(value)
                 }
                 renderView(
-                  mrn = mrn,
-                  mode = mode,
-                  consigneeName = consigneeName.getOrElse(""),
-                  customsOffice = locationName,
-                  form = preparedForm,
+                  mrn            = mrn,
+                  mode           = mode,
+                  consigneeName  = consigneeName.getOrElse(""),
+                  customsOffice  = locationName,
+                  form           = preparedForm,
                   customsOffices = customsOffices,
-                  status = Results.Ok
+                  status         = Results.Ok
                 )
               case _ =>
                 Future.successful(Redirect(routes.SessionExpiredController.onPageLoad()))
@@ -101,7 +101,7 @@ class CustomsOfficeController @Inject()(override val messagesApi: MessagesApi,
       "customsOffices" -> getCustomsOfficesAsJson(form.value, customsOffices),
       "header"         -> msg"customsOffice.title".withArgs(customsOffice),
       "consigneeName"  -> consigneeName,
-      "locationName" ->   customsOffice
+      "locationName"   -> customsOffice
     )
     renderer.render("customsOffice.njk", json).map(status(_))
   }

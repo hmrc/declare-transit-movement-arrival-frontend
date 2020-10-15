@@ -18,15 +18,13 @@ package services.conversion
 
 import base.SpecBase
 import generators.MessagesModelGenerators
-import models.domain.{EnRouteEventDomain, NormalNotification, TraderDomain}
 import models.messages.{ArrivalMovementRequest, InterchangeControlReference}
 import models.reference.CustomsOffice
-import models.{EoriNumber, Index, MovementReferenceNumber, NormalProcedureFlag, UserAnswers}
+import models.{EoriNumber, MovementReferenceNumber, UserAnswers}
 import org.mockito.Mockito
 import org.mockito.Mockito.when
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
-import pages.events.{EventCountryPage, EventPlacePage, EventReportedPage, IsTranshipmentPage}
 import play.api.inject.bind
 import play.api.test.Helpers.running
 import repositories.InterchangeControlReferenceIdRepository

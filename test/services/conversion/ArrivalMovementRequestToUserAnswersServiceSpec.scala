@@ -18,18 +18,11 @@ package services.conversion
 
 import base.SpecBase
 import generators.MessagesModelGenerators
-import models.{EoriNumber, MovementReferenceNumber, UserAnswers}
-import models.domain.{ArrivalNotificationDomain, NormalNotification}
 import models.messages.{ArrivalMovementRequest, Header}
 import models.reference.CustomsOffice
-import org.mockito.Matchers.any
-import org.mockito.Mockito.when
+import models.{EoriNumber, MovementReferenceNumber, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.inject.bind
-
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
 
 class ArrivalMovementRequestToUserAnswersServiceSpec extends SpecBase with MessagesModelGenerators with ScalaCheckPropertyChecks {
 

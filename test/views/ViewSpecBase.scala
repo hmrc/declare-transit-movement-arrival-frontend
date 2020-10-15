@@ -19,8 +19,6 @@ package views
 import base.SpecBase
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import play.api.Configuration
-import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsObject, Json}
 import play.twirl.api.Html
 import renderer.Renderer

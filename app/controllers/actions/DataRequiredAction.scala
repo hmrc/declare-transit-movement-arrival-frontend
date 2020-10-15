@@ -29,8 +29,6 @@ class DataRequiredActionImpl @Inject()(implicit val executionContext: ExecutionC
 
   override protected def refine[A](request: OptionalDataRequest[A]): Future[Either[Result, DataRequest[A]]] = {
 
-    implicit val hc = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
-
     request.userAnswers match {
       case None =>
         Future.successful(Left(Redirect(routes.SessionExpiredController.onPageLoad())))
