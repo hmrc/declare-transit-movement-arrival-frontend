@@ -28,28 +28,30 @@ class TraderAddressFormProvider @Inject() extends Mappings {
 
   def apply(traderName: String): Form[Address] = Form(
     mapping(
-      "buildingAndStreet" -> text("traderAddress.error.required", Seq(Address.Constants.Fields.buildingAndStreetName, traderName))
-        .verifying(
-          maxLength(
-            streetAndNumberLength,
-            "traderAddress.error.max_length",
-            Seq(Address.Constants.Fields.buildingAndStreetName, traderName)
-          )
+      "buildingAndStreet" -> text(
+        "traderAddress.error.required",
+        Seq(Address.Constants.Fields.buildingAndStreetName, traderName)
+      ).verifying(
+        maxLength(
+          streetAndNumberLength,
+          "traderAddress.error.max_length",
+          Seq(Address.Constants.Fields.buildingAndStreetName, traderName)
         )
-        .verifying(
-          minLength(
-            1,
-            "traderAddress.error.empty",
-            Seq(Address.Constants.Fields.buildingAndStreetName, traderName)
-          )
+      )
+      .verifying(
+        minLength(
+          1,
+          "traderAddress.error.empty",
+          Seq(Address.Constants.Fields.buildingAndStreetName, traderName)
         )
-        .verifying(
-          regexp(
-            inputRegex,
-            "traderAddress.error.invalid",
-            Seq(Address.Constants.Fields.buildingAndStreetName, traderName)
-          )
-        ),
+      )
+      .verifying(
+        regexp(
+          inputRegex,
+          "traderAddress.error.invalid",
+          Seq(Address.Constants.Fields.buildingAndStreetName, traderName)
+        )
+      ),
       "city" -> text("traderAddress.error.required", args = Seq(Address.Constants.Fields.city, traderName))
         .verifying(
           maxLength(cityLength, "traderAddress.error.max_length", args = Seq(Address.Constants.Fields.city, traderName))
