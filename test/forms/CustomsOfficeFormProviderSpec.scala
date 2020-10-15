@@ -29,7 +29,7 @@ class CustomsOfficeFormProviderSpec extends StringFieldBehaviours with SpecBase 
   val maxLength           = 8
 
   val customsOffices = Seq(CustomsOffice("id", "name", Seq.empty, None), CustomsOffice("GB000003", "someName", Seq.empty, None))
-  val form           = new CustomsOfficeFormProvider()(subPlace, customsOffices)
+  val form           = new CustomsOfficeFormProvider()(consigneeName, subPlace, customsOffices)
 
   ".value" - {
 
@@ -44,7 +44,7 @@ class CustomsOfficeFormProviderSpec extends StringFieldBehaviours with SpecBase 
     behave like mandatoryField(
       form,
       fieldName,
-      requiredError = FormError(fieldName, requiredKey)
+      requiredError = FormError(fieldName, requiredKey, Seq(consigneeName))
     )
 
     "not bind if customs office id does not exist in the customs office list" in {

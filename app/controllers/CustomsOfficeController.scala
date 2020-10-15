@@ -20,7 +20,6 @@ import connectors.ReferenceDataConnector
 import controllers.actions._
 import forms.CustomsOfficeFormProvider
 import javax.inject.Inject
-import models.GoodsLocation.BorderForceOffice
 import models.reference.CustomsOffice
 import models.{Mode, MovementReferenceNumber}
 import navigation.Navigator
@@ -53,16 +52,19 @@ class CustomsOfficeController @Inject()(override val messagesApi: MessagesApi,
   def onPageLoad(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] =
     (identify andThen getData(mrn) andThen requireData).async {
       implicit request =>
-        val locationName = (request.userAnswers.get(CustomsSubPlacePage), request.userAnswers.get(ConsigneeNamePage)) match {
+        val consigneeName = request.userAnswers.get(ConsigneeNamePage)
+
+        val locationName = (request.userAnswers.get(CustomsSubPlacePage), consigneeName) match {
           case (Some(customsSubPlace), None) => customsSubPlace
-          case (None, Some(consigneeName))   => consigneeName
+          case (None, Some(cName))           => cName
           case _                             => None
         }
+
         referenceDataConnector.getCustomsOffices flatMap {
           customsOffices =>
             locationName match {
               case locationName: String =>
-                val form = formProvider(locationName, customsOffices)
+                val form = formProvider(consigneeName.getOrElse(""), locationName, customsOffices)
                 val preparedForm = request.userAnswers.get(CustomsOfficePage) match {
                   case None        => form
                   case Some(value) => form.fill(value)
@@ -94,9 +96,10 @@ class CustomsOfficeController @Inject()(override val messagesApi: MessagesApi,
   def onSubmit(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] =
     (identify andThen getData(mrn) andThen requireData).async {
       implicit request =>
-        val locationName = (request.userAnswers.get(CustomsSubPlacePage), request.userAnswers.get(ConsigneeNamePage)) match {
+        val consigneeName = request.userAnswers.get(ConsigneeNamePage)
+        val locationName = (request.userAnswers.get(CustomsSubPlacePage), consigneeName) match {
           case (Some(customsSubPlace), None) => customsSubPlace
-          case (None, Some(consigneeName))   => consigneeName
+          case (None, Some(cName))           => cName
           case _                             => None
         }
 
@@ -104,7 +107,7 @@ class CustomsOfficeController @Inject()(override val messagesApi: MessagesApi,
           customsOffices =>
             locationName match {
               case locationName: String =>
-                val form = formProvider(locationName, customsOffices)
+                val form = formProvider(consigneeName.getOrElse(""), locationName, customsOffices)
                 form
                   .bindFromRequest()
                   .fold(

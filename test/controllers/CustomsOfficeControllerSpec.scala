@@ -46,7 +46,7 @@ class CustomsOfficeControllerSpec extends SpecBase with MockitoSugar with Nunjuc
 
   val formProvider              = new CustomsOfficeFormProvider()
   val customsOffices            = Seq(CustomsOffice("id", "name", Seq.empty, None), CustomsOffice("officeId", "someName", Seq.empty, None))
-  val form: Form[CustomsOffice] = formProvider("sub place", customsOffices)
+  val form: Form[CustomsOffice] = formProvider(consigneeName, "sub place", customsOffices)
 
   lazy val customsOfficeRoute: String = routes.CustomsOfficeController.onPageLoad(mrn, NormalMode).url
 

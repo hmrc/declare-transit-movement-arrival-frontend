@@ -24,9 +24,13 @@ import models.reference.CustomsOffice
 
 class CustomsOfficeFormProvider @Inject() extends Mappings {
 
-  def apply(subPlace: String, customsOffices: Seq[CustomsOffice])(implicit messages: Messages): Form[CustomsOffice] =
+  def apply(
+    consigneeName: String,
+    subPlace: String,
+    customsOffices: Seq[CustomsOffice]
+  )(implicit messages: Messages): Form[CustomsOffice] =
     Form(
-      "value" -> text(messages("customsOffice.error.required", subPlace))
+      "value" -> text(messages("customsOffice.error.required", subPlace, Seq(consigneeName)))
         .verifying(messages("customsOffice.error.required", subPlace), value => customsOffices.exists(_.id == value))
         .transform[CustomsOffice](value => customsOffices.find(_.id == value).get, _.id)
     )
