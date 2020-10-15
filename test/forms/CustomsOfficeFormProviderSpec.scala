@@ -21,15 +21,15 @@ import forms.behaviours.StringFieldBehaviours
 import models.reference.CustomsOffice
 import play.api.data.FormError
 
-class PresentationOfficeFormProviderSpec extends StringFieldBehaviours with SpecBase {
+class CustomsOfficeFormProviderSpec extends StringFieldBehaviours with SpecBase {
 
   var subPlace            = "subPlace"
-  val requiredKey: String = messages("presentationOffice.error.required", subPlace)
-  val lengthKey           = "presentationOffice.error.length"
+  val requiredKey: String = messages("customsOffice.error.required", subPlace)
+  val lengthKey           = "customsOffice.error.length"
   val maxLength           = 8
 
   val customsOffices = Seq(CustomsOffice("id", "name", Seq.empty, None), CustomsOffice("GB000003", "someName", Seq.empty, None))
-  val form           = new PresentationOfficeFormProvider()(subPlace, customsOffices)
+  val form           = new CustomsOfficeFormProvider()(subPlace, customsOffices)
 
   ".value" - {
 

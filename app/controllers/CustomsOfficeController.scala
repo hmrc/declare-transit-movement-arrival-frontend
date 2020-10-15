@@ -18,7 +18,7 @@ package controllers
 
 import connectors.ReferenceDataConnector
 import controllers.actions._
-import forms.PresentationOfficeFormProvider
+import forms.CustomsOfficeFormProvider
 import javax.inject.Inject
 import models.GoodsLocation.BorderForceOffice
 import models.reference.CustomsOffice
@@ -36,16 +36,16 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class PresentationOfficeController @Inject()(override val messagesApi: MessagesApi,
-                                             sessionRepository: SessionRepository,
-                                             navigator: Navigator,
-                                             identify: IdentifierAction,
-                                             getData: DataRetrievalActionProvider,
-                                             requireData: DataRequiredAction,
-                                             formProvider: PresentationOfficeFormProvider,
-                                             referenceDataConnector: ReferenceDataConnector,
-                                             val controllerComponents: MessagesControllerComponents,
-                                             renderer: Renderer)(implicit ec: ExecutionContext)
+class CustomsOfficeController @Inject()(override val messagesApi: MessagesApi,
+                                        sessionRepository: SessionRepository,
+                                        navigator: Navigator,
+                                        identify: IdentifierAction,
+                                        getData: DataRetrievalActionProvider,
+                                        requireData: DataRequiredAction,
+                                        formProvider: CustomsOfficeFormProvider,
+                                        referenceDataConnector: ReferenceDataConnector,
+                                        val controllerComponents: MessagesControllerComponents,
+                                        renderer: Renderer)(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
     with NunjucksSupport {
@@ -86,9 +86,9 @@ class PresentationOfficeController @Inject()(override val messagesApi: MessagesA
       "mrn"            -> mrn,
       "mode"           -> mode,
       "customsOffices" -> getCustomsOfficesAsJson(form.value, customsOffices),
-      "header"         -> msg"presentationOffice.title".withArgs(presentationOffice)
+      "header"         -> msg"customsOffice.title".withArgs(presentationOffice)
     )
-    renderer.render("presentationOffice.njk", json).map(status(_))
+    renderer.render("customsOffice.njk", json).map(status(_))
   }
 
   def onSubmit(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] =

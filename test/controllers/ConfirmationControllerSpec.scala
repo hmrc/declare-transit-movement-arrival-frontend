@@ -55,7 +55,7 @@ class ConfirmationControllerSpec extends SpecBase with MockitoSugar with JsonMat
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
       val result         = route(application, request).value
 
-      val contactUsMessage: Text.Message = msg"arrivalComplete.para2".withArgs(presentationOffice.name)
+      val contactUsMessage: Text.Message = msg"arrivalComplete.para2".withArgs(customsOffice.name)
 
       status(result) mustEqual OK
 
@@ -87,7 +87,7 @@ class ConfirmationControllerSpec extends SpecBase with MockitoSugar with JsonMat
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
       val result         = route(application, request).value
 
-      val contactUsMessage: Text.Message = msg"arrivalComplete.para2.withPhoneNumber".withArgs(presentationOffice.name, presentationOffice.phoneNumber.get)
+      val contactUsMessage: Text.Message = msg"arrivalComplete.para2.withPhoneNumber".withArgs(customsOffice.name, customsOffice.phoneNumber.get)
 
       status(result) mustEqual OK
 

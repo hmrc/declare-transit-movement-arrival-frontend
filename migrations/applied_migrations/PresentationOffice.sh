@@ -14,11 +14,11 @@ echo "POST       /:mrn/changePresentationOffice                  controllers.Pre
 
 echo "Adding messages to conf.messages"
 echo "" >> ../conf/messages.en
-echo "presentationOffice.title = presentationOffice" >> ../conf/messages.en
-echo "presentationOffice.heading = presentationOffice" >> ../conf/messages.en
-echo "presentationOffice.checkYourAnswersLabel = presentationOffice" >> ../conf/messages.en
-echo "presentationOffice.error.required = Enter presentationOffice" >> ../conf/messages.en
-echo "presentationOffice.error.length = PresentationOffice must be 8 characters or less" >> ../conf/messages.en
+echo "customsOffice.title = presentationOffice" >> ../conf/messages.en
+echo "customsOffice.heading = presentationOffice" >> ../conf/messages.en
+echo "customsOffice.checkYourAnswersLabel = presentationOffice" >> ../conf/messages.en
+echo "customsOffice.error.required = Enter presentationOffice" >> ../conf/messages.en
+echo "customsOffice.error.length = PresentationOffice must be 8 characters or less" >> ../conf/messages.en
 
 echo "Adding to UserAnswersEntryGenerators"
 awk '/trait UserAnswersEntryGenerators/ {\
@@ -54,13 +54,13 @@ awk '/class CheckYourAnswersHelper/ {\
      print "  def presentationOffice: Option[Row] = userAnswers.get(PresentationOfficePage) map {";\
      print "    answer =>";\
      print "      Row(";\
-     print "        key     = Key(msg\"presentationOffice.checkYourAnswersLabel\", classes = Seq(\"govuk-!-width-one-half\")),";\
+     print "        key     = Key(msg\"customsOffice.checkYourAnswersLabel\", classes = Seq(\"govuk-!-width-one-half\")),";\
      print "        value   = Value(lit\"$answer\"),";\
      print "        actions = List(";\
      print "          Action(";\
      print "            content            = msg\"site.edit\",";\
      print "            href               = routes.PresentationOfficeController.onPageLoad(mrn, CheckMode).url,";\
-     print "            visuallyHiddenText = Some(msg\"site.edit.hidden\".withArgs(msg\"presentationOffice.checkYourAnswersLabel\"))";\
+     print "            visuallyHiddenText = Some(msg\"site.edit.hidden\".withArgs(msg\"customsOffice.checkYourAnswersLabel\"))";\
      print "          )";\
      print "        )";\
      print "      )";\

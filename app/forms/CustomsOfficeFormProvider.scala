@@ -22,12 +22,12 @@ import play.api.data.Form
 import play.api.i18n.Messages
 import models.reference.CustomsOffice
 
-class PresentationOfficeFormProvider @Inject() extends Mappings {
+class CustomsOfficeFormProvider @Inject() extends Mappings {
 
   def apply(subPlace: String, customsOffices: Seq[CustomsOffice])(implicit messages: Messages): Form[CustomsOffice] =
     Form(
-      "value" -> text(messages("presentationOffice.error.required", subPlace))
-        .verifying(messages("presentationOffice.error.required", subPlace), value => customsOffices.exists(_.id == value))
+      "value" -> text(messages("customsOffice.error.required", subPlace))
+        .verifying(messages("customsOffice.error.required", subPlace), value => customsOffices.exists(_.id == value))
         .transform[CustomsOffice](value => customsOffices.find(_.id == value).get, _.id)
     )
 }

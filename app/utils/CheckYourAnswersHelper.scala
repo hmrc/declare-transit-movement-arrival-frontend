@@ -236,7 +236,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswers
       }
       Row(
         key = Key(
-          content = msg"presentationOffice.checkYourAnswersLabel".withArgs(location),
+          content = msg"customsOffice.checkYourAnswersLabel".withArgs(location),
           classes = Seq("govuk-!-width-one-half")
         ),
         value = Value(lit"${answer.name} (${answer.id})"),
@@ -244,7 +244,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswers
           Action(
             content            = msg"site.edit",
             href               = routes.PresentationOfficeController.onPageLoad(mrn, CheckMode).url,
-            visuallyHiddenText = Some(msg"presentationOffice.change.hidden".withArgs(location)),
+            visuallyHiddenText = Some(msg"customsOffice.change.hidden".withArgs(location)),
             attributes         = Map("id" -> s"""change-presentation-office""")
           )
         )

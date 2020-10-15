@@ -18,7 +18,7 @@ package controllers
 
 import base.SpecBase
 import connectors.ReferenceDataConnector
-import forms.PresentationOfficeFormProvider
+import forms.CustomsOfficeFormProvider
 import matchers.JsonMatchers
 import models.reference.CustomsOffice
 import models.{NormalMode, UserAnswers}
@@ -40,11 +40,11 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class PresentationOfficeControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class CustomsOfficeControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
   def onwardRoute: Call = Call("GET", "/foo")
 
-  val formProvider              = new PresentationOfficeFormProvider()
+  val formProvider              = new CustomsOfficeFormProvider()
   val customsOffices            = Seq(CustomsOffice("id", "name", Seq.empty, None), CustomsOffice("officeId", "someName", Seq.empty, None))
   val form: Form[CustomsOffice] = formProvider("sub place", customsOffices)
 
@@ -231,7 +231,7 @@ class PresentationOfficeControllerSpec extends SpecBase with MockitoSugar with N
       "customsOffices" -> customsOfficeJson
     )
 
-    templateCaptor.getValue mustEqual "presentationOffice.njk"
+    templateCaptor.getValue mustEqual "customsOffice.njk"
     jsonCaptor.getValue must containJson(expectedJson)
   }
 
