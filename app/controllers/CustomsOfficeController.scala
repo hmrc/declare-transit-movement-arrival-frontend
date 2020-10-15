@@ -69,26 +69,30 @@ class CustomsOfficeController @Inject()(override val messagesApi: MessagesApi,
                   case None        => form
                   case Some(value) => form.fill(value)
                 }
-                renderView(mrn, mode, locationName, preparedForm, customsOffices, Results.Ok)
+                renderView(mrn, mode, consigneeName.getOrElse(""), locationName, preparedForm, customsOffices, Results.Ok)
               case _ =>
                 Future.successful(Redirect(routes.SessionExpiredController.onPageLoad()))
             }
         }
     }
 
-  private def renderView(mrn: MovementReferenceNumber,
-                         mode: Mode,
-                         customsOffice: String,
-                         form: Form[CustomsOffice],
-                         customsOffices: Seq[CustomsOffice],
-                         status: Results.Status)(implicit request: Request[AnyContent]): Future[Result] = {
+  private def renderView(
+    mrn: MovementReferenceNumber,
+    mode: Mode,
+    consigneeName: String,
+    customsOffice: String,
+    form: Form[CustomsOffice],
+    customsOffices: Seq[CustomsOffice],
+    status: Results.Status
+  )(implicit request: Request[AnyContent]): Future[Result] = {
 
     val json = Json.obj(
       "form"           -> form,
       "mrn"            -> mrn,
       "mode"           -> mode,
       "customsOffices" -> getCustomsOfficesAsJson(form.value, customsOffices),
-      "header"         -> msg"customsOffice.title".withArgs(customsOffice)
+      "header"         -> msg"customsOffice.title".withArgs(customsOffice),
+      "consigneeName"  -> consigneeName
     )
     renderer.render("customsOffice.njk", json).map(status(_))
   }
@@ -112,7 +116,15 @@ class CustomsOfficeController @Inject()(override val messagesApi: MessagesApi,
                   .bindFromRequest()
                   .fold(
                     formWithErrors => {
-                      renderView(mrn, mode, locationName, formWithErrors, customsOffices, Results.BadRequest)
+                      renderView(
+                        mrn            = mrn,
+                        mode           = mode,
+                        consigneeName  = consigneeName.getOrElse(""),
+                        customsOffice  = locationName,
+                        form           = formWithErrors,
+                        customsOffices = customsOffices,
+                        status         = Results.BadRequest
+                      )
                     },
                     value =>
                       for {

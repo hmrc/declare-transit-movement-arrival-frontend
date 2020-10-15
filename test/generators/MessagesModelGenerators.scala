@@ -230,13 +230,13 @@ trait MessagesModelGenerators extends Generators {
     Arbitrary {
 
       for {
-        mrn                <- arbitrary[MovementReferenceNumber]
-        place              <- stringsWithMaxLength(NormalNotification.Constants.notificationPlaceLength)
-        date               <- localDateGen
-        subPlace           <- stringsWithMaxLength(NormalNotification.Constants.customsSubPlaceLength)
-        trader             <- arbitrary[domain.TraderDomain]
-        customsOffice      <- arbitrary[CustomsOffice]
-        events             <- Gen.option(listWithMaxLength[EnRouteEventDomain](NormalNotification.Constants.maxNumberOfEnRouteEvents))
+        mrn           <- arbitrary[MovementReferenceNumber]
+        place         <- stringsWithMaxLength(NormalNotification.Constants.notificationPlaceLength)
+        date          <- localDateGen
+        subPlace      <- stringsWithMaxLength(NormalNotification.Constants.customsSubPlaceLength)
+        trader        <- arbitrary[domain.TraderDomain]
+        customsOffice <- arbitrary[CustomsOffice]
+        events        <- Gen.option(listWithMaxLength[EnRouteEventDomain](NormalNotification.Constants.maxNumberOfEnRouteEvents))
       } yield domain.NormalNotification(mrn, place, date, subPlace, trader, customsOffice, events)
     }
 
@@ -244,13 +244,13 @@ trait MessagesModelGenerators extends Generators {
     Arbitrary {
 
       for {
-        mrn                <- arbitrary[MovementReferenceNumber]
-        date               <- localDateGen
-        approvedLocation   <- stringsWithMaxLength(SimplifiedNotification.Constants.approvedLocationLength)
-        trader             <- arbitrary[TraderDomain]
-        customsOffice      <- arbitrary[CustomsOffice]
-        events             <- Gen.option(listWithMaxLength[EnRouteEventDomain](NormalNotification.Constants.maxNumberOfEnRouteEvents))
-        authedEoriNumber   <- arbitrary[EoriNumber]
+        mrn              <- arbitrary[MovementReferenceNumber]
+        date             <- localDateGen
+        approvedLocation <- stringsWithMaxLength(SimplifiedNotification.Constants.approvedLocationLength)
+        trader           <- arbitrary[TraderDomain]
+        customsOffice    <- arbitrary[CustomsOffice]
+        events           <- Gen.option(listWithMaxLength[EnRouteEventDomain](NormalNotification.Constants.maxNumberOfEnRouteEvents))
+        authedEoriNumber <- arbitrary[EoriNumber]
       } yield SimplifiedNotification(mrn, date, approvedLocation, trader, customsOffice, events, authedEoriNumber)
     }
 

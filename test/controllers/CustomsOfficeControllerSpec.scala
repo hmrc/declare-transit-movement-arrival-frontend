@@ -205,9 +205,6 @@ class CustomsOfficeControllerSpec extends SpecBase with MockitoSugar with Nunjuc
       .set(ConsigneeNamePage, consigneeName)
       .success
       .value
-      .set(CustomsSubPlacePage, "sub place")
-      .success
-      .value
 
     val application =
       applicationBuilder(userAnswers = Some(userAnswers))
@@ -221,7 +218,20 @@ class CustomsOfficeControllerSpec extends SpecBase with MockitoSugar with Nunjuc
 
     val result = route(application, request).value
 
-    verifyStatusAndContent(customsOfficeJson, boundForm, result, BAD_REQUEST)
+    status(result) mustEqual BAD_REQUEST
+
+    verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+
+    val expectedJson = Json.obj(
+      "form"           -> boundForm,
+      "mrn"            -> mrn,
+      "mode"           -> NormalMode,
+      "customsOffices" -> customsOfficeJson,
+      "consigneeName"  -> consigneeName
+    )
+
+    templateCaptor.getValue mustEqual "customsOffice.njk"
+    jsonCaptor.getValue must containJson(expectedJson)
 
     application.stop()
   }
