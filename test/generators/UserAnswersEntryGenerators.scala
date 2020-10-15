@@ -237,7 +237,7 @@ trait UserAnswersEntryGenerators extends PageGenerators {
       } yield (page, value)
     }
 
-  implicit lazy val arbitraryPresentationOfficeUserAnswersEntry: Arbitrary[(CustomsOfficePage.type, JsValue)] =
+  implicit lazy val arbitraryCustomsOfficeUserAnswersEntry: Arbitrary[(CustomsOfficePage.type, JsValue)] =
     Arbitrary {
       for {
         page  <- arbitrary[CustomsOfficePage.type]

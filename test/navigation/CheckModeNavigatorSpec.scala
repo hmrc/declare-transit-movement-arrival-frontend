@@ -90,7 +90,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
       }
 
       "must go from 'CustomsSubPlaceController' to " - {
-        "'PresentationOfficeController' when no previous answer for 'PresentationOffice'" in {
+        "'CustomsOfficeController' when no previous answer for 'CustomsOffice'" in {
           forAll(arbitrary[UserAnswers], nonEmptyString) {
             (answers, customsSubPlace) =>
               val updatedAnswers =
@@ -103,7 +103,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
           }
         }
 
-        "'CheckYourAnswersPage' when already answer for 'PresentationOffice'" in {
+        "'CheckYourAnswersPage' when already answer for 'CustomsOffice'" in {
           forAll(arbitrary[UserAnswers], arbitrary[String], arbitrary[CustomsOffice]) {
             (answers, customsSubPlace, customsOffice) =>
               val updatedAnswers =
@@ -121,10 +121,10 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
       "must go from OfficeOfPresentation to" - {
         "CheckYourAnswersPage when trader at destination name has already been answered " in {
           forAll(arbitrary[UserAnswers], arbitrary[CustomsOffice], arbitrary[String]) {
-            (answers, presentationOffice, traderName) =>
+            (answers, customsOffice, traderName) =>
               val updatedAnswers =
                 answers
-                  .set(CustomsOfficePage, presentationOffice).success.value
+                  .set(CustomsOfficePage, customsOffice).success.value
                   .set(TraderNamePage, traderName).success.value
 
               navigator

@@ -235,9 +235,9 @@ trait MessagesModelGenerators extends Generators {
         date               <- localDateGen
         subPlace           <- stringsWithMaxLength(NormalNotification.Constants.customsSubPlaceLength)
         trader             <- arbitrary[domain.TraderDomain]
-        presentationOffice <- arbitrary[CustomsOffice]
+        customsOffice      <- arbitrary[CustomsOffice]
         events             <- Gen.option(listWithMaxLength[EnRouteEventDomain](NormalNotification.Constants.maxNumberOfEnRouteEvents))
-      } yield domain.NormalNotification(mrn, place, date, subPlace, trader, presentationOffice, events)
+      } yield domain.NormalNotification(mrn, place, date, subPlace, trader, customsOffice, events)
     }
 
   implicit lazy val arbitrarySimplifiedNotification: Arbitrary[SimplifiedNotification] =
@@ -248,10 +248,10 @@ trait MessagesModelGenerators extends Generators {
         date               <- localDateGen
         approvedLocation   <- stringsWithMaxLength(SimplifiedNotification.Constants.approvedLocationLength)
         trader             <- arbitrary[TraderDomain]
-        presentationOffice <- arbitrary[CustomsOffice]
+        customsOffice      <- arbitrary[CustomsOffice]
         events             <- Gen.option(listWithMaxLength[EnRouteEventDomain](NormalNotification.Constants.maxNumberOfEnRouteEvents))
         authedEoriNumber   <- arbitrary[EoriNumber]
-      } yield SimplifiedNotification(mrn, date, approvedLocation, trader, presentationOffice, events, authedEoriNumber)
+      } yield SimplifiedNotification(mrn, date, approvedLocation, trader, customsOffice, events, authedEoriNumber)
     }
 
   implicit lazy val arbitraryArrivalNotification: Arbitrary[ArrivalNotificationDomain] =
@@ -273,10 +273,9 @@ trait MessagesModelGenerators extends Generators {
 
   implicit lazy val arbitraryCustomsOfficeOfPresentation: Arbitrary[CustomsOfficeOfPresentation] = {
     Arbitrary {
-
       for {
-        presentationOffice <- stringsWithMaxLength(CustomsOfficeOfPresentation.Constants.customsOfficeLength)
-      } yield CustomsOfficeOfPresentation(presentationOffice)
+        customsOffice <- stringsWithMaxLength(CustomsOfficeOfPresentation.Constants.customsOfficeLength)
+      } yield CustomsOfficeOfPresentation(customsOffice)
     }
   }
 
@@ -330,8 +329,6 @@ trait MessagesModelGenerators extends Generators {
         procedureTypeFlag        <- arbitrary[ProcedureTypeFlag]
         customsSubPlace          <- stringsWithMaxLength(Header.Constants.customsSubPlaceLength)
         notificationDate         <- arbitrary[LocalDate]
-        presentationOfficeId     <- stringsWithMaxLength(CustomsOfficeOfPresentation.Constants.customsOfficeLength)
-        presentationOfficeName   <- stringsWithMaxLength(35)
       } yield {
 
         val customsSubPlaceToggle = if (procedureTypeFlag == NormalProcedureFlag) Some(customsSubPlace) else None
