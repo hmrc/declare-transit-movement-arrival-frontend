@@ -208,7 +208,7 @@ class CustomsOfficeControllerSpec extends SpecBase with MockitoSugar with Nunjuc
       .set(CustomsSubPlacePage, "sub place")
       .success
       .value
-    
+
     val application =
       applicationBuilder(userAnswers = Some(userAnswers))
         .overrides(

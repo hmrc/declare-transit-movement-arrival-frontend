@@ -102,11 +102,11 @@ final case class SimplifiedNotification(
 object SimplifiedNotification {
 
   object Constants {
-    val notificationPlaceLength                              = 35
-    val approvedLocationLength                               = 17
-    val customsOfficeLengthCustomsOfficeControllerSpec.scala = 8
-    val maxNumberOfEnRouteEvents                             = 9
-    val authorisedLocationRegex                              = "^[a-zA-Z0-9]*$"
+    val notificationPlaceLength  = 35
+    val approvedLocationLength   = 17
+    val customsOfficeLength      = 8
+    val maxNumberOfEnRouteEvents = 9
+    val authorisedLocationRegex  = "^[a-zA-Z0-9]*$"
   }
 
   implicit lazy val writes: OWrites[SimplifiedNotification] = OWrites[SimplifiedNotification] {
