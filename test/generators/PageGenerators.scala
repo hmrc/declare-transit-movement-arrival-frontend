@@ -106,7 +106,7 @@ trait PageGenerators {
   implicit lazy val arbitraryCustomsSubPlacePage: Arbitrary[CustomsSubPlacePage.type] =
     Arbitrary(CustomsSubPlacePage)
 
-  implicit lazy val arbitraryPresentationOfficePage: Arbitrary[CustomsOfficePage.type] =
+  implicit lazy val arbitraryCustomsOfficePage: Arbitrary[CustomsOfficePage.type] =
     Arbitrary(CustomsOfficePage)
 
   implicit lazy val arbitraryGoodsLocationPage: Arbitrary[GoodsLocationPage.type] =

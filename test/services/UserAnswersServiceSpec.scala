@@ -81,7 +81,7 @@ class UserAnswersServiceSpec extends SpecBase with MessagesModelGenerators {
       userAnswersService.getUserAnswers(ArrivalId(1), eoriNumber).futureValue mustBe None
     }
 
-    "must return None when the PresentationOffice cannot be found" in {
+    "must return None when the CustomsOffice cannot be found" in {
       val arrivalMovementRequest = arbitrary[ArrivalMovementRequest].sample.value
 
       val customsOffice = arbitrary[CustomsOffice]

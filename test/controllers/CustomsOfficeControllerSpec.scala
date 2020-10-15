@@ -59,7 +59,7 @@ class CustomsOfficeControllerSpec extends SpecBase with MockitoSugar with Nunjuc
     Mockito.reset(mockRefDataConnector)
   }
 
-  "PresentationOffice Controller" - {
+  "CustomsOffice Controller" - {
 
     "must return OK and the correct view for a GET" in {
       verifyOnLoadPage(emptyUserAnswers.set(CustomsSubPlacePage, "sub place").success.value, form)

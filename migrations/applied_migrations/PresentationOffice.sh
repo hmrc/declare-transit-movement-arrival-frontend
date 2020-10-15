@@ -24,7 +24,7 @@ echo "Adding to UserAnswersEntryGenerators"
 awk '/trait UserAnswersEntryGenerators/ {\
     print;\
     print "";\
-    print "  implicit lazy val arbitraryPresentationOfficeUserAnswersEntry: Arbitrary[(CustomsOfficePage.type, JsValue)] =";\
+    print "  implicit lazy val arbitraryCustomsOfficeUserAnswersEntry: Arbitrary[(CustomsOfficePage.type, JsValue)] =";\
     print "    Arbitrary {";\
     print "      for {";\
     print "        page  <- arbitrary[CustomsOfficePage.type]";\
@@ -37,7 +37,7 @@ echo "Adding to PageGenerators"
 awk '/trait PageGenerators/ {\
     print;\
     print "";\
-    print "  implicit lazy val arbitraryPresentationOfficePage: Arbitrary[CustomsOfficePage.type] =";\
+    print "  implicit lazy val arbitraryCustomsOfficePage: Arbitrary[CustomsOfficePage.type] =";\
     print "    Arbitrary(CustomsOfficePage)";\
     next }1' ../test/generators/PageGenerators.scala > tmp && mv tmp ../test/generators/PageGenerators.scala
 

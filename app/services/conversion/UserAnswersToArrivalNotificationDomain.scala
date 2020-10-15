@@ -41,11 +41,11 @@ class UserAnswersToArrivalNotificationDomain {
 
   private def createSimplifiedNotification(userAnswers: UserAnswers): Option[SimplifiedNotification] =
     for {
-      presentationOffice <- userAnswers.get(CustomsOfficePage)
-      notificationPlace  <- userAnswers.get(AuthorisedLocationPage)
-      tradersAddress     <- userAnswers.get(ConsigneeAddressPage)
-      traderEori         <- userAnswers.get(ConsigneeEoriNumberPage)
-      traderName         <- userAnswers.get(ConsigneeNamePage)
+      customsOffice     <- userAnswers.get(CustomsOfficePage)
+      notificationPlace <- userAnswers.get(AuthorisedLocationPage)
+      tradersAddress    <- userAnswers.get(ConsigneeAddressPage)
+      traderEori        <- userAnswers.get(ConsigneeEoriNumberPage)
+      traderName        <- userAnswers.get(ConsigneeNamePage)
     } yield {
 
       SimplifiedNotification(
@@ -60,7 +60,7 @@ class UserAnswersToArrivalNotificationDomain {
           city            = tradersAddress.city,
           countryCode     = countryCode_GB
         ),
-        customsOffice = presentationOffice,
+        customsOffice = customsOffice,
         enRouteEvents = enRouteEvents(userAnswers),
         authedEori    = userAnswers.eoriNumber
       )
@@ -68,12 +68,12 @@ class UserAnswersToArrivalNotificationDomain {
 
   private def createNormalNotification(userAnswers: UserAnswers): Option[NormalNotification] =
     for {
-      presentationOffice <- userAnswers.get(CustomsOfficePage)
-      customsSubPlace    <- userAnswers.get(CustomsSubPlacePage)
-      tradersAddress     <- userAnswers.get(TraderAddressPage)
-      traderEori         <- userAnswers.get(TraderEoriPage)
-      traderName         <- userAnswers.get(TraderNamePage)
-      notificationPlace  <- userAnswers.get(PlaceOfNotificationPage) orElse Some(tradersAddress.postcode)
+      customsOffice     <- userAnswers.get(CustomsOfficePage)
+      customsSubPlace   <- userAnswers.get(CustomsSubPlacePage)
+      tradersAddress    <- userAnswers.get(TraderAddressPage)
+      traderEori        <- userAnswers.get(TraderEoriPage)
+      traderName        <- userAnswers.get(TraderNamePage)
+      notificationPlace <- userAnswers.get(PlaceOfNotificationPage) orElse Some(tradersAddress.postcode)
     } yield
       NormalNotification(
         movementReferenceNumber = userAnswers.id,
@@ -88,7 +88,7 @@ class UserAnswersToArrivalNotificationDomain {
           city            = tradersAddress.city,
           countryCode     = countryCode_GB
         ),
-        customsOffice = presentationOffice,
+        customsOffice = customsOffice,
         enRouteEvents = enRouteEvents(userAnswers)
       )
 

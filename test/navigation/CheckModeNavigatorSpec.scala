@@ -105,11 +105,11 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
         "'CheckYourAnswersPage' when already answer for 'PresentationOffice'" in {
           forAll(arbitrary[UserAnswers], arbitrary[String], arbitrary[CustomsOffice]) {
-            (answers, customsSubPlace, presentationOffice) =>
+            (answers, customsSubPlace, customsOffice) =>
               val updatedAnswers =
                 answers
                   .set(CustomsSubPlacePage, customsSubPlace).success.value
-                  .set(CustomsOfficePage, presentationOffice).success.value
+                  .set(CustomsOfficePage, customsOffice).success.value
 
               navigator
                 .nextPage(CustomsSubPlacePage, CheckMode, updatedAnswers)

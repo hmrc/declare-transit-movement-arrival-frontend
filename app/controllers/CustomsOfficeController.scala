@@ -78,7 +78,7 @@ class CustomsOfficeController @Inject()(override val messagesApi: MessagesApi,
 
   private def renderView(mrn: MovementReferenceNumber,
                          mode: Mode,
-                         presentationOffice: String,
+                         customsOffice: String,
                          form: Form[CustomsOffice],
                          customsOffices: Seq[CustomsOffice],
                          status: Results.Status)(implicit request: Request[AnyContent]): Future[Result] = {
@@ -88,7 +88,7 @@ class CustomsOfficeController @Inject()(override val messagesApi: MessagesApi,
       "mrn"            -> mrn,
       "mode"           -> mode,
       "customsOffices" -> getCustomsOfficesAsJson(form.value, customsOffices),
-      "header"         -> msg"customsOffice.title".withArgs(presentationOffice)
+      "header"         -> msg"customsOffice.title".withArgs(customsOffice)
     )
     renderer.render("customsOffice.njk", json).map(status(_))
   }

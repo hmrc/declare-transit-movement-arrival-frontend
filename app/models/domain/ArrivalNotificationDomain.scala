@@ -104,7 +104,7 @@ object SimplifiedNotification {
   object Constants {
     val notificationPlaceLength  = 35
     val approvedLocationLength   = 17
-    val presentationOfficeLength = 8
+    val customsOfficeLength      = 8
     val maxNumberOfEnRouteEvents = 9
     val authorisedLocationRegex  = "^[a-zA-Z0-9]*$"
   }
