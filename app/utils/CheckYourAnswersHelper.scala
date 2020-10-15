@@ -228,7 +228,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswers
       )
   }
 
-  def presentationOffice: Option[Row] = userAnswers.get(CustomsOfficePage) map {
+  def customsOffice: Option[Row] = userAnswers.get(CustomsOfficePage) map {
     answer =>
       val location: String = (userAnswers.get(CustomsSubPlacePage), userAnswers.get(ConsigneeNamePage)) match {
         case (Some(customsSubPlace), None) => customsSubPlace

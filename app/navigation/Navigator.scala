@@ -43,7 +43,7 @@ class Navigator @Inject()() {
     case ConsigneeEoriConfirmationPage => consigneeEoriConfirmationRoute(NormalMode)
     case ConsigneeEoriNumberPage => ua => Some(routes.ConsigneeAddressController.onPageLoad(ua.id, NormalMode))
     case ConsigneeAddressPage => ua => Some(routes.CustomsOfficeController.onPageLoad(ua.id, NormalMode))
-    case CustomsOfficePage => presentationOfficeRoute(NormalMode)
+    case CustomsOfficePage => customsOffice(NormalMode)
     case CustomsSubPlacePage => ua => Some(routes.CustomsOfficeController.onPageLoad(ua.id, NormalMode))
     case TraderNamePage => ua => Some(routes.TraderEoriController.onPageLoad(ua.id, NormalMode))
     case TraderAddressPage => ua => Some(routes.IsTraderAddressPlaceOfNotificationController.onPageLoad(ua.id, NormalMode))
@@ -97,7 +97,7 @@ class Navigator @Inject()() {
     case HaveSealsChangedPage(index) => haveSealsChanged(index, CheckMode)
     case ConfirmRemoveSealPage(eventIndex) => removeSeal(eventIndex, CheckMode)
     case AddSealPage(eventIndex) => addSeal(eventIndex, CheckMode)
-    case CustomsOfficePage =>  presentationOfficeRoute(CheckMode)
+    case CustomsOfficePage =>  customsOffice(CheckMode)
     case TraderNamePage =>  traderNameRoute(CheckMode)
     case TraderEoriPage =>  traderEoriRoute(CheckMode)
 
@@ -169,7 +169,7 @@ class Navigator @Inject()() {
       case _                    => Some(routes.CustomsOfficeController.onPageLoad(ua.id, mode))
     }
 
-  private def presentationOfficeRoute(mode: Mode)(ua: UserAnswers): Option[Call] =
+  private def customsOffice(mode: Mode)(ua: UserAnswers): Option[Call] =
     (ua.get(GoodsLocationPage), ua.get(TraderNamePage), mode) match {
       case (Some(BorderForceOffice), Some(_), _)               => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
       case (Some(BorderForceOffice), None, _)                  => Some(routes.TraderNameController.onPageLoad(ua.id, mode))

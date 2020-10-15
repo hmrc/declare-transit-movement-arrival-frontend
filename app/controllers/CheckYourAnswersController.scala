@@ -83,7 +83,7 @@ class CheckYourAnswersController @Inject()(override val messagesApi: MessagesApi
       msg"checkYourAnswers.section.goodsLocation",
       (userAnswers.get(GoodsLocationPage) match {
         case Some(AuthorisedConsigneesLocation) => Seq(helper.goodsLocation, helper.authorisedLocation)
-        case _                                  => Seq(helper.goodsLocation, helper.authorisedLocation, helper.customsSubPlace, helper.presentationOffice)
+        case _                                  => Seq(helper.goodsLocation, helper.authorisedLocation, helper.customsSubPlace, helper.customsOffice)
 
       }).flatten
     )
@@ -103,7 +103,7 @@ class CheckYourAnswersController @Inject()(override val messagesApi: MessagesApi
         helper.eoriConfirmation(eori),
         helper.eoriNumber,
         helper.consigneeAddress,
-        helper.presentationOffice
+        helper.customsOffice
       ).flatten
     )
     val placeOfNotification = Section(
