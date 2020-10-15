@@ -159,7 +159,12 @@ class TraderAddressControllerSpec extends SpecBase with MockitoSugar with Nunjuc
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application    = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val userAnswers = emptyUserAnswers
+        .set(TraderNamePage, traderName)
+        .success
+        .value
+
+      val application    = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request        = FakeRequest(POST, traderAddressRoute).withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm      = form.bind(Map("value" -> "invalid value"))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -172,9 +177,10 @@ class TraderAddressControllerSpec extends SpecBase with MockitoSugar with Nunjuc
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form" -> boundForm,
-        "mrn"  -> mrn,
-        "mode" -> NormalMode
+        "form"       -> boundForm,
+        "mrn"        -> mrn,
+        "mode"       -> NormalMode,
+        "traderName" -> traderName
       )
 
       templateCaptor.getValue mustEqual "traderAddress.njk"
