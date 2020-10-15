@@ -24,7 +24,7 @@ import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.PresentationOfficePage
+import pages.CustomsOfficePage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
@@ -46,7 +46,7 @@ class ConfirmationControllerSpec extends SpecBase with MockitoSugar with JsonMat
 
       val mockSessionRepository = mock[SessionRepository]
       val presentationOffice    = CustomsOffice("id", "name", Seq.empty, None)
-      val userAnswers           = emptyUserAnswers.set(PresentationOfficePage, presentationOffice).success.value
+      val userAnswers           = emptyUserAnswers.set(CustomsOfficePage, presentationOffice).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers))
         .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
@@ -78,7 +78,7 @@ class ConfirmationControllerSpec extends SpecBase with MockitoSugar with JsonMat
 
       val mockSessionRepository = mock[SessionRepository]
       val presentationOffice    = CustomsOffice("id", "name", Seq.empty, Some("phoneNumber"))
-      val userAnswers           = emptyUserAnswers.set(PresentationOfficePage, presentationOffice).success.value
+      val userAnswers           = emptyUserAnswers.set(CustomsOfficePage, presentationOffice).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers))
         .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
         .build()

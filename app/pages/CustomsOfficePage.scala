@@ -19,9 +19,9 @@ package pages
 import models.reference.CustomsOffice
 import play.api.libs.json.JsPath
 
-case object PresentationOfficePage extends QuestionPage[CustomsOffice] {
+case object CustomsOfficePage extends QuestionPage[CustomsOffice] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "presentationOffice"
+  override def toString: String = "customsOffice"
 }

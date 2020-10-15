@@ -40,7 +40,7 @@ class CustomsOfficeOfPresentationSpec
         customsOfficeOfPresentation =>
           val expectedResult: NodeSeq =
             <CUSOFFPREOFFRES>
-              <RefNumRES1>{customsOfficeOfPresentation.presentationOffice}</RefNumRES1>
+              <RefNumRES1>{customsOfficeOfPresentation.office}</RefNumRES1>
             </CUSOFFPREOFFRES>
 
           customsOfficeOfPresentation.toXml mustEqual expectedResult
@@ -53,7 +53,7 @@ class CustomsOfficeOfPresentationSpec
         customsOfficeOfPresentation =>
           val xml: NodeSeq =
             <CUSOFFPREOFFRES>
-              <RefNumRES1>{customsOfficeOfPresentation.presentationOffice}</RefNumRES1>
+              <RefNumRES1>{customsOfficeOfPresentation.office}</RefNumRES1>
             </CUSOFFPREOFFRES>
 
           val result = XmlReader.of[CustomsOfficeOfPresentation].read(xml).toOption.value

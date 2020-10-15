@@ -45,7 +45,7 @@ class UserAnswersServiceSpec extends SpecBase with MessagesModelGenerators {
     "must return user answers for valid input" in {
 
       val arrivalMovementRequest = arbitrary[ArrivalMovementRequest].sample.value
-      val customsOffice          = arbitrary[CustomsOffice].sample.value.copy(id = arrivalMovementRequest.customsOfficeOfPresentation.presentationOffice)
+      val customsOffice          = arbitrary[CustomsOffice].sample.value.copy(id = arrivalMovementRequest.customsOfficeOfPresentation.office)
 
       when(mockArrivalNotificationMessageService.getArrivalNotificationMessage(any())(any(), any()))
         .thenReturn(Future.successful(Some(arrivalMovementRequest)))
@@ -86,7 +86,7 @@ class UserAnswersServiceSpec extends SpecBase with MessagesModelGenerators {
 
       val customsOffice = arbitrary[CustomsOffice]
         .suchThat(
-          _.id != arrivalMovementRequest.customsOfficeOfPresentation.presentationOffice
+          _.id != arrivalMovementRequest.customsOfficeOfPresentation.office
         )
         .sample
         .value

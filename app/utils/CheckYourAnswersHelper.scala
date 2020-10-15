@@ -228,7 +228,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswers
       )
   }
 
-  def presentationOffice: Option[Row] = userAnswers.get(PresentationOfficePage) map {
+  def presentationOffice: Option[Row] = userAnswers.get(CustomsOfficePage) map {
     answer =>
       val location: String = (userAnswers.get(CustomsSubPlacePage), userAnswers.get(ConsigneeNamePage)) match {
         case (Some(customsSubPlace), None) => customsSubPlace
@@ -243,7 +243,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswers
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = routes.PresentationOfficeController.onPageLoad(mrn, CheckMode).url,
+            href               = routes.CustomsOfficeController.onPageLoad(mrn, CheckMode).url,
             visuallyHiddenText = Some(msg"customsOffice.change.hidden".withArgs(location)),
             attributes         = Map("id" -> s"""change-presentation-office""")
           )

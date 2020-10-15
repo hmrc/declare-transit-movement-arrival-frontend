@@ -55,7 +55,7 @@ class ArrivalMovementRequestToArrivalNotificationServiceSpec extends SpecBase wi
           }
 
           val result = arrivalMovementRequestConversionService
-            .convertToArrivalNotification(arrivalMovementRequest, arrivalNotificationDomain.presentationOffice, eoriNumber)
+            .convertToArrivalNotification(arrivalMovementRequest, arrivalNotificationDomain.customsOffice, eoriNumber)
             .value
 
           result mustBe expectedResult

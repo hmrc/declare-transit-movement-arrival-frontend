@@ -109,7 +109,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
               val updatedAnswers =
                 answers
                   .set(CustomsSubPlacePage, customsSubPlace).success.value
-                  .set(PresentationOfficePage, presentationOffice).success.value
+                  .set(CustomsOfficePage, presentationOffice).success.value
 
               navigator
                 .nextPage(CustomsSubPlacePage, CheckMode, updatedAnswers)
@@ -124,7 +124,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
             (answers, presentationOffice, traderName) =>
               val updatedAnswers =
                 answers
-                  .set(PresentationOfficePage, presentationOffice).success.value
+                  .set(CustomsOfficePage, presentationOffice).success.value
                   .set(TraderNamePage, traderName).success.value
 
               navigator
@@ -141,12 +141,12 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
                   .set(GoodsLocationPage, BorderForceOffice)
                   .success
                   .value
-                  .set(PresentationOfficePage, presentationOffice).success.value
+                  .set(CustomsOfficePage, presentationOffice).success.value
 
                   .remove(TraderNamePage).success.value
 
               navigator
-                .nextPage(PresentationOfficePage, CheckMode, updatedAnswers)
+                .nextPage(CustomsOfficePage, CheckMode, updatedAnswers)
                 .mustBe(routes.TraderNameController.onPageLoad(answers.id, CheckMode))
 
           }

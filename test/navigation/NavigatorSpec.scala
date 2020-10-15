@@ -148,7 +148,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
                 .set(GoodsLocationPage, AuthorisedConsigneesLocation).success.value
                 .remove(IncidentOnRoutePage).success.value
               navigator
-                .nextPage(PresentationOfficePage, NormalMode, ua)
+                .nextPage(CustomsOfficePage, NormalMode, ua)
                 .mustBe(routes.IncidentOnRouteController.onPageLoad(ua.id, NormalMode))
           }
         }
@@ -160,14 +160,14 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
                 .set(GoodsLocationPage, BorderForceOffice).success.value
                 .remove(TraderNamePage).success.value
               navigator
-                .nextPage(PresentationOfficePage, NormalMode, ua)
+                .nextPage(CustomsOfficePage, NormalMode, ua)
                 .mustBe(routes.TraderNameController.onPageLoad(ua.id, NormalMode))
           }
         }
 
         "to 'SessionExpired' when no answers are available" in {
           navigator
-            .nextPage(PresentationOfficePage, NormalMode, emptyUserAnswers)
+            .nextPage(CustomsOfficePage, NormalMode, emptyUserAnswers)
             .mustBe(routes.SessionExpiredController.onPageLoad())
         }
       }

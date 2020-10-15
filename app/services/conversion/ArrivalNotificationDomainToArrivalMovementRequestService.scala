@@ -38,7 +38,7 @@ object ArrivalNotificationDomainToArrivalMovementRequestService {
         )
         val header            = buildHeader(normalNotification, NormalProcedureFlag)
         val traderDestination = TraderDomain.domainTraderToMessagesTrader(normalNotification.trader)
-        val customsOffice     = CustomsOfficeOfPresentation(presentationOffice = normalNotification.presentationOffice.id)
+        val customsOffice     = CustomsOfficeOfPresentation(office = normalNotification.customsOffice.id)
         val enRouteEvents     = normalNotification.enRouteEvents.map(_.map(EnRouteEventDomain.domainEnrouteEventToEnrouteEvent))
 
         ArrivalMovementRequest(meta, header, traderDestination, customsOffice, enRouteEvents)
@@ -51,7 +51,7 @@ object ArrivalNotificationDomainToArrivalMovementRequestService {
         )
         val header                                   = buildSimplifiedHeader(simplifiedNotification, SimplifiedProcedureFlag)
         val traderDestination                        = TraderDomain.domainTraderToMessagesTrader(simplifiedNotification.trader)
-        val customsOffice                            = CustomsOfficeOfPresentation(presentationOffice = simplifiedNotification.presentationOffice.id)
+        val customsOffice                            = CustomsOfficeOfPresentation(office = simplifiedNotification.customsOffice.id)
         val enRouteEvents: Option[Seq[EnRouteEvent]] = simplifiedNotification.enRouteEvents.map(_.map(EnRouteEventDomain.domainEnrouteEventToEnrouteEvent))
 
         ArrivalMovementRequest(meta, header, traderDestination, customsOffice, enRouteEvents)

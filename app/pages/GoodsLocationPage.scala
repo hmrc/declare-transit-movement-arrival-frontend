@@ -32,7 +32,7 @@ case object GoodsLocationPage extends QuestionPage[GoodsLocation] {
       case Some(GoodsLocation.AuthorisedConsigneesLocation) =>
         userAnswers
           .remove(CustomsSubPlacePage)
-          .flatMap(_.remove(PresentationOfficePage))
+          .flatMap(_.remove(CustomsOfficePage))
           .flatMap(_.remove(TraderNamePage))
           .flatMap(_.remove(TraderEoriPage))
           .flatMap(_.remove(TraderAddressPage))
@@ -43,7 +43,7 @@ case object GoodsLocationPage extends QuestionPage[GoodsLocation] {
         userAnswers
           .remove(AuthorisedLocationPage)
           .flatMap(_.remove(ConsigneeNamePage))
-          .flatMap(_.remove(PresentationOfficePage))
+          .flatMap(_.remove(CustomsOfficePage))
           .flatMap(_.remove(ConsigneeEoriConfirmationPage))
           .flatMap(_.remove(ConsigneeEoriNumberPage))
           .flatMap(_.remove(ConsigneeAddressPage))

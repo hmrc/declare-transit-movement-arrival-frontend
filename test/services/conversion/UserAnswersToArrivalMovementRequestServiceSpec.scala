@@ -55,7 +55,7 @@ class UserAnswersToArrivalMovementRequestServiceSpec extends SpecBase with Messa
 
         forAll(arbitrary[ArrivalMovementRequest], arbitrary[CustomsOffice]) {
           (arrivalMovementRequest, customsOffice) =>
-            val setCustomsOffice = customsOffice.copy(id = arrivalMovementRequest.customsOfficeOfPresentation.presentationOffice)
+            val setCustomsOffice = customsOffice.copy(id = arrivalMovementRequest.customsOfficeOfPresentation.office)
 
             when(mockIcrRepo.nextInterchangeControlReferenceId()).thenReturn(Future.successful(arrivalMovementRequest.meta.interchangeControlReference))
 

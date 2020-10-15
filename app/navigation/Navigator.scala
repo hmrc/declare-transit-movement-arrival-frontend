@@ -42,9 +42,9 @@ class Navigator @Inject()() {
     case ConsigneeNamePage => ua => Some(routes.ConsigneeEoriConfirmationController.onPageLoad(ua.id, NormalMode))
     case ConsigneeEoriConfirmationPage => consigneeEoriConfirmationRoute(NormalMode)
     case ConsigneeEoriNumberPage => ua => Some(routes.ConsigneeAddressController.onPageLoad(ua.id, NormalMode))
-    case ConsigneeAddressPage => ua => Some(routes.PresentationOfficeController.onPageLoad(ua.id, NormalMode))
-    case PresentationOfficePage => presentationOfficeRoute(NormalMode)
-    case CustomsSubPlacePage => ua => Some(routes.PresentationOfficeController.onPageLoad(ua.id, NormalMode))
+    case ConsigneeAddressPage => ua => Some(routes.CustomsOfficeController.onPageLoad(ua.id, NormalMode))
+    case CustomsOfficePage => presentationOfficeRoute(NormalMode)
+    case CustomsSubPlacePage => ua => Some(routes.CustomsOfficeController.onPageLoad(ua.id, NormalMode))
     case TraderNamePage => ua => Some(routes.TraderEoriController.onPageLoad(ua.id, NormalMode))
     case TraderAddressPage => ua => Some(routes.IsTraderAddressPlaceOfNotificationController.onPageLoad(ua.id, NormalMode))
     case TraderEoriPage => ua => Some(routes.TraderAddressController.onPageLoad(ua.id, NormalMode))
@@ -97,7 +97,7 @@ class Navigator @Inject()() {
     case HaveSealsChangedPage(index) => haveSealsChanged(index, CheckMode)
     case ConfirmRemoveSealPage(eventIndex) => removeSeal(eventIndex, CheckMode)
     case AddSealPage(eventIndex) => addSeal(eventIndex, CheckMode)
-    case PresentationOfficePage =>  presentationOfficeRoute(CheckMode)
+    case CustomsOfficePage =>  presentationOfficeRoute(CheckMode)
     case TraderNamePage =>  traderNameRoute(CheckMode)
     case TraderEoriPage =>  traderEoriRoute(CheckMode)
 
@@ -164,9 +164,9 @@ class Navigator @Inject()() {
     }
 
   private def consigneeAddressRoute(mode: Mode)(ua: UserAnswers): Option[Call] =
-    (ua.get(PresentationOfficePage), mode) match {
+    (ua.get(CustomsOfficePage), mode) match {
       case (Some(_), CheckMode) => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
-      case _                    => Some(routes.PresentationOfficeController.onPageLoad(ua.id, mode))
+      case _                    => Some(routes.CustomsOfficeController.onPageLoad(ua.id, mode))
     }
 
   private def presentationOfficeRoute(mode: Mode)(ua: UserAnswers): Option[Call] =
@@ -188,9 +188,9 @@ class Navigator @Inject()() {
       case _                    => Some(routes.TraderAddressController.onPageLoad(ua.id, mode))
     }
   private def customsSubPlaceRoute(mode: Mode)(ua: UserAnswers): Option[Call] =
-    (ua.get(PresentationOfficePage), mode) match {
+    (ua.get(CustomsOfficePage), mode) match {
       case (Some(_), CheckMode) => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
-      case _                    => Some(routes.PresentationOfficeController.onPageLoad(ua.id, mode))
+      case _                    => Some(routes.CustomsOfficeController.onPageLoad(ua.id, mode))
     }
   private def authorisedLocationRoute(mode: Mode)(ua: UserAnswers): Option[Call] =
     (ua.get(ConsigneeNamePage), mode) match {

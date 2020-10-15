@@ -275,7 +275,7 @@ trait MessagesModelGenerators extends Generators {
     Arbitrary {
 
       for {
-        presentationOffice <- stringsWithMaxLength(CustomsOfficeOfPresentation.Constants.presentationOfficeLength)
+        presentationOffice <- stringsWithMaxLength(CustomsOfficeOfPresentation.Constants.customsOfficeLength)
       } yield CustomsOfficeOfPresentation(presentationOffice)
     }
   }
@@ -330,7 +330,7 @@ trait MessagesModelGenerators extends Generators {
         procedureTypeFlag        <- arbitrary[ProcedureTypeFlag]
         customsSubPlace          <- stringsWithMaxLength(Header.Constants.customsSubPlaceLength)
         notificationDate         <- arbitrary[LocalDate]
-        presentationOfficeId     <- stringsWithMaxLength(CustomsOfficeOfPresentation.Constants.presentationOfficeLength)
+        presentationOfficeId     <- stringsWithMaxLength(CustomsOfficeOfPresentation.Constants.customsOfficeLength)
         presentationOfficeName   <- stringsWithMaxLength(35)
       } yield {
 

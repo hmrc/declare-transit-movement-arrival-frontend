@@ -24,7 +24,7 @@ import models.GoodsLocation.BorderForceOffice
 import models.reference.CustomsOffice
 import models.{Mode, MovementReferenceNumber}
 import navigation.Navigator
-import pages.{ConsigneeNamePage, CustomsSubPlacePage, PresentationOfficePage}
+import pages.{ConsigneeNamePage, CustomsOfficePage, CustomsSubPlacePage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.{JsObject, Json}
@@ -63,7 +63,7 @@ class CustomsOfficeController @Inject()(override val messagesApi: MessagesApi,
             locationName match {
               case locationName: String =>
                 val form = formProvider(locationName, customsOffices)
-                val preparedForm = request.userAnswers.get(PresentationOfficePage) match {
+                val preparedForm = request.userAnswers.get(CustomsOfficePage) match {
                   case None        => form
                   case Some(value) => form.fill(value)
                 }
@@ -113,9 +113,9 @@ class CustomsOfficeController @Inject()(override val messagesApi: MessagesApi,
                     },
                     value =>
                       for {
-                        updatedAnswers <- Future.fromTry(request.userAnswers.set(PresentationOfficePage, value))
+                        updatedAnswers <- Future.fromTry(request.userAnswers.set(CustomsOfficePage, value))
                         _              <- sessionRepository.set(updatedAnswers)
-                      } yield Redirect(navigator.nextPage(PresentationOfficePage, mode, updatedAnswers))
+                      } yield Redirect(navigator.nextPage(CustomsOfficePage, mode, updatedAnswers))
                   )
               case _ => Future.successful(Redirect(routes.SessionExpiredController.onPageLoad()))
 

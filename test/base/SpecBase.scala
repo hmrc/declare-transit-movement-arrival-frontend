@@ -67,9 +67,9 @@ trait SpecBase
   val container: Container             = Container("containerNumber")
   val domainContainer: ContainerDomain = ContainerDomain("containerNumber")
 
-  val traderName: String         = "traderName"
-  val consigneeName: String      = "consigneeName"
-  val presentationOffice: String = "presentationOffice"
+  val traderName: String    = "traderName"
+  val consigneeName: String = "consigneeName"
+  val customsOffice: String = "customsOffice"
 
   val traderAddress: Address = Address("buildingAndStreet", "city", "NE99 1XN")
   val configKey              = "config"

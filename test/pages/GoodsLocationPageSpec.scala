@@ -52,7 +52,7 @@ class GoodsLocationPageSpec extends PageBehaviours {
           result.get(ConsigneeEoriConfirmationPage) must not be defined
           result.get(ConsigneeEoriNumberPage) must not be defined
           result.get(ConsigneeAddressPage) must not be defined
-          result.get(PresentationOfficePage) must not be defined
+          result.get(CustomsOfficePage) must not be defined
 
       }
     }
@@ -73,13 +73,13 @@ class GoodsLocationPageSpec extends PageBehaviours {
             .value
 
           result.get(CustomsSubPlacePage) must not be defined
-          result.get(PresentationOfficePage) must not be defined
+          result.get(CustomsOfficePage) must not be defined
           result.get(TraderNamePage) must not be defined
           result.get(TraderEoriPage) must not be defined
           result.get(TraderAddressPage) must not be defined
           result.get(IsTraderAddressPlaceOfNotificationPage) must not be defined
           result.get(PlaceOfNotificationPage) must not be defined
-          result.get(PresentationOfficePage) must not be defined
+          result.get(CustomsOfficePage) must not be defined
 
       }
     }

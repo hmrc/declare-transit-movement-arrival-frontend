@@ -27,7 +27,7 @@ import org.mockito.{ArgumentCaptor, Mockito}
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.{CustomsSubPlacePage, PresentationOfficePage}
+import pages.{CustomsOfficePage, CustomsSubPlacePage}
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
@@ -69,7 +69,7 @@ class CustomsOfficeControllerSpec extends SpecBase with MockitoSugar with Nunjuc
       val officeId   = "officeId"
       val officeName = "someName"
       val userAnswers = emptyUserAnswers
-        .set(PresentationOfficePage, CustomsOffice(officeId, officeName, Seq.empty, None))
+        .set(CustomsOfficePage, CustomsOffice(officeId, officeName, Seq.empty, None))
         .success
         .value
         .set(CustomsSubPlacePage, "subs place")
