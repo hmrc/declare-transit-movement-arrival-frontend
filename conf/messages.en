@@ -209,16 +209,16 @@ traderAddress.buildingAndStreet = Building and street
 traderAddress.city = Town or city
 traderAddress.postcode = Postcode
 traderAddress.checkYourAnswersLabel = Address
-traderAddress.error.buildingAndStreet.required = Enter the building and street of the trader at the destination
+traderAddress.error.buildingAndStreet.required = Enter the building and street name of the trader at the destination
 traderAddress.error.city.required = Enter the town or city of the trader at the destination
-traderAddress.error.postcode.required = Enter the postcode of the trader at the destination
-traderAddress.error.buildingAndStreet.length = Building and street must be 35 characters or less
 traderAddress.error.city.length = Town or city must be 35 characters or less
+
+traderAddress.error.postcode.required = Enter the postcode of {0}’s address
 traderAddress.error.postcode.length = Postcode must be 9 characters or less
 traderAddress.error.postcode.invalid = The postcode of {0}’s address must only include letters A to Z and numbers 0 to 9
 
 traderAddress.error.invalid = The {0} of {1}’s address must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, asterisks, forward slashes, full stops, hyphens, question marks, and greater than (>) and less than (<) signs
-traderAddress.error.empty = Enter the {0} of {1}’s address
+traderAddress.error.required = Enter the {0} of {1}’s address
 traderAddress.error.max_length = The {0} of {1}’s address must be 35 characters or less
 traderAddress.change.hidden = address of trader
 
@@ -460,9 +460,9 @@ eoriNumber.error.required = Enter the EORI number for {0}
 eoriNumber.error.length =  EORI mumber must be 17 characters or less
 eoriNumber.error.invalid =  EORI number must start with 2 letters followed by up to 15 numbers
 
-consigneeAddress.title = What is the address of the authorised consignee
-consigneeAddress.heading =  What is the address for {0}?
-consigneeAddress.checkYourAnswersLabel =  What is the address for {0}?
+consigneeAddress.title = What is the authorised consignee’s address?
+consigneeAddress.heading =  What is {0}’s address?
+consigneeAddress.checkYourAnswersLabel =  What is {0}’s address?
 consigneeAddress.error.required = Enter {0}’s Address
 consigneeAddress.error.length = The address for {0} must be 100 characters or less
 
@@ -470,15 +470,24 @@ consigneeAddress.buildingAndStreet = Building and street
 consigneeAddress.city = Town or city
 consigneeAddress.postcode = Postcode
 consigneeAddress.checkYourAnswersLabel = Address
+
 consigneeAddress.error.buildingAndStreet.required = Enter the building and street
-consigneeAddress.error.city.required = Enter the town or city
-consigneeAddress.error.postcode.required = Enter the postcode
 consigneeAddress.error.buildingAndStreet.length = Building and street must be 35 characters or less
+
+consigneeAddress.error.city.required = Enter the town or city
 consigneeAddress.error.city.length = Town or city must be 35 characters or less
-consigneeAddress.error.postcode.length = Postcode must be 9 characters or less
 consigneeAddress.change.hidden = address of consignee
 
-arrivalRejection.title = There is a problem with this arrival notification
+consigneeAddress.error.postcode.required = Enter the postcode of {0}’s address
+consigneeAddress.error.postcode.length = Postcode must be 9 characters or less
+consigneeAddress.error.postcode.invalid = The postcode of {0}’s address must only include letters A to Z and numbers 0 to 9
+
+consigneeAddress.error.invalid = The {0} of {1}’s address must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, asterisks, forward slashes, full stops, hyphens, question marks, and greater than (>) and less than (<) signs
+consigneeAddress.error.required = Enter the {0} of {1}’s address
+consigneeAddress.error.max_length = The {0} of {1}’s address must be 35 characters or less
+
+
+arrivalRejection.title = There is a problem with this arrival not ification
 arrivalRejection.heading = There is a problem with this arrival notification
 arrivalRejection.you.can = You can:
 arrivalRejection.errorCode = Error code

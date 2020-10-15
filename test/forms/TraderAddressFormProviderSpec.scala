@@ -17,12 +17,13 @@
 package forms
 
 import forms.behaviours.StringFieldBehaviours
+import models.Address
 import org.scalacheck.Gen
 import play.api.data.FormError
 
 class TraderAddressFormProviderSpec extends StringFieldBehaviours {
 
-  val traderName = "trader_name"
+  val traderName = "traderName"
   val form       = new TraderAddressFormProvider()(traderName)
 
   val maxLength = 35
@@ -35,8 +36,10 @@ class TraderAddressFormProviderSpec extends StringFieldBehaviours {
   ".buildingAndStreet" - {
 
     val fieldName   = "buildingAndStreet"
-    val requiredKey = "traderAddress.error.buildingAndStreet.required"
-    val lengthKey   = "traderAddress.error.buildingAndStreet.length"
+    val requiredKey = "traderAddress.error.required"
+    val lengthKey   = "traderAddress.error.max_length"
+
+    val args = Seq(Address.Constants.Fields.buildingAndStreetName, traderName)
 
     behave like fieldThatBindsValidData(
       form,
@@ -48,23 +51,25 @@ class TraderAddressFormProviderSpec extends StringFieldBehaviours {
       form,
       fieldName,
       maxLength   = maxLength,
-      lengthError = FormError(fieldName, lengthKey, Seq("building and street name", traderName)),
+      lengthError = FormError(fieldName, lengthKey, args),
       validAddressStringGenOverLength
     )
 
     behave like mandatoryField(
       form,
       fieldName,
-      requiredError = FormError(fieldName, requiredKey, Seq(traderName))
+      requiredError = FormError(fieldName, requiredKey, args)
     )
   }
 
   ".city" - {
 
     val fieldName   = "city"
-    val requiredKey = "traderAddress.error.city.required"
+    val requiredKey = "traderAddress.error.required"
     val lengthKey   = "traderAddress.error.max_length"
     val maxLength   = 35
+
+    val args = Seq(Address.Constants.Fields.city, traderName)
 
     behave like fieldThatBindsValidData(
       form,
@@ -76,14 +81,14 @@ class TraderAddressFormProviderSpec extends StringFieldBehaviours {
       form,
       fieldName,
       maxLength   = maxLength,
-      lengthError = FormError(fieldName, lengthKey, Seq("city", traderName)),
+      lengthError = FormError(fieldName, lengthKey, args),
       validAddressStringGenOverLength
     )
 
     behave like mandatoryField(
       form,
       fieldName,
-      requiredError = FormError(fieldName, requiredKey, Seq(traderName))
+      requiredError = FormError(fieldName, requiredKey, args)
     )
   }
 
