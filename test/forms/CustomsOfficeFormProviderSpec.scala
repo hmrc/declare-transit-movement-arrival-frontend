@@ -24,7 +24,7 @@ import play.api.data.FormError
 class CustomsOfficeFormProviderSpec extends StringFieldBehaviours with SpecBase {
 
   var subPlace            = "subPlace"
-  val requiredKey: String = messages("customsOffice.error.required", subPlace)
+  val requiredKey: String = "customsOffice.error.required"
   val lengthKey           = "customsOffice.error.length"
   val maxLength           = 8
 
