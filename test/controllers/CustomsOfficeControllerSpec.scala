@@ -27,7 +27,7 @@ import org.mockito.{ArgumentCaptor, Mockito}
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.{CustomsOfficePage, CustomsSubPlacePage}
+import pages.{ConsigneeNamePage, CustomsOfficePage, CustomsSubPlacePage}
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
@@ -201,7 +201,14 @@ class CustomsOfficeControllerSpec extends SpecBase with MockitoSugar with Nunjuc
 
     when(mockRefDataConnector.getCustomsOffices()(any(), any())).thenReturn(Future.successful(customsOffices))
 
-    val userAnswers = emptyUserAnswers.set(CustomsSubPlacePage, "sub place").success.value
+    val userAnswers = emptyUserAnswers
+      .set(ConsigneeNamePage, consigneeName)
+      .success
+      .value
+      .set(CustomsSubPlacePage, "sub place")
+      .success
+      .value
+    
     val application =
       applicationBuilder(userAnswers = Some(userAnswers))
         .overrides(
