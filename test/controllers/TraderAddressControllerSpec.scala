@@ -25,7 +25,7 @@ import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.TraderAddressPage
+import pages.{TraderAddressPage, TraderNamePage}
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -65,7 +65,9 @@ class TraderAddressControllerSpec extends SpecBase with MockitoSugar with Nunjuc
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application    = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val answers = emptyUserAnswers.set(TraderNamePage, traderName).success.value
+
+      val application    = applicationBuilder(userAnswers = Some(answers)).build()
       val request        = FakeRequest(GET, traderAddressRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
@@ -77,9 +79,10 @@ class TraderAddressControllerSpec extends SpecBase with MockitoSugar with Nunjuc
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form" -> form,
-        "mrn"  -> mrn,
-        "mode" -> NormalMode
+        "form"       -> form,
+        "mrn"        -> mrn,
+        "mode"       -> NormalMode,
+        "traderName" -> traderName
       )
 
       templateCaptor.getValue mustEqual "traderAddress.njk"
