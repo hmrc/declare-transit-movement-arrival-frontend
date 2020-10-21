@@ -166,7 +166,7 @@ class Navigator @Inject()() {
   private def consigneeAddressRoute(mode: Mode)(ua: UserAnswers): Option[Call] =
     (ua.get(CustomsOfficePage), mode) match {
       case (Some(_), CheckMode) => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
-      case _                    => Some(routes.CustomsOfficeController.onPageLoad(ua.id, mode))
+      case _                    => Some(routes.SimplifiedCustomsOfficeController.onPageLoad(ua.id, mode))
     }
 
   private def customsOffice(mode: Mode)(ua: UserAnswers): Option[Call] =
