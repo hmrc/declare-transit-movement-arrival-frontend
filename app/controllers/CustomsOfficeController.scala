@@ -99,7 +99,7 @@ class CustomsOfficeController @Inject()(override val messagesApi: MessagesApi,
       "mrn"            -> mrn,
       "mode"           -> mode,
       "customsOffices" -> getCustomsOfficesAsJson(form.value, customsOffices),
-      "header"         -> msg"customsOffice.title".withArgs(customsOffice),
+      "header"         -> msg"customsOffice.heading".withArgs(customsOffice),
       "consigneeName"  -> consigneeName,
       "locationName"   -> customsOffice
     )
