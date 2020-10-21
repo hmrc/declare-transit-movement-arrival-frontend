@@ -29,10 +29,10 @@ GET        /:mrn/change-where-are-goods                      controllers.GoodsLo
 POST       /:mrn/change-where-are-goods                      controllers.GoodsLocationController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
 
 
-GET        /:mrn/simplified-customs-office                   controllers.SimplifiedCustomsOfficeController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
-POST       /:mrn/simplified-customs-office                   controllers.SimplifiedCustomsOfficeController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
-GET        /:mrn/change-simplified-customs-office            controllers.SimplifiedCustomsOfficeController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
-POST       /:mrn/change-simplified-customs-office            controllers.SimplifiedCustomsOfficeController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
+GET        /:mrn/supervising-customs-office                  controllers.SimplifiedCustomsOfficeController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
+POST       /:mrn/supervising-customs-office                  controllers.SimplifiedCustomsOfficeController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
+GET        /:mrn/change-supervising-customs-office           controllers.SimplifiedCustomsOfficeController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
+POST       /:mrn/change-supervising-customs-office           controllers.SimplifiedCustomsOfficeController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
 
 
 GET        /:mrn/customs-office                              controllers.CustomsOfficeController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
