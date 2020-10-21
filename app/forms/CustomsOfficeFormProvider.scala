@@ -36,8 +36,6 @@ class CustomsOfficeFormProvider @Inject() extends Mappings {
     )
 }
 
-
-
 class CustomsOfficeSimplifiedFormProvider @Inject() extends Mappings {
 
   def apply(
