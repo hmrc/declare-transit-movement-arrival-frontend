@@ -17,9 +17,7 @@
 package pages
 
 import base.SpecBase
-import models.UserAnswers
 import pages.behaviours.PageBehaviours
-import org.scalacheck.Arbitrary.arbitrary
 
 class ConsigneeEoriConfirmationPageSpec extends PageBehaviours with SpecBase {
 

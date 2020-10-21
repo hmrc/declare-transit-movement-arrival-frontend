@@ -38,7 +38,7 @@ class UserAnswersService @Inject()(arrivalNotificationMessageService: ArrivalNot
         arrivalMovementRequest =>
           MovementReferenceNumber(arrivalMovementRequest.header.movementReferenceNumber).flatMap {
             movementReferenceNumber =>
-              customsOffices.find(_.id == arrivalMovementRequest.customsOfficeOfPresentation.presentationOffice).flatMap {
+              customsOffices.find(_.id == arrivalMovementRequest.customsOfficeOfPresentation.office).flatMap {
                 customsOffice =>
                   ArrivalMovementRequestToUserAnswersService.convertToUserAnswers(arrivalMovementRequest, eoriNumber, movementReferenceNumber, customsOffice)
               }

@@ -18,7 +18,7 @@ package controllers
 
 import base.SpecBase
 import connectors.ReferenceDataConnector
-import forms.PresentationOfficeFormProvider
+import forms.CustomsOfficeFormProvider
 import matchers.JsonMatchers
 import models.reference.CustomsOffice
 import models.{NormalMode, UserAnswers}
@@ -27,7 +27,7 @@ import org.mockito.{ArgumentCaptor, Mockito}
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.{CustomsSubPlacePage, PresentationOfficePage}
+import pages.{ConsigneeNamePage, CustomsOfficePage, CustomsSubPlacePage}
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
@@ -40,15 +40,15 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class PresentationOfficeControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class CustomsOfficeControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
   def onwardRoute: Call = Call("GET", "/foo")
 
-  val formProvider              = new PresentationOfficeFormProvider()
+  val formProvider              = new CustomsOfficeFormProvider()
   val customsOffices            = Seq(CustomsOffice("id", "name", Seq.empty, None), CustomsOffice("officeId", "someName", Seq.empty, None))
-  val form: Form[CustomsOffice] = formProvider("sub place", customsOffices)
+  val form: Form[CustomsOffice] = formProvider(consigneeName, "sub place", customsOffices)
 
-  lazy val presentationOfficeRoute: String = routes.PresentationOfficeController.onPageLoad(mrn, NormalMode).url
+  lazy val customsOfficeRoute: String = routes.CustomsOfficeController.onPageLoad(mrn, NormalMode).url
 
   private val mockRefDataConnector: ReferenceDataConnector = mock[ReferenceDataConnector]
   val templateCaptor: ArgumentCaptor[String]               = ArgumentCaptor.forClass(classOf[String])
@@ -59,7 +59,7 @@ class PresentationOfficeControllerSpec extends SpecBase with MockitoSugar with N
     Mockito.reset(mockRefDataConnector)
   }
 
-  "PresentationOffice Controller" - {
+  "CustomsOffice Controller" - {
 
     "must return OK and the correct view for a GET" in {
       verifyOnLoadPage(emptyUserAnswers.set(CustomsSubPlacePage, "sub place").success.value, form)
@@ -69,7 +69,7 @@ class PresentationOfficeControllerSpec extends SpecBase with MockitoSugar with N
       val officeId   = "officeId"
       val officeName = "someName"
       val userAnswers = emptyUserAnswers
-        .set(PresentationOfficePage, CustomsOffice(officeId, officeName, Seq.empty, None))
+        .set(CustomsOfficePage, CustomsOffice(officeId, officeName, Seq.empty, None))
         .success
         .value
         .set(CustomsSubPlacePage, "subs place")
@@ -91,7 +91,7 @@ class PresentationOfficeControllerSpec extends SpecBase with MockitoSugar with N
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(bind[ReferenceDataConnector].toInstance(mockRefDataConnector))
         .build()
-      val request = FakeRequest(GET, presentationOfficeRoute)
+      val request = FakeRequest(GET, customsOfficeRoute)
 
       val result = route(application, request).value
 
@@ -119,7 +119,7 @@ class PresentationOfficeControllerSpec extends SpecBase with MockitoSugar with N
           .build()
 
       val request =
-        FakeRequest(POST, presentationOfficeRoute)
+        FakeRequest(POST, customsOfficeRoute)
           .withFormUrlEncodedBody(("value", "id"))
 
       val result = route(application, request).value
@@ -145,7 +145,7 @@ class PresentationOfficeControllerSpec extends SpecBase with MockitoSugar with N
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(bind[ReferenceDataConnector].toInstance(mockRefDataConnector))
         .build()
-      val request = FakeRequest(POST, presentationOfficeRoute).withFormUrlEncodedBody(("value", ""))
+      val request = FakeRequest(POST, customsOfficeRoute).withFormUrlEncodedBody(("value", ""))
 
       val result = route(application, request).value
 
@@ -160,7 +160,7 @@ class PresentationOfficeControllerSpec extends SpecBase with MockitoSugar with N
 
       val application = applicationBuilder(userAnswers = None).build()
 
-      val request = FakeRequest(GET, presentationOfficeRoute)
+      val request = FakeRequest(GET, customsOfficeRoute)
 
       val result = route(application, request).value
 
@@ -176,7 +176,7 @@ class PresentationOfficeControllerSpec extends SpecBase with MockitoSugar with N
       val application = applicationBuilder(userAnswers = None).build()
 
       val request =
-        FakeRequest(POST, presentationOfficeRoute)
+        FakeRequest(POST, customsOfficeRoute)
           .withFormUrlEncodedBody(("value", "answer"))
 
       val result = route(application, request).value
@@ -201,7 +201,11 @@ class PresentationOfficeControllerSpec extends SpecBase with MockitoSugar with N
 
     when(mockRefDataConnector.getCustomsOffices()(any(), any())).thenReturn(Future.successful(customsOffices))
 
-    val userAnswers = emptyUserAnswers.set(CustomsSubPlacePage, "sub place").success.value
+    val userAnswers = emptyUserAnswers
+      .set(ConsigneeNamePage, consigneeName)
+      .success
+      .value
+
     val application =
       applicationBuilder(userAnswers = Some(userAnswers))
         .overrides(
@@ -209,12 +213,25 @@ class PresentationOfficeControllerSpec extends SpecBase with MockitoSugar with N
           bind[ReferenceDataConnector].toInstance(mockRefDataConnector)
         )
         .build()
-    val request   = FakeRequest(POST, presentationOfficeRoute).withFormUrlEncodedBody(("value", formValue))
+    val request   = FakeRequest(POST, customsOfficeRoute).withFormUrlEncodedBody(("value", formValue))
     val boundForm = form.bind(Map("value" -> formValue))
 
     val result = route(application, request).value
 
-    verifyStatusAndContent(customsOfficeJson, boundForm, result, BAD_REQUEST)
+    status(result) mustEqual BAD_REQUEST
+
+    verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+
+    val expectedJson = Json.obj(
+      "form"           -> boundForm,
+      "mrn"            -> mrn,
+      "mode"           -> NormalMode,
+      "customsOffices" -> customsOfficeJson,
+      "consigneeName"  -> consigneeName
+    )
+
+    templateCaptor.getValue mustEqual "customsOffice.njk"
+    jsonCaptor.getValue must containJson(expectedJson)
 
     application.stop()
   }
@@ -231,7 +248,7 @@ class PresentationOfficeControllerSpec extends SpecBase with MockitoSugar with N
       "customsOffices" -> customsOfficeJson
     )
 
-    templateCaptor.getValue mustEqual "presentationOffice.njk"
+    templateCaptor.getValue mustEqual "customsOffice.njk"
     jsonCaptor.getValue must containJson(expectedJson)
   }
 
@@ -252,7 +269,7 @@ class PresentationOfficeControllerSpec extends SpecBase with MockitoSugar with N
         bind[ReferenceDataConnector].toInstance(mockRefDataConnector)
       }
       .build()
-    val request = FakeRequest(GET, presentationOfficeRoute)
+    val request = FakeRequest(GET, customsOfficeRoute)
 
     val result = route(application, request).value
 

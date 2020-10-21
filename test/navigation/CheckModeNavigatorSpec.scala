@@ -90,7 +90,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
       }
 
       "must go from 'CustomsSubPlaceController' to " - {
-        "'PresentationOfficeController' when no previous answer for 'PresentationOffice'" in {
+        "'CustomsOfficeController' when no previous answer for 'CustomsOffice'" in {
           forAll(arbitrary[UserAnswers], nonEmptyString) {
             (answers, customsSubPlace) =>
               val updatedAnswers =
@@ -99,17 +99,17 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
               navigator
                 .nextPage(CustomsSubPlacePage, CheckMode, updatedAnswers)
-                .mustBe(routes.PresentationOfficeController.onPageLoad(answers.id, CheckMode))
+                .mustBe(routes.CustomsOfficeController.onPageLoad(answers.id, CheckMode))
           }
         }
 
-        "'CheckYourAnswersPage' when already answer for 'PresentationOffice'" in {
+        "'CheckYourAnswersPage' when already answer for 'CustomsOffice'" in {
           forAll(arbitrary[UserAnswers], arbitrary[String], arbitrary[CustomsOffice]) {
-            (answers, customsSubPlace, presentationOffice) =>
+            (answers, customsSubPlace, customsOffice) =>
               val updatedAnswers =
                 answers
                   .set(CustomsSubPlacePage, customsSubPlace).success.value
-                  .set(PresentationOfficePage, presentationOffice).success.value
+                  .set(CustomsOfficePage, customsOffice).success.value
 
               navigator
                 .nextPage(CustomsSubPlacePage, CheckMode, updatedAnswers)
@@ -121,10 +121,10 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
       "must go from OfficeOfPresentation to" - {
         "CheckYourAnswersPage when trader at destination name has already been answered " in {
           forAll(arbitrary[UserAnswers], arbitrary[CustomsOffice], arbitrary[String]) {
-            (answers, presentationOffice, traderName) =>
+            (answers, customsOffice, traderName) =>
               val updatedAnswers =
                 answers
-                  .set(PresentationOfficePage, presentationOffice).success.value
+                  .set(CustomsOfficePage, customsOffice).success.value
                   .set(TraderNamePage, traderName).success.value
 
               navigator
@@ -135,18 +135,18 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
         }
         "trader name when trader name has not previously been answered on Normal Route" in {
           forAll(arbitrary[UserAnswers], arbitrary[CustomsOffice]) {
-            (answers, presentationOffice) =>
+            (answers, customsOffice) =>
               val updatedAnswers =
                 answers
                   .set(GoodsLocationPage, BorderForceOffice)
                   .success
                   .value
-                  .set(PresentationOfficePage, presentationOffice).success.value
+                  .set(CustomsOfficePage, customsOffice).success.value
 
                   .remove(TraderNamePage).success.value
 
               navigator
-                .nextPage(PresentationOfficePage, CheckMode, updatedAnswers)
+                .nextPage(CustomsOfficePage, CheckMode, updatedAnswers)
                 .mustBe(routes.TraderNameController.onPageLoad(answers.id, CheckMode))
 
           }

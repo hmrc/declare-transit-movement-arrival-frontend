@@ -49,7 +49,7 @@ class UserAnswersToArrivalNotificationDomainSpec extends SpecBase with ScalaChec
               arrivalMovementRequest,
               eori,
               arrivalNotificationDomain.movementReferenceNumber,
-              arrivalNotificationDomain.presentationOffice
+              arrivalNotificationDomain.customsOffice
             )
             .value
 

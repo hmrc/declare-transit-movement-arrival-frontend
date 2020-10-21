@@ -83,7 +83,7 @@ class ArrivalNotificationDomainSpec extends FreeSpec with MustMatchers with Scal
         "city"              -> notification.trader.city,
         "postcode"          -> notification.trader.postCode
       ),
-      PresentationOfficePage.toString                 -> Json.toJson(notification.presentationOffice),
+      CustomsOfficePage.toString                      -> Json.toJson(notification.customsOffice),
       EventsQuery.toString                            -> Json.toJson(notification.enRouteEvents),
       TraderEoriPage.toString                         -> notification.trader.eori,
       TraderNamePage.toString                         -> notification.trader.name,
@@ -104,8 +104,8 @@ class ArrivalNotificationDomainSpec extends FreeSpec with MustMatchers with Scal
         "city"              -> notification.trader.city,
         "postcode"          -> notification.trader.postCode
       ),
-      PresentationOfficePage.toString -> Json.toJson(notification.presentationOffice),
-      IncidentOnRoutePage.toString    -> notification.enRouteEvents.isDefined,
-      EventsQuery.toString            -> Json.toJson(notification.enRouteEvents)
+      CustomsOfficePage.toString   -> Json.toJson(notification.customsOffice),
+      IncidentOnRoutePage.toString -> notification.enRouteEvents.isDefined,
+      EventsQuery.toString         -> Json.toJson(notification.enRouteEvents)
     )
 }

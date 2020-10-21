@@ -19,14 +19,14 @@ package pages
 import models.reference.CustomsOffice
 import pages.behaviours.PageBehaviours
 
-class PresentationOfficePageSpec extends PageBehaviours {
+class CustomsOfficePageSpec extends PageBehaviours {
 
-  "PresentationOfficePage" - {
+  "CustomsOfficePage" - {
 
-    beRetrievable[CustomsOffice](PresentationOfficePage)
+    beRetrievable[CustomsOffice](CustomsOfficePage)
 
-    beSettable[CustomsOffice](PresentationOfficePage)
+    beSettable[CustomsOffice](CustomsOfficePage)
 
-    beRemovable[CustomsOffice](PresentationOfficePage)
+    beRemovable[CustomsOffice](CustomsOfficePage)
   }
 }

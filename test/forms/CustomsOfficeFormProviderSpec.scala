@@ -21,15 +21,15 @@ import forms.behaviours.StringFieldBehaviours
 import models.reference.CustomsOffice
 import play.api.data.FormError
 
-class PresentationOfficeFormProviderSpec extends StringFieldBehaviours with SpecBase {
+class CustomsOfficeFormProviderSpec extends StringFieldBehaviours with SpecBase {
 
   var subPlace            = "subPlace"
-  val requiredKey: String = messages("presentationOffice.error.required", subPlace)
-  val lengthKey           = "presentationOffice.error.length"
+  val requiredKey: String = "customsOffice.error.required"
+  val lengthKey           = "customsOffice.error.length"
   val maxLength           = 8
 
   val customsOffices = Seq(CustomsOffice("id", "name", Seq.empty, None), CustomsOffice("GB000003", "someName", Seq.empty, None))
-  val form           = new PresentationOfficeFormProvider()(subPlace, customsOffices)
+  val form           = new CustomsOfficeFormProvider()(consigneeName, subPlace, customsOffices)
 
   ".value" - {
 
@@ -44,7 +44,7 @@ class PresentationOfficeFormProviderSpec extends StringFieldBehaviours with Spec
     behave like mandatoryField(
       form,
       fieldName,
-      requiredError = FormError(fieldName, requiredKey)
+      requiredError = FormError(fieldName, requiredKey, Seq(consigneeName))
     )
 
     "not bind if customs office id does not exist in the customs office list" in {

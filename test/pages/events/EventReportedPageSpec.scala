@@ -16,10 +16,9 @@
 
 package pages.events
 
-import models.{Index, TranshipmentType, UserAnswers}
+import models.{Index, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
-import pages.events.transhipments.{TranshipmentTypePage, TransportIdentityPage, TransportNationalityPage}
 
 class EventReportedPageSpec extends PageBehaviours {
 

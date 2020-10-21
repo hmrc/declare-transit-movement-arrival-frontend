@@ -24,7 +24,7 @@ import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.PresentationOfficePage
+import pages.CustomsOfficePage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
@@ -45,8 +45,8 @@ class ConfirmationControllerSpec extends SpecBase with MockitoSugar with JsonMat
         .thenReturn(Future.successful(Html("")))
 
       val mockSessionRepository = mock[SessionRepository]
-      val presentationOffice    = CustomsOffice("id", "name", Seq.empty, None)
-      val userAnswers           = emptyUserAnswers.set(PresentationOfficePage, presentationOffice).success.value
+      val customsOffice         = CustomsOffice("id", "name", Seq.empty, None)
+      val userAnswers           = emptyUserAnswers.set(CustomsOfficePage, customsOffice).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers))
         .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
@@ -55,7 +55,7 @@ class ConfirmationControllerSpec extends SpecBase with MockitoSugar with JsonMat
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
       val result         = route(application, request).value
 
-      val contactUsMessage: Text.Message = msg"arrivalComplete.para2".withArgs(presentationOffice.name)
+      val contactUsMessage: Text.Message = msg"arrivalComplete.para2".withArgs(customsOffice.name)
 
       status(result) mustEqual OK
 
@@ -77,8 +77,8 @@ class ConfirmationControllerSpec extends SpecBase with MockitoSugar with JsonMat
         .thenReturn(Future.successful(Html("")))
 
       val mockSessionRepository = mock[SessionRepository]
-      val presentationOffice    = CustomsOffice("id", "name", Seq.empty, Some("phoneNumber"))
-      val userAnswers           = emptyUserAnswers.set(PresentationOfficePage, presentationOffice).success.value
+      val customsOffice         = CustomsOffice("id", "name", Seq.empty, Some("phoneNumber"))
+      val userAnswers           = emptyUserAnswers.set(CustomsOfficePage, customsOffice).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers))
         .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
@@ -87,7 +87,7 @@ class ConfirmationControllerSpec extends SpecBase with MockitoSugar with JsonMat
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
       val result         = route(application, request).value
 
-      val contactUsMessage: Text.Message = msg"arrivalComplete.para2.withPhoneNumber".withArgs(presentationOffice.name, presentationOffice.phoneNumber.get)
+      val contactUsMessage: Text.Message = msg"arrivalComplete.para2.withPhoneNumber".withArgs(customsOffice.name, customsOffice.phoneNumber.get)
 
       status(result) mustEqual OK
 

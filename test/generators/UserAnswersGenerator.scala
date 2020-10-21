@@ -57,7 +57,7 @@ trait UserAnswersGenerator extends TryValues {
       arbitrary[(TraderAddressPage.type, JsValue)] ::
       arbitrary[(AuthorisedLocationPage.type, JsValue)] ::
       arbitrary[(CustomsSubPlacePage.type, JsValue)] ::
-      arbitrary[(PresentationOfficePage.type, JsValue)] ::
+      arbitrary[(CustomsOfficePage.type, JsValue)] ::
       arbitrary[(GoodsLocationPage.type, JsValue)] ::
       Nil
 

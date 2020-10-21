@@ -31,7 +31,7 @@ sealed trait ArrivalNotificationDomain {
   def movementReferenceNumber: MovementReferenceNumber
   def trader: TraderDomain
   def notificationDate: LocalDate
-  def presentationOffice: CustomsOffice
+  def customsOffice: CustomsOffice
 }
 
 object ArrivalNotificationDomain {
@@ -47,7 +47,7 @@ final case class NormalNotification(movementReferenceNumber: MovementReferenceNu
                                     notificationDate: LocalDate,
                                     customsSubPlace: String,
                                     trader: TraderDomain,
-                                    presentationOffice: CustomsOffice,
+                                    customsOffice: CustomsOffice,
                                     enRouteEvents: Option[Seq[EnRouteEventDomain]])
     extends ArrivalNotificationDomain {
 
@@ -59,7 +59,7 @@ object NormalNotification {
   object Constants {
     val customsSubPlaceLength    = 17
     val notificationPlaceLength  = 35
-    val presentationOfficeLength = 8
+    val customsOfficeLength      = 8
     val maxNumberOfEnRouteEvents = 9
   }
 
@@ -77,7 +77,7 @@ object NormalNotification {
               "postcode"          -> notification.trader.postCode
             ),
             IsTraderAddressPlaceOfNotificationPage.toString -> notification.notificationPlace.equalsIgnoreCase(notification.trader.postCode),
-            PresentationOfficePage.toString                 -> Json.toJson(notification.presentationOffice),
+            CustomsOfficePage.toString                      -> Json.toJson(notification.customsOffice),
             EventsQuery.toString                            -> Json.toJson(notification.enRouteEvents),
             TraderEoriPage.toString                         -> notification.trader.eori,
             TraderNamePage.toString                         -> notification.trader.name,
@@ -91,7 +91,7 @@ final case class SimplifiedNotification(
   notificationDate: LocalDate,
   approvedLocation: String,
   trader: TraderDomain,
-  presentationOffice: CustomsOffice,
+  customsOffice: CustomsOffice,
   enRouteEvents: Option[Seq[EnRouteEventDomain]],
   authedEori: EoriNumber
 ) extends ArrivalNotificationDomain {
@@ -104,7 +104,7 @@ object SimplifiedNotification {
   object Constants {
     val notificationPlaceLength  = 35
     val approvedLocationLength   = 17
-    val presentationOfficeLength = 8
+    val customsOfficeLength      = 8
     val maxNumberOfEnRouteEvents = 9
     val authorisedLocationRegex  = "^[a-zA-Z0-9]*$"
   }
@@ -123,9 +123,9 @@ object SimplifiedNotification {
             "city"              -> notification.trader.city,
             "postcode"          -> notification.trader.postCode
           ),
-          PresentationOfficePage.toString -> Json.toJson(notification.presentationOffice),
-          IncidentOnRoutePage.toString    -> notification.enRouteEvents.isDefined,
-          EventsQuery.toString            -> Json.toJson(notification.enRouteEvents)
+          CustomsOfficePage.toString   -> Json.toJson(notification.customsOffice),
+          IncidentOnRoutePage.toString -> notification.enRouteEvents.isDefined,
+          EventsQuery.toString         -> Json.toJson(notification.enRouteEvents)
         )
   }
 }

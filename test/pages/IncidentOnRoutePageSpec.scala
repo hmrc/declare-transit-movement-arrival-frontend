@@ -25,7 +25,7 @@ import queries.EventsQuery
 
 class IncidentOnRoutePageSpec extends PageBehaviours {
 
-  private var eventIndex = Index(0)
+  private val eventIndex = Index(0)
   "IncidentOnRoutePage" - {
 
     beRetrievable[Boolean](IncidentOnRoutePage)

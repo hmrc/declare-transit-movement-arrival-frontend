@@ -26,8 +26,8 @@ import models.GoodsLocation.{AuthorisedConsigneesLocation, BorderForceOffice}
 import models.TranshipmentType.{DifferentContainer, DifferentContainerAndVehicle, DifferentVehicle}
 import models._
 import models.domain.{ContainerDomain, SealDomain}
-import models.messages.{Container, EnRouteEvent, Seal}
-import models.reference.{Country, CountryCode}
+import models.messages.EnRouteEvent
+import models.reference.CountryCode
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -136,7 +136,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
             navigator
               .nextPage(ConsigneeAddressPage, NormalMode, answers)
-              .mustBe(routes.PresentationOfficeController.onPageLoad(answers.id, NormalMode))
+              .mustBe(routes.CustomsOfficeController.onPageLoad(answers.id, NormalMode))
         }
       }
 
@@ -148,7 +148,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
                 .set(GoodsLocationPage, AuthorisedConsigneesLocation).success.value
                 .remove(IncidentOnRoutePage).success.value
               navigator
-                .nextPage(PresentationOfficePage, NormalMode, ua)
+                .nextPage(CustomsOfficePage, NormalMode, ua)
                 .mustBe(routes.IncidentOnRouteController.onPageLoad(ua.id, NormalMode))
           }
         }
@@ -160,14 +160,14 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
                 .set(GoodsLocationPage, BorderForceOffice).success.value
                 .remove(TraderNamePage).success.value
               navigator
-                .nextPage(PresentationOfficePage, NormalMode, ua)
+                .nextPage(CustomsOfficePage, NormalMode, ua)
                 .mustBe(routes.TraderNameController.onPageLoad(ua.id, NormalMode))
           }
         }
 
         "to 'SessionExpired' when no answers are available" in {
           navigator
-            .nextPage(PresentationOfficePage, NormalMode, emptyUserAnswers)
+            .nextPage(CustomsOfficePage, NormalMode, emptyUserAnswers)
             .mustBe(routes.SessionExpiredController.onPageLoad())
         }
       }
@@ -177,7 +177,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
             navigator
               .nextPage(CustomsSubPlacePage, NormalMode, answers)
-              .mustBe(routes.PresentationOfficeController.onPageLoad(answers.id, NormalMode))
+              .mustBe(routes.CustomsOfficeController.onPageLoad(answers.id, NormalMode))
         }
       }
 

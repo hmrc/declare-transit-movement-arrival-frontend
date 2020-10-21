@@ -7,7 +7,7 @@
 {% from "macros/title.njk"                         import title %}
 
 {% block pageTitle %}
-  {{ title(header, form.errors) }}
+  {{ title(messages("customsOffice.title"), form.errors) }}
 {% endblock %}
 
 {% block pageHead %}
@@ -33,7 +33,7 @@
           }) }}
         {% endif %}
 
-        <form action="{{ routes.controllers.PresentationOfficeController.onSubmit(mrn, mode).url }}" method="post">
+        <form action="{{ routes.controllers.CustomsOfficeController.onSubmit(mrn, mode).url }}" method="post">
 
           {{ csrf() | safe }}
 
@@ -47,7 +47,7 @@
             id: "value",
             name: "value",
             hint: {
-              text: messages('presentationOffice.hintText')
+              text: messages('customsOffice.hintText')
             },
             errorMessage: form.value.error,
             items: customsOffices

@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import controllers.actions._
 import javax.inject.Inject
 import models.MovementReferenceNumber
-import pages.PresentationOfficePage
+import pages.CustomsOfficePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -45,11 +45,11 @@ class ConfirmationController @Inject()(override val messagesApi: MessagesApi,
 
   def onPageLoad(mrn: MovementReferenceNumber): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
-      request.userAnswers.get(PresentationOfficePage) match {
-        case Some(presentationOffice) =>
-          val contactUsMessage = presentationOffice.phoneNumber match {
-            case Some(telephone) => msg"arrivalComplete.para2.withPhoneNumber".withArgs(presentationOffice.name, telephone)
-            case None            => msg"arrivalComplete.para2".withArgs(presentationOffice.name)
+      request.userAnswers.get(CustomsOfficePage) match {
+        case Some(customsOffice) =>
+          val contactUsMessage = customsOffice.phoneNumber match {
+            case Some(telephone) => msg"arrivalComplete.para2.withPhoneNumber".withArgs(customsOffice.name, telephone)
+            case None            => msg"arrivalComplete.para2".withArgs(customsOffice.name)
           }
 
           val json = Json.obj(

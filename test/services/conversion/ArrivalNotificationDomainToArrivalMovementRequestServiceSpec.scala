@@ -43,7 +43,7 @@ class ArrivalNotificationDomainToArrivalMovementRequestServiceSpec
       forAll(arbitrary[ArrivalMovementRequest], arbitrary[CustomsOffice], arbitrary[EoriNumber]) {
         (arrivalMovementRequest, customsOffice, eoriNumber) =>
           val customsOfficeWithMatchingId: CustomsOffice = customsOffice
-            .copy(id = arrivalMovementRequest.customsOfficeOfPresentation.presentationOffice)
+            .copy(id = arrivalMovementRequest.customsOfficeOfPresentation.office)
 
           val arrivalNotificationDomain = ArrivalMovementRequestToArrivalNotificationService
             .convertToArrivalNotification(

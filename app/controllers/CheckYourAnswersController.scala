@@ -22,7 +22,7 @@ import derivable.DeriveNumberOfEvents
 import handlers.ErrorHandler
 import models.GoodsLocation.{AuthorisedConsigneesLocation, BorderForceOffice}
 import models.{EoriNumber, Index, MovementReferenceNumber, UserAnswers}
-import pages.{ConsigneeEoriConfirmationPage, GoodsLocationPage}
+import pages.GoodsLocationPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -83,7 +83,7 @@ class CheckYourAnswersController @Inject()(override val messagesApi: MessagesApi
       msg"checkYourAnswers.section.goodsLocation",
       (userAnswers.get(GoodsLocationPage) match {
         case Some(AuthorisedConsigneesLocation) => Seq(helper.goodsLocation, helper.authorisedLocation)
-        case _                                  => Seq(helper.goodsLocation, helper.authorisedLocation, helper.customsSubPlace, helper.presentationOffice)
+        case _                                  => Seq(helper.goodsLocation, helper.authorisedLocation, helper.customsSubPlace, helper.customsOffice)
 
       }).flatten
     )
@@ -103,7 +103,7 @@ class CheckYourAnswersController @Inject()(override val messagesApi: MessagesApi
         helper.eoriConfirmation(eori),
         helper.eoriNumber,
         helper.consigneeAddress,
-        helper.presentationOffice
+        helper.customsOffice
       ).flatten
     )
     val placeOfNotification = Section(

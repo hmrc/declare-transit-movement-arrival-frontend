@@ -18,13 +18,12 @@ package controllers
 
 import connectors.ReferenceDataConnector
 import controllers.actions._
-import forms.PresentationOfficeFormProvider
+import forms.CustomsOfficeFormProvider
 import javax.inject.Inject
-import models.GoodsLocation.BorderForceOffice
 import models.reference.CustomsOffice
 import models.{Mode, MovementReferenceNumber}
 import navigation.Navigator
-import pages.{ConsigneeNamePage, CustomsSubPlacePage, PresentationOfficePage}
+import pages.{ConsigneeNamePage, CustomsOfficePage, CustomsSubPlacePage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.{JsObject, Json}
@@ -36,16 +35,16 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class PresentationOfficeController @Inject()(override val messagesApi: MessagesApi,
-                                             sessionRepository: SessionRepository,
-                                             navigator: Navigator,
-                                             identify: IdentifierAction,
-                                             getData: DataRetrievalActionProvider,
-                                             requireData: DataRequiredAction,
-                                             formProvider: PresentationOfficeFormProvider,
-                                             referenceDataConnector: ReferenceDataConnector,
-                                             val controllerComponents: MessagesControllerComponents,
-                                             renderer: Renderer)(implicit ec: ExecutionContext)
+class CustomsOfficeController @Inject()(override val messagesApi: MessagesApi,
+                                        sessionRepository: SessionRepository,
+                                        navigator: Navigator,
+                                        identify: IdentifierAction,
+                                        getData: DataRetrievalActionProvider,
+                                        requireData: DataRequiredAction,
+                                        formProvider: CustomsOfficeFormProvider,
+                                        referenceDataConnector: ReferenceDataConnector,
+                                        val controllerComponents: MessagesControllerComponents,
+                                        renderer: Renderer)(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
     with NunjucksSupport {
@@ -53,50 +52,67 @@ class PresentationOfficeController @Inject()(override val messagesApi: MessagesA
   def onPageLoad(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] =
     (identify andThen getData(mrn) andThen requireData).async {
       implicit request =>
-        val locationName = (request.userAnswers.get(CustomsSubPlacePage), request.userAnswers.get(ConsigneeNamePage)) match {
+        val consigneeName = request.userAnswers.get(ConsigneeNamePage)
+
+        val locationName = (request.userAnswers.get(CustomsSubPlacePage), consigneeName) match {
           case (Some(customsSubPlace), None) => customsSubPlace
-          case (None, Some(consigneeName))   => consigneeName
+          case (None, Some(cName))           => cName
           case _                             => None
         }
+
         referenceDataConnector.getCustomsOffices flatMap {
           customsOffices =>
             locationName match {
               case locationName: String =>
-                val form = formProvider(locationName, customsOffices)
-                val preparedForm = request.userAnswers.get(PresentationOfficePage) match {
+                val form = formProvider(consigneeName.getOrElse(""), locationName, customsOffices)
+                val preparedForm = request.userAnswers.get(CustomsOfficePage) match {
                   case None        => form
                   case Some(value) => form.fill(value)
                 }
-                renderView(mrn, mode, locationName, preparedForm, customsOffices, Results.Ok)
+                renderView(
+                  mrn            = mrn,
+                  mode           = mode,
+                  consigneeName  = consigneeName.getOrElse(""),
+                  customsOffice  = locationName,
+                  form           = preparedForm,
+                  customsOffices = customsOffices,
+                  status         = Results.Ok
+                )
               case _ =>
                 Future.successful(Redirect(routes.SessionExpiredController.onPageLoad()))
             }
         }
     }
 
-  private def renderView(mrn: MovementReferenceNumber,
-                         mode: Mode,
-                         presentationOffice: String,
-                         form: Form[CustomsOffice],
-                         customsOffices: Seq[CustomsOffice],
-                         status: Results.Status)(implicit request: Request[AnyContent]): Future[Result] = {
+  private def renderView(
+    mrn: MovementReferenceNumber,
+    mode: Mode,
+    consigneeName: String,
+    customsOffice: String,
+    form: Form[CustomsOffice],
+    customsOffices: Seq[CustomsOffice],
+    status: Results.Status
+  )(implicit request: Request[AnyContent]): Future[Result] = {
 
     val json = Json.obj(
       "form"           -> form,
       "mrn"            -> mrn,
       "mode"           -> mode,
       "customsOffices" -> getCustomsOfficesAsJson(form.value, customsOffices),
-      "header"         -> msg"presentationOffice.title".withArgs(presentationOffice)
+      "header"         -> msg"customsOffice.heading".withArgs(customsOffice),
+      "consigneeName"  -> consigneeName,
+      "locationName"   -> customsOffice
     )
-    renderer.render("presentationOffice.njk", json).map(status(_))
+    renderer.render("customsOffice.njk", json).map(status(_))
   }
 
   def onSubmit(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] =
     (identify andThen getData(mrn) andThen requireData).async {
       implicit request =>
-        val locationName = (request.userAnswers.get(CustomsSubPlacePage), request.userAnswers.get(ConsigneeNamePage)) match {
+        val consigneeName = request.userAnswers.get(ConsigneeNamePage)
+        val locationName = (request.userAnswers.get(CustomsSubPlacePage), consigneeName) match {
           case (Some(customsSubPlace), None) => customsSubPlace
-          case (None, Some(consigneeName))   => consigneeName
+          case (None, Some(cName))           => cName
           case _                             => None
         }
 
@@ -104,18 +120,26 @@ class PresentationOfficeController @Inject()(override val messagesApi: MessagesA
           customsOffices =>
             locationName match {
               case locationName: String =>
-                val form = formProvider(locationName, customsOffices)
+                val form = formProvider(consigneeName.getOrElse(""), locationName, customsOffices)
                 form
                   .bindFromRequest()
                   .fold(
                     formWithErrors => {
-                      renderView(mrn, mode, locationName, formWithErrors, customsOffices, Results.BadRequest)
+                      renderView(
+                        mrn            = mrn,
+                        mode           = mode,
+                        consigneeName  = consigneeName.getOrElse(""),
+                        customsOffice  = locationName,
+                        form           = formWithErrors,
+                        customsOffices = customsOffices,
+                        status         = Results.BadRequest
+                      )
                     },
                     value =>
                       for {
-                        updatedAnswers <- Future.fromTry(request.userAnswers.set(PresentationOfficePage, value))
+                        updatedAnswers <- Future.fromTry(request.userAnswers.set(CustomsOfficePage, value))
                         _              <- sessionRepository.set(updatedAnswers)
-                      } yield Redirect(navigator.nextPage(PresentationOfficePage, mode, updatedAnswers))
+                      } yield Redirect(navigator.nextPage(CustomsOfficePage, mode, updatedAnswers))
                   )
               case _ => Future.successful(Redirect(routes.SessionExpiredController.onPageLoad()))
 
