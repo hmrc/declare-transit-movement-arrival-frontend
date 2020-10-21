@@ -187,6 +187,14 @@ customsOffice.error.required = Select the Customs office that supervises {0}
 customsOffice.error.length = Customs office must be 8 characters or less
 customsOffice.change.hidden = which Customs office supervises {0}
 
+customsOffice.simplified.title = Which Customs office supervises this Customs-approved location?
+customsOffice.simplified.heading = Which Customs office supervises {0}?
+customsOffice.simplified.hintText = Give the office location or code. For example, Dover or GB000060.
+customsOffice.simplified.checkYourAnswersLabel = Which Customs office supervises {0}?
+customsOffice.simplified.error.required = Select the Customs office that supervises {0}
+customsOffice.simplified.error.length = Customs office must be 8 characters or less
+customsOffice.simplified.change.hidden = which Customs office supervises {0}
+
 customsSubPlace.title = Which Customs-approved location has the goods?
 customsSubPlace.heading = Which Customs-approved location has the goods?
 customsSubPlace.checkYourAnswersLabel = Which Customs-approved location has the goods?
