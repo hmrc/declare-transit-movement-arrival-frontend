@@ -35,3 +35,19 @@ class CustomsOfficeFormProvider @Inject() extends Mappings {
         .transform[CustomsOffice](value => customsOffices.find(_.id == value).get, _.id)
     )
 }
+
+
+
+class CustomsOfficeSimplifiedFormProvider @Inject() extends Mappings {
+
+  def apply(
+    location: String,
+    subPlace: String,
+    customsOffices: Seq[CustomsOffice]
+  )(implicit messages: Messages): Form[CustomsOffice] =
+    Form(
+      "value" -> text("customsOffice.simplified.error.required", Seq(location))
+        .verifying(messages("customsOffice.simplified.error.required", location), value => customsOffices.exists(_.id == value))
+        .transform[CustomsOffice](value => customsOffices.find(_.id == value).get, _.id)
+    )
+}
