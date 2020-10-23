@@ -228,7 +228,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswers
       )
   }
 
-  def customsOffice: Option[Row] = userAnswers.get(CustomsOfficePage) map {
+  def simplifiedCustomsOffice: Option[Row] = userAnswers.get(SimplifiedCustomsOfficePage) map {
     answer =>
       val location: String = (userAnswers.get(CustomsSubPlacePage), userAnswers.get(ConsigneeNamePage)) match {
         case (Some(customsSubPlace), None) => customsSubPlace
@@ -236,20 +236,50 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswers
       }
       Row(
         key = Key(
-          content = msg"customsOffice.checkYourAnswersLabel".withArgs(location),
+          content = msg"customsOffice.simplified.checkYourAnswersLabel".withArgs(location),
           classes = Seq("govuk-!-width-one-half")
         ),
         value = Value(lit"${answer.name} (${answer.id})"),
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = routes.CustomsOfficeController.onPageLoad(mrn, CheckMode).url,
-            visuallyHiddenText = Some(msg"customsOffice.change.hidden".withArgs(location)),
+            href               = routes.SimplifiedCustomsOfficeController.onPageLoad(mrn, CheckMode).url,
+            visuallyHiddenText = Some(msg"customsOffice.simplified.change.hidden".withArgs(location)),
             attributes         = Map("id" -> s"""change-presentation-office""")
           )
         )
       )
   }
+
+  def pickCustomsOffice: Option[Row] =
+    userAnswers.get(SimplifiedCustomsOfficePage) match {
+      case Some(_) => simplifiedCustomsOffice
+      case None    => customsOffice
+    }
+
+  def customsOffice: Option[Row] =
+    userAnswers.get(CustomsOfficePage) map {
+      answer =>
+        val location: String = (userAnswers.get(CustomsSubPlacePage), userAnswers.get(ConsigneeNamePage)) match {
+          case (Some(customsSubPlace), None) => customsSubPlace
+          case (None, Some(consigneeName))   => consigneeName
+        }
+        Row(
+          key = Key(
+            content = msg"customsOffice.checkYourAnswersLabel".withArgs(location),
+            classes = Seq("govuk-!-width-one-half")
+          ),
+          value = Value(lit"${answer.name} (${answer.id})"),
+          actions = List(
+            Action(
+              content            = msg"site.edit",
+              href               = routes.CustomsOfficeController.onPageLoad(mrn, CheckMode).url,
+              visuallyHiddenText = Some(msg"customsOffice.change.hidden".withArgs(location)),
+              attributes         = Map("id" -> s"""change-presentation-office""")
+            )
+          )
+        )
+    }
 
   def goodsLocation: Option[Row] = userAnswers.get(GoodsLocationPage) map {
     answer =>

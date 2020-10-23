@@ -131,12 +131,12 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         }
       }
 
-      "must go from 'ConsigneeAddress' page to 'Presentation Office' On route page when simplified journey" in {
+      "must go from 'ConsigneeAddress' page to 'supervising customs office' page when simplified journey" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
             navigator
               .nextPage(ConsigneeAddressPage, NormalMode, answers)
-              .mustBe(routes.CustomsOfficeController.onPageLoad(answers.id, NormalMode))
+              .mustBe(routes.SimplifiedCustomsOfficeController.onPageLoad(answers.id, NormalMode))
         }
       }
 
