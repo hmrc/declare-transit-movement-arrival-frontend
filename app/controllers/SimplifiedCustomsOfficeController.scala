@@ -18,12 +18,12 @@ package controllers
 
 import connectors.ReferenceDataConnector
 import controllers.actions._
-import forms.CustomsOfficeFormProvider
+import forms.SimplifiedCustomsOfficeFormProvider
 import javax.inject.Inject
 import models.reference.CustomsOffice
 import models.{Mode, MovementReferenceNumber}
 import navigation.Navigator
-import pages.{ConsigneeNamePage, CustomsOfficePage, CustomsSubPlacePage}
+import pages.{ConsigneeNamePage, CustomsSubPlacePage, SimplifiedCustomsOfficePage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.{JsObject, Json}
@@ -35,16 +35,18 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class SimplifiedCustomsOfficeController @Inject()(override val messagesApi: MessagesApi,
-                                                  sessionRepository: SessionRepository,
-                                                  navigator: Navigator,
-                                                  identify: IdentifierAction,
-                                                  getData: DataRetrievalActionProvider,
-                                                  requireData: DataRequiredAction,
-                                                  formProvider: CustomsOfficeFormProvider,
-                                                  referenceDataConnector: ReferenceDataConnector,
-                                                  val controllerComponents: MessagesControllerComponents,
-                                                  renderer: Renderer)(implicit ec: ExecutionContext)
+class SimplifiedCustomsOfficeController @Inject()(
+  override val messagesApi: MessagesApi,
+  sessionRepository: SessionRepository,
+  navigator: Navigator,
+  identify: IdentifierAction,
+  getData: DataRetrievalActionProvider,
+  requireData: DataRequiredAction,
+  formProvider: SimplifiedCustomsOfficeFormProvider,
+  referenceDataConnector: ReferenceDataConnector,
+  val controllerComponents: MessagesControllerComponents,
+  renderer: Renderer
+)(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
     with NunjucksSupport {
@@ -64,8 +66,8 @@ class SimplifiedCustomsOfficeController @Inject()(override val messagesApi: Mess
           customsOffices =>
             locationName match {
               case locationName: String =>
-                val form = formProvider(consigneeName.getOrElse(""), locationName, customsOffices)
-                val preparedForm = request.userAnswers.get(CustomsOfficePage) match {
+                val form = formProvider(consigneeName.getOrElse(""), customsOffices)
+                val preparedForm = request.userAnswers.get(SimplifiedCustomsOfficePage) match {
                   case None        => form
                   case Some(value) => form.fill(value)
                 }
@@ -78,8 +80,6 @@ class SimplifiedCustomsOfficeController @Inject()(override val messagesApi: Mess
                   customsOffices = customsOffices,
                   status         = Results.Ok
                 )
-              case _ =>
-                Future.successful(Redirect(routes.SessionExpiredController.onPageLoad()))
             }
         }
     }
@@ -120,7 +120,7 @@ class SimplifiedCustomsOfficeController @Inject()(override val messagesApi: Mess
           customsOffices =>
             locationName match {
               case locationName: String =>
-                val form = formProvider(consigneeName.getOrElse(""), locationName, customsOffices)
+                val form = formProvider(consigneeName.getOrElse(""), customsOffices)
                 form
                   .bindFromRequest()
                   .fold(
@@ -137,9 +137,9 @@ class SimplifiedCustomsOfficeController @Inject()(override val messagesApi: Mess
                     },
                     value =>
                       for {
-                        updatedAnswers <- Future.fromTry(request.userAnswers.set(CustomsOfficePage, value))
+                        updatedAnswers <- Future.fromTry(request.userAnswers.set(SimplifiedCustomsOfficePage, value))
                         _              <- sessionRepository.set(updatedAnswers)
-                      } yield Redirect(navigator.nextPage(CustomsOfficePage, mode, updatedAnswers))
+                      } yield Redirect(navigator.nextPage(SimplifiedCustomsOfficePage, mode, updatedAnswers))
                   )
               case _ => Future.successful(Redirect(routes.SessionExpiredController.onPageLoad()))
 

@@ -245,6 +245,14 @@ trait UserAnswersEntryGenerators extends PageGenerators {
       } yield (page, value)
     }
 
+  implicit lazy val arbitrarySimplifiedCustomsOfficeUserAnswersEntry: Arbitrary[(SimplifiedCustomsOfficePage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[SimplifiedCustomsOfficePage.type]
+        value <- stringsWithMaxLength(8).suchThat(_.nonEmpty).map(Json.toJson(_))
+      } yield (page, value)
+    }
+
   implicit lazy val arbitraryGoodsLocationUserAnswersEntry: Arbitrary[(GoodsLocationPage.type, JsValue)] =
     Arbitrary {
       for {
