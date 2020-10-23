@@ -42,7 +42,9 @@ class Navigator @Inject()() {
     case ConsigneeNamePage => ua => Some(routes.ConsigneeEoriConfirmationController.onPageLoad(ua.id, NormalMode))
     case ConsigneeEoriConfirmationPage => consigneeEoriConfirmationRoute(NormalMode)
     case ConsigneeEoriNumberPage => ua => Some(routes.ConsigneeAddressController.onPageLoad(ua.id, NormalMode))
+    // go to simplified customs office mode if simplified route is being pursued.
     case ConsigneeAddressPage => ua => Some(routes.SimplifiedCustomsOfficeController.onPageLoad(ua.id, NormalMode))
+
     case CustomsOfficePage => customsOffice(NormalMode)
     case CustomsSubPlacePage => ua => Some(routes.CustomsOfficeController.onPageLoad(ua.id, NormalMode))
     case TraderNamePage => ua => Some(routes.TraderEoriController.onPageLoad(ua.id, NormalMode))

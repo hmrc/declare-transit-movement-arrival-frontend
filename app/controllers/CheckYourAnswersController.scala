@@ -103,7 +103,7 @@ class CheckYourAnswersController @Inject()(override val messagesApi: MessagesApi
         helper.eoriConfirmation(eori),
         helper.eoriNumber,
         helper.consigneeAddress,
-        helper.customsOffice
+        helper.pickCustomsOffice
       ).flatten
     )
     val placeOfNotification = Section(
