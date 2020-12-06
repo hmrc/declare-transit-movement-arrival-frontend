@@ -27,7 +27,6 @@ import org.mockito.Mockito._
 import org.scalacheck.Arbitrary.arbitrary
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
-import repositories.SessionRepository
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future

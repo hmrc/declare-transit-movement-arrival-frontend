@@ -23,13 +23,11 @@ import config.FrontendAppConfig
 import matchers.JsonMatchers
 import models.ArrivalId
 import models.messages.ErrorType.{DuplicateMrn, IncorrectValue, InvalidMrn, UnknownMrn}
-import models.messages.{ArrivalNotificationRejectionMessage, ErrorPointer, ErrorType, FunctionalError}
+import models.messages.{ArrivalNotificationRejectionMessage, ErrorPointer, FunctionalError}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.{any, eq => eqTo}
 import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatest.BeforeAndAfterEach
-import org.scalatestplus.mockito.MockitoSugar
-import play.api.Configuration
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsObject, Json}

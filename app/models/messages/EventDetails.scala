@@ -28,7 +28,6 @@ import models.domain._
 import models.reference.CountryCode
 import utils.Format
 
-import scala.language.implicitConversions
 import scala.xml.NodeSeq
 
 sealed trait EventDetails

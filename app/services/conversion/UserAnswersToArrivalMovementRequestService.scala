@@ -18,7 +18,6 @@ package services.conversion
 
 import java.time.LocalTime
 
-import config.FrontendAppConfig
 import javax.inject.Inject
 import models.UserAnswers
 import models.messages.ArrivalMovementRequest

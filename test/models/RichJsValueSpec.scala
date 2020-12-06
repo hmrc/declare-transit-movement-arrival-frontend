@@ -18,7 +18,6 @@ package models
 
 import generators.MessagesModelGenerators
 import org.scalacheck.Gen
-import org.scalacheck.Shrink
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import org.scalatest.FreeSpec
 import org.scalatest.MustMatchers

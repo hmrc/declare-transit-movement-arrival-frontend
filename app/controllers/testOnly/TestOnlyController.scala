@@ -18,10 +18,8 @@ package controllers.testOnly
 
 import javax.inject.Inject
 import play.api.i18n.MessagesApi
-import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.modules.reactivemongo.ReactiveMongoApi
-import reactivemongo.play.json.ImplicitBSONHandlers.JsObjectDocumentWriter
 import reactivemongo.play.json.collection.JSONCollection
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController

@@ -20,24 +20,15 @@ import java.util.UUID
 
 import akka.stream.Materializer
 import com.google.inject.Inject
-import org.scalatest.FreeSpec
-import org.scalatest.MustMatchers
-import org.scalatest.OptionValues
+import org.scalatest.{FreeSpec, MustMatchers, OptionValues}
 import org.scalatestplus.play.components.OneAppPerSuiteWithComponents
-import play.api.Application
-import play.api.BuiltInComponents
-import play.api.BuiltInComponentsFromContext
-import play.api.NoHttpFiltersComponents
+import play.api.{Application, BuiltInComponents, BuiltInComponentsFromContext, NoHttpFiltersComponents}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
-import play.api.mvc.Action
-import play.api.mvc.Results
 import play.api.mvc.SessionCookieBaker
-import play.api.routing.Router
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import uk.gov.hmrc.http.HeaderNames
-import uk.gov.hmrc.http.SessionKeys
+import uk.gov.hmrc.http.{HeaderNames, SessionKeys}
 
 import scala.concurrent.ExecutionContext
 

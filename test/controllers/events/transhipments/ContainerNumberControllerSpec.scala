@@ -21,23 +21,17 @@ import forms.events.transhipments.ContainerNumberFormProvider
 import generators.MessagesModelGenerators
 import matchers.JsonMatchers
 import models.domain.ContainerDomain
-import models.messages.Container
-import models.{Index, NormalMode, UserAnswers}
-import navigation.{FakeNavigator, Navigator}
+import models.{Index, NormalMode}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalatestplus.mockito.MockitoSugar
 import pages.events.transhipments.ContainerNumberPage
 import play.api.data.Form
-import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import repositories.SessionRepository
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
@@ -134,7 +128,7 @@ class ContainerNumberControllerSpec extends SpecBase with AppWithDefaultMockFixt
       val container   = arbitrary[ContainerDomain].sample.value
       val userAnswers = emptyUserAnswers.set(ContainerNumberPage(eventIndex, containerIndex), container).success.value
 
-      setExistingUserAnswers(emptyUserAnswers)
+      setExistingUserAnswers(userAnswers)
 
       val request =
         FakeRequest(POST, containerNumberRoute())

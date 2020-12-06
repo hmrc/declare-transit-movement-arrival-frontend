@@ -20,7 +20,6 @@ import base.{AppWithDefaultMockFixtures, SpecBase}
 import forms.MovementReferenceNumberFormProvider
 import matchers.JsonMatchers
 import models.UserAnswers
-import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{reset, times, verify, when}
@@ -30,7 +29,6 @@ import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import repositories.SessionRepository
 import services.UserAnswersService
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 

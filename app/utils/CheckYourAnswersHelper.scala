@@ -297,8 +297,3 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswers
       )
   }
 }
-
-object CheckYourAnswersHelper {
-
-  private val dateFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
-}

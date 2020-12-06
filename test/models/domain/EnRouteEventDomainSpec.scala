@@ -22,7 +22,7 @@ import models.messages.EnRouteEvent
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.{FreeSpec, MustMatchers, OptionValues}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.json.Json
 
 class EnRouteEventDomainSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with MessagesModelGenerators with OptionValues {
 

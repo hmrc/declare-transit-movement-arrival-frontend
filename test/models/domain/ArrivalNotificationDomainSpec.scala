@@ -19,7 +19,6 @@ package models.domain
 import generators.MessagesModelGenerators
 import models.GoodsLocation
 import models.messages.behaviours.JsonBehaviours
-import models.reference.CustomsOffice
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.{FreeSpec, MustMatchers}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks

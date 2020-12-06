@@ -17,8 +17,8 @@
 package models
 
 import base.SpecBase
-import org.scalatest.{EitherValues, FreeSpec, MustMatchers}
-import play.api.libs.json.{JsNumber, Json}
+import org.scalatest.EitherValues
+import play.api.libs.json.Json
 import play.api.mvc.PathBindable
 
 class ArrivalIdSpec extends SpecBase with EitherValues {

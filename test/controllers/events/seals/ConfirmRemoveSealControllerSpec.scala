@@ -17,7 +17,6 @@
 package controllers.events.seals
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
-import controllers.events.seals.{routes => sealRoutes}
 import forms.events.seals.ConfirmRemoveSealFormProvider
 import matchers.JsonMatchers
 import models.{Index, NormalMode, UserAnswers}

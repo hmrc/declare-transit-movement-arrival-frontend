@@ -17,7 +17,6 @@
 package forms
 
 import forms.behaviours.StringFieldBehaviours
-import generators.Generators
 import org.scalacheck.Gen
 import play.api.data.FormError
 

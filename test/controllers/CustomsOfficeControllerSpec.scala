@@ -22,21 +22,18 @@ import forms.CustomsOfficeFormProvider
 import matchers.JsonMatchers
 import models.reference.CustomsOffice
 import models.{NormalMode, UserAnswers}
-import navigation.{FakeNavigator, Navigator}
-import org.mockito.{ArgumentCaptor, Mockito}
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.{ArgumentCaptor, Mockito}
 import pages.{ConsigneeNamePage, CustomsOfficePage, CustomsSubPlacePage}
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.{Call, Result}
+import play.api.mvc.Result
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import repositories.SessionRepository
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future

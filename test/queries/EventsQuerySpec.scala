@@ -19,7 +19,7 @@ package queries
 import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
-import play.api.libs.json.{JsObject, JsString, Json}
+import play.api.libs.json.{JsObject, Json}
 
 class EventsQuerySpec extends PageBehaviours {
 
@@ -32,7 +32,5 @@ class EventsQuerySpec extends PageBehaviours {
     }
 
     beRetrievable[List[JsObject]](EventsQuery)
-
   }
-
 }

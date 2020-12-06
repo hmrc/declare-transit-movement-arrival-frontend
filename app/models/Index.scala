@@ -17,7 +17,6 @@
 package models
 
 import play.api.mvc.PathBindable
-import scala.language.implicitConversions
 
 case class Index(position: Int) {
   val display: Int = position + 1
@@ -36,5 +35,4 @@ object Index {
     override def unbind(key: String, value: Index): String =
       intBinder.unbind(key, value.position + 1)
   }
-
 }

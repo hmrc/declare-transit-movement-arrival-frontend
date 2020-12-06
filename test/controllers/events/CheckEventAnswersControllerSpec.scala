@@ -20,20 +20,18 @@ import base.{AppWithDefaultMockFixtures, SpecBase}
 import connectors.ReferenceDataConnector
 import generators.MessagesModelGenerators
 import matchers.JsonMatchers
+import models.reference.Country
 import models.{CountryList, NormalMode}
-import models.reference.{Country, CountryFullList, CountryTransitList}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
-import org.mockito.Mockito.times
-import org.mockito.Mockito.verify
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{times, verify, when}
+import org.scalacheck.Arbitrary.arbitrary
+import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.JsObject
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import org.scalacheck.Arbitrary.arbitrary
-import play.api.inject.bind
-import play.api.inject.guice.GuiceApplicationBuilder
 
 import scala.concurrent.Future
 

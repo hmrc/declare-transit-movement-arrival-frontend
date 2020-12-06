@@ -21,7 +21,7 @@ import java.time.LocalDate
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import connectors.ArrivalMovementConnector
 import models.messages.ErrorType.DuplicateMrn
-import models.messages.{ArrivalNotificationRejectionMessage, ErrorPointer, ErrorType, FunctionalError}
+import models.messages.{ArrivalNotificationRejectionMessage, ErrorPointer, FunctionalError}
 import models.{ArrivalId, MessagesLocation, MessagesSummary}
 import org.mockito.Matchers.any
 import org.mockito.Mockito._
@@ -81,8 +81,6 @@ class ArrivalRejectionServiceSpec extends SpecBase with AppWithDefaultMockFixtur
     }
 
     "must return None when getSummary call fails to get MessagesSummary" in {
-      val messagesSummary =
-        MessagesSummary(arrivalId, MessagesLocation(s"/movements/arrivals/${arrivalId.value}/messages/3", None))
       when(mockConnector.getSummary(any())(any())).thenReturn(Future.successful(None))
 
       setExistingUserAnswers(emptyUserAnswers)

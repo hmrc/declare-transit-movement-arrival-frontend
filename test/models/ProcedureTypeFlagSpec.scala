@@ -19,7 +19,6 @@ package models
 import base.SpecBase
 import com.lucidchart.open.xtract.{ParseFailure, XmlReader}
 import generators.MessagesModelGenerators
-import models.messages.Meta
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.StreamlinedXmlEquality
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks

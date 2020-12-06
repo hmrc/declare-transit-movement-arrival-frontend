@@ -20,7 +20,6 @@ import base.SpecBase
 import generators.MessagesModelGenerators
 import models.domain.ContainerDomain
 import models.{Index, NormalMode}
-import models.messages.Container
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.events.transhipments.ContainerNumberPage

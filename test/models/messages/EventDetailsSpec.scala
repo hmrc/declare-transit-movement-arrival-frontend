@@ -18,7 +18,7 @@ package models.messages
 
 import com.lucidchart.open.xtract.XmlReader
 import generators.MessagesModelGenerators
-import models.{LanguageCodeEnglish, MovementReferenceNumber}
+import models.LanguageCodeEnglish
 import models.XMLWrites._
 import models.domain.{ContainerTranshipmentDomain, IncidentWithInformationDomain, VehicularTranshipmentDomain}
 import models.messages.behaviours.JsonBehaviours

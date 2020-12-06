@@ -122,7 +122,7 @@ class TraderEoriControllerSpec extends SpecBase with AppWithDefaultMockFixtures 
 
       val userAnswers = emptyUserAnswers.set(TraderNamePage, traderName).success.value
 
-      setExistingUserAnswers(emptyUserAnswers)
+      setExistingUserAnswers(userAnswers)
 
       val request        = FakeRequest(POST, traderEoriRoute).withFormUrlEncodedBody(("value", ""))
       val boundForm      = form.bind(Map("value" -> ""))

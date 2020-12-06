@@ -24,7 +24,7 @@ import controllers.routes
 import derivable.{DeriveNumberOfContainers, DeriveNumberOfEvents, DeriveNumberOfSeals}
 import models.GoodsLocation._
 import models.TranshipmentType.{DifferentContainer, DifferentContainerAndVehicle, DifferentVehicle}
-import models.{ArrivalId, CheckMode, Index, Mode, MovementReferenceNumber, NormalMode, UserAnswers}
+import models.{CheckMode, Index, Mode, MovementReferenceNumber, NormalMode, UserAnswers}
 import pages._
 import pages.events._
 import pages.events.seals._

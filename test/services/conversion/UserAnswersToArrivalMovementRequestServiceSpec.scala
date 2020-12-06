@@ -27,7 +27,6 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.test.Helpers.running
 import repositories.InterchangeControlReferenceIdRepository
 
 import scala.concurrent.Future
@@ -38,9 +37,9 @@ class UserAnswersToArrivalMovementRequestServiceSpec
     with MessagesModelGenerators
     with ScalaCheckDrivenPropertyChecks {
 
-  val mockIcrRepo = mock[InterchangeControlReferenceIdRepository]
+  val mockIcrRepo: InterchangeControlReferenceIdRepository = mock[InterchangeControlReferenceIdRepository]
 
-  override def beforeEach() = {
+  override def beforeEach(): Unit = {
     super.beforeEach()
     Mockito.reset(mockIcrRepo)
   }
