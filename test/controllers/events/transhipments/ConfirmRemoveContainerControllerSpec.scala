@@ -16,7 +16,7 @@
 
 package controllers.events.transhipments
 
-import base.SpecBase
+import base.{AppWithDefaultMockFixtures, SpecBase}
 import forms.events.transhipments.ConfirmRemoveContainerFormProvider
 import matchers.JsonMatchers
 import models.{Index, NormalMode, UserAnswers}
@@ -37,9 +37,7 @@ import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.Future
 
-class ConfirmRemoveContainerControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
-
-  private def onwardRoute = Call("GET", "/foo")
+class ConfirmRemoveContainerControllerSpec extends SpecBase with AppWithDefaultMockFixtures with NunjucksSupport with JsonMatchers {
 
   private val formProvider = new ConfirmRemoveContainerFormProvider()
   private val form         = formProvider(domainContainer)
@@ -57,12 +55,13 @@ class ConfirmRemoveContainerControllerSpec extends SpecBase with MockitoSugar wi
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application    = applicationBuilder(userAnswers = Some(presetUserAnswers)).build()
+      setExistingUserAnswers(presetUserAnswers)
+
       val request        = FakeRequest(GET, confirmRemoveContainerRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
@@ -79,21 +78,20 @@ class ConfirmRemoveContainerControllerSpec extends SpecBase with MockitoSugar wi
 
       templateCaptor.getValue mustEqual confirmRemoveContainerTemplate
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "must return error page when user tries to remove a container that does not exists" in {
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
-      val updatedAnswer  = presetUserAnswers.remove(ContainerNumberPage(eventIndex, containerIndex)).success.value
-      val application    = applicationBuilder(userAnswers = Some(updatedAnswer)).build()
+      val updatedAnswer = presetUserAnswers.remove(ContainerNumberPage(eventIndex, containerIndex)).success.value
+      setExistingUserAnswers(updatedAnswer)
+
       val request        = FakeRequest(GET, confirmRemoveContainerRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual NOT_FOUND
 
@@ -103,13 +101,11 @@ class ConfirmRemoveContainerControllerSpec extends SpecBase with MockitoSugar wi
         "pageTitle"    -> msg"concurrent.remove.error.title".withArgs("container"),
         "pageHeading"  -> msg"concurrent.remove.error.heading".withArgs("container"),
         "linkText"     -> msg"concurrent.remove.error.noContainer.link.text",
-        "redirectLink" -> controllers.events.routes.IsTranshipmentController.onPageLoad(mrn, eventIndex, NormalMode).url
+        "redirectLink" -> onwardRoute.url
       )
 
       templateCaptor.getValue mustEqual "concurrentRemoveError.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "must return error page when there are multiple containers and user tries to remove the last container that is already removed" in {
@@ -129,12 +125,13 @@ class ConfirmRemoveContainerControllerSpec extends SpecBase with MockitoSugar wi
 
       val removeContainerRoute = routes.ConfirmRemoveContainerController.onPageLoad(mrn, eventIndex, Index(2), NormalMode).url
 
-      val application    = applicationBuilder(userAnswers = Some(updatedAnswer)).build()
+      setExistingUserAnswers(updatedAnswer)
+
       val request        = FakeRequest(GET, removeContainerRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual NOT_FOUND
 
@@ -144,34 +141,24 @@ class ConfirmRemoveContainerControllerSpec extends SpecBase with MockitoSugar wi
         "pageTitle"    -> msg"concurrent.remove.error.title".withArgs("container"),
         "pageHeading"  -> msg"concurrent.remove.error.heading".withArgs("container"),
         "linkText"     -> msg"concurrent.remove.error.multipleContainer.link.text",
-        "redirectLink" -> routes.AddContainerController.onPageLoad(mrn, eventIndex, NormalMode).url
+        "redirectLink" -> onwardRoute.url
       )
 
       templateCaptor.getValue mustEqual "concurrentRemoveError.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "must redirect to the next page when valid data is submitted and call to remove data when true" in {
 
-      val mockSessionRepository = mock[SessionRepository]
-
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
-      val application =
-        applicationBuilder(userAnswers = Some(presetUserAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
+      setExistingUserAnswers(presetUserAnswers)
 
       val request =
         FakeRequest(POST, confirmRemoveContainerRoute)
           .withFormUrlEncodedBody(("value", "true"))
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       val updateAnswers = UserAnswers(
         id          = presetUserAnswers.id,
@@ -185,29 +172,19 @@ class ConfirmRemoveContainerControllerSpec extends SpecBase with MockitoSugar wi
       redirectLocation(result).value mustEqual onwardRoute.url
 
       verify(mockSessionRepository, times(1)).set(updateAnswers)
-
-      application.stop()
     }
 
     "must redirect to the next page when valid data is submitted and not call to remove data when false" in {
 
-      val mockSessionRepository = mock[SessionRepository]
-
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
-      val application =
-        applicationBuilder(userAnswers = Some(presetUserAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
+      setExistingUserAnswers(presetUserAnswers)
 
       val request =
         FakeRequest(POST, confirmRemoveContainerRoute)
           .withFormUrlEncodedBody(("value", "false"))
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       val updateAnswers = UserAnswers(
         id          = presetUserAnswers.id,
@@ -221,8 +198,6 @@ class ConfirmRemoveContainerControllerSpec extends SpecBase with MockitoSugar wi
       redirectLocation(result).value mustEqual onwardRoute.url
 
       verify(mockSessionRepository, times(0)).set(updateAnswers)
-
-      application.stop()
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
@@ -230,13 +205,14 @@ class ConfirmRemoveContainerControllerSpec extends SpecBase with MockitoSugar wi
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application    = applicationBuilder(userAnswers = Some(presetUserAnswers)).build()
+      setExistingUserAnswers(presetUserAnswers)
+
       val request        = FakeRequest(POST, confirmRemoveContainerRoute).withFormUrlEncodedBody(("value", ""))
       val boundForm      = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual BAD_REQUEST
 
@@ -252,40 +228,34 @@ class ConfirmRemoveContainerControllerSpec extends SpecBase with MockitoSugar wi
 
       templateCaptor.getValue mustEqual confirmRemoveContainerTemplate
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "must redirect to Session Expired for a GET if no existing data is found" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      setNoExistingUserAnswers()
 
       val request = FakeRequest(GET, confirmRemoveContainerRoute)
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
-
-      application.stop()
     }
 
     "must redirect to Session Expired for a POST if no existing data is found" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      setNoExistingUserAnswers()
 
       val request =
         FakeRequest(POST, confirmRemoveContainerRoute)
           .withFormUrlEncodedBody(("value", "true"))
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
-
-      application.stop()
     }
   }
 }

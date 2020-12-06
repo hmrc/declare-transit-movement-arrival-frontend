@@ -16,42 +16,27 @@
 
 package base
 
-import config.FrontendAppConfig
-import controllers.actions._
 import models.domain.{ContainerDomain, SealDomain}
 import models.messages.{Container, Seal}
 import models.{Address, EoriNumber, Index, MovementReferenceNumber, UserAnswers}
-import org.mockito.Mockito
-import org.scalatest._
-import org.scalatest.concurrent.IntegrationPatience
-import org.scalatest.concurrent.ScalaFutures
+import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatestplus.mockito.MockitoSugar
-import org.scalatestplus.play.guice._
-import play.api.Configuration
+import org.scalatest.{FreeSpec, MustMatchers, OptionValues, TryValues}
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.i18n.Messages
-import play.api.i18n.MessagesApi
-import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.inject.Injector
-import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.mvc.AnyContentAsEmpty
-import play.api.test.FakeRequest
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.nunjucks.NunjucksRenderer
+import play.api.test.{FakeRequest, Helpers}
 
 trait SpecBase
     extends FreeSpec
     with MustMatchers
-    with GuiceOneAppPerSuite
+    with ScalaCheckPropertyChecks
     with OptionValues
     with TryValues
     with ScalaFutures
     with IntegrationPatience
-    with MockitoSugar
-    with BeforeAndAfterEach {
-
-  override def beforeEach: Unit =
-    Mockito.reset(mockRenderer)
+    with MockitoSugar {
 
   val eoriNumber: EoriNumber       = EoriNumber("EOriNumber")
   val mrn: MovementReferenceNumber = MovementReferenceNumber("19", "GB", "1234567890123")
@@ -75,27 +60,7 @@ trait SpecBase
   val consigneeAddress: Address = Address("buildingAndStreet", "city", "NE99 1XN")
   val configKey                 = "config"
 
-  def injector: Injector = app.injector
-
-  def frontendAppConfig: FrontendAppConfig = injector.instanceOf[FrontendAppConfig]
-
-  def messagesApi: MessagesApi = injector.instanceOf[MessagesApi]
-
-  implicit val hc: HeaderCarrier = HeaderCarrier()
-
   def fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("", "")
 
-  val mockRenderer: NunjucksRenderer = mock[NunjucksRenderer]
-
-  implicit def messages: Messages = messagesApi.preferred(fakeRequest)
-
-  protected def applicationBuilder(userAnswers: Option[UserAnswers] = None): GuiceApplicationBuilder =
-    new GuiceApplicationBuilder()
-      .configure(Configuration("metrics.enabled" -> "false"))
-      .overrides(
-        bind[DataRequiredAction].to[DataRequiredActionImpl],
-        bind[IdentifierAction].to[FakeIdentifierAction],
-        bind[DataRetrievalActionProvider].toInstance(new FakeDataRetrievalActionProvider(userAnswers)),
-        bind[NunjucksRenderer].toInstance(mockRenderer)
-      )
+  implicit def messages: Messages = Helpers.stubMessages()
 }

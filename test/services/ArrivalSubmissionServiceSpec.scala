@@ -18,7 +18,7 @@ package services
 
 import java.time.LocalDate
 
-import base.SpecBase
+import base.{AppWithDefaultMockFixtures, SpecBase}
 import connectors.ArrivalMovementConnector
 import generators.MessagesModelGenerators
 import models.ArrivalId
@@ -29,13 +29,14 @@ import org.mockito.Matchers.any
 import org.mockito.Mockito._
 import play.api.http.Status._
 import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
 import repositories.InterchangeControlReferenceIdRepository
 import services.conversion.UserAnswersToArrivalNotificationDomain
-import uk.gov.hmrc.http.HttpResponse
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
 import scala.concurrent.Future
 
-class ArrivalSubmissionServiceSpec extends SpecBase with MessagesModelGenerators {
+class ArrivalSubmissionServiceSpec extends SpecBase with AppWithDefaultMockFixtures with MessagesModelGenerators {
 
   private val mockConverterService                  = mock[UserAnswersToArrivalNotificationDomain]
   private val mockArrivalMovementConnector          = mock[ArrivalMovementConnector]
@@ -45,13 +46,25 @@ class ArrivalSubmissionServiceSpec extends SpecBase with MessagesModelGenerators
   private val traderWithoutEori  = TraderDomain("", "", "", "", "", "")
   private val normalNotification = NormalNotification(mrn, "", LocalDate.now(), "", traderWithoutEori, CustomsOffice("", "", Seq.empty, None), None)
 
-  override def beforeEach: Unit = {
+  implicit private val hc: HeaderCarrier = HeaderCarrier()
+
+  override def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockArrivalMovementConnector)
     reset(mockInterchangeControllerReference)
     reset(mockArrivalNotificationMessageService)
     reset(mockConverterService)
   }
+
+  override def guiceApplicationBuilder(): GuiceApplicationBuilder =
+    super
+      .guiceApplicationBuilder()
+      .overrides(
+        bind[UserAnswersToArrivalNotificationDomain].toInstance(mockConverterService),
+        bind[ArrivalMovementConnector].toInstance(mockArrivalMovementConnector),
+        bind[InterchangeControlReferenceIdRepository].toInstance(mockInterchangeControllerReference),
+        bind[ArrivalNotificationMessageService].toInstance(mockArrivalNotificationMessageService)
+      )
 
   "ArrivalSubmissionService" - {
 
@@ -61,11 +74,9 @@ class ArrivalSubmissionServiceSpec extends SpecBase with MessagesModelGenerators
         when(mockConverterService.convertToArrivalNotification(any()))
           .thenReturn(None)
 
-        val application = applicationBuilder(Some(emptyUserAnswers))
-          .overrides(bind[UserAnswersToArrivalNotificationDomain].toInstance(mockConverterService))
-          .build()
+        setExistingUserAnswers(emptyUserAnswers)
 
-        val arrivalNotificationService = application.injector.instanceOf[ArrivalSubmissionService]
+        val arrivalNotificationService = app.injector.instanceOf[ArrivalSubmissionService]
 
         arrivalNotificationService.submit(emptyUserAnswers).futureValue mustBe None
       }
@@ -81,18 +92,13 @@ class ArrivalSubmissionServiceSpec extends SpecBase with MessagesModelGenerators
         when(mockArrivalMovementConnector.submitArrivalMovement(any())(any()))
           .thenReturn(Future.successful(HttpResponse(ACCEPTED)))
 
-        val application = applicationBuilder(Some(emptyUserAnswers))
-          .overrides(bind[InterchangeControlReferenceIdRepository].toInstance(mockInterchangeControllerReference))
-          .overrides(bind[UserAnswersToArrivalNotificationDomain].toInstance(mockConverterService))
-          .overrides(bind[ArrivalMovementConnector].toInstance(mockArrivalMovementConnector))
-          .build()
+        setExistingUserAnswers(emptyUserAnswers)
 
-        val arrivalNotificationService = application.injector.instanceOf[ArrivalSubmissionService]
+        val arrivalNotificationService = app.injector.instanceOf[ArrivalSubmissionService]
 
         val response = arrivalNotificationService.submit(emptyUserAnswers).futureValue.get
         response.status mustBe ACCEPTED
         verify(mockArrivalMovementConnector, times(1)).submitArrivalMovement(any())(any())
-
       }
 
       "must update arrival notification for valid xml input" in {
@@ -108,13 +114,9 @@ class ArrivalSubmissionServiceSpec extends SpecBase with MessagesModelGenerators
         when(mockArrivalMovementConnector.updateArrivalMovement(any(), any())(any()))
           .thenReturn(Future.successful(HttpResponse(ACCEPTED)))
 
-        val application = applicationBuilder(Some(userAnswersWithArrivalId))
-          .overrides(bind[InterchangeControlReferenceIdRepository].toInstance(mockInterchangeControllerReference))
-          .overrides(bind[UserAnswersToArrivalNotificationDomain].toInstance(mockConverterService))
-          .overrides(bind[ArrivalMovementConnector].toInstance(mockArrivalMovementConnector))
-          .build()
+        setExistingUserAnswers(userAnswersWithArrivalId)
 
-        val arrivalNotificationService = application.injector.instanceOf[ArrivalSubmissionService]
+        val arrivalNotificationService = app.injector.instanceOf[ArrivalSubmissionService]
 
         val response = arrivalNotificationService.submit(userAnswersWithArrivalId).futureValue.get
         response.status mustBe ACCEPTED

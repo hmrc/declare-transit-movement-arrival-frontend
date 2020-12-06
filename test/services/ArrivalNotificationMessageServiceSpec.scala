@@ -16,7 +16,7 @@
 
 package services
 
-import base.SpecBase
+import base.{AppWithDefaultMockFixtures, SpecBase}
 import connectors.ArrivalMovementConnector
 import generators.MessagesModelGenerators
 import models.messages.ArrivalMovementRequest
@@ -25,18 +25,27 @@ import org.mockito.Matchers.any
 import org.mockito.Mockito.{reset, _}
 import org.scalacheck.Arbitrary.arbitrary
 import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
+import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class ArrivalNotificationMessageServiceSpec extends SpecBase with MessagesModelGenerators {
+class ArrivalNotificationMessageServiceSpec extends SpecBase with AppWithDefaultMockFixtures with MessagesModelGenerators {
 
   val mockConnector: ArrivalMovementConnector = mock[ArrivalMovementConnector]
 
-  override def beforeEach: Unit = {
-    super.beforeEach
+  override def beforeEach(): Unit = {
+    super.beforeEach()
     reset(mockConnector)
   }
+
+  override def guiceApplicationBuilder(): GuiceApplicationBuilder =
+    super
+      .guiceApplicationBuilder()
+      .overrides(bind[ArrivalMovementConnector].toInstance(mockConnector))
+
+  implicit private val hc: HeaderCarrier = HeaderCarrier()
 
   private val arrivalId = ArrivalId(1)
 
@@ -50,10 +59,9 @@ class ArrivalNotificationMessageServiceSpec extends SpecBase with MessagesModelG
       when(mockConnector.getArrivalNotificationMessage(any())(any()))
         .thenReturn(Future.successful(Some(arrivalMovementRequest)))
 
-      val application = applicationBuilder(Some(emptyUserAnswers))
-        .overrides(bind[ArrivalMovementConnector].toInstance(mockConnector))
-        .build()
-      val arrivalMovementMessageService = application.injector.instanceOf[ArrivalNotificationMessageService]
+      setExistingUserAnswers(emptyUserAnswers)
+
+      val arrivalMovementMessageService = app.injector.instanceOf[ArrivalNotificationMessageService]
 
       arrivalMovementMessageService.getArrivalNotificationMessage(arrivalId).futureValue mustBe Some(arrivalMovementRequest)
 
@@ -62,10 +70,9 @@ class ArrivalNotificationMessageServiceSpec extends SpecBase with MessagesModelG
     "must return None when getSummary call fails to get MessagesSummary" in {
       when(mockConnector.getSummary(any())(any())).thenReturn(Future.successful(None))
 
-      val application = applicationBuilder(Some(emptyUserAnswers))
-        .overrides(bind[ArrivalMovementConnector].toInstance(mockConnector))
-        .build()
-      val arrivalRejectionService = application.injector.instanceOf[ArrivalRejectionService]
+      setExistingUserAnswers(emptyUserAnswers)
+
+      val arrivalRejectionService = app.injector.instanceOf[ArrivalRejectionService]
 
       arrivalRejectionService.arrivalRejectionMessage(arrivalId).futureValue mustBe None
     }

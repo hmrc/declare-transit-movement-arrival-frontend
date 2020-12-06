@@ -18,7 +18,7 @@ package connectors
 
 import java.time.LocalDate
 
-import base.SpecBase
+import base.{AppWithDefaultMockFixtures, SpecBase}
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import generators.MessagesModelGenerators
@@ -29,24 +29,29 @@ import models.{ArrivalId, MessagesLocation, MessagesSummary, NormalProcedureFlag
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.Application
 import play.api.http.Status._
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
-import uk.gov.hmrc.http.HttpResponse
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
 import scala.concurrent.Future
 import scala.xml.NodeSeq
 
-class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler with MessagesModelGenerators with ScalaCheckPropertyChecks {
+class ArrivalMovementConnectorSpec
+    extends SpecBase
+    with AppWithDefaultMockFixtures
+    with WireMockServerHandler
+    with MessagesModelGenerators
+    with ScalaCheckPropertyChecks {
 
-  override lazy val app: Application = new GuiceApplicationBuilder()
-    .configure(
-      conf = "microservice.services.destination.port" -> server.port()
-    )
-    .build()
+  override def guiceApplicationBuilder(): GuiceApplicationBuilder =
+    super
+      .guiceApplicationBuilder()
+      .configure(conf = "microservice.services.destination.port" -> server.port())
 
   lazy val connector: ArrivalMovementConnector = app.injector.instanceOf[ArrivalMovementConnector]
+
+  implicit private val hc: HeaderCarrier = HeaderCarrier()
 
   private val errorResponsesCodes: Gen[Int] = Gen.chooseNum(400, 599)
   private val arrivalId                     = ArrivalId(1)

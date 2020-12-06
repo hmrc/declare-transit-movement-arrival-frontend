@@ -16,7 +16,7 @@
 
 package controllers
 
-import base.SpecBase
+import base.{AppWithDefaultMockFixtures, SpecBase}
 import forms.EoriConfirmationFormProvider
 import matchers.JsonMatchers
 import models.NormalMode
@@ -37,9 +37,7 @@ import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.Future
 
-class EoriConfirmationControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
-
-  def onwardRoute = Call("GET", "/foo")
+class EoriConfirmationControllerSpec extends SpecBase with AppWithDefaultMockFixtures with NunjucksSupport with JsonMatchers {
 
   val formProvider = new EoriConfirmationFormProvider()
   val form         = formProvider(traderName = traderName, eoriNumber = eoriNumber)
@@ -52,13 +50,14 @@ class EoriConfirmationControllerSpec extends SpecBase with MockitoSugar with Nun
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
-      val userAnswers    = emptyUserAnswers.set(ConsigneeNamePage, traderName).success.value
-      val application    = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val userAnswers = emptyUserAnswers.set(ConsigneeNamePage, traderName).success.value
+      setExistingUserAnswers(userAnswers)
+
       val request        = FakeRequest(GET, consingeeEoriConfirmationRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
@@ -73,8 +72,6 @@ class EoriConfirmationControllerSpec extends SpecBase with MockitoSugar with Nun
 
       templateCaptor.getValue mustEqual "eoriConfirmation.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
@@ -89,12 +86,13 @@ class EoriConfirmationControllerSpec extends SpecBase with MockitoSugar with Nun
         .set(ConsigneeNamePage, "Fred")
         .success
         .value
-      val application    = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      setExistingUserAnswers(userAnswers)
+
       val request        = FakeRequest(GET, consingeeEoriConfirmationRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
@@ -111,13 +109,9 @@ class EoriConfirmationControllerSpec extends SpecBase with MockitoSugar with Nun
 
       templateCaptor.getValue mustEqual "eoriConfirmation.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "must redirect to the next page when valid data is submitted" in {
-
-      val mockSessionRepository = mock[SessionRepository]
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
       val userAnswers = emptyUserAnswers
@@ -127,25 +121,18 @@ class EoriConfirmationControllerSpec extends SpecBase with MockitoSugar with Nun
         .set(ConsigneeNamePage, "Fred")
         .success
         .value
-      val application =
-        applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
+
+      setExistingUserAnswers(userAnswers)
 
       val request =
         FakeRequest(POST, consingeeEoriConfirmationRoute)
           .withFormUrlEncodedBody(("value", "true"))
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual onwardRoute.url
-
-      application.stop()
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
@@ -161,13 +148,14 @@ class EoriConfirmationControllerSpec extends SpecBase with MockitoSugar with Nun
         .success
         .value
 
-      val application    = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      setExistingUserAnswers(userAnswers)
+
       val request        = FakeRequest(POST, consingeeEoriConfirmationRoute).withFormUrlEncodedBody(("value", ""))
       val boundForm      = formProvider(traderName, eoriNumber).bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual BAD_REQUEST
 
@@ -182,40 +170,34 @@ class EoriConfirmationControllerSpec extends SpecBase with MockitoSugar with Nun
 
       templateCaptor.getValue mustEqual "eoriConfirmation.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "must redirect to Session Expired for a GET if no existing data is found" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      setNoExistingUserAnswers()
 
       val request = FakeRequest(GET, consingeeEoriConfirmationRoute)
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
-
-      application.stop()
     }
 
     "must redirect to Session Expired for a POST if no existing data is found" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      setNoExistingUserAnswers()
 
       val request =
         FakeRequest(POST, consingeeEoriConfirmationRoute)
           .withFormUrlEncodedBody(("value", "true"))
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
-
-      application.stop()
     }
   }
 }

@@ -16,7 +16,7 @@
 
 package controllers
 
-import base.SpecBase
+import base.{AppWithDefaultMockFixtures, SpecBase}
 import connectors.ReferenceDataConnector
 import forms.CustomsOfficeFormProvider
 import matchers.JsonMatchers
@@ -30,6 +30,7 @@ import org.scalatestplus.mockito.MockitoSugar
 import pages.{ConsigneeNamePage, CustomsOfficePage, CustomsSubPlacePage}
 import play.api.data.Form
 import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.{Call, Result}
 import play.api.test.FakeRequest
@@ -40,9 +41,7 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class CustomsOfficeControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
-
-  def onwardRoute: Call = Call("GET", "/foo")
+class CustomsOfficeControllerSpec extends SpecBase with AppWithDefaultMockFixtures with NunjucksSupport with JsonMatchers {
 
   val formProvider              = new CustomsOfficeFormProvider()
   val customsOffices            = Seq(CustomsOffice("id", "name", Seq.empty, None), CustomsOffice("officeId", "someName", Seq.empty, None))
@@ -58,6 +57,11 @@ class CustomsOfficeControllerSpec extends SpecBase with MockitoSugar with Nunjuc
     super.beforeEach()
     Mockito.reset(mockRefDataConnector)
   }
+
+  override def guiceApplicationBuilder(): GuiceApplicationBuilder =
+    super
+      .guiceApplicationBuilder()
+      .overrides(bind[ReferenceDataConnector].toInstance(mockRefDataConnector))
 
   "CustomsOffice Controller" - {
 
@@ -88,46 +92,33 @@ class CustomsOfficeControllerSpec extends SpecBase with MockitoSugar with Nunjuc
 
       when(mockRefDataConnector.getCustomsOffices()(any(), any())).thenReturn(Future.successful(customsOffices))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .overrides(bind[ReferenceDataConnector].toInstance(mockRefDataConnector))
-        .build()
+      setExistingUserAnswers(emptyUserAnswers)
+
       val request = FakeRequest(GET, customsOfficeRoute)
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
-
-      application.stop()
     }
 
     "must redirect to the next page when valid data is submitted" in {
-      val mockSessionRepository = mock[SessionRepository]
 
       when(mockRefDataConnector.getCustomsOffices()(any(), any())).thenReturn(Future.successful(customsOffices))
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       val userAnswers = emptyUserAnswers.set(CustomsSubPlacePage, "sub place").success.value
-      val application =
-        applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[ReferenceDataConnector].toInstance(mockRefDataConnector)
-          )
-          .build()
+      setExistingUserAnswers(userAnswers)
 
       val request =
         FakeRequest(POST, customsOfficeRoute)
           .withFormUrlEncodedBody(("value", "id"))
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual onwardRoute.url
-
-      application.stop()
     }
 
     "must return Bad Request and error when user entered data does not exist in reference data customs office list" in {
@@ -142,54 +133,47 @@ class CustomsOfficeControllerSpec extends SpecBase with MockitoSugar with Nunjuc
 
       when(mockRefDataConnector.getCustomsOffices()(any(), any())).thenReturn(Future.successful(customsOffices))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .overrides(bind[ReferenceDataConnector].toInstance(mockRefDataConnector))
-        .build()
+      setExistingUserAnswers(emptyUserAnswers)
+
       val request = FakeRequest(POST, customsOfficeRoute).withFormUrlEncodedBody(("value", ""))
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
-
-      application.stop()
     }
 
     "must redirect to Session Expired for a GET if no existing data is found" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      setNoExistingUserAnswers()
 
       val request = FakeRequest(GET, customsOfficeRoute)
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
-
-      application.stop()
     }
 
     "must redirect to Session Expired for a POST if no existing data is found" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      setNoExistingUserAnswers()
 
       val request =
         FakeRequest(POST, customsOfficeRoute)
           .withFormUrlEncodedBody(("value", "answer"))
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
-
-      application.stop()
     }
   }
 
-  private def verifyBadRequestOnSubmit(formValue: String): Future[_] = {
+  private def verifyBadRequestOnSubmit(formValue: String) = {
     val customsOfficeJson = Seq(
       Json.obj("value" -> "", "text"         -> ""),
       Json.obj("value" -> "id", "text"       -> "name (id)", "selected" -> false),
@@ -206,17 +190,12 @@ class CustomsOfficeControllerSpec extends SpecBase with MockitoSugar with Nunjuc
       .success
       .value
 
-    val application =
-      applicationBuilder(userAnswers = Some(userAnswers))
-        .overrides(
-          bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-          bind[ReferenceDataConnector].toInstance(mockRefDataConnector)
-        )
-        .build()
+    setExistingUserAnswers(userAnswers)
+
     val request   = FakeRequest(POST, customsOfficeRoute).withFormUrlEncodedBody(("value", formValue))
     val boundForm = form.bind(Map("value" -> formValue))
 
-    val result = route(application, request).value
+    val result = route(app, request).value
 
     status(result) mustEqual BAD_REQUEST
 
@@ -232,8 +211,6 @@ class CustomsOfficeControllerSpec extends SpecBase with MockitoSugar with Nunjuc
 
     templateCaptor.getValue mustEqual "customsOffice.njk"
     jsonCaptor.getValue must containJson(expectedJson)
-
-    application.stop()
   }
 
   private def verifyStatusAndContent(customsOfficeJson: Seq[JsObject], boundForm: Form[CustomsOffice], result: Future[Result], expectedStatus: Int): Any = {
@@ -252,7 +229,7 @@ class CustomsOfficeControllerSpec extends SpecBase with MockitoSugar with Nunjuc
     jsonCaptor.getValue must containJson(expectedJson)
   }
 
-  private def verifyOnLoadPage(userAnswers: UserAnswers, form: Form[CustomsOffice], preSelectOfficeId: Boolean = false): Future[_] = {
+  private def verifyOnLoadPage(userAnswers: UserAnswers, form: Form[CustomsOffice], preSelectOfficeId: Boolean = false) = {
 
     val expectedCustomsOfficeJson = Seq(
       Json.obj("value" -> "", "text"         -> ""),
@@ -264,17 +241,12 @@ class CustomsOfficeControllerSpec extends SpecBase with MockitoSugar with Nunjuc
       .thenReturn(Future.successful(Html("")))
     when(mockRefDataConnector.getCustomsOffices()(any(), any())).thenReturn(Future.successful(customsOffices))
 
-    val application = applicationBuilder(userAnswers = Some(userAnswers))
-      .overrides {
-        bind[ReferenceDataConnector].toInstance(mockRefDataConnector)
-      }
-      .build()
+    setExistingUserAnswers(userAnswers)
+
     val request = FakeRequest(GET, customsOfficeRoute)
 
-    val result = route(application, request).value
+    val result = route(app, request).value
 
     verifyStatusAndContent(expectedCustomsOfficeJson, form, result, OK)
-
-    application.stop()
   }
 }

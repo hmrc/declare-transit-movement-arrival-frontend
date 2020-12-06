@@ -16,7 +16,7 @@
 
 package controllers
 
-import base.SpecBase
+import base.{AppWithDefaultMockFixtures, SpecBase}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
@@ -26,7 +26,7 @@ import play.twirl.api.Html
 
 import scala.concurrent.Future
 
-class UnauthorisedControllerSpec extends SpecBase {
+class UnauthorisedControllerSpec extends SpecBase with AppWithDefaultMockFixtures {
 
   "Unauthorised Controller" - {
 
@@ -35,11 +35,11 @@ class UnauthorisedControllerSpec extends SpecBase {
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application = applicationBuilder(userAnswers = None).build()
+      setNoExistingUserAnswers()
 
       val request = FakeRequest(GET, routes.UnauthorisedController.onPageLoad().url)
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
@@ -48,8 +48,6 @@ class UnauthorisedControllerSpec extends SpecBase {
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
 
       templateCaptor.getValue mustEqual "unauthorised.njk"
-
-      application.stop()
     }
   }
 }

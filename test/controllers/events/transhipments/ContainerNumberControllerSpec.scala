@@ -16,7 +16,7 @@
 
 package controllers.events.transhipments
 
-import base.SpecBase
+import base.{AppWithDefaultMockFixtures, SpecBase}
 import forms.events.transhipments.ContainerNumberFormProvider
 import generators.MessagesModelGenerators
 import matchers.JsonMatchers
@@ -42,9 +42,7 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class ContainerNumberControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers with MessagesModelGenerators {
-
-  def onwardRoute = Call("GET", "/foo")
+class ContainerNumberControllerSpec extends SpecBase with AppWithDefaultMockFixtures with NunjucksSupport with JsonMatchers with MessagesModelGenerators {
 
   private val formProvider       = new ContainerNumberFormProvider()
   private val form: Form[String] = formProvider(containerIndex, Seq.empty)
@@ -59,12 +57,13 @@ class ContainerNumberControllerSpec extends SpecBase with MockitoSugar with Nunj
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application    = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      setExistingUserAnswers(emptyUserAnswers)
+
       val request        = FakeRequest(GET, containerNumberRoute())
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
@@ -79,8 +78,6 @@ class ContainerNumberControllerSpec extends SpecBase with MockitoSugar with Nunj
 
       templateCaptor.getValue mustEqual containerNumberTemplate
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
@@ -88,13 +85,14 @@ class ContainerNumberControllerSpec extends SpecBase with MockitoSugar with Nunj
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers    = emptyUserAnswers.set(ContainerNumberPage(eventIndex, containerIndex), ContainerDomain("answer")).success.value
-      val application    = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val userAnswers = emptyUserAnswers.set(ContainerNumberPage(eventIndex, containerIndex), ContainerDomain("answer")).success.value
+      setExistingUserAnswers(userAnswers)
+
       val request        = FakeRequest(GET, containerNumberRoute())
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
@@ -111,63 +109,41 @@ class ContainerNumberControllerSpec extends SpecBase with MockitoSugar with Nunj
 
       templateCaptor.getValue mustEqual containerNumberTemplate
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "must redirect to the next page when valid data is submitted" in {
 
-      val mockSessionRepository = mock[SessionRepository]
-
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
+      setExistingUserAnswers(emptyUserAnswers)
 
       val request =
         FakeRequest(POST, containerNumberRoute())
           .withFormUrlEncodedBody(("value", "answer"))
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual onwardRoute.url
-
-      application.stop()
     }
 
     "must redirect to the next page when a value that is the same as the previous is submitted within the same index" in {
-
-      val mockSessionRepository = mock[SessionRepository]
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       val container   = arbitrary[ContainerDomain].sample.value
       val userAnswers = emptyUserAnswers.set(ContainerNumberPage(eventIndex, containerIndex), container).success.value
 
-      val application =
-        applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
+      setExistingUserAnswers(emptyUserAnswers)
 
       val request =
         FakeRequest(POST, containerNumberRoute())
           .withFormUrlEncodedBody(("value", container.containerNumber))
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual onwardRoute.url
-
-      application.stop()
     }
 
     "must return a Bad Request and errors when an existing container is submitted and index is different to current index" in {
@@ -179,9 +155,10 @@ class ContainerNumberControllerSpec extends SpecBase with MockitoSugar with Nunj
       val userAnswers = emptyUserAnswers.set(ContainerNumberPage(eventIndex, containerIndex), container).success.value
       val nextIndex   = Index(1)
 
-      val application    = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      setExistingUserAnswers(userAnswers)
+
       val request        = FakeRequest(POST, containerNumberRoute(nextIndex)).withFormUrlEncodedBody(("value", container.containerNumber))
-      val result         = route(application, request).value
+      val result         = route(app, request).value
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -190,8 +167,6 @@ class ContainerNumberControllerSpec extends SpecBase with MockitoSugar with Nunj
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       templateCaptor.getValue mustEqual containerNumberTemplate
-
-      application.stop()
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
@@ -199,13 +174,14 @@ class ContainerNumberControllerSpec extends SpecBase with MockitoSugar with Nunj
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application    = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      setExistingUserAnswers(emptyUserAnswers)
+
       val request        = FakeRequest(POST, containerNumberRoute()).withFormUrlEncodedBody(("value", ""))
       val boundForm      = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual BAD_REQUEST
 
@@ -220,40 +196,34 @@ class ContainerNumberControllerSpec extends SpecBase with MockitoSugar with Nunj
 
       templateCaptor.getValue mustEqual containerNumberTemplate
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "must redirect to Session Expired for a GET if no existing data is found" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      setNoExistingUserAnswers()
 
       val request = FakeRequest(GET, containerNumberRoute())
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
-
-      application.stop()
     }
 
     "must redirect to Session Expired for a POST if no existing data is found" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      setNoExistingUserAnswers()
 
       val request =
         FakeRequest(POST, containerNumberRoute())
           .withFormUrlEncodedBody(("value", "answer"))
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
-
-      application.stop()
     }
   }
 }

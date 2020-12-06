@@ -16,7 +16,8 @@
 
 package controllers
 
-import base.SpecBase
+import base.{AppWithDefaultMockFixtures, SpecBase}
+import config.FrontendAppConfig
 import matchers.JsonMatchers
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
@@ -29,7 +30,7 @@ import play.twirl.api.Html
 
 import scala.concurrent.Future
 
-class TechnicalDifficultiesControllerSpec extends SpecBase with MockitoSugar with JsonMatchers {
+class TechnicalDifficultiesControllerSpec extends SpecBase with AppWithDefaultMockFixtures with JsonMatchers {
 
   "TechnicalDifficulties Controller" - {
 
@@ -38,12 +39,14 @@ class TechnicalDifficultiesControllerSpec extends SpecBase with MockitoSugar wit
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application    = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request        = FakeRequest(GET, routes.TechnicalDifficultiesController.onPageLoad().url)
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+      setExistingUserAnswers(emptyUserAnswers)
 
-      val result = route(application, request).value
+      val frontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
+      val request           = FakeRequest(GET, routes.TechnicalDifficultiesController.onPageLoad().url)
+      val templateCaptor    = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor        = ArgumentCaptor.forClass(classOf[JsObject])
+
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
@@ -55,8 +58,6 @@ class TechnicalDifficultiesControllerSpec extends SpecBase with MockitoSugar wit
 
       templateCaptor.getValue mustEqual "technicalDifficulties.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
   }
 }

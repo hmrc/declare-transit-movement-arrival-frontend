@@ -16,31 +16,24 @@
 
 package controllers
 
-import base.SpecBase
+import base.{AppWithDefaultMockFixtures, SpecBase}
 import forms.IsTraderAddressPlaceOfNotificationFormProvider
 import matchers.JsonMatchers
 import models.NormalMode
-import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
-import org.scalatestplus.mockito.MockitoSugar
 import pages.{IsTraderAddressPlaceOfNotificationPage, TraderAddressPage, TraderNamePage}
-import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import repositories.SessionRepository
 import uk.gov.hmrc.nunjucks.NunjucksSupport
 import uk.gov.hmrc.viewmodels.Radios
 
 import scala.concurrent.Future
 
-class IsTraderAddressPlaceOfNotificationControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
-
-  def onwardRoute = Call("GET", "/foo")
+class IsTraderAddressPlaceOfNotificationControllerSpec extends SpecBase with AppWithDefaultMockFixtures with NunjucksSupport with JsonMatchers {
 
   private val formProvider = new IsTraderAddressPlaceOfNotificationFormProvider()
   private val form         = formProvider(traderName)
@@ -56,12 +49,13 @@ class IsTraderAddressPlaceOfNotificationControllerSpec extends SpecBase with Moc
         .set(TraderAddressPage, traderAddress)
         .success
         .value
-      val application    = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      setExistingUserAnswers(userAnswers)
+
       val request        = FakeRequest(GET, isTraderAddressPlaceOfNotificationRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual OK
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
@@ -78,8 +72,6 @@ class IsTraderAddressPlaceOfNotificationControllerSpec extends SpecBase with Moc
 
       templateCaptor.getValue mustEqual "isTraderAddressPlaceOfNotification.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
@@ -93,12 +85,13 @@ class IsTraderAddressPlaceOfNotificationControllerSpec extends SpecBase with Moc
         .set(TraderAddressPage, traderAddress)
         .success
         .value
-      val application    = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      setExistingUserAnswers(userAnswers)
+
       val request        = FakeRequest(GET, isTraderAddressPlaceOfNotificationRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual OK
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
@@ -116,32 +109,23 @@ class IsTraderAddressPlaceOfNotificationControllerSpec extends SpecBase with Moc
 
       templateCaptor.getValue mustEqual "isTraderAddressPlaceOfNotification.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "must redirect to the next page when valid data is submitted" in {
-      val mockSessionRepository = mock[SessionRepository]
+
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       val userAnswers = emptyUserAnswers.set(TraderAddressPage, traderAddress).success.value
-      val application =
-        applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
+      setExistingUserAnswers(userAnswers)
+
       val request =
         FakeRequest(POST, isTraderAddressPlaceOfNotificationRoute)
           .withFormUrlEncodedBody(("value", "true"))
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual onwardRoute.url
-
-      application.stop()
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
@@ -157,13 +141,14 @@ class IsTraderAddressPlaceOfNotificationControllerSpec extends SpecBase with Moc
         .success
         .value
 
-      val application    = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      setExistingUserAnswers(userAnswers)
+
       val request        = FakeRequest(POST, isTraderAddressPlaceOfNotificationRoute).withFormUrlEncodedBody(("value", ""))
       val boundForm      = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual BAD_REQUEST
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
@@ -182,60 +167,51 @@ class IsTraderAddressPlaceOfNotificationControllerSpec extends SpecBase with Moc
       templateCaptor.getValue mustEqual "isTraderAddressPlaceOfNotification.njk"
 
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "must redirect to Session Expired for a GET if no existing data is found" in {
-      val application = applicationBuilder(userAnswers = None).build()
-      val request     = FakeRequest(GET, isTraderAddressPlaceOfNotificationRoute)
+      setNoExistingUserAnswers()
+      val request = FakeRequest(GET, isTraderAddressPlaceOfNotificationRoute)
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
-
-      application.stop()
     }
 
     "must redirect to Session Expired for a GET if no traderAddress data is found" in {
-      val application = applicationBuilder(Some(emptyUserAnswers)).build()
-      val request     = FakeRequest(GET, isTraderAddressPlaceOfNotificationRoute)
+      setExistingUserAnswers(emptyUserAnswers)
+      val request = FakeRequest(GET, isTraderAddressPlaceOfNotificationRoute)
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
-
-      application.stop()
     }
 
     "must redirect to Session Expired for a POST if no existing data is found" in {
-      val application = applicationBuilder(userAnswers = None).build()
+      setNoExistingUserAnswers()
+
       val request =
         FakeRequest(POST, isTraderAddressPlaceOfNotificationRoute)
           .withFormUrlEncodedBody(("value", "true"))
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
-
-      application.stop()
     }
 
     "must redirect to Session Expired for a POST if no traderAddress data is found" in {
-      val application = applicationBuilder(Some(emptyUserAnswers)).build()
+      setExistingUserAnswers(emptyUserAnswers)
 
       val request = FakeRequest(POST, isTraderAddressPlaceOfNotificationRoute)
         .withFormUrlEncodedBody(("value", "true"))
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
-
-      application.stop()
     }
   }
 }

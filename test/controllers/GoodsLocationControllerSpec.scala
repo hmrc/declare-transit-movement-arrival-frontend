@@ -16,18 +16,15 @@
 
 package controllers
 
-import base.SpecBase
+import base.{AppWithDefaultMockFixtures, SpecBase}
 import forms.GoodsLocationFormProvider
 import matchers.JsonMatchers
 import models.{GoodsLocation, NormalMode}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
-import org.scalatestplus.mockito.MockitoSugar
 import pages.GoodsLocationPage
-import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
@@ -36,9 +33,7 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class GoodsLocationControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
-
-  def onwardRoute = Call("GET", "/foo")
+class GoodsLocationControllerSpec extends SpecBase with AppWithDefaultMockFixtures with NunjucksSupport with JsonMatchers {
 
   lazy val goodsLocationRoute = routes.GoodsLocationController.onPageLoad(mrn, NormalMode).url
 
@@ -52,12 +47,13 @@ class GoodsLocationControllerSpec extends SpecBase with MockitoSugar with Nunjuc
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application    = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      setExistingUserAnswers(emptyUserAnswers)
+
       val request        = FakeRequest(GET, goodsLocationRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
@@ -72,8 +68,6 @@ class GoodsLocationControllerSpec extends SpecBase with MockitoSugar with Nunjuc
 
       templateCaptor.getValue mustEqual "goodsLocation.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
@@ -81,13 +75,14 @@ class GoodsLocationControllerSpec extends SpecBase with MockitoSugar with Nunjuc
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers    = emptyUserAnswers.set(GoodsLocationPage, GoodsLocation.values.head).success.value
-      val application    = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val userAnswers = emptyUserAnswers.set(GoodsLocationPage, GoodsLocation.values.head).success.value
+      setExistingUserAnswers(userAnswers)
+
       val request        = FakeRequest(GET, goodsLocationRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
@@ -104,52 +99,42 @@ class GoodsLocationControllerSpec extends SpecBase with MockitoSugar with Nunjuc
 
       templateCaptor.getValue mustEqual "goodsLocation.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "must redirect to the correct page for Border Force Office when valid data is submitted" in {
 
-      val mockSessionRepository = mock[SessionRepository]
-
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       val userAnswers = emptyUserAnswers.set(GoodsLocationPage, GoodsLocation.values.head).success.value
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      setExistingUserAnswers(userAnswers)
 
       val request =
         FakeRequest(POST, goodsLocationRoute)
           .withFormUrlEncodedBody(("value", GoodsLocation.BorderForceOffice.toString))
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual s"/common-transit-convention-trader-arrival/${emptyUserAnswers.id}/customs-approved-location"
-
-      application.stop()
     }
 
     "must redirect to the correct page for Authorised Consignees Location when valid data is submitted" in {
 
-      val mockSessionRepository = mock[SessionRepository]
-
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       val userAnswers = emptyUserAnswers.set(GoodsLocationPage, GoodsLocation.values.head).success.value
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      setExistingUserAnswers(userAnswers)
 
       val request =
         FakeRequest(POST, goodsLocationRoute)
           .withFormUrlEncodedBody(("value", GoodsLocation.AuthorisedConsigneesLocation.toString))
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual s"/common-transit-convention-trader-arrival/${emptyUserAnswers.id}/authorised-location-code"
-
-      application.stop()
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
@@ -157,13 +142,14 @@ class GoodsLocationControllerSpec extends SpecBase with MockitoSugar with Nunjuc
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application    = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      setExistingUserAnswers(emptyUserAnswers)
+
       val request        = FakeRequest(POST, goodsLocationRoute).withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm      = form.bind(Map("value" -> "invalid value"))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual BAD_REQUEST
 
@@ -178,8 +164,6 @@ class GoodsLocationControllerSpec extends SpecBase with MockitoSugar with Nunjuc
 
       templateCaptor.getValue mustEqual "goodsLocation.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
   }
 }

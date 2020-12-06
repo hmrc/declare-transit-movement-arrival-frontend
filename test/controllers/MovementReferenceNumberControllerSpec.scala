@@ -16,18 +16,17 @@
 
 package controllers
 
-import base.SpecBase
+import base.{AppWithDefaultMockFixtures, SpecBase}
 import forms.MovementReferenceNumberFormProvider
 import matchers.JsonMatchers
 import models.UserAnswers
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
-import org.mockito.Mockito.{times, verify, when}
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.Mockito.{reset, times, verify, when}
 import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
@@ -37,14 +36,24 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class MovementReferenceNumberControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
-
-  def onwardRoute = Call("GET", "/foo")
+class MovementReferenceNumberControllerSpec extends SpecBase with AppWithDefaultMockFixtures with NunjucksSupport with JsonMatchers {
 
   val formProvider = new MovementReferenceNumberFormProvider()
   val form         = formProvider()
 
-  lazy val movementReferenceNumberRoute = routes.MovementReferenceNumberController.onPageLoad().url
+  private lazy val movementReferenceNumberRoute = routes.MovementReferenceNumberController.onPageLoad().url
+
+  private val mockUserAnswersService = mock[UserAnswersService]
+
+  override def guiceApplicationBuilder(): GuiceApplicationBuilder =
+    super
+      .guiceApplicationBuilder()
+      .overrides(bind[UserAnswersService].toInstance(mockUserAnswersService))
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(mockUserAnswersService)
+  }
 
   "MovementReferenceNumber Controller" - {
 
@@ -53,12 +62,13 @@ class MovementReferenceNumberControllerSpec extends SpecBase with MockitoSugar w
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application    = applicationBuilder(userAnswers = None).build()
+      setNoExistingUserAnswers()
+
       val request        = FakeRequest(GET, movementReferenceNumberRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
@@ -70,33 +80,22 @@ class MovementReferenceNumberControllerSpec extends SpecBase with MockitoSugar w
 
       templateCaptor.getValue mustEqual "movementReferenceNumber.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "must redirect to the next page when valid data is submitted and sessionRepository returns UserAnswers value as Some(_)" in {
 
-      val mockSessionRepository  = mock[SessionRepository]
-      val mockUserAnswersService = mock[UserAnswersService]
-      val userAnswersCaptor      = ArgumentCaptor.forClass(classOf[UserAnswers])
+      val userAnswersCaptor = ArgumentCaptor.forClass(classOf[UserAnswers])
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
       when(mockUserAnswersService.getOrCreateUserAnswers(any(), any())) thenReturn Future.successful(emptyUserAnswers)
 
-      val application =
-        applicationBuilder(userAnswers = None)
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[UserAnswersService].toInstance(mockUserAnswersService)
-          )
-          .build()
+      setNoExistingUserAnswers()
 
       val request =
         FakeRequest(POST, movementReferenceNumberRoute)
           .withFormUrlEncodedBody(("value", mrn.toString))
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual onwardRoute.url
@@ -104,8 +103,6 @@ class MovementReferenceNumberControllerSpec extends SpecBase with MockitoSugar w
 
       userAnswersCaptor.getValue.id mustBe mrn
       userAnswersCaptor.getValue.eoriNumber mustBe eoriNumber
-
-      application.stop()
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
@@ -113,13 +110,14 @@ class MovementReferenceNumberControllerSpec extends SpecBase with MockitoSugar w
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application    = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      setExistingUserAnswers(emptyUserAnswers)
+
       val request        = FakeRequest(POST, movementReferenceNumberRoute).withFormUrlEncodedBody(("value", ""))
       val boundForm      = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual BAD_REQUEST
 
@@ -131,8 +129,6 @@ class MovementReferenceNumberControllerSpec extends SpecBase with MockitoSugar w
 
       templateCaptor.getValue mustEqual "movementReferenceNumber.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
   }
 }

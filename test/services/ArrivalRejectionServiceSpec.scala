@@ -18,7 +18,7 @@ package services
 
 import java.time.LocalDate
 
-import base.SpecBase
+import base.{AppWithDefaultMockFixtures, SpecBase}
 import connectors.ArrivalMovementConnector
 import models.messages.ErrorType.DuplicateMrn
 import models.messages.{ArrivalNotificationRejectionMessage, ErrorPointer, ErrorType, FunctionalError}
@@ -26,18 +26,27 @@ import models.{ArrivalId, MessagesLocation, MessagesSummary}
 import org.mockito.Matchers.any
 import org.mockito.Mockito._
 import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
+import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class ArrivalRejectionServiceSpec extends SpecBase {
+class ArrivalRejectionServiceSpec extends SpecBase with AppWithDefaultMockFixtures {
 
   val mockConnector: ArrivalMovementConnector = mock[ArrivalMovementConnector]
 
-  override def beforeEach: Unit = {
-    super.beforeEach
+  override def beforeEach(): Unit = {
+    super.beforeEach()
     reset(mockConnector)
   }
+
+  override def guiceApplicationBuilder(): GuiceApplicationBuilder =
+    super
+      .guiceApplicationBuilder()
+      .overrides(bind[ArrivalMovementConnector].toInstance(mockConnector))
+
+  implicit private val hc: HeaderCarrier = HeaderCarrier()
 
   private val arrivalId = ArrivalId(1)
 
@@ -52,10 +61,9 @@ class ArrivalRejectionServiceSpec extends SpecBase {
       when(mockConnector.getRejectionMessage(any())(any()))
         .thenReturn(Future.successful(Some(notificationMessage)))
 
-      val application = applicationBuilder(Some(emptyUserAnswers))
-        .overrides(bind[ArrivalMovementConnector].toInstance(mockConnector))
-        .build()
-      val arrivalRejectionService = application.injector.instanceOf[ArrivalRejectionService]
+      setExistingUserAnswers(emptyUserAnswers)
+
+      val arrivalRejectionService = app.injector.instanceOf[ArrivalRejectionService]
 
       arrivalRejectionService.arrivalRejectionMessage(arrivalId).futureValue mustBe Some(notificationMessage)
     }
@@ -65,10 +73,9 @@ class ArrivalRejectionServiceSpec extends SpecBase {
         MessagesSummary(arrivalId, MessagesLocation(s"/movements/arrivals/${arrivalId.value}/messages/3", None))
       when(mockConnector.getSummary(any())(any())).thenReturn(Future.successful(Some(messagesSummary)))
 
-      val application = applicationBuilder(Some(emptyUserAnswers))
-        .overrides(bind[ArrivalMovementConnector].toInstance(mockConnector))
-        .build()
-      val arrivalRejectionService = application.injector.instanceOf[ArrivalRejectionService]
+      setExistingUserAnswers(emptyUserAnswers)
+
+      val arrivalRejectionService = app.injector.instanceOf[ArrivalRejectionService]
 
       arrivalRejectionService.arrivalRejectionMessage(arrivalId).futureValue mustBe None
     }
@@ -78,10 +85,9 @@ class ArrivalRejectionServiceSpec extends SpecBase {
         MessagesSummary(arrivalId, MessagesLocation(s"/movements/arrivals/${arrivalId.value}/messages/3", None))
       when(mockConnector.getSummary(any())(any())).thenReturn(Future.successful(None))
 
-      val application = applicationBuilder(Some(emptyUserAnswers))
-        .overrides(bind[ArrivalMovementConnector].toInstance(mockConnector))
-        .build()
-      val arrivalRejectionService = application.injector.instanceOf[ArrivalRejectionService]
+      setExistingUserAnswers(emptyUserAnswers)
+
+      val arrivalRejectionService = app.injector.instanceOf[ArrivalRejectionService]
 
       arrivalRejectionService.arrivalRejectionMessage(arrivalId).futureValue mustBe None
     }

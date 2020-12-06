@@ -16,19 +16,17 @@
 
 package controllers
 
-import base.SpecBase
+import base.{AppWithDefaultMockFixtures, SpecBase}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
-import org.mockito.Mockito.times
-import org.mockito.Mockito.verify
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{times, verify, when}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 
 import scala.concurrent.Future
 
-class SessionExpiredControllerSpec extends SpecBase {
+class SessionExpiredControllerSpec extends SpecBase with AppWithDefaultMockFixtures {
 
   "Session Expired Controller" - {
 
@@ -37,11 +35,11 @@ class SessionExpiredControllerSpec extends SpecBase {
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application = applicationBuilder(userAnswers = None).build()
+      setNoExistingUserAnswers()
 
       val request = FakeRequest(GET, routes.SessionExpiredController.onPageLoad().url)
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
@@ -50,8 +48,6 @@ class SessionExpiredControllerSpec extends SpecBase {
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
 
       templateCaptor.getValue mustEqual "session-expired.njk"
-
-      application.stop()
     }
   }
 }

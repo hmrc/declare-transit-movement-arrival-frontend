@@ -16,32 +16,25 @@
 
 package controllers.events.seals
 
-import base.SpecBase
+import base.{AppWithDefaultMockFixtures, SpecBase}
 import forms.events.seals.AddSealFormProvider
 import matchers.JsonMatchers
 import models.NormalMode
-import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
-import org.scalatestplus.mockito.MockitoSugar
 import pages.events.seals.SealIdentityPage
 import play.api.data.Form
-import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import repositories.SessionRepository
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 import utils.AddSealHelper
 
 import scala.concurrent.Future
 
-class AddSealControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
-
-  def onwardRoute: Call = Call("GET", "/foo")
+class AddSealControllerSpec extends SpecBase with AppWithDefaultMockFixtures with NunjucksSupport with JsonMatchers {
 
   val formProvider        = new AddSealFormProvider()
   val form: Form[Boolean] = formProvider()
@@ -56,13 +49,13 @@ class AddSealControllerSpec extends SpecBase with MockitoSugar with NunjucksSupp
         .thenReturn(Future.successful(Html("")))
 
       val ua = emptyUserAnswers.set(SealIdentityPage(eventIndex, sealIndex), sealDomain).success.value
+      setExistingUserAnswers(ua)
 
-      val application    = applicationBuilder(userAnswers = Some(ua)).build()
       val request        = FakeRequest(GET, addSealRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
@@ -72,8 +65,8 @@ class AddSealControllerSpec extends SpecBase with MockitoSugar with NunjucksSupp
         "form"        -> form,
         "mode"        -> NormalMode,
         "mrn"         -> mrn,
-        "pageTitle"   -> "You have added 1 seal",
-        "heading"     -> "You have added 1 seal",
+        "pageTitle"   -> "addSeal.title.singular",
+        "heading"     -> "addSeal.heading.singular",
         "seals"       -> Json.toJson(Seq(AddSealHelper.apply(ua).sealRow(eventIndex, sealIndex, NormalMode).value)),
         "radios"      -> Radios.yesNo(form("value")),
         "onSubmitUrl" -> routes.AddSealController.onSubmit(mrn, eventIndex, NormalMode).url
@@ -81,35 +74,21 @@ class AddSealControllerSpec extends SpecBase with MockitoSugar with NunjucksSupp
 
       templateCaptor.getValue mustEqual "events/seals/addSeal.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "must redirect to the next page when valid data is submitted" in {
 
-      val mockSessionRepository = mock[SessionRepository]
-
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
+      setExistingUserAnswers(emptyUserAnswers)
 
       val request =
         FakeRequest(POST, addSealRoute)
           .withFormUrlEncodedBody(("value", "true"))
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual onwardRoute.url
-
-      application.stop()
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
@@ -117,14 +96,14 @@ class AddSealControllerSpec extends SpecBase with MockitoSugar with NunjucksSupp
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
       val ua = emptyUserAnswers.set(SealIdentityPage(eventIndex, sealIndex), sealDomain).success.value
+      setExistingUserAnswers(ua)
 
-      val application    = applicationBuilder(userAnswers = Some(ua)).build()
       val request        = FakeRequest(POST, addSealRoute).withFormUrlEncodedBody(("value", ""))
       val boundForm      = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual BAD_REQUEST
 
@@ -134,8 +113,8 @@ class AddSealControllerSpec extends SpecBase with MockitoSugar with NunjucksSupp
         "form"        -> boundForm,
         "mode"        -> NormalMode,
         "mrn"         -> mrn,
-        "pageTitle"   -> "You have added 1 seal",
-        "heading"     -> "You have added 1 seal",
+        "pageTitle"   -> "addSeal.title.singular",
+        "heading"     -> "addSeal.heading.singular",
         "seals"       -> Json.toJson(Seq(AddSealHelper.apply(ua).sealRow(eventIndex, sealIndex, NormalMode).value)),
         "radios"      -> Radios.yesNo(boundForm("value")),
         "onSubmitUrl" -> routes.AddSealController.onSubmit(mrn, eventIndex, NormalMode).url
@@ -143,40 +122,34 @@ class AddSealControllerSpec extends SpecBase with MockitoSugar with NunjucksSupp
 
       templateCaptor.getValue mustEqual "events/seals/addSeal.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "must redirect to Session Expired for a GET if no existing data is found" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      setNoExistingUserAnswers()
 
       val request = FakeRequest(GET, addSealRoute)
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
-
-      application.stop()
     }
 
     "must redirect to Session Expired for a POST if no existing data is found" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      setNoExistingUserAnswers()
 
       val request =
         FakeRequest(POST, addSealRoute)
           .withFormUrlEncodedBody(("value", "true"))
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
-
-      application.stop()
     }
   }
 }
