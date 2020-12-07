@@ -16,7 +16,7 @@
 
 package controllers
 
-import base.SpecBase
+import base.{AppWithDefaultMockFixtures, SpecBase}
 import matchers.JsonMatchers
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
@@ -25,6 +25,7 @@ import org.mockito.Mockito.verify
 import org.mockito.Mockito.when
 import org.scalacheck.Gen
 import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.JsObject
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -34,9 +35,14 @@ import uk.gov.hmrc.http.HttpResponse
 
 import scala.concurrent.Future
 
-class CheckYourAnswersControllerSpec extends SpecBase with JsonMatchers {
+class CheckYourAnswersControllerSpec extends SpecBase with AppWithDefaultMockFixtures with JsonMatchers {
 
   val mockService: ArrivalSubmissionService = mock[ArrivalSubmissionService]
+
+  override def guiceApplicationBuilder(): GuiceApplicationBuilder =
+    super
+      .guiceApplicationBuilder()
+      .overrides(bind[ArrivalSubmissionService].toInstance(mockService))
 
   "Check Your Answers Controller" - {
 
@@ -45,11 +51,11 @@ class CheckYourAnswersControllerSpec extends SpecBase with JsonMatchers {
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      setExistingUserAnswers(emptyUserAnswers)
 
       val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad(mrn).url)
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
@@ -59,56 +65,46 @@ class CheckYourAnswersControllerSpec extends SpecBase with JsonMatchers {
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       templateCaptor.getValue mustEqual "check-your-answers.njk"
-
-      application.stop()
     }
 
     "must redirect to Session Expired for a GET if no existing data is found" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      setNoExistingUserAnswers()
 
       val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad(mrn).url)
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
-
-      application.stop()
     }
 
     "must redirect to 'Application Complete' page on valid submission" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .overrides(bind[ArrivalSubmissionService].toInstance(mockService))
-        .build()
+      setExistingUserAnswers(emptyUserAnswers)
 
       when(mockService.submit(any())(any())).thenReturn(Future.successful(Some(HttpResponse(ACCEPTED))))
 
       val request = FakeRequest(POST, routes.CheckYourAnswersController.onPost(mrn).url)
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual routes.ConfirmationController.onPageLoad(mrn).url
-
-      application.stop()
     }
 
     "must fail with bad request error on invalid submission" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .overrides(bind[ArrivalSubmissionService].toInstance(mockService))
-        .build()
+      setExistingUserAnswers(emptyUserAnswers)
 
       when(mockRenderer.render(any(), any())(any())).thenReturn(Future.successful(Html("")))
       when(mockService.submit(any())(any())).thenReturn(Future.successful(Some(HttpResponse(BAD_REQUEST))))
 
       val request = FakeRequest(POST, routes.CheckYourAnswersController.onPost(mrn).url)
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
 
@@ -117,22 +113,18 @@ class CheckYourAnswersControllerSpec extends SpecBase with JsonMatchers {
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
 
       templateCaptor.getValue mustEqual "badRequest.njk"
-
-      application.stop()
     }
 
     "must fail with an Unauthorised error when backend returns 401" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .overrides(bind[ArrivalSubmissionService].toInstance(mockService))
-        .build()
+      setExistingUserAnswers(emptyUserAnswers)
 
       when(mockRenderer.render(any(), any())(any())).thenReturn(Future.successful(Html("")))
       when(mockService.submit(any())(any())).thenReturn(Future.successful(Some(HttpResponse(UNAUTHORIZED))))
 
       val request = FakeRequest(POST, routes.CheckYourAnswersController.onPost(mrn).url)
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
 
@@ -141,45 +133,35 @@ class CheckYourAnswersControllerSpec extends SpecBase with JsonMatchers {
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
 
       templateCaptor.getValue mustEqual "unauthorised.njk"
-
-      application.stop()
     }
 
     "must redirected to TechnicalDifficulties page when there is a server side error" in {
 
       val genServerError = Gen.chooseNum(500, 599).sample.value
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .overrides(bind[ArrivalSubmissionService].toInstance(mockService))
-        .build()
+      setExistingUserAnswers(emptyUserAnswers)
 
       when(mockService.submit(any())(any())).thenReturn(Future.successful(Some(HttpResponse(genServerError))))
 
       val request = FakeRequest(POST, routes.CheckYourAnswersController.onPost(mrn).url)
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
-
-      application.stop()
     }
 
     "must fail with internal server error when service fails" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .overrides(bind[ArrivalSubmissionService].toInstance(mockService))
-        .build()
+      setExistingUserAnswers(emptyUserAnswers)
 
       when(mockRenderer.render(any(), any())(any())).thenReturn(Future.successful(Html("")))
       when(mockService.submit(any())(any())).thenReturn(Future.successful(None))
 
       val request = FakeRequest(POST, routes.CheckYourAnswersController.onPost(mrn).url)
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual BAD_REQUEST
-
-      application.stop()
     }
   }
 }

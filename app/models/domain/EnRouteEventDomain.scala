@@ -17,7 +17,7 @@
 package models.domain
 
 import models.messages._
-import play.api.libs.json.{JsObject, Json, OWrites}
+import play.api.libs.json.{Json, OWrites}
 import models._
 import models.reference.CountryCode
 

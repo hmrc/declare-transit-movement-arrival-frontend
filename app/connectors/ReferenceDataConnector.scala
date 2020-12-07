@@ -18,6 +18,7 @@ package connectors
 
 import config.FrontendAppConfig
 import javax.inject.Inject
+import metrics.{MetricsService, Monitors}
 import models.CountryList
 import models.reference.{Country, CountryReferenceDataEndpoint, CustomsOffice}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -25,15 +26,21 @@ import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class ReferenceDataConnector @Inject()(config: FrontendAppConfig, http: HttpClient) {
+class ReferenceDataConnector @Inject()(config: FrontendAppConfig, http: HttpClient, metricsService: MetricsService) {
 
   def getCustomsOffices()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[CustomsOffice]] = {
     val serviceUrl = s"${config.referenceDataUrl}/customs-offices"
-    http.GET[Seq[CustomsOffice]](serviceUrl)
+
+    metricsService.timeAsyncCall(Monitors.getCustomsOfficesMonitor) {
+      http.GET[Seq[CustomsOffice]](serviceUrl)
+    }
   }
 
   def getCountryList(endpoint: CountryReferenceDataEndpoint)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[CountryList] = {
     val serviceUrl = s"${config.referenceDataUrl}/${endpoint.value}"
-    http.GET[Vector[Country]](serviceUrl).map(CountryList(_))
+
+    metricsService.timeAsyncCall(Monitors.getCountryListMonitor) {
+      http.GET[Vector[Country]](serviceUrl).map(CountryList(_))
+    }
   }
 }

@@ -21,7 +21,6 @@ import forms.behaviours.StringFieldBehaviours
 import generators.MessagesModelGenerators
 import models.Index
 import models.domain.SealDomain
-import models.messages.Seal
 import org.scalacheck.Gen
 import play.api.data.FormError
 

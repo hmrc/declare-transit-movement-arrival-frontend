@@ -40,7 +40,7 @@ import queries.EventsQuery
 class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generators with MessagesModelGenerators {
 
   // format: off
-  val navigator: Navigator = app.injector.instanceOf[Navigator]
+  val navigator: Navigator = new Navigator()
 
   val country: CountryCode = CountryCode("GB")
 

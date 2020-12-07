@@ -17,7 +17,6 @@
 package pages.events.transhipments
 
 import generators.MessagesModelGenerators
-import models.messages.Container
 import models.{Index, TranshipmentType, UserAnswers}
 import models.TranshipmentType._
 import models.domain.ContainerDomain

@@ -18,7 +18,6 @@ package forms.events.transhipments
 
 import forms.behaviours.StringFieldBehaviours
 import models.CountryList
-import models.messages.VehicularTranshipment
 import play.api.data.FormError
 import models.reference._
 

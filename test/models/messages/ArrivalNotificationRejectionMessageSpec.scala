@@ -19,7 +19,6 @@ package models.messages
 import base.SpecBase
 import com.lucidchart.open.xtract.XmlReader
 import generators.MessagesModelGenerators
-import models.messages.ErrorType.{InvalidMrn, UnknownMrn}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import utils.Format._

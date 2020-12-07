@@ -21,8 +21,6 @@ import models.messages.{ContainerTranshipment, EventDetails, IncidentWithInforma
 import models.reference.CountryCode
 import play.api.libs.json._
 
-import scala.language.implicitConversions
-
 sealed trait EventDetailsDomain
 
 object EventDetailsDomain {

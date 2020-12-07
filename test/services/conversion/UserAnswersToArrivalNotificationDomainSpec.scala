@@ -18,7 +18,7 @@ package services.conversion
 
 import java.time.LocalTime
 
-import base.SpecBase
+import base.{AppWithDefaultMockFixtures, SpecBase}
 import generators.MessagesModelGenerators
 import models.domain._
 import models.messages.{ArrivalMovementRequest, InterchangeControlReference}
@@ -26,9 +26,7 @@ import models.{EoriNumber, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
-class UserAnswersToArrivalNotificationDomainSpec extends SpecBase with ScalaCheckPropertyChecks with MessagesModelGenerators {
-
-  private val service = injector.instanceOf[UserAnswersToArrivalNotificationDomain]
+class UserAnswersToArrivalNotificationDomainSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with MessagesModelGenerators {
 
   "UserAnswersToArrivalNotificationDomain" - {
 
@@ -53,6 +51,8 @@ class UserAnswersToArrivalNotificationDomainSpec extends SpecBase with ScalaChec
             )
             .value
 
+          val service = app.injector.instanceOf[UserAnswersToArrivalNotificationDomain]
+
           val result = service.convertToArrivalNotification(userAnswers).value
 
           val expectedResult = arrivalNotificationDomain match {
@@ -66,8 +66,8 @@ class UserAnswersToArrivalNotificationDomainSpec extends SpecBase with ScalaChec
     }
 
     "must return 'None' from invalid UserAnswers" in {
+      val service = app.injector.instanceOf[UserAnswersToArrivalNotificationDomain]
       service.convertToArrivalNotification(emptyUserAnswers) mustBe None
     }
   }
-
 }

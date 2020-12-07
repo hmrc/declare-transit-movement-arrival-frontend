@@ -40,7 +40,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
   // format: off
 
-  private val navigator: Navigator = app.injector.instanceOf[Navigator]
+  private val navigator: Navigator = new Navigator()
 
   private val country: CountryCode = CountryCode("GB")
 

@@ -17,13 +17,9 @@
 package viewModels
 
 import base.SpecBase
-import play.api.libs.json.JsNull
-import play.api.libs.json.Json
-import uk.gov.hmrc.viewmodels.SummaryList.Action
-import uk.gov.hmrc.viewmodels.SummaryList.Key
-import uk.gov.hmrc.viewmodels.SummaryList.Row
-import uk.gov.hmrc.viewmodels.SummaryList.Value
-import uk.gov.hmrc.viewmodels.{NunjucksSupport, Text}
+import play.api.libs.json.{JsNull, Json}
+import uk.gov.hmrc.viewmodels.NunjucksSupport
+import uk.gov.hmrc.viewmodels.SummaryList.{Action, Key, Row, Value}
 import viewModels.sections.Section
 
 class SectionSpec extends SpecBase with NunjucksSupport {

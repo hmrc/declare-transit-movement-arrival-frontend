@@ -22,9 +22,8 @@ import forms.events.seals.ConfirmRemoveSealFormProvider
 import handlers.ErrorHandler
 import javax.inject.Inject
 import models.domain.SealDomain
-import models.messages.Seal
 import models.requests.DataRequest
-import models.{Index, Mode, MovementReferenceNumber, UserAnswers}
+import models.{Index, Mode, MovementReferenceNumber}
 import navigation.Navigator
 import pages.events.seals.{ConfirmRemoveSealPage, SealIdentityPage}
 import play.api.data.Form

@@ -18,7 +18,6 @@ package queries
 
 import models.Index
 import models.domain.SealDomain
-import models.messages.Seal
 import pages.QuestionPage
 import pages.events.SectionConstants
 import play.api.libs.json.JsPath

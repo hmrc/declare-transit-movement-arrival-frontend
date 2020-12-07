@@ -20,12 +20,11 @@ import base.SpecBase
 import generators.MessagesModelGenerators
 import models.domain.ContainerDomain
 import models.{Index, NormalMode}
-import models.messages.Container
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.events.transhipments.ContainerNumberPage
 import play.api.libs.json.{JsObject, Json}
-import uk.gov.hmrc.viewmodels.Text.Literal
+import uk.gov.hmrc.viewmodels.Text.{Literal, Message}
 import uk.gov.hmrc.viewmodels._
 
 class AddContainerViewModelSpec extends SpecBase with ScalaCheckPropertyChecks with MessagesModelGenerators {
@@ -39,7 +38,7 @@ class AddContainerViewModelSpec extends SpecBase with ScalaCheckPropertyChecks w
     "pageTitle defaults to 0 when there are no containers" in {
       val vm = AddContainerViewModel(eventIndex, emptyUserAnswers, NormalMode)
 
-      assert(vm.pageTitle.resolve.contains("0"))
+      vm.pageTitle mustEqual Message("addContainer.title.plural", 0)
     }
 
     "has the number of containers" in {
@@ -52,7 +51,11 @@ class AddContainerViewModelSpec extends SpecBase with ScalaCheckPropertyChecks w
 
           val vm = AddContainerViewModel(eventIndex, userAnswers, NormalMode)
 
-          assert(vm.pageTitle.resolve.contains(containers.length.toString))
+          if (containers.size == 1) {
+            vm.pageTitle mustEqual Message("addContainer.title.singular", 1)
+          } else {
+            vm.pageTitle mustEqual Message("addContainer.title.plural", containers.size)
+          }
       }
     }
   }
@@ -61,7 +64,7 @@ class AddContainerViewModelSpec extends SpecBase with ScalaCheckPropertyChecks w
     "is empty when there are no containers is UserAnswer" in {
       val vm = AddContainerViewModel(eventIndex, emptyUserAnswers, NormalMode)
 
-      vm.containers must not be (defined)
+      vm.containers must not be defined
     }
 
     "has the number of containers" in {

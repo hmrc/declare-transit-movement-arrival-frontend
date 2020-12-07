@@ -19,7 +19,6 @@ package pages.events.seals
 import generators.MessagesModelGenerators
 import models.Index
 import models.domain.SealDomain
-import models.messages.Seal
 import pages.behaviours.PageBehaviours
 
 class SealIdentityPageSpec extends PageBehaviours with MessagesModelGenerators {

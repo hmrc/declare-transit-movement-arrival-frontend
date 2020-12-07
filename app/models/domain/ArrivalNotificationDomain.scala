@@ -25,8 +25,6 @@ import pages._
 import play.api.libs.json._
 import queries.EventsQuery
 
-import scala.language.implicitConversions
-
 sealed trait ArrivalNotificationDomain {
   def movementReferenceNumber: MovementReferenceNumber
   def trader: TraderDomain

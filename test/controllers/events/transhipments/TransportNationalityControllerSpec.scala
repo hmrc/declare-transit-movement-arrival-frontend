@@ -16,33 +16,28 @@
 
 package controllers.events.transhipments
 
-import base.SpecBase
+import base.{AppWithDefaultMockFixtures, SpecBase}
 import connectors.ReferenceDataConnector
 import forms.events.transhipments.TransportNationalityFormProvider
 import matchers.JsonMatchers
-import models.reference.{Country, CountryCode, CountryFullList}
+import models.reference.{Country, CountryCode}
 import models.{CountryList, NormalMode, UserAnswers}
-import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
-import org.scalatestplus.mockito.MockitoSugar
 import pages.events.transhipments.TransportNationalityPage
 import play.api.data.Form
 import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import repositories.SessionRepository
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class TransportNationalityControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
-
-  def onwardRoute: Call = Call("GET", "/foo")
+class TransportNationalityControllerSpec extends SpecBase with AppWithDefaultMockFixtures with NunjucksSupport with JsonMatchers {
 
   val formProvider    = new TransportNationalityFormProvider()
   private val country = Country(CountryCode("GB"), "United Kingdom")
@@ -52,6 +47,11 @@ class TransportNationalityControllerSpec extends SpecBase with MockitoSugar with
   val mockReferenceDataConnector: ReferenceDataConnector = mock[ReferenceDataConnector]
   lazy val transportNationalityRoute: String             = routes.TransportNationalityController.onPageLoad(mrn, eventIndex, NormalMode).url
   private val transportNationalityTemplate               = "events/transhipments/transportNationality.njk"
+
+  override def guiceApplicationBuilder(): GuiceApplicationBuilder =
+    super
+      .guiceApplicationBuilder()
+      .overrides(bind[ReferenceDataConnector].toInstance(mockReferenceDataConnector))
 
   "TransportNationality Controller" - {
 
@@ -71,29 +71,18 @@ class TransportNationalityControllerSpec extends SpecBase with MockitoSugar with
     "must redirect to the next page when valid data is submitted" in {
 
       when(mockReferenceDataConnector.getCountryList(any())(any(), any())).thenReturn(Future.successful(countries))
-      val mockSessionRepository = mock[SessionRepository]
-
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[ReferenceDataConnector].toInstance(mockReferenceDataConnector)
-          )
-          .build()
+      setExistingUserAnswers(emptyUserAnswers)
 
       val request =
         FakeRequest(POST, transportNationalityRoute)
           .withFormUrlEncodedBody(("value", "GB"))
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual onwardRoute.url
-
-      application.stop()
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
@@ -102,17 +91,14 @@ class TransportNationalityControllerSpec extends SpecBase with MockitoSugar with
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .overrides {
-          bind[ReferenceDataConnector].toInstance(mockReferenceDataConnector)
-        }
-        .build()
+      setExistingUserAnswers(emptyUserAnswers)
+
       val request                                = FakeRequest(POST, transportNationalityRoute).withFormUrlEncodedBody(("value", ""))
       val boundForm                              = form.bind(Map("value" -> ""))
       val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor: ArgumentCaptor[JsObject]   = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual BAD_REQUEST
 
@@ -128,60 +114,51 @@ class TransportNationalityControllerSpec extends SpecBase with MockitoSugar with
 
       templateCaptor.getValue mustEqual transportNationalityTemplate
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "must redirect to Session Expired for a GET if no existing data is found" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      setNoExistingUserAnswers()
 
       val request = FakeRequest(GET, transportNationalityRoute)
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
-
-      application.stop()
     }
 
     "must redirect to Session Expired for a POST if no existing data is found" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      setNoExistingUserAnswers()
 
       val request =
         FakeRequest(POST, transportNationalityRoute)
           .withFormUrlEncodedBody(("value", "answer"))
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
-
-      application.stop()
     }
   }
 
-  private def verifyOnPageLoad(form: Form[Country], userAnswers: UserAnswers, preSelect: Boolean): Future[_] = {
+  private def verifyOnPageLoad(form: Form[Country], userAnswers: UserAnswers, preSelect: Boolean) = {
 
     when(mockReferenceDataConnector.getCountryList(any())(any(), any())).thenReturn(Future.successful(countries))
     when(mockRenderer.render(any(), any())(any()))
       .thenReturn(Future.successful(Html("")))
 
-    val application = applicationBuilder(userAnswers = Some(userAnswers))
-      .overrides {
-        bind[ReferenceDataConnector].toInstance(mockReferenceDataConnector)
-      }
-      .build()
+    setExistingUserAnswers(userAnswers)
+
     val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
     val jsonCaptor: ArgumentCaptor[JsObject]   = ArgumentCaptor.forClass(classOf[JsObject])
 
     val request = FakeRequest(GET, transportNationalityRoute)
 
-    val result = route(application, request).value
+    val result = route(app, request).value
 
     status(result) mustEqual OK
 
@@ -196,8 +173,6 @@ class TransportNationalityControllerSpec extends SpecBase with MockitoSugar with
 
     templateCaptor.getValue mustEqual transportNationalityTemplate
     jsonCaptor.getValue must containJson(expectedJson)
-
-    application.stop()
   }
 
   private def countriesJson(preSelect: Boolean = false): Seq[JsObject] =

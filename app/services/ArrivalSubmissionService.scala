@@ -19,7 +19,7 @@ package services
 import cats.implicits._
 import connectors.ArrivalMovementConnector
 import javax.inject.Inject
-import models.{EoriNumber, UserAnswers}
+import models.UserAnswers
 import services.conversion.UserAnswersToArrivalMovementRequestService
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 

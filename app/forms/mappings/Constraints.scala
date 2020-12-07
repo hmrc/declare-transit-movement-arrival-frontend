@@ -18,7 +18,6 @@ package forms.mappings
 
 import java.time.LocalDate
 
-import com.google.common.base.CharMatcher
 import models.Index
 import play.api.data.validation.{Constraint, Invalid, Valid}
 

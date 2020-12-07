@@ -17,7 +17,7 @@
 package pages.events.transhipments
 
 import models.Index
-import models.reference.{Country, CountryCode}
+import models.reference.CountryCode
 import pages.QuestionPage
 import pages.events.SectionConstants
 import play.api.libs.json.JsPath

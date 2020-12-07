@@ -16,7 +16,7 @@
 
 package services.conversion
 
-import base.SpecBase
+import base.{AppWithDefaultMockFixtures, SpecBase}
 import generators.MessagesModelGenerators
 import models.messages.{ArrivalMovementRequest, InterchangeControlReference}
 import models.reference.CustomsOffice
@@ -26,75 +26,70 @@ import org.mockito.Mockito.when
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import play.api.inject.bind
-import play.api.test.Helpers.running
+import play.api.inject.guice.GuiceApplicationBuilder
 import repositories.InterchangeControlReferenceIdRepository
 
 import scala.concurrent.Future
 
-class UserAnswersToArrivalMovementRequestServiceSpec extends SpecBase with MessagesModelGenerators with ScalaCheckDrivenPropertyChecks {
+class UserAnswersToArrivalMovementRequestServiceSpec
+    extends SpecBase
+    with AppWithDefaultMockFixtures
+    with MessagesModelGenerators
+    with ScalaCheckDrivenPropertyChecks {
 
-  val mockIcrRepo = mock[InterchangeControlReferenceIdRepository]
+  val mockIcrRepo: InterchangeControlReferenceIdRepository = mock[InterchangeControlReferenceIdRepository]
 
-  override def beforeEach = {
+  override def beforeEach(): Unit = {
     super.beforeEach()
     Mockito.reset(mockIcrRepo)
   }
 
-  private def applicationWithMockIcr =
-    applicationBuilder(None).overrides(bind[InterchangeControlReferenceIdRepository].toInstance(mockIcrRepo)).build()
+  override def guiceApplicationBuilder(): GuiceApplicationBuilder =
+    super
+      .guiceApplicationBuilder()
+      .overrides(bind[InterchangeControlReferenceIdRepository].toInstance(mockIcrRepo))
 
   "UserAnswersToArrivalMovementRequestService" - {
 
     "must convert UserAnswers to ArrivalMovementRequest for a valid set of user answers and given an InterchangeControlReference" in {
-      val app = applicationWithMockIcr
+      val service = app.injector.instanceOf[UserAnswersToArrivalMovementRequestService]
 
-      running(app) {
-        val service = app.injector.instanceOf[UserAnswersToArrivalMovementRequestService]
+      forAll(arbitrary[ArrivalMovementRequest], arbitrary[CustomsOffice]) {
+        (arrivalMovementRequest, customsOffice) =>
+          val setCustomsOffice = customsOffice.copy(id = arrivalMovementRequest.customsOfficeOfPresentation.office)
 
-        forAll(arbitrary[ArrivalMovementRequest], arbitrary[CustomsOffice]) {
-          (arrivalMovementRequest, customsOffice) =>
-            val setCustomsOffice = customsOffice.copy(id = arrivalMovementRequest.customsOfficeOfPresentation.office)
+          when(mockIcrRepo.nextInterchangeControlReferenceId()).thenReturn(Future.successful(arrivalMovementRequest.meta.interchangeControlReference))
 
-            when(mockIcrRepo.nextInterchangeControlReferenceId()).thenReturn(Future.successful(arrivalMovementRequest.meta.interchangeControlReference))
+          val userAnswers: UserAnswers = ArrivalMovementRequestToUserAnswersService
+            .convertToUserAnswers(
+              arrivalMovementRequest,
+              EoriNumber(arrivalMovementRequest.trader.eori),
+              MovementReferenceNumber(arrivalMovementRequest.header.movementReferenceNumber).value,
+              setCustomsOffice
+            )
+            .value
 
-            val userAnswers: UserAnswers = ArrivalMovementRequestToUserAnswersService
-              .convertToUserAnswers(
-                arrivalMovementRequest,
-                EoriNumber(arrivalMovementRequest.trader.eori),
-                MovementReferenceNumber(arrivalMovementRequest.header.movementReferenceNumber).value,
-                setCustomsOffice
-              )
-              .value
+          val result: ArrivalMovementRequest = service.convert(userAnswers).value.futureValue
 
-            val result: ArrivalMovementRequest = service.convert(userAnswers).value.futureValue
+          val dateOfPreparation = result.meta.dateOfPreparation
+          val timeOfPreparation = result.meta.timeOfPreparation
 
-            val dateOfPreperation = result.meta.dateOfPreparation
-            val timeOfPreperation = result.meta.timeOfPreparation
+          val expectedResult: ArrivalMovementRequest =
+            arrivalMovementRequest.copy(
+              meta   = arrivalMovementRequest.meta.copy(dateOfPreparation  = dateOfPreparation, timeOfPreparation = timeOfPreparation),
+              header = arrivalMovementRequest.header.copy(notificationDate = dateOfPreparation)
+            )
 
-            val expectedResult: ArrivalMovementRequest =
-              arrivalMovementRequest.copy(
-                meta   = arrivalMovementRequest.meta.copy(dateOfPreparation  = dateOfPreperation, timeOfPreparation = timeOfPreperation),
-                header = arrivalMovementRequest.header.copy(notificationDate = dateOfPreperation)
-              )
-
-            result mustBe expectedResult
-        }
+          result mustBe expectedResult
       }
-
     }
 
     "must return None when UserAnswers is incomplete" in {
-      val app = applicationWithMockIcr
+      when(mockIcrRepo.nextInterchangeControlReferenceId()).thenReturn(Future.successful(InterchangeControlReference("", 1)))
 
-      running(app) {
-        when(mockIcrRepo.nextInterchangeControlReferenceId()).thenReturn(Future.successful(InterchangeControlReference("", 1)))
+      val service = app.injector.instanceOf[UserAnswersToArrivalMovementRequestService]
 
-        val service = app.injector.instanceOf[UserAnswersToArrivalMovementRequestService]
-
-        service.convert(emptyUserAnswers) must not be (defined)
-
-      }
+      service.convert(emptyUserAnswers) must not be defined
     }
-
   }
 }

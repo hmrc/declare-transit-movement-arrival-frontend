@@ -18,12 +18,11 @@ package queries
 
 import pages.QuestionPage
 import pages.events.SectionConstants
-import play.api.libs.json.{JsArray, JsObject, JsPath}
+import play.api.libs.json.{JsObject, JsPath}
 
 case object EventsQuery extends QuestionPage[List[JsObject]] {
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = SectionConstants.events
-
 }

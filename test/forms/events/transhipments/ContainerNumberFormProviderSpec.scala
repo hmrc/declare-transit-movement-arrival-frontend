@@ -21,7 +21,7 @@ import forms.behaviours.StringFieldBehaviours
 import generators.MessagesModelGenerators
 import models.Index
 import models.domain.ContainerDomain
-import models.messages.{Container, Transhipment}
+import models.messages.Transhipment
 import play.api.data.FormError
 
 class ContainerNumberFormProviderSpec extends StringFieldBehaviours with MessagesModelGenerators with SpecBase {

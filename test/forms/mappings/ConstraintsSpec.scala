@@ -24,7 +24,7 @@ import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import org.scalatest.FreeSpec
 import org.scalatest.MustMatchers
-import play.api.data.validation.{Constraint, Invalid, Valid, ValidationResult}
+import play.api.data.validation.{Constraint, Invalid, Valid}
 
 class ConstraintsSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with Generators with Constraints {
 
