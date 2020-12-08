@@ -510,3 +510,9 @@ movementReferenceNumberRejection.error.invalid = The movement reference number i
 movementReferenceNumberRejection.contact.message = If this information is correct, you will need to
 movementReferenceNumberRejection.change.hidden = Change - movement reference number
 
+pageNotFound.title = Page not found
+pageNotFound.heading = Page not found
+pageNotFound.paragraph1 = If you typed the web address, check it is correct.
+pageNotFound.paragraph2 = If you pasted the web address, check you copied the entire address.
+pageNotFound.paragraph3Start = If the web address is correct or you selected a link or button,
+pageNotFound.contactLink=contact the New Computerised Transit System(NCTS) helpdesk if you need to speak to someone about your transit movement(opens in a new tab).
