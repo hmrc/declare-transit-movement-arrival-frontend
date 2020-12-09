@@ -115,7 +115,7 @@ class GoodsLocationControllerSpec extends SpecBase with AppWithDefaultMockFixtur
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual s"/common-transit-convention-trader-arrival/${emptyUserAnswers.id}/customs-approved-location"
+      redirectLocation(result).value mustEqual s"/manage-transit-movements-arrivals/${emptyUserAnswers.id}/customs-approved-location"
     }
 
     "must redirect to the correct page for Authorised Consignees Location when valid data is submitted" in {
@@ -133,7 +133,7 @@ class GoodsLocationControllerSpec extends SpecBase with AppWithDefaultMockFixtur
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual s"/common-transit-convention-trader-arrival/${emptyUserAnswers.id}/authorised-location-code"
+      redirectLocation(result).value mustEqual s"/manage-transit-movements-arrivals/${emptyUserAnswers.id}/authorised-location-code"
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
