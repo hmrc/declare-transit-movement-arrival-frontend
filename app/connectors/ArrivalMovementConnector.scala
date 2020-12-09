@@ -22,8 +22,7 @@ import javax.inject.Inject
 import models.XMLWrites._
 import models.messages.{ArrivalMovementRequest, ArrivalNotificationRejectionMessage}
 import models.{ArrivalId, MessagesSummary, ResponseMovementMessage}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpErrorFunctions, HttpResponse}
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpErrorFunctions, HttpResponse}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.xml.NodeSeq
