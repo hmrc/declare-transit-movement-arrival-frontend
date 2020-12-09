@@ -22,17 +22,21 @@ import javax.inject.Inject
 import models.XMLWrites._
 import models.messages.{ArrivalMovementRequest, ArrivalNotificationRejectionMessage}
 import models.{ArrivalId, MessagesSummary, ResponseMovementMessage}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpErrorFunctions, HttpResponse}
+import play.api.http.HeaderNames
+import uk.gov.hmrc.http.{HeaderCarrier, HttpErrorFunctions, HttpResponse}
+import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.xml.NodeSeq
 
 class ArrivalMovementConnector @Inject()(val config: FrontendAppConfig, val http: HttpClient)(implicit ec: ExecutionContext) extends HttpErrorFunctions {
 
+  private val channel: String = "web"
+
   def submitArrivalMovement(arrivalMovement: ArrivalMovementRequest)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
 
     val serviceUrl = s"${config.destinationUrl}/movements/arrivals"
-    val headers    = Seq(("Content-Type", "application/xml"))
+    val headers    = Seq(ContentTypeHeader("application/xml"), ChannelHeader(channel))
 
     http.POSTString[HttpResponse](serviceUrl, arrivalMovement.toXml.toString, headers)
   }
@@ -40,7 +44,8 @@ class ArrivalMovementConnector @Inject()(val config: FrontendAppConfig, val http
   def getSummary(arrivalId: ArrivalId)(implicit hc: HeaderCarrier): Future[Option[MessagesSummary]] = {
 
     val serviceUrl: String = s"${config.destinationUrl}/movements/arrivals/${arrivalId.value}/messages/summary"
-    http.GET[HttpResponse](serviceUrl) map {
+    val header             = hc.withExtraHeaders(ChannelHeader(channel))
+    http.GET[HttpResponse](serviceUrl)(httpReads, header, ec) map {
       case responseMessage if is2xx(responseMessage.status) => Some(responseMessage.json.as[MessagesSummary])
       case _                                                => None
     }
@@ -48,7 +53,8 @@ class ArrivalMovementConnector @Inject()(val config: FrontendAppConfig, val http
 
   def getRejectionMessage(rejectionLocation: String)(implicit hc: HeaderCarrier): Future[Option[ArrivalNotificationRejectionMessage]] = {
     val serviceUrl = s"${config.baseDestinationUrl}$rejectionLocation"
-    http.GET[HttpResponse](serviceUrl) map {
+    val header     = hc.withExtraHeaders(ChannelHeader(channel))
+    http.GET[HttpResponse](serviceUrl)(httpReads, header, ec) map {
       case responseMessage if is2xx(responseMessage.status) =>
         val message: NodeSeq = responseMessage.json.as[ResponseMovementMessage].message
         XmlReader.of[ArrivalNotificationRejectionMessage].read(message).toOption
@@ -58,7 +64,8 @@ class ArrivalMovementConnector @Inject()(val config: FrontendAppConfig, val http
 
   def getArrivalNotificationMessage(location: String)(implicit hc: HeaderCarrier): Future[Option[ArrivalMovementRequest]] = {
     val serviceUrl = s"${config.baseDestinationUrl}$location"
-    http.GET[HttpResponse](serviceUrl) map {
+    val header     = hc.withExtraHeaders(ChannelHeader(channel))
+    http.GET[HttpResponse](serviceUrl)(httpReads, header, ec) map {
       case responseMessage if is2xx(responseMessage.status) =>
         val xml = responseMessage.json.as[ResponseMovementMessage].message
         XmlReader.of[ArrivalMovementRequest].read(xml).toOption
@@ -69,8 +76,20 @@ class ArrivalMovementConnector @Inject()(val config: FrontendAppConfig, val http
 
   def updateArrivalMovement(arrivalId: ArrivalId, arrivalMovementRequest: ArrivalMovementRequest)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
     val serviceUrl = s"${config.destinationUrl}/movements/arrivals/${arrivalId.value}"
-    val headers    = Seq(("Content-Type", "application/xml"))
+    val headers    = Seq(ChannelHeader(channel), ("Content-Type", "application/xml"))
 
     http.PUTString[HttpResponse](serviceUrl, arrivalMovementRequest.toXml.toString(), headers)
+  }
+
+  object ChannelHeader {
+    def apply(value: String): (String, String) = ("Channel", value)
+  }
+
+  object ContentTypeHeader {
+    def apply(value: String): (String, String) = (HeaderNames.CONTENT_TYPE, value)
+  }
+
+  object AuthorizationHeader {
+    def apply(value: String): (String, String) = (HeaderNames.AUTHORIZATION, value)
   }
 }
