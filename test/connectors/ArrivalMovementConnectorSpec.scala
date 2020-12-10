@@ -260,6 +260,7 @@ class ArrivalMovementConnectorSpec
   private def stubGetResponse(errorResponseCode: Int, serviceUrl: String) =
     server.stubFor(
       get(urlEqualTo(serviceUrl))
+        .withHeader("Channel", containing("web"))
         .willReturn(
           aResponse()
             .withStatus(errorResponseCode)
@@ -268,6 +269,8 @@ class ArrivalMovementConnectorSpec
   private def stubResponse(expectedStatus: Int): StubMapping =
     server.stubFor(
       post(urlEqualTo("/transit-movements-trader-at-destination/movements/arrivals"))
+        .withHeader("Channel", containing("web"))
+        .withHeader("Content-Type", containing("application/xml"))
         .willReturn(
           aResponse()
             .withStatus(expectedStatus)
@@ -277,6 +280,8 @@ class ArrivalMovementConnectorSpec
   private def stubPutResponse(expectedStatus: Int): StubMapping =
     server.stubFor(
       put(urlEqualTo("/transit-movements-trader-at-destination/movements/arrivals/1"))
+        .withHeader("Channel", containing("web"))
+        .withHeader("Content-Type", containing("application/xml"))
         .willReturn(
           aResponse()
             .withStatus(expectedStatus)
