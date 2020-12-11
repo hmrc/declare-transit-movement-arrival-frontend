@@ -4,6 +4,9 @@ GET        /assets/*file                                     controllers.Assets.
 
 GET        /language/:lang                                   controllers.LanguageSwitchController.switchToLanguage(lang: String)
 
+GET         /keep-alive                                      controllers.KeepAliveController.keepAlive(mrn: Option[String] = None)
+GET         /:mrn/keep-alive                                 controllers.KeepAliveController.keepAlive(mrn: Option[String])
+
 GET        /this-service-has-been-reset                      controllers.SessionExpiredController.onPageLoad
 
 GET        /:mrn/check-your-answers-arrival                  controllers.CheckYourAnswersController.onPageLoad(mrn: MovementReferenceNumber)

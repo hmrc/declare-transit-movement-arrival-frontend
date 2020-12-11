@@ -21,8 +21,7 @@ import javax.inject.Inject
 import metrics.{MetricsService, Monitors}
 import models.CountryList
 import models.reference.{Country, CountryReferenceDataEndpoint, CustomsOffice}
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
 import scala.concurrent.{ExecutionContext, Future}
 

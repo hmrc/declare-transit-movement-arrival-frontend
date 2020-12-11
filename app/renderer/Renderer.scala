@@ -45,5 +45,7 @@ class Renderer @Inject()(appConfig: FrontendAppConfig, renderer: NunjucksRendere
     "reportAProblemNonJSUrl"         -> appConfig.reportAProblemNonJSUrl,
     "signOutUrl"                     -> appConfig.signOutUrl,
     "manageTransitMovementsUrl"      -> appConfig.manageTransitMovementsUrl
+    "timeout"                        -> appConfig.timeoutSeconds,
+    "countdown"                      -> appConfig.countdownSeconds
   )
 }

@@ -1,7 +1,9 @@
-$govuk-assets-path: "/common-transit-convention-trader-arrival/assets/lib/govuk-frontend/govuk/assets/";
+$govuk-assets-path: "/manage-transit-movements-arrivals/assets/lib/govuk-frontend/govuk/assets/";
+$hmrc-assets-path: "/manage-transit-movements-arrivals/assets/lib/hmrc-frontend/hmrc/assets/";
 
 @import "lib/govuk-frontend/govuk/all";
 @import "partials/language-toggles";
 @import "partials/page-heading";
+@import "_timeout-dialog.scss";
 @import "partials/header";
 @import "partials/shame";

@@ -16,23 +16,35 @@
 
 package controllers
 
+import controllers.actions.IdentifierAction
 import javax.inject.Inject
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import renderer.Renderer
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import repositories.SessionRepository
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
-class AccessibilityController @Inject()(
+class KeepAliveController @Inject()(
+  identify: IdentifierAction,
   val controllerComponents: MessagesControllerComponents,
-  renderer: Renderer
+  sessionRepository: SessionRepository
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = Action.async {
-    implicit request =>
-      renderer.render("accessibility.njk").map(Ok(_))
-  }
+  def keepAlive(mrn: Option[String]): Action[AnyContent] =
+    identify.async {
+      implicit request =>
+        mrn match {
+          case Some(refNumber) =>
+            sessionRepository.get(refNumber, request.eoriNumber) flatMap {
+              case Some(ua) =>
+                sessionRepository.set(ua).map(_ => NoContent)
+              case _ =>
+                Future.successful(NoContent)
+            }
+          case _ => Future.successful(NoContent)
+        }
+    }
 }
