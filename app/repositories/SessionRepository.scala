@@ -52,8 +52,22 @@ class DefaultSessionRepository @Inject()(mongo: ReactiveMongoApi, config: Config
       }
       .map(_ => ())
 
-  override def get(id: String, eoriNumber: EoriNumber): Future[Option[UserAnswers]] =
-    collection.flatMap(_.find(Json.obj("_id" -> id, "eoriNumber" -> eoriNumber.value), None).one[UserAnswers])
+  override def get(id: String, eoriNumber: EoriNumber): Future[Option[UserAnswers]] = {
+
+    val selector = Json.obj(
+      "_id"        -> id,
+      "eoriNumber" -> eoriNumber.value
+    )
+
+    val modifier = Json.obj(
+      "$set" -> Json.obj("lastUpdated" -> LocalDateTime.now)
+    )
+
+    collection.flatMap {
+      _.findAndUpdate(selector, modifier)
+        .map(_.value.map(_.as[UserAnswers]))
+    }
+  }
 
   override def set(userAnswers: UserAnswers): Future[Boolean] = {
 
