@@ -12,7 +12,7 @@ site.yes = Yes
 site.continue = Continue
 site.confirmAndSend = Confirm and send
 site.acceptAndSend = Accept and Send
-site.service_name = Common Transit Convention for traders
+site.service_name = Manage your transit movements
 site.textarea.char_limit = (Limit is {0} characters)
 site.title.suffix = - Common Transit Convention for traders - GOV.UK
 site.movement.reference.number = Movement reference number
@@ -61,7 +61,7 @@ checkYourAnswers.confirmation.heading = Now send your arrival notification
 checkYourAnswers.confirmation.paragraph = By sending this you are confirming that the details you are providing are correct, to the best of your knowledge.
 
 index.title = Manage your transit movements - GOV.UK
-index.heading = Manage your transit movements
+index.heading = Manage transit movements
 index.guidance = Welcome to your new frontend. Please see the README file for a guide to getting started.
 index.create_arrival = Create an arrival notification
 
