@@ -19,7 +19,7 @@ package repositories
 import java.time.LocalDateTime
 
 import javax.inject.Inject
-import models.{EoriNumber, UserAnswers}
+import models.{EoriNumber, MongoDateTimeFormats, UserAnswers}
 import play.api.Configuration
 import play.api.libs.json._
 import play.modules.reactivemongo.ReactiveMongoApi
@@ -53,7 +53,7 @@ class DefaultSessionRepository @Inject()(mongo: ReactiveMongoApi, config: Config
       .map(_ => ())
 
   override def get(id: String, eoriNumber: EoriNumber): Future[Option[UserAnswers]] = {
-
+    implicit val dateWriter: Writes[LocalDateTime] = MongoDateTimeFormats.localDateTimeWrite
     val selector = Json.obj(
       "_id"        -> id,
       "eoriNumber" -> eoriNumber.value
