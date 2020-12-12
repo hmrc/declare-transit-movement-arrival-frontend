@@ -44,7 +44,7 @@ class ArrivalSubmissionServiceSpec extends SpecBase with AppWithDefaultMockFixtu
   private val mockArrivalNotificationMessageService = mock[ArrivalNotificationMessageService]
 
   private val traderWithoutEori  = TraderDomain("", "", "", "", "", "")
-  private val normalNotification = NormalNotification(mrn, "", LocalDate.now(), "", traderWithoutEori, CustomsOffice("", "", Seq.empty, None), None)
+  private val normalNotification = NormalNotification(mrn, "", LocalDate.now(), "", traderWithoutEori, CustomsOffice("", Some(""), Seq.empty, None), None)
 
   implicit private val hc: HeaderCarrier = HeaderCarrier()
 

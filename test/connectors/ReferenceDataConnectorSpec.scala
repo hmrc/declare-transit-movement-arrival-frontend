@@ -95,8 +95,8 @@ class ReferenceDataConnectorSpec
 
         val expectedResult = {
           Seq(
-            CustomsOffice("testId1", "testName1", Seq("role1", "role2"), Some("testPhoneNumber")),
-            CustomsOffice("testId2", "testName2", Seq("role1", "role2"), None)
+            CustomsOffice("testId1", Some("testName1"), Seq("role1", "role2"), Some("testPhoneNumber")),
+            CustomsOffice("testId2", Some("testName2"), Seq("role1", "role2"), None)
           )
         }
 

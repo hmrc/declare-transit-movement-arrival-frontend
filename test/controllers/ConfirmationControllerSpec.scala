@@ -41,7 +41,7 @@ class ConfirmationControllerSpec extends SpecBase with AppWithDefaultMockFixture
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val customsOffice = CustomsOffice("id", "name", Seq.empty, None)
+      val customsOffice = CustomsOffice("id", Some("name"), Seq.empty, None)
       val userAnswers   = emptyUserAnswers.set(CustomsOfficePage, customsOffice).success.value
       setExistingUserAnswers(userAnswers)
 
@@ -70,7 +70,7 @@ class ConfirmationControllerSpec extends SpecBase with AppWithDefaultMockFixture
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val customsOffice = CustomsOffice("id", "name", Seq.empty, Some("phoneNumber"))
+      val customsOffice = CustomsOffice("id", Some("name"), Seq.empty, Some("phoneNumber"))
       val userAnswers   = emptyUserAnswers.set(CustomsOfficePage, customsOffice).success.value
       setExistingUserAnswers(userAnswers)
 

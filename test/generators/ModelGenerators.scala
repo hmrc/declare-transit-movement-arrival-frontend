@@ -68,7 +68,7 @@ trait ModelGenerators {
     Arbitrary {
       for {
         id          <- arbitrary[String]
-        name        <- arbitrary[String]
+        name        <- arbitrary[Option[String]]
         roles       <- genRoles
         phoneNumber <- Gen.option(arbitrary[String])
       } yield CustomsOffice(id, name, roles, phoneNumber)
