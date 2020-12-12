@@ -41,7 +41,7 @@ import scala.concurrent.Future
 class CustomsOfficeControllerSpec extends SpecBase with AppWithDefaultMockFixtures with NunjucksSupport with JsonMatchers {
 
   val formProvider              = new CustomsOfficeFormProvider()
-  val customsOffices            = Seq(CustomsOffice("id", "name", Seq.empty, None), CustomsOffice("officeId", "someName", Seq.empty, None))
+  val customsOffices            = Seq(CustomsOffice("id", Some("name"), Seq.empty, None), CustomsOffice("officeId", Some("someName"), Seq.empty, None))
   val form: Form[CustomsOffice] = formProvider(consigneeName, "sub place", customsOffices)
 
   lazy val customsOfficeRoute: String = routes.CustomsOfficeController.onPageLoad(mrn, NormalMode).url
@@ -70,7 +70,7 @@ class CustomsOfficeControllerSpec extends SpecBase with AppWithDefaultMockFixtur
       val officeId   = "officeId"
       val officeName = "someName"
       val userAnswers = emptyUserAnswers
-        .set(CustomsOfficePage, CustomsOffice(officeId, officeName, Seq.empty, None))
+        .set(CustomsOfficePage, CustomsOffice(officeId, Some(officeName), Seq.empty, None))
         .success
         .value
         .set(CustomsSubPlacePage, "subs place")
