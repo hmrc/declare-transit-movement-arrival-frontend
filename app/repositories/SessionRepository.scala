@@ -19,7 +19,7 @@ package repositories
 import java.time.LocalDateTime
 
 import javax.inject.Inject
-import models.{EoriNumber, UserAnswers}
+import models.{EoriNumber, MongoDateTimeFormats, UserAnswers}
 import play.api.Configuration
 import play.api.libs.json._
 import play.modules.reactivemongo.ReactiveMongoApi
@@ -52,8 +52,22 @@ class DefaultSessionRepository @Inject()(mongo: ReactiveMongoApi, config: Config
       }
       .map(_ => ())
 
-  override def get(id: String, eoriNumber: EoriNumber): Future[Option[UserAnswers]] =
-    collection.flatMap(_.find(Json.obj("_id" -> id, "eoriNumber" -> eoriNumber.value), None).one[UserAnswers])
+  override def get(id: String, eoriNumber: EoriNumber): Future[Option[UserAnswers]] = {
+    implicit val dateWriter: Writes[LocalDateTime] = MongoDateTimeFormats.localDateTimeWrite
+    val selector = Json.obj(
+      "_id"        -> id,
+      "eoriNumber" -> eoriNumber.value
+    )
+
+    val modifier = Json.obj(
+      "$set" -> Json.obj("lastUpdated" -> LocalDateTime.now)
+    )
+
+    collection.flatMap {
+      _.findAndUpdate(selector, modifier)
+        .map(_.value.map(_.as[UserAnswers]))
+    }
+  }
 
   override def set(userAnswers: UserAnswers): Future[Boolean] = {
 
