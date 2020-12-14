@@ -60,6 +60,4 @@ class FrontendAppConfig @Inject()(configuration: Configuration) {
     "cymraeg" -> Lang("cy")
   )
 
-  def routeToSwitchLanguage: String => Call =
-    (lang: String) => routes.LanguageSwitchController.switchToLanguage(lang)
 }
