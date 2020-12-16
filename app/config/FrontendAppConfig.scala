@@ -26,6 +26,9 @@ class FrontendAppConfig @Inject()(configuration: Configuration) {
   private val contactFormServiceIdentifier = "play26frontend"
   val analyticsToken: String               = configuration.get[String](s"google-analytics.token")
 
+  val trackingConsentUrl: String = configuration.get[String]("microservice.services.tracking-consent-frontend.url")
+  val gtmContainer: String       = configuration.get[String]("microservice.services.tracking-consent-frontend.gtm.container")
+
   val analyticsHost: String          = configuration.get[String](s"google-analytics.host")
   val reportAProblemPartialUrl       = s"$contactHost/problem_reports_ajax?service=$contactFormServiceIdentifier"
   val reportAProblemNonJSUrl         = s"$contactHost/problem_reports_nonjs?service=$contactFormServiceIdentifier"
