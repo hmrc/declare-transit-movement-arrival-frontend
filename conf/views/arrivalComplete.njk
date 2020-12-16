@@ -25,18 +25,10 @@
 
          <h2 class="govuk-heading-m"> {{ messages("arrivalComplete.subHeading") }}</h2>
 
-         <p class="govuk-body"> {{messages("arrivalComplete.para1")}}</p>
+         <p class="govuk-body"> <a href={{ manageTransitMovementsUrl }} class="govuk-link"> {{messages("arrivalComplete.checkStatus")}}</a>  {{ paragraph }} </p>
 
-          <ul class="govuk-list govuk-list--bullet">
-                             <li>{{ messages("arrivalComplete.BulletPoint1") }}</li>
-                             <li>{{ messages("arrivalComplete.BulletPoint2") }}</li>
-                             </ul>
-
-             <p class="govuk-body"> {{ contactUs }}</p>
-
-          <p class ="govuk-body"> {{ messages("arrivalComplete.link.pretext") }}
-            <a id="manage-transit-movements" href="{{ manageTransitMovementsUrl }}" class="govuk-link"> {{ messages("arrivalComplete.linkText") }} </a>
-          </p>
+         <p class="govuk-body"> {{ contactUs }}</p>
+         <p class="govuk-body"> <a href={{ movementReferencePageUrl }} class="govuk-link"> {{ messages("arrivalComplete.makeAnother.arrivalNotification") }} </a> </p>
 
      </div>
     </div>

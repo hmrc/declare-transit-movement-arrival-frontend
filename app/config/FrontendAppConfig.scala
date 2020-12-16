@@ -17,10 +17,7 @@
 package config
 
 import com.google.inject.{Inject, Singleton}
-import controllers.routes
 import play.api.Configuration
-import play.api.i18n.Lang
-import play.api.mvc.Call
 
 @Singleton
 class FrontendAppConfig @Inject()(configuration: Configuration) {
@@ -38,7 +35,8 @@ class FrontendAppConfig @Inject()(configuration: Configuration) {
   val nctsEnquiriesUrl: String       = configuration.get[String]("urls.nctsEnquiries")
   val loginHmrcServiceUrl: String    = configuration.get[String]("urls.loginHmrcService")
 
-  lazy val manageTransitMovementsUrl: String = configuration.get[String]("urls.manageTransitMovementsFrontend")
+  lazy val manageTransitMovementsUrl: String             = configuration.get[String]("urls.manageTransitMovementsFrontend")
+  lazy val manageTransitMovementsViewArrivalsUrl: String = s"$manageTransitMovementsUrl/view-arrivals"
 
   lazy val authUrl: String            = configuration.get[Service]("auth").fullServiceUrl
   lazy val loginUrl: String           = configuration.get[String]("urls.login")

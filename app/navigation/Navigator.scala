@@ -100,6 +100,7 @@ class Navigator @Inject()() {
     case ConfirmRemoveSealPage(eventIndex) => removeSeal(eventIndex, CheckMode)
     case AddSealPage(eventIndex) => addSeal(eventIndex, CheckMode)
     case CustomsOfficePage =>  customsOffice(CheckMode)
+    case SimplifiedCustomsOfficePage =>  ua => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
     case TraderNamePage =>  traderNameRoute(CheckMode)
     case TraderEoriPage =>  traderEoriRoute(CheckMode)
 
