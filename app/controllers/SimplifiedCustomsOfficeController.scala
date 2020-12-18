@@ -28,7 +28,6 @@ import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc._
-import play.twirl.api.Html
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -78,8 +77,9 @@ class SimplifiedCustomsOfficeController @Inject()(
                   consigneeName  = consigneeName.getOrElse(""),
                   customsOffice  = locationName,
                   form           = preparedForm,
-                  customsOffices = customsOffices
-                ).map(Ok(_))
+                  customsOffices = customsOffices,
+                  status         = Results.Ok
+                )
             }
         }
     }
@@ -90,8 +90,9 @@ class SimplifiedCustomsOfficeController @Inject()(
     consigneeName: String,
     customsOffice: String,
     form: Form[CustomsOffice],
-    customsOffices: Seq[CustomsOffice]
-  )(implicit request: Request[AnyContent]): Future[Html] = {
+    customsOffices: Seq[CustomsOffice],
+    status: Results.Status
+  )(implicit request: Request[AnyContent]): Future[Result] = {
 
     val json = Json.obj(
       "form"           -> form,
@@ -102,7 +103,7 @@ class SimplifiedCustomsOfficeController @Inject()(
       "consigneeName"  -> consigneeName,
       "locationName"   -> customsOffice
     )
-    renderer.render("customsOfficeSimplified.njk", json)
+    renderer.render("customsOfficeSimplified.njk", json).map(status(_))
   }
 
   def onSubmit(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] =
@@ -130,8 +131,9 @@ class SimplifiedCustomsOfficeController @Inject()(
                         consigneeName  = consigneeName.getOrElse(""),
                         customsOffice  = locationName,
                         form           = formWithErrors,
-                        customsOffices = customsOffices
-                      ).map(BadRequest(_))
+                        customsOffices = customsOffices,
+                        status         = Results.BadRequest
+                      )
                     },
                     value =>
                       for {
