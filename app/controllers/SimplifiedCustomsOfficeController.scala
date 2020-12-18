@@ -152,11 +152,11 @@ class SimplifiedCustomsOfficeController @Inject()(
       office =>
         val officeName = office.name match {
           case Some(name) => s"$name (${office.id})"
-          case _          => s"${office.id}"
+          case _          => office.id
         }
         Json.obj(
           "value"    -> office.id,
-          "text"     -> s"$officeName",
+          "text"     -> officeName,
           "selected" -> value.contains(office)
         )
     }
