@@ -150,9 +150,10 @@ class SimplifiedCustomsOfficeController @Inject()(
   private def getCustomsOfficesAsJson(value: Option[CustomsOffice], customsOffices: Seq[CustomsOffice]): Seq[JsObject] = {
     val customsOfficeObjects = customsOffices.map {
       office =>
+        val officeId = office.id.replace("()", "")
         Json.obj(
           "value"    -> office.id,
-          "text"     -> s"${office.name} (${office.id})",
+          "text"     -> s"${office.name.getOrElse("")} ${office.id}",
           "selected" -> value.contains(office)
         )
     }
