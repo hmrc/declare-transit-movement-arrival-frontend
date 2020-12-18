@@ -19,11 +19,12 @@ package controllers
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import config.FrontendAppConfig
 import matchers.JsonMatchers
+import models.GoodsLocation
 import models.reference.CustomsOffice
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
-import pages.CustomsOfficePage
+import pages.{CustomsOfficePage, GoodsLocationPage}
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -42,7 +43,13 @@ class ConfirmationControllerSpec extends SpecBase with AppWithDefaultMockFixture
         .thenReturn(Future.successful(Html("")))
 
       val customsOffice = CustomsOffice("id", Some("name"), Seq.empty, None)
-      val userAnswers   = emptyUserAnswers.set(CustomsOfficePage, customsOffice).success.value
+      val userAnswers = emptyUserAnswers
+        .set(GoodsLocationPage, GoodsLocation.AuthorisedConsigneesLocation)
+        .success
+        .value
+        .set(CustomsOfficePage, customsOffice)
+        .success
+        .value
       setExistingUserAnswers(userAnswers)
 
       val frontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
@@ -51,7 +58,7 @@ class ConfirmationControllerSpec extends SpecBase with AppWithDefaultMockFixture
       val jsonCaptor        = ArgumentCaptor.forClass(classOf[JsObject])
       val result            = route(app, request).value
 
-      val contactUsMessage: Text.Message = msg"arrivalComplete.para2".withArgs(customsOffice.name)
+      val contactUsMessage: Text.Message = msg"arrivalComplete.contact.withOffice".withArgs(customsOffice.name)
 
       status(result) mustEqual OK
 
@@ -59,7 +66,13 @@ class ConfirmationControllerSpec extends SpecBase with AppWithDefaultMockFixture
       verify(mockSessionRepository, times(1)).remove(mrn.toString)
 
       val expectedJson =
-        Json.obj("mrn" -> mrn, "contactUs" -> contactUsMessage, "manageTransitMovementsUrl" -> frontendAppConfig.manageTransitMovementsUrl)
+        Json.obj(
+          "mrn"                       -> mrn,
+          "paragraph"                 -> msg"arrivalComplete.para1.simplified",
+          "contactUs"                 -> contactUsMessage,
+          "manageTransitMovementsUrl" -> frontendAppConfig.manageTransitMovementsViewArrivalsUrl,
+          "movementReferencePageUrl"  -> routes.MovementReferenceNumberController.onPageLoad().url
+        )
 
       templateCaptor.getValue mustEqual "arrivalComplete.njk"
       jsonCaptor.getValue must containJson(expectedJson)
@@ -71,22 +84,76 @@ class ConfirmationControllerSpec extends SpecBase with AppWithDefaultMockFixture
         .thenReturn(Future.successful(Html("")))
 
       val customsOffice = CustomsOffice("id", Some("name"), Seq.empty, Some("phoneNumber"))
-      val userAnswers   = emptyUserAnswers.set(CustomsOfficePage, customsOffice).success.value
+      val userAnswers = emptyUserAnswers
+        .set(GoodsLocationPage, GoodsLocation.BorderForceOffice)
+        .success
+        .value
+        .set(CustomsOfficePage, customsOffice)
+        .success
+        .value
+
       setExistingUserAnswers(userAnswers)
 
-      val request        = FakeRequest(GET, routes.ConfirmationController.onPageLoad(mrn).url)
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
-      val result         = route(app, request).value
+      val frontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
+      val request           = FakeRequest(GET, routes.ConfirmationController.onPageLoad(mrn).url)
+      val templateCaptor    = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor        = ArgumentCaptor.forClass(classOf[JsObject])
+      val result            = route(app, request).value
 
-      val contactUsMessage: Text.Message = msg"arrivalComplete.para2.withPhoneNumber".withArgs(customsOffice.name, customsOffice.phoneNumber.get)
+      val contactUsMessage: Text.Message = msg"arrivalComplete.contact.withOfficeAndPhoneNumber".withArgs(customsOffice.name, customsOffice.phoneNumber.get)
 
       status(result) mustEqual OK
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
       verify(mockSessionRepository, times(1)).remove(mrn.toString)
 
-      val expectedJson = Json.obj("mrn" -> mrn, "contactUs" -> contactUsMessage)
+      val expectedJson = Json.obj(
+        "mrn"                       -> mrn,
+        "contactUs"                 -> contactUsMessage,
+        "paragraph"                 -> msg"arrivalComplete.para1.normal",
+        "manageTransitMovementsUrl" -> frontendAppConfig.manageTransitMovementsViewArrivalsUrl,
+        "movementReferencePageUrl"  -> routes.MovementReferenceNumberController.onPageLoad().url
+      )
+
+      templateCaptor.getValue mustEqual "arrivalComplete.njk"
+      jsonCaptor.getValue must containJson(expectedJson)
+    }
+
+    "return OK and the correct view when there is no phone number and office name for a GET the data" in {
+
+      when(mockRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("")))
+
+      val customsOffice = CustomsOffice("id", None, Seq.empty, None)
+      val userAnswers = emptyUserAnswers
+        .set(GoodsLocationPage, GoodsLocation.BorderForceOffice)
+        .success
+        .value
+        .set(CustomsOfficePage, customsOffice)
+        .success
+        .value
+      setExistingUserAnswers(userAnswers)
+
+      val frontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
+      val request           = FakeRequest(GET, routes.ConfirmationController.onPageLoad(mrn).url)
+      val templateCaptor    = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor        = ArgumentCaptor.forClass(classOf[JsObject])
+      val result            = route(app, request).value
+
+      val contactUsMessage: Text.Message = msg"arrivalComplete.contact.withOfficeCode".withArgs("id")
+
+      status(result) mustEqual OK
+
+      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+      verify(mockSessionRepository, times(1)).remove(mrn.toString)
+
+      val expectedJson = Json.obj(
+        "mrn"                       -> mrn,
+        "contactUs"                 -> contactUsMessage,
+        "paragraph"                 -> msg"arrivalComplete.para1.normal",
+        "manageTransitMovementsUrl" -> frontendAppConfig.manageTransitMovementsViewArrivalsUrl,
+        "movementReferencePageUrl"  -> routes.MovementReferenceNumberController.onPageLoad().url
+      )
 
       templateCaptor.getValue mustEqual "arrivalComplete.njk"
       jsonCaptor.getValue must containJson(expectedJson)
