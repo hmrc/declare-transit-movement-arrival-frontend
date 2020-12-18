@@ -148,7 +148,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
                 .set(GoodsLocationPage, AuthorisedConsigneesLocation).success.value
                 .remove(IncidentOnRoutePage).success.value
               navigator
-                .nextPage(SimplifiedCustomsOfficePage, NormalMode, ua)
+                .nextPage(CustomsOfficePage, NormalMode, ua)
                 .mustBe(routes.IncidentOnRouteController.onPageLoad(ua.id, NormalMode))
           }
         }

@@ -150,7 +150,7 @@ class SimplifiedCustomsOfficeController @Inject()(
       office =>
         Json.obj(
           "value"    -> office.id,
-          "text"     -> s"${office.name.getOrElse("")} (${office.id})",
+          "text"     -> s"${office.name} (${office.id})",
           "selected" -> value.contains(office)
         )
     }
