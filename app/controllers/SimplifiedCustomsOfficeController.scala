@@ -77,7 +77,7 @@ class SimplifiedCustomsOfficeController @Inject()(
                   consigneeName  = consigneeName.getOrElse(""),
                   customsOffice  = locationName,
                   form           = preparedForm,
-                  customsOffices = customsOffices,
+                  customsOffices = customsOffices.filter(customsOffice => customsOffice.id.startsWith("GB")),
                   status         = Results.Ok
                 )
             }
