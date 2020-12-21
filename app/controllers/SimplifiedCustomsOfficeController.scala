@@ -62,7 +62,7 @@ class SimplifiedCustomsOfficeController @Inject()(
           case _                             => None
         }
 
-        referenceDataConnector.getCustomsOffices flatMap {
+        referenceDataConnector.getCustomsOfficesOfTheCountry("GB") flatMap {
           customsOffices =>
             locationName match {
               case locationName: String =>
@@ -80,6 +80,8 @@ class SimplifiedCustomsOfficeController @Inject()(
                   customsOffices = customsOffices,
                   status         = Results.Ok
                 )
+              case _ =>
+                Future.successful(Redirect(routes.SessionExpiredController.onPageLoad()))
             }
         }
     }

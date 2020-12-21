@@ -39,6 +39,7 @@ class ReferenceDataConnectorSpec
     with ScalaCheckPropertyChecks {
 
   private val startUrl = "transit-movements-trader-reference-data"
+  private val country  = "GB"
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
@@ -53,13 +54,13 @@ class ReferenceDataConnectorSpec
     """
       |[
       | {
-      |   "id" : "testId1",
+      |   "id" : "GBtestId1",
       |   "name" : "testName1",
       |   "roles" : ["role1", "role2"],
       |   "phoneNumber" : "testPhoneNumber"
       | },
       | {
-      |   "id" : "testId2",
+      |   "id" : "GBtestId2",
       |   "name" : "testName2",
       |   "roles" : ["role1", "role2"]
       | }
@@ -95,8 +96,8 @@ class ReferenceDataConnectorSpec
 
         val expectedResult = {
           Seq(
-            CustomsOffice("testId1", Some("testName1"), Seq("role1", "role2"), Some("testPhoneNumber")),
-            CustomsOffice("testId2", Some("testName2"), Seq("role1", "role2"), None)
+            CustomsOffice("GBtestId1", Some("testName1"), Seq("role1", "role2"), Some("testPhoneNumber")),
+            CustomsOffice("GBtestId2", Some("testName2"), Seq("role1", "role2"), None)
           )
         }
 
@@ -105,6 +106,28 @@ class ReferenceDataConnectorSpec
 
       "must return an exception when an error response is returned" in {
         checkErrorResponse(s"/$startUrl/customs-offices", connector.getCustomsOffices)
+      }
+    }
+
+    "getCustomsOfficesOfTheCountry" - {
+      "must return a successful future response with a sequence of CustomsOffices" in {
+        server.stubFor(
+          get(urlEqualTo(s"/$startUrl/customs-offices/$country"))
+            .willReturn(okJson(customsOfficeResponseJson))
+        )
+
+        val expectedResult = {
+          Seq(
+            CustomsOffice("GBtestId1", Some("testName1"), Seq("role1", "role2"), Some("testPhoneNumber")),
+            CustomsOffice("GBtestId2", Some("testName2"), Seq("role1", "role2"), None)
+          )
+        }
+
+        connector.getCustomsOfficesOfTheCountry(country).futureValue mustBe expectedResult
+      }
+
+      "must return an exception when an error response is returned" in {
+        checkErrorResponse(s"/$startUrl/customs-offices/$country", connector.getCustomsOfficesOfTheCountry(country))
       }
     }
 
