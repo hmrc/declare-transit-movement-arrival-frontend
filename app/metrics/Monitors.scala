@@ -34,5 +34,8 @@ case class DefaultRequestMonitor[A](name: String) extends RequestMonitor[A]
 
 object Monitors {
   val getCustomsOfficesMonitor: DefaultRequestMonitor[Seq[CustomsOffice]] = DefaultRequestMonitor[Seq[CustomsOffice]]("get-customs-offices")
-  val getCountryListMonitor: DefaultRequestMonitor[CountryList]           = DefaultRequestMonitor[CountryList]("get-country-list")
+
+  val getCustomsOfficesOfTheCountryMonitor: DefaultRequestMonitor[Seq[CustomsOffice]] =
+    DefaultRequestMonitor[Seq[CustomsOffice]]("get-customs-offices-of-the-country")
+  val getCountryListMonitor: DefaultRequestMonitor[CountryList] = DefaultRequestMonitor[CountryList]("get-country-list")
 }

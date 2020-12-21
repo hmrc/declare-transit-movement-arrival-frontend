@@ -18,7 +18,7 @@ package controllers
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import connectors.ReferenceDataConnector
-import forms.CustomsOfficeFormProvider
+import forms.SimplifiedCustomsOfficeFormProvider
 import matchers.JsonMatchers
 import models.reference.CustomsOffice
 import models.{NormalMode, UserAnswers}
@@ -38,14 +38,14 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class CustomsOfficeControllerSpec extends SpecBase with AppWithDefaultMockFixtures with NunjucksSupport with JsonMatchers {
+class SimplifiedCustomsOfficeControllerSpec extends SpecBase with AppWithDefaultMockFixtures with NunjucksSupport with JsonMatchers {
 
-  val formProvider              = new CustomsOfficeFormProvider()
+  val formProvider              = new SimplifiedCustomsOfficeFormProvider()
   val customsOffices            = Seq(CustomsOffice("id", Some("name"), Seq.empty, None), CustomsOffice("officeId", Some("someName"), Seq.empty, None))
-  val form: Form[CustomsOffice] = formProvider(consigneeName, "sub place", customsOffices)
+  val form: Form[CustomsOffice] = formProvider(consigneeName, customsOffices)
   val country: String           = "GB"
 
-  lazy val customsOfficeRoute: String = routes.CustomsOfficeController.onPageLoad(mrn, NormalMode).url
+  lazy val simplifiedCustomsOfficeRoute: String = routes.SimplifiedCustomsOfficeController.onPageLoad(mrn, NormalMode).url
 
   private val mockRefDataConnector: ReferenceDataConnector = mock[ReferenceDataConnector]
   val templateCaptor: ArgumentCaptor[String]               = ArgumentCaptor.forClass(classOf[String])
@@ -61,7 +61,7 @@ class CustomsOfficeControllerSpec extends SpecBase with AppWithDefaultMockFixtur
       .guiceApplicationBuilder()
       .overrides(bind[ReferenceDataConnector].toInstance(mockRefDataConnector))
 
-  "CustomsOffice Controller" - {
+  "SimplifiedCustomsOffice Controller" - {
 
     "must return OK and the correct view for a GET" in {
       verifyOnLoadPage(emptyUserAnswers.set(CustomsSubPlacePage, "sub place").success.value, form)
@@ -92,7 +92,7 @@ class CustomsOfficeControllerSpec extends SpecBase with AppWithDefaultMockFixtur
 
       setExistingUserAnswers(emptyUserAnswers)
 
-      val request = FakeRequest(GET, customsOfficeRoute)
+      val request = FakeRequest(GET, simplifiedCustomsOfficeRoute)
 
       val result = route(app, request).value
 
@@ -110,7 +110,7 @@ class CustomsOfficeControllerSpec extends SpecBase with AppWithDefaultMockFixtur
       setExistingUserAnswers(userAnswers)
 
       val request =
-        FakeRequest(POST, customsOfficeRoute)
+        FakeRequest(POST, simplifiedCustomsOfficeRoute)
           .withFormUrlEncodedBody(("value", "id"))
 
       val result = route(app, request).value
@@ -133,7 +133,7 @@ class CustomsOfficeControllerSpec extends SpecBase with AppWithDefaultMockFixtur
 
       setExistingUserAnswers(emptyUserAnswers)
 
-      val request = FakeRequest(POST, customsOfficeRoute).withFormUrlEncodedBody(("value", ""))
+      val request = FakeRequest(POST, simplifiedCustomsOfficeRoute).withFormUrlEncodedBody(("value", ""))
 
       val result = route(app, request).value
 
@@ -146,7 +146,7 @@ class CustomsOfficeControllerSpec extends SpecBase with AppWithDefaultMockFixtur
 
       setNoExistingUserAnswers()
 
-      val request = FakeRequest(GET, customsOfficeRoute)
+      val request = FakeRequest(GET, simplifiedCustomsOfficeRoute)
 
       val result = route(app, request).value
 
@@ -160,7 +160,7 @@ class CustomsOfficeControllerSpec extends SpecBase with AppWithDefaultMockFixtur
       setNoExistingUserAnswers()
 
       val request =
-        FakeRequest(POST, customsOfficeRoute)
+        FakeRequest(POST, simplifiedCustomsOfficeRoute)
           .withFormUrlEncodedBody(("value", "answer"))
 
       val result = route(app, request).value
@@ -190,7 +190,7 @@ class CustomsOfficeControllerSpec extends SpecBase with AppWithDefaultMockFixtur
 
     setExistingUserAnswers(userAnswers)
 
-    val request   = FakeRequest(POST, customsOfficeRoute).withFormUrlEncodedBody(("value", formValue))
+    val request   = FakeRequest(POST, simplifiedCustomsOfficeRoute).withFormUrlEncodedBody(("value", formValue))
     val boundForm = form.bind(Map("value" -> formValue))
 
     val result = route(app, request).value
@@ -207,7 +207,7 @@ class CustomsOfficeControllerSpec extends SpecBase with AppWithDefaultMockFixtur
       "consigneeName"  -> consigneeName
     )
 
-    templateCaptor.getValue mustEqual "customsOffice.njk"
+    templateCaptor.getValue mustEqual "customsOfficeSimplified.njk"
     jsonCaptor.getValue must containJson(expectedJson)
   }
 
@@ -223,7 +223,7 @@ class CustomsOfficeControllerSpec extends SpecBase with AppWithDefaultMockFixtur
       "customsOffices" -> customsOfficeJson
     )
 
-    templateCaptor.getValue mustEqual "customsOffice.njk"
+    templateCaptor.getValue mustEqual "customsOfficeSimplified.njk"
     jsonCaptor.getValue must containJson(expectedJson)
   }
 
@@ -241,7 +241,7 @@ class CustomsOfficeControllerSpec extends SpecBase with AppWithDefaultMockFixtur
 
     setExistingUserAnswers(userAnswers)
 
-    val request = FakeRequest(GET, customsOfficeRoute)
+    val request = FakeRequest(GET, simplifiedCustomsOfficeRoute)
 
     val result = route(app, request).value
 

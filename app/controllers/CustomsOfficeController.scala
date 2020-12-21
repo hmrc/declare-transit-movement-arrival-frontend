@@ -60,7 +60,7 @@ class CustomsOfficeController @Inject()(override val messagesApi: MessagesApi,
           case _                             => None
         }
 
-        referenceDataConnector.getCustomsOffices flatMap {
+        referenceDataConnector.getCustomsOfficesOfTheCountry("GB") flatMap {
           customsOffices =>
             locationName match {
               case locationName: String =>
