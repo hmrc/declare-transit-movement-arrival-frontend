@@ -22,7 +22,7 @@ import play.api.Configuration
 @Singleton
 class FrontendAppConfig @Inject()(configuration: Configuration) {
 
-  private val contactHost                  = configuration.get[Service]("microservice.services.contact-frontend").fullServiceUrl
+  private val contactHost                  = configuration.get[String]("urls.contactFrontend")
   private val contactFormServiceIdentifier = "play26frontend"
   val analyticsToken: String               = configuration.get[String](s"google-analytics.token")
 
