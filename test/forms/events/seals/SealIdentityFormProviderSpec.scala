@@ -22,7 +22,8 @@ import generators.MessagesModelGenerators
 import models.Index
 import models.domain.SealDomain
 import org.scalacheck.Gen
-import play.api.data.FormError
+import play.api.data.{Field, FormError}
+import wolfendale.scalacheck.regexp.RegexpGen
 
 class SealIdentityFormProviderSpec extends StringFieldBehaviours with MessagesModelGenerators with SpecBase {
 
@@ -31,6 +32,7 @@ class SealIdentityFormProviderSpec extends StringFieldBehaviours with MessagesMo
   val duplicateKey = "sealIdentity.error.duplicate"
   val maxLength    = 20
   val fieldName    = "value"
+  val invalidKey   = "sealIdentity.error.invalid"
 
   val validSealSringGenOverLength: Gen[String] = for {
     num  <- Gen.chooseNum[Int](maxLength + 1, maxLength + 5)
@@ -90,6 +92,19 @@ class SealIdentityFormProviderSpec extends StringFieldBehaviours with MessagesMo
     val result = form(sealIndex, Seq.empty).bind(Map(fieldName -> seal.numberOrMark)).apply(fieldName)
 
     result.hasErrors mustEqual false
+  }
+
+  "must not bind strings that do not match regex" in {
+
+    val generator: Gen[String] = RegexpGen.from(s"[!£^*(){}_+=:;|`~,±]{20}")
+    val validRegex: String     = "^[a-zA-Z0-9&'@/.\\-%?<>]*$"
+    val expectedError          = FormError(fieldName, invalidKey, Seq(validRegex))
+
+    forAll(generator) {
+      invalidString =>
+        val result: Field = form(sealIndex).bind(Map(fieldName -> invalidString)).apply(fieldName)
+        result.errors must contain(expectedError)
+    }
   }
 
 }
