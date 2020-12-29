@@ -14,8 +14,6 @@ GET        /cannot-use-service-no-eori                       controllers.Unautho
 
 GET        /technical-difficulties                           controllers.TechnicalDifficultiesController.onPageLoad
 
-GET        /accessibility-statement                          controllers.AccessibilityController.onPageLoad
-
 GET        /movement-reference-number                        controllers.MovementReferenceNumberController.onPageLoad()
 POST       /movement-reference-number                        controllers.MovementReferenceNumberController.onSubmit()
 GET        /change-movement-reference-number                 controllers.MovementReferenceNumberController.onPageLoad()
