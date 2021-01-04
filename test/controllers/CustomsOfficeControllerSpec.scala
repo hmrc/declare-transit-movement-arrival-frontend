@@ -42,7 +42,7 @@ class CustomsOfficeControllerSpec extends SpecBase with AppWithDefaultMockFixtur
 
   val formProvider              = new CustomsOfficeFormProvider()
   val customsOffices            = Seq(CustomsOffice("id", Some("name"), Seq.empty, None), CustomsOffice("officeId", Some("someName"), Seq.empty, None))
-  val form: Form[CustomsOffice] = formProvider(consigneeName, "sub place", customsOffices)
+  val form: Form[CustomsOffice] = formProvider("sub place", customsOffices)
   val country: String           = "GB"
 
   lazy val customsOfficeRoute: String = routes.CustomsOfficeController.onPageLoad(mrn, NormalMode).url
