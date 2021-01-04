@@ -381,6 +381,7 @@ transportIdentity.heading = What is the name, registration or reference of the n
 transportIdentity.checkYourAnswersLabel = What is the name, registration or reference of the new vehicle?
 transportIdentity.error.required = Enter the name, registration or reference of the new vehicle
 transportIdentity.error.length = Name, registration or reference of the new vehicle must be 27 characters or less
+transportIdentity.error.invalid = The name, registration or reference of the new vehicle must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, at signs (@), forward slashes, full stops, hyphens, percent signs, question marks, spaces, and less than and greater than signs
 transportIdentity.change.hidden = the name, registration or reference of the new vehicle
 
 transportNationality.title = Which country is the vehicle registered in?

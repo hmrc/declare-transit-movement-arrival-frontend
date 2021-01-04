@@ -23,9 +23,14 @@ import play.api.data.Form
 
 class TransportIdentityFormProvider @Inject() extends Mappings {
 
+  val validReg = "^[a-zA-Z0-9&'@/.\\-%?<> ]*$"
+
   def apply(): Form[String] =
     Form(
       "value" -> text("transportIdentity.error.required")
-        .verifying(maxLength(VehicularTranshipment.Constants.transportIdentityLength, "transportIdentity.error.length"))
+        .verifying(
+          maxLength(VehicularTranshipment.Constants.transportIdentityLength, "transportIdentity.error.length"),
+          regexp(validReg, "transportIdentity.error.invalid")
+        )
     )
 }
