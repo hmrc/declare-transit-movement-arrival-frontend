@@ -30,8 +30,8 @@ class CustomsOfficeFormProvider @Inject() extends Mappings {
     customsOffices: Seq[CustomsOffice]
   )(implicit messages: Messages): Form[CustomsOffice] =
     Form(
-      "value" -> text("customsOffice.error.required", Seq(consigneeName))
-        .verifying(messages("customsOffice.error.required", consigneeName), value => customsOffices.exists(_.id == value))
+      "value" -> text("customsOffice.error.required", Seq(subPlace))
+        .verifying(messages("customsOffice.error.required", subPlace), value => customsOffices.exists(_.id == value))
         .transform[CustomsOffice](value => customsOffices.find(_.id == value).get, _.id)
     )
 }

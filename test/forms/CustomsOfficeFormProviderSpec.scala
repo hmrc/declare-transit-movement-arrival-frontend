@@ -44,7 +44,7 @@ class CustomsOfficeFormProviderSpec extends StringFieldBehaviours with SpecBase 
     behave like mandatoryField(
       form,
       fieldName,
-      requiredError = FormError(fieldName, requiredKey, Seq(consigneeName))
+      requiredError = FormError(fieldName, requiredKey, Seq(subPlace))
     )
 
     "not bind if customs office id does not exist in the customs office list" in {
