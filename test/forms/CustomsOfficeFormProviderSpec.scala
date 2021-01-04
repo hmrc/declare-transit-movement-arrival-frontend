@@ -29,7 +29,7 @@ class CustomsOfficeFormProviderSpec extends StringFieldBehaviours with SpecBase 
   val maxLength           = 8
 
   val customsOffices = Seq(CustomsOffice("id", Some("name"), Seq.empty, None), CustomsOffice("GB000003", Some("someName"), Seq.empty, None))
-  val form           = new CustomsOfficeFormProvider()(consigneeName, subPlace, customsOffices)
+  val form           = new CustomsOfficeFormProvider()(subPlace, customsOffices)
 
   ".value" - {
 

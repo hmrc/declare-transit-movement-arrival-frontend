@@ -25,7 +25,6 @@ import models.reference.CustomsOffice
 class CustomsOfficeFormProvider @Inject() extends Mappings {
 
   def apply(
-    consigneeName: String,
     subPlace: String,
     customsOffices: Seq[CustomsOffice]
   )(implicit messages: Messages): Form[CustomsOffice] =
