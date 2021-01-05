@@ -344,6 +344,7 @@ placeOfNotification.heading = Where are you completing this arrival notification
 placeOfNotification.checkYourAnswersLabel = Where are you completing this arrival notification?
 placeOfNotification.hintText = This is also known as the place of notification. Give the postcode.
 placeOfNotification.error.required = Enter where you are completing this arrival notification
+placeOfNotification.error.invalid =  Where you are completing this arrival notification must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, at signs (@), forward slashes, full stops, hyphens, percent signs, question marks, spaces, and less than and greater than signs
 placeOfNotification.error.length = Where are you completing this arrival notification must be 35 characters or less
 placeOfNotification.change.hidden = where you are completing this arrival notification
 

@@ -17,12 +17,16 @@
 package forms
 
 import forms.behaviours.StringFieldBehaviours
+import models.domain.TraderDomain.inputRegex
+import org.scalacheck.Gen
 import play.api.data.FormError
+import wolfendale.scalacheck.regexp.RegexpGen
 
 class PlaceOfNotificationFormProviderSpec extends StringFieldBehaviours {
 
   val requiredKey = "placeOfNotification.error.required"
   val lengthKey   = "placeOfNotification.error.length"
+  val invalidKey  = "placeOfNotification.error.invalid"
   val maxLength   = 35
 
   val form = new PlaceOfNotificationFormProvider()()
@@ -49,5 +53,18 @@ class PlaceOfNotificationFormProviderSpec extends StringFieldBehaviours {
       fieldName,
       requiredError = FormError(fieldName, requiredKey)
     )
+
+    "must not bind strings that do not match regex" in {
+      val expectedError =
+        FormError(fieldName, invalidKey, Seq.empty)
+      val generator: Gen[String] = RegexpGen.from(s"[!£^*(){}_+=:;|`~,±]{20}")
+
+      forAll(generator) {
+        invalidString =>
+          val result = form.bind(Map(fieldName -> invalidString)).apply(fieldName)
+          result.errors must contain(expectedError)
+      }
+    }
+
   }
 }
