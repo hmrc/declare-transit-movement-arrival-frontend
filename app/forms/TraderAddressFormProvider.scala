@@ -63,7 +63,7 @@ class TraderAddressFormProvider @Inject() extends Mappings {
           regexp(
             inputRegex,
             "traderAddress.error.invalid",
-            Seq("city", traderName)
+            Seq("town or city", traderName)
           )
         ),
       "postcode" -> text("traderAddress.error.postcode.required", args = Seq(traderName))
