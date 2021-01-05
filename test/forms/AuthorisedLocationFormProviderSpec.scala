@@ -19,6 +19,7 @@ package forms
 import forms.behaviours.StringFieldBehaviours
 import org.scalacheck.Gen
 import play.api.data.FormError
+import wolfendale.scalacheck.regexp.RegexpGen
 
 class AuthorisedLocationFormProviderSpec extends StringFieldBehaviours {
 
@@ -57,11 +58,9 @@ class AuthorisedLocationFormProviderSpec extends StringFieldBehaviours {
       val expectedError =
         List(FormError(fieldName, invalidKey, Seq(locationRegex)))
 
-      val genInvalidString: Gen[String] = {
-        stringCharsWithMaxLength(maxLength) suchThat (!_.matches(locationRegex))
-      }
+      val generator: Gen[String] = RegexpGen.from(s"[!£^*(){}_+=:;|`~,±]{17}")
 
-      forAll(genInvalidString) {
+      forAll(generator) {
         invalidString =>
           val result = form.bind(Map(fieldName -> invalidString)).apply(fieldName)
           result.errors mustBe expectedError
