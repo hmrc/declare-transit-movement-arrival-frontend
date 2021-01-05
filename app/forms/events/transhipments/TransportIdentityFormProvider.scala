@@ -20,12 +20,18 @@ import forms.mappings.Mappings
 import javax.inject.Inject
 import models.messages.VehicularTranshipment
 import play.api.data.Form
+import uk.gov.hmrc.play.mappers.StopOnFirstFail
 
 class TransportIdentityFormProvider @Inject() extends Mappings {
 
   def apply(): Form[String] =
     Form(
       "value" -> text("transportIdentity.error.required")
-        .verifying(maxLength(VehicularTranshipment.Constants.transportIdentityLength, "transportIdentity.error.length"))
+        .verifying(
+          StopOnFirstFail[String](
+            maxLength(VehicularTranshipment.Constants.transportIdentityLength, "transportIdentity.error.length"),
+            regexp(VehicularTranshipment.Constants.transportIdentityRegEx, "transportIdentity.error.invalid")
+          )
+        )
     )
 }

@@ -18,19 +18,27 @@ package forms.events.transhipments
 
 import forms.behaviours.StringFieldBehaviours
 import models.messages.VehicularTranshipment
-import play.api.data.FormError
+import org.scalacheck.Gen
+import play.api.data.{Field, FormError}
+import wolfendale.scalacheck.regexp.RegexpGen
 
 class TransportIdentityFormProviderSpec extends StringFieldBehaviours {
 
   val requiredKey = "transportIdentity.error.required"
   val lengthKey   = "transportIdentity.error.length"
+  val invalidKey  = "transportIdentity.error.invalid"
   val maxLength   = VehicularTranshipment.Constants.transportIdentityLength
+
+  val fieldName = "value"
 
   val form = new TransportIdentityFormProvider()()
 
   ".value" - {
 
-    val fieldName = "value"
+    val validTransportIdentityOverLength: Gen[String] = for {
+      num  <- Gen.chooseNum[Int](maxLength + 1, maxLength + 5)
+      list <- Gen.listOfN(num, Gen.alphaNumChar)
+    } yield list.mkString("")
 
     behave like fieldThatBindsValidData(
       form,
@@ -42,7 +50,8 @@ class TransportIdentityFormProviderSpec extends StringFieldBehaviours {
       form,
       fieldName,
       maxLength   = maxLength,
-      lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
+      lengthError = FormError(fieldName, lengthKey, Seq(maxLength)),
+      validTransportIdentityOverLength
     )
 
     behave like mandatoryField(
@@ -50,5 +59,17 @@ class TransportIdentityFormProviderSpec extends StringFieldBehaviours {
       fieldName,
       requiredError = FormError(fieldName, requiredKey)
     )
+  }
+
+  "must not bind strings that do not match regex" in {
+
+    val generator: Gen[String] = RegexpGen.from(s"[!£^*(){}_+=:;|`~,±]{27}")
+    val expectedError          = FormError(fieldName, invalidKey, Seq(VehicularTranshipment.Constants.transportIdentityRegEx))
+
+    forAll(generator) {
+      invalidString =>
+        val result: Field = form.bind(Map(fieldName -> invalidString)).apply(fieldName)
+        result.errors must contain(expectedError)
+    }
   }
 }

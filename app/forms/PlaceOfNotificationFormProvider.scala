@@ -20,12 +20,18 @@ import forms.mappings.Mappings
 import javax.inject.Inject
 import play.api.data.Form
 import models.domain.NormalNotification.Constants.notificationPlaceLength
+import models.domain.TraderDomain.inputRegex
+import uk.gov.hmrc.play.mappers.StopOnFirstFail
 
 class PlaceOfNotificationFormProvider @Inject() extends Mappings {
 
   def apply(): Form[String] =
     Form(
       "value" -> text("placeOfNotification.error.required")
-        .verifying(maxLength(notificationPlaceLength, "placeOfNotification.error.length"))
+        .verifying(
+          StopOnFirstFail[String](
+            maxLength(notificationPlaceLength, "placeOfNotification.error.length"),
+            regexp(inputRegex, "placeOfNotification.error.invalid", Seq.empty)
+          ))
     )
 }
