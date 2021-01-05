@@ -64,7 +64,7 @@ class CustomsOfficeController @Inject()(override val messagesApi: MessagesApi,
           customsOffices =>
             locationName match {
               case locationName: String =>
-                val form = formProvider(consigneeName.getOrElse(""), locationName, customsOffices)
+                val form = formProvider(locationName, customsOffices)
                 val preparedForm = request.userAnswers.get(CustomsOfficePage) match {
                   case None        => form
                   case Some(value) => form.fill(value)
@@ -120,7 +120,7 @@ class CustomsOfficeController @Inject()(override val messagesApi: MessagesApi,
           customsOffices =>
             locationName match {
               case locationName: String =>
-                val form = formProvider(consigneeName.getOrElse(""), locationName, customsOffices)
+                val form = formProvider(locationName, customsOffices)
                 form
                   .bindFromRequest()
                   .fold(
