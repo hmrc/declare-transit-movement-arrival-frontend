@@ -225,7 +225,7 @@ traderAddress.error.postcode.required = Enter the postcode of {0}’s address
 traderAddress.error.postcode.length = Postcode must be 9 characters or less
 traderAddress.error.postcode.invalid = The postcode of {0}’s address must only include letters A to Z and numbers 0 to 9
 
-traderAddress.error.invalid = The {0} of {1}’s address must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, asterisks, forward slashes, full stops, hyphens, question marks, and greater than (>) and less than (<) signs
+traderAddress.error.invalid = The {0} of {1}’s address must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, at signs (@), forward slashes, full stops, hyphens, percent signs, question marks, spaces, and less than and greater than signs
 traderAddress.error.required = Enter the {0} of {1}’s address
 traderAddress.error.max_length = The {0} of {1}’s address must be 35 characters or less
 traderAddress.change.hidden = address of trader
