@@ -56,7 +56,7 @@ class PlaceOfNotificationFormProviderSpec extends StringFieldBehaviours {
     "must not bind strings that do not match regex" in {
       val expectedError =
         FormError(fieldName, invalidKey, Seq.empty)
-      val generator: Gen[String] = RegexpGen.from(s"[!£^*(){}_+=:;|`~,±]{20}")
+      val generator: Gen[String] = RegexpGen.from(s"[!£^*(){}_+=:;|`~,±]{35}")
 
       forAll(generator) {
         invalidString =>
