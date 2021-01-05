@@ -19,6 +19,7 @@ package forms
 import forms.mappings.Mappings
 import javax.inject.Inject
 import models.Address
+import models.Address.Constants.Fields.city
 import play.api.data.Form
 import play.api.data.Forms._
 import models.domain.TraderDomain.Constants.{cityLength, postCodeLength, streetAndNumberLength}
@@ -63,7 +64,7 @@ class TraderAddressFormProvider @Inject() extends Mappings {
           regexp(
             inputRegex,
             "traderAddress.error.invalid",
-            Seq("town or city", traderName)
+            Seq(city, traderName)
           )
         ),
       "postcode" -> text("traderAddress.error.postcode.required", args = Seq(traderName))
