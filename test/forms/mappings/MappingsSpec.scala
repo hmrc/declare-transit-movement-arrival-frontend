@@ -25,6 +25,8 @@ import play.api.data.Form
 import play.api.data.FormError
 import models.Enumerable
 import models.MovementReferenceNumber
+import models.domain.TraderDomain.Constants.eoriLength
+import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
 object MappingsSpec {
@@ -181,7 +183,7 @@ class MappingsSpec extends FreeSpec with MustMatchers with OptionValues with Map
   "mrn" - {
 
     val testForm = Form(
-      "value" -> mrn("error.required", "error.invalid")
+      "value" -> mrn("error.required", "error.invalid", "error.invalid.character")
     )
 
     "must bind valid MRNs" in {
@@ -193,16 +195,33 @@ class MappingsSpec extends FreeSpec with MustMatchers with OptionValues with Map
       }
     }
 
-    "must not bind invalid MRNs" in {
+    "must not bind invalid MRNs" - {
 
-      forAll(arbitrary[String]) {
-        value =>
-          whenever(value != "" && MovementReferenceNumber(value).isEmpty) {
+      "when value is invalid format" in {
+        forAll(alphaStringsWithMaxLength(MovementReferenceNumber.Constants.length)) {
+          invalidMrn =>
+            whenever(invalidMrn != "" && MovementReferenceNumber(invalidMrn).isEmpty) {
 
-            val result = testForm.bind(Map("value" -> value))
-            result.errors must contain(FormError("value", "error.invalid"))
-          }
+              val result = testForm.bind(Map("value" -> invalidMrn))
+              result.errors must contain(FormError("value", "error.invalid"))
+            }
+        }
       }
+
+      "when value contains an invalid character" in {
+
+        forAll(nonEmptyString) {
+          value =>
+            whenever(
+              MovementReferenceNumber(value).isEmpty &&
+                !value.matches(MovementReferenceNumber.Constants.validCharactersRegex)) {
+              val result = testForm.bind(Map("value" -> value))
+              result.errors must contain(FormError("value", "error.invalid.character"))
+            }
+        }
+      }
+
     }
+
   }
 }

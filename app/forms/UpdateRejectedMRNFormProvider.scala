@@ -25,6 +25,6 @@ class UpdateRejectedMRNFormProvider @Inject() extends Mappings {
 
   def apply(): Form[MovementReferenceNumber] =
     Form(
-      "value" -> mrn("movementReferenceNumber.error.required", "movementReferenceNumber.error.invalid")
+      "value" -> mrn("movementReferenceNumber.error.required", "movementReferenceNumber.error.invalid", "movementReferenceNumber.error.invalidCharacter")
     )
 }

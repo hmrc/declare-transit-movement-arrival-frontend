@@ -23,8 +23,9 @@ import play.api.data.FormError
 
 class MovementReferenceNumberFormProviderSpec extends StringFieldBehaviours {
 
-  val requiredKey = "movementReferenceNumber.error.required"
-  val invalidKey  = "movementReferenceNumber.error.invalid"
+  val requiredKey         = "movementReferenceNumber.error.required"
+  val invalidKey          = "movementReferenceNumber.error.invalid"
+  val invalidCharacterKey = "movementReferenceNumber.error.invalidCharacter"
 
   val form = new MovementReferenceNumberFormProvider()()
 
@@ -44,14 +45,27 @@ class MovementReferenceNumberFormProviderSpec extends StringFieldBehaviours {
       requiredError = FormError(fieldName, requiredKey)
     )
 
-    "must not bind invalid MRNs" in {
+    "must not bind when value is invalid format" in {
 
-      forAll(arbitrary[String]) {
-        value =>
-          whenever(value != "" && MovementReferenceNumber(value).isEmpty) {
+      forAll(alphaStringsWithMaxLength(MovementReferenceNumber.Constants.length)) {
+        invalidMrn =>
+          whenever(invalidMrn != "" && MovementReferenceNumber(invalidMrn).isEmpty) {
 
-            val result = form.bind(Map("value" -> value))
+            val result = form.bind(Map("value" -> invalidMrn))
             result.errors must contain(FormError("value", invalidKey))
+          }
+      }
+    }
+
+    "must not bind when value contains an invalid character" in {
+
+      forAll(nonEmptyString) {
+        value =>
+          whenever(
+            MovementReferenceNumber(value).isEmpty &&
+              !value.matches(MovementReferenceNumber.Constants.validCharactersRegex)) {
+            val result = form.bind(Map("value" -> value))
+            result.errors must contain(FormError("value", invalidCharacterKey))
           }
       }
     }
