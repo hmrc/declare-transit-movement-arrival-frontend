@@ -17,7 +17,6 @@
 package forms.events.transhipments
 
 import forms.behaviours.StringFieldBehaviours
-import models.Address
 import models.messages.VehicularTranshipment
 import org.scalacheck.Gen
 import play.api.data.{Field, FormError}
@@ -25,11 +24,10 @@ import wolfendale.scalacheck.regexp.RegexpGen
 
 class TransportIdentityFormProviderSpec extends StringFieldBehaviours {
 
-  val requiredKey        = "transportIdentity.error.required"
-  val lengthKey          = "transportIdentity.error.length"
-  val invalidKey         = "transportIdentity.error.invalid"
-  val maxLength          = VehicularTranshipment.Constants.transportIdentityLength
-  val validRegex: String = "^[a-zA-Z0-9&'@/.\\-%?<> ]*$"
+  val requiredKey = "transportIdentity.error.required"
+  val lengthKey   = "transportIdentity.error.length"
+  val invalidKey  = "transportIdentity.error.invalid"
+  val maxLength   = VehicularTranshipment.Constants.transportIdentityLength
 
   val fieldName = "value"
 
@@ -66,7 +64,7 @@ class TransportIdentityFormProviderSpec extends StringFieldBehaviours {
   "must not bind strings that do not match regex" in {
 
     val generator: Gen[String] = RegexpGen.from(s"[!£^*(){}_+=:;|`~,±]{27}")
-    val expectedError          = FormError(fieldName, invalidKey, Seq(validRegex))
+    val expectedError          = FormError(fieldName, invalidKey, Seq(VehicularTranshipment.Constants.transportIdentityRegEx))
 
     forAll(generator) {
       invalidString =>
