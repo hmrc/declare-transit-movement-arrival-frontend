@@ -10,6 +10,7 @@ object AppDependencies {
     "uk.gov.hmrc"       %% "play-health"                   % "3.15.0-play-26",
     "uk.gov.hmrc"       %% "play-conditional-form-mapping" % "1.2.0-play-26",
     "uk.gov.hmrc"       %% "bootstrap-frontend-play-26"    % "3.2.0",
+    "uk.gov.hmrc"       %% "play-ui"                       % "8.19.0-play-26",
     "uk.gov.hmrc"       %% "play-allowlist-filter"         % "0.1.0-play-26",
     "uk.gov.hmrc"       %% "play-nunjucks"                 % "0.23.0-play-26",
     "uk.gov.hmrc"       %% "play-nunjucks-viewmodel"       % "0.9.0-play-26",

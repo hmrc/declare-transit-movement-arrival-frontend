@@ -189,7 +189,8 @@ final case class VehicularTranshipment(
 object VehicularTranshipment {
 
   object Constants {
-    val transportIdentityLength = 27
+    val transportIdentityLength     = 27
+    lazy val transportIdentityRegEx = "^[a-zA-Z0-9&'@/.\\-%?<> ]*$"
   }
 
   def vehicularTranshipmentToDomain(transhipment: VehicularTranshipment): VehicularTranshipmentDomain =

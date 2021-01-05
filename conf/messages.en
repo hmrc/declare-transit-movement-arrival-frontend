@@ -183,7 +183,7 @@ customsOffice.title = Which Customs office supervises this Customs-approved loca
 customsOffice.heading = Which Customs office supervises {0}?
 customsOffice.hintText = Give the office location or code. For example, Dover or GB000060.
 customsOffice.checkYourAnswersLabel = Which Customs office supervises {0}?
-customsOffice.error.required = Select the Customs office that supervises {0}
+customsOffice.error.required = Enter the Customs office that supervises {0}
 customsOffice.error.length = Customs office must be 8 characters or less
 customsOffice.change.hidden = which Customs office supervises {0}
 
@@ -191,7 +191,7 @@ customsOffice.simplified.title = Which Customs office supervises the authorised 
 customsOffice.simplified.heading = Which Customs office supervises {0}’s address?
 customsOffice.simplified.hintText = Give the office location or code. For example, Dover or GB000060.
 customsOffice.simplified.checkYourAnswersLabel = Which Customs office supervises {0}’s address?
-customsOffice.simplified.error.required = Select the Customs office that supervises {0}’s address
+customsOffice.simplified.error.required = Enter the Customs office that supervises {0}’s address
 customsOffice.simplified.error.length = Customs office must be 8 characters or less
 customsOffice.simplified.change.hidden = which Customs office supervises {0}
 
@@ -209,7 +209,7 @@ authorisedLocation.heading = What is the authorised location code?
 authorisedLocation.checkYourAnswersLabel = Authorised location
 authorisedLocation.error.required = Enter authorised location code
 authorisedLocation.error.length = Authorised location code must be 17 characters or less
-authorisedLocation.error.invalid = Authorised location code must only contain letters a to z or numbers 0 to 9
+authorisedLocation.error.invalid = Authorised location code must only include the letters a to z, numbers 0 to 9, ampersands (&), apostrophes, at signs (@), forward slashes, full stops, hyphens, percentage signs, question marks, spaces, and greater than and less than signs
 
 traderAddress.title = What is the destination trader’s address?
 traderAddress.heading = What is {0}’s address?
@@ -382,6 +382,7 @@ transportIdentity.heading = What is the name, registration or reference of the n
 transportIdentity.checkYourAnswersLabel = What is the name, registration or reference of the new vehicle?
 transportIdentity.error.required = Enter the name, registration or reference of the new vehicle
 transportIdentity.error.length = Name, registration or reference of the new vehicle must be 27 characters or less
+transportIdentity.error.invalid = The name, registration or reference of the new vehicle must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, at signs (@), forward slashes, full stops, hyphens, percent signs, question marks, spaces, and less than and greater than signs
 transportIdentity.change.hidden = the name, registration or reference of the new vehicle
 
 transportNationality.title = Which country is the vehicle registered in?
