@@ -29,7 +29,7 @@ object Address {
 
     object Fields {
       val buildingAndStreetName = "building and street name"
-      val city                  = "city"
+      val city                  = "town or city"
       val postcode              = "postcode"
     }
   }
