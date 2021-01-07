@@ -20,7 +20,8 @@ import controllers.routes
 import models.ArrivalId
 import models.messages.ArrivalNotificationRejectionMessage
 import models.messages.ErrorType.{DuplicateMrn, GenericError, InvalidMrn, MRNError, UnknownMrn}
-import play.api.libs.json.{JsObject, Json}
+import play.api.i18n.Messages
+import play.api.libs.json.{JsObject, Json, OWrites}
 
 case class ArrivalRejectionViewModel(page: String, json: JsObject)
 
@@ -59,5 +60,7 @@ object ArrivalRejectionViewModel {
       DuplicateMrn -> "movementReferenceNumberRejection.error.duplicate",
       InvalidMrn   -> "movementReferenceNumberRejection.error.invalid"
     )
+
+  implicit def writes: OWrites[ArrivalRejectionViewModel] = Json.writes[ArrivalRejectionViewModel]
 
 }
