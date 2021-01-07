@@ -41,6 +41,11 @@ final case class MovementReferenceNumber(year: String, countryCode: String, seri
 
 object MovementReferenceNumber {
 
+  object Constants {
+    val length               = 21
+    val validCharactersRegex = """^[a-zA-Z0-9]*$"""
+  }
+
   private val mrnFormat = """^(\d{2})([A-Z]{2})([A-Z0-9]{13})(\d)$""".r
 
   def apply(input: String): Option[MovementReferenceNumber] = input match {

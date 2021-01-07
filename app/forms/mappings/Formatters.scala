@@ -96,7 +96,7 @@ trait Formatters {
         baseFormatter.unbind(key, value.toString)
     }
 
-  private[mappings] def mrnFormatter(requiredKey: String, invalidKey: String): Formatter[MovementReferenceNumber] =
+  private[mappings] def mrnFormatter(requiredKey: String, invalidKey: String, invalidCharacterKey: String): Formatter[MovementReferenceNumber] =
     new Formatter[MovementReferenceNumber] {
 
       override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], MovementReferenceNumber] =
@@ -104,7 +104,9 @@ trait Formatters {
           .bind(key, data)
           .right
           .flatMap {
-            str =>
+            case str if str.trim.nonEmpty && !str.matches(MovementReferenceNumber.Constants.validCharactersRegex) =>
+              Left(Seq(FormError(key, invalidCharacterKey)))
+            case str =>
               MovementReferenceNumber(str).map(Right.apply).getOrElse(Left(Seq(FormError(key, invalidKey))))
           }
 
