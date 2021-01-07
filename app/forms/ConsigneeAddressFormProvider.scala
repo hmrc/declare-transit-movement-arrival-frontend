@@ -16,60 +16,43 @@
 
 package forms
 
-import javax.inject.Inject
 import forms.mappings.Mappings
+import javax.inject.Inject
 import models.Address
 import play.api.data.Form
 import play.api.data.Forms._
-import models.domain.TraderDomain.Constants.{cityLength, postCodeLength, streetAndNumberLength}
-import models.domain.TraderDomain.inputRegex
+import uk.gov.hmrc.play.mappers.StopOnFirstFail
 
 class ConsigneeAddressFormProvider @Inject() extends Mappings {
 
   def apply(authorisedConsignee: String): Form[Address] = Form(
     mapping(
-      "buildingAndStreet" -> text(
-        "consigneeAddress.error.required",
-        Seq(Address.Constants.Fields.buildingAndStreetName, authorisedConsignee)
-      ).verifying(
-          maxLength(
-            streetAndNumberLength,
-            "consigneeAddress.error.max_length",
-            Seq(Address.Constants.Fields.buildingAndStreetName, authorisedConsignee)
-          )
-        )
+      "buildingAndStreet" -> text("consigneeAddress.error.required", Seq(Address.Constants.Fields.buildingAndStreetName, authorisedConsignee))
         .verifying(
-          minLength(
-            1,
-            "consigneeAddress.error.empty",
-            Seq(Address.Constants.Fields.buildingAndStreetName, authorisedConsignee)
-          )
-        )
-        .verifying(
-          regexp(
-            inputRegex,
-            "consigneeAddress.error.invalid",
-            Seq(Address.Constants.Fields.buildingAndStreetName, authorisedConsignee)
+          StopOnFirstFail[String](
+            maxLength(Address.Constants.buildingAndStreetLength,
+                      "consigneeAddress.error.length",
+                      Seq(Address.Constants.Fields.buildingAndStreetName, authorisedConsignee)),
+            regexp(Address.Constants.consigneeAddressRegex,
+                   "consigneeAddress.error.invalid",
+                   Seq(Address.Constants.Fields.buildingAndStreetName, authorisedConsignee))
           )
         ),
       "city" -> text("consigneeAddress.error.required", args = Seq(Address.Constants.Fields.city, authorisedConsignee))
         .verifying(
-          maxLength(cityLength, "consigneeAddress.error.max_length", args = Seq(Address.Constants.Fields.city, authorisedConsignee))
-        )
-        .verifying(
-          minLength(1, "consigneeAddress.error.empty", Seq(Address.Constants.Fields.city, authorisedConsignee))
-        )
-        .verifying(
-          regexp(
-            inputRegex,
-            "consigneeAddress.error.invalid",
-            Seq("city", authorisedConsignee)
+          StopOnFirstFail[String](
+            maxLength(Address.Constants.cityLength, "consigneeAddress.error.length", args = Seq(Address.Constants.Fields.city, authorisedConsignee)),
+            regexp(Address.Constants.consigneeAddressRegex, "consigneeAddress.error.invalid", Seq(Address.Constants.Fields.city, authorisedConsignee))
           )
         ),
       "postcode" -> text("consigneeAddress.error.postcode.required", args = Seq(authorisedConsignee))
-        .verifying(maxLength(postCodeLength, "consigneeAddress.error.postcode.length", args = Seq(authorisedConsignee)))
-        .verifying(minLength(1, "consigneeAddress.error.empty", args = Seq(Address.Constants.Fields.postcode, authorisedConsignee)))
-        .verifying(regexp("[\\sa-zA-Z0-9]*".r, "consigneeAddress.error.postcode.invalid", args = Seq(authorisedConsignee)))
+        .verifying(
+          StopOnFirstFail[String](
+            maxLength(Address.Constants.postcodeLength, "consigneeAddress.error.postcode.length", args          = Seq(authorisedConsignee)),
+            regexp(Address.Constants.postCodeRegex, "consigneeAddress.error.postcode.invalid", args             = Seq(authorisedConsignee)),
+            regexp(Address.Constants.postCodeFormatRegex, "consigneeAddress.error.postcode.invalidFormat", args = Seq(authorisedConsignee))
+          )
+        )
     )(Address.apply)(Address.unapply)
   )
 }
