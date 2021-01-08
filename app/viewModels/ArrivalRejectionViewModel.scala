@@ -18,18 +18,25 @@ package viewModels
 
 import controllers.routes
 import models.ArrivalId
-import models.messages.ArrivalNotificationRejectionMessage
-import models.messages.ErrorType.{GenericError, MRNError}
+import models.messages.{ArrivalNotificationRejectionMessage, ErrorType}
+import models.messages.ErrorType._
 import play.api.libs.json.{JsObject, Json, OWrites}
 
-class ArrivalRejectionViewModel(rejectionMessage: ArrivalNotificationRejectionMessage, enquiriesUrl: String, arrivalId: ArrivalId) {
+class ArrivalRejectionViewModel(val rejectionMessage: ArrivalNotificationRejectionMessage, enquiriesUrl: String, arrivalId: ArrivalId) {
 
   private val mrnRejectionPage     = "movementReferenceNumberRejection.njk"
   private val genericRejectionPage = "arrivalGeneralRejection.njk"
 
-  val page: String = rejectionMessage.errors.head.errorType match {
-    case mrnError: MRNError => mrnRejectionPage
-    case _: GenericError    => genericRejectionPage
+  val page: String = {
+    if (rejectionMessage.errors.length == 1) {
+      if (ErrorType.mrnValues.contains(rejectionMessage.errors.head.errorType)) {
+        mrnRejectionPage
+      } else {
+        genericRejectionPage
+      }
+    } else {
+      genericRejectionPage
+    }
   }
 
   private def mrnJson(mrnError: MRNError, rejectionMessage: ArrivalNotificationRejectionMessage, enquiriesUrl: String, arrivalId: ArrivalId): JsObject =
@@ -48,9 +55,14 @@ class ArrivalRejectionViewModel(rejectionMessage: ArrivalNotificationRejectionMe
       "createArrivalUrl" -> routes.MovementReferenceNumberController.onPageLoad().url
     )
 
-  val viewData: JsObject = rejectionMessage.errors.head.errorType match {
-    case mrnError: MRNError => mrnJson(mrnError, rejectionMessage, enquiriesUrl, arrivalId)
-    case _: GenericError    => genericJson(rejectionMessage, enquiriesUrl, arrivalId)
+  val viewData: JsObject = if (rejectionMessage.errors.length == 1) {
+    if (ErrorType.mrnValues.contains(rejectionMessage.errors.head.errorType)) {
+      mrnJson(rejectionMessage.errors.head.errorType.asInstanceOf[MRNError], rejectionMessage, enquiriesUrl, arrivalId)
+    } else {
+      genericJson(rejectionMessage, enquiriesUrl, arrivalId)
+    }
+  } else {
+    genericJson(rejectionMessage, enquiriesUrl, arrivalId)
   }
 }
 

@@ -90,6 +90,37 @@ class ArrivalRejectionViewModelSpec extends SpecBase with ScalaCheckPropertyChec
       }
     }
 
+    "when there are multiple functional errors" in {
+      implicit val functionalError: Gen[FunctionalError] =
+        Arbitrary.arbitrary[ErrorType].map(FunctionalError(_, ErrorPointer(""), None, None))
+
+      forAll(listInLengthRange(2, 5)(Arbitrary(functionalError))) {
+        functionalErrors =>
+          val enquiriesUrl = "testEnquiriesUrl"
+          val arrivalId    = ArrivalId(1)
+
+          val rejectionMessage =
+            ArrivalNotificationRejectionMessage(
+              movementReferenceNumber = mrn.toString,
+              rejectionDate           = LocalDate.now(),
+              action                  = None,
+              reason                  = None,
+              errors                  = functionalErrors
+            )
+          val vm = ArrivalRejectionViewModel(rejectionMessage, enquiriesUrl, arrivalId)
+
+          val expectedViewData =
+            Json.obj(
+              "mrn"              -> mrn,
+              "errors"           -> rejectionMessage.errors,
+              "contactUrl"       -> enquiriesUrl,
+              "createArrivalUrl" -> routes.MovementReferenceNumberController.onPageLoad().url
+            )
+
+          vm.viewData mustEqual expectedViewData
+      }
+    }
+
   }
 
   "page returns" - {
@@ -133,6 +164,30 @@ class ArrivalRejectionViewModelSpec extends SpecBase with ScalaCheckPropertyChec
       }
 
     }
+
+    "when there are multiple errors" in {
+      implicit val functionalError: Gen[FunctionalError] =
+        Arbitrary.arbitrary[ErrorType].map(FunctionalError(_, ErrorPointer(""), None, None))
+
+      forAll(listInLengthRange(2, 5)(Arbitrary(functionalError))) {
+        functionalErrors =>
+          val enquiriesUrl = "testEnquiriesUrl"
+          val arrivalId    = ArrivalId(1)
+
+          val rejectionMessage =
+            ArrivalNotificationRejectionMessage(
+              movementReferenceNumber = mrn.toString,
+              rejectionDate           = LocalDate.now(),
+              action                  = None,
+              reason                  = None,
+              errors                  = functionalErrors
+            )
+          val vm = ArrivalRejectionViewModel(rejectionMessage, enquiriesUrl, arrivalId)
+
+          vm.page mustEqual "arrivalGeneralRejection.njk"
+      }
+    }
+
   }
 
 }
