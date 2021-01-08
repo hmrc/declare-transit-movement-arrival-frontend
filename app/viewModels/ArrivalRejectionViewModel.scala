@@ -61,6 +61,4 @@ object ArrivalRejectionViewModel {
 
   def unapply(arg: ArrivalRejectionViewModel): Some[(String, JsObject)] = Some((arg.page, arg.viewData))
 
-  implicit def writes: OWrites[ArrivalRejectionViewModel] = arrivalRejectionViewModel => arrivalRejectionViewModel.viewData
-
 }

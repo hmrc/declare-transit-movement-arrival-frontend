@@ -375,9 +375,7 @@ trait MessagesModelGenerators extends Generators {
   implicit lazy val arbitraryErrorType: Arbitrary[ErrorType] =
     Arbitrary {
       for {
-        genericError      <- arbitrary[GenericError]
-        mrnRejectionError <- arbitrary[MRNError]
-        errorType         <- Gen.oneOf(Seq(genericError, mrnRejectionError))
+        errorType <- Gen.oneOf(arbitrary[GenericError], arbitrary[MRNError])
       } yield errorType
     }
 

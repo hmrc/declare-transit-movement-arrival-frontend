@@ -19,30 +19,120 @@ package viewModels
 import java.time.LocalDate
 
 import base.SpecBase
+import controllers.routes
+import generators.MessagesModelGenerators
 import models.ArrivalId
-import models.messages.ErrorType.DuplicateMrn
-import models.messages.{ArrivalNotificationRejectionMessage, ErrorPointer, FunctionalError}
+import models.messages.ErrorType.{DuplicateMrn, GenericError, MRNError}
+import models.messages.{ArrivalNotificationRejectionMessage, ErrorPointer, ErrorType, FunctionalError}
+import org.scalacheck.{Arbitrary, Gen}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.{JsObject, Json}
 
-class ArrivalRejectionViewModelSpec extends SpecBase with ScalaCheckPropertyChecks {
+class ArrivalRejectionViewModelSpec extends SpecBase with ScalaCheckPropertyChecks with MessagesModelGenerators {
 
-  "must be able to deserialize to a JsObject" in {
-    val vm = ArrivalRejectionViewModel(
-      ArrivalNotificationRejectionMessage(mrn.toString, LocalDate.now(), None, None, Seq(FunctionalError(DuplicateMrn, ErrorPointer(""), None, None))),
-      "",
-      ArrivalId(1)
-    )
+  "json data for the view" - {
 
-    Json.toJsObject(vm) mustBe a[JsObject]
+    "when there is one functional error" - {
+      "relating to the MRN" in {
+        forAll(Arbitrary.arbitrary[MRNError]) {
+          error =>
+            val enquiriesUrl = "testEnquiriesUrl"
+            val arrivalId    = ArrivalId(1)
+
+            val rejectionMessage =
+              ArrivalNotificationRejectionMessage(
+                movementReferenceNumber = mrn.toString,
+                rejectionDate           = LocalDate.now(),
+                action                  = None,
+                reason                  = None,
+                errors                  = Seq(FunctionalError(error, ErrorPointer(""), None, None))
+              )
+            val vm = ArrivalRejectionViewModel(rejectionMessage, enquiriesUrl, arrivalId)
+
+            val expectedViewData =
+              Json.obj(
+                "mrn"                        -> mrn,
+                "errorKey"                   -> MrnErrorDescription(error),
+                "contactUrl"                 -> enquiriesUrl,
+                "movementReferenceNumberUrl" -> routes.UpdateRejectedMRNController.onPageLoad(arrivalId).url
+              )
+
+            vm.viewData mustEqual expectedViewData
+        }
+      }
+
+      "when there a generic error" in {
+        forAll(Arbitrary.arbitrary[GenericError]) {
+          error =>
+            val enquiriesUrl = "testEnquiriesUrl"
+            val arrivalId    = ArrivalId(1)
+
+            val rejectionMessage =
+              ArrivalNotificationRejectionMessage(
+                movementReferenceNumber = mrn.toString,
+                rejectionDate           = LocalDate.now(),
+                action                  = None,
+                reason                  = None,
+                errors                  = Seq(FunctionalError(error, ErrorPointer(""), None, None))
+              )
+            val vm = ArrivalRejectionViewModel(rejectionMessage, enquiriesUrl, arrivalId)
+
+            val expectedViewData =
+              Json.obj(
+                "mrn"              -> mrn,
+                "errors"           -> rejectionMessage.errors,
+                "contactUrl"       -> enquiriesUrl,
+                "createArrivalUrl" -> routes.MovementReferenceNumberController.onPageLoad().url
+              )
+
+            vm.viewData mustEqual expectedViewData
+        }
+      }
+    }
+
   }
 
-  "when an Arrival Rejection is received" - {
+  "page returns" - {
+    "view for MRN Rejection when there is a single error for MRN" in {
+      forAll(Arbitrary.arbitrary[MRNError]) {
+        error =>
+          val enquiriesUrl = "testEnquiriesUrl"
+          val arrivalId    = ArrivalId(1)
 
-    "that does not contain any error messages" ignore {
+          val rejectionMessage =
+            ArrivalNotificationRejectionMessage(
+              movementReferenceNumber = mrn.toString,
+              rejectionDate           = LocalDate.now(),
+              action                  = None,
+              reason                  = None,
+              errors                  = Seq(FunctionalError(error, ErrorPointer(""), None, None))
+            )
+          val vm = ArrivalRejectionViewModel(rejectionMessage, enquiriesUrl, arrivalId)
 
-      val vm = ArrivalRejectionViewModel(ArrivalNotificationRejectionMessage(mrn.toString, LocalDate.now(), None, None, Seq.empty), "", ArrivalId(1))
+          vm.page mustEqual "movementReferenceNumberRejection.njk"
+      }
+    }
+
+    "view for Generic Rejections when there is a single error for MRN" in {
+      forAll(Arbitrary.arbitrary[GenericError]) {
+        error =>
+          val enquiriesUrl = "testEnquiriesUrl"
+          val arrivalId    = ArrivalId(1)
+
+          val rejectionMessage =
+            ArrivalNotificationRejectionMessage(
+              movementReferenceNumber = mrn.toString,
+              rejectionDate           = LocalDate.now(),
+              action                  = None,
+              reason                  = None,
+              errors                  = Seq(FunctionalError(error, ErrorPointer(""), None, None))
+            )
+          val vm = ArrivalRejectionViewModel(rejectionMessage, enquiriesUrl, arrivalId)
+
+          vm.page mustEqual "arrivalGeneralRejection.njk"
+      }
 
     }
   }
+
 }
