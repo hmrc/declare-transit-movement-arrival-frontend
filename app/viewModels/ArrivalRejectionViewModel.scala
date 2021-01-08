@@ -19,48 +19,48 @@ package viewModels
 import controllers.routes
 import models.ArrivalId
 import models.messages.ArrivalNotificationRejectionMessage
-import models.messages.ErrorType.{DuplicateMrn, GenericError, InvalidMrn, MRNError, UnknownMrn}
-import play.api.i18n.Messages
+import models.messages.ErrorType.{GenericError, MRNError}
 import play.api.libs.json.{JsObject, Json, OWrites}
 
-case class ArrivalRejectionViewModel(page: String, json: JsObject)
+class ArrivalRejectionViewModel(rejectionMessage: ArrivalNotificationRejectionMessage, enquiriesUrl: String, arrivalId: ArrivalId) {
+
+  private val mrnRejectionPage     = "movementReferenceNumberRejection.njk"
+  private val genericRejectionPage = "arrivalGeneralRejection.njk"
+
+  val page: String = rejectionMessage.errors.head.errorType match {
+    case mrnError: MRNError => mrnRejectionPage
+    case _: GenericError    => genericRejectionPage
+  }
+
+  private def mrnJson(mrnError: MRNError, rejectionMessage: ArrivalNotificationRejectionMessage, enquiriesUrl: String, arrivalId: ArrivalId): JsObject =
+    Json.obj(
+      "mrn"                        -> rejectionMessage.movementReferenceNumber,
+      "errorKey"                   -> MrnErrorDescription(mrnError),
+      "contactUrl"                 -> enquiriesUrl,
+      "movementReferenceNumberUrl" -> routes.UpdateRejectedMRNController.onPageLoad(arrivalId).url
+    )
+
+  private def genericJson(rejectionMessage: ArrivalNotificationRejectionMessage, enquiriesUrl: String, arrivalId: ArrivalId): JsObject =
+    Json.obj(
+      "mrn"              -> rejectionMessage.movementReferenceNumber,
+      "errors"           -> rejectionMessage.errors,
+      "contactUrl"       -> enquiriesUrl,
+      "createArrivalUrl" -> routes.MovementReferenceNumberController.onPageLoad().url
+    )
+
+  val viewData: JsObject = rejectionMessage.errors.head.errorType match {
+    case mrnError: MRNError => mrnJson(mrnError, rejectionMessage, enquiriesUrl, arrivalId)
+    case _: GenericError    => genericJson(rejectionMessage, enquiriesUrl, arrivalId)
+  }
+}
 
 object ArrivalRejectionViewModel {
 
-  def apply(rejectionMessage: ArrivalNotificationRejectionMessage, enquiriesUrl: String, arrivalId: ArrivalId): ArrivalRejectionViewModel = {
+  def apply(rejectionMessage: ArrivalNotificationRejectionMessage, enquiriesUrl: String, arrivalId: ArrivalId): ArrivalRejectionViewModel =
+    new ArrivalRejectionViewModel(rejectionMessage, enquiriesUrl, arrivalId)
 
-    def mrnJson(mrnError: MRNError): JsObject =
-      Json.obj(
-        "mrn"                        -> rejectionMessage.movementReferenceNumber,
-        "errorKey"                   -> mrnMessage(mrnError),
-        "contactUrl"                 -> enquiriesUrl,
-        "movementReferenceNumberUrl" -> routes.UpdateRejectedMRNController.onPageLoad(arrivalId).url
-      )
+  def unapply(arg: ArrivalRejectionViewModel): Some[(String, JsObject)] = Some((arg.page, arg.viewData))
 
-    def genericJson: JsObject =
-      Json.obj(
-        "mrn"              -> rejectionMessage.movementReferenceNumber,
-        "errors"           -> rejectionMessage.errors,
-        "contactUrl"       -> enquiriesUrl,
-        "createArrivalUrl" -> routes.MovementReferenceNumberController.onPageLoad().url
-      )
-
-    val mrnRejectionPage     = "movementReferenceNumberRejection.njk"
-    val genericRejectionPage = "arrivalGeneralRejection.njk"
-
-    rejectionMessage.errors.head.errorType match {
-      case mrnError: MRNError => new ArrivalRejectionViewModel(mrnRejectionPage, mrnJson(mrnError))
-      case _: GenericError    => new ArrivalRejectionViewModel(genericRejectionPage, genericJson)
-    }
-  }
-
-  val mrnMessage: Map[MRNError, String] =
-    Map(
-      UnknownMrn   -> "movementReferenceNumberRejection.error.unknown",
-      DuplicateMrn -> "movementReferenceNumberRejection.error.duplicate",
-      InvalidMrn   -> "movementReferenceNumberRejection.error.invalid"
-    )
-
-  implicit def writes: OWrites[ArrivalRejectionViewModel] = Json.writes[ArrivalRejectionViewModel]
+  implicit def writes: OWrites[ArrivalRejectionViewModel] = arrivalRejectionViewModel => arrivalRejectionViewModel.viewData
 
 }
