@@ -26,6 +26,7 @@ import renderer.Renderer
 import services.ArrivalRejectionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewModels.ArrivalRejectionViewModel
+import viewModels.sections.ViewModelConfig
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -36,7 +37,7 @@ class ArrivalRejectionController @Inject()(
   renderer: Renderer,
   appConfig: FrontendAppConfig,
   arrivalRejectionService: ArrivalRejectionService,
-  frontendAppConfig: FrontendAppConfig
+  viewModelConfig: ViewModelConfig
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
@@ -45,7 +46,7 @@ class ArrivalRejectionController @Inject()(
     implicit request =>
       arrivalRejectionService.arrivalRejectionMessage(arrivalId).flatMap {
         case Some(rejectionMessage) =>
-          val ArrivalRejectionViewModel(page, json) = ArrivalRejectionViewModel(rejectionMessage, appConfig.nctsEnquiriesUrl, arrivalId)
+          val ArrivalRejectionViewModel(page, json) = ArrivalRejectionViewModel(rejectionMessage, viewModelConfig.nctsEnquiriesUrl, arrivalId)
           renderer.render(page, json).map(Ok(_))
         case _ => Future.successful(Redirect(routes.TechnicalDifficultiesController.onPageLoad()))
       }

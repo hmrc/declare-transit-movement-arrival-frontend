@@ -26,6 +26,7 @@ import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
+import viewModels.sections.ViewModelConfig
 
 import scala.concurrent.Future
 
@@ -40,7 +41,7 @@ class TechnicalDifficultiesControllerSpec extends SpecBase with AppWithDefaultMo
 
       setExistingUserAnswers(emptyUserAnswers)
 
-      val frontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
+      val frontendAppConfig = app.injector.instanceOf[ViewModelConfig]
       val request           = FakeRequest(GET, routes.TechnicalDifficultiesController.onPageLoad().url)
       val templateCaptor    = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor        = ArgumentCaptor.forClass(classOf[JsObject])
