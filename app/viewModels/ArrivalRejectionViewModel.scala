@@ -106,6 +106,4 @@ object ArrivalRejectionViewModel {
   def apply(rejectionMessage: ArrivalNotificationRejectionMessage, enquiriesUrl: String, arrivalId: ArrivalId): ArrivalRejectionViewModel =
     new ArrivalRejectionViewModel(rejectionMessage, enquiriesUrl, arrivalId)
 
-  def unapply(arg: ArrivalRejectionViewModel): Option[(String, JsObject)] = None // TODO: Remove
-
 }
