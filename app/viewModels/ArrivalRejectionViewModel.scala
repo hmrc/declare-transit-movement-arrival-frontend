@@ -22,6 +22,28 @@ import models.messages.{ArrivalNotificationRejectionMessage, ErrorType, Function
 import models.messages.ErrorType._
 import play.api.libs.json.{JsObject, Json, OWrites}
 
+final private case class RejectionViewDataNoFunctionalErrors(
+  mrn: String,
+  errorKey: String,
+  contactUrl: String,
+  movementReferenceNumberUrl: String
+)
+
+private object RejectionViewDataNoFunctionalErrors {
+  implicit val writes: OWrites[RejectionViewDataNoFunctionalErrors] = Json.writes[RejectionViewDataNoFunctionalErrors]
+}
+
+final private case class RejectionViewDataFunctionalErrors(
+  mrn: String,
+  errors: Seq[FunctionalError],
+  contactUrl: String,
+  createArrivalUrl: String
+)
+
+private object RejectionViewDataFunctionalErrors {
+  implicit val writes: OWrites[RejectionViewDataFunctionalErrors] = Json.writes[RejectionViewDataFunctionalErrors]
+}
+
 class ArrivalRejectionViewModel(val rejectionMessage: ArrivalNotificationRejectionMessage, enquiriesUrl: String, arrivalId: ArrivalId) {
 
   private val mrnRejectionPage     = "movementReferenceNumberRejection.njk"
@@ -30,24 +52,24 @@ class ArrivalRejectionViewModel(val rejectionMessage: ArrivalNotificationRejecti
   val (page, viewData): (String, JsObject) =
     rejectionMessage.errors match {
       case FunctionalError(mrnError: MRNError, _, _, _) :: Nil =>
-        val json = Json.obj(
-          "mrn"                        -> rejectionMessage.movementReferenceNumber,
-          "errorKey"                   -> MrnErrorDescription(mrnError),
-          "contactUrl"                 -> enquiriesUrl,
-          "movementReferenceNumberUrl" -> routes.UpdateRejectedMRNController.onPageLoad(arrivalId).url
+        val data = RejectionViewDataNoFunctionalErrors(
+          mrn                        = rejectionMessage.movementReferenceNumber,
+          errorKey                   = MrnErrorDescription(mrnError),
+          contactUrl                 = enquiriesUrl,
+          movementReferenceNumberUrl = routes.UpdateRejectedMRNController.onPageLoad(arrivalId).url
         )
 
-        (mrnRejectionPage, json)
+        (mrnRejectionPage, Json.toJsObject(data))
 
       case _ =>
-        val json = Json.obj(
-          "mrn"              -> rejectionMessage.movementReferenceNumber,
-          "errors"           -> rejectionMessage.errors,
-          "contactUrl"       -> enquiriesUrl,
-          "createArrivalUrl" -> routes.MovementReferenceNumberController.onPageLoad().url
+        val data = RejectionViewDataFunctionalErrors(
+          mrn              = rejectionMessage.movementReferenceNumber,
+          errors           = rejectionMessage.errors,
+          contactUrl       = enquiriesUrl,
+          createArrivalUrl = routes.MovementReferenceNumberController.onPageLoad().url
         )
 
-        (genericRejectionPage, json)
+        (genericRejectionPage, Json.toJsObject(data))
     }
 }
 
