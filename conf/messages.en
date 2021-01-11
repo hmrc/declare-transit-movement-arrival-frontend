@@ -218,9 +218,6 @@ traderAddress.buildingAndStreet = Building and street
 traderAddress.city = Town or city
 traderAddress.postcode = Postcode
 traderAddress.checkYourAnswersLabel = Address
-traderAddress.error.buildingAndStreet.required = Enter the building and street name of the trader at the destination
-traderAddress.error.city.required = Enter the town or city of the trader at the destination
-traderAddress.error.city.length = Town or city must be 35 characters or less
 
 traderAddress.error.postcode.required = Enter the postcode of {0}’s address
 traderAddress.error.postcode.length = Postcode must be 9 characters or less
@@ -228,7 +225,7 @@ traderAddress.error.postcode.invalid = The postcode of {0}’s address must only
 
 traderAddress.error.invalid = The {0} of {1}’s address must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, at signs (@), forward slashes, full stops, hyphens, percent signs, question marks and spaces
 traderAddress.error.required = Enter the {0} of {1}’s address
-traderAddress.error.max_length = The {0} of {1}’s address must be 35 characters or less
+traderAddress.error.length = The {0} of {1}’s address must be 35 characters or less
 traderAddress.change.hidden = address of trader
 
 traderEori.title = What is the EORI number of the trader at the destination? - {0} - GOV.UK

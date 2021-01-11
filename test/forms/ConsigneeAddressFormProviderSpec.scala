@@ -72,7 +72,7 @@ class ConsigneeAddressFormProviderSpec extends StringFieldBehaviours with SpecBa
         val fieldName = "buildingAndStreet"
         val args      = Seq(Address.Constants.Fields.buildingAndStreetName, consigneeName)
 
-        val generator: Gen[String] = RegexpGen.from(s"[!£^(){}_+=:;|`~,±]{${Address.Constants.buildingAndStreetLength}}")
+        val generator: Gen[String] = RegexpGen.from(s"[!£^(){}_+=:;|`~,±<>]{${Address.Constants.buildingAndStreetLength}}")
         val expectedError          = FormError(fieldName, consigneeAddressInvalidKey, args)
 
         forAll(generator) {
@@ -118,7 +118,7 @@ class ConsigneeAddressFormProviderSpec extends StringFieldBehaviours with SpecBa
         val fieldName = "city"
         val args      = Seq(Address.Constants.Fields.city, consigneeName)
 
-        val generator: Gen[String] = RegexpGen.from(s"[!£^(){}_+=:;|`~,±]{${Address.Constants.cityLength}}")
+        val generator: Gen[String] = RegexpGen.from(s"[!£^(){}_+=:;|`~,±<>]{${Address.Constants.cityLength}}")
         val expectedError          = FormError(fieldName, consigneeAddressInvalidKey, args)
 
         forAll(generator) {
@@ -161,7 +161,7 @@ class ConsigneeAddressFormProviderSpec extends StringFieldBehaviours with SpecBa
       "must not bind strings that do not match regex" in {
         val fieldName = "postcode"
 
-        val generator: Gen[String] = RegexpGen.from(s"[!£^(){}_+=:;|`~,±]{${Address.Constants.postcodeLength}}")
+        val generator: Gen[String] = RegexpGen.from(s"[!£^(){}_+=:;|`~,±<>]{${Address.Constants.postcodeLength}}")
         val expectedError          = FormError(fieldName, postcodeInvalidKey, Seq(consigneeName))
 
         forAll(generator) {
