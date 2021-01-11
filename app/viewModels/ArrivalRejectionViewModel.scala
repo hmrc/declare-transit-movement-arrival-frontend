@@ -20,57 +20,85 @@ import controllers.routes
 import models.ArrivalId
 import models.messages.{ArrivalNotificationRejectionMessage, ErrorType, FunctionalError}
 import models.messages.ErrorType._
+import play.api.i18n.Messages
 import play.api.libs.json.{JsObject, Json, OWrites}
+import uk.gov.hmrc.viewmodels.Text
+import uk.gov.hmrc.viewmodels.NunjucksSupport
+import uk.gov.hmrc.viewmodels.Text.Literal
+
+object NunjucksSupportObject extends NunjucksSupport
+import NunjucksSupportObject._
+
+sealed trait RejectionViewData
+
+private object RejectionViewData {
+  implicit def writes(implicit messages: Messages): OWrites[RejectionViewData] = OWrites {
+    case x: RejectionViewDataNoFunctionalErrors => Json.toJsObject(x)(RejectionViewDataNoFunctionalErrors.writes)
+    case x: RejectionViewDataFunctionalErrors   => Json.toJsObject(x)(RejectionViewDataFunctionalErrors.writes)
+  }
+}
 
 final private case class RejectionViewDataNoFunctionalErrors(
   mrn: String,
   errorKey: String,
+  rejectionOverview: Text,
   contactUrl: String,
   movementReferenceNumberUrl: String
-)
+) extends RejectionViewData
 
 private object RejectionViewDataNoFunctionalErrors {
-  implicit val writes: OWrites[RejectionViewDataNoFunctionalErrors] = Json.writes[RejectionViewDataNoFunctionalErrors]
+  implicit def writes(implicit messages: Messages): OWrites[RejectionViewDataNoFunctionalErrors] = Json.writes[RejectionViewDataNoFunctionalErrors]
 }
 
 final private case class RejectionViewDataFunctionalErrors(
   mrn: String,
   errors: Seq[FunctionalError],
+  rejectionOverview: Text,
   contactUrl: String,
   createArrivalUrl: String
-)
+) extends RejectionViewData
 
 private object RejectionViewDataFunctionalErrors {
-  implicit val writes: OWrites[RejectionViewDataFunctionalErrors] = Json.writes[RejectionViewDataFunctionalErrors]
+  implicit def writes(implicit messages: Messages): OWrites[RejectionViewDataFunctionalErrors] = Json.writes[RejectionViewDataFunctionalErrors]
 }
 
-class ArrivalRejectionViewModel(val rejectionMessage: ArrivalNotificationRejectionMessage, enquiriesUrl: String, arrivalId: ArrivalId) {
+class ArrivalRejectionViewModel(
+  rejectionMessage: ArrivalNotificationRejectionMessage,
+  enquiriesUrl: String,
+  arrivalId: ArrivalId
+) {
 
   private val mrnRejectionPage     = "movementReferenceNumberRejection.njk"
   private val genericRejectionPage = "arrivalGeneralRejection.njk"
 
-  val (page, viewData): (String, JsObject) =
+  private val (_page, _viewData): (String, RejectionViewData) =
     rejectionMessage.errors match {
       case FunctionalError(mrnError: MRNError, _, _, _) :: Nil =>
         val data = RejectionViewDataNoFunctionalErrors(
           mrn                        = rejectionMessage.movementReferenceNumber,
           errorKey                   = MrnErrorDescription(mrnError),
+          rejectionOverview          = msg"arrivalRejection.conflicting.information",
           contactUrl                 = enquiriesUrl,
           movementReferenceNumberUrl = routes.UpdateRejectedMRNController.onPageLoad(arrivalId).url
         )
 
-        (mrnRejectionPage, Json.toJsObject(data))
+        (mrnRejectionPage, data)
 
       case _ =>
         val data = RejectionViewDataFunctionalErrors(
-          mrn              = rejectionMessage.movementReferenceNumber,
-          errors           = rejectionMessage.errors,
-          contactUrl       = enquiriesUrl,
-          createArrivalUrl = routes.MovementReferenceNumberController.onPageLoad().url
+          mrn               = rejectionMessage.movementReferenceNumber,
+          errors            = rejectionMessage.errors,
+          rejectionOverview = rejectionMessage.reason.map(Literal(_)).getOrElse(msg"arrivalRejection.conflicting.information"),
+          contactUrl        = enquiriesUrl,
+          createArrivalUrl  = routes.MovementReferenceNumberController.onPageLoad().url
         )
 
-        (genericRejectionPage, Json.toJsObject(data))
+        (genericRejectionPage, data)
     }
+
+  val page = _page
+
+  def viewData(implicit messages: Messages): JsObject = Json.toJsObject(_viewData)
 }
 
 object ArrivalRejectionViewModel {
@@ -78,6 +106,6 @@ object ArrivalRejectionViewModel {
   def apply(rejectionMessage: ArrivalNotificationRejectionMessage, enquiriesUrl: String, arrivalId: ArrivalId): ArrivalRejectionViewModel =
     new ArrivalRejectionViewModel(rejectionMessage, enquiriesUrl, arrivalId)
 
-  def unapply(arg: ArrivalRejectionViewModel): Some[(String, JsObject)] = Some((arg.page, arg.viewData))
+  def unapply(arg: ArrivalRejectionViewModel): Option[(String, JsObject)] = None // TODO: Remove
 
 }
