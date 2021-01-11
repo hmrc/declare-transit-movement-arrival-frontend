@@ -293,50 +293,73 @@ class ArrivalRejectionViewModelSpec extends SpecBase with ScalaCheckPropertyChec
 
   }
 
-  "page returns" - {
+  "page" - {
 
-    "view for MRN Rejection when there is a single error for MRN" in {
-      forAll(Arbitrary.arbitrary[MRNError]) {
-        error =>
-          val enquiriesUrl = "testEnquiriesUrl"
-          val arrivalId    = ArrivalId(1)
+    "when there are no errors, it returns the view for Arrival General Rejections" in {
 
-          val rejectionMessage =
-            ArrivalNotificationRejectionMessage(
-              movementReferenceNumber = mrn.toString,
-              rejectionDate           = LocalDate.now(),
-              action                  = None,
-              reason                  = None,
-              errors                  = Seq(FunctionalError(error, ErrorPointer(""), None, None))
-            )
-          val vm = ArrivalRejectionViewModel(rejectionMessage, enquiriesUrl, arrivalId)
+      val enquiriesUrl = "testEnquiriesUrl"
+      val arrivalId    = ArrivalId(1)
 
-          vm.page mustEqual "movementReferenceNumberRejection.njk"
-      }
-    }
+      val rejectionMessage =
+        ArrivalNotificationRejectionMessage(
+          movementReferenceNumber = mrn.toString,
+          rejectionDate           = LocalDate.now(),
+          action                  = None,
+          reason                  = None,
+          errors                  = Seq.empty
+        )
+      val vm = ArrivalRejectionViewModel(rejectionMessage, enquiriesUrl, arrivalId)
 
-    "view for Generic Rejections when there is a single error for MRN" in {
-      forAll(Arbitrary.arbitrary[GenericError]) {
-        error =>
-          val enquiriesUrl = "testEnquiriesUrl"
-          val arrivalId    = ArrivalId(1)
-
-          val rejectionMessage =
-            ArrivalNotificationRejectionMessage(
-              movementReferenceNumber = mrn.toString,
-              rejectionDate           = LocalDate.now(),
-              action                  = None,
-              reason                  = None,
-              errors                  = Seq(FunctionalError(error, ErrorPointer(""), None, None))
-            )
-          val vm = ArrivalRejectionViewModel(rejectionMessage, enquiriesUrl, arrivalId)
-
-          vm.page mustEqual "arrivalGeneralRejection.njk"
-      }
+      vm.page mustEqual "arrivalGeneralRejection.njk"
 
     }
 
-    "when there are multiple errors" in {
+    "when there is a single error" - {
+
+      "for a MRN Error, then it returns the view for MRN Rejection" in {
+        forAll(Arbitrary.arbitrary[MRNError]) {
+          error =>
+            val enquiriesUrl = "testEnquiriesUrl"
+            val arrivalId    = ArrivalId(1)
+
+            val rejectionMessage =
+              ArrivalNotificationRejectionMessage(
+                movementReferenceNumber = mrn.toString,
+                rejectionDate           = LocalDate.now(),
+                action                  = None,
+                reason                  = None,
+                errors                  = Seq(FunctionalError(error, ErrorPointer(""), None, None))
+              )
+            val vm = ArrivalRejectionViewModel(rejectionMessage, enquiriesUrl, arrivalId)
+
+            vm.page mustEqual "movementReferenceNumberRejection.njk"
+        }
+      }
+
+      "for a Generic Error, then it returns the view for Arrival General Rejections" in {
+        forAll(Arbitrary.arbitrary[GenericError]) {
+          error =>
+            val enquiriesUrl = "testEnquiriesUrl"
+            val arrivalId    = ArrivalId(1)
+
+            val rejectionMessage =
+              ArrivalNotificationRejectionMessage(
+                movementReferenceNumber = mrn.toString,
+                rejectionDate           = LocalDate.now(),
+                action                  = None,
+                reason                  = None,
+                errors                  = Seq(FunctionalError(error, ErrorPointer(""), None, None))
+              )
+            val vm = ArrivalRejectionViewModel(rejectionMessage, enquiriesUrl, arrivalId)
+
+            vm.page mustEqual "arrivalGeneralRejection.njk"
+        }
+
+      }
+
+    }
+
+    "when there are multiple errors, it returns the view for Arrival General Rejections" in {
       forAll(listInLengthRange(2, 5)(Arbitrary(functionalError))) {
         functionalErrors =>
           val enquiriesUrl = "testEnquiriesUrl"
