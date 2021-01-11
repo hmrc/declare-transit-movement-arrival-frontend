@@ -1,8 +1,8 @@
 {% extends "includes/layout.njk" %}
 
 {% from "govuk/components/back-link/macro.njk"        import govukBackLink %}
-{% from "macros/title.njk"                            import title %}
-{% from "govuk/components/button/macro.njk"           import govukButton %}
+{% from "macros/title.njk" import title %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/summary-list/macro.njk"     import govukSummaryList %}
 
 {% block pageTitle %}
@@ -11,7 +11,7 @@
 
 {% block mainContent %}
 
-{{ govukBackLink({
+  {{ govukBackLink({
     text: messages("site.back")
   }) }}
 
@@ -26,23 +26,24 @@
         <p class="govuk-body">{{ messages(errorKey) }}</p>
 
         <dl class="govuk-summary-list govuk-summary-list">
-                <div class="govuk-summary-list__row">
-                     <dt class="govuk-summary-list__key" style="width: 48%">
-                    {{ messages("site.movement.reference.number") }}
-                     </dt>
-                     <dd class="govuk-summary-list__value" style="width: 62%">
-                    {{ mrn }}
-                     </dd>
-                     <dd class="govuk-summary-list__actions">
-                            <a class="govuk-link" href={{movementReferenceNumberUrl}}> {{ messages("site.edit") }}
-                            <span class="govuk-visually-hidden">{{ messages("movementReferenceNumberRejection.change.hidden") }}</span>
-                            </a>
-                     </dd>
-                 </div>
-              </dl>
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key" style="width: 48%">
+              {{ messages("site.movement.reference.number") }}
+            </dt>
+            <dd class="govuk-summary-list__value" style="width: 62%">
+              {{ mrn }}
+            </dd>
+            <dd class="govuk-summary-list__actions">
+              <a class="govuk-link" href={{movementReferenceNumberUrl}}>
+                {{ messages("site.edit") }}
+                <span class="govuk-visually-hidden">{{ messages("movementReferenceNumberRejection.change.hidden") }}</span>
+              </a>
+            </dd>
+          </div>
+        </dl>
 
         <p class="govuk-body">{{ messages("movementReferenceNumberRejection.contact.message") }}
-        <a class="govuk-link" href={{contactUrl}} target="_blank">{{ messages("technicalDifficulties.contact.link") }}</a>
+          <a class="govuk-link" href={{contactUrl}} target="_blank">{{ messages("technicalDifficulties.contact.link") }}</a>
         </p>
 
       </div>
