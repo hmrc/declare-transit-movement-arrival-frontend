@@ -19,12 +19,15 @@ package forms
 import forms.behaviours.StringFieldBehaviours
 import models.Address
 import org.scalacheck.Gen
-import play.api.data.FormError
+import play.api.data.{Field, FormError}
+import wolfendale.scalacheck.regexp.RegexpGen
 
 class TraderAddressFormProviderSpec extends StringFieldBehaviours {
 
-  val traderName = "traderName"
-  val form       = new TraderAddressFormProvider()(traderName)
+  val traderName                   = "traderName"
+  lazy val traderAddressInvalidKey = "traderAddress.error.invalid"
+
+  val form = new TraderAddressFormProvider()(traderName)
 
   val maxLength = 35
 
@@ -37,7 +40,7 @@ class TraderAddressFormProviderSpec extends StringFieldBehaviours {
 
     val fieldName   = "buildingAndStreet"
     val requiredKey = "traderAddress.error.required"
-    val lengthKey   = "traderAddress.error.max_length"
+    val lengthKey   = "traderAddress.error.length"
 
     val args = Seq(Address.Constants.Fields.buildingAndStreetName, traderName)
 
@@ -60,13 +63,27 @@ class TraderAddressFormProviderSpec extends StringFieldBehaviours {
       fieldName,
       requiredError = FormError(fieldName, requiredKey, args)
     )
+
+    "must not bind strings that do not match regex" in {
+      val fieldName = "buildingAndStreet"
+      val args      = Seq(Address.Constants.Fields.buildingAndStreetName, traderName)
+
+      val generator: Gen[String] = RegexpGen.from(s"[!£^(){}_+=:;|`~,±<>]{${Address.Constants.buildingAndStreetLength}}")
+      val expectedError          = FormError(fieldName, traderAddressInvalidKey, args)
+
+      forAll(generator) {
+        invalidString =>
+          val result: Field = form.bind(Map(fieldName -> invalidString)).apply(fieldName)
+          result.errors must contain(expectedError)
+      }
+    }
   }
 
   ".city" - {
 
     val fieldName   = "city"
     val requiredKey = "traderAddress.error.required"
-    val lengthKey   = "traderAddress.error.max_length"
+    val lengthKey   = "traderAddress.error.length"
     val maxLength   = 35
 
     val args = Seq(Address.Constants.Fields.city, traderName)
@@ -90,6 +107,20 @@ class TraderAddressFormProviderSpec extends StringFieldBehaviours {
       fieldName,
       requiredError = FormError(fieldName, requiredKey, args)
     )
+
+    "must not bind strings that do not match regex" in {
+      val fieldName = "city"
+      val args      = Seq(Address.Constants.Fields.city, traderName)
+
+      val generator: Gen[String] = RegexpGen.from(s"[!£^(){}_+=:;|`~,±<>]{${Address.Constants.cityLength}}")
+      val expectedError          = FormError(fieldName, traderAddressInvalidKey, args)
+
+      forAll(generator) {
+        invalidString =>
+          val result: Field = form.bind(Map(fieldName -> invalidString)).apply(fieldName)
+          result.errors must contain(expectedError)
+      }
+    }
   }
 
   ".postcode" - {
