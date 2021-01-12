@@ -23,16 +23,16 @@
           {{ messages("arrivalRejection.heading") }}
         </h1>
 
-        <p class="govuk-body">{{ messages("arrivalRejection.conflicting.information") }}</p>
+        <p id="rejection-information" class="govuk-body">{{ rejectionOverview }}</p>
 
         {% for error in errors %}
 
-          <dl class="govuk-summary-list">
+          <dl class="govuk-summary-list" data-testid="error-row">
             <div class="govuk-summary-list__row">
               <dt class="govuk-summary-list__key">
                 {{ messages("arrivalRejection.errorCode") }}
               </dt>
-              <dd class="govuk-summary-list__value">
+              <dd class="govuk-summary-list__value" data-testid="error-row-error-type">
                 {{ error.errorType }}
               </dd>
             </div>
@@ -40,7 +40,7 @@
               <dt class="govuk-summary-list__key">
                 {{ messages("arrivalRejection.pointer") }}
               </dt>
-              <dd class="govuk-summary-list__value">
+              <dd class="govuk-summary-list__value" data-testid="error-row-error-pointer">
                 {{ error.pointer.value }}
               </dd>
             </div>
