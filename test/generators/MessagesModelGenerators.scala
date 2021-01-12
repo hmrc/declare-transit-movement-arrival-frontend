@@ -244,14 +244,15 @@ trait MessagesModelGenerators extends Generators {
     Arbitrary {
 
       for {
-        mrn              <- arbitrary[MovementReferenceNumber]
-        date             <- localDateGen
-        approvedLocation <- stringsWithMaxLength(SimplifiedNotification.Constants.approvedLocationLength)
-        trader           <- arbitrary[TraderDomain]
-        customsOffice    <- arbitrary[CustomsOffice]
-        events           <- Gen.option(listWithMaxLength[EnRouteEventDomain](NormalNotification.Constants.maxNumberOfEnRouteEvents))
-        authedEoriNumber <- arbitrary[EoriNumber]
-      } yield SimplifiedNotification(mrn, date, approvedLocation, trader, customsOffice, events, authedEoriNumber)
+        mrn               <- arbitrary[MovementReferenceNumber]
+        notificationPlace <- stringsWithMaxLength(SimplifiedNotification.Constants.notificationPlaceLength)
+        date              <- localDateGen
+        approvedLocation  <- stringsWithMaxLength(SimplifiedNotification.Constants.approvedLocationLength)
+        trader            <- arbitrary[TraderDomain]
+        customsOffice     <- arbitrary[CustomsOffice]
+        events            <- Gen.option(listWithMaxLength[EnRouteEventDomain](NormalNotification.Constants.maxNumberOfEnRouteEvents))
+        authedEoriNumber  <- arbitrary[EoriNumber]
+      } yield SimplifiedNotification(mrn, notificationPlace, date, approvedLocation, trader, customsOffice, events, authedEoriNumber)
     }
 
   implicit lazy val arbitraryArrivalNotification: Arbitrary[ArrivalNotificationDomain] =
@@ -445,7 +446,7 @@ trait MessagesModelGenerators extends Generators {
         .copy(movementReferenceNumber = mrn)
         .copy(trader = trader)
         .copy(notificationDate = LocalDate.now())
-        .copy(approvedLocation = approvedLocation)
+        .copy(authorisedLocation = approvedLocation)
 
       (expected, trader)
     }

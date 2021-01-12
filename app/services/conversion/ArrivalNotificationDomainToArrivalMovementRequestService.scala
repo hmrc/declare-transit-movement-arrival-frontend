@@ -68,10 +68,11 @@ object ArrivalNotificationDomainToArrivalMovementRequestService {
 
   private def buildSimplifiedHeader(arrivalNotification: SimplifiedNotification, procedureTypeFlag: ProcedureTypeFlag): Header =
     Header(
-      movementReferenceNumber  = arrivalNotification.movementReferenceNumber.toString,
-      customsSubPlace          = None,
-      arrivalNotificationPlace = arrivalNotification.approvedLocation,
-      procedureTypeFlag        = procedureTypeFlag,
-      notificationDate         = arrivalNotification.notificationDate
+      movementReferenceNumber          = arrivalNotification.movementReferenceNumber.toString,
+      customsSubPlace                  = None,
+      arrivalNotificationPlace         = arrivalNotification.authorisedLocation,
+      procedureTypeFlag                = procedureTypeFlag,
+      notificationDate                 = arrivalNotification.notificationDate,
+      arrivalAuthorisedLocationOfGoods = Some(arrivalNotification.authorisedLocation)
     )
 }

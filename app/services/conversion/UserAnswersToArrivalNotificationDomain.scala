@@ -41,17 +41,18 @@ class UserAnswersToArrivalNotificationDomain {
 
   private def createSimplifiedNotification(userAnswers: UserAnswers): Option[SimplifiedNotification] =
     for {
-      customsOffice     <- userAnswers.get(CustomsOfficePage)
-      notificationPlace <- userAnswers.get(AuthorisedLocationPage)
-      tradersAddress    <- userAnswers.get(ConsigneeAddressPage)
-      traderEori        <- userAnswers.get(ConsigneeEoriNumberPage)
-      traderName        <- userAnswers.get(ConsigneeNamePage)
+      customsOffice      <- userAnswers.get(CustomsOfficePage)
+      authorisedLocation <- userAnswers.get(AuthorisedLocationPage)
+      tradersAddress     <- userAnswers.get(ConsigneeAddressPage)
+      traderEori         <- userAnswers.get(ConsigneeEoriNumberPage)
+      traderName         <- userAnswers.get(ConsigneeNamePage)
     } yield {
 
       SimplifiedNotification(
         movementReferenceNumber = userAnswers.id,
+        notificationPlace       = tradersAddress.postcode,
         notificationDate        = LocalDate.now(),
-        approvedLocation        = notificationPlace,
+        authorisedLocation      = authorisedLocation,
         trader = TraderDomain(
           eori            = traderEori,
           name            = traderName,

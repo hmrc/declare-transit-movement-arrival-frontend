@@ -34,25 +34,26 @@ object ArrivalMovementRequestToArrivalNotificationService {
       case (NormalProcedureFlag, Some(mrn), Some(customsSubPlace)) =>
         Some(
           NormalNotification(
-            mrn,
-            arrivalMovementRequest.header.arrivalNotificationPlace,
-            arrivalMovementRequest.header.notificationDate,
-            customsSubPlace,
-            Trader.messagesTraderToDomainTrader(arrivalMovementRequest.trader),
-            customsOffice,
-            arrivalMovementRequest.enRouteEvents.map(_.map(EnRouteEvent.enRouteEventToDomain))
+            movementReferenceNumber = mrn,
+            notificationPlace       = arrivalMovementRequest.header.arrivalNotificationPlace,
+            notificationDate        = arrivalMovementRequest.header.notificationDate,
+            customsSubPlace         = customsSubPlace,
+            trader                  = Trader.messagesTraderToDomainTrader(arrivalMovementRequest.trader),
+            customsOffice           = customsOffice,
+            enRouteEvents           = arrivalMovementRequest.enRouteEvents.map(_.map(EnRouteEvent.enRouteEventToDomain))
           )
         )
       case (SimplifiedProcedureFlag, Some(mrn), _) =>
         Some(
           SimplifiedNotification(
-            mrn,
-            arrivalMovementRequest.header.notificationDate,
-            arrivalMovementRequest.header.arrivalNotificationPlace,
-            Trader.messagesTraderToDomainTrader(arrivalMovementRequest.trader),
-            customsOffice,
-            arrivalMovementRequest.enRouteEvents.map(_.map(EnRouteEvent.enRouteEventToDomain)),
-            authEoriNumber
+            movementReferenceNumber = mrn,
+            notificationPlace       = arrivalMovementRequest.header.arrivalNotificationPlace,
+            notificationDate        = arrivalMovementRequest.header.notificationDate,
+            authorisedLocation      = arrivalMovementRequest.header.arrivalAuthorisedLocationOfGoods.getOrElse(""), //TODO need to think about it
+            trader                  = Trader.messagesTraderToDomainTrader(arrivalMovementRequest.trader),
+            customsOffice           = customsOffice,
+            enRouteEvents           = arrivalMovementRequest.enRouteEvents.map(_.map(EnRouteEvent.enRouteEventToDomain)),
+            authedEori              = authEoriNumber
           )
         )
       case _ => None
