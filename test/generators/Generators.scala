@@ -28,6 +28,8 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
 
   implicit def dontShrink[A]: Shrink[A] = Shrink.shrinkAny
 
+  val maxListLength = 10
+
   def genIntersperseString(gen: Gen[String], value: String, frequencyV: Int = 1, frequencyN: Int = 10): Gen[String] = {
 
     val genValue: Gen[Option[String]] = Gen.frequency(frequencyN -> None, frequencyV -> Gen.const(Some(value)))
@@ -135,7 +137,7 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
       seq    <- listOfN(length, arbitrary[A])
     } yield seq
 
-  def listWithMaxLength[A](maxLength: Int)(implicit a: Arbitrary[A]): Gen[List[A]] =
+  def listWithMaxLength[A](maxLength: Int = maxListLength)(implicit a: Arbitrary[A]): Gen[List[A]] =
     for {
       length <- choose(1, maxLength)
       seq    <- listOfN(length, arbitrary[A])
