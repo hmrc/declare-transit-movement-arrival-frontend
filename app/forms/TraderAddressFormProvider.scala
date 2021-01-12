@@ -35,7 +35,7 @@ class TraderAddressFormProvider @Inject() extends Mappings {
       ).verifying(
           maxLength(
             streetAndNumberLength,
-            "traderAddress.error.max_length",
+            "traderAddress.error.length",
             Seq(Address.Constants.Fields.buildingAndStreetName, traderName)
           )
         )
@@ -55,7 +55,7 @@ class TraderAddressFormProvider @Inject() extends Mappings {
         ),
       "city" -> text("traderAddress.error.required", args = Seq(Address.Constants.Fields.city, traderName))
         .verifying(
-          maxLength(cityLength, "traderAddress.error.max_length", args = Seq(Address.Constants.Fields.city, traderName))
+          maxLength(cityLength, "traderAddress.error.length", args = Seq(Address.Constants.Fields.city, traderName))
         )
         .verifying(
           minLength(1, "traderAddress.error.required", Seq(Address.Constants.Fields.city, traderName))
