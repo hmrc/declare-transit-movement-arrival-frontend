@@ -358,8 +358,9 @@ trait MessagesModelGenerators extends Generators {
         enRouteEvents <- Gen.option(listWithMaxLength[EnRouteEvent](1))
       } yield {
         val traderWithEori = trader.copy(eori = eori.value)
+        val updatedHeader  = if (header.procedureTypeFlag == SimplifiedProcedureFlag) header.copy(arrivalNotificationPlace = trader.postCode) else header
 
-        ArrivalMovementRequest(meta, header, traderWithEori, customsOffice, enRouteEvents)
+        ArrivalMovementRequest(meta, updatedHeader, traderWithEori, customsOffice, enRouteEvents)
       }
     }
   }
