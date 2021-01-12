@@ -52,9 +52,10 @@ case class Header(movementReferenceNumber: String,
 object Header {
 
   object Constants {
-    val languageCode: LanguageCode     = LanguageCodeEnglish
-    val customsSubPlaceLength          = 17
-    val arrivalNotificationPlaceLength = 35
+    val languageCode: LanguageCode             = LanguageCodeEnglish
+    val customsSubPlaceLength                  = 17
+    val arrivalAuthorisedLocationOfGoodsLength = 17
+    val arrivalNotificationPlaceLength         = 35
   }
 
   implicit def writes: XMLWrites[Header] = XMLWrites[Header] {

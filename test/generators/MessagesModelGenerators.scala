@@ -244,15 +244,14 @@ trait MessagesModelGenerators extends Generators {
     Arbitrary {
 
       for {
-        mrn               <- arbitrary[MovementReferenceNumber]
-        notificationPlace <- stringsWithMaxLength(SimplifiedNotification.Constants.notificationPlaceLength)
-        date              <- localDateGen
-        approvedLocation  <- stringsWithMaxLength(SimplifiedNotification.Constants.approvedLocationLength)
-        trader            <- arbitrary[TraderDomain]
-        customsOffice     <- arbitrary[CustomsOffice]
-        events            <- Gen.option(listWithMaxLength[EnRouteEventDomain](NormalNotification.Constants.maxNumberOfEnRouteEvents))
-        authedEoriNumber  <- arbitrary[EoriNumber]
-      } yield SimplifiedNotification(mrn, notificationPlace, date, approvedLocation, trader, customsOffice, events, authedEoriNumber)
+        mrn              <- arbitrary[MovementReferenceNumber]
+        date             <- localDateGen
+        approvedLocation <- stringsWithMaxLength(SimplifiedNotification.Constants.approvedLocationLength)
+        trader           <- arbitrary[TraderDomain]
+        customsOffice    <- arbitrary[CustomsOffice]
+        events           <- Gen.option(listWithMaxLength[EnRouteEventDomain](NormalNotification.Constants.maxNumberOfEnRouteEvents))
+        authedEoriNumber <- arbitrary[EoriNumber]
+      } yield SimplifiedNotification(mrn, trader.postCode, date, approvedLocation, trader, customsOffice, events, authedEoriNumber)
     }
 
   implicit lazy val arbitraryArrivalNotification: Arbitrary[ArrivalNotificationDomain] =
@@ -325,22 +324,24 @@ trait MessagesModelGenerators extends Generators {
   implicit lazy val arbitraryHeader: Arbitrary[Header] = {
     Arbitrary {
       for {
-        movementReferenceNumber  <- arbitrary[MovementReferenceNumber].map(_.toString())
-        arrivalNotificationPlace <- stringsWithMaxLength(Header.Constants.arrivalNotificationPlaceLength)
-        procedureTypeFlag        <- arbitrary[ProcedureTypeFlag]
-        customsSubPlace          <- stringsWithMaxLength(Header.Constants.customsSubPlaceLength)
-        notificationDate         <- arbitrary[LocalDate]
+        movementReferenceNumber          <- arbitrary[MovementReferenceNumber].map(_.toString())
+        arrivalNotificationPlace         <- stringsWithMaxLength(Header.Constants.arrivalNotificationPlaceLength)
+        procedureTypeFlag                <- arbitrary[ProcedureTypeFlag]
+        customsSubPlace                  <- stringsWithMaxLength(Header.Constants.customsSubPlaceLength)
+        arrivalAuthorisedLocationOfGoods <- stringsWithMaxLength(Header.Constants.arrivalAuthorisedLocationOfGoodsLength)
+        notificationDate                 <- arbitrary[LocalDate]
       } yield {
 
         val customsSubPlaceToggle = if (procedureTypeFlag == NormalProcedureFlag) Some(customsSubPlace) else None
+        val authLocation          = if (procedureTypeFlag == SimplifiedProcedureFlag) Some(arrivalAuthorisedLocationOfGoods) else None
 
         Header(
-          movementReferenceNumber,
-          customsSubPlaceToggle,
-          arrivalNotificationPlace,
-          None,
-          procedureTypeFlag,
-          notificationDate
+          movementReferenceNumber          = movementReferenceNumber,
+          customsSubPlace                  = customsSubPlaceToggle,
+          arrivalNotificationPlace         = arrivalNotificationPlace,
+          arrivalAuthorisedLocationOfGoods = authLocation,
+          procedureTypeFlag                = procedureTypeFlag,
+          notificationDate                 = notificationDate
         )
       }
     }

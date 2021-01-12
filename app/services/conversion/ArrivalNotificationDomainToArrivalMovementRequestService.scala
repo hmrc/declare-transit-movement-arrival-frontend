@@ -70,7 +70,7 @@ object ArrivalNotificationDomainToArrivalMovementRequestService {
     Header(
       movementReferenceNumber          = arrivalNotification.movementReferenceNumber.toString,
       customsSubPlace                  = None,
-      arrivalNotificationPlace         = arrivalNotification.authorisedLocation,
+      arrivalNotificationPlace         = arrivalNotification.notificationPlace,
       procedureTypeFlag                = procedureTypeFlag,
       notificationDate                 = arrivalNotification.notificationDate,
       arrivalAuthorisedLocationOfGoods = Some(arrivalNotification.authorisedLocation)
