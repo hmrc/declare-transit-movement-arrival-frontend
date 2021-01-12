@@ -45,7 +45,7 @@ import scala.xml.NodeSeq
 case class Header(movementReferenceNumber: String,
                   customsSubPlace: Option[String] = None,
                   arrivalNotificationPlace: String,
-                  arrivalAgreedLocationOfGoods: Option[String] = None,
+                  arrivalAuthorisedLocationOfGoods: Option[String] = None,
                   procedureTypeFlag: ProcedureTypeFlag,
                   notificationDate: LocalDate)
 
@@ -69,7 +69,7 @@ object Header {
           <ArrNotPlaHEA60>{escapeXml(header.arrivalNotificationPlace)}</ArrNotPlaHEA60>
           <ArrNotPlaHEA60LNG>{Header.Constants.languageCode.code}</ArrNotPlaHEA60LNG>
           {
-            header.arrivalAgreedLocationOfGoods.fold(NodeSeq.Empty) { location =>
+            header.arrivalAuthorisedLocationOfGoods.fold(NodeSeq.Empty) { location =>
                 <ArrAutLocOfGooHEA65>{escapeXml(location)}</ArrAutLocOfGooHEA65>
               }
           }
