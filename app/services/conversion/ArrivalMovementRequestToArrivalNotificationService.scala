@@ -44,18 +44,20 @@ object ArrivalMovementRequestToArrivalNotificationService {
           )
         )
       case (SimplifiedProcedureFlag, Some(mrn), _) =>
-        Some(
-          SimplifiedNotification(
-            movementReferenceNumber = mrn,
-            notificationPlace       = arrivalMovementRequest.header.arrivalNotificationPlace,
-            notificationDate        = arrivalMovementRequest.header.notificationDate,
-            authorisedLocation      = arrivalMovementRequest.header.arrivalAuthorisedLocationOfGoods.getOrElse(""), //TODO need to think about it
-            trader                  = Trader.messagesTraderToDomainTrader(arrivalMovementRequest.trader),
-            customsOffice           = customsOffice,
-            enRouteEvents           = arrivalMovementRequest.enRouteEvents.map(_.map(EnRouteEvent.enRouteEventToDomain)),
-            authedEori              = authEoriNumber
-          )
-        )
+        arrivalMovementRequest.header.arrivalAuthorisedLocationOfGoods.map {
+          authLocation =>
+            SimplifiedNotification(
+              movementReferenceNumber = mrn,
+              notificationPlace       = arrivalMovementRequest.header.arrivalNotificationPlace,
+              notificationDate        = arrivalMovementRequest.header.notificationDate,
+              authorisedLocation      = authLocation,
+              trader                  = Trader.messagesTraderToDomainTrader(arrivalMovementRequest.trader),
+              customsOffice           = customsOffice,
+              enRouteEvents           = arrivalMovementRequest.enRouteEvents.map(_.map(EnRouteEvent.enRouteEventToDomain)),
+              authedEori              = authEoriNumber
+            )
+        }
+
       case _ => None
     }
 }
