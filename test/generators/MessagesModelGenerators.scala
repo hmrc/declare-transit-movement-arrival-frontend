@@ -251,7 +251,7 @@ trait MessagesModelGenerators extends Generators {
         customsOffice    <- arbitrary[CustomsOffice]
         events           <- Gen.option(listWithMaxLength[EnRouteEventDomain](NormalNotification.Constants.maxNumberOfEnRouteEvents))
         authedEoriNumber <- arbitrary[EoriNumber]
-      } yield SimplifiedNotification(mrn, date, approvedLocation, trader, customsOffice, events, authedEoriNumber)
+      } yield SimplifiedNotification(mrn, trader.postCode, date, approvedLocation, trader, customsOffice, events, authedEoriNumber)
     }
 
   implicit lazy val arbitraryArrivalNotification: Arbitrary[ArrivalNotificationDomain] =
@@ -324,22 +324,24 @@ trait MessagesModelGenerators extends Generators {
   implicit lazy val arbitraryHeader: Arbitrary[Header] = {
     Arbitrary {
       for {
-        movementReferenceNumber  <- arbitrary[MovementReferenceNumber].map(_.toString())
-        arrivalNotificationPlace <- stringsWithMaxLength(Header.Constants.arrivalNotificationPlaceLength)
-        procedureTypeFlag        <- arbitrary[ProcedureTypeFlag]
-        customsSubPlace          <- stringsWithMaxLength(Header.Constants.customsSubPlaceLength)
-        notificationDate         <- arbitrary[LocalDate]
+        movementReferenceNumber          <- arbitrary[MovementReferenceNumber].map(_.toString())
+        arrivalNotificationPlace         <- stringsWithMaxLength(Header.Constants.arrivalNotificationPlaceLength)
+        procedureTypeFlag                <- arbitrary[ProcedureTypeFlag]
+        customsSubPlace                  <- stringsWithMaxLength(Header.Constants.customsSubPlaceLength)
+        arrivalAuthorisedLocationOfGoods <- stringsWithMaxLength(Header.Constants.arrivalAuthorisedLocationOfGoodsLength)
+        notificationDate                 <- arbitrary[LocalDate]
       } yield {
 
         val customsSubPlaceToggle = if (procedureTypeFlag == NormalProcedureFlag) Some(customsSubPlace) else None
+        val authLocation          = if (procedureTypeFlag == SimplifiedProcedureFlag) Some(arrivalAuthorisedLocationOfGoods) else None
 
         Header(
-          movementReferenceNumber,
-          customsSubPlaceToggle,
-          arrivalNotificationPlace,
-          None,
-          procedureTypeFlag,
-          notificationDate
+          movementReferenceNumber          = movementReferenceNumber,
+          customsSubPlace                  = customsSubPlaceToggle,
+          arrivalNotificationPlace         = arrivalNotificationPlace,
+          arrivalAuthorisedLocationOfGoods = authLocation,
+          procedureTypeFlag                = procedureTypeFlag,
+          notificationDate                 = notificationDate
         )
       }
     }
@@ -356,8 +358,9 @@ trait MessagesModelGenerators extends Generators {
         enRouteEvents <- Gen.option(listWithMaxLength[EnRouteEvent](1))
       } yield {
         val traderWithEori = trader.copy(eori = eori.value)
+        val updatedHeader  = if (header.procedureTypeFlag == SimplifiedProcedureFlag) header.copy(arrivalNotificationPlace = trader.postCode) else header
 
-        ArrivalMovementRequest(meta, header, traderWithEori, customsOffice, enRouteEvents)
+        ArrivalMovementRequest(meta, updatedHeader, traderWithEori, customsOffice, enRouteEvents)
       }
     }
   }
@@ -445,7 +448,7 @@ trait MessagesModelGenerators extends Generators {
         .copy(movementReferenceNumber = mrn)
         .copy(trader = trader)
         .copy(notificationDate = LocalDate.now())
-        .copy(approvedLocation = approvedLocation)
+        .copy(authorisedLocation = approvedLocation)
 
       (expected, trader)
     }

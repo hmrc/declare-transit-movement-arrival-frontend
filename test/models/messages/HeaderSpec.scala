@@ -67,7 +67,7 @@ class HeaderSpec extends SpecBase with ScalaCheckPropertyChecks with MessagesMod
             customsSubPlace => <CusSubPlaHEA66>{escapeXml(customsSubPlace)}</CusSubPlaHEA66>
           )
 
-          val authorisedLocationOfGoods = normalHeader.arrivalAgreedLocationOfGoods.map(
+          val authorisedLocationOfGoods = normalHeader.arrivalAuthorisedLocationOfGoods.map(
             arrivalAgreedLocationOfGoods => <ArrAutLocOfGooHEA65>{escapeXml(arrivalAgreedLocationOfGoods)}</ArrAutLocOfGooHEA65>
           )
 
