@@ -19,7 +19,6 @@ package controllers
 import java.time.LocalDate
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
-import config.FrontendAppConfig
 import matchers.JsonMatchers
 import models.ArrivalId
 import models.messages.ErrorType.{DuplicateMrn, IncorrectValue, InvalidMrn, UnknownMrn}
@@ -35,12 +34,16 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import services.ArrivalRejectionService
+import viewModels.sections.ViewModelConfig
 
 import scala.concurrent.Future
 
 class ArrivalRejectionControllerSpec extends SpecBase with AppWithDefaultMockFixtures with JsonMatchers with BeforeAndAfterEach {
 
   private val mockArrivalRejectionService = mock[ArrivalRejectionService]
+  private val mockViewModelConfig         = mock[ViewModelConfig]
+  private val testUrl                     = "testUrl"
+  when(mockViewModelConfig.nctsEnquiriesUrl).thenReturn(testUrl)
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -50,7 +53,10 @@ class ArrivalRejectionControllerSpec extends SpecBase with AppWithDefaultMockFix
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
       .guiceApplicationBuilder()
-      .overrides(bind[ArrivalRejectionService].toInstance(mockArrivalRejectionService))
+      .overrides(
+        bind[ArrivalRejectionService].toInstance(mockArrivalRejectionService),
+        bind[ViewModelConfig].toInstance(mockViewModelConfig)
+      )
 
   private val arrivalId = ArrivalId(1)
 
@@ -74,10 +80,9 @@ class ArrivalRejectionControllerSpec extends SpecBase with AppWithDefaultMockFix
           when(mockArrivalRejectionService.arrivalRejectionMessage((any()))(any(), any()))
             .thenReturn(Future.successful(Some(ArrivalNotificationRejectionMessage(mrn.toString, LocalDate.now, None, None, errors))))
 
-          val frontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
-          val request           = FakeRequest(GET, routes.ArrivalRejectionController.onPageLoad(arrivalId).url)
-          val templateCaptor    = ArgumentCaptor.forClass(classOf[String])
-          val jsonCaptor        = ArgumentCaptor.forClass(classOf[JsObject])
+          val request        = FakeRequest(GET, routes.ArrivalRejectionController.onPageLoad(arrivalId).url)
+          val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+          val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
           val result = route(app, request).value
 
@@ -89,7 +94,7 @@ class ArrivalRejectionControllerSpec extends SpecBase with AppWithDefaultMockFix
           val expectedJson = Json.obj(
             "mrn"                        -> mrn,
             "errorKey"                   -> errorKey,
-            "contactUrl"                 -> frontendAppConfig.nctsEnquiriesUrl,
+            "contactUrl"                 -> testUrl,
             "movementReferenceNumberUrl" -> routes.UpdateRejectedMRNController.onPageLoad(arrivalId).url
           )
 
@@ -110,10 +115,9 @@ class ArrivalRejectionControllerSpec extends SpecBase with AppWithDefaultMockFix
       when(mockArrivalRejectionService.arrivalRejectionMessage(any())(any(), any()))
         .thenReturn(Future.successful(Some(ArrivalNotificationRejectionMessage(mrn.toString, LocalDate.now, None, None, errors))))
 
-      val frontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
-      val request           = FakeRequest(GET, routes.ArrivalRejectionController.onPageLoad(arrivalId).url)
-      val templateCaptor    = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor        = ArgumentCaptor.forClass(classOf[JsObject])
+      val request        = FakeRequest(GET, routes.ArrivalRejectionController.onPageLoad(arrivalId).url)
+      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -125,7 +129,7 @@ class ArrivalRejectionControllerSpec extends SpecBase with AppWithDefaultMockFix
       val expectedJson = Json.obj(
         "mrn"              -> mrn,
         "errors"           -> errors,
-        "contactUrl"       -> frontendAppConfig.nctsEnquiriesUrl,
+        "contactUrl"       -> testUrl,
         "createArrivalUrl" -> routes.MovementReferenceNumberController.onPageLoad().url
       )
 

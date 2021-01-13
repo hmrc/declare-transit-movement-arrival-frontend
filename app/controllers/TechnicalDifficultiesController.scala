@@ -16,20 +16,20 @@
 
 package controllers
 
-import config.FrontendAppConfig
 import javax.inject.Inject
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import viewModels.sections.ViewModelConfig
 
 import scala.concurrent.ExecutionContext
 
 class TechnicalDifficultiesController @Inject()(
   override val messagesApi: MessagesApi,
   val controllerComponents: MessagesControllerComponents,
-  appConfig: FrontendAppConfig,
+  viewModelConfig: ViewModelConfig,
   renderer: Renderer
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
@@ -38,7 +38,7 @@ class TechnicalDifficultiesController @Inject()(
   def onPageLoad: Action[AnyContent] = Action.async {
     implicit request =>
       val json = Json.obj(
-        "contactUrl" -> appConfig.nctsEnquiriesUrl
+        "contactUrl" -> viewModelConfig.nctsEnquiriesUrl
       )
 
       renderer.render("technicalDifficulties.njk", json).map(Ok(_))
