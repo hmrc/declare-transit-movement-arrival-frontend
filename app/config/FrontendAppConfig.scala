@@ -22,7 +22,8 @@ import play.api.Configuration
 @Singleton
 class FrontendAppConfig @Inject()(configuration: Configuration) {
 
-  val contactHost: String                  = configuration.get[String]("urls.contactFrontend")
+  lazy val contactHost: String             = configuration.get[Service]("microservice.services.contact-frontend").baseUrl
+  lazy val contactFrontendUrl: String      = configuration.get[Service]("microservice.services.contact-frontend").fullServiceUrl
   val contactFormServiceIdentifier: String = "CTCTrader"
   val analyticsToken: String               = configuration.get[String](s"google-analytics.token")
 
@@ -30,8 +31,8 @@ class FrontendAppConfig @Inject()(configuration: Configuration) {
   val gtmContainer: String       = configuration.get[String]("microservice.services.tracking-consent-frontend.gtm.container")
 
   val analyticsHost: String          = configuration.get[String](s"google-analytics.host")
-  val betaFeedbackUrl                = s"$contactHost/beta-feedback"
-  val betaFeedbackUnauthenticatedUrl = s"$contactHost/beta-feedback-unauthenticated"
+  val betaFeedbackUrl                = s"$contactFrontendUrl/beta-feedback"
+  val betaFeedbackUnauthenticatedUrl = s"$contactFrontendUrl/beta-feedback-unauthenticated"
   val signOutUrl: String             = configuration.get[String]("urls.logout")
   val loginHmrcServiceUrl: String    = configuration.get[String]("urls.loginHmrcService")
 
