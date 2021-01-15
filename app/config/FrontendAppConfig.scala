@@ -24,7 +24,7 @@ class FrontendAppConfig @Inject()(configuration: Configuration) {
 
   lazy val contactHost: String             = configuration.get[Service]("microservice.services.contact-frontend").baseUrl
   lazy val contactFrontendUrl: String      = configuration.get[Service]("microservice.services.contact-frontend").fullServiceUrl
-  val contactFormServiceIdentifier: String = "CTCTrader"
+  val contactFormServiceIdentifier: String = "CTCTraders"
   val analyticsToken: String               = configuration.get[String](s"google-analytics.token")
 
   val trackingConsentUrl: String = configuration.get[String]("microservice.services.tracking-consent-frontend.url")
