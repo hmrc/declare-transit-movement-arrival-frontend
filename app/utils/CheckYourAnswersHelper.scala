@@ -234,12 +234,18 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswers
         case (Some(customsSubPlace), None) => customsSubPlace
         case (None, Some(consigneeName))   => consigneeName
       }
+
+      val customsOfficeValue = answer.name match {
+        case Some(name) => Value(lit"$name (${answer.id})")
+        case None       => Value(lit"${answer.id}")
+      }
+
       Row(
         key = Key(
           content = msg"customsOffice.simplified.checkYourAnswersLabel".withArgs(location),
           classes = Seq("govuk-!-width-one-half")
         ),
-        value = Value(lit"${answer.name} (${answer.id})"),
+        value = customsOfficeValue,
         actions = List(
           Action(
             content            = msg"site.edit",
@@ -264,12 +270,18 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswers
           case (Some(customsSubPlace), None) => customsSubPlace
           case (None, Some(consigneeName))   => consigneeName
         }
+
+        val customsOfficeValue = answer.name match {
+          case Some(name) => Value(lit"$name (${answer.id})")
+          case None       => Value(lit"${answer.id}")
+        }
+
         Row(
           key = Key(
             content = msg"customsOffice.checkYourAnswersLabel".withArgs(location),
             classes = Seq("govuk-!-width-one-half")
           ),
-          value = Value(lit"${answer.name} (${answer.id})"),
+          value = customsOfficeValue,
           actions = List(
             Action(
               content            = msg"site.edit",
