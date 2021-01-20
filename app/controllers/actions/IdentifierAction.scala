@@ -20,6 +20,7 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.routes
 import models.EoriNumber
+import models.EoriNumber.prefixGBIfMissing
 import models.requests.IdentifierRequest
 import play.api.mvc.Results._
 import play.api.mvc._
@@ -53,7 +54,7 @@ class AuthenticatedIdentifierAction @Inject()(
           identifier <- enrolment.getIdentifier(enrolmentIdentifierKey)
         } yield identifier.value).getOrElse(throw InsufficientEnrolments(s"Unable to retrieve enrolment for $enrolmentIdentifierKey"))
 
-        block(IdentifierRequest(request, EoriNumber(eoriNumber)))
+        block(IdentifierRequest(request, EoriNumber(prefixGBIfMissing(eoriNumber))))
     }
   } recover {
     case _: NoActiveSession =>
