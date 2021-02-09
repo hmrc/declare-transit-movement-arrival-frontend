@@ -20,8 +20,8 @@ import forms.mappings.Mappings
 import javax.inject.Inject
 import play.api.data.Form
 import models.domain.NormalNotification.Constants.notificationPlaceLength
-import models.domain.TraderDomain.inputRegex
 import uk.gov.hmrc.play.mappers.StopOnFirstFail
+import models.StringFieldRegex._
 
 class PlaceOfNotificationFormProvider @Inject() extends Mappings {
 
@@ -31,7 +31,7 @@ class PlaceOfNotificationFormProvider @Inject() extends Mappings {
         .verifying(
           StopOnFirstFail[String](
             maxLength(notificationPlaceLength, "placeOfNotification.error.length"),
-            regexp(inputRegex, "placeOfNotification.error.invalid", Seq.empty)
+            regexp(stringFieldRegex, "placeOfNotification.error.invalid", Seq.empty)
           ))
     )
 }

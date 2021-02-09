@@ -17,8 +17,10 @@
 package forms.events.seals
 
 import forms.mappings.Mappings
+
 import javax.inject.Inject
 import models.Index
+import models.StringFieldRegex.stringFieldRegex
 import models.domain.SealDomain
 import models.messages.Seal
 import play.api.data.Form
@@ -34,8 +36,9 @@ class SealIdentityFormProvider @Inject() extends Mappings {
         )
         .verifying(
           regexp(
-            "^[a-zA-Z0-9&'@/.\\-%?<>]*$",
-            "sealIdentity.error.invalid"
+            stringFieldRegex,
+            "sealIdentity.error.invalid",
+            Seq.empty
           )
         )
     )

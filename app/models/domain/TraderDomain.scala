@@ -55,8 +55,6 @@ object TraderDomain {
     * question marks
     * and greater than (>) and less than (<) signs
     */
-  val inputRegex: Regex = "[\\sa-zA-Z0-9&'@/.\\-? ]*".r
-
   val eoriRegex = "[A-Z]{2}[^\n\r]{1,}"
 
   implicit lazy val format: Format[TraderDomain] =

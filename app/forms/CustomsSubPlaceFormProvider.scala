@@ -17,10 +17,11 @@
 package forms
 
 import forms.mappings.Mappings
+
 import javax.inject.Inject
 import play.api.data.Form
 import models.domain.NormalNotification.Constants.customsSubPlaceLength
-import models.domain.TraderDomain
+import models.StringFieldRegex.stringFieldRegexAsterisk
 
 class CustomsSubPlaceFormProvider @Inject() extends Mappings {
 
@@ -28,6 +29,6 @@ class CustomsSubPlaceFormProvider @Inject() extends Mappings {
     Form(
       "value" -> text("customsSubPlace.error.required")
         .verifying(maxLength(customsSubPlaceLength, "customsSubPlace.error.length"))
-        .verifying(regexp(TraderDomain.inputRegex, "customsSubPlace.error.invalid", Seq.empty))
+        .verifying(regexp(stringFieldRegexAsterisk, "customsSubPlace.error.invalid", Seq.empty))
     )
 }

@@ -112,7 +112,7 @@ class TraderAddressFormProviderSpec extends StringFieldBehaviours {
       val fieldName = "city"
       val args      = Seq(Address.Constants.Fields.city, traderName)
 
-      val generator: Gen[String] = RegexpGen.from(s"[!£^(){}_+=:;|`~,±<>]{${Address.Constants.cityLength}}")
+      val generator: Gen[String] = RegexpGen.from(s"[!£^(){}_+=:;|`~,±<>éèâñüç]{${Address.Constants.cityLength}}")
       val expectedError          = FormError(fieldName, traderAddressInvalidKey, args)
 
       forAll(generator) {
@@ -121,38 +121,51 @@ class TraderAddressFormProviderSpec extends StringFieldBehaviours {
           result.errors must contain(expectedError)
       }
     }
-  }
+    "must not bind strings that include accented/disallowed characters" in {
+      val fieldName              = "city"
+      val args                   = Seq(Address.Constants.Fields.city, traderName)
+      val expectedError          = FormError(fieldName, traderAddressInvalidKey, args)
+      val generator: Gen[String] = RegexpGen.from(s"[<>^éèâ±ñüç]{17}")
 
-  ".postcode" - {
+      forAll(generator) {
+        invalidString =>
+          val result: Field = form.bind(Map(fieldName -> invalidString)).apply(fieldName)
+          result.errors must contain(expectedError)
 
-    val fieldName   = "postcode"
-    val requiredKey = "traderAddress.error.postcode.required"
-    val lengthKey   = "traderAddress.error.postcode.length"
-    val maxLength   = 9
+      }
+    }
 
-    val validAddressStringGenOverLength: Gen[String] = for {
-      num  <- Gen.chooseNum[Int](maxLength + 1, maxLength + 5)
-      list <- Gen.listOfN(num, Gen.alphaNumChar)
-    } yield list.mkString("")
+    ".postcode" - {
 
-    behave like fieldThatBindsValidData(
-      form,
-      fieldName,
-      stringsWithMaxLength(maxLength)
-    )
+      val fieldName   = "postcode"
+      val requiredKey = "traderAddress.error.postcode.required"
+      val lengthKey   = "traderAddress.error.postcode.length"
+      val maxLength   = 9
 
-    behave like fieldWithMaxLength(
-      form,
-      fieldName,
-      maxLength   = maxLength,
-      lengthError = FormError(fieldName, lengthKey, Seq(traderName)),
-      validAddressStringGenOverLength
-    )
+      val validAddressStringGenOverLength: Gen[String] = for {
+        num  <- Gen.chooseNum[Int](maxLength + 1, maxLength + 5)
+        list <- Gen.listOfN(num, Gen.alphaNumChar)
+      } yield list.mkString("")
 
-    behave like mandatoryField(
-      form,
-      fieldName,
-      requiredError = FormError(fieldName, requiredKey, Seq(traderName))
-    )
+      behave like fieldThatBindsValidData(
+        form,
+        fieldName,
+        stringsWithMaxLength(maxLength)
+      )
+
+      behave like fieldWithMaxLength(
+        form,
+        fieldName,
+        maxLength   = maxLength,
+        lengthError = FormError(fieldName, lengthKey, Seq(traderName)),
+        validAddressStringGenOverLength
+      )
+
+      behave like mandatoryField(
+        form,
+        fieldName,
+        requiredError = FormError(fieldName, requiredKey, Seq(traderName))
+      )
+    }
   }
 }

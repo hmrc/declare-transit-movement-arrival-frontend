@@ -17,13 +17,14 @@
 package forms
 
 import forms.mappings.Mappings
-import javax.inject.Inject
 import models.Address
 import models.Address.Constants.Fields.city
+import models.StringFieldRegex.stringFieldRegex
+import models.domain.TraderDomain.Constants.{cityLength, postCodeLength, streetAndNumberLength}
 import play.api.data.Form
 import play.api.data.Forms._
-import models.domain.TraderDomain.Constants.{cityLength, postCodeLength, streetAndNumberLength}
-import models.domain.TraderDomain.inputRegex
+
+import javax.inject.Inject
 
 class TraderAddressFormProvider @Inject() extends Mappings {
 
@@ -48,7 +49,7 @@ class TraderAddressFormProvider @Inject() extends Mappings {
         )
         .verifying(
           regexp(
-            inputRegex,
+            stringFieldRegex,
             "traderAddress.error.invalid",
             Seq(Address.Constants.Fields.buildingAndStreetName, traderName)
           )
@@ -62,7 +63,7 @@ class TraderAddressFormProvider @Inject() extends Mappings {
         )
         .verifying(
           regexp(
-            inputRegex,
+            stringFieldRegex,
             "traderAddress.error.invalid",
             Seq(city, traderName)
           )
