@@ -30,12 +30,7 @@ class ConsigneeNameFormProvider @Inject() extends Mappings {
         .verifying(
           maxLength(nameLength, "consigneeName.error.length")
         )
-        .verifying(
-          regexp(
-            stringFieldRegexAsterisk,
-            "consigneeName.error.invalid",
-            Seq.empty
-          )
+        .verifying(regexp(stringFieldRegexAsterisk,"consigneeName.error.invalid", Seq.empty)
         )
     )
 }
