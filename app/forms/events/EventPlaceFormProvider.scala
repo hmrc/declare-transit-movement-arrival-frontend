@@ -17,15 +17,21 @@
 package forms.events
 
 import forms.mappings.Mappings
+import models.StringFieldRegex
+import models.StringFieldRegex.{stringFieldRegex, stringFieldRegexAsterisk}
+
 import javax.inject.Inject
 import play.api.data.Form
 import models.messages.EnRouteEvent.Constants.placeLength
+import uk.gov.hmrc.play.mappers.StopOnFirstFail
 
 class EventPlaceFormProvider @Inject() extends Mappings {
 
   def apply(): Form[String] =
     Form(
       "value" -> text("eventPlace.error.required")
-        .verifying(maxLength(placeLength, "eventPlace.error.length"))
+        .verifying(
+          StopOnFirstFail[String](maxLength(placeLength, "eventPlace.error.length"), regexp(stringFieldRegex, "eventPlace.error.invalid", Seq.empty))
+        )
     )
 }

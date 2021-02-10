@@ -20,6 +20,7 @@ import base.SpecBase
 import forms.behaviours.StringFieldBehaviours
 import generators.MessagesModelGenerators
 import models.Index
+import models.StringFieldRegex.stringFieldRegex
 import models.domain.SealDomain
 import org.scalacheck.Gen
 import play.api.data.{Field, FormError}
@@ -96,9 +97,8 @@ class SealIdentityFormProviderSpec extends StringFieldBehaviours with MessagesMo
 
   "must not bind strings that do not match regex" in {
 
-    val generator: Gen[String] = RegexpGen.from(s"[!£^*(){}_+=:;|`~,±]{20}")
-    val validRegex: String     = "^[a-zA-Z0-9&'@/.\\-%?<>]*$"
-    val expectedError          = FormError(fieldName, invalidKey, Seq(validRegex))
+    val generator: Gen[String] = RegexpGen.from(s"[!£^*(){}_+=:;|`~,±*]{20}")
+    val expectedError          = FormError(fieldName, invalidKey)
 
     forAll(generator) {
       invalidString =>

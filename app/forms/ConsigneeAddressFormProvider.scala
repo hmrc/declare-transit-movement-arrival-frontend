@@ -17,11 +17,13 @@
 package forms
 
 import forms.mappings.Mappings
-import javax.inject.Inject
 import models.Address
+import models.StringFieldRegex.stringFieldRegexAsterisk
 import play.api.data.Form
 import play.api.data.Forms._
 import uk.gov.hmrc.play.mappers.StopOnFirstFail
+
+import javax.inject.Inject
 
 class ConsigneeAddressFormProvider @Inject() extends Mappings {
 
@@ -33,16 +35,14 @@ class ConsigneeAddressFormProvider @Inject() extends Mappings {
             maxLength(Address.Constants.buildingAndStreetLength,
                       "consigneeAddress.error.length",
                       Seq(Address.Constants.Fields.buildingAndStreetName, authorisedConsignee)),
-            regexp(Address.Constants.consigneeAddressRegex,
-                   "consigneeAddress.error.invalid",
-                   Seq(Address.Constants.Fields.buildingAndStreetName, authorisedConsignee))
+            regexp(stringFieldRegexAsterisk, "consigneeAddress.error.invalid", Seq(Address.Constants.Fields.buildingAndStreetName, authorisedConsignee))
           )
         ),
       "city" -> text("consigneeAddress.error.required", args = Seq(Address.Constants.Fields.city, authorisedConsignee))
         .verifying(
           StopOnFirstFail[String](
             maxLength(Address.Constants.cityLength, "consigneeAddress.error.length", args = Seq(Address.Constants.Fields.city, authorisedConsignee)),
-            regexp(Address.Constants.consigneeAddressRegex, "consigneeAddress.error.invalid", Seq(Address.Constants.Fields.city, authorisedConsignee))
+            regexp(stringFieldRegexAsterisk, "consigneeAddress.error.invalid", Seq(Address.Constants.Fields.city, authorisedConsignee))
           )
         ),
       "postcode" -> text("consigneeAddress.error.postcode.required", args = Seq(authorisedConsignee))

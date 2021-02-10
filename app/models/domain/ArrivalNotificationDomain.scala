@@ -105,7 +105,6 @@ object SimplifiedNotification {
     val approvedLocationLength   = 17
     val customsOfficeLength      = 8
     val maxNumberOfEnRouteEvents = 9
-    val authorisedLocationRegex  = "^[a-zA-Z0-9]*$"
   }
 
   implicit lazy val writes: OWrites[SimplifiedNotification] = OWrites[SimplifiedNotification] {

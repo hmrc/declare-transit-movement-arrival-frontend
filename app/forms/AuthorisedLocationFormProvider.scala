@@ -17,6 +17,7 @@
 package forms
 
 import forms.mappings.Mappings
+import models.StringFieldRegex.{stringFieldRegex, stringFieldRegexAsterisk}
 import javax.inject.Inject
 import models.domain.SimplifiedNotification
 import play.api.data.Form
@@ -24,15 +25,13 @@ import uk.gov.hmrc.play.mappers.StopOnFirstFail
 
 class AuthorisedLocationFormProvider @Inject() extends Mappings {
 
-  val authorisedLocationRegex = s"^[a-zA-Z0-9&'@\\/.\\-%?<> ]{1,${SimplifiedNotification.Constants.approvedLocationLength}}$$"
-
   def apply(): Form[String] =
     Form(
       "value" -> text("authorisedLocation.error.required")
         .verifying(
           StopOnFirstFail[String](
             maxLength(SimplifiedNotification.Constants.approvedLocationLength, "authorisedLocation.error.length"),
-            regexp(authorisedLocationRegex, "authorisedLocation.error.invalid")
+            regexp(stringFieldRegex, "authorisedLocation.error.invalid", Seq.empty)
           )
         )
     )

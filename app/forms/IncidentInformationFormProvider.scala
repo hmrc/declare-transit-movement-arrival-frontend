@@ -17,15 +17,22 @@
 package forms
 
 import forms.mappings.Mappings
+import models.StringFieldRegex.stringFieldRegex
+
 import javax.inject.Inject
 import play.api.data.Form
 import models.messages.IncidentWithInformation.Constants.informationLength
+import uk.gov.hmrc.play.mappers.StopOnFirstFail
 
 class IncidentInformationFormProvider @Inject() extends Mappings {
 
   def apply(): Form[String] =
     Form(
       "value" -> text("incidentInformation.error.required")
-        .verifying(maxLength(informationLength, "incidentInformation.error.length"))
+        .verifying(
+          StopOnFirstFail[String](
+            maxLength(informationLength, "incidentInformation.error.length"),
+            regexp(stringFieldRegex, "incidentInformation.error.invalid", Seq.empty)
+          ))
     )
 }

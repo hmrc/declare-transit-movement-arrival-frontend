@@ -17,6 +17,8 @@
 package forms.events.transhipments
 
 import forms.mappings.Mappings
+import models.StringFieldRegex.stringFieldRegex
+
 import javax.inject.Inject
 import models.messages.VehicularTranshipment
 import play.api.data.Form
@@ -30,7 +32,7 @@ class TransportIdentityFormProvider @Inject() extends Mappings {
         .verifying(
           StopOnFirstFail[String](
             maxLength(VehicularTranshipment.Constants.transportIdentityLength, "transportIdentity.error.length"),
-            regexp(VehicularTranshipment.Constants.transportIdentityRegEx, "transportIdentity.error.invalid")
+            regexp(stringFieldRegex, "transportIdentity.error.invalid", Seq.empty)
           )
         )
     )

@@ -19,13 +19,15 @@ package forms
 import forms.behaviours.StringFieldBehaviours
 import models.domain.TraderDomain.Constants.nameLength
 import org.scalacheck.Gen
-import play.api.data.FormError
+import play.api.data.{Field, FormError}
+import wolfendale.scalacheck.regexp.RegexpGen
 
 class ConsigneeNameFormProviderSpec extends StringFieldBehaviours {
 
   val requiredKey    = "consigneeName.error.required"
   val lengthKey      = "consigneeName.error.length"
   val maxLength: Int = nameLength
+  val invalidKey     = "consigneeName.error.invalid"
 
   val validConsigneeNameStringGenOverLength: Gen[String] = for {
     num  <- Gen.chooseNum[Int](maxLength + 1, maxLength + 5)
@@ -57,5 +59,17 @@ class ConsigneeNameFormProviderSpec extends StringFieldBehaviours {
       fieldName,
       requiredError = FormError(fieldName, requiredKey)
     )
+
+    "must not bind strings that do not match regex" in {
+
+      val expectedError          = FormError(fieldName, invalidKey)
+      val generator: Gen[String] = RegexpGen.from(s"[!£^*(){}_+=:;|`~,±üçñèé@]{35}")
+
+      forAll(generator) {
+        invalidString =>
+          val result: Field = form.bind(Map(fieldName -> invalidString)).apply(fieldName)
+          result.errors must contain(expectedError)
+      }
+    }
   }
 }

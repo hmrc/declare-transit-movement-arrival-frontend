@@ -29,9 +29,8 @@ object Address {
     val cityLength              = 35
     val postcodeLength          = 9
 
-    lazy val consigneeAddressRegex: Regex = "^[a-zA-Z0-9&'*/.\\-? ]*$".r
-    lazy val postCodeRegex: Regex         = "^[a-zA-Z\\s*0-9]*$".r
-    lazy val postCodeFormatRegex: Regex   = "^[a-zA-Z]{1,2}([0-9]{1,2}|[0-9][a-zA-Z])\\s*[0-9][a-zA-Z]{2}$".r
+    lazy val postCodeRegex: Regex       = "^[a-zA-Z\\s*0-9]*$".r
+    lazy val postCodeFormatRegex: Regex = "^[a-zA-Z]{1,2}([0-9]{1,2}|[0-9][a-zA-Z])\\s*[0-9][a-zA-Z]{2}$".r
 
     object Fields {
       val buildingAndStreetName = "building and street name"

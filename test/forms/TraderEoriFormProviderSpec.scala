@@ -20,6 +20,7 @@ import forms.behaviours.StringFieldBehaviours
 import org.scalacheck.Gen
 import play.api.data.{Field, FormError}
 import models.domain.TraderDomain.Constants._
+import wolfendale.scalacheck.regexp.RegexpGen
 
 class TraderEoriFormProviderSpec extends StringFieldBehaviours {
 
@@ -59,14 +60,10 @@ class TraderEoriFormProviderSpec extends StringFieldBehaviours {
 
     "must not bind strings that do not match regex" in {
 
-      val validRegex    = "[A-Z]{2}[^\n\r]{1,}"
-      val expectedError = FormError(fieldName, invalidKey, Seq(traderName))
+      val expectedError          = FormError(fieldName, invalidKey, Seq(traderName))
+      val generator: Gen[String] = RegexpGen.from(s"[!£^*(){}_+=:;|`~,±üçñèé]{35}")
 
-      val genInvalidString: Gen[String] = {
-        stringsWithMaxLength(eoriLength) suchThat (!_.matches(validRegex))
-      }
-
-      forAll(genInvalidString) {
+      forAll(generator) {
         invalidString =>
           val result: Field = form.bind(Map(fieldName -> invalidString)).apply(fieldName)
           result.errors must contain(expectedError)

@@ -201,7 +201,7 @@ customsSubPlace.heading = Which Customs-approved location has the goods?
 customsSubPlace.checkYourAnswersLabel = Which Customs-approved location has the goods?
 customsSubPlace.error.required = Enter the Customs-approved location that has the goods
 customsSubPlace.error.length = Customs-approved location that has the goods must be 17 characters or less
-customsSubPlace.error.invalid = Customs-approved location that has the goods must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, asterisks, forward slashes, full stops, hyphens, question marks, and greater than (>) and less than (<) signs.
+customsSubPlace.error.invalid = Customs-approved location that has the goods must only include letters a to z without accents, numbers 0 to 9, asterisks(*), apostrophes, asterisks(*), forward slashes, full stops, hyphens, percent signs, question marks and spaces
 customsSubPlace.change.hidden = the customs sub-place or approved location
 
 authorisedLocation.title = What is the authorised location code?
@@ -210,7 +210,7 @@ authorisedLocation.heading = What is the authorised location code?
 authorisedLocation.checkYourAnswersLabel = Authorised location
 authorisedLocation.error.required = Enter authorised location code
 authorisedLocation.error.length = Authorised location code must be 17 characters or less
-authorisedLocation.error.invalid = Authorised location code must only include the letters a to z, numbers 0 to 9, ampersands (&), apostrophes, at signs (@), forward slashes, full stops, hyphens, percentage signs, question marks, spaces, and greater than and less than signs
+authorisedLocation.error.invalid = Authorised location code must only include letters a to z without accents, numbers 0 to 9, ampersands (&), apostrophes, at signs (@), forward slashes, full stops, hyphens, percent signs, question marks and spaces
 
 traderAddress.title = What is the destination trader’s address?
 traderAddress.heading = What is {0}’s address?
@@ -223,7 +223,7 @@ traderAddress.error.postcode.required = Enter the postcode of {0}’s address
 traderAddress.error.postcode.length = Postcode must be 9 characters or less
 traderAddress.error.postcode.invalid = The postcode of {0}’s address must only include letters A to Z and numbers 0 to 9
 
-traderAddress.error.invalid = The {0} of {1}’s address must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, at signs (@), forward slashes, full stops, hyphens, percent signs, question marks and spaces
+traderAddress.error.invalid = The {0} of {1}’s address must only include letters a to z without accents, numbers 0 to 9, ampersands (&), apostrophes, at signs (@), forward slashes, full stops, hyphens, percent signs, question marks and spaces
 traderAddress.error.required = Enter the {0} of {1}’s address
 traderAddress.error.length = The {0} of {1}’s address must be 35 characters or less
 traderAddress.change.hidden = address of trader
@@ -244,7 +244,7 @@ traderName.title = What is the destination trader’s name?
 traderName.heading = What is the destination trader’s name?
 traderName.checkYourAnswersLabel = Name
 traderName.error.required = Enter destination trader’s name
-traderName.error.invalid = Destination trader’s name must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, asterisks, forward slashes, full stops, hyphens, question marks, and greater than (>) and less than (<) signs.
+traderName.error.invalid = Destination trader’s name must only include letters a to z without accents, numbers 0 to 9, ampersands (&), apostrophes, asterisks(*), forward slashes, full stops, hyphens, percent signs, question marks and spaces
 traderName.error.length = Destination trader’s name must be 35 characters or less
 traderName.change.hidden = name of trader
 
@@ -295,6 +295,7 @@ eventPlace.hintText = Give the nearest town or road number.
 eventPlace.checkYourAnswersLabel = Where did the event happen?
 eventPlace.error.required = Enter where the event happened
 eventPlace.error.length = Where the event happened must be 35 characters or less
+eventPlace.error.invalid = Where the event happened must only include letters a to z without accents, numbers 0 to 9, ampersands (&), apostrophes, at signs (@), forward slashes, full stops, hyphens, percent signs, question marks and spaces
 eventPlace.change.hidden = where the event happened
 
 eventReported.title = Has this event been reported to Customs?
@@ -308,6 +309,7 @@ incidentInformation.heading = What happened on the journey?
 incidentInformation.checkYourAnswersLabel = What happened on the journey?
 incidentInformation.error.required = Enter what happened on the journey
 incidentInformation.error.length = What happened on the journey must be 350 characters or less
+incidentInformation.error.invalid = What happened on the journey must only include letters a to z without accents, numbers 0 to 9, ampersands (&), apostrophes, at signs (@), forward slashes, full stops, hyphens, percent signs, question marks and spaces
 incidentInformation.change.hidden = what happened on the journey
 
 isTranshipment.title = Were the goods moved to a different vehicle or container?
@@ -342,7 +344,7 @@ placeOfNotification.heading = Where are you completing this arrival notification
 placeOfNotification.checkYourAnswersLabel = Where are you completing this arrival notification?
 placeOfNotification.hintText = This is also known as the place of notification. Give the postcode.
 placeOfNotification.error.required = Enter where you are completing this arrival notification
-placeOfNotification.error.invalid =  Where you are completing this arrival notification must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, at signs (@), forward slashes, full stops, hyphens, percent signs, question marks, spaces, and less than and greater than signs
+placeOfNotification.error.invalid =  Where you are completing this arrival notification must only include letters a to z without accents, numbers 0 to 9, ampersands (&), apostrophes, at signs (@), forward slashes, full stops, hyphens, percent signs, question marks and spaces
 placeOfNotification.error.length = Where are you completing this arrival notification must be 35 characters or less
 placeOfNotification.change.hidden = where you are completing this arrival notification
 
@@ -380,7 +382,7 @@ transportIdentity.heading = What is the name, registration or reference of the n
 transportIdentity.checkYourAnswersLabel = What is the name, registration or reference of the new vehicle?
 transportIdentity.error.required = Enter the name, registration or reference of the new vehicle
 transportIdentity.error.length = Name, registration or reference of the new vehicle must be 27 characters or less
-transportIdentity.error.invalid = The name, registration or reference of the new vehicle must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, at signs (@), forward slashes, full stops, hyphens, percent signs, question marks, spaces, and less than and greater than signs
+transportIdentity.error.invalid = The name, registration or reference of the new vehicle must only include letters a to z without accents, numbers 0 to 9, ampersands (&), apostrophes, at signs (@), forward slashes, full stops, hyphens, percent signs, question marks and spaces
 transportIdentity.change.hidden = the name, registration or reference of the new vehicle
 
 transportNationality.title = Which country is the vehicle registered in?
@@ -395,6 +397,7 @@ containerNumber.heading = What is the new container number?
 containerNumber.checkYourAnswersLabel = What is the new container number?
 containerNumber.error.required = Enter the new container number
 containerNumber.error.length = New container number must be 17 characters or less
+containerNumber.error.invalid = New container number must only include letters a to z without accents, numbers 0 to 9, ampersands (&), apostrophes, at signs (@), forward slashes, full stops, hyphens, percent signs, question marks and spaces
 containerNumber.change.hidden = container {0}
 containerNumber.error.duplicate = Enter a container number you have not given before
 
@@ -416,7 +419,7 @@ sealIdentity.heading = What is the new official customs seal number?
 sealIdentity.checkYourAnswersLabel = What is the new official customs seal number?
 sealIdentity.error.required = Enter the new official customs seal number
 sealIdentity.error.length = The new official customs seal number must be 20 characters or less
-sealIdentity.error.invalid = The new official customs seal number must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, at signs (@), forward slashes, full stops, hyphens, percentage signs, question marks, greater than and less than signs
+sealIdentity.error.invalid = The new official customs seal number must only include letters a to z without accents, numbers 0 to 9, ampersands (&), apostrophes, at signs (@), forward slashes, full stops, hyphens, percent signs, question marks and spaces
 sealIdentity.error.duplicate = Enter an official customs seal number or mark you have not given before
 sealIdentity.change.hidden = official customs seal {0}
 
@@ -483,7 +486,7 @@ consigneeAddress.error.postcode.length = Postcode must be 9 characters or less
 consigneeAddress.error.postcode.invalid = Enter a real postcode
 consigneeAddress.error.postcode.invalidFormat = Enter the postcode of {0}’s address in the right format, like AB1 1AB
 
-consigneeAddress.error.invalid = The {0} of {1}’s address must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, asterisks, forward slashes, full stops, hyphens, question marks and spaces
+consigneeAddress.error.invalid = The {0} of {1}’s address must only include letters a to z without accents, numbers 0 to 9, ampersands (&), apostrophes, asterisks(*), forward slashes, full stops, hyphens, percent signs, question marks and spaces
 consigneeAddress.error.required = Enter the {0} of {1}’s address
 consigneeAddress.error.length = The {0} of {1}’s address must be 35 characters or less
 

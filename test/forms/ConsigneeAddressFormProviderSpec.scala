@@ -72,7 +72,7 @@ class ConsigneeAddressFormProviderSpec extends StringFieldBehaviours with SpecBa
         val fieldName = "buildingAndStreet"
         val args      = Seq(Address.Constants.Fields.buildingAndStreetName, consigneeName)
 
-        val generator: Gen[String] = RegexpGen.from(s"[!£^(){}_+=:;|`~,±<>]{${Address.Constants.buildingAndStreetLength}}")
+        val generator: Gen[String] = RegexpGen.from(s"[!£^(){}_+=:;|`~,±<>éèâñüç]{${Address.Constants.buildingAndStreetLength}}")
         val expectedError          = FormError(fieldName, consigneeAddressInvalidKey, args)
 
         forAll(generator) {

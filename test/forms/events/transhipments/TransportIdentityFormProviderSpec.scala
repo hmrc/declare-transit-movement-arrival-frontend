@@ -63,8 +63,8 @@ class TransportIdentityFormProviderSpec extends StringFieldBehaviours {
 
   "must not bind strings that do not match regex" in {
 
-    val generator: Gen[String] = RegexpGen.from(s"[!£^*(){}_+=:;|`~,±]{27}")
-    val expectedError          = FormError(fieldName, invalidKey, Seq(VehicularTranshipment.Constants.transportIdentityRegEx))
+    val generator: Gen[String] = RegexpGen.from(s"[!£^*(){}_+=:;|`~,±éèâñüç]{27}")
+    val expectedError          = FormError(fieldName, invalidKey)
 
     forAll(generator) {
       invalidString =>

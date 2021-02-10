@@ -18,9 +18,9 @@ package forms
 
 import javax.inject.Inject
 import forms.mappings.Mappings
-import models.domain.TraderDomain
 import models.domain.TraderDomain.Constants.nameLength
 import play.api.data.Form
+import models.StringFieldRegex.{stringFieldRegex, stringFieldRegexAsterisk}
 
 class ConsigneeNameFormProvider @Inject() extends Mappings {
 
@@ -30,12 +30,6 @@ class ConsigneeNameFormProvider @Inject() extends Mappings {
         .verifying(
           maxLength(nameLength, "consigneeName.error.length")
         )
-        .verifying(
-          regexp(
-            TraderDomain.inputRegex,
-            "consigneeName.error.invalid",
-            Seq.empty
-          )
-        )
+        .verifying(regexp(stringFieldRegexAsterisk, "consigneeName.error.invalid", Seq.empty))
     )
 }

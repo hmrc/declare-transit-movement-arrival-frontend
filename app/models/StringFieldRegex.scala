@@ -14,21 +14,12 @@
  * limitations under the License.
  */
 
-package forms
+package models
 
-import forms.mappings.Mappings
-import models.StringFieldRegex.stringFieldRegexAsterisk
-import models.domain.TraderDomain.Constants.nameLength
-import play.api.data.Form
+object StringFieldRegex {
+//includes "@' at signs
+  val stringFieldRegex = "[\\sa-zA-Z0-9&'@/.\\-? ]*".r
+//Includes "*" asterisks
+  val stringFieldRegexAsterisk = "[\\sa-zA-Z0-9&'*/.\\-? ]*".r
 
-import javax.inject.Inject
-
-class TraderNameFormProvider @Inject() extends Mappings {
-
-  def apply(): Form[String] =
-    Form(
-      "value" -> text("traderName.error.required")
-        .verifying(maxLength(nameLength, "traderName.error.length"))
-        .verifying(regexp(stringFieldRegexAsterisk, "traderName.error.invalid", Seq.empty))
-    )
 }

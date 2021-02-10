@@ -18,12 +18,15 @@ package forms.events
 
 import forms.IncidentInformationFormProvider
 import forms.behaviours.StringFieldBehaviours
-import play.api.data.FormError
+import org.scalacheck.Gen
+import play.api.data.{Field, FormError}
+import wolfendale.scalacheck.regexp.RegexpGen
 
 class IncidentInformationFormProviderSpec extends StringFieldBehaviours {
 
   val requiredKey = "incidentInformation.error.required"
   val lengthKey   = "incidentInformation.error.length"
+  val invalidKey  = "incidentInformation.error.invalid"
   val maxLength   = 350
 
   val form = new IncidentInformationFormProvider()()
@@ -50,5 +53,17 @@ class IncidentInformationFormProviderSpec extends StringFieldBehaviours {
       fieldName,
       requiredError = FormError(fieldName, requiredKey)
     )
+
+    "must not bind strings that do not match regex" in {
+
+      val expectedError          = FormError(fieldName, invalidKey)
+      val generator: Gen[String] = RegexpGen.from(s"[!£^*(){}_+=:;|`~,±üçñèé@]{35}")
+
+      forAll(generator) {
+        invalidString =>
+          val result: Field = form.bind(Map(fieldName -> invalidString)).apply(fieldName)
+          result.errors must contain(expectedError)
+      }
+    }
   }
 }
