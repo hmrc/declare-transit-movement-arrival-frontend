@@ -295,6 +295,7 @@ eventPlace.hintText = Give the nearest town or road number.
 eventPlace.checkYourAnswersLabel = Where did the event happen?
 eventPlace.error.required = Enter where the event happened
 eventPlace.error.length = Where the event happened must be 35 characters or less
+eventPlace.error.invalid = Where the event happened must only include letters a to z without accents, numbers 0 to 9, ampersands (&), apostrophes, at signs (@), forward slashes, full stops, hyphens, percent signs, question marks and spaces
 eventPlace.change.hidden = where the event happened
 
 eventReported.title = Has this event been reported to Customs?
@@ -396,6 +397,7 @@ containerNumber.heading = What is the new container number?
 containerNumber.checkYourAnswersLabel = What is the new container number?
 containerNumber.error.required = Enter the new container number
 containerNumber.error.length = New container number must be 17 characters or less
+containerNumber.error.invalid = New container number must only include letters a to z without accents, numbers 0 to 9, ampersands (&), apostrophes, at signs (@), forward slashes, full stops, hyphens, percent signs, question marks and spaces
 containerNumber.change.hidden = container {0}
 containerNumber.error.duplicate = Enter a container number you have not given before
 

@@ -17,18 +17,26 @@
 package forms.events.transhipments
 
 import forms.mappings.Mappings
+
 import javax.inject.Inject
 import models.Index
+import models.StringFieldRegex.stringFieldRegex
 import models.domain.ContainerDomain
 import models.messages.Transhipment
 import play.api.data.Form
+import uk.gov.hmrc.play.mappers.StopOnFirstFail
 
 class ContainerNumberFormProvider @Inject() extends Mappings {
 
   def apply(index: Index, declaredContainers: Seq[ContainerDomain] = Seq.empty[ContainerDomain]): Form[String] =
     Form(
       "value" -> text("containerNumber.error.required")
-        .verifying(maxLength(Transhipment.Constants.containerLength, "containerNumber.error.length"))
-        .verifying(doesNotExistIn(declaredContainers, index, "containerNumber.error.duplicate"))
+        .verifying(
+          StopOnFirstFail[String](
+            maxLength(Transhipment.Constants.containerLength, "containerNumber.error.length"),
+            regexp(stringFieldRegex, "containerNumber.error.invalid", Seq.empty),
+            doesNotExistIn(declaredContainers, index, "containerNumber.error.duplicate")
+          )
+        )
     )
 }
