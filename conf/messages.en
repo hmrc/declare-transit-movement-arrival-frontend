@@ -308,6 +308,7 @@ incidentInformation.heading = What happened on the journey?
 incidentInformation.checkYourAnswersLabel = What happened on the journey?
 incidentInformation.error.required = Enter what happened on the journey
 incidentInformation.error.length = What happened on the journey must be 350 characters or less
+incidentInformation.error.invalid = What happened on the journey must only include letters a to z without accents, numbers 0 to 9, ampersands (&), apostrophes, at signs (@), forward slashes, full stops, hyphens, percent signs, question marks and spaces
 incidentInformation.change.hidden = what happened on the journey
 
 isTranshipment.title = Were the goods moved to a different vehicle or container?
