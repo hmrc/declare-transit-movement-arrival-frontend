@@ -18,8 +18,10 @@ package models.messages
 
 import com.lucidchart.open.xtract._
 import models.Enumerable
+import play.api.Logger
 import play.api.libs.json.{JsNumber, Writes}
 
+import scala.util.Try
 import scala.xml.NodeSeq
 
 sealed trait ErrorType {
@@ -30,6 +32,8 @@ object ErrorType extends Enumerable.Implicits {
 
   sealed abstract class GenericError(val code: Int) extends ErrorType
   sealed abstract class MRNError(val code: Int) extends ErrorType
+
+  case class UnknownErrorType(override val code: Int) extends GenericError(code)
 
   case object IncorrectValue extends GenericError(12)
   case object MissingValue extends GenericError(13)
@@ -72,18 +76,15 @@ object ErrorType extends Enumerable.Implicits {
     case mrnError: MRNError         => JsNumber(mrnError.code)
   }
 
-  implicit val xmlErrorTypeReads: XmlReader[ErrorType] = {
-    new XmlReader[ErrorType] {
-      override def read(xml: NodeSeq): ParseResult[ErrorType] = {
-
-        case class ErrorTypeParseError(message: String) extends ParseError
-
-        (mrnValues ++ genericValues).find(x => x.code.toString == xml.text) match {
-          case Some(errorType) => ParseSuccess(errorType)
-          case None            => ParseFailure(ErrorTypeParseError(s"Invalid or missing ErrorType: ${xml.text}"))
+  implicit val xmlErrorTypeReads: XmlReader[ErrorType] =
+    XmlReader.of[Int].map {
+      code =>
+        (mrnValues ++ genericValues).find(knownError => knownError.code == code) match {
+          case Some(errorType) => errorType
+          case None =>
+            Logger("xmlErrorTypeReads").warn(s"[read] No known error type found instead found errorType: $code")
+            UnknownErrorType(code)
         }
-      }
     }
-  }
 
 }
