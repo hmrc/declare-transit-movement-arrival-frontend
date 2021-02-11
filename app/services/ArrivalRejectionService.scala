@@ -17,21 +17,27 @@
 package services
 
 import connectors.ArrivalMovementConnector
+
 import javax.inject.Inject
 import models.ArrivalId
 import models.messages.ArrivalNotificationRejectionMessage
+import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class ArrivalRejectionService @Inject()(arrivalMovementConnector: ArrivalMovementConnector) {
 
+  private val logger: Logger = Logger(getClass.getSimpleName)
+
   def arrivalRejectionMessage(arrivalId: ArrivalId)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[ArrivalNotificationRejectionMessage]] =
     arrivalMovementConnector.getSummary(arrivalId) flatMap {
       case Some(summary) =>
         summary.messagesLocation.arrivalRejection match {
           case Some(rejectionLocation) => arrivalMovementConnector.getRejectionMessage(rejectionLocation)
-          case _                       => Future.successful(None)
+          case _ =>
+            logger.error(s"[arrivalRejectionMessage] no arrivalRejection found for arrivalId ${arrivalId.value}")
+            Future.successful(None)
         }
       case _ => Future.successful(None)
     }

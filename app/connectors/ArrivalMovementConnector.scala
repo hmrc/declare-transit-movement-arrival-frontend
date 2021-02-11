@@ -16,12 +16,14 @@
 
 package connectors
 
-import com.lucidchart.open.xtract.XmlReader
+import com.lucidchart.open.xtract.{ParseFailure, ParseSuccess, PartialParseSuccess, XmlReader}
 import config.FrontendAppConfig
+
 import javax.inject.Inject
 import models.XMLWrites._
 import models.messages.{ArrivalMovementRequest, ArrivalNotificationRejectionMessage}
 import models.{ArrivalId, MessagesSummary, ResponseMovementMessage}
+import play.api.Logger
 import play.api.http.HeaderNames
 import uk.gov.hmrc.http.{HeaderCarrier, HttpErrorFunctions, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
@@ -32,6 +34,7 @@ import scala.xml.NodeSeq
 class ArrivalMovementConnector @Inject()(val config: FrontendAppConfig, val http: HttpClient)(implicit ec: ExecutionContext) extends HttpErrorFunctions {
 
   private val channel: String = "web"
+  private val logger: Logger  = Logger(getClass.getSimpleName)
 
   def submitArrivalMovement(arrivalMovement: ArrivalMovementRequest)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
 
@@ -47,7 +50,9 @@ class ArrivalMovementConnector @Inject()(val config: FrontendAppConfig, val http
     val header             = hc.withExtraHeaders(ChannelHeader(channel))
     http.GET[HttpResponse](serviceUrl)(httpReads, header, ec) map {
       case responseMessage if is2xx(responseMessage.status) => Some(responseMessage.json.as[MessagesSummary])
-      case _                                                => None
+      case response =>
+        logger.error(s"[getSummary] unexpected response code (${response.status}) returned when getting summary for arrival id: ${arrivalId.value} ")
+        None
     }
   }
 
@@ -57,8 +62,18 @@ class ArrivalMovementConnector @Inject()(val config: FrontendAppConfig, val http
     http.GET[HttpResponse](serviceUrl)(httpReads, header, ec) map {
       case responseMessage if is2xx(responseMessage.status) =>
         val message: NodeSeq = responseMessage.json.as[ResponseMovementMessage].message
-        XmlReader.of[ArrivalNotificationRejectionMessage].read(message).toOption
-      case _ => None
+        XmlReader.of[ArrivalNotificationRejectionMessage].read(message) match {
+          case ParseFailure(_) =>
+            logger.error("[getRejectionMessage] could not parse body into an ArrivalNotificationRejectionMessage")
+            Option.empty[ArrivalNotificationRejectionMessage]
+          case PartialParseSuccess(get, _) =>
+            logger.info("[getRejectionMessage] successfully parsed ArrivalNotificationRejectionMessage with some errors")
+            Some(get)
+          case ParseSuccess(get) => Some(get)
+        }
+      case response =>
+        logger.error(s"[getRejectionMessage] received an unexpected status (${response.status}) when attempting to retrieve the rejection message")
+        None
     }
   }
 
