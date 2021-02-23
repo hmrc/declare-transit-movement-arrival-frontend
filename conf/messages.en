@@ -65,7 +65,7 @@ index.heading = Manage transit movements
 index.guidance = Welcome to your new frontend. Please see the README file for a guide to getting started.
 index.create_arrival = Create an arrival notification
 
-ession_expired.title = For your security, we signed you out
+session_expired.title = For your security, we signed you out
 session_expired.heading = For your security, we signed you out
 session_expired.guidance = We did not save your answers.
 session_expired.button = Sign in
