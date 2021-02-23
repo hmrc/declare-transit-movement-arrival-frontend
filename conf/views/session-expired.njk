@@ -1,6 +1,7 @@
 {% extends "includes/layout.njk" %}
 
 {% from "macros/title.njk"                         import title %}
+{% from "govuk/components/button/macro.njk"        import govukButton %}
 
 {% block pageTitle %}
   {{ title(messages("session_expired.title")) }}
@@ -20,6 +21,12 @@
           {{ messages("session_expired.guidance") }}
         </p>
 
+               {{ govukButton({
+                                          text: messages("session_expired.button"),
+                                          preventDoubleClick: true,
+                                          href: nextPageUrl,
+                                          attributes: {id:"submit"}
+                                        }) }}
       </div>
     </div>
   </div>
