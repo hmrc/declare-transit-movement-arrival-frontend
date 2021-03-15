@@ -48,6 +48,7 @@ class FrontendAppConfig @Inject()(configuration: Configuration) {
   lazy val referenceDataUrl: String   = configuration.get[Service]("microservice.services.referenceData").fullServiceUrl
   lazy val timeoutSeconds: String     = configuration.get[String]("session.timeoutSeconds")
   lazy val countdownSeconds: String   = configuration.get[String]("session.countdownSeconds")
+  lazy val enrolmentProxyUrl: String  = configuration.get[Service]("microservice.services.enrolment-store-proxy").fullServiceUrl
 
   lazy val languageTranslationEnabled: Boolean =
     configuration.get[Boolean]("microservice.services.features.welsh-translation")
