@@ -39,15 +39,18 @@ class FrontendAppConfig @Inject()(configuration: Configuration) {
   lazy val manageTransitMovementsUrl: String             = configuration.get[String]("urls.manageTransitMovementsFrontend")
   lazy val manageTransitMovementsViewArrivalsUrl: String = s"$manageTransitMovementsUrl/view-arrivals"
 
-  lazy val authUrl: String            = configuration.get[Service]("auth").fullServiceUrl
-  lazy val loginUrl: String           = configuration.get[String]("urls.login")
-  lazy val loginContinueUrl: String   = configuration.get[String]("urls.loginContinue")
-  lazy val enrolmentKey: String       = configuration.get[String]("urls.enrolmentKey")
-  lazy val destinationUrl: String     = configuration.get[Service]("microservice.services.destination").fullServiceUrl
-  lazy val baseDestinationUrl: String = configuration.get[Service]("microservice.services.destination").baseUrl
-  lazy val referenceDataUrl: String   = configuration.get[Service]("microservice.services.referenceData").fullServiceUrl
-  lazy val timeoutSeconds: String     = configuration.get[String]("session.timeoutSeconds")
-  lazy val countdownSeconds: String   = configuration.get[String]("session.countdownSeconds")
+  lazy val authUrl: String                             = configuration.get[Service]("auth").fullServiceUrl
+  lazy val loginUrl: String                            = configuration.get[String]("urls.login")
+  lazy val loginContinueUrl: String                    = configuration.get[String]("urls.loginContinue")
+  lazy val enrolmentKey: String                        = configuration.get[String]("urls.enrolmentKey")
+  lazy val destinationUrl: String                      = configuration.get[Service]("microservice.services.destination").fullServiceUrl
+  lazy val baseDestinationUrl: String                  = configuration.get[Service]("microservice.services.destination").baseUrl
+  lazy val referenceDataUrl: String                    = configuration.get[Service]("microservice.services.referenceData").fullServiceUrl
+  lazy val timeoutSeconds: String                      = configuration.get[String]("session.timeoutSeconds")
+  lazy val countdownSeconds: String                    = configuration.get[String]("session.countdownSeconds")
+  lazy val enrolmentProxyUrl: String                   = configuration.get[Service]("microservice.services.enrolment-store-proxy").fullServiceUrl
+  lazy val enrolmentManagementFrontendEnrolUrl: String = configuration.get[String]("urls.enrolmentManagementFrontendEnrolUrl")
+  lazy val enrolmentIdentifierKey: String              = configuration.get[String]("keys.enrolmentIdentifierKey")
 
   lazy val languageTranslationEnabled: Boolean =
     configuration.get[Boolean]("microservice.services.features.welsh-translation")
