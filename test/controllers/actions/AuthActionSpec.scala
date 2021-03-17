@@ -419,7 +419,7 @@ class AuthActionSpec extends SpecBase with AppWithDefaultMockFixtures {
 
         status(result) mustBe UNAUTHORIZED
 
-        verify(mockUIRender, times(2)).render(templateCaptor.capture())(any())
+        verify(mockUIRender, times(1)).render(templateCaptor.capture())(any())
 
         templateCaptor.getValue mustBe "unauthorisedWithGroupAccess.njk"
       }
@@ -472,7 +472,7 @@ class AuthActionSpec extends SpecBase with AppWithDefaultMockFixtures {
         val result     = controller.onPageLoad()(fakeRequest)
 
         status(result) mustBe UNAUTHORIZED
-        verify(mockUIRender, times(2)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+        verify(mockUIRender, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
         val expectedJson = Json.obj("requestAccessToNCTSUrl" -> frontendAppConfig.enrolmentManagementFrontendEnrolUrl)
 

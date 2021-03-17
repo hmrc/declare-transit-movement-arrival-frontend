@@ -28,6 +28,7 @@ import play.api.mvc.Results._
 import play.api.mvc._
 import renderer.Renderer
 import uk.gov.hmrc.auth.core._
+import uk.gov.hmrc.auth.core.authorise.EmptyPredicate
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.HeaderCarrier
@@ -49,27 +50,25 @@ class AuthenticatedIdentifierAction @Inject()(
 
   override def invokeBlock[A](request: Request[A], block: IdentifierRequest[A] => Future[Result]): Future[Result] = {
 
-    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
+    implicit val hc: HeaderCarrier = HeaderCarrierConverter
+      .fromHeadersAndSession(request.headers, Some(request.session))
 
-    authorised(Enrolment(config.enrolmentKey)).retrieve(Retrievals.authorisedEnrolments and Retrievals.groupIdentifier) {
-      case enrolments ~ maybeGroupId =>
-        enrolments.enrolments
-          .filter(_.isActivated)
-          .find(_.key.equals(config.enrolmentKey))
-          .map {
-            enrolment =>
-              enrolment.getIdentifier(config.enrolmentIdentifierKey) match {
-                case Some(eoriNumber) => block(IdentifierRequest(request, EoriNumber(prefixGBIfMissing(eoriNumber.value))))
-                case _                => Future.successful(Redirect(routes.UnauthorisedController.onPageLoad()))
-              }
-          }
-          .getOrElse(checkForGroupEnrolment(maybeGroupId, config)(hc, request))
-    } recover {
-      case _: NoActiveSession =>
-        Redirect(config.loginUrl, Map("continue" -> Seq(config.loginContinueUrl)))
-      case _: AuthorisationException =>
-        Redirect(routes.UnauthorisedController.onPageLoad())
-    }
+    authorised(EmptyPredicate)
+      .retrieve(Retrievals.allEnrolments and Retrievals.groupIdentifier) {
+        case enrolments ~ maybeGroupId =>
+          (for {
+            enrolment <- enrolments.enrolments.filter(_.isActivated).find(_.key.equals(config.enrolmentKey))
+          } yield
+            enrolment.getIdentifier(config.enrolmentIdentifierKey) match {
+              case Some(eoriNumber) => block(IdentifierRequest(request, EoriNumber(prefixGBIfMissing(eoriNumber.value))))
+              case _                => Future.successful(Redirect(routes.UnauthorisedController.onPageLoad()))
+            }).getOrElse(checkForGroupEnrolment(maybeGroupId, config)(hc, request))
+      }
+  } recover {
+    case _: NoActiveSession =>
+      Redirect(config.loginUrl, Map("continue" -> Seq(config.loginContinueUrl)))
+    case _: AuthorisationException =>
+      Redirect(routes.UnauthorisedController.onPageLoad())
   }
 
   private def checkForGroupEnrolment[A](maybeGroupId: Option[String], config: FrontendAppConfig)(implicit hc: HeaderCarrier,

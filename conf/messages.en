@@ -16,6 +16,7 @@ site.service_name = Manage your transit movements
 site.textarea.char_limit = (Limit is {0} characters)
 site.title.suffix = - Manage your transit movements - GOV.UK
 site.movement.reference.number = Movement reference number
+site.youMust = You must
 
 error.title.prefix = Error:
 error.summary.title = There is a problem
@@ -512,3 +513,12 @@ pageNotFound.paragraph1 = If you typed the web address, check it is correct.
 pageNotFound.paragraph2 = If you pasted the web address, check you copied the entire address.
 pageNotFound.paragraph3Start = If the web address is correct or you selected a link or button,
 pageNotFound.contactLink=contact the New Computerised Transit System(NCTS) helpdesk if you need to speak to someone about your transit movement (opens in a new tab)
+
+unauthorisedWithGroupAccess.title = You cannot use this service authorisation
+unauthorisedWithGroupAccess.heading = You cannot use this service
+unauthorisedWithGroupAccess.p = If you already have access, you must contact your group administrator to update your access rights.
+
+unauthorisedWithoutGroupAccess.title = You cannot use this service group authorisation
+unauthorisedWithoutGroupAccess.heading = You cannot use this service
+unauthorisedWithoutGroupAccess.requestAccess = request access to NCTS
+unauthorisedWithoutGroupAccess.beforeUseThisService =  before you can use this service.
