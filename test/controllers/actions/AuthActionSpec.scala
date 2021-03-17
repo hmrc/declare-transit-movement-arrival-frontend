@@ -20,24 +20,24 @@ import base.{AppWithDefaultMockFixtures, SpecBase}
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.EnrolmentStoreConnector
+import controllers.actions.AuthActionSpec._
 import controllers.routes
+import matchers.JsonMatchers.containJson
+import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{reset, times, verify, when}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.{Action, AnyContent, BodyParsers, Results}
 import play.api.test.Helpers._
+import play.twirl.api.Html
 import renderer.Renderer
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.{~, Retrieval}
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.auth.{core => authClient}
-import controllers.actions.AuthActionSpec._
-import matchers.JsonMatchers.containJson
-import org.mockito.ArgumentCaptor
-import play.api.libs.json.{JsObject, Json}
-import play.twirl.api.Html
+import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
@@ -161,16 +161,14 @@ class AuthActionSpec extends SpecBase with AppWithDefaultMockFixtures {
 
         setNoExistingUserAnswers()
 
-        val bodyParsers             = app.injector.instanceOf[BodyParsers.Default]
-        val frontendAppConfig       = app.injector.instanceOf[FrontendAppConfig]
-        val enrolmentStoreConnector = app.injector.instanceOf[EnrolmentStoreConnector]
-        val renderer                = app.injector.instanceOf[Renderer]
+        val bodyParsers       = app.injector.instanceOf[BodyParsers.Default]
+        val frontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
         val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new MissingBearerToken),
                                                            frontendAppConfig,
                                                            bodyParsers,
-                                                           enrolmentStoreConnector,
-                                                           renderer)
+                                                           mockEnrolmentStoreConnector,
+                                                           mockUIRender)
 
         val controller = new Harness(authAction)
         val result     = controller.onPageLoad()(fakeRequest)
@@ -187,16 +185,14 @@ class AuthActionSpec extends SpecBase with AppWithDefaultMockFixtures {
 
         setNoExistingUserAnswers()
 
-        val bodyParsers             = app.injector.instanceOf[BodyParsers.Default]
-        val frontendAppConfig       = app.injector.instanceOf[FrontendAppConfig]
-        val enrolmentStoreConnector = app.injector.instanceOf[EnrolmentStoreConnector]
-        val renderer                = app.injector.instanceOf[Renderer]
+        val bodyParsers       = app.injector.instanceOf[BodyParsers.Default]
+        val frontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
         val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new BearerTokenExpired),
                                                            frontendAppConfig,
                                                            bodyParsers,
-                                                           enrolmentStoreConnector,
-                                                           renderer)
+                                                           mockEnrolmentStoreConnector,
+                                                           mockUIRender)
         val controller = new Harness(authAction)
         val result     = controller.onPageLoad()(fakeRequest)
 
@@ -212,16 +208,14 @@ class AuthActionSpec extends SpecBase with AppWithDefaultMockFixtures {
 
         setNoExistingUserAnswers()
 
-        val bodyParsers             = app.injector.instanceOf[BodyParsers.Default]
-        val frontendAppConfig       = app.injector.instanceOf[FrontendAppConfig]
-        val enrolmentStoreConnector = app.injector.instanceOf[EnrolmentStoreConnector]
-        val renderer                = app.injector.instanceOf[Renderer]
+        val bodyParsers       = app.injector.instanceOf[BodyParsers.Default]
+        val frontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
         val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new InsufficientEnrolments),
                                                            frontendAppConfig,
                                                            bodyParsers,
-                                                           enrolmentStoreConnector,
-                                                           renderer)
+                                                           mockEnrolmentStoreConnector,
+                                                           mockUIRender)
 
         val controller = new Harness(authAction)
         val result     = controller.onPageLoad()(fakeRequest)
@@ -238,16 +232,14 @@ class AuthActionSpec extends SpecBase with AppWithDefaultMockFixtures {
 
         setNoExistingUserAnswers()
 
-        val bodyParsers             = app.injector.instanceOf[BodyParsers.Default]
-        val frontendAppConfig       = app.injector.instanceOf[FrontendAppConfig]
-        val enrolmentStoreConnector = app.injector.instanceOf[EnrolmentStoreConnector]
-        val renderer                = app.injector.instanceOf[Renderer]
+        val bodyParsers       = app.injector.instanceOf[BodyParsers.Default]
+        val frontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
         val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new InsufficientConfidenceLevel),
                                                            frontendAppConfig,
                                                            bodyParsers,
-                                                           enrolmentStoreConnector,
-                                                           renderer)
+                                                           mockEnrolmentStoreConnector,
+                                                           mockUIRender)
 
         val controller = new Harness(authAction)
         val result     = controller.onPageLoad()(fakeRequest)
@@ -264,16 +256,14 @@ class AuthActionSpec extends SpecBase with AppWithDefaultMockFixtures {
 
         setNoExistingUserAnswers()
 
-        val bodyParsers             = app.injector.instanceOf[BodyParsers.Default]
-        val frontendAppConfig       = app.injector.instanceOf[FrontendAppConfig]
-        val enrolmentStoreConnector = app.injector.instanceOf[EnrolmentStoreConnector]
-        val renderer                = app.injector.instanceOf[Renderer]
+        val bodyParsers       = app.injector.instanceOf[BodyParsers.Default]
+        val frontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
         val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new UnsupportedAuthProvider),
                                                            frontendAppConfig,
                                                            bodyParsers,
-                                                           enrolmentStoreConnector,
-                                                           renderer)
+                                                           mockEnrolmentStoreConnector,
+                                                           mockUIRender)
 
         val controller = new Harness(authAction)
         val result     = controller.onPageLoad()(fakeRequest)
@@ -290,16 +280,14 @@ class AuthActionSpec extends SpecBase with AppWithDefaultMockFixtures {
 
         setNoExistingUserAnswers()
 
-        val bodyParsers             = app.injector.instanceOf[BodyParsers.Default]
-        val frontendAppConfig       = app.injector.instanceOf[FrontendAppConfig]
-        val enrolmentStoreConnector = app.injector.instanceOf[EnrolmentStoreConnector]
-        val renderer                = app.injector.instanceOf[Renderer]
+        val bodyParsers       = app.injector.instanceOf[BodyParsers.Default]
+        val frontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
         val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new UnsupportedAffinityGroup),
                                                            frontendAppConfig,
                                                            bodyParsers,
-                                                           enrolmentStoreConnector,
-                                                           renderer)
+                                                           mockEnrolmentStoreConnector,
+                                                           mockUIRender)
 
         val controller = new Harness(authAction)
         val result     = controller.onPageLoad()(fakeRequest)
@@ -316,16 +304,14 @@ class AuthActionSpec extends SpecBase with AppWithDefaultMockFixtures {
 
         setNoExistingUserAnswers()
 
-        val bodyParsers             = app.injector.instanceOf[BodyParsers.Default]
-        val frontendAppConfig       = app.injector.instanceOf[FrontendAppConfig]
-        val enrolmentStoreConnector = app.injector.instanceOf[EnrolmentStoreConnector]
-        val renderer                = app.injector.instanceOf[Renderer]
+        val bodyParsers       = app.injector.instanceOf[BodyParsers.Default]
+        val frontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
         val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new UnsupportedCredentialRole),
                                                            frontendAppConfig,
                                                            bodyParsers,
-                                                           enrolmentStoreConnector,
-                                                           renderer)
+                                                           mockEnrolmentStoreConnector,
+                                                           mockUIRender)
 
         val controller = new Harness(authAction)
         val result     = controller.onPageLoad()(fakeRequest)
@@ -344,12 +330,10 @@ class AuthActionSpec extends SpecBase with AppWithDefaultMockFixtures {
 
         setNoExistingUserAnswers()
 
-        val bodyParsers             = app.injector.instanceOf[BodyParsers.Default]
-        val frontendAppConfig       = app.injector.instanceOf[FrontendAppConfig]
-        val enrolmentStoreConnector = app.injector.instanceOf[EnrolmentStoreConnector]
-        val renderer                = app.injector.instanceOf[Renderer]
+        val bodyParsers       = app.injector.instanceOf[BodyParsers.Default]
+        val frontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
-        val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, frontendAppConfig, bodyParsers, enrolmentStoreConnector, renderer)
+        val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, frontendAppConfig, bodyParsers, mockEnrolmentStoreConnector, mockUIRender)
 
         val controller = new Harness(authAction)
         val result     = controller.onPageLoad()(fakeRequest)
@@ -361,12 +345,10 @@ class AuthActionSpec extends SpecBase with AppWithDefaultMockFixtures {
         when(mockAuthConnector.authorise[Enrolments ~ Option[String]](any(), any())(any(), any()))
           .thenReturn(Future.successful(enrolmentsWithoutEori ~ Some("testName")))
 
-        val bodyParsers             = app.injector.instanceOf[BodyParsers.Default]
-        val frontendAppConfig       = app.injector.instanceOf[FrontendAppConfig]
-        val enrolmentStoreConnector = app.injector.instanceOf[EnrolmentStoreConnector]
-        val renderer                = app.injector.instanceOf[Renderer]
+        val bodyParsers       = app.injector.instanceOf[BodyParsers.Default]
+        val frontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
-        val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, frontendAppConfig, bodyParsers, enrolmentStoreConnector, renderer)
+        val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, frontendAppConfig, bodyParsers, mockEnrolmentStoreConnector, mockUIRender)
 
         val controller = new Harness(authAction)
         val result     = controller.onPageLoad()(fakeRequest)
@@ -384,12 +366,10 @@ class AuthActionSpec extends SpecBase with AppWithDefaultMockFixtures {
 
         val templateCaptor = ArgumentCaptor.forClass(classOf[String])
 
-        val bodyParsers             = app.injector.instanceOf[BodyParsers.Default]
-        val frontendAppConfig       = app.injector.instanceOf[FrontendAppConfig]
-        val enrolmentStoreConnector = app.injector.instanceOf[EnrolmentStoreConnector]
-        val renderer                = app.injector.instanceOf[Renderer]
+        val bodyParsers       = app.injector.instanceOf[BodyParsers.Default]
+        val frontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
-        val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, frontendAppConfig, bodyParsers, enrolmentStoreConnector, renderer)
+        val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, frontendAppConfig, bodyParsers, mockEnrolmentStoreConnector, mockUIRender)
         val controller = new Harness(authAction)
 
         val result = controller.onPageLoad()(fakeRequest)
@@ -408,19 +388,17 @@ class AuthActionSpec extends SpecBase with AppWithDefaultMockFixtures {
 
         val templateCaptor = ArgumentCaptor.forClass(classOf[String])
 
-        val bodyParsers             = app.injector.instanceOf[BodyParsers.Default]
-        val frontendAppConfig       = app.injector.instanceOf[FrontendAppConfig]
-        val enrolmentStoreConnector = app.injector.instanceOf[EnrolmentStoreConnector]
-        val renderer                = app.injector.instanceOf[Renderer]
+        val bodyParsers       = app.injector.instanceOf[BodyParsers.Default]
+        val frontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
-        val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, frontendAppConfig, bodyParsers, enrolmentStoreConnector, renderer)
+        val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, frontendAppConfig, bodyParsers, mockEnrolmentStoreConnector, mockUIRender)
         val controller = new Harness(authAction)
-        val result     = controller.onPageLoad()(fakeRequest)
+
+        val result = controller.onPageLoad()(fakeRequest)
 
         status(result) mustBe UNAUTHORIZED
 
         verify(mockUIRender, times(1)).render(templateCaptor.capture())(any())
-
         templateCaptor.getValue mustBe "unauthorisedWithGroupAccess.njk"
       }
 
@@ -433,12 +411,10 @@ class AuthActionSpec extends SpecBase with AppWithDefaultMockFixtures {
         val templateCaptor = ArgumentCaptor.forClass(classOf[String])
         val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-        val bodyParsers             = app.injector.instanceOf[BodyParsers.Default]
-        val frontendAppConfig       = app.injector.instanceOf[FrontendAppConfig]
-        val enrolmentStoreConnector = app.injector.instanceOf[EnrolmentStoreConnector]
-        val renderer                = app.injector.instanceOf[Renderer]
+        val bodyParsers       = app.injector.instanceOf[BodyParsers.Default]
+        val frontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
-        val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, frontendAppConfig, bodyParsers, enrolmentStoreConnector, renderer)
+        val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, frontendAppConfig, bodyParsers, mockEnrolmentStoreConnector, mockUIRender)
         val controller = new Harness(authAction)
         val result     = controller.onPageLoad()(fakeRequest)
 
@@ -455,23 +431,21 @@ class AuthActionSpec extends SpecBase with AppWithDefaultMockFixtures {
       "must redirect to unauthorised page without group access when given user has no enrolments and there is no group" in {
         when(mockAuthConnector.authorise[Enrolments ~ Option[String]](any(), any())(any(), any()))
           .thenReturn(Future.successful(Enrolments(Set.empty) ~ None))
-
         when(mockUIRender.render(any(), any())(any())).thenReturn(Future.successful(Html("")))
         when(mockEnrolmentStoreConnector.checkGroupEnrolments(any(), any())(any())).thenReturn(Future.successful(false))
 
         val templateCaptor = ArgumentCaptor.forClass(classOf[String])
         val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-        val bodyParsers             = app.injector.instanceOf[BodyParsers.Default]
-        val frontendAppConfig       = app.injector.instanceOf[FrontendAppConfig]
-        val enrolmentStoreConnector = app.injector.instanceOf[EnrolmentStoreConnector]
-        val renderer                = app.injector.instanceOf[Renderer]
+        val bodyParsers       = app.injector.instanceOf[BodyParsers.Default]
+        val frontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
-        val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, frontendAppConfig, bodyParsers, enrolmentStoreConnector, renderer)
+        val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, frontendAppConfig, bodyParsers, mockEnrolmentStoreConnector, mockUIRender)
         val controller = new Harness(authAction)
         val result     = controller.onPageLoad()(fakeRequest)
 
         status(result) mustBe UNAUTHORIZED
+
         verify(mockUIRender, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
         val expectedJson = Json.obj("requestAccessToNCTSUrl" -> frontendAppConfig.enrolmentManagementFrontendEnrolUrl)
@@ -487,7 +461,7 @@ class AuthActionSpec extends SpecBase with AppWithDefaultMockFixtures {
     super.beforeEach()
     reset(mockAuthConnector)
     reset(mockEnrolmentStoreConnector)
-    reset(mockRenderer)
+    reset(mockUIRender)
   }
 }
 
