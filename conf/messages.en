@@ -81,7 +81,7 @@ technicalDifficulties.title = Sorry, there is a problem with the service
 technicalDifficulties.heading = Sorry, there is a problem with the service
 technicalDifficulties.tryAgain = Try again later.
 technicalDifficulties.contact = You can
-technicalDifficulties.contact.link = contact the New Computerised Transit System helpdesk if you need to speak to someone about transit movements (opens in a new tab)
+technicalDifficulties.contact.link = contact the New Computerised Transit System helpdesk if you need to speak to someone about transit movements (opens in a new tab).
 
 #### Compliance statement
 
@@ -491,7 +491,7 @@ consigneeAddress.error.invalid = The {0} of {1}’s address must only include le
 consigneeAddress.error.required = Enter the {0} of {1}’s address
 consigneeAddress.error.length = The {0} of {1}’s address must be 35 characters or less
 
-arrivalRejection.title = There is a problem with this arrival not ification
+arrivalRejection.title = There is a problem with this arrival notification
 arrivalRejection.heading = There is a problem with this arrival notification
 arrivalRejection.you.can = You can:
 arrivalRejection.errorCode = Error code
