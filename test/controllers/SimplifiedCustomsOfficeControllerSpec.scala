@@ -22,9 +22,9 @@ import forms.SimplifiedCustomsOfficeFormProvider
 import matchers.JsonMatchers
 import models.reference.CustomsOffice
 import models.{NormalMode, UserAnswers}
-import org.mockito.Matchers.{any, anyObject}
+import org.mockito.Matchers.{any, anyObject, anyString}
 import org.mockito.Mockito.{times, verify, when}
-import org.mockito.{ArgumentCaptor, Mockito}
+import org.mockito.{ArgumentCaptor, Matchers, Mockito}
 import pages.{ConsigneeNamePage, CustomsOfficePage, CustomsSubPlacePage}
 import play.api.data.Form
 import play.api.inject.bind
@@ -88,7 +88,7 @@ class SimplifiedCustomsOfficeControllerSpec extends SpecBase with AppWithDefault
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      when(mockRefDataConnector.getCustomsOfficesOfTheCountry(anyObject())(any(), any())).thenReturn(Future.successful(customsOffices))
+      when(mockRefDataConnector.getCustomsOfficesOfTheCountry(anyString())(any(), any())).thenReturn(Future.successful(customsOffices))
 
       setExistingUserAnswers(emptyUserAnswers)
 
@@ -103,7 +103,7 @@ class SimplifiedCustomsOfficeControllerSpec extends SpecBase with AppWithDefault
 
     "must redirect to the next page when valid data is submitted" in {
 
-      when(mockRefDataConnector.getCustomsOffices()(any(), any())).thenReturn(Future.successful(customsOffices))
+      when(mockRefDataConnector.getCustomsOfficesOfTheCountry(anyString())(any(), any())).thenReturn(Future.successful(customsOffices))
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       val userAnswers = emptyUserAnswers.set(CustomsSubPlacePage, "sub place").success.value
@@ -117,6 +117,7 @@ class SimplifiedCustomsOfficeControllerSpec extends SpecBase with AppWithDefault
 
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual onwardRoute.url
+      verify(mockRefDataConnector, times(1)).getCustomsOfficesOfTheCountry(Matchers.eq("GB"))(any(), any())
     }
 
     "must return Bad Request and error when user entered data does not exist in reference data customs office list" in {
@@ -129,7 +130,7 @@ class SimplifiedCustomsOfficeControllerSpec extends SpecBase with AppWithDefault
 
     "must redirect to session expired page when invalid data is submitted and user hasn't answered the customs sub-place page question" in {
 
-      when(mockRefDataConnector.getCustomsOffices()(any(), any())).thenReturn(Future.successful(customsOffices))
+      when(mockRefDataConnector.getCustomsOfficesOfTheCountry(anyString())(any(), any())).thenReturn(Future.successful(customsOffices))
 
       setExistingUserAnswers(emptyUserAnswers)
 
@@ -140,6 +141,7 @@ class SimplifiedCustomsOfficeControllerSpec extends SpecBase with AppWithDefault
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
+      verify(mockRefDataConnector, times(1)).getCustomsOfficesOfTheCountry(Matchers.eq("GB"))(any(), any())
     }
 
     "must redirect to Session Expired for a GET if no existing data is found" in {
@@ -181,7 +183,7 @@ class SimplifiedCustomsOfficeControllerSpec extends SpecBase with AppWithDefault
     when(mockRenderer.render(any(), any())(any()))
       .thenReturn(Future.successful(Html("")))
 
-    when(mockRefDataConnector.getCustomsOffices()(any(), any())).thenReturn(Future.successful(customsOffices))
+    when(mockRefDataConnector.getCustomsOfficesOfTheCountry(Matchers.eq("GB"))(any(), any())).thenReturn(Future.successful(customsOffices))
 
     val userAnswers = emptyUserAnswers
       .set(ConsigneeNamePage, consigneeName)
@@ -198,6 +200,7 @@ class SimplifiedCustomsOfficeControllerSpec extends SpecBase with AppWithDefault
     status(result) mustEqual BAD_REQUEST
 
     verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+    verify(mockRefDataConnector, times(1)).getCustomsOfficesOfTheCountry(Matchers.eq("GB"))(any(), any())
 
     val expectedJson = Json.obj(
       "form"           -> boundForm,
@@ -215,6 +218,7 @@ class SimplifiedCustomsOfficeControllerSpec extends SpecBase with AppWithDefault
     status(result) mustEqual expectedStatus
 
     verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+    verify(mockRefDataConnector, times(1)).getCustomsOfficesOfTheCountry(Matchers.eq("GB"))(any(), any())
 
     val expectedJson = Json.obj(
       "form"           -> boundForm,
