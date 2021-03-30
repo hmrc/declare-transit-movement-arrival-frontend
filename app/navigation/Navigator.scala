@@ -70,6 +70,7 @@ class Navigator @Inject()() {
     case SealIdentityPage(eventIndex, _) => ua => Some(sealRoutes.AddSealController.onPageLoad(ua.id, eventIndex, NormalMode))
     case AddSealPage(eventIndex) => addSeal(eventIndex, NormalMode)
     case ConfirmRemoveSealPage(eventIndex) => removeSeal(eventIndex, NormalMode)
+    case UpdateRejectedMRNPage => ua => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
   }
 
   private val checkRouteMap: PartialFunction[Page, UserAnswers => Option[Call]] = {
@@ -128,13 +129,6 @@ class Navigator @Inject()() {
       }
   }
 
-  @deprecated("All navigation should rely on the nextPage method", "")
-  def nextRejectionPage(page: Page, mrn: MovementReferenceNumber): Call =
-    page match {
-      case UpdateRejectedMRNPage => routes.CheckYourAnswersController.onPageLoad(mrn)
-      case _ => routes.TechnicalDifficultiesController.onPageLoad()
-    }
-  
   // format: on
 
   private def traderAddressRoute(mode: Mode)(ua: UserAnswers) =

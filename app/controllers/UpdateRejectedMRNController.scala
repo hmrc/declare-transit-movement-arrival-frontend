@@ -18,8 +18,9 @@ package controllers
 
 import controllers.actions._
 import forms.UpdateRejectedMRNFormProvider
+
 import javax.inject.Inject
-import models.{ArrivalId, MovementReferenceNumber}
+import models.{ArrivalId, MovementReferenceNumber, NormalMode}
 import navigation.Navigator
 import pages.UpdateRejectedMRNPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -68,16 +69,15 @@ class UpdateRejectedMRNController @Inject()(override val messagesApi: MessagesAp
         .bindFromRequest()
         .fold(
           formWithErrors => {
-
             val json = Json.obj("form" -> formWithErrors)
-
             renderer.render("updateMovementReferenceNumber.njk", json).map(BadRequest(_))
           },
           value =>
             userAnswersService.getUserAnswers(arrivalId, request.eoriNumber) map {
               case Some(userAnswers) =>
-                sessionRepository.set(userAnswers.copy(id = value, arrivalId = Some(arrivalId)))
-                Redirect(navigator.nextRejectionPage(UpdateRejectedMRNPage, value))
+                val updatedUserAnswers = userAnswers.copy(id = value, arrivalId = Some(arrivalId))
+                sessionRepository.set(updatedUserAnswers)
+                Redirect(navigator.nextPage(UpdateRejectedMRNPage, NormalMode, updatedUserAnswers))
               case _ => Redirect(routes.TechnicalDifficultiesController.onPageLoad())
           }
         )
