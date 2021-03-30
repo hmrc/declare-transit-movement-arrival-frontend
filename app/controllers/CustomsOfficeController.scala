@@ -49,6 +49,8 @@ class CustomsOfficeController @Inject()(override val messagesApi: MessagesApi,
     with I18nSupport
     with NunjucksSupport {
 
+  val country_gb = "GB"
+
   def onPageLoad(mrn: MovementReferenceNumber, mode: Mode): Action[AnyContent] =
     (identify andThen getData(mrn) andThen requireData).async {
       implicit request =>
@@ -60,7 +62,7 @@ class CustomsOfficeController @Inject()(override val messagesApi: MessagesApi,
           case _                             => None
         }
 
-        referenceDataConnector.getCustomsOfficesOfTheCountry("GB") flatMap {
+        referenceDataConnector.getCustomsOfficesOfTheCountry(country_gb) flatMap {
           customsOffices =>
             locationName match {
               case locationName: String =>
@@ -116,7 +118,7 @@ class CustomsOfficeController @Inject()(override val messagesApi: MessagesApi,
           case _                             => None
         }
 
-        referenceDataConnector.getCustomsOffices flatMap {
+        referenceDataConnector.getCustomsOfficesOfTheCountry(country_gb) flatMap {
           customsOffices =>
             locationName match {
               case locationName: String =>
