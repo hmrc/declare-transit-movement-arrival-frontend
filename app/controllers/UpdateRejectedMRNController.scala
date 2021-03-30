@@ -31,6 +31,7 @@ import repositories.SessionRepository
 import services.{ArrivalNotificationMessageService, UserAnswersService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
+import viewModels.sections.ViewModelConfig
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -41,11 +42,13 @@ class UpdateRejectedMRNController @Inject()(override val messagesApi: MessagesAp
                                             sessionRepository: SessionRepository,
                                             arrivalMovementMessageService: ArrivalNotificationMessageService,
                                             userAnswersService: UserAnswersService,
+                                            val viewModelConfig: ViewModelConfig,
                                             val controllerComponents: MessagesControllerComponents,
-                                            renderer: Renderer)(implicit ec: ExecutionContext)
+                                            val renderer: Renderer)(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
-    with NunjucksSupport {
+    with NunjucksSupport
+    with TechnicalDifficultiesPage {
 
   private val form = formProvider()
 
@@ -57,9 +60,9 @@ class UpdateRejectedMRNController @Inject()(override val messagesApi: MessagesAp
             case Some(mrn) =>
               val json = Json.obj("form" -> form.fill(mrn), "arrivalId" -> arrivalId.value)
               renderer.render("updateMovementReferenceNumber.njk", json).map(Ok(_))
-            case _ => Future.successful(Redirect(routes.TechnicalDifficultiesController.onPageLoad()))
+            case _ => renderTechnicalDifficultiesPage
           }
-        case _ => Future.successful(Redirect(routes.TechnicalDifficultiesController.onPageLoad()))
+        case _ => renderTechnicalDifficultiesPage
       }
   }
 
@@ -73,12 +76,12 @@ class UpdateRejectedMRNController @Inject()(override val messagesApi: MessagesAp
             renderer.render("updateMovementReferenceNumber.njk", json).map(BadRequest(_))
           },
           value =>
-            userAnswersService.getUserAnswers(arrivalId, request.eoriNumber) map {
+            userAnswersService.getUserAnswers(arrivalId, request.eoriNumber) flatMap {
               case Some(userAnswers) =>
                 val updatedUserAnswers = userAnswers.copy(id = value, arrivalId = Some(arrivalId))
                 sessionRepository.set(updatedUserAnswers)
-                Redirect(navigator.nextPage(UpdateRejectedMRNPage, NormalMode, updatedUserAnswers))
-              case _ => Redirect(routes.TechnicalDifficultiesController.onPageLoad())
+                Future.successful(Redirect(navigator.nextPage(UpdateRejectedMRNPage, NormalMode, updatedUserAnswers)))
+              case _ => renderTechnicalDifficultiesPage
           }
         )
   }

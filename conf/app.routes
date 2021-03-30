@@ -12,8 +12,6 @@ POST       /:mrn/check-your-answers-arrival                  controllers.CheckYo
 
 GET        /cannot-use-service-no-eori                       controllers.UnauthorisedController.onPageLoad
 
-GET        /technical-difficulties                           controllers.TechnicalDifficultiesController.onPageLoad
-
 GET        /movement-reference-number                        controllers.MovementReferenceNumberController.onPageLoad()
 POST       /movement-reference-number                        controllers.MovementReferenceNumberController.onSubmit()
 GET        /change-movement-reference-number                 controllers.MovementReferenceNumberController.onPageLoad()

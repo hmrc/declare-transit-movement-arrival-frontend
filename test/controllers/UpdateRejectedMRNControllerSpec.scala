@@ -50,6 +50,7 @@ import play.api.test.Helpers._
 import play.twirl.api.Html
 import services.{ArrivalNotificationMessageService, UserAnswersService}
 import uk.gov.hmrc.viewmodels.NunjucksSupport
+import viewModels.sections.ViewModelConfig
 
 import scala.concurrent.Future
 
@@ -60,7 +61,7 @@ class UpdateRejectedMRNControllerSpec extends SpecBase with AppWithDefaultMockFi
   private val mockArrivalMovementMessageService = mock[ArrivalNotificationMessageService]
   private val mockUserAnswersService            = mock[UserAnswersService]
   private val arrivalId                         = ArrivalId(1)
-
+  private val viewConfig: ViewModelConfig       = app.injector.instanceOf[ViewModelConfig]
   private lazy val movementReferenceNumberRoute = routes.UpdateRejectedMRNController.onPageLoad(arrivalId).url
 
   override def beforeEach(): Unit = {
@@ -110,18 +111,29 @@ class UpdateRejectedMRNControllerSpec extends SpecBase with AppWithDefaultMockFi
       jsonCaptor.getValue must containJson(expectedJson)
     }
 
-    "must redirect to TechnicalDifficulties page when getArrivalNotification returns None" in {
-
+    "must render to TechnicalDifficulties page when getArrivalNotification returns None" in {
+      when(mockRenderer.render(any(), any())(any())).thenReturn(Future.successful(Html("")))
       when(mockArrivalMovementMessageService.getArrivalNotificationMessage(any())(any(), any()))
         .thenReturn(Future.successful(None))
 
       setNoExistingUserAnswers()
+      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val request = FakeRequest(GET, movementReferenceNumberRoute)
 
       val result = route(app, request).value
 
-      status(result) mustEqual SEE_OTHER
+      status(result) mustEqual INTERNAL_SERVER_ERROR
+      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+
+      val expectedJson = Json.obj(
+        "contactUrl" -> viewConfig.nctsEnquiriesUrl
+      )
+
+      templateCaptor.getValue mustEqual "technicalDifficulties.njk"
+      jsonCaptor.getValue must containJson(expectedJson)
+
     }
 
     "must redirect to the next page when valid data is submitted" in {
@@ -145,12 +157,17 @@ class UpdateRejectedMRNControllerSpec extends SpecBase with AppWithDefaultMockFi
       verify(mockSessionRepository, times(1)).set(meq(emptyUserAnswers.copy(id = MovementReferenceNumber(mrn).get, arrivalId = Some(arrivalId))))
     }
 
-    "must redirect to to TechnicalDifficulties page when UserAnswersService return 'none'" in {
+    "must render to TechnicalDifficulties page when UserAnswersService return 'none'" in {
+
+      when(mockRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("")))
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
       when(mockUserAnswersService.getUserAnswers(any(), any())(any())) thenReturn Future.successful(None)
 
       setNoExistingUserAnswers()
+      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val request =
         FakeRequest(POST, movementReferenceNumberRoute)
@@ -158,9 +175,15 @@ class UpdateRejectedMRNControllerSpec extends SpecBase with AppWithDefaultMockFi
 
       val result = route(app, request).value
 
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual routes.TechnicalDifficultiesController.onPageLoad().url
+      status(result) mustEqual INTERNAL_SERVER_ERROR
+      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
+      val expectedJson = Json.obj(
+        "contactUrl" -> viewConfig.nctsEnquiriesUrl
+      )
+
+      templateCaptor.getValue mustEqual "technicalDifficulties.njk"
+      jsonCaptor.getValue must containJson(expectedJson)
       verify(mockUserAnswersService, times(1)).getUserAnswers(any(), any())(any())
       verify(mockSessionRepository, never()).set(any())
     }

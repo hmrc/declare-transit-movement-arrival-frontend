@@ -26,12 +26,13 @@ import org.mockito.Mockito.when
 import org.scalacheck.Gen
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json.JsObject
+import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import services.ArrivalSubmissionService
 import uk.gov.hmrc.http.HttpResponse
+import viewModels.sections.ViewModelConfig
 
 import scala.concurrent.Future
 
@@ -137,17 +138,30 @@ class CheckYourAnswersControllerSpec extends SpecBase with AppWithDefaultMockFix
 
     "must redirected to TechnicalDifficulties page when there is a server side error" in {
 
-      val genServerError = Gen.chooseNum(500, 599).sample.value
+      val genServerError: Int = Gen.chooseNum(500, 599).sample.value
+      when(mockRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("")))
+      val viewConfig = app.injector.instanceOf[ViewModelConfig]
 
       setExistingUserAnswers(emptyUserAnswers)
 
-      when(mockService.submit(any())(any())).thenReturn(Future.successful(Some(HttpResponse(genServerError))))
+      when(mockService.submit(any())(any())).thenReturn(Future.successful(Some(HttpResponse.apply(genServerError))))
 
       val request = FakeRequest(POST, routes.CheckYourAnswersController.onPost(mrn).url)
 
       val result = route(app, request).value
 
-      status(result) mustEqual SEE_OTHER
+      status(result) mustEqual INTERNAL_SERVER_ERROR
+      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+
+      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+      val expectedJson = Json.obj(
+        "contactUrl" -> viewConfig.nctsEnquiriesUrl
+      )
+
+      templateCaptor.getValue mustEqual "technicalDifficulties.njk"
+      jsonCaptor.getValue must containJson(expectedJson)
     }
 
     "must fail with internal server error when service fails" in {
