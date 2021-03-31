@@ -33,7 +33,7 @@ class FrontendAppConfig @Inject()(configuration: Configuration) {
   val analyticsHost: String          = configuration.get[String](s"google-analytics.host")
   val betaFeedbackUrl                = s"$contactFrontendUrl/beta-feedback"
   val betaFeedbackUnauthenticatedUrl = s"$contactFrontendUrl/beta-feedback-unauthenticated"
-  val signOutUrl: String             = configuration.get[String]("urls.logout")
+  val signOutUrl: String             = configuration.get[String]("urls.logoutContinue") + configuration.get[String]("urls.feedback")
   val loginHmrcServiceUrl: String    = configuration.get[String]("urls.loginHmrcService")
 
   lazy val manageTransitMovementsUrl: String             = configuration.get[String]("urls.manageTransitMovementsFrontend")
