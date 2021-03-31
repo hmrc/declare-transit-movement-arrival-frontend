@@ -32,7 +32,7 @@ import uk.gov.hmrc.http.HttpErrorFunctions
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, SummaryList}
 import utils.{AddEventsHelper, CheckYourAnswersHelper}
-import viewModels.sections.Section
+import viewModels.sections.{Section, ViewModelConfig}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -42,12 +42,14 @@ class CheckYourAnswersController @Inject()(override val messagesApi: MessagesApi
                                            requireData: DataRequiredAction,
                                            service: ArrivalSubmissionService,
                                            errorHandler: ErrorHandler,
+                                           val viewModelConfig: ViewModelConfig,
                                            val controllerComponents: MessagesControllerComponents,
-                                           renderer: Renderer)(implicit ec: ExecutionContext)
+                                           val renderer: Renderer)(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
     with NunjucksSupport
-    with HttpErrorFunctions {
+    with HttpErrorFunctions
+    with TechnicalDifficultiesPage {
 
   def onPageLoad(mrn: MovementReferenceNumber): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
@@ -69,7 +71,7 @@ class CheckYourAnswersController @Inject()(override val messagesApi: MessagesApi
             result.status match {
               case status if is2xx(status) => Future.successful(Redirect(routes.ConfirmationController.onPageLoad(mrn)))
               case status if is4xx(status) => errorHandler.onClientError(request, status)
-              case _                       => Future.successful(Redirect(routes.TechnicalDifficultiesController.onPageLoad()))
+              case _                       => renderTechnicalDifficultiesPage
             }
           case None => errorHandler.onClientError(request, BAD_REQUEST)
         }
