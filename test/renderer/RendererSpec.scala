@@ -43,7 +43,6 @@ class RendererSpec extends SpecBase with AppWithDefaultMockFixtures {
         val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
         val renderer = app.injector.instanceOf[Renderer]
-
         renderer.render("foo").futureValue
 
         verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
