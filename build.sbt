@@ -6,8 +6,6 @@ import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
 
 lazy val appName: String = "declare-transit-movement-arrival-frontend"
 
-resolvers += "hmrc-releases" at "https://artefacts.tax.service.gov.uk/artifactory/hmrc-releases/"
-
 val silencerVersion = "1.7.0"
 
 lazy val root = (project in file("."))
