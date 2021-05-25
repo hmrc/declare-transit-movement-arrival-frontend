@@ -39,7 +39,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswers
                 Action(
                   content            = msg"site.edit",
                   href               = routes.ConsigneeEoriNumberController.onPageLoad(mrn, CheckMode).url,
-                  visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"eoriNumber.checkYourAnswersLabel")),
+                  visuallyHiddenText = Some(messages),
                   attributes         = Map("id" -> s"""change-eori-number""")
                 )
               )
@@ -59,7 +59,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswers
           Action(
             content            = msg"site.edit",
             href               = routes.ConsigneeEoriConfirmationController.onPageLoad(mrn, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"eoriConfirmation.checkYourAnswersLabel")),
+            visuallyHiddenText = Some(messages),
             attributes         = Map("id" -> s"""change-eori-confirmation""")
           )
         )
@@ -75,7 +75,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswers
           Action(
             content            = msg"site.edit",
             href               = routes.ConsigneeNameController.onPageLoad(mrn, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"consigneeName.checkYourAnswersLabel")),
+            visuallyHiddenText = Some(msg"consigneeName.checkYourAnswersLabel"),
             attributes         = Map("id" -> s"""change-consignee-name""")
           )
         )
@@ -109,7 +109,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswers
           Action(
             content            = msg"site.edit",
             href               = routes.IsTraderAddressPlaceOfNotificationController.onPageLoad(mrn, CheckMode).url,
-            visuallyHiddenText = Some(msg"isTraderAddressPlaceOfNotification.change.hidden"),
+            visuallyHiddenText = Some(message),
             attributes         = Map("id" -> s"""change-trader-address-place-of-notification""")
           )
         )
@@ -189,7 +189,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswers
           Action(
             content            = msg"site.edit",
             href               = routes.ConsigneeAddressController.onPageLoad(mrn, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"consigneeAddress.checkYourAnswersLabel")),
+            visuallyHiddenText = Some(msg"consigneeAddress.checkYourAnswersLabel"),
             attributes         = Map("id" -> s"""change-consignee-address""")
           )
         )
@@ -205,7 +205,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswers
           Action(
             content            = msg"site.edit",
             href               = routes.AuthorisedLocationController.onPageLoad(mrn, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"authorisedLocation.checkYourAnswersLabel")),
+            visuallyHiddenText = Some(msg"authorisedLocation.checkYourAnswersLabel"),
             attributes         = Map("id" -> s"""change-authorised-location""")
           )
         )
