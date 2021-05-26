@@ -59,7 +59,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswers
           Action(
             content            = msg"site.edit",
             href               = routes.ConsigneeEoriConfirmationController.onPageLoad(mrn, CheckMode).url,
-            visuallyHiddenText = Some(messages),
+            visuallyHiddenText = Some(msg"eoriConfirmation.visually.hidden".withArgs(consigneeName)),
             attributes         = Map("id" -> s"""change-eori-confirmation""")
           )
         )
@@ -75,7 +75,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswers
           Action(
             content            = msg"site.edit",
             href               = routes.ConsigneeNameController.onPageLoad(mrn, CheckMode).url,
-            visuallyHiddenText = Some(msg"consigneeName.checkYourAnswersLabel"),
+            visuallyHiddenText = Some(msg"consigneeName.change.hidden"),
             attributes         = Map("id" -> s"""change-consignee-name""")
           )
         )
@@ -181,6 +181,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswers
   }
 
   def consigneeAddress: Option[Row] = userAnswers.get(ConsigneeAddressPage) map {
+    val consigneeName = userAnswers.get(ConsigneeNamePage).getOrElse("")
     answer =>
       Row(
         key   = Key(msg"consigneeAddress.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
@@ -189,7 +190,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswers
           Action(
             content            = msg"site.edit",
             href               = routes.ConsigneeAddressController.onPageLoad(mrn, CheckMode).url,
-            visuallyHiddenText = Some(msg"consigneeAddress.checkYourAnswersLabel"),
+            visuallyHiddenText = Some(msg"consigneeAddress.visually.hidden".withArgs(consigneeName)),
             attributes         = Map("id" -> s"""change-consignee-address""")
           )
         )
@@ -205,7 +206,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswers
           Action(
             content            = msg"site.edit",
             href               = routes.AuthorisedLocationController.onPageLoad(mrn, CheckMode).url,
-            visuallyHiddenText = Some(msg"authorisedLocation.checkYourAnswersLabel"),
+            visuallyHiddenText = Some(msg"authorisedLocation.visually.hidden"),
             attributes         = Map("id" -> s"""change-authorised-location""")
           )
         )
