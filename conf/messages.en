@@ -441,7 +441,7 @@ haveSealsChanged.title = Have any of the official customs seals changed?
 haveSealsChanged.heading = Have any of the official customs seals changed?
 haveSealsChanged.checkYourAnswersLabel = Have any of the official customs seals changed?
 haveSealsChanged.error.required = Select yes if any official customs seals have changed
-haveSealsChanged.change.hidden = if any of the official customs seals changed
+haveSealsChanged.change.hidden = if any of the official customs seals have changed
 
 confirmRemoveSeal.title = Are you sure you want to remove the official customs seal {0}?
 confirmRemoveSeal.heading = Are you sure you want to remove the official customs seal {0}?
