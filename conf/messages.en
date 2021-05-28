@@ -210,6 +210,7 @@ authorisedLocation.title = What is the authorised location code?
 authorisedLocation.hintText = The code can be found in the registration documents.
 authorisedLocation.heading = What is the authorised location code?
 authorisedLocation.checkYourAnswersLabel = Authorised location
+authorisedLocation.visually.hidden = the authorised location
 authorisedLocation.error.required = Enter authorised location code
 authorisedLocation.error.length = Authorised location code must be 17 characters or less
 authorisedLocation.error.invalid = Authorised location code must only include letters a to z without accents, numbers 0 to 9, ampersands (&), apostrophes, at signs (@), forward slashes, full stops, hyphens, percent signs, question marks and spaces
@@ -441,7 +442,7 @@ haveSealsChanged.title = Have any of the official customs seals changed?
 haveSealsChanged.heading = Have any of the official customs seals changed?
 haveSealsChanged.checkYourAnswersLabel = Have any of the official customs seals changed?
 haveSealsChanged.error.required = Select yes if any official customs seals have changed
-haveSealsChanged.change.hidden = if any of the official customs seals changed
+haveSealsChanged.change.hidden = if any of the official customs seals have changed
 
 confirmRemoveSeal.title = Are you sure you want to remove the official customs seal {0}?
 confirmRemoveSeal.heading = Are you sure you want to remove the official customs seal {0}?
@@ -460,11 +461,14 @@ consigneeName.checkYourAnswersLabel = What is the name of the authorised consign
 consigneeName.error.required = Enter authorised consignee’s name
 consigneeName.error.invalid = Authorised consignee’s name must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, asterisks, forward slashes, full stops, hyphens, question marks, and greater than (>) and less than (<) signs.
 consigneeName.error.length = Authorised consignee’s name must be 35 characters or less
+consigneeName.change.hidden = the name of the authorised consignee
 
 eoriConfirmation.title = Is this the EORI number for the trader?
 eoriConfirmation.heading = Is {0} the authorised consignee’s EORI number?
 eoriConfirmation.checkYourAnswersLabel = Is {0} the EORI number for {1}?
+eoriConfirmation.visually.hidden = the EORI number for {0}
 eoriConfirmation.error.required = Select yes if {0} is for {1}
+
 
 eoriNumber.title = What is the EORI number of the authorised consignee?
 eoriNumber.heading =  What is the EORI number for {0}?
@@ -477,6 +481,7 @@ eoriNumber.error.invalid =  EORI number must start with 2 letters followed by up
 consigneeAddress.title = What is the authorised consignee’s address?
 consigneeAddress.heading =  What is {0}’s address?
 consigneeAddress.checkYourAnswersLabel =  What is {0}’s address?
+consigneeAddress.visually.hidden = {0}’s address?
 
 consigneeAddress.buildingAndStreet = Building and street
 consigneeAddress.city = Town or city
