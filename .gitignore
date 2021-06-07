@@ -24,4 +24,4 @@ yarn-error.log
 .git-together 
 .vscode/
 .metals/
-
+.hydra
