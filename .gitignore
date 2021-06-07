@@ -25,4 +25,4 @@ yarn-error.log
 .vscode/
 .metals/
 .bsp/
-
+.hydra
