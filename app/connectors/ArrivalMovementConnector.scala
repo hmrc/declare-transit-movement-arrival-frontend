@@ -23,18 +23,19 @@ import javax.inject.Inject
 import models.XMLWrites._
 import models.messages.{ArrivalMovementRequest, ArrivalNotificationRejectionMessage}
 import models.{ArrivalId, MessagesSummary, ResponseMovementMessage}
-import play.api.Logger
 import play.api.http.HeaderNames
 import uk.gov.hmrc.http.{HeaderCarrier, HttpErrorFunctions, HttpResponse}
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.xml.NodeSeq
+import logging.Logging
+import uk.gov.hmrc.http.HttpClient
 
-class ArrivalMovementConnector @Inject()(val config: FrontendAppConfig, val http: HttpClient)(implicit ec: ExecutionContext) extends HttpErrorFunctions {
+class ArrivalMovementConnector @Inject()(val config: FrontendAppConfig, val http: HttpClient)(implicit ec: ExecutionContext)
+    extends HttpErrorFunctions
+    with Logging {
 
   private val channel: String = "web"
-  private val logger: Logger  = Logger(getClass.getSimpleName)
 
   def submitArrivalMovement(arrivalMovement: ArrivalMovementRequest)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
 
