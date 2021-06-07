@@ -17,9 +17,10 @@
 package models.messages
 
 import com.lucidchart.open.xtract._
-import models.Enumerable
 import play.api.Logger
 import play.api.libs.json.{JsNumber, Writes}
+import models.Enumerable
+import logging.Logging
 
 import scala.util.Try
 import scala.xml.NodeSeq
@@ -28,7 +29,7 @@ sealed trait ErrorType {
   val code: Int
 }
 
-object ErrorType extends Enumerable.Implicits {
+object ErrorType extends Enumerable.Implicits with Logging {
 
   sealed abstract class GenericError(val code: Int) extends ErrorType
   sealed abstract class MRNError(val code: Int) extends ErrorType
@@ -82,7 +83,7 @@ object ErrorType extends Enumerable.Implicits {
         (mrnValues ++ genericValues).find(knownError => knownError.code == code) match {
           case Some(errorType) => errorType
           case None =>
-            Logger("xmlErrorTypeReads").warn(s"[read] No known error type found instead found errorType: $code")
+            logger.warn(s"[read] No known error type found instead found errorType: $code")
             UnknownErrorType(code)
         }
     }
