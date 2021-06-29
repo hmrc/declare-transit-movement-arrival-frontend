@@ -41,7 +41,7 @@ import scala.concurrent.Future
 class CustomsOfficeControllerSpec extends SpecBase with AppWithDefaultMockFixtures with NunjucksSupport with JsonMatchers {
 
   val formProvider              = new CustomsOfficeFormProvider()
-  val customsOffices            = Seq(CustomsOffice("id", Some("name"), Seq.empty, None), CustomsOffice("officeId", Some("someName"), Seq.empty, None))
+  val customsOffices            = Seq(CustomsOffice("id", Some("name"), None), CustomsOffice("officeId", Some("someName"), None))
   val form: Form[CustomsOffice] = formProvider("sub place", customsOffices)
   val country: String           = "GB"
 
@@ -71,7 +71,7 @@ class CustomsOfficeControllerSpec extends SpecBase with AppWithDefaultMockFixtur
       val officeId   = "officeId"
       val officeName = "someName"
       val userAnswers = emptyUserAnswers
-        .set(CustomsOfficePage, CustomsOffice(officeId, Some(officeName), Seq.empty, None))
+        .set(CustomsOfficePage, CustomsOffice(officeId, Some(officeName), None))
         .success
         .value
         .set(CustomsSubPlacePage, "subs place")
