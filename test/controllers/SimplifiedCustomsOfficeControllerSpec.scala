@@ -20,9 +20,9 @@ import base.{AppWithDefaultMockFixtures, SpecBase}
 import connectors.ReferenceDataConnector
 import forms.SimplifiedCustomsOfficeFormProvider
 import matchers.JsonMatchers
-import models.reference.{CountryCode, CustomsOffice}
+import models.reference.CustomsOffice
 import models.{CustomsOfficeList, NormalMode, UserAnswers}
-import org.mockito.Matchers.{any, anyObject}
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.mockito.{ArgumentCaptor, Mockito}
 import pages.{ConsigneeNamePage, CustomsOfficePage, CustomsSubPlacePage}
@@ -188,8 +188,7 @@ class SimplifiedCustomsOfficeControllerSpec extends SpecBase with AppWithDefault
     )
 
     when(mockRenderer.render(any(), any())(any())).thenReturn(Future.successful(Html("")))
-    when(mockRefDataConnector.getCustomsOfficesOfTheCountry(any())(any(), any())).thenReturn(Future.successful(customsOffices))
-    when(mockCustomsOfficesService.getCustomsOfficesOfArrival(anyObject())).thenReturn(Future.successful(customsOffices))
+    when(mockCustomsOfficesService.getCustomsOfficesOfArrival(any())).thenReturn(Future.successful(customsOffices))
 
     val userAnswers = emptyUserAnswers
       .set(ConsigneeNamePage, consigneeName)
@@ -223,8 +222,6 @@ class SimplifiedCustomsOfficeControllerSpec extends SpecBase with AppWithDefault
   private def verifyStatusAndContent(customsOfficeJson: Seq[JsObject], boundForm: Form[CustomsOffice], result: Future[Result], expectedStatus: Int): Any = {
     status(result) mustEqual expectedStatus
 
-    when(mockRefDataConnector.getCustomsOfficesOfTheCountry(anyObject())(any(), any())).thenReturn(Future.successful(customsOffices))
-    when(mockCustomsOfficesService.getCustomsOfficesOfArrival(any())).thenReturn(Future.successful(customsOffices))
     verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
     val expectedJson = Json.obj(
@@ -246,9 +243,7 @@ class SimplifiedCustomsOfficeControllerSpec extends SpecBase with AppWithDefault
       Json.obj("value" -> "officeId", "text" -> "someName (officeId)", "selected" -> preSelectOfficeId)
     )
 
-    when(mockRefDataConnector.getCustomsOfficesOfTheCountry(any())(any(), any())).thenReturn(Future.successful(customsOffices))
-    when(mockRenderer.render(any(), any())(any()))
-      .thenReturn(Future.successful(Html("")))
+    when(mockRenderer.render(any(), any())(any())).thenReturn(Future.successful(Html("")))
     when(mockCustomsOfficesService.getCustomsOfficesOfArrival(any())).thenReturn(Future.successful(customsOffices))
 
     setExistingUserAnswers(userAnswers)

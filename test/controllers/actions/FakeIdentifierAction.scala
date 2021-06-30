@@ -16,13 +16,12 @@
 
 package controllers.actions
 
-import javax.inject.Inject
 import models.EoriNumber
 import models.requests.IdentifierRequest
 import play.api.mvc._
 
-import scala.concurrent.ExecutionContext
-import scala.concurrent.Future
+import javax.inject.Inject
+import scala.concurrent.{ExecutionContext, Future}
 
 class FakeIdentifierAction @Inject()(bodyParsers: PlayBodyParsers) extends IdentifierAction {
 

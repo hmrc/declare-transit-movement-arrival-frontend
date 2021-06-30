@@ -16,8 +16,6 @@
 
 package services
 
-import java.time.LocalDate
-
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import connectors.ArrivalMovementConnector
 import generators.MessagesModelGenerators
@@ -25,7 +23,7 @@ import models.ArrivalId
 import models.domain.{NormalNotification, TraderDomain}
 import models.messages.InterchangeControlReference
 import models.reference.CustomsOffice
-import org.mockito.Matchers.any
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import play.api.http.Status._
 import play.api.inject.bind
@@ -34,6 +32,7 @@ import repositories.InterchangeControlReferenceIdRepository
 import services.conversion.UserAnswersToArrivalNotificationDomain
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
+import java.time.LocalDate
 import scala.concurrent.Future
 
 class ArrivalSubmissionServiceSpec extends SpecBase with AppWithDefaultMockFixtures with MessagesModelGenerators {

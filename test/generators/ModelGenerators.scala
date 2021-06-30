@@ -18,9 +18,8 @@ package generators
 
 import models._
 import models.reference.{Country, CountryCode, CustomsOffice}
-import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalacheck.Gen
+import org.scalacheck.{Arbitrary, Gen}
 
 trait ModelGenerators {
   self: Generators =>

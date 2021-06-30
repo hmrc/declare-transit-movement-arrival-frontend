@@ -16,8 +16,6 @@
 
 package services.conversion
 
-import java.time.LocalTime
-
 import base.SpecBase
 import generators.MessagesModelGenerators
 import models.EoriNumber
@@ -26,6 +24,8 @@ import models.messages.{ArrivalMovementRequest, Header, InterchangeControlRefere
 import models.reference.CustomsOffice
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+
+import java.time.LocalTime
 
 class ArrivalMovementRequestToArrivalNotificationServiceSpec extends SpecBase with MessagesModelGenerators with ScalaCheckPropertyChecks {
 

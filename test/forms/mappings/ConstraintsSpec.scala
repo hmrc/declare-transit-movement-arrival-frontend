@@ -16,15 +16,14 @@
 
 package forms.mappings
 
-import java.time.LocalDate
-
 import generators.Generators
 import models.Index
 import org.scalacheck.Gen
+import org.scalatest.{FreeSpec, MustMatchers}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import org.scalatest.FreeSpec
-import org.scalatest.MustMatchers
 import play.api.data.validation.{Constraint, Invalid, Valid}
+
+import java.time.LocalDate
 
 class ConstraintsSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with Generators with Constraints {
 

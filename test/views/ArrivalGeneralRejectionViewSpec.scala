@@ -20,8 +20,6 @@ import models.messages.FunctionalError
 import org.jsoup.nodes.Element
 import play.api.libs.json.Json
 
-import scala.collection.JavaConverters._
-
 class ArrivalGeneralRejectionViewSpec extends SingleViewSpec("arrivalGeneralRejection.njk") with Generators with MessagesModelGenerators {
 
   val baseJson =

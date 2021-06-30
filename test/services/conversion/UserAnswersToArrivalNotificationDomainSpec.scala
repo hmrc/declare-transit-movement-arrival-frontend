@@ -16,8 +16,6 @@
 
 package services.conversion
 
-import java.time.LocalTime
-
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import generators.MessagesModelGenerators
 import models.domain._
@@ -25,6 +23,8 @@ import models.messages.{ArrivalMovementRequest, InterchangeControlReference}
 import models.{EoriNumber, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+
+import java.time.LocalTime
 
 class UserAnswersToArrivalNotificationDomainSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with MessagesModelGenerators {
 

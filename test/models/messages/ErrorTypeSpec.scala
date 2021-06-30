@@ -19,9 +19,9 @@ package models.messages
 import com.lucidchart.open.xtract.{ParseFailure, ParseSuccess}
 import generators.MessagesModelGenerators
 import models.messages.ErrorType.UnknownErrorType
+import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.{FreeSpec, MustMatchers}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import org.scalacheck.Arbitrary.arbitrary
 
 class ErrorTypeSpec extends FreeSpec with ScalaCheckPropertyChecks with MustMatchers with MessagesModelGenerators {
 

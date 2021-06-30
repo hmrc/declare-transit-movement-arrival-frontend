@@ -22,6 +22,7 @@ import models.TranshipmentType._
 import models.domain.{ContainerDomain, SealDomain}
 import models.reference.{Country, CountryCode}
 import models.{CheckMode, CountryList, Index}
+import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.IncidentOnRoutePage
 import pages.events._
@@ -30,7 +31,6 @@ import pages.events.transhipments._
 import play.api.libs.json.{JsObject, Json}
 import uk.gov.hmrc.viewmodels.SummaryList.Row
 import viewModels.sections.Section
-import org.scalacheck.Arbitrary.arbitrary
 
 // format: off
 

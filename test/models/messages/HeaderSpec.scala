@@ -16,18 +16,17 @@
 
 package models.messages
 
-import java.time.LocalDate
-
 import base.SpecBase
 import com.lucidchart.open.xtract.XmlReader
 import generators.MessagesModelGenerators
-import models.{LanguageCodeEnglish, NormalProcedureFlag}
 import models.XMLWrites._
+import models.{LanguageCodeEnglish, NormalProcedureFlag}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.StreamlinedXmlEquality
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import utils.Format
 
+import java.time.LocalDate
 import scala.xml.NodeSeq
 
 class HeaderSpec extends SpecBase with ScalaCheckPropertyChecks with MessagesModelGenerators with StreamlinedXmlEquality {

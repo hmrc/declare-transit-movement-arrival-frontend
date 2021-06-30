@@ -16,8 +16,6 @@
 
 package models.messages
 
-import java.time.LocalTime
-
 import base.SpecBase
 import com.lucidchart.open.xtract.XmlReader
 import generators.MessagesModelGenerators
@@ -28,6 +26,7 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import utils.Format
 import utils.Format.timeFormatter
 
+import java.time.LocalTime
 import scala.xml.NodeSeq
 
 class MetaSpec extends SpecBase with ScalaCheckPropertyChecks with MessagesModelGenerators with StreamlinedXmlEquality {

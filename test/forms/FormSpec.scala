@@ -16,12 +16,8 @@
 
 package forms
 
-import org.scalatest.Assertion
-import org.scalatest.FreeSpec
-import org.scalatest.MustMatchers
-import org.scalatest.OptionValues
-import play.api.data.Form
-import play.api.data.FormError
+import org.scalatest.{Assertion, FreeSpec, MustMatchers, OptionValues}
+import play.api.data.{Form, FormError}
 
 trait FormSpec extends FreeSpec with OptionValues with MustMatchers {
 
