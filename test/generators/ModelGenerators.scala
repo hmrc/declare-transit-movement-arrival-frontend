@@ -71,7 +71,7 @@ trait ModelGenerators {
         name        <- arbitrary[Option[String]]
         roles       <- genRoles
         phoneNumber <- Gen.option(arbitrary[String])
-      } yield CustomsOffice(id, name, roles, phoneNumber)
+      } yield CustomsOffice(id, name, phoneNumber)
     }
   }
 

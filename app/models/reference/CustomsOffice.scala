@@ -18,7 +18,7 @@ package models.reference
 
 import play.api.libs.json.{Json, OFormat}
 
-case class CustomsOffice(id: String, name: Option[String], roles: Seq[String], phoneNumber: Option[String])
+case class CustomsOffice(id: String, name: Option[String], phoneNumber: Option[String])
 
 object CustomsOffice {
   implicit val format: OFormat[CustomsOffice] = Json.format[CustomsOffice]
