@@ -17,6 +17,8 @@
 package forms
 
 import forms.mappings.Mappings
+import models.CustomsOfficeList
+
 import javax.inject.Inject
 import play.api.data.Form
 import play.api.i18n.Messages
@@ -26,12 +28,12 @@ class CustomsOfficeFormProvider @Inject() extends Mappings {
 
   def apply(
     subPlace: String,
-    customsOffices: Seq[CustomsOffice]
+    customsOffices: CustomsOfficeList
   )(implicit messages: Messages): Form[CustomsOffice] =
     Form(
       "value" -> text("customsOffice.error.required", Seq(subPlace))
-        .verifying(messages("customsOffice.error.required", subPlace), value => customsOffices.exists(_.id == value))
-        .transform[CustomsOffice](value => customsOffices.find(_.id == value).get, _.id)
+        .verifying(messages("customsOffice.error.required", subPlace), value => customsOffices.getAll.exists(_.id == value))
+        .transform[CustomsOffice](value => customsOffices.getAll.find(_.id == value).get, _.id)
     )
 }
 
@@ -39,11 +41,11 @@ class SimplifiedCustomsOfficeFormProvider @Inject() extends Mappings {
 
   def apply(
     consigneeName: String,
-    customsOffices: Seq[CustomsOffice]
+    customsOffices: CustomsOfficeList
   )(implicit messages: Messages): Form[CustomsOffice] =
     Form(
       "value" -> text("customsOffice.simplified.error.required", Seq(consigneeName))
-        .verifying(messages("customsOffice.simplified.error.required", consigneeName), value => customsOffices.exists(_.id == value))
-        .transform[CustomsOffice](value => customsOffices.find(_.id == value).get, _.id)
+        .verifying(messages("customsOffice.simplified.error.required", consigneeName), value => customsOffices.getAll.exists(_.id == value))
+        .transform[CustomsOffice](value => customsOffices.getAll.find(_.id == value).get, _.id)
     )
 }

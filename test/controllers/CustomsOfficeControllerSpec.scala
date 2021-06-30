@@ -20,8 +20,8 @@ import base.{AppWithDefaultMockFixtures, SpecBase}
 import connectors.ReferenceDataConnector
 import forms.CustomsOfficeFormProvider
 import matchers.JsonMatchers
-import models.reference.CustomsOffice
-import models.{NormalMode, UserAnswers}
+import models.reference.{CountryCode, CustomsOffice}
+import models.{CustomsOfficeList, NormalMode, UserAnswers}
 import org.mockito.Matchers.{any, anyObject, anyString}
 import org.mockito.Mockito.{times, verify, when}
 import org.mockito.{ArgumentCaptor, Mockito}
@@ -34,6 +34,7 @@ import play.api.mvc.Result
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
+import services.CustomsOfficesService
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
@@ -41,25 +42,28 @@ import scala.concurrent.Future
 class CustomsOfficeControllerSpec extends SpecBase with AppWithDefaultMockFixtures with NunjucksSupport with JsonMatchers {
 
   val formProvider              = new CustomsOfficeFormProvider()
-  val customsOffices            = Seq(CustomsOffice("id", Some("name"), Seq.empty, None), CustomsOffice("officeId", Some("someName"), Seq.empty, None))
+  val customsOffices            = CustomsOfficeList(Seq(CustomsOffice("id", Some("name"), Seq.empty, None), CustomsOffice("officeId", Some("someName"), Seq.empty, None)))
   val form: Form[CustomsOffice] = formProvider("sub place", customsOffices)
   val country: String           = "GB"
 
   lazy val customsOfficeRoute: String = routes.CustomsOfficeController.onPageLoad(mrn, NormalMode).url
 
-  private val mockRefDataConnector: ReferenceDataConnector = mock[ReferenceDataConnector]
-  val templateCaptor: ArgumentCaptor[String]               = ArgumentCaptor.forClass(classOf[String])
-  val jsonCaptor: ArgumentCaptor[JsObject]                 = ArgumentCaptor.forClass(classOf[JsObject])
+  private val mockRefDataConnector: ReferenceDataConnector     = mock[ReferenceDataConnector]
+  val templateCaptor: ArgumentCaptor[String]                   = ArgumentCaptor.forClass(classOf[String])
+  val jsonCaptor: ArgumentCaptor[JsObject]                     = ArgumentCaptor.forClass(classOf[JsObject])
+  private val mockCustomsOfficesService: CustomsOfficesService = mock[CustomsOfficesService]
 
   override def beforeEach(): Unit = {
     super.beforeEach()
     Mockito.reset(mockRefDataConnector)
+    Mockito.reset(mockCustomsOfficesService)
   }
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
       .guiceApplicationBuilder()
       .overrides(bind[ReferenceDataConnector].toInstance(mockRefDataConnector))
+      .overrides(bind[CustomsOfficesService].toInstance(mockCustomsOfficesService))
 
   "CustomsOffice Controller" - {
 
@@ -85,10 +89,9 @@ class CustomsOfficeControllerSpec extends SpecBase with AppWithDefaultMockFixtur
 
     "must redirect to session expired page when user hasn't answered the customs sub place question" in {
 
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
+      when(mockRenderer.render(any(), any())(any())).thenReturn(Future.successful(Html("")))
       when(mockRefDataConnector.getCustomsOfficesOfTheCountry(anyObject())(any(), any())).thenReturn(Future.successful(customsOffices))
+      when(mockCustomsOfficesService.getCustomsOfficesOfArrival(anyObject())).thenReturn(Future.successful(customsOffices))
 
       setExistingUserAnswers(emptyUserAnswers)
 
@@ -104,6 +107,7 @@ class CustomsOfficeControllerSpec extends SpecBase with AppWithDefaultMockFixtur
     "must redirect to the next page when valid data is submitted" in {
       when(mockRefDataConnector.getCustomsOfficesOfTheCountry(anyObject())(any(), any())).thenReturn(Future.successful(customsOffices))
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockCustomsOfficesService.getCustomsOfficesOfArrival(anyObject())).thenReturn(Future.successful(customsOffices))
 
       val userAnswers = emptyUserAnswers.set(CustomsSubPlacePage, "sub place").success.value
       setExistingUserAnswers(userAnswers)
@@ -116,7 +120,7 @@ class CustomsOfficeControllerSpec extends SpecBase with AppWithDefaultMockFixtur
 
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual onwardRoute.url
-      verify(mockRefDataConnector, times(1)).getCustomsOfficesOfTheCountry(any())(any(), any())
+      verify(mockCustomsOfficesService, times(1)).getCustomsOfficesOfArrival(any())
     }
 
     "must return Bad Request and error when user entered data does not exist in reference data customs office list" in {
@@ -130,6 +134,7 @@ class CustomsOfficeControllerSpec extends SpecBase with AppWithDefaultMockFixtur
     "must redirect to session expired page when invalid data is submitted and user hasn't answered the customs sub-place page question" in {
 
       when(mockRefDataConnector.getCustomsOfficesOfTheCountry(any())(any(), any())).thenReturn(Future.successful(customsOffices))
+      when(mockCustomsOfficesService.getCustomsOfficesOfArrival(anyObject())).thenReturn(Future.successful(customsOffices))
 
       setExistingUserAnswers(emptyUserAnswers)
 
@@ -178,10 +183,9 @@ class CustomsOfficeControllerSpec extends SpecBase with AppWithDefaultMockFixtur
       Json.obj("value" -> "officeId", "text" -> "someName (officeId)", "selected" -> false)
     )
 
-    when(mockRenderer.render(any(), any())(any()))
-      .thenReturn(Future.successful(Html("")))
-
-    when(mockRefDataConnector.getCustomsOfficesOfTheCountry(anyString())(any(), any())).thenReturn(Future.successful(customsOffices))
+    when(mockRenderer.render(any(), any())(any())).thenReturn(Future.successful(Html("")))
+    when(mockRefDataConnector.getCustomsOfficesOfTheCountry(any())(any(), any())).thenReturn(Future.successful(customsOffices))
+    when(mockCustomsOfficesService.getCustomsOfficesOfArrival(anyObject())).thenReturn(Future.successful(customsOffices))
 
     val userAnswers = emptyUserAnswers
       .set(ConsigneeNamePage, consigneeName)
@@ -198,7 +202,7 @@ class CustomsOfficeControllerSpec extends SpecBase with AppWithDefaultMockFixtur
     status(result) mustEqual BAD_REQUEST
 
     verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-    verify(mockRefDataConnector, times(1)).getCustomsOfficesOfTheCountry(any())(any(), any())
+    verify(mockCustomsOfficesService, times(1)).getCustomsOfficesOfArrival(any())
 
     val expectedJson = Json.obj(
       "form"           -> boundForm,
@@ -215,8 +219,9 @@ class CustomsOfficeControllerSpec extends SpecBase with AppWithDefaultMockFixtur
   private def verifyStatusAndContent(customsOfficeJson: Seq[JsObject], boundForm: Form[CustomsOffice], result: Future[Result], expectedStatus: Int): Any = {
     status(result) mustEqual expectedStatus
 
+    when(mockRefDataConnector.getCustomsOfficesOfTheCountry(anyObject())(any(), any())).thenReturn(Future.successful(customsOffices))
+    when(mockCustomsOfficesService.getCustomsOfficesOfArrival(any())).thenReturn(Future.successful(customsOffices))
     verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-    verify(mockRefDataConnector, times(1)).getCustomsOfficesOfTheCountry(any())(any(), any())
 
     val expectedJson = Json.obj(
       "form"           -> boundForm,
@@ -227,6 +232,7 @@ class CustomsOfficeControllerSpec extends SpecBase with AppWithDefaultMockFixtur
 
     templateCaptor.getValue mustEqual "customsOffice.njk"
     jsonCaptor.getValue must containJson(expectedJson)
+
   }
 
   private def verifyOnLoadPage(userAnswers: UserAnswers, form: Form[CustomsOffice], preSelectOfficeId: Boolean = false) = {
@@ -236,10 +242,11 @@ class CustomsOfficeControllerSpec extends SpecBase with AppWithDefaultMockFixtur
       Json.obj("value" -> "id", "text"       -> "name (id)", "selected" -> false),
       Json.obj("value" -> "officeId", "text" -> "someName (officeId)", "selected" -> preSelectOfficeId)
     )
+    when(mockRefDataConnector.getCustomsOfficesOfTheCountry(anyObject())(any(), any())).thenReturn(Future.successful(customsOffices))
 
     when(mockRenderer.render(any(), any())(any()))
       .thenReturn(Future.successful(Html("")))
-    when(mockRefDataConnector.getCustomsOfficesOfTheCountry(anyObject())(any(), any())).thenReturn(Future.successful(customsOffices))
+    when(mockCustomsOfficesService.getCustomsOfficesOfArrival(anyObject())).thenReturn(Future.successful(customsOffices))
 
     setExistingUserAnswers(userAnswers)
 

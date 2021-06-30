@@ -20,7 +20,7 @@ import base.{AppWithDefaultMockFixtures, SpecBase}
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, okJson, urlEqualTo}
 import generators.MessagesModelGenerators
 import helper.WireMockServerHandler
-import models.CountryList
+import models.{CountryList, CustomsOfficeList}
 import models.reference._
 import org.scalacheck.Gen
 import org.scalatest.Assertion
@@ -39,7 +39,7 @@ class ReferenceDataConnectorSpec
     with ScalaCheckPropertyChecks {
 
   private val startUrl = "transit-movements-trader-reference-data"
-  private val country  = "GB"
+  private val country  = CountryCode("GB")
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
@@ -112,15 +112,18 @@ class ReferenceDataConnectorSpec
     "getCustomsOfficesOfTheCountry" - {
       "must return a successful future response with a sequence of CustomsOffices" in {
         server.stubFor(
-          get(urlEqualTo(s"/$startUrl/customs-offices/$country"))
+          get(urlEqualTo(s"/$startUrl/customs-offices/GB"))
             .willReturn(okJson(customsOfficeResponseJson))
         )
 
         val expectedResult = {
-          Seq(
-            CustomsOffice("GBtestId1", Some("testName1"), Seq("role1", "role2"), Some("testPhoneNumber")),
-            CustomsOffice("GBtestId2", Some("testName2"), Seq("role1", "role2"), None)
-          )
+
+          CustomsOfficeList(
+            Seq(
+              CustomsOffice("GBtestId1", Some("testName1"), Seq("role1", "role2"), Some("testPhoneNumber")),
+              CustomsOffice("GBtestId2", Some("testName2"), Seq("role1", "role2"), None)
+            ))
+
         }
 
         connector.getCustomsOfficesOfTheCountry(country).futureValue mustBe expectedResult

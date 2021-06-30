@@ -35,6 +35,7 @@ class FrontendAppConfig @Inject()(configuration: Configuration) {
   val betaFeedbackUnauthenticatedUrl = s"$contactFrontendUrl/beta-feedback-unauthenticated"
   val signOutUrl: String             = configuration.get[String]("urls.logoutContinue") + configuration.get[String]("urls.feedback")
   val loginHmrcServiceUrl: String    = configuration.get[String]("urls.loginHmrcService")
+  val isNIJourneyEnabled: Boolean    = configuration.getOptional[Boolean]("microservice.services.features.isNIJourneyEnabled").getOrElse(false)
 
   lazy val manageTransitMovementsUrl: String             = configuration.get[String]("urls.manageTransitMovementsFrontend")
   lazy val serviceUrl: String                            = s"$manageTransitMovementsUrl/index"
