@@ -18,13 +18,9 @@ package models
 
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
+import org.scalatest.{FreeSpec, MustMatchers, OptionValues}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import org.scalatest.FreeSpec
-import org.scalatest.MustMatchers
-import org.scalatest.OptionValues
-import play.api.libs.json.JsError
-import play.api.libs.json.JsString
-import play.api.libs.json.Json
+import play.api.libs.json.{JsError, JsString, Json}
 
 class GoodsLocationSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with OptionValues {
 

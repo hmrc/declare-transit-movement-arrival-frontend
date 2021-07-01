@@ -16,8 +16,6 @@
 
 package models.messages
 
-import java.time.LocalTime
-
 import com.lucidchart.open.xtract.XmlReader
 import generators.MessagesModelGenerators
 import models.NormalProcedureFlag
@@ -29,6 +27,7 @@ import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import utils.Format
 import utils.Format.timeFormatter
 
+import java.time.LocalTime
 import scala.xml.{Node, NodeSeq}
 
 class ArrivalMovementRequestSpec

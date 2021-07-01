@@ -17,17 +17,11 @@
 package forms.mappings
 
 import generators.Generators
+import models.{Enumerable, MovementReferenceNumber}
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalatest.FreeSpec
-import org.scalatest.MustMatchers
-import org.scalatest.OptionValues
-import play.api.data.Form
-import play.api.data.FormError
-import models.Enumerable
-import models.MovementReferenceNumber
-import models.domain.TraderDomain.Constants.eoriLength
-import org.scalacheck.Gen
+import org.scalatest.{FreeSpec, MustMatchers, OptionValues}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import play.api.data.{Form, FormError}
 
 object MappingsSpec {
 

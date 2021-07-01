@@ -22,9 +22,7 @@ import generators.MessagesModelGenerators
 import models.Index
 import models.domain.ContainerDomain
 import models.messages.Transhipment
-import org.scalacheck.Gen
-import play.api.data.{Field, FormError}
-import wolfendale.scalacheck.regexp.RegexpGen
+import play.api.data.FormError
 
 class ContainerNumberFormProviderSpec extends StringFieldBehaviours with MessagesModelGenerators with SpecBase {
 

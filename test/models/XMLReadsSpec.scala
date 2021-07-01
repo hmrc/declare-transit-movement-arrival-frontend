@@ -16,8 +16,6 @@
 
 package models
 
-import java.time.{LocalDate, LocalTime}
-
 import base.SpecBase
 import com.lucidchart.open.xtract.{ParseFailure, ParseSuccess, XmlReader}
 import generators.Generators
@@ -26,6 +24,7 @@ import org.scalacheck.Arbitrary.arbitrary
 import utils.Format
 import utils.Format.timeFormatter
 
+import java.time.{LocalDate, LocalTime}
 import scala.xml.NodeSeq
 
 class XMLReadsSpec extends SpecBase with Generators {

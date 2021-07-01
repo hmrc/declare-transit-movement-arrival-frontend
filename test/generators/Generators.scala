@@ -16,13 +16,11 @@
 
 package generators
 
-import java.time.{Instant, LocalDate, LocalDateTime, LocalTime, ZoneOffset}
-
 import org.scalacheck.Arbitrary._
 import org.scalacheck.Gen._
-import org.scalacheck.Arbitrary
-import org.scalacheck.Gen
-import org.scalacheck.Shrink
+import org.scalacheck.{Arbitrary, Gen, Shrink}
+
+import java.time._
 
 trait Generators extends UserAnswersGenerator with PageGenerators with ModelGenerators with UserAnswersEntryGenerators {
 

@@ -16,9 +16,8 @@
 
 package pages
 
-import models.GoodsLocation
 import models.GoodsLocation._
-import models.UserAnswers
+import models.{GoodsLocation, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
 

@@ -16,12 +16,10 @@
 
 package controllers
 
-import connectors.ReferenceDataConnector
 import controllers.actions._
 import forms.CustomsOfficeFormProvider
-import javax.inject.Inject
 import models.reference.CustomsOffice
-import models.{Mode, MovementReferenceNumber}
+import models.{CustomsOfficeList, Mode, MovementReferenceNumber}
 import navigation.Navigator
 import pages.{ConsigneeNamePage, CustomsOfficePage, CustomsSubPlacePage}
 import play.api.data.Form
@@ -30,9 +28,11 @@ import play.api.libs.json.{JsObject, Json}
 import play.api.mvc._
 import renderer.Renderer
 import repositories.SessionRepository
+import services.CustomsOfficesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class CustomsOfficeController @Inject()(override val messagesApi: MessagesApi,
@@ -42,7 +42,7 @@ class CustomsOfficeController @Inject()(override val messagesApi: MessagesApi,
                                         getData: DataRetrievalActionProvider,
                                         requireData: DataRequiredAction,
                                         formProvider: CustomsOfficeFormProvider,
-                                        referenceDataConnector: ReferenceDataConnector,
+                                        customsOfficesService: CustomsOfficesService,
                                         val controllerComponents: MessagesControllerComponents,
                                         renderer: Renderer)(implicit ec: ExecutionContext)
     extends FrontendBaseController
@@ -62,8 +62,8 @@ class CustomsOfficeController @Inject()(override val messagesApi: MessagesApi,
           case _                             => None
         }
 
-        referenceDataConnector.getCustomsOfficesOfTheCountry(country_gb) flatMap {
-          customsOffices =>
+        customsOfficesService.getCustomsOfficesOfArrival.flatMap {
+          customsOffices: CustomsOfficeList =>
             locationName match {
               case locationName: String =>
                 val form = formProvider(locationName, customsOffices)
@@ -92,7 +92,7 @@ class CustomsOfficeController @Inject()(override val messagesApi: MessagesApi,
     consigneeName: String,
     customsOffice: String,
     form: Form[CustomsOffice],
-    customsOffices: Seq[CustomsOffice],
+    customsOffices: CustomsOfficeList,
     status: Results.Status
   )(implicit request: Request[AnyContent]): Future[Result] = {
 
@@ -118,7 +118,7 @@ class CustomsOfficeController @Inject()(override val messagesApi: MessagesApi,
           case _                             => None
         }
 
-        referenceDataConnector.getCustomsOfficesOfTheCountry(country_gb) flatMap {
+        customsOfficesService.getCustomsOfficesOfArrival.flatMap {
           customsOffices =>
             locationName match {
               case locationName: String =>
@@ -149,8 +149,8 @@ class CustomsOfficeController @Inject()(override val messagesApi: MessagesApi,
         }
     }
 
-  private def getCustomsOfficesAsJson(value: Option[CustomsOffice], customsOffices: Seq[CustomsOffice]): Seq[JsObject] = {
-    val customsOfficeObjects = customsOffices.map {
+  private def getCustomsOfficesAsJson(value: Option[CustomsOffice], customsOffices: CustomsOfficeList): Seq[JsObject] = {
+    val customsOfficeObjects = customsOffices.getAll.map {
       office =>
         Json.obj(
           "value"    -> office.id,

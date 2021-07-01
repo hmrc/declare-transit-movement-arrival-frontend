@@ -19,13 +19,9 @@ package pages.behaviours
 import generators.Generators
 import models.UserAnswers
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalacheck.Arbitrary
-import org.scalacheck.Gen
+import org.scalacheck.{Arbitrary, Gen}
+import org.scalatest.{FreeSpec, MustMatchers, OptionValues, TryValues}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import org.scalatest.FreeSpec
-import org.scalatest.MustMatchers
-import org.scalatest.OptionValues
-import org.scalatest.TryValues
 import pages.QuestionPage
 import play.api.libs.json._
 import queries.Gettable

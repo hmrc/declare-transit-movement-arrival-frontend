@@ -19,6 +19,7 @@ package views
 import org.jsoup.nodes.{Document, Element}
 import org.scalatest.MustMatchers
 import play.api.i18n.Messages
+
 import scala.collection.JavaConverters._
 
 trait ViewSpecAssertions {

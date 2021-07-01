@@ -16,8 +16,8 @@
 
 package pages
 
-import models.{Index, UserAnswers}
 import models.reference.CountryCode
+import models.{Index, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
 import pages.events.{EventCountryPage, EventPlacePage, EventReportedPage}

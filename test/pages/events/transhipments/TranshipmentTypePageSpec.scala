@@ -17,10 +17,10 @@
 package pages.events.transhipments
 
 import generators.MessagesModelGenerators
-import models.{Index, TranshipmentType, UserAnswers}
 import models.TranshipmentType._
 import models.domain.ContainerDomain
 import models.reference.CountryCode
+import models.{Index, TranshipmentType, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
 import queries.ContainersQuery

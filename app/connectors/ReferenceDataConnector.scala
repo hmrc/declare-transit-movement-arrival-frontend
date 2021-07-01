@@ -17,10 +17,11 @@
 package connectors
 
 import config.FrontendAppConfig
+
 import javax.inject.Inject
 import metrics.{MetricsService, Monitors}
-import models.CountryList
-import models.reference.{Country, CountryReferenceDataEndpoint, CustomsOffice}
+import models.{CountryList, CustomsOfficeList}
+import models.reference.{Country, CountryCode, CountryReferenceDataEndpoint, CustomsOffice}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -35,12 +36,13 @@ class ReferenceDataConnector @Inject()(config: FrontendAppConfig, http: HttpClie
     }
   }
 
-  def getCustomsOfficesOfTheCountry(country: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[CustomsOffice]] = {
-    val serviceUrl = s"${config.referenceDataUrl}/customs-offices/$country"
-
-    metricsService.timeAsyncCall(Monitors.getCustomsOfficesOfTheCountryMonitor) {
-      http.GET[Seq[CustomsOffice]](serviceUrl)
-    }
+  def getCustomsOfficesOfTheCountry(countryCode: CountryCode)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[CustomsOfficeList] = {
+    val serviceUrl = s"${config.referenceDataUrl}/customs-offices/${countryCode.code}"
+    metricsService
+      .timeAsyncCall(Monitors.getCustomsOfficesOfTheCountryMonitor) {
+        http.GET[Seq[CustomsOffice]](serviceUrl)
+      }
+      .map(CustomsOfficeList(_))
   }
 
   def getCountryList(endpoint: CountryReferenceDataEndpoint)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[CountryList] = {

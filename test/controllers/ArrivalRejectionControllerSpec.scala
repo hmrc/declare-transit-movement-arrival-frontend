@@ -16,15 +16,13 @@
 
 package controllers
 
-import java.time.LocalDate
-
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import matchers.JsonMatchers
 import models.ArrivalId
 import models.messages.ErrorType.{DuplicateMrn, IncorrectValue, InvalidMrn, UnknownMrn}
 import models.messages.{ArrivalNotificationRejectionMessage, ErrorPointer, FunctionalError}
 import org.mockito.ArgumentCaptor
-import org.mockito.Matchers.{any, eq => eqTo}
+import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import play.api.inject.bind
@@ -36,6 +34,7 @@ import play.twirl.api.Html
 import services.ArrivalRejectionService
 import viewModels.sections.ViewModelConfig
 
+import java.time.LocalDate
 import scala.concurrent.Future
 
 class ArrivalRejectionControllerSpec extends SpecBase with AppWithDefaultMockFixtures with JsonMatchers with BeforeAndAfterEach {

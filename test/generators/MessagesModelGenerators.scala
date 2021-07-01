@@ -16,16 +16,16 @@
 
 package generators
 
-import java.time.{LocalDate, LocalTime}
-
-import models.{domain, messages, EoriNumber, MovementReferenceNumber, NormalProcedureFlag, ProcedureTypeFlag, SimplifiedProcedureFlag}
 import models.domain._
 import models.messages.ErrorType.{GenericError, MRNError}
 import models.messages._
 import models.reference.{CountryCode, CustomsOffice}
+import models.{domain, messages, EoriNumber, MovementReferenceNumber, NormalProcedureFlag, ProcedureTypeFlag, SimplifiedProcedureFlag}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 import utils.Format._
+
+import java.time.{LocalDate, LocalTime}
 
 trait MessagesModelGenerators extends Generators {
 

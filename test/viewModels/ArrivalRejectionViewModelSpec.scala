@@ -16,17 +16,17 @@
 
 package viewModels
 
-import java.time.LocalDate
-
 import base.SpecBase
 import controllers.routes
 import generators.MessagesModelGenerators
 import models.ArrivalId
-import models.messages.ErrorType.{DuplicateMrn, GenericError, MRNError}
+import models.messages.ErrorType.{GenericError, MRNError}
 import models.messages.{ArrivalNotificationRejectionMessage, ErrorPointer, ErrorType, FunctionalError}
 import org.scalacheck.{Arbitrary, Gen}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.json.Json
+
+import java.time.LocalDate
 
 class ArrivalRejectionViewModelSpec extends SpecBase with ScalaCheckPropertyChecks with MessagesModelGenerators {
 

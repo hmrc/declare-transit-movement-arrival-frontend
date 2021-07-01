@@ -17,13 +17,9 @@
 package models.messages
 
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalatest.FreeSpec
-import org.scalatest.MustMatchers
+import org.scalatest.{FreeSpec, MustMatchers}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.libs.json.JsError
-import play.api.libs.json.JsString
-import play.api.libs.json.JsSuccess
-import play.api.libs.json.Json
+import play.api.libs.json.{JsError, JsString, JsSuccess, Json}
 
 class ProcedureTypeSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks {
 

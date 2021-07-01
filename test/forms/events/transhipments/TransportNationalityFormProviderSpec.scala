@@ -18,8 +18,8 @@ package forms.events.transhipments
 
 import forms.behaviours.StringFieldBehaviours
 import models.CountryList
-import play.api.data.FormError
 import models.reference._
+import play.api.data.FormError
 
 class TransportNationalityFormProviderSpec extends StringFieldBehaviours {
 

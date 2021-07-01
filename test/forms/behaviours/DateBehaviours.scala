@@ -16,12 +16,11 @@
 
 package forms.behaviours
 
+import org.scalacheck.Gen
+import play.api.data.{Form, FormError}
+
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-
-import org.scalacheck.Gen
-import play.api.data.Form
-import play.api.data.FormError
 
 class DateBehaviours extends FieldBehaviours {
 

@@ -18,13 +18,9 @@ package models.messages.behaviours
 
 import generators.MessagesModelGenerators
 import org.scalacheck.Gen
-import org.scalatest.FreeSpec
-import org.scalatest.MustMatchers
+import org.scalatest.{FreeSpec, MustMatchers}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.libs.json.JsSuccess
-import play.api.libs.json.Json
-import play.api.libs.json.Reads
-import play.api.libs.json.Writes
+import play.api.libs.json.{JsSuccess, Json, Reads, Writes}
 
 trait JsonBehaviours extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with MessagesModelGenerators {
 

@@ -20,7 +20,6 @@ import base.SpecBase
 import forms.behaviours.StringFieldBehaviours
 import generators.MessagesModelGenerators
 import models.Index
-import models.StringFieldRegex.stringFieldRegex
 import models.domain.SealDomain
 import org.scalacheck.Gen
 import play.api.data.{Field, FormError}
