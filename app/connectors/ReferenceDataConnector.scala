@@ -38,7 +38,11 @@ class ReferenceDataConnector @Inject()(config: FrontendAppConfig, http: HttpClie
 
   def getCustomsOfficesOfTheCountry(countryCode: CountryCode)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[CustomsOfficeList] = {
     val serviceUrl = s"${config.referenceDataUrl}/customs-offices/${countryCode.code}"
-    http.GET[Seq[CustomsOffice]](serviceUrl).map(CustomsOfficeList(_))
+    metricsService
+      .timeAsyncCall(Monitors.getCustomsOfficesOfTheCountryMonitor) {
+        http.GET[Seq[CustomsOffice]](serviceUrl)
+      }
+      .map(CustomsOfficeList(_))
   }
 
   def getCountryList(endpoint: CountryReferenceDataEndpoint)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[CountryList] = {
