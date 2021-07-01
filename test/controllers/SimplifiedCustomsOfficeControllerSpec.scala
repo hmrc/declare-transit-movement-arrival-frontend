@@ -49,20 +49,17 @@ class SimplifiedCustomsOfficeControllerSpec extends SpecBase with AppWithDefault
 
   lazy val simplifiedCustomsOfficeRoute: String = routes.SimplifiedCustomsOfficeController.onPageLoad(mrn, NormalMode).url
 
-  private val mockRefDataConnector: ReferenceDataConnector = mock[ReferenceDataConnector]
-  val templateCaptor: ArgumentCaptor[String]               = ArgumentCaptor.forClass(classOf[String])
-  val jsonCaptor: ArgumentCaptor[JsObject]                 = ArgumentCaptor.forClass(classOf[JsObject])
+  val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
+  val jsonCaptor: ArgumentCaptor[JsObject]   = ArgumentCaptor.forClass(classOf[JsObject])
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    Mockito.reset(mockRefDataConnector)
     Mockito.reset(mockCustomsOfficesService)
   }
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
       .guiceApplicationBuilder()
-      .overrides(bind[ReferenceDataConnector].toInstance(mockRefDataConnector))
       .overrides(bind[CustomsOfficesService].toInstance(mockCustomsOfficesService))
 
   "SimplifiedCustomsOffice Controller" - {
@@ -92,7 +89,6 @@ class SimplifiedCustomsOfficeControllerSpec extends SpecBase with AppWithDefault
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      when(mockRefDataConnector.getCustomsOfficesOfTheCountry(any())(any(), any())).thenReturn(Future.successful(customsOffices))
       when(mockCustomsOfficesService.getCustomsOfficesOfArrival(any())).thenReturn(Future.successful(customsOffices))
 
       setExistingUserAnswers(emptyUserAnswers)
@@ -108,7 +104,6 @@ class SimplifiedCustomsOfficeControllerSpec extends SpecBase with AppWithDefault
 
     "must redirect to the next page when valid data is submitted" in {
 
-      when(mockRefDataConnector.getCustomsOfficesOfTheCountry(any())(any(), any())).thenReturn(Future.successful(customsOffices))
       when(mockCustomsOfficesService.getCustomsOfficesOfArrival(any())).thenReturn(Future.successful(customsOffices))
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
@@ -136,7 +131,6 @@ class SimplifiedCustomsOfficeControllerSpec extends SpecBase with AppWithDefault
 
     "must redirect to session expired page when invalid data is submitted and user hasn't answered the customs sub-place page question" in {
 
-      when(mockRefDataConnector.getCustomsOfficesOfTheCountry(any())(any(), any())).thenReturn(Future.successful(customsOffices))
       when(mockCustomsOfficesService.getCustomsOfficesOfArrival(any())).thenReturn(Future.successful(customsOffices))
 
       setExistingUserAnswers(emptyUserAnswers)

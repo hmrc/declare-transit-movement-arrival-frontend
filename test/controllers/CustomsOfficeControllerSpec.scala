@@ -46,23 +46,19 @@ class CustomsOfficeControllerSpec extends SpecBase with AppWithDefaultMockFixtur
   val form: Form[CustomsOffice] = formProvider("sub place", customsOffices)
   val country: String           = "GB"
 
-  lazy val customsOfficeRoute: String = routes.CustomsOfficeController.onPageLoad(mrn, NormalMode).url
-
-  private val mockRefDataConnector: ReferenceDataConnector     = mock[ReferenceDataConnector]
+  lazy val customsOfficeRoute: String                          = routes.CustomsOfficeController.onPageLoad(mrn, NormalMode).url
   val templateCaptor: ArgumentCaptor[String]                   = ArgumentCaptor.forClass(classOf[String])
   val jsonCaptor: ArgumentCaptor[JsObject]                     = ArgumentCaptor.forClass(classOf[JsObject])
   private val mockCustomsOfficesService: CustomsOfficesService = mock[CustomsOfficesService]
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    Mockito.reset(mockRefDataConnector)
     Mockito.reset(mockCustomsOfficesService)
   }
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
       .guiceApplicationBuilder()
-      .overrides(bind[ReferenceDataConnector].toInstance(mockRefDataConnector))
       .overrides(bind[CustomsOfficesService].toInstance(mockCustomsOfficesService))
 
   "CustomsOffice Controller" - {
@@ -90,7 +86,6 @@ class CustomsOfficeControllerSpec extends SpecBase with AppWithDefaultMockFixtur
     "must redirect to session expired page when user hasn't answered the customs sub place question" in {
 
       when(mockRenderer.render(any(), any())(any())).thenReturn(Future.successful(Html("")))
-      when(mockRefDataConnector.getCustomsOfficesOfTheCountry(any())(any(), any())).thenReturn(Future.successful(customsOffices))
       when(mockCustomsOfficesService.getCustomsOfficesOfArrival(any())).thenReturn(Future.successful(customsOffices))
 
       setExistingUserAnswers(emptyUserAnswers)
@@ -105,7 +100,6 @@ class CustomsOfficeControllerSpec extends SpecBase with AppWithDefaultMockFixtur
     }
 
     "must redirect to the next page when valid data is submitted" in {
-      when(mockRefDataConnector.getCustomsOfficesOfTheCountry(any())(any(), any())).thenReturn(Future.successful(customsOffices))
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
       when(mockCustomsOfficesService.getCustomsOfficesOfArrival(any())).thenReturn(Future.successful(customsOffices))
 
@@ -133,7 +127,6 @@ class CustomsOfficeControllerSpec extends SpecBase with AppWithDefaultMockFixtur
 
     "must redirect to session expired page when invalid data is submitted and user hasn't answered the customs sub-place page question" in {
 
-      when(mockRefDataConnector.getCustomsOfficesOfTheCountry(any())(any(), any())).thenReturn(Future.successful(customsOffices))
       when(mockCustomsOfficesService.getCustomsOfficesOfArrival(any())).thenReturn(Future.successful(customsOffices))
 
       setExistingUserAnswers(emptyUserAnswers)
@@ -184,7 +177,6 @@ class CustomsOfficeControllerSpec extends SpecBase with AppWithDefaultMockFixtur
     )
 
     when(mockRenderer.render(any(), any())(any())).thenReturn(Future.successful(Html("")))
-    when(mockRefDataConnector.getCustomsOfficesOfTheCountry(any())(any(), any())).thenReturn(Future.successful(customsOffices))
     when(mockCustomsOfficesService.getCustomsOfficesOfArrival(any())).thenReturn(Future.successful(customsOffices))
 
     val userAnswers = emptyUserAnswers
