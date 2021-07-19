@@ -348,48 +348,6 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
           }
         }
 
-        "must go from 'ConsigneeEoriConfirmationController' to " - {
-          "'ConsigneeAddressController' when the answer is true and there was no previous answer" in {
-            forAll(arbitrary[UserAnswers]) {
-              answers =>
-                val updatedAnswers =
-                  answers
-                    .set(ConsigneeEoriConfirmationPage, true).success.value
-                navigator
-                  .nextPage(ConsigneeEoriConfirmationPage, CheckMode, updatedAnswers)
-                  .mustBe(routes.ConsigneeAddressController.onPageLoad(answers.id, CheckMode))
-            }
-          }
-
-          "'ConsigneeEoriNumberController' when the answer is false and the consigneeEoriNumber is populated" in {
-            forAll(arbitrary[UserAnswers]) {
-              answers =>
-                val updatedAnswers =
-                  answers
-                    .set(ConsigneeEoriConfirmationPage, false).success.value
-                    .set(ConsigneeEoriNumberPage, eoriNumber.value).success.value
-                navigator
-                  .nextPage(ConsigneeEoriConfirmationPage, CheckMode, updatedAnswers)
-                  .mustBe(routes.ConsigneeEoriNumberController.onPageLoad(answers.id, CheckMode))
-            }
-          }
-
-
-          "'ConsigneeEoriNumberController' false and no answer for 'consigneeEoriNumber'" in {
-            forAll(arbitrary[UserAnswers]) {
-              answers =>
-                val updatedAnswers =
-                  answers
-                    .set(ConsigneeEoriConfirmationPage, false).success.value
-                    .remove(ConsigneeEoriNumberPage).success.value
-
-                navigator
-                  .nextPage(ConsigneeEoriConfirmationPage, CheckMode, updatedAnswers)
-                  .mustBe(routes.ConsigneeEoriNumberController.onPageLoad(answers.id, CheckMode))
-            }
-          }
-        }
-
         "must go from 'ConsigneeEoriNumberController' to " - {
           "'CheckYourAnswersController' when 'ConsigneeAddress' is populated" in {
             forAll(arbitrary[UserAnswers]) {
