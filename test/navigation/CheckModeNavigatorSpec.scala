@@ -307,12 +307,26 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
         }
 
         "must go from 'ConsigneeNameController' to " - {
-          "'CheckYourAnswersController'" in {
+          "'Consignee eori number page no address is present'" in {
             forAll(arbitrary[UserAnswers], nonEmptyString) {
               (answers, consigneeName) =>
                 val updatedAnswers =
                   answers
                     .set(ConsigneeNamePage, consigneeName).success.value
+                    .remove(ConsigneeAddressPage).success.value
+
+                navigator
+                  .nextPage(ConsigneeNamePage, CheckMode, updatedAnswers)
+                  .mustBe(routes.ConsigneeEoriNumberController.onPageLoad(answers.id, CheckMode))
+            }
+          }
+          "'CYA page' when address is present" in {
+            forAll(arbitrary[UserAnswers], nonEmptyString) {
+              (answers, consigneeName) =>
+                val updatedAnswers =
+                  answers
+                    .set(ConsigneeNamePage, consigneeName).success.value
+                    .set(ConsigneeAddressPage, traderAddress ).success.value
 
                 navigator
                   .nextPage(ConsigneeNamePage, CheckMode, updatedAnswers)
@@ -322,15 +336,27 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
         }
 
-
         "must go from 'ConsigneeEoriNumberController' to " - {
-          "'CheckYourAnswersController'" in {
+          "'Consignee Address page' when no address is present" in {
             forAll(arbitrary[UserAnswers]) {
               answers =>
+                val updatedAnswers = answers
+                  .remove(ConsigneeAddressPage).success.value
 
                 navigator
-                  .nextPage(ConsigneeEoriNumberPage, CheckMode, answers)
-                  .mustBe(routes.CheckYourAnswersController.onPageLoad(answers.id))
+                  .nextPage(ConsigneeEoriNumberPage, CheckMode, updatedAnswers)
+                  .mustBe(routes.ConsigneeAddressController.onPageLoad(updatedAnswers.id, CheckMode))
+            }
+          }
+
+          "'CYA page' when  address is present" in {
+            forAll(arbitrary[UserAnswers]) {
+              answers =>
+                val updatedAnswers = answers
+                  .set(ConsigneeAddressPage, traderAddress ).success.value
+                navigator
+                  .nextPage(ConsigneeEoriNumberPage, CheckMode, updatedAnswers)
+                  .mustBe(routes.CheckYourAnswersController.onPageLoad(updatedAnswers.id))
             }
           }
 
