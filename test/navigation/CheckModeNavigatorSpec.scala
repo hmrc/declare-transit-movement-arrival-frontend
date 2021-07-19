@@ -303,19 +303,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
             }
           }
 
-          "'ConsigneeConfirmEori' when no answer for 'ConsigneeConfirmEori'" in {
-            forAll(arbitrary[UserAnswers], nonEmptyString) {
-              (answers, authorisedLocation) =>
-                val updatedAnswers =
-                  answers
-                    .set(AuthorisedLocationPage, authorisedLocation).success.value
-                    .remove(ConsigneeNamePage).success.value
 
-                navigator
-                  .nextPage(AuthorisedLocationPage, CheckMode, updatedAnswers)
-                  .mustBe(routes.ConsigneeNameController.onPageLoad(answers.id, CheckMode))
-            }
-          }
         }
 
         "must go from 'ConsigneeNameController' to " - {
@@ -336,31 +324,16 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
 
         "must go from 'ConsigneeEoriNumberController' to " - {
-          "'CheckYourAnswersController' when 'ConsigneeAddress' is populated" in {
+          "'CheckYourAnswersController'" in {
             forAll(arbitrary[UserAnswers]) {
               answers =>
-                val updatedAnswers =
-                  answers
-                    .set(ConsigneeAddressPage, traderAddress).success.value
 
                 navigator
-                  .nextPage(ConsigneeEoriNumberPage, CheckMode, updatedAnswers)
+                  .nextPage(ConsigneeEoriNumberPage, CheckMode, answers)
                   .mustBe(routes.CheckYourAnswersController.onPageLoad(answers.id))
             }
           }
 
-          "'ConsigneeAddressController' when 'ConsigneeAddress is not populated'" in {
-            forAll(arbitrary[UserAnswers]) {
-              answers =>
-                val updatedAnswers =
-                  answers
-                    .remove(ConsigneeAddressPage).success.value
-
-                navigator
-                  .nextPage(ConsigneeEoriNumberPage, CheckMode, updatedAnswers)
-                  .mustBe(routes.ConsigneeAddressController.onPageLoad(answers.id, CheckMode))
-            }
-          }
         }
 
         "to Use Different Service" - {
