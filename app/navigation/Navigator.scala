@@ -76,7 +76,7 @@ class Navigator @Inject()() {
     case GoodsLocationPage => goodsLocationCheckRoute
     case AuthorisedLocationPage  => authorisedLocationRoute(CheckMode)
     case CustomsSubPlacePage => customsSubPlaceRoute(CheckMode)
-    case ConsigneeNamePage =>  ua => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
+    case ConsigneeNamePage => consigneeNameRoute(CheckMode)
     case ConsigneeEoriNumberPage => consigneeEoriNumberRoute(CheckMode)
     case ConsigneeAddressPage => consigneeAddressRoute(CheckMode)
     case EventCountryPage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
@@ -139,6 +139,12 @@ class Navigator @Inject()() {
     (mode, ua.get(ConsigneeAddressPage)) match {
       case (CheckMode, Some(_)) => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
       case _                    => Some(routes.ConsigneeAddressController.onPageLoad(ua.id, mode))
+    }
+
+  private def consigneeNameRoute(mode: Mode)(ua: UserAnswers): Option[Call] =
+    (ua.get(ConsigneeAddressPage), mode) match {
+      case (Some(_), CheckMode) => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
+      case _                    => Some(routes.ConsigneeEoriNumberController.onPageLoad(ua.id, mode))
     }
 
   private def consigneeAddressRoute(mode: Mode)(ua: UserAnswers): Option[Call] =
