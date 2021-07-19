@@ -48,7 +48,6 @@ class GoodsLocationPageSpec extends PageBehaviours {
 
           result.get(AuthorisedLocationPage) must not be defined
           result.get(ConsigneeNamePage) must not be defined
-          result.get(ConsigneeEoriConfirmationPage) must not be defined
           result.get(ConsigneeEoriNumberPage) must not be defined
           result.get(ConsigneeAddressPage) must not be defined
           result.get(CustomsOfficePage) must not be defined

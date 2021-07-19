@@ -111,11 +111,10 @@ object SimplifiedNotification {
     notification =>
       Json
         .obj(
-          GoodsLocationPage.toString             -> GoodsLocation.AuthorisedConsigneesLocation.toString,
-          AuthorisedLocationPage.toString        -> notification.authorisedLocation,
-          ConsigneeNamePage.toString             -> notification.trader.name,
-          ConsigneeEoriConfirmationPage.toString -> (notification.authedEori.value == notification.trader.eori),
-          ConsigneeEoriNumberPage.toString       -> notification.trader.eori,
+          GoodsLocationPage.toString       -> GoodsLocation.AuthorisedConsigneesLocation.toString,
+          AuthorisedLocationPage.toString  -> notification.authorisedLocation,
+          ConsigneeNamePage.toString       -> notification.trader.name,
+          ConsigneeEoriNumberPage.toString -> notification.trader.eori,
           ConsigneeAddressPage.toString -> Json.obj(
             "buildingAndStreet" -> notification.trader.streetAndNumber,
             "city"              -> notification.trader.city,

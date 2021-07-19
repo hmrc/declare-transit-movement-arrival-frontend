@@ -44,7 +44,6 @@ case object GoodsLocationPage extends QuestionPage[GoodsLocation] {
           .remove(AuthorisedLocationPage)
           .flatMap(_.remove(ConsigneeNamePage))
           .flatMap(_.remove(CustomsOfficePage))
-          .flatMap(_.remove(ConsigneeEoriConfirmationPage))
           .flatMap(_.remove(ConsigneeEoriNumberPage))
           .flatMap(_.remove(ConsigneeAddressPage))
 

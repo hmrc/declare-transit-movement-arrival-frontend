@@ -23,7 +23,7 @@ import models.NormalMode
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{times, verify, when}
-import pages.{ConsigneeEoriConfirmationPage, ConsigneeEoriNumberPage, ConsigneeNamePage}
+import pages.{ConsigneeEoriNumberPage, ConsigneeNamePage}
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -46,9 +46,6 @@ class EoriNumberControllerSpec extends SpecBase with AppWithDefaultMockFixtures 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
       val userAnswers = emptyUserAnswers
-        .set(ConsigneeEoriConfirmationPage, true)
-        .success
-        .value
         .set(ConsigneeNamePage, "Fred")
         .success
         .value
@@ -80,9 +77,6 @@ class EoriNumberControllerSpec extends SpecBase with AppWithDefaultMockFixtures 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
       val userAnswers = emptyUserAnswers
-        .set(ConsigneeEoriConfirmationPage, false)
-        .success
-        .value
         .set(ConsigneeNamePage, traderName)
         .success
         .value
@@ -120,9 +114,6 @@ class EoriNumberControllerSpec extends SpecBase with AppWithDefaultMockFixtures 
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
       val userAnswers = emptyUserAnswers
-        .set(ConsigneeEoriConfirmationPage, false)
-        .success
-        .value
         .set(ConsigneeNamePage, traderName)
         .success
         .value
@@ -144,9 +135,6 @@ class EoriNumberControllerSpec extends SpecBase with AppWithDefaultMockFixtures 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
       val userAnswers = emptyUserAnswers
-        .set(ConsigneeEoriConfirmationPage, false)
-        .success
-        .value
         .set(ConsigneeNamePage, traderName)
         .success
         .value

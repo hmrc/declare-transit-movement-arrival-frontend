@@ -27,8 +27,8 @@ import uk.gov.hmrc.viewmodels._
 class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswersHelper(userAnswers) {
 
   def eoriNumber: Option[Row] =
-    (userAnswers.get(ConsigneeEoriConfirmationPage), userAnswers.get(ConsigneeNamePage)) match {
-      case (Some(false), Some(consigneeName)) =>
+    (userAnswers.get(ConsigneeNamePage)) match {
+      case (Some(consigneeName)) =>
         userAnswers.get(ConsigneeEoriNumberPage) map {
           answer =>
             val messages = msg"eoriNumber.checkYourAnswersLabel".withArgs(consigneeName)
@@ -47,24 +47,6 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswers
         }
       case _ => None
     }
-
-  def eoriConfirmation(eoriNumber: EoriNumber): Option[Row] = userAnswers.get(ConsigneeEoriConfirmationPage) map {
-    answer =>
-      val consigneeName = userAnswers.get(ConsigneeNamePage).getOrElse("")
-      val messages      = msg"eoriConfirmation.checkYourAnswersLabel".withArgs(eoriNumber.value, consigneeName)
-      Row(
-        key   = Key(messages, classes = Seq("govuk-!-width-one-half")),
-        value = Value(yesOrNo(answer)),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = routes.ConsigneeEoriConfirmationController.onPageLoad(mrn, CheckMode).url,
-            visuallyHiddenText = Some(msg"eoriConfirmation.visually.hidden".withArgs(consigneeName)),
-            attributes         = Map("id" -> s"""change-eori-confirmation""")
-          )
-        )
-      )
-  }
 
   def consigneeName: Option[Row] = userAnswers.get(ConsigneeNamePage) map {
     answer =>
