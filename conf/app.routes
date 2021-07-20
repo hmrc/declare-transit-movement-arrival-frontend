@@ -176,11 +176,6 @@ POST       /:mrn/consignee-name                        controllers.ConsigneeName
 GET        /:mrn/change-consignee-name                  controllers.ConsigneeNameController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
 POST       /:mrn/change-consignee-name                  controllers.ConsigneeNameController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
 
-GET        /:mrn/eori-confirmation                        controllers.ConsigneeEoriConfirmationController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
-POST       /:mrn/eori-confirmation                        controllers.ConsigneeEoriConfirmationController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
-GET        /:mrn/change-eori-confirmation                  controllers.ConsigneeEoriConfirmationController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
-POST       /:mrn/change-eori-confirmation                  controllers.ConsigneeEoriConfirmationController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = CheckMode)
-
 GET        /:mrn/eori-number                        controllers.ConsigneeEoriNumberController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
 POST       /:mrn/eori-number                        controllers.ConsigneeEoriNumberController.onSubmit(mrn: MovementReferenceNumber, mode: Mode = NormalMode)
 GET        /:mrn/change-eori-number                  controllers.ConsigneeEoriNumberController.onPageLoad(mrn: MovementReferenceNumber, mode: Mode = CheckMode)

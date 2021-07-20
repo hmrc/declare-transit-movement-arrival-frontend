@@ -39,8 +39,7 @@ class Navigator @Inject()() {
     case MovementReferenceNumberPage => ua => Some(routes.GoodsLocationController.onPageLoad(ua.id, NormalMode))
     case GoodsLocationPage => ua => Some(routes.CustomsSubPlaceController.onPageLoad(ua.id, NormalMode))
     case AuthorisedLocationPage => ua => Some(routes.ConsigneeNameController.onPageLoad(ua.id, NormalMode))
-    case ConsigneeNamePage => ua => Some(routes.ConsigneeEoriConfirmationController.onPageLoad(ua.id, NormalMode))
-    case ConsigneeEoriConfirmationPage => consigneeEoriConfirmationRoute(NormalMode)
+    case ConsigneeNamePage => ua => Some(routes.ConsigneeEoriNumberController.onPageLoad(ua.id, NormalMode))
     case ConsigneeEoriNumberPage => ua => Some(routes.ConsigneeAddressController.onPageLoad(ua.id, NormalMode))
     // go to simplified customs office mode if simplified route is being pursued.
     case ConsigneeAddressPage => ua => Some(routes.SimplifiedCustomsOfficeController.onPageLoad(ua.id, NormalMode))
@@ -78,7 +77,6 @@ class Navigator @Inject()() {
     case AuthorisedLocationPage  => authorisedLocationRoute(CheckMode)
     case CustomsSubPlacePage => customsSubPlaceRoute(CheckMode)
     case ConsigneeNamePage => consigneeNameRoute(CheckMode)
-    case ConsigneeEoriConfirmationPage => consigneeEoriConfirmationRoute(CheckMode)
     case ConsigneeEoriNumberPage => consigneeEoriNumberRoute(CheckMode)
     case ConsigneeAddressPage => consigneeAddressRoute(CheckMode)
     case EventCountryPage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
@@ -137,17 +135,6 @@ class Navigator @Inject()() {
       case (None, _)            => Some(routes.IsTraderAddressPlaceOfNotificationController.onPageLoad(ua.id, mode))
     }
 
-//TODO refactor case matching
-  private def consigneeEoriConfirmationRoute(mode: Mode)(ua: UserAnswers) =
-    (ua.get(ConsigneeEoriConfirmationPage), mode, ua.get(ConsigneeEoriNumberPage), ua.get(ConsigneeAddressPage)) match {
-      case (Some(true), NormalMode, _, _)       => Some(routes.ConsigneeAddressController.onPageLoad(ua.id, mode))
-      case (Some(true), CheckMode, _, None)     => Some(routes.ConsigneeAddressController.onPageLoad(ua.id, mode))
-      case (Some(true), CheckMode, _, _)        => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
-      case (Some(false), CheckMode, Some(_), _) => Some(routes.ConsigneeEoriNumberController.onPageLoad(ua.id, mode))
-      case (Some(false), _, _, _)               => Some(routes.ConsigneeEoriNumberController.onPageLoad(ua.id, mode))
-      case _                                    => None
-    }
-
   private def consigneeEoriNumberRoute(mode: Mode)(ua: UserAnswers) =
     (mode, ua.get(ConsigneeAddressPage)) match {
       case (CheckMode, Some(_)) => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
@@ -155,9 +142,9 @@ class Navigator @Inject()() {
     }
 
   private def consigneeNameRoute(mode: Mode)(ua: UserAnswers): Option[Call] =
-    (ua.get(ConsigneeEoriConfirmationPage), mode) match {
+    (ua.get(ConsigneeAddressPage), mode) match {
       case (Some(_), CheckMode) => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
-      case _                    => Some(routes.ConsigneeEoriConfirmationController.onPageLoad(ua.id, mode))
+      case _                    => Some(routes.ConsigneeEoriNumberController.onPageLoad(ua.id, mode))
     }
 
   private def consigneeAddressRoute(mode: Mode)(ua: UserAnswers): Option[Call] =

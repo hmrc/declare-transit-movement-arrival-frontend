@@ -102,7 +102,6 @@ class CheckYourAnswersController @Inject()(override val messagesApi: MessagesApi
       msg"checkYourAnswers.section.consigneeDetails",
       Seq(
         helper.consigneeName,
-        helper.eoriConfirmation(eori),
         helper.eoriNumber,
         helper.consigneeAddress,
         helper.pickCustomsOffice
