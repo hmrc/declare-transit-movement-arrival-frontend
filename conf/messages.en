@@ -231,7 +231,7 @@ traderAddress.error.required = Enter the {0} of {1}’s address
 traderAddress.error.length = The {0} of {1}’s address must be 35 characters or less
 traderAddress.change.hidden = address of trader
 
-traderEori.title = What is the EORI number of the trader at the destination? - {0} - GOV.UK
+traderEori.title = What is the destination trader’s EORI number?
 traderEori.heading = What is {0}’s EORI number?
 traderEori.hint = The first 2 letters are the country code, like 'GB'. This is followed by up to 12 numbers, like GB123456123456.
 traderEori.checkYourAnswersLabel = EORI number
@@ -463,7 +463,7 @@ consigneeName.error.invalid = Authorised consignee’s name must only include le
 consigneeName.error.length = Authorised consignee’s name must be 35 characters or less
 consigneeName.change.hidden = the name of the authorised consignee
 
-eoriConfirmation.title = Is this the EORI number for the trader?
+eoriConfirmation.title = Is this the authorised consignee’s EORI number?
 eoriConfirmation.heading = Is {0} the authorised consignee’s EORI number?
 eoriConfirmation.checkYourAnswersLabel = Is {0} the EORI number for {1}?
 eoriConfirmation.visually.hidden = the EORI number for {0}
