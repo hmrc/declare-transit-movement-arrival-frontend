@@ -182,7 +182,7 @@ goodsLocation.checkYourAnswersLabel = Where are the goods?
 goodsLocation.error.required = Select where the goods are
 goodsLocation.change.hidden = where the goods are
 
-customsOffice.title = Which Customs office supervises {0}?
+customsOffice.title = Which Customs office supervises this Customs-approved location?
 customsOffice.heading = Which Customs office supervises {0}?
 customsOffice.hintText = Give the office location or code. For example, Dover or GB000060.
 customsOffice.checkYourAnswersLabel = Which Customs office supervises {0}?
@@ -190,7 +190,7 @@ customsOffice.error.required = Enter the Customs office that supervises {0}
 customsOffice.error.length = Customs office must be 8 characters or less
 customsOffice.change.hidden = which Customs office supervises {0}
 
-customsOffice.simplified.title = Which Customs office supervises {0}’s address?
+customsOffice.simplified.title = Which Customs office supervises the authorised consignee’s address?
 customsOffice.simplified.heading = Which Customs office supervises {0}’s address?
 customsOffice.simplified.hintText = Give the office location or code. For example, Dover or GB000060.
 customsOffice.simplified.checkYourAnswersLabel = Which Customs office supervises {0}’s address?
@@ -215,7 +215,7 @@ authorisedLocation.error.required = Enter authorised location code
 authorisedLocation.error.length = Authorised location code must be 17 characters or less
 authorisedLocation.error.invalid = Authorised location code must only include letters a to z without accents, numbers 0 to 9, ampersands (&), apostrophes, at signs (@), forward slashes, full stops, hyphens, percent signs, question marks and spaces
 
-traderAddress.title = What is {0}’s address?
+traderAddress.title = What is the destination trader’s address?
 traderAddress.heading = What is {0}’s address?
 traderAddress.buildingAndStreet = Building and street
 traderAddress.city = Town or city
@@ -231,7 +231,7 @@ traderAddress.error.required = Enter the {0} of {1}’s address
 traderAddress.error.length = The {0} of {1}’s address must be 35 characters or less
 traderAddress.change.hidden = address of trader
 
-traderEori.title = What is {0}’s EORI number?
+traderEori.title = What is the destination trader’s EORI number?
 traderEori.heading = What is {0}’s EORI number?
 traderEori.hint = The first 2 letters are the country code, like 'GB'. This is followed by up to 12 numbers, like GB123456123456.
 traderEori.checkYourAnswersLabel = EORI number
@@ -463,14 +463,14 @@ consigneeName.error.invalid = Authorised consignee’s name must only include le
 consigneeName.error.length = Authorised consignee’s name must be 35 characters or less
 consigneeName.change.hidden = the name of the authorised consignee
 
-eoriConfirmation.title = Is {0} the authorised consignee’s EORI number?
+eoriConfirmation.title = Is this the authorised consignee’s EORI number?
 eoriConfirmation.heading = Is {0} the authorised consignee’s EORI number?
 eoriConfirmation.checkYourAnswersLabel = Is {0} the EORI number for {1}?
 eoriConfirmation.visually.hidden = the EORI number for {0}
 eoriConfirmation.error.required = Select yes if {0} is for {1}
 
 
-eoriNumber.title = What is the EORI number for {0}?
+eoriNumber.title = What is the EORI number of the authorised consignee?
 eoriNumber.heading =  What is the EORI number for {0}?
 eoriNumber.hint = The first 2 letters are the country code, like 'GB'. This is followed by up to 12 numbers, like GB123456123456.
 eoriNumber.checkYourAnswersLabel =   What is the EORI number for {0}?
@@ -478,7 +478,7 @@ eoriNumber.error.required = Enter the EORI number for {0}
 eoriNumber.error.length =  EORI mumber must be 17 characters or less
 eoriNumber.error.invalid =  EORI number must start with 2 letters followed by up to 15 numbers
 
-consigneeAddress.title = What is {0}’s address?
+consigneeAddress.title = What is the authorised consignee’s address?
 consigneeAddress.heading =  What is {0}’s address?
 consigneeAddress.checkYourAnswersLabel =  What is {0}’s address?
 consigneeAddress.visually.hidden = {0}’s address?
