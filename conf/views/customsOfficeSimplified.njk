@@ -7,7 +7,7 @@
 {% from "macros/title.njk"                         import title %}
 
 {% block pageTitle %}
-  {{ title(messages("customsOffice.simplified.title"), form.errors) }}
+  {{ title(messages("customsOffice.simplified.title", consigneeName), form.errors) }}
 {% endblock %}
 
 {% block pageHead %}
