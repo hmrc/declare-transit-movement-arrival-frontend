@@ -22,13 +22,7 @@ import models.domain.TraderDomain.{eoriRegex, eoriUkXiRegex}
 import play.api.data.Form
 import uk.gov.hmrc.play.mappers.StopOnFirstFail
 
-import java.util.Locale
 import javax.inject.Inject
-
-object TraderEoriUtils {
-  val isoCountries: List[String] = Locale.getISOCountries.toList
-  val numericOnlyRegex           = "[0-9]*"
-}
 
 class TraderEoriFormProvider @Inject() extends Mappings {
 

@@ -32,7 +32,7 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class EoriNumberControllerSpec extends SpecBase with AppWithDefaultMockFixtures with NunjucksSupport with JsonMatchers {
+class ConsigneeEoriNumberControllerSpec extends SpecBase with AppWithDefaultMockFixtures with NunjucksSupport with JsonMatchers {
 
   val formProvider = new EoriNumberFormProvider()
   val form         = formProvider(traderName)
@@ -46,7 +46,7 @@ class EoriNumberControllerSpec extends SpecBase with AppWithDefaultMockFixtures 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
       val userAnswers = emptyUserAnswers
-        .set(ConsigneeNamePage, "Fred")
+        .set(ConsigneeNamePage, "TestName")
         .success
         .value
 
