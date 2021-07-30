@@ -19,6 +19,7 @@ package forms
 import base.SpecBase
 import forms.behaviours.StringFieldBehaviours
 import models.domain.TraderDomain.Constants.eoriLength
+import models.domain.TraderDomain.eoriRegex
 import org.scalacheck.Gen
 import play.api.data.{Field, FormError}
 
@@ -58,11 +59,10 @@ class EoriNumberFormProviderSpec extends StringFieldBehaviours with SpecBase {
 
     "must not bind strings that do not match regex" in {
 
-      val validRegex    = "[A-Z]{2}[^\n\r]{1,}"
-      val expectedError = FormError(fieldName, invalidKey, Seq(validRegex))
+      val expectedError = FormError(fieldName, invalidKey, Seq(eoriRegex))
 
       val genInvalidString: Gen[String] = {
-        stringsWithMaxLength(eoriLength) suchThat (!_.matches("[A-Z]{2}[^\n\r]{1,}"))
+        stringsWithMaxLength(eoriLength) suchThat (!_.matches("eoriRegex"))
       }
 
       forAll(genInvalidString) {

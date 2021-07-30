@@ -238,7 +238,7 @@ traderEori.checkYourAnswersLabel = EORI number
 
 traderEori.error.required = What is {0}’s EORI number
 traderEori.error.length = EORI number must be 17 characters or less
-traderEori.error.format = Enter {0}’s EORI number in the right format
+traderEori.error.format = {0}’s EORI number must start with GB or XI
 traderEori.error.regexp = {0}’s EORI number must only include letters a to z and numbers 0 to 9
 traderEori.error.invalid = Enter a real EORI number
 traderEori.change.hidden = EORI number of trader

@@ -38,7 +38,7 @@ trait SpecBase
     with IntegrationPatience
     with MockitoSugar {
 
-  val eoriNumber: EoriNumber       = EoriNumber("EOriNumber")
+  val eoriNumber: EoriNumber       = EoriNumber("GB123456")
   val mrn: MovementReferenceNumber = MovementReferenceNumber("19", "GB", "1234567890123")
 
   val emptyUserAnswers: UserAnswers = UserAnswers(mrn, eoriNumber, Json.obj())

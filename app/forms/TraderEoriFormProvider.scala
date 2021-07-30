@@ -17,13 +17,13 @@
 package forms
 
 import forms.mappings.Mappings
-import javax.inject.Inject
-import play.api.data.Form
 import models.domain.TraderDomain.Constants._
-import models.domain.TraderDomain.eoriRegex
-import play.api.data.validation.{Constraint, Invalid, Valid}
+import models.domain.TraderDomain.{eoriRegex, eoriUkXiRegex}
+import play.api.data.Form
+import uk.gov.hmrc.play.mappers.StopOnFirstFail
 
 import java.util.Locale
+import javax.inject.Inject
 
 object TraderEoriUtils {
   val isoCountries: List[String] = Locale.getISOCountries.toList
@@ -32,29 +32,15 @@ object TraderEoriUtils {
 
 class TraderEoriFormProvider @Inject() extends Mappings {
 
-  def eoriFormat(errorKey: String, args: Seq[Any]): Constraint[String] =
-    Constraint {
-      str =>
-        val countryCode  = str.take(2)
-        val restOfString = str.drop(2)
-
-        if (TraderEoriUtils.isoCountries.contains(countryCode) &&
-            restOfString.length <= (eoriLength - 2) &&
-            restOfString.matches(TraderEoriUtils.numericOnlyRegex)) {
-          Valid
-        } else {
-          Invalid(errorKey, args: _*)
-        }
-    }
-
   def apply(traderName: String): Form[String] =
     Form(
       "value" -> text("traderEori.error.required", Seq(traderName))
         .verifying(
-          maxLength(eoriLength, "traderEori.error.length", Seq(traderName)),
-          regexp(eoriRegex.r, "traderEori.error.invalid", Seq(traderName)),
-          eoriFormat("traderEori.error.format", Seq(traderName))
+          StopOnFirstFail[String](
+            maxLength(eoriLength, "traderEori.error.length", Seq(traderName)),
+            regexp(eoriRegex.r, "traderEori.error.invalid", Seq(traderName)),
+            regexp(eoriUkXiRegex.r, "traderEori.error.format", Seq(traderName))
+          )
         )
-        .verifying()
     )
 }

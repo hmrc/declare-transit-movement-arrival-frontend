@@ -26,7 +26,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class FakeIdentifierAction @Inject()(bodyParsers: PlayBodyParsers) extends IdentifierAction {
 
   override def invokeBlock[A](request: Request[A], block: IdentifierRequest[A] => Future[Result]): Future[Result] =
-    block(IdentifierRequest(request, EoriNumber("EOriNumber")))
+    block(IdentifierRequest(request, EoriNumber("GB123456")))
 
   override def parser: BodyParser[AnyContent] =
     bodyParsers.default
