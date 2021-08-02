@@ -91,7 +91,7 @@ class ConsigneeEoriNumberController @Inject()(
               },
               value =>
                 for {
-                  updatedAnswers <- Future.fromTry(request.userAnswers.set(ConsigneeEoriNumberPage, value.toUpperCase))
+                  updatedAnswers <- Future.fromTry(request.userAnswers.set(ConsigneeEoriNumberPage, value.replaceAll("\\s", "").toUpperCase))
                   _              <- sessionRepository.set(updatedAnswers)
                 } yield Redirect(navigator.nextPage(ConsigneeEoriNumberPage, mode, updatedAnswers))
             )
