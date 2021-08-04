@@ -21,13 +21,15 @@ import forms.behaviours.StringFieldBehaviours
 import models.domain.TraderDomain.Constants.eoriLength
 import org.scalacheck.Gen
 import play.api.data.{Field, FormError}
+import wolfendale.scalacheck.regexp.RegexpGen
 
 class EoriNumberFormProviderSpec extends StringFieldBehaviours with SpecBase {
   private val requiredKey = "eoriNumber.error.required"
   private val lengthKey   = "eoriNumber.error.length"
   private val invalidKey  = "eoriNumber.error.invalid"
+  private val formatKey   = "eoriNumber.error.format"
 
-  val form = new EoriNumberFormProvider()(traderName)
+  val form = new EoriNumberFormProvider()(consigneeName)
 
   ".value" - {
 
@@ -42,30 +44,27 @@ class EoriNumberFormProviderSpec extends StringFieldBehaviours with SpecBase {
     behave like mandatoryField(
       form,
       fieldName,
-      requiredError = FormError(fieldName, requiredKey, Seq(traderName))
+      requiredError = FormError(fieldName, requiredKey, Seq(consigneeName))
     )
 
-    "must not bind strings longer than TraderWithEori.Constants.eoriLength characters" in {
+    "must not bind strings that do not match validation regex" in {
 
-      val expectedError = FormError(fieldName, lengthKey, Seq(eoriLength))
+      val expectedError          = FormError(fieldName, invalidKey, Seq(consigneeName))
+      val generator: Gen[String] = RegexpGen.from(s"[!£^*(){}_+=:;|`~,±üçñèé]{17}")
 
-      forAll(stringsLongerThan(eoriLength + 1)) {
-        string =>
-          val result = form.bind(Map(fieldName -> string)).apply(fieldName)
+      forAll(generator) {
+        invalidString =>
+          val result: Field = form.bind(Map(fieldName -> invalidString)).apply(fieldName)
           result.errors must contain(expectedError)
       }
     }
 
-    "must not bind strings that do not match regex" in {
+    "must not bind strings that do not match format regex" in {
 
-      val validRegex    = "[A-Z]{2}[^\n\r]{1,}"
-      val expectedError = FormError(fieldName, invalidKey, Seq(validRegex))
+      val expectedError          = FormError(fieldName, formatKey, Seq(consigneeName))
+      val generator: Gen[String] = RegexpGen.from(s"[AB]{2}([0-9]){15}")
 
-      val genInvalidString: Gen[String] = {
-        stringsWithMaxLength(eoriLength) suchThat (!_.matches("[A-Z]{2}[^\n\r]{1,}"))
-      }
-
-      forAll(genInvalidString) {
+      forAll(generator) {
         invalidString =>
           val result: Field = form.bind(Map(fieldName -> invalidString)).apply(fieldName)
           result.errors must contain(expectedError)

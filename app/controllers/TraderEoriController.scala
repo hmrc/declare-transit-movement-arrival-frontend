@@ -89,7 +89,7 @@ class TraderEoriController @Inject()(override val messagesApi: MessagesApi,
             },
             value =>
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(TraderEoriPage, value))
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(TraderEoriPage, value.replaceAll("\\s", "").toUpperCase))
                 _              <- sessionRepository.set(updatedAnswers)
               } yield Redirect(navigator.nextPage(TraderEoriPage, mode, updatedAnswers))
           )

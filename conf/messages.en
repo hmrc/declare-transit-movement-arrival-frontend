@@ -238,9 +238,8 @@ traderEori.checkYourAnswersLabel = EORI number
 
 traderEori.error.required = What is {0}’s EORI number
 traderEori.error.length = EORI number must be 17 characters or less
-traderEori.error.format = Enter {0}’s EORI number in the right format
-traderEori.error.regexp = {0}’s EORI number must only include letters a to z and numbers 0 to 9
-traderEori.error.invalid = Enter a real EORI number
+traderEori.error.format = {0}’s EORI number must start with GB or XI
+traderEori.error.invalid = {0}’s EORI number must only include letters a to z and numbers 0 to 9
 traderEori.change.hidden = EORI number of trader
 
 traderName.title = What is the destination trader’s name?
@@ -477,6 +476,7 @@ eoriNumber.checkYourAnswersLabel =   What is the EORI number for {0}?
 eoriNumber.error.required = Enter the EORI number for {0}
 eoriNumber.error.length =  EORI mumber must be 17 characters or less
 eoriNumber.error.invalid =  EORI number must start with 2 letters followed by up to 15 numbers
+eoriNumber.error.format =  {0}’s  EORI number must start with GB or XI
 
 consigneeAddress.title = What is the authorised consignee’s address?
 consigneeAddress.heading =  What is {0}’s address?

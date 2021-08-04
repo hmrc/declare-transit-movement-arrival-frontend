@@ -19,8 +19,6 @@ package models.domain
 import models.messages.Trader
 import play.api.libs.json.{Format, Json}
 
-import scala.util.matching.Regex
-
 final case class TraderDomain(
   name: String,
   streetAndNumber: String,
@@ -55,7 +53,8 @@ object TraderDomain {
     * question marks
     * and greater than (>) and less than (<) signs
     */
-  val eoriRegex = "[A-Z]{2}[^\n\r]{1,}"
+  val eoriRegex     = "[a-zA-Z]{2}[0-9 ]{1,}"
+  val eoriUkXiRegex = "((GB)|(XI)|(gb)|(xi))[0-9 ]{1,}"
 
   implicit lazy val format: Format[TraderDomain] =
     Json.format[TraderDomain]

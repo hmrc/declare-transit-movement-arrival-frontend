@@ -27,6 +27,7 @@ class TraderEoriFormProviderSpec extends StringFieldBehaviours {
   private val requiredKey = "traderEori.error.required"
   private val lengthKey   = "traderEori.error.length"
   private val invalidKey  = "traderEori.error.invalid"
+  private val formatKey   = "traderEori.error.format"
   val traderName          = "traderName"
 
   private val form = new TraderEoriFormProvider()(traderName)
@@ -58,10 +59,22 @@ class TraderEoriFormProviderSpec extends StringFieldBehaviours {
       }
     }
 
-    "must not bind strings that do not match regex" in {
+    "must not bind strings that do not match validation regex" in {
 
       val expectedError          = FormError(fieldName, invalidKey, Seq(traderName))
-      val generator: Gen[String] = RegexpGen.from(s"[!£^*(){}_+=:;|`~,±üçñèé]{35}")
+      val generator: Gen[String] = RegexpGen.from(s"[!£^*(){}_+=:;|`~,±üçñèé]{17}")
+
+      forAll(generator) {
+        invalidString =>
+          val result: Field = form.bind(Map(fieldName -> invalidString)).apply(fieldName)
+          result.errors must contain(expectedError)
+      }
+    }
+
+    "must not bind strings that do not match format regex" in {
+
+      val expectedError          = FormError(fieldName, formatKey, Seq(traderName))
+      val generator: Gen[String] = RegexpGen.from(s"[AB]{2}([0-9]){15}")
 
       forAll(generator) {
         invalidString =>
