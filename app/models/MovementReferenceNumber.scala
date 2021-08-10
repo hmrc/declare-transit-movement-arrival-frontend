@@ -42,25 +42,26 @@ final case class MovementReferenceNumber(year: String, countryCode: String, seri
 object MovementReferenceNumber {
 
   object Constants {
-    val length               = 21
-    val validCharactersRegex = """^[a-zA-Z0-9]*$"""
+    val length               = 100
+    val validCharactersRegex = """^[a-zA-Z0-9 ]*$"""
   }
 
   private val mrnFormat = """^(\d{2})([A-Z]{2})([A-Z0-9]{13})(\d)$""".r
 
-  def apply(input: String): Option[MovementReferenceNumber] = input match {
-    case mrnFormat(year, countryCode, serial, checkCharacter) =>
-      val mrn = MovementReferenceNumber(year, countryCode, serial)
+  def apply(input: String): Option[MovementReferenceNumber] =
+    input.replaceAll("\\s", "") match {
+      case mrnFormat(year, countryCode, serial, checkCharacter) =>
+        val mrn = MovementReferenceNumber(year, countryCode, serial)
 
-      if (mrn.checkCharacter == checkCharacter) {
-        Some(mrn)
-      } else {
+        if (mrn.checkCharacter == checkCharacter) {
+          Some(mrn)
+        } else {
+          None
+        }
+
+      case _ =>
         None
-      }
-
-    case _ =>
-      None
-  }
+    }
 
   implicit lazy val reads: Reads[MovementReferenceNumber] = {
 

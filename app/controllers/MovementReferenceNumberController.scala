@@ -18,8 +18,9 @@ package controllers
 
 import controllers.actions._
 import forms.MovementReferenceNumberFormProvider
+
 import javax.inject.Inject
-import models.{NormalMode, UserAnswers}
+import models.{MovementReferenceNumber, NormalMode, UserAnswers}
 import navigation.Navigator
 import pages.MovementReferenceNumberPage
 import play.api.i18n.{I18nSupport, MessagesApi}
