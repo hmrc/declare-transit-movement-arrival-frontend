@@ -43,7 +43,8 @@
             id: "buildingAndStreet",
             name: "buildingAndStreet",
             value: form.buildingAndStreet.value,
-            errorMessage: form.buildingAndStreet.error
+            errorMessage: form.buildingAndStreet.error,
+            autocomplete: "street-address"
           }) }}
 
           {{ govukInput({
@@ -54,7 +55,8 @@
             id: "city",
             name: "city",
             value: form.city.value,
-            errorMessage: form.city.error
+            errorMessage: form.city.error,
+             autocomplete: "address-level2"
           }) }}
 
           {{ govukInput({
@@ -65,7 +67,8 @@
             id: "postcode",
             name: "postcode",
             value: form.postcode.value,
-            errorMessage: form.postcode.error
+            errorMessage: form.postcode.error,
+            autocomplete: "postal-code"
           }) }}
 
           {{ govukButton({
