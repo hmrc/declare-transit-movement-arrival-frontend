@@ -31,10 +31,15 @@
 
           {{ csrf() | safe }}
 
-          <h1 class="govuk-heading govuk-heading-xl">{{messages('authorisedLocation.heading')}}</h1>
-          <p class="govuk-body-m">{{messages('authorisedLocation.hintText')}}</p>
-          
           {{ govukInput({
+            label: {
+              text: messages('authorisedLocation.title'),
+              isPageHeading: true,
+              classes: "govuk-label--xl"
+            },
+             hint: {
+                text: messages('authorisedLocation.hintText')
+              },
             id: "value",
             name: "value",
             value: form.value.value,
