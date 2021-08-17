@@ -38,7 +38,7 @@ class FrontendAppConfig @Inject()(configuration: Configuration) {
   val isNIJourneyEnabled: Boolean    = configuration.getOptional[Boolean]("microservice.services.features.isNIJourneyEnabled").getOrElse(false)
 
   lazy val manageTransitMovementsUrl: String             = configuration.get[String]("urls.manageTransitMovementsFrontend")
-  lazy val serviceUrl: String                            = s"$manageTransitMovementsUrl/index"
+  lazy val serviceUrl: String                            = s"$manageTransitMovementsUrl/what-do-you-want-to-do"
   lazy val manageTransitMovementsViewArrivalsUrl: String = s"$manageTransitMovementsUrl/view-arrivals"
 
   lazy val authUrl: String                             = configuration.get[Service]("auth").fullServiceUrl
