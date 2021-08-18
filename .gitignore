@@ -24,5 +24,8 @@ yarn-error.log
 .git-together 
 .vscode/
 .metals/
+.bloop/
 .bsp/
-
+project/.bloop/
+project/metals.sbt
+.hydra
