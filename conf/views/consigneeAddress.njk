@@ -5,6 +5,7 @@
 {% from "govuk/components/button/macro.njk"        import govukButton %}
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 {% from "macros/title.njk"                         import title %}
+{% from "govuk/components/fieldset/macro.njk" import govukFieldset %}
 
 {% block pageTitle %}
   {{ title(messages("consigneeAddress.title"), form.errors) }}
@@ -30,9 +31,14 @@
         <form action="{{ routes.controllers.ConsigneeAddressController.onSubmit(mrn, mode).url }}" method="post">
 
           {{ csrf() | safe }}
- <h1 class="govuk-heading-xl">
-          {{ messages("consigneeAddress.heading", consigneeName) }}
-        </h1>
+
+        {% call govukFieldset({
+          legend: {
+            text: messages("consigneeAddress.heading", consigneeName),
+            classes: "govuk-fieldset__legend--l",
+            isPageHeading: true
+          }
+        }) %}
             {{ govukInput({
                       classes: "govuk-!-width-two-thirds",
                       label: {
@@ -73,7 +79,8 @@
             text: messages("site.continue"),
             attributes: {id:"submit"}
           }) }}
-
+          s
+        {% endcall %}
         </form>
 
       </div>
