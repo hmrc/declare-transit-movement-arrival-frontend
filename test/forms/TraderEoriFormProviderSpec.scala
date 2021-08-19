@@ -62,7 +62,7 @@ class TraderEoriFormProviderSpec extends StringFieldBehaviours {
     "must not bind strings that do not match validation regex" in {
 
       val expectedError          = FormError(fieldName, invalidKey, Seq(traderName))
-      val generator: Gen[String] = RegexpGen.from(s"[!£^*(){}_+=:;|`~,±üçñèé]{14}")
+      val generator: Gen[String] = RegexpGen.from(s"[a-zA-Z0-9]{14}")
 
       forAll(generator) {
         invalidString =>

@@ -50,7 +50,7 @@ class EoriNumberFormProviderSpec extends StringFieldBehaviours with SpecBase {
     "must not bind strings that do not match validation regex" in {
 
       val expectedError          = FormError(fieldName, invalidKey, Seq(consigneeName))
-      val generator: Gen[String] = RegexpGen.from(s"[!£^*(){}_+=:;|`~,±üçñèé]{14}")
+      val generator: Gen[String] = RegexpGen.from(s"[A-Za-z0-9 ]{14}")
 
       forAll(generator) {
         invalidString =>
