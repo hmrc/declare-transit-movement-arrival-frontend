@@ -36,7 +36,7 @@ class TraderEoriControllerSpec extends SpecBase with AppWithDefaultMockFixtures 
 
   private val formProvider = new TraderEoriFormProvider()
   private val form         = formProvider(traderName)
-  private val validEori    = "GB123456789012345"
+  private val validEori    = "GB123456789012"
 
   lazy val traderEoriRoute = routes.TraderEoriController.onPageLoad(mrn, NormalMode).url
 
