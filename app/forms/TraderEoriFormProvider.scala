@@ -18,7 +18,7 @@ package forms
 
 import forms.mappings.Mappings
 import models.domain.TraderDomain.Constants._
-import models.domain.TraderDomain.{eoriRegex, eoriUkXiRegex}
+import models.domain.TraderDomain.{eoriLengthRegex, eoriRegex, eoriUkXiRegex}
 import play.api.data.Form
 import uk.gov.hmrc.play.mappers.StopOnFirstFail
 
@@ -31,7 +31,7 @@ class TraderEoriFormProvider @Inject() extends Mappings {
       "value" -> text("traderEori.error.required", Seq(traderName))
         .verifying(
           StopOnFirstFail[String](
-            maxLength(eoriLength, "traderEori.error.length", Seq(traderName)),
+            regexp(eoriLengthRegex.r, "traderEori.error.length", Seq(traderName)),
             regexp(eoriRegex.r, "traderEori.error.invalid", Seq(traderName)),
             regexp(eoriUkXiRegex.r, "traderEori.error.format", Seq(traderName))
           )

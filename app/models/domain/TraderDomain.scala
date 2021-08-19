@@ -34,7 +34,7 @@ object TraderDomain {
     TraderDomain.unapply(trader).map((Trader.apply _).tupled).get
 
   object Constants {
-    val eoriLength            = 17
+    val eoriLength            = 14
     val nameLength            = 35
     val streetAndNumberLength = 35
     val postCodeLength        = 9
@@ -53,8 +53,9 @@ object TraderDomain {
     * question marks
     * and greater than (>) and less than (<) signs
     */
-  val eoriRegex     = "[a-zA-Z]{2}[0-9 ]{1,}"
-  val eoriUkXiRegex = "((GB)|(XI)|(gb)|(xi))[0-9 ]{1,}"
+  val eoriRegex       = "(\\s*[a-zA-Z]\\s*){2}(\\s*[0-9]\\s*){1,}"
+  val eoriUkXiRegex   = "(?i)\\s*(g\\s*b|x\\s*i)(\\s*[0-9 ]\\s*){1,}"
+  val eoriLengthRegex = "^(\\s*[A-Za-z0-9]\\s*){1,14}$"
 
   implicit lazy val format: Format[TraderDomain] =
     Json.format[TraderDomain]
