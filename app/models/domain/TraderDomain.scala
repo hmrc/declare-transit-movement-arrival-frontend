@@ -53,8 +53,9 @@ object TraderDomain {
     * question marks
     * and greater than (>) and less than (<) signs
     */
-  val eoriRegex     = "(\\s*[a-zA-Z]\\s*){2}(\\s*[0-9]\\s*){1,}"
-  val eoriUkXiRegex = "(?i)\\s*(g\\s*b|x\\s*i)(\\s*[0-9 ]\\s*){1,}"
+  val eoriRegex       = "(\\s*[a-zA-Z]\\s*){2}(\\s*[0-9]\\s*){1,}"
+  val eoriUkXiRegex   = "(?i)\\s*(g\\s*b|x\\s*i)(\\s*[0-9 ]\\s*){1,}"
+  val eoriLengthRegex = "^(\\s*[A-Za-z0-9]\\s*){1,14}$"
 
   implicit lazy val format: Format[TraderDomain] =
     Json.format[TraderDomain]
