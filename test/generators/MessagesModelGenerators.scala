@@ -29,6 +29,8 @@ import java.time.{LocalDate, LocalTime}
 
 trait MessagesModelGenerators extends Generators {
 
+  implicit val arbValidString: Arbitrary[String] = Arbitrary(Gen.alphaNumStr)
+
   private val gbCountryCode = "GB"
 
   private val maxNumberOfSeals = 99
