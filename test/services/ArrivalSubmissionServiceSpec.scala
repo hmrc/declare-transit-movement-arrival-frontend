@@ -89,7 +89,7 @@ class ArrivalSubmissionServiceSpec extends SpecBase with AppWithDefaultMockFixtu
           .thenReturn(Some(normalNotification))
 
         when(mockArrivalMovementConnector.submitArrivalMovement(any())(any()))
-          .thenReturn(Future.successful(HttpResponse(ACCEPTED)))
+          .thenReturn(Future.successful(HttpResponse(ACCEPTED, "")))
 
         setExistingUserAnswers(emptyUserAnswers)
 
@@ -111,7 +111,7 @@ class ArrivalSubmissionServiceSpec extends SpecBase with AppWithDefaultMockFixtu
           .thenReturn(Some(normalNotification))
 
         when(mockArrivalMovementConnector.updateArrivalMovement(any(), any())(any()))
-          .thenReturn(Future.successful(HttpResponse(ACCEPTED)))
+          .thenReturn(Future.successful(HttpResponse(ACCEPTED, "")))
 
         setExistingUserAnswers(userAnswersWithArrivalId)
 
