@@ -5,18 +5,21 @@ object AppDependencies {
 
   val compile: Seq[ModuleID] = Seq(
     play.sbt.PlayImport.ws,
-    "org.reactivemongo" %% "play2-reactivemongo"           % "0.18.6-play26",
-    "uk.gov.hmrc"       %% "logback-json-logger"           % "5.1.0",
-    "uk.gov.hmrc"       %% "play-health"                   % "3.16.0-play-26",
-    "uk.gov.hmrc"       %% "play-conditional-form-mapping" % "1.9.0-play-26",
-    "uk.gov.hmrc"       %% "bootstrap-frontend-play-26"    % "5.6.0",
-    "uk.gov.hmrc"       %% "play-ui"                       % "9.6.0-play-26",
-    "uk.gov.hmrc"       %% "play-allowlist-filter"         % "1.0.0-play-26",
-    "uk.gov.hmrc"       %% "play-nunjucks"                 % "0.28.0-play-26",
-    "uk.gov.hmrc"       %% "play-nunjucks-viewmodel"       % "0.13.0-play-26",
-    "org.webjars.npm"   % "govuk-frontend"                 % "3.10.1",
-    "org.webjars.npm"   % "hmrc-frontend"                  % "1.22.0",
-    "com.lucidchart"    %% "xtract"                        % "2.2.1"
+    "org.reactivemongo" %% "play2-reactivemongo"              % "0.20.13-play26",
+    "org.reactivemongo" %% "reactivemongo-play-json-compat"   % "0.20.13-play26",
+    "com.typesafe.play" %% "play-iteratees"                   % "2.6.1",
+    "com.typesafe.play" %% "play-iteratees-reactive-streams"  % "2.6.1",
+    "uk.gov.hmrc"       %% "logback-json-logger"              % "5.1.0",
+    "uk.gov.hmrc"       %% "play-health"                      % "3.16.0-play-26",
+    "uk.gov.hmrc"       %% "play-conditional-form-mapping"    % "1.9.0-play-26",
+    "uk.gov.hmrc"       %% "bootstrap-frontend-play-26"       % "5.12.0",
+    "uk.gov.hmrc"       %% "play-ui"                          % "9.6.0-play-26",
+    "uk.gov.hmrc"       %% "play-allowlist-filter"            % "1.0.0-play-26",
+    "uk.gov.hmrc"       %% "play-nunjucks"                    % "0.29.0-play-26",
+    "uk.gov.hmrc"       %% "play-nunjucks-viewmodel"          % "0.14.0-play-26",
+    "org.webjars.npm"   % "govuk-frontend"                    % "3.10.1",
+    "org.webjars.npm"   % "hmrc-frontend"                     % "1.22.0",
+    "com.lucidchart"    %% "xtract"                           % "2.2.1"
   )
 
   val test: Seq[ModuleID] = Seq(
@@ -27,8 +30,8 @@ object AppDependencies {
     "com.typesafe.play"      %% "play-test"             % PlayVersion.current,
     "org.mockito"            % "mockito-core"             % "3.3.3",
     "org.scalacheck"         %% "scalacheck"            % "1.14.0",
-    "com.github.tomakehurst" % "wiremock-standalone"    % "2.25.0",
-    "wolfendale"             %% "scalacheck-gen-regexp" % "0.1.1"
+    "com.github.tomakehurst" % "wiremock-standalone"    % "2.27.2",
+    "wolfendale"             %% "scalacheck-gen-regexp" % "0.1.2"
   ).map(_ % "test, it")
 
   def apply(): Seq[ModuleID] = compile ++ test
