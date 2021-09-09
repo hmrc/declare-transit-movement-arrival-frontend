@@ -66,7 +66,7 @@ awk '/class CheckYourAnswersHelper/ {\
      print "    answer =>";\
      print "      Row(";\
      print "        key     = Key(msg\"$className;format="decap"$.checkYourAnswersLabel\", classes = Seq(\"govuk-!-width-one-half\")),";\
-     print "        value   = Value(Html(answer.map(a => msg\"$className;format="decap"$.\$a\".resolve).mkString(\",<br>\"))),";\
+     print "        value   = Value(Html(answer.map(a => msg\"$className;format="decap"$.\$a\").mkString(\",<br>\"))),";\
      print "        actions = List(";\
      print "          Action(";\
      print "            content            = msg\"site.edit\",";\
