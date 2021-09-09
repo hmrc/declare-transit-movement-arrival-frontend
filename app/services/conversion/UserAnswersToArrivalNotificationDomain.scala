@@ -16,17 +16,17 @@
 
 package services.conversion
 
-import java.time.LocalDate
-
 import derivable.DeriveNumberOfEvents
 import models.GoodsLocation.{AuthorisedConsigneesLocation, BorderForceOffice}
 import models.domain._
-import models.reference.{CountryCode, CustomsOffice}
+import models.reference.CountryCode
 import models.{Index, UserAnswers}
 import pages._
 import pages.events._
 import pages.events.transhipments._
 import queries.{ContainersQuery, SealsQuery}
+
+import java.time.LocalDate
 
 class UserAnswersToArrivalNotificationDomain {
 

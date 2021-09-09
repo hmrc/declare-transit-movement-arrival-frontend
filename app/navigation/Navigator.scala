@@ -24,7 +24,7 @@ import controllers.routes
 import derivable.{DeriveNumberOfContainers, DeriveNumberOfEvents, DeriveNumberOfSeals}
 import models.GoodsLocation._
 import models.TranshipmentType.{DifferentContainer, DifferentContainerAndVehicle, DifferentVehicle}
-import models.{CheckMode, Index, Mode, MovementReferenceNumber, NormalMode, UserAnswers}
+import models.{CheckMode, Index, Mode, NormalMode, UserAnswers}
 import pages._
 import pages.events._
 import pages.events.seals._
@@ -34,76 +34,129 @@ import play.api.mvc.Call
 @Singleton
 class Navigator @Inject()() {
 
-  // format: off
   private val normalRoutes: PartialFunction[Page, UserAnswers => Option[Call]] = {
-    case MovementReferenceNumberPage => ua => Some(routes.GoodsLocationController.onPageLoad(ua.id, NormalMode))
-    case GoodsLocationPage => ua => Some(routes.CustomsSubPlaceController.onPageLoad(ua.id, NormalMode))
-    case AuthorisedLocationPage => ua => Some(routes.ConsigneeNameController.onPageLoad(ua.id, NormalMode))
-    case ConsigneeNamePage => ua => Some(routes.ConsigneeEoriNumberController.onPageLoad(ua.id, NormalMode))
-    case ConsigneeEoriNumberPage => ua => Some(routes.ConsigneeAddressController.onPageLoad(ua.id, NormalMode))
+    case MovementReferenceNumberPage =>
+      ua =>
+        Some(routes.GoodsLocationController.onPageLoad(ua.id, NormalMode))
+    case GoodsLocationPage =>
+      ua =>
+        Some(routes.CustomsSubPlaceController.onPageLoad(ua.id, NormalMode))
+    case AuthorisedLocationPage =>
+      ua =>
+        Some(routes.ConsigneeNameController.onPageLoad(ua.id, NormalMode))
+    case ConsigneeNamePage =>
+      ua =>
+        Some(routes.ConsigneeEoriNumberController.onPageLoad(ua.id, NormalMode))
+    case ConsigneeEoriNumberPage =>
+      ua =>
+        Some(routes.ConsigneeAddressController.onPageLoad(ua.id, NormalMode))
     // go to simplified customs office mode if simplified route is being pursued.
-    case ConsigneeAddressPage => ua => Some(routes.SimplifiedCustomsOfficeController.onPageLoad(ua.id, NormalMode))
-    case SimplifiedCustomsOfficePage => ua => Some(routes.IncidentOnRouteController.onPageLoad(ua.id, NormalMode))
+    case ConsigneeAddressPage =>
+      ua =>
+        Some(routes.SimplifiedCustomsOfficeController.onPageLoad(ua.id, NormalMode))
+    case SimplifiedCustomsOfficePage =>
+      ua =>
+        Some(routes.IncidentOnRouteController.onPageLoad(ua.id, NormalMode))
     case CustomsOfficePage => customsOffice(NormalMode)
-    case CustomsSubPlacePage => ua => Some(routes.CustomsOfficeController.onPageLoad(ua.id, NormalMode))
-    case TraderNamePage => ua => Some(routes.TraderEoriController.onPageLoad(ua.id, NormalMode))
-    case TraderAddressPage => ua => Some(routes.IsTraderAddressPlaceOfNotificationController.onPageLoad(ua.id, NormalMode))
-    case TraderEoriPage => ua => Some(routes.TraderAddressController.onPageLoad(ua.id, NormalMode))
+    case CustomsSubPlacePage =>
+      ua =>
+        Some(routes.CustomsOfficeController.onPageLoad(ua.id, NormalMode))
+    case TraderNamePage =>
+      ua =>
+        Some(routes.TraderEoriController.onPageLoad(ua.id, NormalMode))
+    case TraderAddressPage =>
+      ua =>
+        Some(routes.IsTraderAddressPlaceOfNotificationController.onPageLoad(ua.id, NormalMode))
+    case TraderEoriPage =>
+      ua =>
+        Some(routes.TraderAddressController.onPageLoad(ua.id, NormalMode))
     case IsTraderAddressPlaceOfNotificationPage => isTraderAddressPlaceOfNotificationRoute
-    case PlaceOfNotificationPage => ua => Some(routes.IncidentOnRouteController.onPageLoad(ua.id, NormalMode))
+    case PlaceOfNotificationPage =>
+      ua =>
+        Some(routes.IncidentOnRouteController.onPageLoad(ua.id, NormalMode))
     case IncidentOnRoutePage => incidentOnRoute
-    case EventCountryPage(eventIndex) => ua => Some(eventRoutes.EventPlaceController.onPageLoad(ua.id, eventIndex, NormalMode))
-    case EventPlacePage(eventIndex) => ua => Some(eventRoutes.EventReportedController.onPageLoad(ua.id, eventIndex, NormalMode))
-    case EventReportedPage(eventIndex) => ua => Some(eventRoutes.IsTranshipmentController.onPageLoad(ua.id, eventIndex, NormalMode))
+    case EventCountryPage(eventIndex) =>
+      ua =>
+        Some(eventRoutes.EventPlaceController.onPageLoad(ua.id, eventIndex, NormalMode))
+    case EventPlacePage(eventIndex) =>
+      ua =>
+        Some(eventRoutes.EventReportedController.onPageLoad(ua.id, eventIndex, NormalMode))
+    case EventReportedPage(eventIndex) =>
+      ua =>
+        Some(eventRoutes.IsTranshipmentController.onPageLoad(ua.id, eventIndex, NormalMode))
     case IsTranshipmentPage(eventIndex) => isTranshipmentRoute(eventIndex)
-    case IncidentInformationPage(eventIndex) => ua => Some(sealRoutes.HaveSealsChangedController.onPageLoad(ua.id, eventIndex, NormalMode))
-    case AddEventPage => addEventRoute
+    case IncidentInformationPage(eventIndex) =>
+      ua =>
+        Some(sealRoutes.HaveSealsChangedController.onPageLoad(ua.id, eventIndex, NormalMode))
+    case AddEventPage                     => addEventRoute
     case TranshipmentTypePage(eventIndex) => transhipmentType(eventIndex)
-    case TransportIdentityPage(eventIndex) => ua => Some(transhipmentRoutes.TransportNationalityController.onPageLoad(ua.id, eventIndex, NormalMode))
-    case TransportNationalityPage(eventIndex) => ua => Some(sealRoutes.HaveSealsChangedController.onPageLoad(ua.id, eventIndex, NormalMode))
-    case ContainerNumberPage(eventIndex, _) => ua => Some(transhipmentRoutes.AddContainerController.onPageLoad(ua.id, eventIndex, NormalMode))
-    case AddContainerPage(eventIndex) => addContainer(eventIndex)
+    case TransportIdentityPage(eventIndex) =>
+      ua =>
+        Some(transhipmentRoutes.TransportNationalityController.onPageLoad(ua.id, eventIndex, NormalMode))
+    case TransportNationalityPage(eventIndex) =>
+      ua =>
+        Some(sealRoutes.HaveSealsChangedController.onPageLoad(ua.id, eventIndex, NormalMode))
+    case ContainerNumberPage(eventIndex, _) =>
+      ua =>
+        Some(transhipmentRoutes.AddContainerController.onPageLoad(ua.id, eventIndex, NormalMode))
+    case AddContainerPage(eventIndex)           => addContainer(eventIndex)
     case ConfirmRemoveContainerPage(eventIndex) => confirmRemoveContainerRoute(eventIndex, NormalMode)
-    case ConfirmRemoveEventPage(eventIndex) => confirmRemoveEventRoute(eventIndex, NormalMode)
-    case HaveSealsChangedPage(eventIndex) => haveSealsChanged(eventIndex, NormalMode)
-    case SealIdentityPage(eventIndex, _) => ua => Some(sealRoutes.AddSealController.onPageLoad(ua.id, eventIndex, NormalMode))
-    case AddSealPage(eventIndex) => addSeal(eventIndex, NormalMode)
+    case ConfirmRemoveEventPage(eventIndex)     => confirmRemoveEventRoute(eventIndex, NormalMode)
+    case HaveSealsChangedPage(eventIndex)       => haveSealsChanged(eventIndex, NormalMode)
+    case SealIdentityPage(eventIndex, _) =>
+      ua =>
+        Some(sealRoutes.AddSealController.onPageLoad(ua.id, eventIndex, NormalMode))
+    case AddSealPage(eventIndex)           => addSeal(eventIndex, NormalMode)
     case ConfirmRemoveSealPage(eventIndex) => removeSeal(eventIndex, NormalMode)
-    case UpdateRejectedMRNPage => ua => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
+    case UpdateRejectedMRNPage =>
+      ua =>
+        Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
   }
 
   private val checkRouteMap: PartialFunction[Page, UserAnswers => Option[Call]] = {
-    case GoodsLocationPage => goodsLocationCheckRoute
+    case GoodsLocationPage       => goodsLocationCheckRoute
     case AuthorisedLocationPage  => authorisedLocationRoute(CheckMode)
-    case CustomsSubPlacePage => customsSubPlaceRoute(CheckMode)
-    case ConsigneeNamePage => consigneeNameRoute(CheckMode)
+    case CustomsSubPlacePage     => customsSubPlaceRoute(CheckMode)
+    case ConsigneeNamePage       => consigneeNameRoute(CheckMode)
     case ConsigneeEoriNumberPage => consigneeEoriNumberRoute(CheckMode)
-    case ConsigneeAddressPage => consigneeAddressRoute(CheckMode)
-    case EventCountryPage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
-    case EventPlacePage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
-    case TraderAddressPage => traderAddressRoute(CheckMode)
+    case ConsigneeAddressPage    => consigneeAddressRoute(CheckMode)
+    case EventCountryPage(index) =>
+      ua =>
+        Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
+    case EventPlacePage(index) =>
+      ua =>
+        Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
+    case TraderAddressPage                      => traderAddressRoute(CheckMode)
     case IsTraderAddressPlaceOfNotificationPage => isTraderAddressPlaceOfNotificationCheckRoute
-    case IsTranshipmentPage(index) => isTranshipmentCheckRoute(index)
-    case IncidentInformationPage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
+    case IsTranshipmentPage(index)              => isTranshipmentCheckRoute(index)
+    case IncidentInformationPage(index) =>
+      ua =>
+        Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
     case TranshipmentTypePage(index) => transhipmentTypeCheckRoute(index)
-    case ContainerNumberPage(index, _) => ua => Some(transhipmentRoutes.AddContainerController.onPageLoad(ua.id, index, CheckMode))
+    case ContainerNumberPage(index, _) =>
+      ua =>
+        Some(transhipmentRoutes.AddContainerController.onPageLoad(ua.id, index, CheckMode))
     case TransportIdentityPage(index) => transportIdentity(index)
-    case TransportNationalityPage(index) => ua => Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
-    case AddContainerPage(index) => addContainerCheckRoute(index)
-    case EventReportedPage(index) => eventReportedCheckRoute(index)
+    case TransportNationalityPage(index) =>
+      ua =>
+        Some(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, index))
+    case AddContainerPage(index)           => addContainerCheckRoute(index)
+    case EventReportedPage(index)          => eventReportedCheckRoute(index)
     case ConfirmRemoveContainerPage(index) => confirmRemoveContainerRoute(index, CheckMode)
-    case ConfirmRemoveEventPage(index) => confirmRemoveEventRoute(index, CheckMode)
-    case IncidentOnRoutePage => incidentOnRoute
-    case SealIdentityPage(index, _) => ua => Some(sealRoutes.AddSealController.onPageLoad(ua.id, index, CheckMode))
-    case HaveSealsChangedPage(index) => haveSealsChanged(index, CheckMode)
+    case ConfirmRemoveEventPage(index)     => confirmRemoveEventRoute(index, CheckMode)
+    case IncidentOnRoutePage               => incidentOnRoute
+    case SealIdentityPage(index, _) =>
+      ua =>
+        Some(sealRoutes.AddSealController.onPageLoad(ua.id, index, CheckMode))
+    case HaveSealsChangedPage(index)       => haveSealsChanged(index, CheckMode)
     case ConfirmRemoveSealPage(eventIndex) => removeSeal(eventIndex, CheckMode)
-    case AddSealPage(eventIndex) => addSeal(eventIndex, CheckMode)
-    case CustomsOfficePage =>  customsOffice(CheckMode)
-    case SimplifiedCustomsOfficePage =>  ua => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
-    case TraderNamePage =>  traderNameRoute(CheckMode)
-    case TraderEoriPage =>  traderEoriRoute(CheckMode)
-
-
+    case AddSealPage(eventIndex)           => addSeal(eventIndex, CheckMode)
+    case CustomsOfficePage                 => customsOffice(CheckMode)
+    case SimplifiedCustomsOfficePage =>
+      ua =>
+        Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
+    case TraderNamePage => traderNameRoute(CheckMode)
+    case TraderEoriPage => traderEoriRoute(CheckMode)
   }
 
   def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = mode match {
@@ -113,7 +166,7 @@ class Navigator @Inject()() {
         case Some(call) =>
           call(userAnswers) match {
             case Some(onwardRoute) => onwardRoute
-            case None => routes.SessionExpiredController.onPageLoad()
+            case None              => routes.SessionExpiredController.onPageLoad()
           }
       }
     case CheckMode =>
@@ -122,17 +175,16 @@ class Navigator @Inject()() {
         case Some(call) =>
           call(userAnswers) match {
             case Some(onwardRoute) => onwardRoute
-            case None => routes.SessionExpiredController.onPageLoad()
+            case None              => routes.SessionExpiredController.onPageLoad()
           }
       }
   }
-
-  // format: on
 
   private def traderAddressRoute(mode: Mode)(ua: UserAnswers) =
     (ua.get(IsTraderAddressPlaceOfNotificationPage), mode) match {
       case (Some(_), CheckMode) => Some(routes.CheckYourAnswersController.onPageLoad(ua.id))
       case (None, _)            => Some(routes.IsTraderAddressPlaceOfNotificationController.onPageLoad(ua.id, mode))
+      case _                    => None
     }
 
   private def consigneeEoriNumberRoute(mode: Mode)(ua: UserAnswers) =

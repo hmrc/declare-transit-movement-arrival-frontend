@@ -61,7 +61,7 @@ class CheckEventAnswersController @Inject()(override val messagesApi: MessagesAp
   }
 
   def onSubmit(mrn: MovementReferenceNumber, eventIndex: Index): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
-    implicit request =>
+    _ =>
       Future.successful(Redirect(controllers.events.routes.AddEventController.onPageLoad(mrn, NormalMode)))
   }
 

@@ -16,19 +16,19 @@
 
 package utils
 
-import java.time.format.DateTimeFormatter
-
 import controllers.routes
-import models.{CheckMode, EoriNumber, UserAnswers}
+import models.reference.CustomsOffice
+import models.{CheckMode, Mode, MovementReferenceNumber, UserAnswers}
 import pages._
+import play.api.mvc.Call
 import uk.gov.hmrc.viewmodels.SummaryList._
 import uk.gov.hmrc.viewmodels._
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswersHelper(userAnswers) {
 
   def eoriNumber: Option[Row] =
-    (userAnswers.get(ConsigneeNamePage)) match {
-      case (Some(consigneeName)) =>
+    userAnswers.get(ConsigneeNamePage) match {
+      case Some(consigneeName) =>
         userAnswers.get(ConsigneeEoriNumberPage) map {
           answer =>
             val messages = msg"eoriNumber.checkYourAnswersLabel".withArgs(consigneeName)
@@ -211,70 +211,17 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswers
       )
   }
 
-  def simplifiedCustomsOffice: Option[Row] = userAnswers.get(SimplifiedCustomsOfficePage) map {
-    answer =>
-      val location: String = (userAnswers.get(CustomsSubPlacePage), userAnswers.get(ConsigneeNamePage)) match {
-        case (Some(customsSubPlace), None) => customsSubPlace
-        case (None, Some(consigneeName))   => consigneeName
-      }
-
-      val customsOfficeValue = answer.name match {
-        case Some(name) => Value(lit"$name (${answer.id})")
-        case None       => Value(lit"${answer.id}")
-      }
-
-      Row(
-        key = Key(
-          content = msg"customsOffice.simplified.checkYourAnswersLabel".withArgs(location),
-          classes = Seq("govuk-!-width-one-half")
-        ),
-        value = customsOfficeValue,
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = routes.SimplifiedCustomsOfficeController.onPageLoad(mrn, CheckMode).url,
-            visuallyHiddenText = Some(msg"customsOffice.simplified.change.hidden".withArgs(location)),
-            attributes         = Map("id" -> s"""change-presentation-office""")
-          )
-        )
-      )
-  }
-
   def pickCustomsOffice: Option[Row] =
     userAnswers.get(SimplifiedCustomsOfficePage) match {
       case Some(_) => simplifiedCustomsOffice
       case None    => customsOffice
     }
 
+  def simplifiedCustomsOffice: Option[Row] =
+    customsOffice(SimplifiedCustomsOfficePage, "customsOffice.simplified", routes.SimplifiedCustomsOfficeController.onPageLoad)
+
   def customsOffice: Option[Row] =
-    userAnswers.get(CustomsOfficePage) map {
-      answer =>
-        val location: String = (userAnswers.get(CustomsSubPlacePage), userAnswers.get(ConsigneeNamePage)) match {
-          case (Some(customsSubPlace), None) => customsSubPlace
-          case (None, Some(consigneeName))   => consigneeName
-        }
-
-        val customsOfficeValue = answer.name match {
-          case Some(name) => Value(lit"$name (${answer.id})")
-          case None       => Value(lit"${answer.id}")
-        }
-
-        Row(
-          key = Key(
-            content = msg"customsOffice.checkYourAnswersLabel".withArgs(location),
-            classes = Seq("govuk-!-width-one-half")
-          ),
-          value = customsOfficeValue,
-          actions = List(
-            Action(
-              content            = msg"site.edit",
-              href               = routes.CustomsOfficeController.onPageLoad(mrn, CheckMode).url,
-              visuallyHiddenText = Some(msg"customsOffice.change.hidden".withArgs(location)),
-              attributes         = Map("id" -> s"""change-presentation-office""")
-            )
-          )
-        )
-    }
+    customsOffice(CustomsOfficePage, "customsOffice", routes.CustomsOfficeController.onPageLoad)
 
   def goodsLocation: Option[Row] = userAnswers.get(GoodsLocationPage) map {
     answer =>
@@ -291,4 +238,38 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswers
         )
       )
   }
+
+  private def customsOffice(page: QuestionPage[CustomsOffice], messageKeyPrefix: String, call: (MovementReferenceNumber, Mode) => Call): Option[Row] =
+    userAnswers.get(page) flatMap {
+      answer =>
+        val location: Option[String] = (userAnswers.get(CustomsSubPlacePage), userAnswers.get(ConsigneeNamePage)) match {
+          case (Some(customsSubPlace), None) => Some(customsSubPlace)
+          case (None, Some(consigneeName))   => Some(consigneeName)
+          case _                             => None
+        }
+
+        location map {
+          arg =>
+            val customsOfficeValue = answer.name match {
+              case Some(name) => Value(lit"$name (${answer.id})")
+              case None       => Value(lit"${answer.id}")
+            }
+
+            Row(
+              key = Key(
+                content = msg"$messageKeyPrefix.checkYourAnswersLabel".withArgs(arg),
+                classes = Seq("govuk-!-width-one-half")
+              ),
+              value = customsOfficeValue,
+              actions = List(
+                Action(
+                  content            = msg"site.edit",
+                  href               = call(mrn, CheckMode).url,
+                  visuallyHiddenText = Some(msg"$messageKeyPrefix.change.hidden".withArgs(arg)),
+                  attributes         = Map("id" -> s"""change-presentation-office""")
+                )
+              )
+            )
+        }
+    }
 }
