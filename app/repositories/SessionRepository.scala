@@ -16,18 +16,18 @@
 
 package repositories
 
-import java.time.LocalDateTime
-
-import javax.inject.Inject
 import models.{EoriNumber, MongoDateTimeFormats, UserAnswers}
 import play.api.Configuration
 import play.api.libs.json._
 import play.modules.reactivemongo.ReactiveMongoApi
+import reactivemongo.api.WriteConcern
+import reactivemongo.api.bson.BSONDocument
 import reactivemongo.api.indexes.IndexType
-import reactivemongo.bson.BSONDocument
-import reactivemongo.play.json.ImplicitBSONHandlers.JsObjectDocumentWriter
+import reactivemongo.play.json.collection.Helpers.idWrites
 import reactivemongo.play.json.collection.JSONCollection
 
+import java.time.LocalDateTime
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class DefaultSessionRepository @Inject()(mongo: ReactiveMongoApi, config: Configuration)(implicit ec: ExecutionContext) extends SessionRepository {
@@ -64,8 +64,19 @@ class DefaultSessionRepository @Inject()(mongo: ReactiveMongoApi, config: Config
     )
 
     collection.flatMap {
-      _.findAndUpdate(selector, modifier)
-        .map(_.value.map(_.as[UserAnswers]))
+      _.findAndUpdate(
+        selector                 = selector,
+        update                   = modifier,
+        fetchNewObject           = false,
+        upsert                   = false,
+        sort                     = None,
+        fields                   = None,
+        bypassDocumentValidation = false,
+        writeConcern             = WriteConcern.Default,
+        maxTime                  = None,
+        collation                = None,
+        arrayFilters             = Nil
+      ).map(_.value.map(_.as[UserAnswers]))
     }
   }
 
@@ -90,8 +101,15 @@ class DefaultSessionRepository @Inject()(mongo: ReactiveMongoApi, config: Config
   }
 
   override def remove(id: String): Future[Unit] = collection.flatMap {
-    _.findAndRemove(Json.obj("_id" -> id))
-      .map(_ => ())
+    _.findAndRemove(
+      selector     = Json.obj("_id" -> id),
+      sort         = None,
+      fields       = None,
+      writeConcern = WriteConcern.Default,
+      maxTime      = None,
+      collation    = None,
+      arrayFilters = Nil
+    ).map(_ => ())
   }
 }
 

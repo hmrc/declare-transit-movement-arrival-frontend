@@ -18,9 +18,7 @@ package controllers
 
 import controllers.actions._
 import forms.MovementReferenceNumberFormProvider
-
-import javax.inject.Inject
-import models.{MovementReferenceNumber, NormalMode, UserAnswers}
+import models.{NormalMode, UserAnswers}
 import navigation.Navigator
 import pages.MovementReferenceNumberPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -32,6 +30,7 @@ import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
+import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class MovementReferenceNumberController @Inject()(override val messagesApi: MessagesApi,
