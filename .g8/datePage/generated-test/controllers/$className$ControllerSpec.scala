@@ -2,7 +2,7 @@ package controllers
 
 import java.time.{LocalDate, ZoneOffset}
 
-import base.SpecBase
+import base.{AppWithDefaultMockFixtures, SpecBase}
 import forms.$className$FormProvider
 import matchers.JsonMatchers
 import models.{NormalMode, UserAnswers}
@@ -23,12 +23,10 @@ import uk.gov.hmrc.viewmodels.{DateInput, NunjucksSupport}
 
 import scala.concurrent.Future
 
-class $className$ControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class $className$ControllerSpec extends SpecBase with AppWithDefaultMockFixtures with NunjucksSupport with JsonMatchers {
 
   val formProvider = new $className$FormProvider()
   private def form = formProvider()
-
-  def onwardRoute = Call("GET", "/foo")
 
   val validAnswer = LocalDate.now(ZoneOffset.UTC)
 
@@ -39,11 +37,11 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar with Nunjucks
 
   def postRequest(): FakeRequest[AnyContentAsFormUrlEncoded] =
     FakeRequest(POST, $className;format="decap"$Route)
-      .withFormUrlEncodedBody(
-        "value.day"   -> validAnswer.getDayOfMonth.toString,
-        "value.month" -> validAnswer.getMonthValue.toString,
-        "value.year"  -> validAnswer.getYear.toString
-      )
+  .withFormUrlEncodedBody(
+    "value.day"   -> validAnswer.getDayOfMonth.toString,
+    "value.month" -> validAnswer.getMonthValue.toString,
+    "value.year"  -> validAnswer.getYear.toString
+  )
 
   "$className$ Controller" - {
 
@@ -52,11 +50,12 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar with Nunjucks
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      setExistingUserAnswers(emptyUserAnswers)
+
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, getRequest).value
+      val result = route(app, getRequest).value
 
       status(result) mustEqual OK
 
@@ -73,8 +72,6 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar with Nunjucks
 
       templateCaptor.getValue mustEqual "$className;format="decap"$.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
@@ -82,12 +79,13 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar with Nunjucks
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(mrn).set($className$Page, validAnswer).success.value
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val userAnswers = emptyUserAnswers.set($className$Page, validAnswer).success.value
+      setExistingUserAnswers(userAnswers)
+
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, getRequest).value
+      val result = route(app, getRequest).value
 
       status(result) mustEqual OK
 
@@ -112,31 +110,19 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar with Nunjucks
 
       templateCaptor.getValue mustEqual "$className;format="decap"$.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "must redirect to the next page when valid data is submitted" in {
 
-      val mockSessionRepository = mock[SessionRepository]
-
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
+      setExistingUserAnswers(emptyUserAnswers)
 
-      val result = route(application, postRequest).value
+      val result = route(app, postRequest).value
 
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual onwardRoute.url
-
-      application.stop()
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
@@ -144,13 +130,14 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar with Nunjucks
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      setExistingUserAnswers(emptyUserAnswers)
+
       val request = FakeRequest(POST, $className;format="decap"$Route).withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual BAD_REQUEST
 
@@ -167,33 +154,27 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar with Nunjucks
 
       templateCaptor.getValue mustEqual "$className;format="decap"$.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "must redirect to Session Expired for a GET if no existing data is found" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      setNoExistingUserAnswers()
 
-      val result = route(application, getRequest).value
+      val result = route(app, getRequest).value
 
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
-
-      application.stop()
     }
 
     "must redirect to Session Expired for a POST if no existing data is found" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      setNoExistingUserAnswers()
 
-      val result = route(application, postRequest).value
+      val result = route(app, postRequest).value
 
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
-
-      application.stop()
     }
   }
 }
