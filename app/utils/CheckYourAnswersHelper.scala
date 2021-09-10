@@ -16,13 +16,14 @@
 
 package utils
 
-import java.time.format.DateTimeFormatter
-
 import controllers.routes
-import models.{CheckMode, EoriNumber, UserAnswers}
+import models.{CheckMode, UserAnswers}
 import pages._
 import uk.gov.hmrc.viewmodels.SummaryList._
+import uk.gov.hmrc.viewmodels.Text.Literal
 import uk.gov.hmrc.viewmodels._
+import utils.Format.dateFormatter
+
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswersHelper(userAnswers) {
 
