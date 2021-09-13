@@ -17,7 +17,6 @@
 package controllers
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
-import connectors.ReferenceDataConnector
 import forms.CustomsOfficeFormProvider
 import matchers.JsonMatchers
 import models.reference.CustomsOffice

@@ -17,13 +17,9 @@
 package models.messages
 
 import com.lucidchart.open.xtract._
-import play.api.Logger
-import play.api.libs.json.{JsNumber, Writes}
-import models.Enumerable
 import logging.Logging
-
-import scala.util.Try
-import scala.xml.NodeSeq
+import models.Enumerable
+import play.api.libs.json.{JsNumber, Writes}
 
 sealed trait ErrorType {
   val code: Int
