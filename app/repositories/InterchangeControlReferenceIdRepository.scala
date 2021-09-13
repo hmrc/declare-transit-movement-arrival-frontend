@@ -20,7 +20,8 @@ import com.google.inject.{Inject, Singleton}
 import models.messages.InterchangeControlReference
 import play.api.libs.json.{Json, Reads}
 import play.modules.reactivemongo.ReactiveMongoApi
-import reactivemongo.play.json.ImplicitBSONHandlers.JsObjectDocumentWriter
+import reactivemongo.api.WriteConcern
+import reactivemongo.play.json.collection.Helpers.idWrites
 import reactivemongo.play.json.collection.JSONCollection
 import services.DateTimeService
 
@@ -56,11 +57,22 @@ class InterchangeControlReferenceIdRepository @Inject()(
     val selector = Json.obj("_id" -> s"$date")
 
     collection.flatMap {
-      _.findAndUpdate(selector, update, upsert = true, fetchNewObject = true)
-        .map(
-          _.result(indexKeyReads)
-            .map(InterchangeControlReference(date, _))
-            .getOrElse(throw new Exception(s"Unable to generate InterchangeControlReferenceId for: $date")))
+      _.findAndUpdate(
+        selector                 = selector,
+        update                   = update,
+        fetchNewObject           = true,
+        upsert                   = true,
+        sort                     = None,
+        fields                   = None,
+        bypassDocumentValidation = false,
+        writeConcern             = WriteConcern.Default,
+        maxTime                  = None,
+        collation                = None,
+        arrayFilters             = Nil
+      ).map(
+        _.result(indexKeyReads)
+          .map(InterchangeControlReference(date, _))
+          .getOrElse(throw new Exception(s"Unable to generate InterchangeControlReferenceId for: $date")))
     }
   }
 }

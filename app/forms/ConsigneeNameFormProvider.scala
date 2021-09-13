@@ -16,11 +16,12 @@
 
 package forms
 
-import javax.inject.Inject
 import forms.mappings.Mappings
+import models.StringFieldRegex.stringFieldRegexAsterisk
 import models.domain.TraderDomain.Constants.nameLength
 import play.api.data.Form
-import models.StringFieldRegex.{stringFieldRegex, stringFieldRegexAsterisk}
+
+import javax.inject.Inject
 
 class ConsigneeNameFormProvider @Inject() extends Mappings {
 

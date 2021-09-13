@@ -18,16 +18,15 @@ package viewModels
 
 import controllers.routes
 import models.ArrivalId
-import models.messages.{ArrivalNotificationRejectionMessage, ErrorType, FunctionalError}
 import models.messages.ErrorType._
+import models.messages.{ArrivalNotificationRejectionMessage, FunctionalError}
 import play.api.i18n.Messages
 import play.api.libs.json.{JsObject, Json, OWrites}
-import uk.gov.hmrc.viewmodels.Text
-import uk.gov.hmrc.viewmodels.NunjucksSupport
+import uk.gov.hmrc.viewmodels.{NunjucksSupport, Text}
 import uk.gov.hmrc.viewmodels.Text.Literal
 
 object NunjucksSupportObject extends NunjucksSupport
-import NunjucksSupportObject._
+import viewModels.NunjucksSupportObject._
 
 sealed trait RejectionViewData
 
