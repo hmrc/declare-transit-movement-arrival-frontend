@@ -16,24 +16,21 @@
 
 package controllers.testOnly
 
-import javax.inject.Inject
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.play.json.collection.JSONCollection
-import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class TestOnlyController @Inject()(override val messagesApi: MessagesApi,
-                                   mongo: ReactiveMongoApi,
-                                   val controllerComponents: MessagesControllerComponents,
-                                   renderer: Renderer)(implicit ec: ExecutionContext)
+class TestOnlyController @Inject()(override val messagesApi: MessagesApi, mongo: ReactiveMongoApi, val controllerComponents: MessagesControllerComponents)(
+  implicit ec: ExecutionContext)
     extends FrontendBaseController {
 
   def dropMongoCollection: Action[AnyContent] = Action.async {
-    implicit request =>
+    _ =>
       val collection: Future[JSONCollection] = mongo.database.map(_.collection[JSONCollection]("user-answers"))
 
       collection.flatMap(

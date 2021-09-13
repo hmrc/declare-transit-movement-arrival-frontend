@@ -24,8 +24,8 @@ import play.api.data.{Field, FormError}
 import wolfendale.scalacheck.regexp.RegexpGen
 
 class EoriNumberFormProviderSpec extends StringFieldBehaviours with SpecBase {
+
   private val requiredKey = "eoriNumber.error.required"
-  private val lengthKey   = "eoriNumber.error.length"
   private val invalidKey  = "eoriNumber.error.invalid"
   private val formatKey   = "eoriNumber.error.format"
 

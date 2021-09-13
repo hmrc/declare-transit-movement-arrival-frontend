@@ -17,13 +17,12 @@
 package forms.events
 
 import forms.mappings.Mappings
-import models.StringFieldRegex
-import models.StringFieldRegex.{stringFieldRegex, stringFieldRegexAsterisk}
+import models.StringFieldRegex.stringFieldRegex
+import models.messages.EnRouteEvent.Constants.placeLength
+import play.api.data.Form
+import uk.gov.hmrc.play.mappers.StopOnFirstFail
 
 import javax.inject.Inject
-import play.api.data.Form
-import models.messages.EnRouteEvent.Constants.placeLength
-import uk.gov.hmrc.play.mappers.StopOnFirstFail
 
 class EventPlaceFormProvider @Inject() extends Mappings {
 

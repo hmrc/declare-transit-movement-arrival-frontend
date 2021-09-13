@@ -17,7 +17,6 @@
 package forms
 
 import forms.mappings.Mappings
-import models.domain.TraderDomain.Constants._
 import models.domain.TraderDomain.{eoriLengthRegex, eoriRegex, eoriUkXiRegex}
 import play.api.data.Form
 import uk.gov.hmrc.play.mappers.StopOnFirstFail

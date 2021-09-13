@@ -17,11 +17,12 @@
 package forms
 
 import forms.mappings.Mappings
-import models.StringFieldRegex.{stringFieldRegex, stringFieldRegexAsterisk}
-import javax.inject.Inject
+import models.StringFieldRegex.stringFieldRegex
 import models.domain.SimplifiedNotification
 import play.api.data.Form
 import uk.gov.hmrc.play.mappers.StopOnFirstFail
+
+import javax.inject.Inject
 
 class AuthorisedLocationFormProvider @Inject() extends Mappings {
 

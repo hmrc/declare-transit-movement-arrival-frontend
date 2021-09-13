@@ -16,12 +16,9 @@
 
 package controllers
 
-import connectors.ReferenceDataConnector
 import controllers.actions._
 import forms.SimplifiedCustomsOfficeFormProvider
-
-import javax.inject.Inject
-import models.reference.{CountryCode, CustomsOffice}
+import models.reference.CustomsOffice
 import models.{CustomsOfficeList, Mode, MovementReferenceNumber}
 import navigation.Navigator
 import pages.{ConsigneeNamePage, CustomsSubPlacePage, SimplifiedCustomsOfficePage}
@@ -35,6 +32,7 @@ import services.CustomsOfficesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class SimplifiedCustomsOfficeController @Inject()(
