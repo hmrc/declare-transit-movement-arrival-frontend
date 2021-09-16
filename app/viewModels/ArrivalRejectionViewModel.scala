@@ -40,7 +40,6 @@ private object RejectionViewData {
 final private case class RejectionViewDataNoFunctionalErrors(
   mrn: String,
   errorKey: String,
-  rejectionOverview: Text,
   contactUrl: String,
   movementReferenceNumberUrl: String
 ) extends RejectionViewData
@@ -52,7 +51,6 @@ private object RejectionViewDataNoFunctionalErrors {
 final private case class RejectionViewDataFunctionalErrors(
   mrn: String,
   errors: Seq[FunctionalError],
-  rejectionOverview: Text,
   contactUrl: String,
   createArrivalUrl: String
 ) extends RejectionViewData
@@ -76,7 +74,6 @@ class ArrivalRejectionViewModel(
         val data = RejectionViewDataNoFunctionalErrors(
           mrn                        = rejectionMessage.movementReferenceNumber,
           errorKey                   = MrnErrorDescription(mrnError),
-          rejectionOverview          = msg"arrivalRejection.conflicting.information",
           contactUrl                 = enquiriesUrl,
           movementReferenceNumberUrl = routes.UpdateRejectedMRNController.onPageLoad(arrivalId).url
         )
@@ -85,11 +82,10 @@ class ArrivalRejectionViewModel(
 
       case _ =>
         val data = RejectionViewDataFunctionalErrors(
-          mrn               = rejectionMessage.movementReferenceNumber,
-          errors            = rejectionMessage.errors,
-          rejectionOverview = rejectionMessage.reason.map(Literal(_)).getOrElse(msg"arrivalRejection.conflicting.information"),
-          contactUrl        = enquiriesUrl,
-          createArrivalUrl  = routes.MovementReferenceNumberController.onPageLoad().url
+          mrn              = rejectionMessage.movementReferenceNumber,
+          errors           = rejectionMessage.errors,
+          contactUrl       = enquiriesUrl,
+          createArrivalUrl = routes.MovementReferenceNumberController.onPageLoad().url
         )
 
         (genericRejectionPage, data)

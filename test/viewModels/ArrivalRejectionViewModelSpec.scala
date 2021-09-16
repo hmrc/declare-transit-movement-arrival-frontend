@@ -34,8 +34,7 @@ class ArrivalRejectionViewModelSpec extends SpecBase with ScalaCheckPropertyChec
     Arbitrary.arbitrary[ErrorType].map(FunctionalError(_, ErrorPointer(""), None, None))
 
   "json data for the view" - {
-    val rejectionInformation     = "reasonValue"
-    val noRejectionReasonMessage = "arrivalRejection.conflicting.information"
+    val rejectionInformation = "reasonValue"
 
     "when there are no functional errors" - {
 
@@ -56,11 +55,10 @@ class ArrivalRejectionViewModelSpec extends SpecBase with ScalaCheckPropertyChec
 
         val expectedViewData =
           Json.obj(
-            "mrn"               -> mrn,
-            "errors"            -> rejectionMessage.errors,
-            "rejectionOverview" -> noRejectionReasonMessage,
-            "contactUrl"        -> enquiriesUrl,
-            "createArrivalUrl"  -> routes.MovementReferenceNumberController.onPageLoad().url
+            "mrn"              -> mrn,
+            "errors"           -> rejectionMessage.errors,
+            "contactUrl"       -> enquiriesUrl,
+            "createArrivalUrl" -> routes.MovementReferenceNumberController.onPageLoad().url
           )
 
         vm.viewData mustEqual expectedViewData
@@ -84,11 +82,10 @@ class ArrivalRejectionViewModelSpec extends SpecBase with ScalaCheckPropertyChec
 
         val expectedViewData =
           Json.obj(
-            "mrn"               -> mrn,
-            "errors"            -> rejectionMessage.errors,
-            "rejectionOverview" -> rejectionInformation,
-            "contactUrl"        -> enquiriesUrl,
-            "createArrivalUrl"  -> routes.MovementReferenceNumberController.onPageLoad().url
+            "mrn"              -> mrn,
+            "errors"           -> rejectionMessage.errors,
+            "contactUrl"       -> enquiriesUrl,
+            "createArrivalUrl" -> routes.MovementReferenceNumberController.onPageLoad().url
           )
 
         vm.viewData mustEqual expectedViewData
@@ -121,7 +118,6 @@ class ArrivalRejectionViewModelSpec extends SpecBase with ScalaCheckPropertyChec
                 Json.obj(
                   "mrn"                        -> mrn,
                   "errorKey"                   -> MrnErrorDescription(error),
-                  "rejectionOverview"          -> noRejectionReasonMessage,
                   "contactUrl"                 -> enquiriesUrl,
                   "movementReferenceNumberUrl" -> routes.UpdateRejectedMRNController.onPageLoad(arrivalId).url
                 )
@@ -150,7 +146,6 @@ class ArrivalRejectionViewModelSpec extends SpecBase with ScalaCheckPropertyChec
                 Json.obj(
                   "mrn"                        -> mrn,
                   "errorKey"                   -> MrnErrorDescription(error),
-                  "rejectionOverview"          -> noRejectionReasonMessage,
                   "contactUrl"                 -> enquiriesUrl,
                   "movementReferenceNumberUrl" -> routes.UpdateRejectedMRNController.onPageLoad(arrivalId).url
                 )
@@ -182,11 +177,10 @@ class ArrivalRejectionViewModelSpec extends SpecBase with ScalaCheckPropertyChec
 
               val expectedViewData =
                 Json.obj(
-                  "mrn"               -> mrn,
-                  "errors"            -> rejectionMessage.errors,
-                  "rejectionOverview" -> noRejectionReasonMessage,
-                  "contactUrl"        -> enquiriesUrl,
-                  "createArrivalUrl"  -> routes.MovementReferenceNumberController.onPageLoad().url
+                  "mrn"              -> mrn,
+                  "errors"           -> rejectionMessage.errors,
+                  "contactUrl"       -> enquiriesUrl,
+                  "createArrivalUrl" -> routes.MovementReferenceNumberController.onPageLoad().url
                 )
 
               vm.viewData mustEqual expectedViewData
@@ -212,11 +206,10 @@ class ArrivalRejectionViewModelSpec extends SpecBase with ScalaCheckPropertyChec
 
               val expectedViewData =
                 Json.obj(
-                  "mrn"               -> mrn,
-                  "errors"            -> rejectionMessage.errors,
-                  "rejectionOverview" -> rejectionInformation,
-                  "contactUrl"        -> enquiriesUrl,
-                  "createArrivalUrl"  -> routes.MovementReferenceNumberController.onPageLoad().url
+                  "mrn"              -> mrn,
+                  "errors"           -> rejectionMessage.errors,
+                  "contactUrl"       -> enquiriesUrl,
+                  "createArrivalUrl" -> routes.MovementReferenceNumberController.onPageLoad().url
                 )
 
               vm.viewData mustEqual expectedViewData
@@ -248,11 +241,10 @@ class ArrivalRejectionViewModelSpec extends SpecBase with ScalaCheckPropertyChec
 
             val expectedViewData =
               Json.obj(
-                "mrn"               -> mrn,
-                "errors"            -> rejectionMessage.errors,
-                "rejectionOverview" -> noRejectionReasonMessage,
-                "contactUrl"        -> enquiriesUrl,
-                "createArrivalUrl"  -> routes.MovementReferenceNumberController.onPageLoad().url
+                "mrn"              -> mrn,
+                "errors"           -> rejectionMessage.errors,
+                "contactUrl"       -> enquiriesUrl,
+                "createArrivalUrl" -> routes.MovementReferenceNumberController.onPageLoad().url
               )
 
             vm.viewData mustEqual expectedViewData
@@ -278,11 +270,10 @@ class ArrivalRejectionViewModelSpec extends SpecBase with ScalaCheckPropertyChec
 
             val expectedViewData =
               Json.obj(
-                "mrn"               -> mrn,
-                "errors"            -> rejectionMessage.errors,
-                "rejectionOverview" -> rejectionInformation,
-                "contactUrl"        -> enquiriesUrl,
-                "createArrivalUrl"  -> routes.MovementReferenceNumberController.onPageLoad().url
+                "mrn"              -> mrn,
+                "errors"           -> rejectionMessage.errors,
+                "contactUrl"       -> enquiriesUrl,
+                "createArrivalUrl" -> routes.MovementReferenceNumberController.onPageLoad().url
               )
 
             vm.viewData mustEqual expectedViewData
@@ -378,7 +369,6 @@ class ArrivalRejectionViewModelSpec extends SpecBase with ScalaCheckPropertyChec
           vm.page mustEqual "arrivalGeneralRejection.njk"
       }
     }
-
   }
 
 }

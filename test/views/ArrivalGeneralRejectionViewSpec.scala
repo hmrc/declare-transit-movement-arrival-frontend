@@ -24,25 +24,11 @@ class ArrivalGeneralRejectionViewSpec extends SingleViewSpec("arrivalGeneralReje
 
   val baseJson =
     Json.obj(
-      "mrn"               -> mrn,
-      "errors"            -> Seq.empty[FunctionalError],
-      "rejectionOverview" -> "rejectionOverviewText",
-      "contactUrl"        -> "enquiriesUrl",
-      "createArrivalUrl"  -> "createArrivalUrl"
+      "mrn"              -> mrn,
+      "errors"           -> Seq.empty[FunctionalError],
+      "contactUrl"       -> "enquiriesUrl",
+      "createArrivalUrl" -> "createArrivalUrl"
     )
-
-  "displays a help text for the rejectionOverview" in {
-    forAll(listWithMaxLength[FunctionalError](10)) {
-      functionalError =>
-        val json = baseJson
-
-        val doc = renderDocument(json).futureValue
-
-        val element = getByElementId(doc, "rejection-information")
-
-        element.text() mustEqual "rejectionOverviewText"
-    }
-  }
 
   "rows for functional errors" - {
     "must not display a row when there are no errors" in {
@@ -72,8 +58,8 @@ class ArrivalGeneralRejectionViewSpec extends SingleViewSpec("arrivalGeneralReje
           for {
             FunctionalError(errorType, pointer, _, _) <- functionalError
           } yield {
-            errorTypes.find(_.text() == errorType.code.toString) must not be (empty)
-            errorPointer.find(_.text() == pointer.value.toString) must not be (empty)
+            errorTypes.find(_.text() == errorType.code.toString) must not be empty
+            errorPointer.find(_.text() == pointer.value) must not be empty
           }
       }
     }

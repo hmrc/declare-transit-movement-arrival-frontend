@@ -23,8 +23,6 @@
           {{ messages("arrivalRejection.heading") }}
         </h1>
 
-        <p id="rejection-information" class="govuk-body">{{ rejectionOverview }}</p>
-
         {% for error in errors %}
 
           <dl class="govuk-summary-list" data-testid="error-row">
@@ -48,14 +46,13 @@
 
         {% endfor %}
 
-        <p class="govuk-body">{{ messages("arrivalRejection.you.can") }}</p>
-        <ol class="govuk-list govuk-list--bullet">
-          <li>
-            <a class="govuk-link" href={{createArrivalUrl}} >{{ messages("arrivalRejection.create.arrival") }}</a>
-          <li>
-            <a class="govuk-link" href={{contactUrl}} target="_blank">{{ messages("arrivalRejection.contact") }}</a>
-          </li>
-        </ol>
+        <p class="govuk-body">
+            {{messages("arrivalRejection.review")}} <a class="govuk-link" href={{createArrivalUrl}} >{{ messages("arrivalRejection.sendNewArrival") }}</a>
+        </p>
+
+        <p class="govuk-body">
+            {{ messages("arrivalRejection.youCan")}} <a class="govuk-link" href={{contactUrl}} target="_blank">{{ messages("arrivalRejection.contact") }}</a>
+        </p>
       </div>
     </div>
   </div>
