@@ -503,9 +503,9 @@ arrivalRejection.errorCode = Error code
 arrivalRejection.pointer = Pointer
 arrivalRejection.conflicting.information = There is conflicting information that must be fixed.
 arrivalRejection.review = You must review the error and
-arrivalRejection.sendNewArrival = send a new arrival notification with the right information.
+arrivalRejection.sendNewArrival = send a new arrival notification with the right information
 arrivalRejection.youCan = You can
-arrivalRejection.contact = contact the New Computerised Transit System helpdesk if you need help understanding the error (opens in a new tab).
+arrivalRejection.contact = contact the New Computerised Transit System helpdesk if you need help understanding the error (opens in a new tab)
 
 movementReferenceNumberRejection.error.unknown = The movement reference number cannot be found.
 movementReferenceNumberRejection.error.duplicate = The movement reference number is already in use.
