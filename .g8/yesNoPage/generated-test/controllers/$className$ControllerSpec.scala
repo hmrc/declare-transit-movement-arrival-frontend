@@ -58,7 +58,7 @@ class $className$ControllerSpec extends SpecBase with AppWithDefaultMockFixtures
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(arrivalId, mrn, eoriNumber).set($className$Page, true).success.value
+      val userAnswers = UserAnswers(mrn, eoriNumber).set($className$Page, true).success.value
       setExistingUserAnswers(userAnswers)
 
       val request = FakeRequest(GET, $className;format="decap"$Route)
@@ -77,7 +77,7 @@ class $className$ControllerSpec extends SpecBase with AppWithDefaultMockFixtures
         "form"   -> filledForm,
         "mode"   -> NormalMode,
         "mrn"    -> mrn,
-        "radios" -> Radios.yesNo(form("value"))
+        "radios" -> Radios.yesNo(filledForm("value"))
       )
 
       templateCaptor.getValue mustEqual "$className;format="decap"$.njk"
