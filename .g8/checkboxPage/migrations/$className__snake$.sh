@@ -43,7 +43,7 @@ awk '/trait PageGenerators/ {\
     next }1' ../test/generators/PageGenerators.scala > tmp && mv tmp ../test/generators/PageGenerators.scala
 
 echo "Adding to ModelGenerators"
-awk '/trait ModelGenerators/ {\
+awk '/self: Generators =>/ {\
     print;\
     print "";\
     print "  implicit lazy val arbitrary$className$: Arbitrary[$className$] =";\
@@ -66,7 +66,7 @@ awk '/class CheckYourAnswersHelper/ {\
      print "    answer =>";\
      print "      Row(";\
      print "        key     = Key(msg\"$className;format="decap"$.checkYourAnswersLabel\", classes = Seq(\"govuk-!-width-one-half\")),";\
-     print "        value   = Value(Html(answer.map(a => msg\"$className;format="decap"$.\$a\".resolve).mkString(\",<br>\"))),";\
+     print "        value   = Value(Html(answer.map(a => msg\"$className;format="decap"$.\$a\").mkString(\",<br>\"))),";\
      print "        actions = List(";\
      print "          Action(";\
      print "            content            = msg\"site.edit\",";\
