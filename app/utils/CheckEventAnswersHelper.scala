@@ -38,7 +38,7 @@ class CheckEventAnswersHelper(userAnswers: UserAnswers) {
             content            = msg"site.edit",
             href               = eventRoutes.IsTranshipmentController.onPageLoad(mrn, eventIndex, CheckMode).url,
             visuallyHiddenText = Some(msg"isTranshipment.change.hidden"),
-            attributes         = Map("id" -> s"""change-is-transhipment-${eventIndex.display}""")
+            attributes         = Map("id" -> s"change-is-transhipment-${eventIndex.display}")
           )
         )
       )
@@ -54,7 +54,7 @@ class CheckEventAnswersHelper(userAnswers: UserAnswers) {
             content            = msg"site.edit",
             href               = transhipmentRoutes.TranshipmentTypeController.onPageLoad(mrn, eventIndex, CheckMode).url,
             visuallyHiddenText = Some(msg"transhipmentType.change.hidden"),
-            attributes         = Map("id" -> s"""transhipment-type-${eventIndex.display}""")
+            attributes         = Map("id" -> s"transhipment-type-${eventIndex.display}")
           )
         )
       )
@@ -70,7 +70,7 @@ class CheckEventAnswersHelper(userAnswers: UserAnswers) {
             content            = msg"site.edit",
             href               = transhipmentRoutes.ContainerNumberController.onPageLoad(mrn, eventIndex, containerIndex, CheckMode).url,
             visuallyHiddenText = Some(msg"containerNumber.change.hidden".withArgs(answer.containerNumber)),
-            attributes         = Map("id" -> s"""change-container-${containerIndex.display}""")
+            attributes         = Map("id" -> s"change-container-${containerIndex.display}")
           )
         )
       )
@@ -91,7 +91,7 @@ class CheckEventAnswersHelper(userAnswers: UserAnswers) {
                 content            = msg"site.edit",
                 href               = eventRoutes.EventCountryController.onPageLoad(mrn, eventIndex, CheckMode).url,
                 visuallyHiddenText = Some(msg"eventCountry.change.hidden"),
-                attributes         = Map("id" -> s"""change-event-country-${eventIndex.display}""")
+                attributes         = Map("id" -> s"change-event-country-${eventIndex.display}")
               )
             )
           )
@@ -107,7 +107,7 @@ class CheckEventAnswersHelper(userAnswers: UserAnswers) {
             content            = msg"site.edit",
             href               = eventRoutes.EventPlaceController.onPageLoad(mrn, eventIndex, CheckMode).url,
             visuallyHiddenText = Some(msg"eventPlace.change.hidden"),
-            attributes         = Map("id" -> s"""change-event-place-${eventIndex.display}""")
+            attributes         = Map("id" -> s"change-event-place-${eventIndex.display}")
           )
         )
       )
@@ -123,7 +123,7 @@ class CheckEventAnswersHelper(userAnswers: UserAnswers) {
             content            = msg"site.edit",
             href               = eventRoutes.EventReportedController.onPageLoad(mrn, eventIndex, CheckMode).url,
             visuallyHiddenText = Some(msg"eventReported.change.hidden"),
-            attributes         = Map("id" -> s"""change-event-reported-${eventIndex.display}""")
+            attributes         = Map("id" -> s"change-event-reported-${eventIndex.display}")
           )
         )
       )
@@ -139,7 +139,7 @@ class CheckEventAnswersHelper(userAnswers: UserAnswers) {
             content            = msg"site.edit",
             href               = eventRoutes.IncidentInformationController.onPageLoad(mrn, eventIndex, CheckMode).url,
             visuallyHiddenText = Some(msg"incidentInformation.change.hidden"),
-            attributes         = Map("id" -> s"""change-incident-information-${eventIndex.display}""")
+            attributes         = Map("id" -> s"change-incident-information-${eventIndex.display}")
           )
         )
       )
@@ -155,7 +155,7 @@ class CheckEventAnswersHelper(userAnswers: UserAnswers) {
             content            = msg"site.edit",
             href               = transhipmentRoutes.TransportIdentityController.onPageLoad(mrn, eventIndex, CheckMode).url,
             visuallyHiddenText = Some(msg"transportIdentity.change.hidden"),
-            attributes         = Map("id" -> s"""transport-identity-${eventIndex.display}""")
+            attributes         = Map("id" -> s"transport-identity-${eventIndex.display}")
           )
         )
       )
@@ -173,7 +173,7 @@ class CheckEventAnswersHelper(userAnswers: UserAnswers) {
             content            = msg"site.edit",
             href               = transhipmentRoutes.TransportNationalityController.onPageLoad(mrn, eventIndex, CheckMode).url,
             visuallyHiddenText = Some(msg"transportNationality.change.hidden"),
-            attributes         = Map("id" -> s"""transport-nationality-${eventIndex.display}""")
+            attributes         = Map("id" -> s"transport-nationality-${eventIndex.display}")
           )
         )
       )
@@ -189,7 +189,7 @@ class CheckEventAnswersHelper(userAnswers: UserAnswers) {
             content            = msg"site.edit",
             href               = sealRoutes.HaveSealsChangedController.onPageLoad(mrn, eventIndex, CheckMode).url,
             visuallyHiddenText = Some(msg"haveSealsChanged.change.hidden"),
-            attributes         = Map("id" -> s"""seals-changed-${eventIndex.display}""")
+            attributes         = Map("id" -> s"seals-changed-${eventIndex.display}")
           )
         )
       )
@@ -205,7 +205,7 @@ class CheckEventAnswersHelper(userAnswers: UserAnswers) {
             content            = msg"site.edit",
             href               = sealRoutes.SealIdentityController.onPageLoad(mrn, eventIndex, sealIndex, CheckMode).url,
             visuallyHiddenText = Some(msg"sealIdentity.change.hidden".withArgs(answer.numberOrMark)),
-            attributes         = Map("id" -> s"""change-seal-${sealIndex.display}""")
+            attributes         = Map("id" -> s"change-seal-${sealIndex.display}")
           )
         )
       )

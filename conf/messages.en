@@ -210,7 +210,7 @@ authorisedLocation.title = What is the authorised location code?
 authorisedLocation.hintText = The code can be found in the registration documents.
 authorisedLocation.heading = What is the authorised location code?
 authorisedLocation.checkYourAnswersLabel = Authorised location
-authorisedLocation.visually.hidden = the authorised location
+authorisedLocation.change.hidden = the authorised location
 authorisedLocation.error.required = Enter authorised location code
 authorisedLocation.error.length = Authorised location code must be 17 characters or less
 authorisedLocation.error.invalid = Authorised location code must only include letters a to z without accents, numbers 0 to 9, ampersands (&), apostrophes, at signs (@), forward slashes, full stops, hyphens, percent signs, question marks and spaces
@@ -465,14 +465,15 @@ consigneeName.change.hidden = the name of the authorised consignee
 eoriConfirmation.title = Is this the authorised consignee’s EORI number?
 eoriConfirmation.heading = Is {0} the authorised consignee’s EORI number?
 eoriConfirmation.checkYourAnswersLabel = Is {0} the EORI number for {1}?
-eoriConfirmation.visually.hidden = the EORI number for {0}
+eoriConfirmation.change.hidden = the EORI number for {0}
 eoriConfirmation.error.required = Select yes if {0} is for {1}
 
 
 eoriNumber.title = What is the EORI number of the authorised consignee?
 eoriNumber.heading =  What is the EORI number for {0}?
 eoriNumber.hint = The first 2 letters are the country code, like 'GB'. This is followed by up to 12 numbers, like GB123456123456.
-eoriNumber.checkYourAnswersLabel =   What is the EORI number for {0}?
+eoriNumber.checkYourAnswersLabel = What is the EORI number for {0}?
+eoriNumber.change.hidden = the EORI number for {0}?
 eoriNumber.error.required = Enter the EORI number for {0}
 eoriNumber.error.length =  GB or XI EORI numbers must be 14 characters or less
 eoriNumber.error.invalid =  EORI number must start with 2 letters followed by up to 15 numbers
@@ -481,7 +482,7 @@ eoriNumber.error.format =  {0}’s  EORI number must start with GB or XI
 consigneeAddress.title = What is the authorised consignee’s address?
 consigneeAddress.heading =  What is {0}’s address?
 consigneeAddress.checkYourAnswersLabel =  What is {0}’s address?
-consigneeAddress.visually.hidden = {0}’s address?
+consigneeAddress.change.hidden = {0}’s address?
 
 consigneeAddress.buildingAndStreet = Building and street
 consigneeAddress.city = Town or city
