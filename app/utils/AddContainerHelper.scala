@@ -37,13 +37,13 @@ class AddContainerHelper(userAnswers: UserAnswers) {
               content            = msg"site.edit",
               href               = ContainerNumberController.onPageLoad(userAnswers.id, eventIndex, containerIndex, mode).url,
               visuallyHiddenText = Some(msg"addContainer.containerList.change.hidden".withArgs(answer)),
-              attributes         = Map("id" -> s"""change-container-${containerIndex.display}""")
+              attributes         = Map("id" -> s"change-container-${containerIndex.display}")
             ),
             Action(
               content            = msg"site.delete",
               href               = ConfirmRemoveContainerController.onPageLoad(userAnswers.id, eventIndex, containerIndex, mode).url,
               visuallyHiddenText = Some(msg"addContainer.containerList.delete.hidden".withArgs(answer)),
-              attributes         = Map("id" -> s"""remove-container-${containerIndex.display}""")
+              attributes         = Map("id" -> s"remove-container-${containerIndex.display}")
             )
           )
         )
