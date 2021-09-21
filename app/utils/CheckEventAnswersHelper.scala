@@ -19,14 +19,14 @@ package utils
 import controllers.events.seals.{routes => sealRoutes}
 import controllers.events.transhipments.{routes => transhipmentRoutes}
 import controllers.events.{routes => eventRoutes}
-import models.{Address, CheckMode, CountryList, Index, MovementReferenceNumber, UserAnswers}
+import models.{CheckMode, CountryList, Index, UserAnswers}
 import pages.events._
 import pages.events.seals._
 import pages.events.transhipments._
 import uk.gov.hmrc.viewmodels.SummaryList._
 import uk.gov.hmrc.viewmodels._
 
-class CheckEventAnswersHelper(userAnswers: UserAnswers) {
+class CheckEventAnswersHelper(userAnswers: UserAnswers) extends SummaryListRowHelper(userAnswers) {
 
   def isTranshipment(eventIndex: Index): Option[Row] = userAnswers.get(IsTranshipmentPage(eventIndex)) map {
     answer =>
@@ -211,22 +211,4 @@ class CheckEventAnswersHelper(userAnswers: UserAnswers) {
       )
   }
 
-  def movementReferenceNumber: Row = Row(
-    key   = Key(msg"movementReferenceNumber.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-    value = Value(lit"${mrn.toString}")
-  )
-
-  def yesOrNo(answer: Boolean): Content =
-    if (answer) {
-      msg"site.yes"
-    } else {
-      msg"site.no"
-    }
-
-  def mrn: MovementReferenceNumber = userAnswers.id
-
-  def addressHtml(address: Address): Html = Html(
-    Seq(address.buildingAndStreet, address.city, address.postcode)
-      .mkString("<br>")
-  )
 }

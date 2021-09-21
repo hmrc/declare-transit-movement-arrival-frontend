@@ -17,12 +17,12 @@
 package utils
 
 import controllers.events.{routes => eventRoutes}
-import models.{Index, MovementReferenceNumber, NormalMode, UserAnswers}
+import models.{Index, NormalMode, UserAnswers}
 import pages.events._
 import uk.gov.hmrc.viewmodels.SummaryList.{Action, Key, Row, Value}
 import uk.gov.hmrc.viewmodels._
 
-class AddEventsHelper(userAnswers: UserAnswers) {
+class AddEventsHelper(userAnswers: UserAnswers) extends SummaryListRowHelper(userAnswers) {
 
   def listOfEvent(eventIndex: Index): Option[Row] =
     placeOfEvent(eventIndex).map {
@@ -51,7 +51,8 @@ class AddEventsHelper(userAnswers: UserAnswers) {
     placeOfEvent(eventIndex).map {
       answer =>
         Row(
-          key   = Key(msg"addEvent.event.label".withArgs(eventIndex.display), classes = Seq("govuk-!-width-one-half")), // TODO: Move harded coded interpretation of eventIndex to an Index Model
+          // TODO: Move hard coded interpretation of eventIndex to an Index Model
+          key   = Key(msg"addEvent.event.label".withArgs(eventIndex.display), classes = Seq("govuk-!-width-one-half")),
           value = Value(lit"$answer"),
           actions = List(
             Action(
@@ -64,10 +65,5 @@ class AddEventsHelper(userAnswers: UserAnswers) {
     }
 
   private def placeOfEvent(eventIndex: Index): Option[String] =
-    userAnswers.get(EventPlacePage(eventIndex)) match {
-      case Some(answer) => Some(answer)
-      case _            => userAnswers.get(EventCountryPage(eventIndex)).map(_.code)
-    }
-
-  private def mrn: MovementReferenceNumber = userAnswers.id
+    userAnswers.get(EventPlacePage(eventIndex)) orElse userAnswers.get(EventCountryPage(eventIndex)).map(_.code)
 }

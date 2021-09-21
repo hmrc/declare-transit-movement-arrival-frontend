@@ -22,7 +22,7 @@ import pages.events.seals._
 import uk.gov.hmrc.viewmodels.SummaryList.{Action, Key, Row, Value}
 import uk.gov.hmrc.viewmodels._
 
-class AddSealHelper(userAnswers: UserAnswers) {
+class AddSealHelper(userAnswers: UserAnswers) extends SummaryListRowHelper(userAnswers) {
 
   def sealRow(eventIndex: Index, sealIndex: Index, mode: Mode): Option[Row] =
     userAnswers.get(SealIdentityPage(eventIndex, sealIndex)).map {
@@ -33,13 +33,13 @@ class AddSealHelper(userAnswers: UserAnswers) {
           actions = List(
             Action(
               content            = msg"site.edit",
-              href               = SealIdentityController.onPageLoad(userAnswers.id, eventIndex, sealIndex, mode).url,
+              href               = SealIdentityController.onPageLoad(mrn, eventIndex, sealIndex, mode).url,
               visuallyHiddenText = Some(msg"addSeal.sealList.change.hidden".withArgs(answer.numberOrMark)),
               attributes         = Map("id" -> s"change-seal-${sealIndex.display}")
             ),
             Action(
               content            = msg"site.delete",
-              href               = ConfirmRemoveSealController.onPageLoad(userAnswers.id, eventIndex, sealIndex, mode).url,
+              href               = ConfirmRemoveSealController.onPageLoad(mrn, eventIndex, sealIndex, mode).url,
               visuallyHiddenText = Some(msg"addSeal.sealList.delete.hidden".withArgs(answer.numberOrMark)),
               attributes         = Map("id" -> s"remove-seal-${sealIndex.display}")
             )

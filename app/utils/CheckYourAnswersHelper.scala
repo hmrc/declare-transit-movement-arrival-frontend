@@ -24,7 +24,7 @@ import play.api.mvc.Call
 import uk.gov.hmrc.viewmodels.SummaryList._
 import uk.gov.hmrc.viewmodels._
 
-class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswersHelper(userAnswers) {
+class CheckYourAnswersHelper(userAnswers: UserAnswers) extends SummaryListRowHelper(userAnswers) {
 
   def eoriNumber: Option[Row] =
     userAnswers.get(ConsigneeNamePage) match {
@@ -207,6 +207,11 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends CheckEventAnswers
         )
       )
   }
+
+  def movementReferenceNumber: Row = Row(
+    key   = Key(msg"movementReferenceNumber.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+    value = Value(lit"$mrn")
+  )
 
   def pickCustomsOffice: Option[Row] =
     userAnswers.get(SimplifiedCustomsOfficePage) match {
