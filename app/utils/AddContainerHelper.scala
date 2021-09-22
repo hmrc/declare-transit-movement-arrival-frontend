@@ -24,7 +24,7 @@ import pages.events.transhipments.ContainerNumberPage
 import uk.gov.hmrc.viewmodels.SummaryList.{Action, Key, Row, Value}
 import uk.gov.hmrc.viewmodels._
 
-class AddContainerHelper(userAnswers: UserAnswers) {
+class AddContainerHelper(userAnswers: UserAnswers) extends SummaryListRowHelper(userAnswers) {
 
   def containerRow(eventIndex: Index, containerIndex: Index, mode: Mode): Option[Row] =
     userAnswers.get(ContainerNumberPage(eventIndex, containerIndex)).map {
@@ -35,15 +35,15 @@ class AddContainerHelper(userAnswers: UserAnswers) {
           actions = List(
             Action(
               content            = msg"site.edit",
-              href               = ContainerNumberController.onPageLoad(userAnswers.id, eventIndex, containerIndex, mode).url,
+              href               = ContainerNumberController.onPageLoad(mrn, eventIndex, containerIndex, mode).url,
               visuallyHiddenText = Some(msg"addContainer.containerList.change.hidden".withArgs(answer)),
-              attributes         = Map("id" -> s"""change-container-${containerIndex.display}""")
+              attributes         = Map("id" -> s"change-container-${containerIndex.display}")
             ),
             Action(
               content            = msg"site.delete",
-              href               = ConfirmRemoveContainerController.onPageLoad(userAnswers.id, eventIndex, containerIndex, mode).url,
+              href               = ConfirmRemoveContainerController.onPageLoad(mrn, eventIndex, containerIndex, mode).url,
               visuallyHiddenText = Some(msg"addContainer.containerList.delete.hidden".withArgs(answer)),
-              attributes         = Map("id" -> s"""remove-container-${containerIndex.display}""")
+              attributes         = Map("id" -> s"remove-container-${containerIndex.display}")
             )
           )
         )
