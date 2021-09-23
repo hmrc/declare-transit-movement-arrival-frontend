@@ -18,7 +18,7 @@ package utils
 
 import controllers.routes
 import models.reference.CustomsOffice
-import models.{CheckMode, Mode, MovementReferenceNumber, UserAnswers}
+import models.{Address, CheckMode, GoodsLocation, Mode, MovementReferenceNumber, UserAnswers}
 import pages._
 import play.api.mvc.Call
 import uk.gov.hmrc.viewmodels.SummaryList._
@@ -26,187 +26,95 @@ import uk.gov.hmrc.viewmodels._
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers) extends SummaryListRowHelper(userAnswers) {
 
-  def eoriNumber: Option[Row] =
-    userAnswers.get(ConsigneeNamePage) match {
-      case Some(consigneeName) =>
-        userAnswers.get(ConsigneeEoriNumberPage) map {
-          answer =>
-            Row(
-              key   = Key(msg"eoriNumber.checkYourAnswersLabel".withArgs(consigneeName), classes = Seq("govuk-!-width-one-half")),
-              value = Value(lit"$answer"),
-              actions = List(
-                Action(
-                  content            = msg"site.edit",
-                  href               = routes.ConsigneeEoriNumberController.onPageLoad(mrn, CheckMode).url,
-                  visuallyHiddenText = Some(msg"eoriNumber.change.hidden".withArgs(consigneeName)),
-                  attributes         = Map("id" -> "change-eori-number")
-                )
-              )
-            )
-        }
-      case _ => None
-    }
+  def eoriNumber: Option[Row] = getAnswerAndBuildNamedRow[String](
+    namePage     = ConsigneeNamePage,
+    answerPage   = ConsigneeEoriNumberPage,
+    formatAnswer = formatAsLiteral,
+    prefix       = "eoriNumber",
+    id           = Some("change-eori-number"),
+    call         = routes.ConsigneeEoriNumberController.onPageLoad(mrn, CheckMode)
+  )
 
-  def consigneeName: Option[Row] = userAnswers.get(ConsigneeNamePage) map {
-    answer =>
-      Row(
-        key   = Key(msg"consigneeName.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value = Value(lit"$answer"),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = routes.ConsigneeNameController.onPageLoad(mrn, CheckMode).url,
-            visuallyHiddenText = Some(msg"consigneeName.change.hidden"),
-            attributes         = Map("id" -> "change-consignee-name")
-          )
-        )
-      )
-  }
+  def consigneeName: Option[Row] = getAnswerAndBuildRow[String](
+    page         = ConsigneeNamePage,
+    formatAnswer = formatAsLiteral,
+    prefix       = "consigneeName",
+    id           = Some("change-consignee-name"),
+    call         = routes.ConsigneeNameController.onPageLoad(mrn, CheckMode)
+  )
 
-  def placeOfNotification: Option[Row] = userAnswers.get(PlaceOfNotificationPage) map {
-    answer =>
-      Row(
-        key   = Key(msg"placeOfNotification.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value = Value(lit"$answer"),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = routes.PlaceOfNotificationController.onPageLoad(mrn, CheckMode).url,
-            visuallyHiddenText = Some(msg"placeOfNotification.change.hidden"),
-            attributes         = Map("id" -> "change-place-of-notification")
-          )
-        )
-      )
-  }
+  def placeOfNotification: Option[Row] = getAnswerAndBuildRow[String](
+    page         = PlaceOfNotificationPage,
+    formatAnswer = formatAsLiteral,
+    prefix       = "placeOfNotification",
+    id           = Some("change-place-of-notification"),
+    call         = routes.PlaceOfNotificationController.onPageLoad(mrn, CheckMode)
+  )
 
-  def isTraderAddressPlaceOfNotification: Option[Row] = userAnswers.get(IsTraderAddressPlaceOfNotificationPage) map {
-    answer =>
-      Row(
-        key   = Key(msg"isTraderAddressPlaceOfNotification.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value = Value(yesOrNo(answer)),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = routes.IsTraderAddressPlaceOfNotificationController.onPageLoad(mrn, CheckMode).url,
-            visuallyHiddenText = Some(msg"isTraderAddressPlaceOfNotification.change.hidden"),
-            attributes         = Map("id" -> "change-trader-address-place-of-notification")
-          )
-        )
-      )
-  }
+  def isTraderAddressPlaceOfNotification: Option[Row] = getAnswerAndBuildRow[Boolean](
+    page         = IsTraderAddressPlaceOfNotificationPage,
+    formatAnswer = formatAsYesOrNo,
+    prefix       = "isTraderAddressPlaceOfNotification",
+    id           = Some("change-trader-address-place-of-notification"),
+    call         = routes.IsTraderAddressPlaceOfNotificationController.onPageLoad(mrn, CheckMode)
+  )
 
-  def incidentOnRoute: Option[Row] = userAnswers.get(IncidentOnRoutePage) map {
-    answer =>
-      Row(
-        key   = Key(msg"incidentOnRoute.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value = Value(yesOrNo(answer)),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = routes.IncidentOnRouteController.onPageLoad(mrn, CheckMode).url,
-            visuallyHiddenText = Some(msg"incidentOnRoute.change.hidden"),
-            attributes         = Map("id" -> "change-incident-on-route")
-          )
-        )
-      )
-  }
+  def incidentOnRoute: Option[Row] = getAnswerAndBuildRow[Boolean](
+    page         = IncidentOnRoutePage,
+    formatAnswer = formatAsYesOrNo,
+    prefix       = "incidentOnRoute",
+    id           = Some("change-incident-on-route"),
+    call         = routes.IncidentOnRouteController.onPageLoad(mrn, CheckMode)
+  )
 
-  def traderName: Option[Row] = userAnswers.get(TraderNamePage) map {
-    answer =>
-      Row(
-        key   = Key(msg"traderName.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value = Value(lit"$answer"),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = routes.TraderNameController.onPageLoad(mrn, CheckMode).url,
-            visuallyHiddenText = Some(msg"traderName.change.hidden"),
-            attributes         = Map("id" -> "change-trader-name")
-          )
-        )
-      )
-  }
+  def traderName: Option[Row] = getAnswerAndBuildRow[String](
+    page         = TraderNamePage,
+    formatAnswer = formatAsLiteral,
+    prefix       = "traderName",
+    id           = Some("change-trader-name"),
+    call         = routes.TraderNameController.onPageLoad(mrn, CheckMode)
+  )
 
-  def traderEori: Option[Row] = userAnswers.get(TraderEoriPage) map {
-    answer =>
-      Row(
-        key   = Key(msg"traderEori.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value = Value(lit"$answer"),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = routes.TraderEoriController.onPageLoad(mrn, CheckMode).url,
-            visuallyHiddenText = Some(msg"traderEori.change.hidden"),
-            attributes         = Map("id" -> "change-trader-eori")
-          )
-        )
-      )
-  }
+  def traderEori: Option[Row] = getAnswerAndBuildRow[String](
+    page         = TraderEoriPage,
+    formatAnswer = formatAsLiteral,
+    prefix       = "traderEori",
+    id           = Some("change-trader-eori"),
+    call         = routes.TraderEoriController.onPageLoad(mrn, CheckMode)
+  )
 
-  def traderAddress: Option[Row] = userAnswers.get(TraderAddressPage) map {
-    answer =>
-      Row(
-        key   = Key(msg"traderAddress.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value = Value(addressHtml(answer)),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = routes.TraderAddressController.onPageLoad(mrn, CheckMode).url,
-            visuallyHiddenText = Some(msg"traderAddress.change.hidden"),
-            attributes         = Map("id" -> "change-trader-address")
-          )
-        )
-      )
-  }
+  def traderAddress: Option[Row] = getAnswerAndBuildRow[Address](
+    page         = TraderAddressPage,
+    formatAnswer = formatAsAddress,
+    prefix       = "traderAddress",
+    id           = Some("change-trader-address"),
+    call         = routes.TraderAddressController.onPageLoad(mrn, CheckMode)
+  )
 
-  def consigneeAddress: Option[Row] = userAnswers.get(ConsigneeAddressPage) map {
-    val consigneeName = userAnswers.get(ConsigneeNamePage).getOrElse("")
-    answer =>
-      Row(
-        key   = Key(msg"consigneeAddress.checkYourAnswersLabel".withArgs(consigneeName), classes = Seq("govuk-!-width-one-half")),
-        value = Value(addressHtml(answer)),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = routes.ConsigneeAddressController.onPageLoad(mrn, CheckMode).url,
-            visuallyHiddenText = Some(msg"consigneeAddress.change.hidden".withArgs(consigneeName)),
-            attributes         = Map("id" -> "change-consignee-address")
-          )
-        )
-      )
-  }
+  def consigneeAddress: Option[Row] = getAnswerAndBuildNamedRow[Address](
+    namePage     = ConsigneeNamePage,
+    answerPage   = ConsigneeAddressPage,
+    formatAnswer = formatAsAddress,
+    prefix       = "consigneeAddress",
+    id           = Some("change-consignee-address"),
+    call         = routes.ConsigneeAddressController.onPageLoad(mrn, CheckMode)
+  )
 
-  def authorisedLocation: Option[Row] = userAnswers.get(AuthorisedLocationPage) map {
-    answer =>
-      Row(
-        key   = Key(msg"authorisedLocation.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value = Value(lit"$answer"),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = routes.AuthorisedLocationController.onPageLoad(mrn, CheckMode).url,
-            visuallyHiddenText = Some(msg"authorisedLocation.change.hidden"),
-            attributes         = Map("id" -> "change-authorised-location")
-          )
-        )
-      )
-  }
+  def authorisedLocation: Option[Row] = getAnswerAndBuildRow[String](
+    page         = AuthorisedLocationPage,
+    formatAnswer = formatAsLiteral,
+    prefix       = "authorisedLocation",
+    id           = Some("change-authorised-location"),
+    call         = routes.AuthorisedLocationController.onPageLoad(mrn, CheckMode)
+  )
 
-  def customsSubPlace: Option[Row] = userAnswers.get(CustomsSubPlacePage) map {
-    answer =>
-      Row(
-        key   = Key(msg"customsSubPlace.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value = Value(lit"$answer"),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = routes.CustomsSubPlaceController.onPageLoad(mrn, CheckMode).url,
-            visuallyHiddenText = Some(msg"customsSubPlace.change.hidden"),
-            attributes         = Map("id" -> "change-customs-sub-place")
-          )
-        )
-      )
-  }
+  def customsSubPlace: Option[Row] = getAnswerAndBuildRow[String](
+    page         = CustomsSubPlacePage,
+    formatAnswer = formatAsLiteral,
+    prefix       = "customsSubPlace",
+    id           = Some("change-customs-sub-place"),
+    call         = routes.CustomsSubPlaceController.onPageLoad(mrn, CheckMode)
+  )
 
   def movementReferenceNumber: Row = Row(
     key   = Key(msg"movementReferenceNumber.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
@@ -225,21 +133,13 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends SummaryListRowHel
   def customsOffice: Option[Row] =
     customsOffice(CustomsOfficePage, "customsOffice", routes.CustomsOfficeController.onPageLoad)
 
-  def goodsLocation: Option[Row] = userAnswers.get(GoodsLocationPage) map {
-    answer =>
-      Row(
-        key   = Key(msg"goodsLocation.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value = Value(msg"goodsLocation.$answer"),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = routes.GoodsLocationController.onPageLoad(mrn, CheckMode).url,
-            visuallyHiddenText = Some(msg"goodsLocation.change.hidden"),
-            attributes         = Map("id" -> "change-goods-location")
-          )
-        )
-      )
-  }
+  def goodsLocation: Option[Row] = getAnswerAndBuildRow[GoodsLocation](
+    page         = GoodsLocationPage,
+    formatAnswer = x => msg"goodsLocation.$x",
+    prefix       = "goodsLocation",
+    id           = Some("change-goods-location"),
+    call         = routes.GoodsLocationController.onPageLoad(mrn, CheckMode)
+  )
 
   private def customsOffice(page: QuestionPage[CustomsOffice], messageKeyPrefix: String, call: (MovementReferenceNumber, Mode) => Call): Option[Row] =
     userAnswers.get(page) flatMap {
@@ -253,24 +153,16 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends SummaryListRowHel
         location map {
           arg =>
             val customsOfficeValue = answer.name match {
-              case Some(name) => Value(lit"$name (${answer.id})")
-              case None       => Value(lit"${answer.id}")
+              case Some(name) => s"$name (${answer.id})"
+              case None       => answer.id
             }
 
-            Row(
-              key = Key(
-                content = msg"$messageKeyPrefix.checkYourAnswersLabel".withArgs(arg),
-                classes = Seq("govuk-!-width-one-half")
-              ),
-              value = customsOfficeValue,
-              actions = List(
-                Action(
-                  content            = msg"site.edit",
-                  href               = call(mrn, CheckMode).url,
-                  visuallyHiddenText = Some(msg"$messageKeyPrefix.change.hidden".withArgs(arg)),
-                  attributes         = Map("id" -> "change-presentation-office")
-                )
-              )
+            buildRow(
+              prefix = messageKeyPrefix,
+              answer = lit"$customsOfficeValue",
+              id     = Some("change-presentation-office"),
+              call   = call(mrn, CheckMode),
+              args   = arg
             )
         }
     }

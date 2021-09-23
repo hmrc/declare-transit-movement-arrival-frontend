@@ -16,23 +16,120 @@
 
 package utils
 
-import models.{Address, MovementReferenceNumber, UserAnswers}
+import models.reference.CountryCode
+import models.{Address, CountryList, MovementReferenceNumber, UserAnswers}
+import pages.QuestionPage
+import play.api.libs.json.Reads
+import play.api.mvc.Call
+import uk.gov.hmrc.viewmodels.SummaryList.{Action, Key, Row, Value}
 import uk.gov.hmrc.viewmodels.{Content, Html, MessageInterpolators}
 
 private[utils] class SummaryListRowHelper(userAnswers: UserAnswers) {
 
   def mrn: MovementReferenceNumber = userAnswers.id
 
-  def yesOrNo(answer: Boolean): Content =
+  def formatAsYesOrNo(answer: Boolean): Content =
     if (answer) {
       msg"site.yes"
     } else {
       msg"site.no"
     }
 
-  def addressHtml(address: Address): Html = Html(
+  def formatAsAddress(address: Address): Html = Html(
     Seq(address.buildingAndStreet, address.city, address.postcode)
       .mkString("<br>")
   )
+
+  def formatAsLiteral[T](answer: T): Content = lit"$answer"
+
+  def formatAsCountry(countryList: CountryList)(answer: CountryCode): Content =
+    lit"${countryList.getCountry(answer).map(_.description).getOrElse(answer.code)}"
+
+  def getAnswerAndBuildRow[T](
+    page: QuestionPage[T],
+    formatAnswer: T => Content,
+    prefix: String,
+    id: Option[String],
+    call: Call,
+    args: Any*
+  )(implicit rds: Reads[T]): Option[Row] =
+    userAnswers.get(page) map {
+      answer =>
+        buildRow(
+          prefix = prefix,
+          answer = formatAnswer(answer),
+          id     = id,
+          call   = call,
+          args   = args: _*
+        )
+    }
+
+  def getAnswerAndBuildNamedRow[T](
+    namePage: QuestionPage[String],
+    answerPage: QuestionPage[T],
+    formatAnswer: T => Content,
+    prefix: String,
+    id: Option[String],
+    call: Call
+  )(implicit rds: Reads[T]): Option[Row] =
+    userAnswers.get(namePage) flatMap {
+      name =>
+        getAnswerAndBuildRow[T](
+          page         = answerPage,
+          formatAnswer = formatAnswer,
+          prefix       = prefix,
+          id           = id,
+          call         = call,
+          args         = name
+        )
+    }
+
+  def getAnswerAndBuildSectionRow[T](
+    page: QuestionPage[T],
+    formatAnswer: T => String,
+    prefix: String,
+    label: Content,
+    id: Option[String],
+    call: Call
+  )(implicit rds: Reads[T]): Option[Row] =
+    userAnswers.get(page) map {
+      answer =>
+        Row(
+          key   = Key(label, classes = Seq("govuk-!-width-one-half")),
+          value = Value(lit"${formatAnswer(answer)}"),
+          actions = List(
+            Action(
+              content            = msg"site.edit",
+              href               = call.url,
+              visuallyHiddenText = Some(msg"$prefix.change.hidden".withArgs(formatAnswer(answer))),
+              attributes = id.fold[Map[String, String]](Map.empty)(
+                id => Map("id" -> id)
+              )
+            )
+          )
+        )
+    }
+
+  def buildRow(
+    prefix: String,
+    answer: Content,
+    id: Option[String],
+    call: Call,
+    args: Any*
+  ): Row =
+    Row(
+      key   = Key(msg"$prefix.checkYourAnswersLabel".withArgs(args: _*), classes = Seq("govuk-!-width-one-half")),
+      value = Value(answer),
+      actions = List(
+        Action(
+          content            = msg"site.edit",
+          href               = call.url,
+          visuallyHiddenText = Some(msg"$prefix.change.hidden".withArgs(args: _*)),
+          attributes = id.fold[Map[String, String]](Map.empty)(
+            id => Map("id" -> id)
+          )
+        )
+      )
+    )
 
 }

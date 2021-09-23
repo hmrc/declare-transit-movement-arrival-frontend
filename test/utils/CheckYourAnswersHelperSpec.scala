@@ -340,62 +340,46 @@ class CheckYourAnswersHelperSpec extends SpecBase {
     ".consigneeAddress" - {
 
       "must return None" - {
-        "when ConsigneeAddressPage undefined" in {
+
+        "when ConsigneeNamePage undefined" in {
 
           val checkYourAnswersHelper = new CheckYourAnswersHelper(emptyUserAnswers)
+          checkYourAnswersHelper.consigneeAddress mustBe None
+        }
+
+        "when ConsigneeAddressPage undefined" in {
+
+          val answers = emptyUserAnswers
+            .set(ConsigneeNamePage, name).success.value
+
+          val checkYourAnswersHelper = new CheckYourAnswersHelper(answers)
           checkYourAnswersHelper.consigneeAddress mustBe None
         }
       }
 
       "must return Some(Row)" - {
-        "when ConsigneeAddressPage defined" - {
+        "when ConsigneeAddressPage defined" in {
 
-          "when ConsigneeNamePage undefined" in {
+          val answers = emptyUserAnswers
+            .set(ConsigneeNamePage, name).success.value
+            .set(ConsigneeAddressPage, address).success.value
 
-            val answers = emptyUserAnswers
-              .set(ConsigneeAddressPage, address).success.value
-
-            val checkYourAnswersHelper = new CheckYourAnswersHelper(answers)
-            checkYourAnswersHelper.consigneeAddress mustBe Some(Row(
-              key = Key(
-                content = Message("consigneeAddress.checkYourAnswersLabel").withArgs(""),
-                classes = Seq("govuk-!-width-one-half")
-              ),
-              value = Value(Html(s"${address.buildingAndStreet}<br>${address.city}<br>${address.postcode}")),
-              actions = List(
-                Action(
-                  content            = Message("site.edit"),
-                  href               = routes.ConsigneeAddressController.onPageLoad(mrn, CheckMode).url,
-                  visuallyHiddenText = Some(Message("consigneeAddress.change.hidden").withArgs("")),
-                  attributes         = Map("id" -> "change-consignee-address")
-                )
+          val checkYourAnswersHelper = new CheckYourAnswersHelper(answers)
+          checkYourAnswersHelper.consigneeAddress mustBe Some(Row(
+            key = Key(
+              content = Message("consigneeAddress.checkYourAnswersLabel").withArgs(name),
+              classes = Seq("govuk-!-width-one-half")
+            ),
+            value = Value(Html(s"${address.buildingAndStreet}<br>${address.city}<br>${address.postcode}")),
+            actions = List(
+              Action(
+                content            = Message("site.edit"),
+                href               = routes.ConsigneeAddressController.onPageLoad(mrn, CheckMode).url,
+                visuallyHiddenText = Some(Message("consigneeAddress.change.hidden").withArgs(name)),
+                attributes         = Map("id" -> "change-consignee-address")
               )
-            ))
-          }
-
-          "when ConsigneeNamePage defined" in {
-
-            val answers = emptyUserAnswers
-              .set(ConsigneeNamePage, name).success.value
-              .set(ConsigneeAddressPage, address).success.value
-
-            val checkYourAnswersHelper = new CheckYourAnswersHelper(answers)
-            checkYourAnswersHelper.consigneeAddress mustBe Some(Row(
-              key = Key(
-                content = Message("consigneeAddress.checkYourAnswersLabel").withArgs(name),
-                classes = Seq("govuk-!-width-one-half")
-              ),
-              value = Value(Html(s"${address.buildingAndStreet}<br>${address.city}<br>${address.postcode}")),
-              actions = List(
-                Action(
-                  content            = Message("site.edit"),
-                  href               = routes.ConsigneeAddressController.onPageLoad(mrn, CheckMode).url,
-                  visuallyHiddenText = Some(Message("consigneeAddress.change.hidden").withArgs(name)),
-                  attributes         = Map("id" -> "change-consignee-address")
-                )
-              )
-            ))
-          }
+            )
+          ))
         }
       }
     }
