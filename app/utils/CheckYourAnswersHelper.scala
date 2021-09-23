@@ -135,7 +135,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends SummaryListRowHel
 
   def goodsLocation: Option[Row] = getAnswerAndBuildRow[GoodsLocation](
     page         = GoodsLocationPage,
-    formatAnswer = x => msg"goodsLocation.$x",
+    formatAnswer = goodsLocation => msg"goodsLocation.$goodsLocation",
     prefix       = "goodsLocation",
     id           = Some("change-goods-location"),
     call         = routes.GoodsLocationController.onPageLoad(mrn, CheckMode)

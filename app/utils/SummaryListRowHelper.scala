@@ -22,7 +22,7 @@ import pages.QuestionPage
 import play.api.libs.json.Reads
 import play.api.mvc.Call
 import uk.gov.hmrc.viewmodels.SummaryList.{Action, Key, Row, Value}
-import uk.gov.hmrc.viewmodels.{Content, Html, MessageInterpolators}
+import uk.gov.hmrc.viewmodels.{Content, Html, MessageInterpolators, Text}
 
 private[utils] class SummaryListRowHelper(userAnswers: UserAnswers) {
 
@@ -104,6 +104,23 @@ private[utils] class SummaryListRowHelper(userAnswers: UserAnswers) {
         )
     }
 
+  def getAnswerAndBuildRemovableRow[T](
+    page: QuestionPage[T],
+    formatAnswer: T => Text,
+    id: String,
+    changeCall: Call,
+    removeCall: Call
+  )(implicit rds: Reads[T]): Option[Row] =
+    userAnswers.get(page) map {
+      answer =>
+        buildRemovableRow(
+          label      = formatAnswer(answer),
+          id         = id,
+          changeCall = changeCall,
+          removeCall = removeCall
+        )
+    }
+
   def buildRow(
     prefix: String,
     answer: Content,
@@ -139,6 +156,32 @@ private[utils] class SummaryListRowHelper(userAnswers: UserAnswers) {
           attributes = id.fold[Map[String, String]](Map.empty)(
             id => Map("id" -> id)
           )
+        )
+      )
+    )
+
+  def buildRemovableRow(
+    label: Text,
+    value: String = "",
+    id: String,
+    changeCall: Call,
+    removeCall: Call
+  ): Row =
+    Row(
+      key   = Key(label),
+      value = Value(lit"$value"),
+      actions = List(
+        Action(
+          content            = msg"site.edit",
+          href               = changeCall.url,
+          visuallyHiddenText = Some(label),
+          attributes         = Map("id" -> s"change-$id")
+        ),
+        Action(
+          content            = msg"site.delete",
+          href               = removeCall.url,
+          visuallyHiddenText = Some(label),
+          attributes         = Map("id" -> s"remove-$id")
         )
       )
     )

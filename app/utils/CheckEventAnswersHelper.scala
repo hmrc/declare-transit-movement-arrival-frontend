@@ -40,7 +40,7 @@ class CheckEventAnswersHelper(userAnswers: UserAnswers) extends SummaryListRowHe
 
   def transhipmentType(eventIndex: Index): Option[Row] = getAnswerAndBuildRow[TranshipmentType](
     page         = TranshipmentTypePage(eventIndex),
-    formatAnswer = x => msg"transhipmentType.checkYourAnswers.$x",
+    formatAnswer = transhipmentType => msg"transhipmentType.checkYourAnswers.$transhipmentType",
     prefix       = "transhipmentType",
     id           = Some(s"transhipment-type-${eventIndex.display}"),
     call         = transhipmentRoutes.TranshipmentTypeController.onPageLoad(mrn, eventIndex, CheckMode)
