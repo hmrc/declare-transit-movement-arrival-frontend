@@ -94,19 +94,13 @@ private[utils] class SummaryListRowHelper(userAnswers: UserAnswers) {
   )(implicit rds: Reads[T]): Option[Row] =
     userAnswers.get(page) map {
       answer =>
-        Row(
-          key   = Key(label, classes = Seq("govuk-!-width-one-half")),
-          value = Value(lit"${formatAnswer(answer)}"),
-          actions = List(
-            Action(
-              content            = msg"site.edit",
-              href               = call.url,
-              visuallyHiddenText = Some(msg"$prefix.change.hidden".withArgs(formatAnswer(answer))),
-              attributes = id.fold[Map[String, String]](Map.empty)(
-                id => Map("id" -> id)
-              )
-            )
-          )
+        buildSimpleRow(
+          prefix = prefix,
+          label  = label,
+          answer = lit"${formatAnswer(answer)}",
+          id     = id,
+          call   = call,
+          args   = formatAnswer(answer)
         )
     }
 
@@ -117,8 +111,25 @@ private[utils] class SummaryListRowHelper(userAnswers: UserAnswers) {
     call: Call,
     args: Any*
   ): Row =
+    buildSimpleRow(
+      prefix = prefix,
+      label  = msg"$prefix.checkYourAnswersLabel".withArgs(args: _*),
+      answer = answer,
+      id     = id,
+      call   = call,
+      args   = args: _*
+    )
+
+  def buildSimpleRow(
+    prefix: String,
+    label: Content,
+    answer: Content,
+    id: Option[String],
+    call: Call,
+    args: Any*
+  ): Row =
     Row(
-      key   = Key(msg"$prefix.checkYourAnswersLabel".withArgs(args: _*), classes = Seq("govuk-!-width-one-half")),
+      key   = Key(label, classes = Seq("govuk-!-width-one-half")),
       value = Value(answer),
       actions = List(
         Action(

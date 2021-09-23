@@ -47,23 +47,22 @@ class AddEventsHelper(userAnswers: UserAnswers) extends SummaryListRowHelper(use
         )
     }
 
+  // format: off
   def cyaListOfEvent(eventIndex: Index): Option[Row] =
-    placeOfEvent(eventIndex).map {
+    placeOfEvent(eventIndex) map {
       answer =>
-        Row(
-          // TODO: Move hard coded interpretation of eventIndex to an Index Model
-          key   = Key(msg"addEvent.event.label".withArgs(eventIndex.display), classes = Seq("govuk-!-width-one-half")),
-          value = Value(lit"$answer"),
-          actions = List(
-            Action(
-              content            = msg"site.edit",
-              href               = eventRoutes.CheckEventAnswersController.onPageLoad(mrn, eventIndex).url,
-              visuallyHiddenText = Some(msg"addEvent.change.hidden".withArgs(eventIndex.display, answer))
-            )
-          )
+        buildSimpleRow(
+          prefix = "addEvent",
+          label  = msg"addEvent.event.label".withArgs(eventIndex.display),
+          answer = lit"$answer",
+          id     = None,
+          call   = eventRoutes.CheckEventAnswersController.onPageLoad(mrn, eventIndex),
+          args   = eventIndex.display, answer
         )
     }
+  // format: on
 
   private def placeOfEvent(eventIndex: Index): Option[String] =
-    userAnswers.get(EventPlacePage(eventIndex)) orElse userAnswers.get(EventCountryPage(eventIndex)).map(_.code)
+    userAnswers.get(EventPlacePage(eventIndex)) orElse
+      userAnswers.get(EventCountryPage(eventIndex)).map(_.code)
 }
