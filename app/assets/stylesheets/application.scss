@@ -6,3 +6,8 @@ $hmrc-assets-path: "/manage-transit-movements-arrivals/assets/lib/hmrc-frontend/
 @import "_timeout-dialog.scss";
 @import "partials/header";
 @import "partials/shame";
+
+.hint-as-label {
+    @extend .govuk-label;
+    @extend #{'.govuk-\\!-padding-bottom-2'};
+}

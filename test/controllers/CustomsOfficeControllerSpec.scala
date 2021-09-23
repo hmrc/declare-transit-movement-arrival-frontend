@@ -170,7 +170,7 @@ class CustomsOfficeControllerSpec extends SpecBase with AppWithDefaultMockFixtur
 
   private def verifyBadRequestOnSubmit(formValue: String) = {
     val customsOfficeJson = Seq(
-      Json.obj("value" -> "", "text"         -> ""),
+      Json.obj("value" -> "", "text"         -> "Select a customs office"),
       Json.obj("value" -> "id", "text"       -> "name (id)", "selected" -> false),
       Json.obj("value" -> "officeId", "text" -> "someName (officeId)", "selected" -> false)
     )
@@ -228,7 +228,7 @@ class CustomsOfficeControllerSpec extends SpecBase with AppWithDefaultMockFixtur
   private def verifyOnLoadPage(userAnswers: UserAnswers, form: Form[CustomsOffice], preSelectOfficeId: Boolean = false) = {
 
     val expectedCustomsOfficeJson = Seq(
-      Json.obj("value" -> "", "text"         -> ""),
+      Json.obj("value" -> "", "text"         -> "Select a customs office"),
       Json.obj("value" -> "id", "text"       -> "name (id)", "selected" -> false),
       Json.obj("value" -> "officeId", "text" -> "someName (officeId)", "selected" -> preSelectOfficeId)
     )

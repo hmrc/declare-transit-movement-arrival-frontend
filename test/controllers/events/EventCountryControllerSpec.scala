@@ -88,8 +88,8 @@ class EventCountryControllerSpec extends SpecBase with AppWithDefaultMockFixture
       when(mockReferenceDataConnector.getCountryList(any())(any(), any())).thenReturn(Future.successful(countries))
 
       val json = Seq(
-        Json.obj("text" -> "", "value"               -> ""),
-        Json.obj("text" -> "United Kingdom", "value" -> "GB", "selected" -> false)
+        Json.obj("text" -> "Select a country", "value" -> ""),
+        Json.obj("text" -> "United Kingdom", "value"   -> "GB", "selected" -> false)
       )
 
       setExistingUserAnswers(emptyUserAnswers)
@@ -153,8 +153,8 @@ class EventCountryControllerSpec extends SpecBase with AppWithDefaultMockFixture
     when(mockReferenceDataConnector.getCountryList(any())(any(), any())).thenReturn(Future.successful(countries))
 
     val countriesJson = Seq(
-      Json.obj("text" -> "", "value"               -> ""),
-      Json.obj("text" -> "United Kingdom", "value" -> "GB", "selected" -> preSelected)
+      Json.obj("text" -> "Select a country", "value" -> ""),
+      Json.obj("text" -> "United Kingdom", "value"   -> "GB", "selected" -> preSelected)
     )
 
     userAnswers.map(setExistingUserAnswers).getOrElse(setNoExistingUserAnswers())

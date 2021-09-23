@@ -165,7 +165,7 @@ class SimplifiedCustomsOfficeController @Inject()(
         )
     }
 
-    Json.obj("value" -> "", "text" -> "") +: customsOfficeObjects
+    Json.obj("value" -> "", "text" -> "Select a customs office") +: customsOfficeObjects
   }
 
 }

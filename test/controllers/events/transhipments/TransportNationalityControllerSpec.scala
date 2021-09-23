@@ -177,7 +177,7 @@ class TransportNationalityControllerSpec extends SpecBase with AppWithDefaultMoc
 
   private def countriesJson(preSelect: Boolean = false): Seq[JsObject] =
     Seq(
-      Json.obj("text" -> "", "value"               -> ""),
-      Json.obj("text" -> "United Kingdom", "value" -> "GB", "selected" -> preSelect)
+      Json.obj("text" -> "Select a country", "value" -> ""),
+      Json.obj("text" -> "United Kingdom", "value"   -> "GB", "selected" -> preSelect)
     )
 }
