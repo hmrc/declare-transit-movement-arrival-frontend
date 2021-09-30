@@ -25,9 +25,9 @@ import repositories.InterchangeControlReferenceIdRepository
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class UserAnswersToArrivalMovementRequestService @Inject()(
-  converterService: UserAnswersToArrivalNotificationDomain,
-  interchangeControlReferenceIdRepository: InterchangeControlReferenceIdRepository)(implicit ec: ExecutionContext) {
+class UserAnswersToArrivalMovementRequestService @Inject() (converterService: UserAnswersToArrivalNotificationDomain,
+                                                            interchangeControlReferenceIdRepository: InterchangeControlReferenceIdRepository
+)(implicit ec: ExecutionContext) {
 
   def convert(userAnswers: UserAnswers): Option[Future[ArrivalMovementRequest]] =
     converterService.convertToArrivalNotification(userAnswers).map {
@@ -38,9 +38,9 @@ class UserAnswersToArrivalMovementRequestService @Inject()(
             referenceId =>
               ArrivalNotificationDomainToArrivalMovementRequestService
                 .convertToSubmissionModel(
-                  arrivalNotification         = notification,
+                  arrivalNotification = notification,
                   interchangeControlReference = referenceId,
-                  timeOfPresentation          = LocalTime.now()
+                  timeOfPresentation = LocalTime.now()
                 )
           }
     }

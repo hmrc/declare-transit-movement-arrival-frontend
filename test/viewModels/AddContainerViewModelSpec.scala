@@ -83,9 +83,10 @@ class AddContainerViewModelSpec extends SpecBase with ScalaCheckPropertyChecks w
 
           rows.length mustEqual containers.length
 
-          containers.foreach(c => {
-            rows must contain(Literal(c.containerNumber))
-          })
+          containers.foreach {
+            c =>
+              rows must contain(Literal(c.containerNumber))
+          }
       }
     }
 

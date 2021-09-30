@@ -30,6 +30,14 @@ object ProcedureType {
     override def toString: String = "simplified"
   }
 
+  implicit val normalWrites: Writes[Normal.type] = Writes {
+    _ => JsString("normal")
+  }
+
+  implicit val checkWrites: Writes[Simplified.type] = Writes {
+    _ => JsString("simplified")
+  }
+
   implicit lazy val reads: Reads[ProcedureType] = Reads {
     case JsString("normal")     => JsSuccess(Normal)
     case JsString("simplified") => JsSuccess(Simplified)

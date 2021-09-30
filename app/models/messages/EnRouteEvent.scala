@@ -65,30 +65,30 @@ object EnRouteEvent {
             {
             <SeaNumSF12> {escapeXml(seals.size.toString)} </SeaNumSF12> ++
               seals.map(_.toXml)
-            }
+          }
           </SEAINFSF1>
         case _ => NodeSeq.Empty
       }
 
       <ENROUEVETEV>
         {
-          <PlaTEV10>{ escapeXml(enRouteEvent.place)}</PlaTEV10> ++
-          <PlaTEV10LNG>{ LanguageCodeEnglish.code}</PlaTEV10LNG> ++
-          <CouTEV13>{ enRouteEvent.countryCode.code }</CouTEV13>
-        }
+        <PlaTEV10>{escapeXml(enRouteEvent.place)}</PlaTEV10> ++
+          <PlaTEV10LNG>{LanguageCodeEnglish.code}</PlaTEV10LNG> ++
+          <CouTEV13>{enRouteEvent.countryCode.code}</CouTEV13>
+      }
         <CTLCTL>
           {
-            <AlrInNCTCTL29>{booleanToInt(enRouteEvent.alreadyInNcts)}</AlrInNCTCTL29>
-          }
+        <AlrInNCTCTL29>{booleanToInt(enRouteEvent.alreadyInNcts)}</AlrInNCTCTL29>
+      }
         </CTLCTL>
         {
-          enRouteEvent.eventDetails match {
-            case incidentWithInformation: IncidentWithInformation       => incidentWithInformation.toXml ++ buildSealsXml
-            case incidentWithoutInformation: IncidentWithoutInformation => incidentWithoutInformation.toXml ++ buildSealsXml
-            case containerTranshipment: ContainerTranshipment           => buildSealsXml ++ containerTranshipment.toXml
-            case vehicularTranshipment: VehicularTranshipment           => buildSealsXml ++ vehicularTranshipment.toXml
-          }
+        enRouteEvent.eventDetails match {
+          case incidentWithInformation: IncidentWithInformation       => incidentWithInformation.toXml ++ buildSealsXml
+          case incidentWithoutInformation: IncidentWithoutInformation => incidentWithoutInformation.toXml ++ buildSealsXml
+          case containerTranshipment: ContainerTranshipment           => buildSealsXml ++ containerTranshipment.toXml
+          case vehicularTranshipment: VehicularTranshipment           => buildSealsXml ++ vehicularTranshipment.toXml
         }
+      }
       </ENROUEVETEV>
   }
 

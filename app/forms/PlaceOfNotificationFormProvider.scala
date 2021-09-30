@@ -32,6 +32,7 @@ class PlaceOfNotificationFormProvider @Inject() extends Mappings {
           StopOnFirstFail[String](
             maxLength(notificationPlaceLength, "placeOfNotification.error.length"),
             regexp(stringFieldRegex, "placeOfNotification.error.invalid", Seq.empty)
-          ))
+          )
+        )
     )
 }

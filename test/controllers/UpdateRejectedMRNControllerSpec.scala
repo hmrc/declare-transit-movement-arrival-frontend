@@ -39,7 +39,7 @@ import matchers.JsonMatchers
 import models.messages.ArrivalMovementRequest
 import models.{ArrivalId, MovementReferenceNumber}
 import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers.{any, eq => meq}
+import org.mockito.Matchers.{any, eq => meq}
 import org.mockito.Mockito._
 import org.scalacheck.Arbitrary.arbitrary
 import play.api.inject.bind

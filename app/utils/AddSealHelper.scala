@@ -28,20 +28,20 @@ class AddSealHelper(userAnswers: UserAnswers) extends SummaryListRowHelper(userA
     userAnswers.get(SealIdentityPage(eventIndex, sealIndex)).map {
       answer =>
         Row(
-          key   = Key(msg"addSeal.sealList.label".withArgs(sealIndex.display)),
+          key = Key(msg"addSeal.sealList.label".withArgs(sealIndex.display)),
           value = Value(lit"${answer.numberOrMark}"),
           actions = List(
             Action(
-              content            = msg"site.edit",
-              href               = SealIdentityController.onPageLoad(mrn, eventIndex, sealIndex, mode).url,
+              content = msg"site.edit",
+              href = SealIdentityController.onPageLoad(mrn, eventIndex, sealIndex, mode).url,
               visuallyHiddenText = Some(msg"addSeal.sealList.change.hidden".withArgs(answer.numberOrMark)),
-              attributes         = Map("id" -> s"change-seal-${sealIndex.display}")
+              attributes = Map("id" -> s"change-seal-${sealIndex.display}")
             ),
             Action(
-              content            = msg"site.delete",
-              href               = ConfirmRemoveSealController.onPageLoad(mrn, eventIndex, sealIndex, mode).url,
+              content = msg"site.delete",
+              href = ConfirmRemoveSealController.onPageLoad(mrn, eventIndex, sealIndex, mode).url,
               visuallyHiddenText = Some(msg"addSeal.sealList.delete.hidden".withArgs(answer.numberOrMark)),
-              attributes         = Map("id" -> s"remove-seal-${sealIndex.display}")
+              attributes = Map("id" -> s"remove-seal-${sealIndex.display}")
             )
           )
         )

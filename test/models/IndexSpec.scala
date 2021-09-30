@@ -16,9 +16,11 @@
 
 package models
 
-import org.scalatest.{FreeSpecLike, MustMatchers, OptionValues}
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.must.Matchers
+import org.scalatest.OptionValues
 
-class IndexSpec extends FreeSpecLike with MustMatchers with OptionValues {
+class IndexSpec extends AnyFreeSpec with Matchers with OptionValues {
 
   "Index display must return correct Int" in {
     Index(0).display mustEqual 1

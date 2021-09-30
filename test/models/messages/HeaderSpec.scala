@@ -37,10 +37,10 @@ class HeaderSpec extends SpecBase with ScalaCheckPropertyChecks with MessagesMod
       forAll(arbitrary[Header], arbitrary[LocalDate]) {
         (header, arrivalNotificationDate) =>
           val minimalHeader = Header(
-            movementReferenceNumber  = header.movementReferenceNumber,
-            procedureTypeFlag        = NormalProcedureFlag,
+            movementReferenceNumber = header.movementReferenceNumber,
+            procedureTypeFlag = NormalProcedureFlag,
             arrivalNotificationPlace = header.arrivalNotificationPlace,
-            notificationDate         = arrivalNotificationDate
+            notificationDate = arrivalNotificationDate
           )
 
           val expectedResult: NodeSeq =

@@ -25,7 +25,8 @@ final case class EnRouteEventDomain(place: String,
                                     country: CountryCode,
                                     alreadyInNcts: Boolean,
                                     eventDetails: EventDetailsDomain,
-                                    seals: Option[Seq[SealDomain]])
+                                    seals: Option[Seq[SealDomain]]
+)
 
 object EnRouteEventDomain {
 

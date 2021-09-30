@@ -13,7 +13,6 @@ lazy val root = (project in file("."))
   .disablePlugins(JUnitXmlReportPlugin) //Required to prevent https://github.com/scalatest/scalatest/issues/1427
   .configs(IntegrationTest)
   .settings(inConfig(IntegrationTest)(itSettings): _*)
-  .settings(inConfig(IntegrationTest)(scalafmtSettings): _*)
   .settings(DefaultBuildSettings.scalaSettings: _*)
   .settings(DefaultBuildSettings.defaultSettings(): _*)
   .settings(SbtDistributablesPlugin.publishingSettings: _*)
@@ -36,15 +35,13 @@ lazy val root = (project in file("."))
     ScoverageKeys.coverageExcludedFiles := "<empty>;Reverse.*;.*handlers.*;.*repositories.*;" +
       ".*BuildInfo.*;.*javascript.*;.*Routes.*;.*GuiceInjector;" +
       ".*ControllerConfiguration",
-    ScoverageKeys.coverageMinimum       := 80,
+    ScoverageKeys.coverageMinimumStmtTotal := 80,
     ScoverageKeys.coverageFailOnMinimum := true,
     ScoverageKeys.coverageHighlighting  := true,
     scalacOptions ++= Seq("-feature"),
     libraryDependencies ++= AppDependencies(),
     retrieveManaged := true,
     scalaVersion    := "2.12.12",
-    evictionWarningOptions in update :=
-      EvictionWarningOptions.default.withWarnScalaVersionEviction(false),
     resolvers ++= Seq(
       Resolver.bintrayRepo("hmrc", "releases"),
       Resolver.jcenterRepo
@@ -91,8 +88,5 @@ lazy val itSettings = Defaults.itSettings ++ Seq(
   javaOptions ++= Seq(
     "-Dconfig.resource=it.application.conf",
     "-Dlogger.resource=logback-it.xml"
-  ),
-  scalafmtTestOnCompile in ThisBuild := true
+  )
 )
-
-dependencyOverrides ++= AppDependencies.overrides

@@ -15,6 +15,7 @@
  */
 
 package derivable
+
 import models.Index
 import pages.events.SectionConstants
 import play.api.libs.json.{JsObject, JsPath}

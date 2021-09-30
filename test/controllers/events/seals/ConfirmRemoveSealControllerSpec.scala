@@ -21,7 +21,7 @@ import forms.events.seals.ConfirmRemoveSealFormProvider
 import matchers.JsonMatchers
 import models.{Index, NormalMode, UserAnswers}
 import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers.any
+import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import pages.events.seals.SealIdentityPage
 import play.api.data.Form
@@ -159,7 +159,7 @@ class ConfirmRemoveSealControllerSpec extends SpecBase with AppWithDefaultMockFi
       redirectLocation(result).value mustEqual onwardRoute.url
 
       val newUserAnswers = UserAnswers(
-        id         = userAnswersWithSeal.id,
+        id = userAnswersWithSeal.id,
         eoriNumber = userAnswersWithSeal.eoriNumber,
         userAnswersWithSeal.remove(SealIdentityPage(eventIndex, sealIndex)).success.value.data,
         userAnswersWithSeal.lastUpdated

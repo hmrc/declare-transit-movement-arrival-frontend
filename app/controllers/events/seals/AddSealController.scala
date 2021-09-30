@@ -36,14 +36,15 @@ import utils.AddSealHelper
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class AddSealController @Inject()(override val messagesApi: MessagesApi,
-                                  navigator: Navigator,
-                                  identify: IdentifierAction,
-                                  getData: DataRetrievalActionProvider,
-                                  requireData: DataRequiredAction,
-                                  formProvider: AddSealFormProvider,
-                                  val controllerComponents: MessagesControllerComponents,
-                                  renderer: Renderer)(implicit ec: ExecutionContext)
+class AddSealController @Inject() (override val messagesApi: MessagesApi,
+                                   navigator: Navigator,
+                                   identify: IdentifierAction,
+                                   getData: DataRetrievalActionProvider,
+                                   requireData: DataRequiredAction,
+                                   formProvider: AddSealFormProvider,
+                                   val controllerComponents: MessagesControllerComponents,
+                                   renderer: Renderer
+)(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
     with NunjucksSupport {
@@ -71,8 +72,9 @@ class AddSealController @Inject()(override val messagesApi: MessagesApi,
         )
   }
 
-  private def renderPage(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode, form: Form[Boolean])(
-    implicit request: DataRequest[AnyContent]): Future[Html] = {
+  private def renderPage(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode, form: Form[Boolean])(implicit
+    request: DataRequest[AnyContent]
+  ): Future[Html] = {
 
     val numberOfSeals    = request.userAnswers.get(DeriveNumberOfSeals(eventIndex)).getOrElse(0)
     val listOfSealsIndex = List.range(0, numberOfSeals).map(Index(_))

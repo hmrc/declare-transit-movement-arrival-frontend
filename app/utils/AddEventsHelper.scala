@@ -28,20 +28,20 @@ class AddEventsHelper(userAnswers: UserAnswers) extends SummaryListRowHelper(use
     placeOfEvent(eventIndex).map {
       answer =>
         Row(
-          key   = Key(msg"addEvent.event.label".withArgs(eventIndex.display)),
+          key = Key(msg"addEvent.event.label".withArgs(eventIndex.display)),
           value = Value(lit"$answer"),
           actions = List(
             Action(
-              content            = msg"site.edit",
-              href               = eventRoutes.CheckEventAnswersController.onPageLoad(mrn, eventIndex).url,
+              content = msg"site.edit",
+              href = eventRoutes.CheckEventAnswersController.onPageLoad(mrn, eventIndex).url,
               visuallyHiddenText = Some(msg"addEvent.change.hidden".withArgs(eventIndex.display, answer)),
-              attributes         = Map("id" -> s"change-event-${eventIndex.display}")
+              attributes = Map("id" -> s"change-event-${eventIndex.display}")
             ),
             Action(
-              content            = msg"site.delete",
-              href               = eventRoutes.ConfirmRemoveEventController.onPageLoad(mrn, eventIndex, NormalMode).url,
+              content = msg"site.delete",
+              href = eventRoutes.ConfirmRemoveEventController.onPageLoad(mrn, eventIndex, NormalMode).url,
               visuallyHiddenText = Some(msg"addEvent.remove.hidden".withArgs(eventIndex.display, answer)),
-              attributes         = Map("id" -> s"remove-event-${eventIndex.display}")
+              attributes = Map("id" -> s"remove-event-${eventIndex.display}")
             )
           )
         )
@@ -52,12 +52,12 @@ class AddEventsHelper(userAnswers: UserAnswers) extends SummaryListRowHelper(use
       answer =>
         Row(
           // TODO: Move hard coded interpretation of eventIndex to an Index Model
-          key   = Key(msg"addEvent.event.label".withArgs(eventIndex.display), classes = Seq("govuk-!-width-one-half")),
+          key = Key(msg"addEvent.event.label".withArgs(eventIndex.display), classes = Seq("govuk-!-width-one-half")),
           value = Value(lit"$answer"),
           actions = List(
             Action(
-              content            = msg"site.edit",
-              href               = eventRoutes.CheckEventAnswersController.onPageLoad(mrn, eventIndex).url,
+              content = msg"site.edit",
+              href = eventRoutes.CheckEventAnswersController.onPageLoad(mrn, eventIndex).url,
               visuallyHiddenText = Some(msg"addEvent.change.hidden".withArgs(eventIndex.display, answer))
             )
           )

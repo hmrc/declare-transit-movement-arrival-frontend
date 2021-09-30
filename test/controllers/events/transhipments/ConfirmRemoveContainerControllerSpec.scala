@@ -21,7 +21,7 @@ import forms.events.transhipments.ConfirmRemoveContainerFormProvider
 import matchers.JsonMatchers
 import models.{Index, NormalMode, UserAnswers}
 import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers.any
+import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import pages.events.transhipments.ContainerNumberPage
 import play.api.libs.json.{JsObject, Json}
@@ -156,9 +156,9 @@ class ConfirmRemoveContainerControllerSpec extends SpecBase with AppWithDefaultM
       val result = route(app, request).value
 
       val updateAnswers = UserAnswers(
-        id          = presetUserAnswers.id,
-        eoriNumber  = presetUserAnswers.eoriNumber,
-        data        = presetUserAnswers.remove(ContainerNumberPage(eventIndex, containerIndex)).success.value.data,
+        id = presetUserAnswers.id,
+        eoriNumber = presetUserAnswers.eoriNumber,
+        data = presetUserAnswers.remove(ContainerNumberPage(eventIndex, containerIndex)).success.value.data,
         lastUpdated = presetUserAnswers.lastUpdated
       )
 
@@ -182,9 +182,9 @@ class ConfirmRemoveContainerControllerSpec extends SpecBase with AppWithDefaultM
       val result = route(app, request).value
 
       val updateAnswers = UserAnswers(
-        id          = presetUserAnswers.id,
-        eoriNumber  = eoriNumber,
-        data        = presetUserAnswers.remove(ContainerNumberPage(eventIndex, containerIndex)).success.value.data,
+        id = presetUserAnswers.id,
+        eoriNumber = eoriNumber,
+        data = presetUserAnswers.remove(ContainerNumberPage(eventIndex, containerIndex)).success.value.data,
         lastUpdated = presetUserAnswers.lastUpdated
       )
 

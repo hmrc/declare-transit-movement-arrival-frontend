@@ -32,7 +32,8 @@ object EventInfoSection {
         helper.eventReported(eventIndex),
         if (isTranshipment) None else { helper.isTranshipment(eventIndex) },
         helper.incidentInformation(eventIndex)
-      ).flatten)
+      ).flatten
+    )
   }
 
 }

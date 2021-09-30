@@ -35,16 +35,17 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class CustomsOfficeController @Inject()(override val messagesApi: MessagesApi,
-                                        sessionRepository: SessionRepository,
-                                        navigator: Navigator,
-                                        identify: IdentifierAction,
-                                        getData: DataRetrievalActionProvider,
-                                        requireData: DataRequiredAction,
-                                        formProvider: CustomsOfficeFormProvider,
-                                        customsOfficesService: CustomsOfficesService,
-                                        val controllerComponents: MessagesControllerComponents,
-                                        renderer: Renderer)(implicit ec: ExecutionContext)
+class CustomsOfficeController @Inject() (override val messagesApi: MessagesApi,
+                                         sessionRepository: SessionRepository,
+                                         navigator: Navigator,
+                                         identify: IdentifierAction,
+                                         getData: DataRetrievalActionProvider,
+                                         requireData: DataRequiredAction,
+                                         formProvider: CustomsOfficeFormProvider,
+                                         customsOfficesService: CustomsOfficesService,
+                                         val controllerComponents: MessagesControllerComponents,
+                                         renderer: Renderer
+)(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
     with NunjucksSupport {
@@ -72,13 +73,13 @@ class CustomsOfficeController @Inject()(override val messagesApi: MessagesApi,
                   case Some(value) => form.fill(value)
                 }
                 renderView(
-                  mrn            = mrn,
-                  mode           = mode,
-                  consigneeName  = consigneeName.getOrElse(""),
-                  customsOffice  = locationName,
-                  form           = preparedForm,
+                  mrn = mrn,
+                  mode = mode,
+                  consigneeName = consigneeName.getOrElse(""),
+                  customsOffice = locationName,
+                  form = preparedForm,
                   customsOffices = customsOffices,
-                  status         = Results.Ok
+                  status = Results.Ok
                 )
               case _ =>
                 Future.successful(Redirect(routes.SessionExpiredController.onPageLoad()))
@@ -126,17 +127,16 @@ class CustomsOfficeController @Inject()(override val messagesApi: MessagesApi,
                 form
                   .bindFromRequest()
                   .fold(
-                    formWithErrors => {
+                    formWithErrors =>
                       renderView(
-                        mrn            = mrn,
-                        mode           = mode,
-                        consigneeName  = consigneeName.getOrElse(""),
-                        customsOffice  = locationName,
-                        form           = formWithErrors,
+                        mrn = mrn,
+                        mode = mode,
+                        consigneeName = consigneeName.getOrElse(""),
+                        customsOffice = locationName,
+                        form = formWithErrors,
                         customsOffices = customsOffices,
-                        status         = Results.BadRequest
-                      )
-                    },
+                        status = Results.BadRequest
+                      ),
                     value =>
                       for {
                         updatedAnswers <- Future.fromTry(request.userAnswers.set(CustomsOfficePage, value))
@@ -153,8 +153,10 @@ class CustomsOfficeController @Inject()(override val messagesApi: MessagesApi,
     val customsOfficeObjects = customsOffices.getAll.map {
       office =>
         Json.obj(
-          "value"    -> office.id,
-          "text"     -> office.name.fold(s"${office.id}")(name => s"$name (${office.id})"),
+          "value" -> office.id,
+          "text" -> office.name.fold(s"${office.id}")(
+            name => s"$name (${office.id})"
+          ),
           "selected" -> value.contains(office)
         )
     }

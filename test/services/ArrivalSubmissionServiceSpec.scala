@@ -23,7 +23,7 @@ import models.ArrivalId
 import models.domain.{NormalNotification, TraderDomain}
 import models.messages.InterchangeControlReference
 import models.reference.CustomsOffice
-import org.mockito.ArgumentMatchers.any
+import org.mockito.Matchers.any
 import org.mockito.Mockito._
 import play.api.http.Status._
 import play.api.inject.bind

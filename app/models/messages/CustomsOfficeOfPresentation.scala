@@ -23,11 +23,12 @@ case class CustomsOfficeOfPresentation(office: String)
 
 object CustomsOfficeOfPresentation {
 
-  implicit val writes: XMLWrites[CustomsOfficeOfPresentation] = {
-    XMLWrites(a => <CUSOFFPREOFFRES>
+  implicit val writes: XMLWrites[CustomsOfficeOfPresentation] =
+    XMLWrites(
+      a => <CUSOFFPREOFFRES>
       <RefNumRES1>{a.office}</RefNumRES1>
-    </CUSOFFPREOFFRES>)
-  }
+    </CUSOFFPREOFFRES>
+    )
 
   implicit lazy val xmlReader: XmlReader[CustomsOfficeOfPresentation] = (__ \ "RefNumRES1").read[String].map(apply)
 

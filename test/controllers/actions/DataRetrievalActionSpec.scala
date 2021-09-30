@@ -19,10 +19,12 @@ package controllers.actions
 import generators.Generators
 import models.requests.{IdentifierRequest, OptionalDataRequest}
 import models.{EoriNumber, MovementReferenceNumber, UserAnswers}
-import org.mockito.ArgumentMatchers._
+import org.mockito.Matchers._
 import org.mockito.Mockito._
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalatest.{FreeSpec, MustMatchers, OptionValues}
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.must.Matchers
+import org.scalatest.OptionValues
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
@@ -35,14 +37,7 @@ import repositories.SessionRepository
 
 import scala.concurrent.Future
 
-class DataRetrievalActionSpec
-    extends FreeSpec
-    with MustMatchers
-    with GuiceOneAppPerSuite
-    with ScalaFutures
-    with MockitoSugar
-    with Generators
-    with OptionValues {
+class DataRetrievalActionSpec extends AnyFreeSpec with Matchers with GuiceOneAppPerSuite with ScalaFutures with MockitoSugar with Generators with OptionValues {
 
   val sessionRepository: SessionRepository = mock[SessionRepository]
   val mrn: MovementReferenceNumber         = arbitrary[MovementReferenceNumber].sample.value
@@ -65,7 +60,8 @@ class DataRetrievalActionSpec
 
     actionProvider(mrn)
       .invokeBlock(
-        IdentifierRequest(FakeRequest(GET, "/").asInstanceOf[Request[AnyContent]], EoriNumber("")), {
+        IdentifierRequest(FakeRequest(GET, "/").asInstanceOf[Request[AnyContent]], EoriNumber("")),
+        {
           request: OptionalDataRequest[AnyContent] =>
             f(request)
             Future.successful(Results.Ok)
@@ -82,10 +78,7 @@ class DataRetrievalActionSpec
 
         when(sessionRepository.get(any(), any())) thenReturn Future.successful(None)
 
-        harness(mrn, {
-          request =>
-            request.userAnswers must not be defined
-        })
+        harness(mrn, request => request.userAnswers must not be defined)
       }
     }
 
@@ -95,10 +88,7 @@ class DataRetrievalActionSpec
 
         when(sessionRepository.get(any(), any())) thenReturn Future.successful(Some(UserAnswers(mrn, eoriNumber)))
 
-        harness(mrn, {
-          request =>
-            request.userAnswers mustBe defined
-        })
+        harness(mrn, request => request.userAnswers mustBe defined)
       }
     }
   }

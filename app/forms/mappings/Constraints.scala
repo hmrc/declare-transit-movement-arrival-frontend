@@ -120,7 +120,10 @@ trait Constraints {
 
   protected def printableAscii(errorKey: String): Constraint[String] =
     Constraint {
-      case str if !str.toCharArray.exists(c => 32 > c || c > 126) =>
+      case str
+          if !str.toCharArray.exists(
+            c => 32 > c || c > 126
+          ) =>
         Valid
       case _ =>
         Invalid(errorKey)
@@ -153,9 +156,8 @@ trait Constraints {
   protected def doesNotExistIn[A](values: Seq[A], index: Index, errorKey: String, args: Any*)(implicit ev: StringEquivalence[A]): Constraint[String] = {
     import StringEquivalence._
 
-    val valuesFilterWithoutCurrentIndex: Seq[A] = {
+    val valuesFilterWithoutCurrentIndex: Seq[A] =
       values.zipWithIndex.filterNot(_._2 == index.position).map(_._1)
-    }
 
     Constraint {
       x =>

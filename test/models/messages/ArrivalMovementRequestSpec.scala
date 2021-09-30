@@ -21,7 +21,9 @@ import generators.MessagesModelGenerators
 import models.NormalProcedureFlag
 import models.XMLWrites._
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalatest.{FreeSpec, MustMatchers, OptionValues, StreamlinedXmlEquality}
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.must.Matchers
+import org.scalatest.{OptionValues, StreamlinedXmlEquality}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import utils.Format
@@ -31,8 +33,8 @@ import java.time.LocalTime
 import scala.xml.{Node, NodeSeq}
 
 class ArrivalMovementRequestSpec
-    extends FreeSpec
-    with MustMatchers
+    extends AnyFreeSpec
+    with Matchers
     with GuiceOneAppPerSuite
     with MessagesModelGenerators
     with ScalaCheckDrivenPropertyChecks
@@ -47,11 +49,13 @@ class ArrivalMovementRequestSpec
 
             val validXml: Node =
               <CC007A>
-                {arrivalMovementRequest.meta.toXml ++
-                arrivalMovementRequest.header.toXml ++
-                arrivalMovementRequest.trader.toXml ++
-                arrivalMovementRequest.customsOfficeOfPresentation.toXml ++
-                arrivalMovementRequest.enRouteEvents.map(_.flatMap(_.toXml)).getOrElse(NodeSeq.Empty)}
+                {
+                arrivalMovementRequest.meta.toXml ++
+                  arrivalMovementRequest.header.toXml ++
+                  arrivalMovementRequest.trader.toXml ++
+                  arrivalMovementRequest.customsOfficeOfPresentation.toXml ++
+                  arrivalMovementRequest.enRouteEvents.map(_.flatMap(_.toXml)).getOrElse(NodeSeq.Empty)
+              }
               </CC007A>
 
             arrivalMovementRequest.toXml mustEqual validXml
@@ -69,11 +73,13 @@ class ArrivalMovementRequestSpec
 
             val xml: Node =
               <CC007A>
-                {updatedArrivalMovementRequest.meta.toXml ++
-                updatedArrivalMovementRequest.header.toXml ++
-                updatedArrivalMovementRequest.trader.toXml ++
-                updatedArrivalMovementRequest.customsOfficeOfPresentation.toXml ++
-                updatedArrivalMovementRequest.enRouteEvents.map(_.flatMap(_.toXml)).getOrElse(NodeSeq.Empty)}
+                {
+                updatedArrivalMovementRequest.meta.toXml ++
+                  updatedArrivalMovementRequest.header.toXml ++
+                  updatedArrivalMovementRequest.trader.toXml ++
+                  updatedArrivalMovementRequest.customsOfficeOfPresentation.toXml ++
+                  updatedArrivalMovementRequest.enRouteEvents.map(_.flatMap(_.toXml)).getOrElse(NodeSeq.Empty)
+              }
               </CC007A>
 
             val result = XmlReader.of[ArrivalMovementRequest].read(xml).toOption.value

@@ -28,20 +28,19 @@ class FunctionalErrorSpec extends SpecBase with ScalaCheckDrivenPropertyChecks w
     "must deserialize from XML" in {
       forAll(arbitrary[FunctionalError]) {
         functionalError =>
-          val xml = {
+          val xml =
             <FUNERRER1>
               <ErrTypER11>{functionalError.errorType.code}</ErrTypER11>
               <ErrPoiER12>{functionalError.pointer.value}</ErrPoiER12>
               {
-                functionalError.reason.map {
-                  reason => <ErrReaER13>{reason}</ErrReaER13>
-                } ++
+              functionalError.reason.map {
+                reason => <ErrReaER13>{reason}</ErrReaER13>
+              } ++
                 functionalError.originalAttributeValue.map {
                   originalAttributeValue => <OriAttValER14>{originalAttributeValue}</OriAttValER14>
                 }
-              }
+            }
             </FUNERRER1>
-          }
 
           val result = XmlReader.of[FunctionalError].read(xml).toOption.value
 

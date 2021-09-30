@@ -19,7 +19,7 @@ package base
 import controllers.actions._
 import models.UserAnswers
 import navigation.{FakeNavigator, Navigator}
-import org.mockito.ArgumentMatchers.any
+import org.mockito.Matchers.any
 import org.mockito.Mockito
 import org.mockito.Mockito.when
 import org.scalatest.{BeforeAndAfterEach, TestSuite}

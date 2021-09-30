@@ -94,12 +94,11 @@ class ReferenceDataConnectorSpec
             .willReturn(okJson(customsOfficeResponseJson))
         )
 
-        val expectedResult = {
+        val expectedResult =
           Seq(
             CustomsOffice("GBtestId1", Some("testName1"), Some("testPhoneNumber")),
             CustomsOffice("GBtestId2", Some("testName2"), None)
           )
-        }
 
         connector.getCustomsOffices.futureValue mustBe expectedResult
       }
@@ -116,15 +115,13 @@ class ReferenceDataConnectorSpec
             .willReturn(okJson(customsOfficeResponseJson))
         )
 
-        val expectedResult = {
-
+        val expectedResult =
           CustomsOfficeList(
             Seq(
               CustomsOffice("GBtestId1", Some("testName1"), Some("testPhoneNumber")),
               CustomsOffice("GBtestId2", Some("testName2"), None)
-            ))
-
-        }
+            )
+          )
 
         connector.getCustomsOfficesOfTheCountry(country).futureValue mustBe expectedResult
       }

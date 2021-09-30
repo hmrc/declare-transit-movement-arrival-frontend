@@ -32,14 +32,14 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends SummaryListRowHel
         userAnswers.get(ConsigneeEoriNumberPage) map {
           answer =>
             Row(
-              key   = Key(msg"eoriNumber.checkYourAnswersLabel".withArgs(consigneeName), classes = Seq("govuk-!-width-one-half")),
+              key = Key(msg"eoriNumber.checkYourAnswersLabel".withArgs(consigneeName), classes = Seq("govuk-!-width-one-half")),
               value = Value(lit"$answer"),
               actions = List(
                 Action(
-                  content            = msg"site.edit",
-                  href               = routes.ConsigneeEoriNumberController.onPageLoad(mrn, CheckMode).url,
+                  content = msg"site.edit",
+                  href = routes.ConsigneeEoriNumberController.onPageLoad(mrn, CheckMode).url,
                   visuallyHiddenText = Some(msg"eoriNumber.change.hidden".withArgs(consigneeName)),
-                  attributes         = Map("id" -> "change-eori-number")
+                  attributes = Map("id" -> "change-eori-number")
                 )
               )
             )
@@ -50,14 +50,14 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends SummaryListRowHel
   def consigneeName: Option[Row] = userAnswers.get(ConsigneeNamePage) map {
     answer =>
       Row(
-        key   = Key(msg"consigneeName.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        key = Key(msg"consigneeName.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
         value = Value(lit"$answer"),
         actions = List(
           Action(
-            content            = msg"site.edit",
-            href               = routes.ConsigneeNameController.onPageLoad(mrn, CheckMode).url,
+            content = msg"site.edit",
+            href = routes.ConsigneeNameController.onPageLoad(mrn, CheckMode).url,
             visuallyHiddenText = Some(msg"consigneeName.change.hidden"),
-            attributes         = Map("id" -> "change-consignee-name")
+            attributes = Map("id" -> "change-consignee-name")
           )
         )
       )
@@ -66,14 +66,14 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends SummaryListRowHel
   def placeOfNotification: Option[Row] = userAnswers.get(PlaceOfNotificationPage) map {
     answer =>
       Row(
-        key   = Key(msg"placeOfNotification.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        key = Key(msg"placeOfNotification.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
         value = Value(lit"$answer"),
         actions = List(
           Action(
-            content            = msg"site.edit",
-            href               = routes.PlaceOfNotificationController.onPageLoad(mrn, CheckMode).url,
+            content = msg"site.edit",
+            href = routes.PlaceOfNotificationController.onPageLoad(mrn, CheckMode).url,
             visuallyHiddenText = Some(msg"placeOfNotification.change.hidden"),
-            attributes         = Map("id" -> "change-place-of-notification")
+            attributes = Map("id" -> "change-place-of-notification")
           )
         )
       )
@@ -82,14 +82,14 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends SummaryListRowHel
   def isTraderAddressPlaceOfNotification: Option[Row] = userAnswers.get(IsTraderAddressPlaceOfNotificationPage) map {
     answer =>
       Row(
-        key   = Key(msg"isTraderAddressPlaceOfNotification.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        key = Key(msg"isTraderAddressPlaceOfNotification.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
         value = Value(yesOrNo(answer)),
         actions = List(
           Action(
-            content            = msg"site.edit",
-            href               = routes.IsTraderAddressPlaceOfNotificationController.onPageLoad(mrn, CheckMode).url,
+            content = msg"site.edit",
+            href = routes.IsTraderAddressPlaceOfNotificationController.onPageLoad(mrn, CheckMode).url,
             visuallyHiddenText = Some(msg"isTraderAddressPlaceOfNotification.change.hidden"),
-            attributes         = Map("id" -> "change-trader-address-place-of-notification")
+            attributes = Map("id" -> "change-trader-address-place-of-notification")
           )
         )
       )
@@ -98,14 +98,14 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends SummaryListRowHel
   def incidentOnRoute: Option[Row] = userAnswers.get(IncidentOnRoutePage) map {
     answer =>
       Row(
-        key   = Key(msg"incidentOnRoute.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        key = Key(msg"incidentOnRoute.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
         value = Value(yesOrNo(answer)),
         actions = List(
           Action(
-            content            = msg"site.edit",
-            href               = routes.IncidentOnRouteController.onPageLoad(mrn, CheckMode).url,
+            content = msg"site.edit",
+            href = routes.IncidentOnRouteController.onPageLoad(mrn, CheckMode).url,
             visuallyHiddenText = Some(msg"incidentOnRoute.change.hidden"),
-            attributes         = Map("id" -> "change-incident-on-route")
+            attributes = Map("id" -> "change-incident-on-route")
           )
         )
       )
@@ -114,14 +114,14 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends SummaryListRowHel
   def traderName: Option[Row] = userAnswers.get(TraderNamePage) map {
     answer =>
       Row(
-        key   = Key(msg"traderName.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        key = Key(msg"traderName.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
         value = Value(lit"$answer"),
         actions = List(
           Action(
-            content            = msg"site.edit",
-            href               = routes.TraderNameController.onPageLoad(mrn, CheckMode).url,
+            content = msg"site.edit",
+            href = routes.TraderNameController.onPageLoad(mrn, CheckMode).url,
             visuallyHiddenText = Some(msg"traderName.change.hidden"),
-            attributes         = Map("id" -> "change-trader-name")
+            attributes = Map("id" -> "change-trader-name")
           )
         )
       )
@@ -130,14 +130,14 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends SummaryListRowHel
   def traderEori: Option[Row] = userAnswers.get(TraderEoriPage) map {
     answer =>
       Row(
-        key   = Key(msg"traderEori.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        key = Key(msg"traderEori.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
         value = Value(lit"$answer"),
         actions = List(
           Action(
-            content            = msg"site.edit",
-            href               = routes.TraderEoriController.onPageLoad(mrn, CheckMode).url,
+            content = msg"site.edit",
+            href = routes.TraderEoriController.onPageLoad(mrn, CheckMode).url,
             visuallyHiddenText = Some(msg"traderEori.change.hidden"),
-            attributes         = Map("id" -> "change-trader-eori")
+            attributes = Map("id" -> "change-trader-eori")
           )
         )
       )
@@ -146,14 +146,14 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends SummaryListRowHel
   def traderAddress: Option[Row] = userAnswers.get(TraderAddressPage) map {
     answer =>
       Row(
-        key   = Key(msg"traderAddress.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        key = Key(msg"traderAddress.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
         value = Value(addressHtml(answer)),
         actions = List(
           Action(
-            content            = msg"site.edit",
-            href               = routes.TraderAddressController.onPageLoad(mrn, CheckMode).url,
+            content = msg"site.edit",
+            href = routes.TraderAddressController.onPageLoad(mrn, CheckMode).url,
             visuallyHiddenText = Some(msg"traderAddress.change.hidden"),
-            attributes         = Map("id" -> "change-trader-address")
+            attributes = Map("id" -> "change-trader-address")
           )
         )
       )
@@ -163,14 +163,14 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends SummaryListRowHel
     val consigneeName = userAnswers.get(ConsigneeNamePage).getOrElse("")
     answer =>
       Row(
-        key   = Key(msg"consigneeAddress.checkYourAnswersLabel".withArgs(consigneeName), classes = Seq("govuk-!-width-one-half")),
+        key = Key(msg"consigneeAddress.checkYourAnswersLabel".withArgs(consigneeName), classes = Seq("govuk-!-width-one-half")),
         value = Value(addressHtml(answer)),
         actions = List(
           Action(
-            content            = msg"site.edit",
-            href               = routes.ConsigneeAddressController.onPageLoad(mrn, CheckMode).url,
+            content = msg"site.edit",
+            href = routes.ConsigneeAddressController.onPageLoad(mrn, CheckMode).url,
             visuallyHiddenText = Some(msg"consigneeAddress.change.hidden".withArgs(consigneeName)),
-            attributes         = Map("id" -> "change-consignee-address")
+            attributes = Map("id" -> "change-consignee-address")
           )
         )
       )
@@ -179,14 +179,14 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends SummaryListRowHel
   def authorisedLocation: Option[Row] = userAnswers.get(AuthorisedLocationPage) map {
     answer =>
       Row(
-        key   = Key(msg"authorisedLocation.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        key = Key(msg"authorisedLocation.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
         value = Value(lit"$answer"),
         actions = List(
           Action(
-            content            = msg"site.edit",
-            href               = routes.AuthorisedLocationController.onPageLoad(mrn, CheckMode).url,
+            content = msg"site.edit",
+            href = routes.AuthorisedLocationController.onPageLoad(mrn, CheckMode).url,
             visuallyHiddenText = Some(msg"authorisedLocation.change.hidden"),
-            attributes         = Map("id" -> "change-authorised-location")
+            attributes = Map("id" -> "change-authorised-location")
           )
         )
       )
@@ -195,21 +195,21 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends SummaryListRowHel
   def customsSubPlace: Option[Row] = userAnswers.get(CustomsSubPlacePage) map {
     answer =>
       Row(
-        key   = Key(msg"customsSubPlace.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        key = Key(msg"customsSubPlace.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
         value = Value(lit"$answer"),
         actions = List(
           Action(
-            content            = msg"site.edit",
-            href               = routes.CustomsSubPlaceController.onPageLoad(mrn, CheckMode).url,
+            content = msg"site.edit",
+            href = routes.CustomsSubPlaceController.onPageLoad(mrn, CheckMode).url,
             visuallyHiddenText = Some(msg"customsSubPlace.change.hidden"),
-            attributes         = Map("id" -> "change-customs-sub-place")
+            attributes = Map("id" -> "change-customs-sub-place")
           )
         )
       )
   }
 
   def movementReferenceNumber: Row = Row(
-    key   = Key(msg"movementReferenceNumber.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+    key = Key(msg"movementReferenceNumber.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
     value = Value(lit"$mrn")
   )
 
@@ -228,14 +228,14 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends SummaryListRowHel
   def goodsLocation: Option[Row] = userAnswers.get(GoodsLocationPage) map {
     answer =>
       Row(
-        key   = Key(msg"goodsLocation.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        key = Key(msg"goodsLocation.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
         value = Value(msg"goodsLocation.$answer"),
         actions = List(
           Action(
-            content            = msg"site.edit",
-            href               = routes.GoodsLocationController.onPageLoad(mrn, CheckMode).url,
+            content = msg"site.edit",
+            href = routes.GoodsLocationController.onPageLoad(mrn, CheckMode).url,
             visuallyHiddenText = Some(msg"goodsLocation.change.hidden"),
-            attributes         = Map("id" -> "change-goods-location")
+            attributes = Map("id" -> "change-goods-location")
           )
         )
       )
@@ -265,10 +265,10 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends SummaryListRowHel
               value = customsOfficeValue,
               actions = List(
                 Action(
-                  content            = msg"site.edit",
-                  href               = call(mrn, CheckMode).url,
+                  content = msg"site.edit",
+                  href = call(mrn, CheckMode).url,
                   visuallyHiddenText = Some(msg"$messageKeyPrefix.change.hidden".withArgs(arg)),
-                  attributes         = Map("id" -> "change-presentation-office")
+                  attributes = Map("id" -> "change-presentation-office")
                 )
               )
             )

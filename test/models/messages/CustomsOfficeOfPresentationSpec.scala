@@ -21,17 +21,14 @@ import generators.MessagesModelGenerators
 import models.XMLWrites._
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.OptionValues._
-import org.scalatest.{FreeSpec, MustMatchers, StreamlinedXmlEquality}
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.must.Matchers
+import org.scalatest.StreamlinedXmlEquality
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
 import scala.xml.NodeSeq
 
-class CustomsOfficeOfPresentationSpec
-    extends FreeSpec
-    with MustMatchers
-    with ScalaCheckPropertyChecks
-    with MessagesModelGenerators
-    with StreamlinedXmlEquality {
+class CustomsOfficeOfPresentationSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyChecks with MessagesModelGenerators with StreamlinedXmlEquality {
 
   "CustomsOfficeOfPresentation" - {
 

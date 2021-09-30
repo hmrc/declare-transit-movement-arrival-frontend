@@ -18,7 +18,9 @@ package repositories
 
 import models.messages.InterchangeControlReference
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
-import org.scalatest.{BeforeAndAfterEach, FreeSpec, MustMatchers}
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.must.Matchers
+import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
 import play.api.inject.bind
@@ -32,8 +34,8 @@ import services.mocks.MockDateTimeService
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class InterchangeControlReferenceIdRepositorySpec
-    extends FreeSpec
-    with MustMatchers
+    extends AnyFreeSpec
+    with Matchers
     with MongoSuite
     with ScalaFutures
     with BeforeAndAfterEach

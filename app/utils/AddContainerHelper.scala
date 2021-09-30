@@ -30,20 +30,20 @@ class AddContainerHelper(userAnswers: UserAnswers) extends SummaryListRowHelper(
     userAnswers.get(ContainerNumberPage(eventIndex, containerIndex)).map {
       case ContainerDomain(answer) =>
         Row(
-          key   = Key(msg"addContainer.containerList.label".withArgs(containerIndex.display)),
+          key = Key(msg"addContainer.containerList.label".withArgs(containerIndex.display)),
           value = Value(lit"$answer"),
           actions = List(
             Action(
-              content            = msg"site.edit",
-              href               = ContainerNumberController.onPageLoad(mrn, eventIndex, containerIndex, mode).url,
+              content = msg"site.edit",
+              href = ContainerNumberController.onPageLoad(mrn, eventIndex, containerIndex, mode).url,
               visuallyHiddenText = Some(msg"addContainer.containerList.change.hidden".withArgs(answer)),
-              attributes         = Map("id" -> s"change-container-${containerIndex.display}")
+              attributes = Map("id" -> s"change-container-${containerIndex.display}")
             ),
             Action(
-              content            = msg"site.delete",
-              href               = ConfirmRemoveContainerController.onPageLoad(mrn, eventIndex, containerIndex, mode).url,
+              content = msg"site.delete",
+              href = ConfirmRemoveContainerController.onPageLoad(mrn, eventIndex, containerIndex, mode).url,
               visuallyHiddenText = Some(msg"addContainer.containerList.delete.hidden".withArgs(answer)),
-              attributes         = Map("id" -> s"remove-container-${containerIndex.display}")
+              attributes = Map("id" -> s"remove-container-${containerIndex.display}")
             )
           )
         )

@@ -22,12 +22,14 @@ import models.LanguageCodeEnglish
 import models.XMLWrites._
 import models.messages.behaviours.JsonBehaviours
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalatest.{FreeSpec, MustMatchers, OptionValues, StreamlinedXmlEquality}
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.must.Matchers
+import org.scalatest.{OptionValues, StreamlinedXmlEquality}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
 class EnRouteEventSpec
-    extends FreeSpec
-    with MustMatchers
+    extends AnyFreeSpec
+    with Matchers
     with ScalaCheckPropertyChecks
     with MessagesModelGenerators
     with JsonBehaviours
@@ -42,7 +44,7 @@ class EnRouteEventSpec
         (enRouteEvent, seal, incident) =>
           val enRouteEventWithSealAndIncident = enRouteEvent.copy(seals = Some(Seq(seal)), eventDetails = incident)
 
-          val result = {
+          val result =
             <ENROUEVETEV>
               <PlaTEV10>{enRouteEventWithSealAndIncident.place}</PlaTEV10>
               <PlaTEV10LNG>{LanguageCodeEnglish.code}</PlaTEV10LNG>
@@ -52,15 +54,14 @@ class EnRouteEventSpec
               </CTLCTL>
               {
               incident.toXml
-              }
+            }
               <SEAINFSF1>
                 <SeaNumSF12>1</SeaNumSF12>
                 {
-                seal.toXml
-                }
+              seal.toXml
+            }
               </SEAINFSF1>
             </ENROUEVETEV>
-          }
 
           enRouteEventWithSealAndIncident.toXml mustEqual result
       }
@@ -72,7 +73,7 @@ class EnRouteEventSpec
         (enRouteEvent, seal, containerTranshipment) =>
           val enRouteEventWithContainer = enRouteEvent.copy(seals = Some(Seq(seal)), eventDetails = containerTranshipment)
 
-          val result = {
+          val result =
             <ENROUEVETEV>
               <PlaTEV10>{enRouteEventWithContainer.place}</PlaTEV10>
               <PlaTEV10LNG>{LanguageCodeEnglish.code}</PlaTEV10LNG>
@@ -83,14 +84,13 @@ class EnRouteEventSpec
               <SEAINFSF1>
                 <SeaNumSF12>1</SeaNumSF12>
                 {
-                seal.toXml
-                }
+              seal.toXml
+            }
               </SEAINFSF1>
               {
               containerTranshipment.toXml
-              }
+            }
             </ENROUEVETEV>
-          }
 
           enRouteEventWithContainer.toXml mustEqual result
       }
@@ -102,7 +102,7 @@ class EnRouteEventSpec
         (enRouteEvent, seal, vehicularTranshipment) =>
           val enRouteEventWithVehicle = enRouteEvent.copy(seals = Some(Seq(seal)), eventDetails = vehicularTranshipment)
 
-          val result = {
+          val result =
             <ENROUEVETEV>
               <PlaTEV10>{enRouteEventWithVehicle.place}</PlaTEV10>
               <PlaTEV10LNG>{LanguageCodeEnglish.code}</PlaTEV10LNG>
@@ -113,14 +113,13 @@ class EnRouteEventSpec
               <SEAINFSF1>
                 <SeaNumSF12>1</SeaNumSF12>
                 {
-                seal.toXml
-                }
+              seal.toXml
+            }
               </SEAINFSF1>
               {
               vehicularTranshipment.toXml
-              }
+            }
             </ENROUEVETEV>
-          }
 
           enRouteEventWithVehicle.toXml mustEqual result
       }
@@ -134,7 +133,7 @@ class EnRouteEventSpec
           (enRouteEvent, seal, vehicularTranshipment) =>
             val enRouteEventWithVehicle = enRouteEvent.copy(seals = Some(Seq(seal)), eventDetails = vehicularTranshipment)
             val alreadyInNcts: Int      = if (enRouteEventWithVehicle.alreadyInNcts) 1 else 0
-            val xml = {
+            val xml =
               <ENROUEVETEV>
                 <PlaTEV10>{enRouteEventWithVehicle.place}</PlaTEV10>
                 <PlaTEV10LNG>{LanguageCodeEnglish.code}</PlaTEV10LNG>
@@ -144,7 +143,6 @@ class EnRouteEventSpec
                   <SeaNumSF12>1</SeaNumSF12>{seal.toXml}
                 </SEAINFSF1>{vehicularTranshipment.toXml}
               </ENROUEVETEV>
-            }
             val result = XmlReader.of[EnRouteEvent].read(xml).toOption.value
 
             result mustEqual enRouteEventWithVehicle
@@ -157,7 +155,7 @@ class EnRouteEventSpec
           (enRouteEvent, seal, containerTranshipment) =>
             val enRouteEventWithContainer = enRouteEvent.copy(seals = Some(Seq(seal)), eventDetails = containerTranshipment)
 
-            val xml = {
+            val xml =
               <ENROUEVETEV>
                 <PlaTEV10>{enRouteEventWithContainer.place}</PlaTEV10>
                 <PlaTEV10LNG>{LanguageCodeEnglish.code}</PlaTEV10LNG>
@@ -168,14 +166,13 @@ class EnRouteEventSpec
                 <SEAINFSF1>
                   <SeaNumSF12>1</SeaNumSF12>
                   {
-                  seal.toXml
-                  }
+                seal.toXml
+              }
                 </SEAINFSF1>
                 {
                 containerTranshipment.toXml
-                }
+              }
               </ENROUEVETEV>
-            }
 
             val result = XmlReader.of[EnRouteEvent].read(xml).toOption.value
 
@@ -189,7 +186,7 @@ class EnRouteEventSpec
           (enRouteEvent, seal, incident) =>
             val enRouteEventWithSealAndIncident = enRouteEvent.copy(seals = Some(Seq(seal)), eventDetails = incident)
 
-            val xml = {
+            val xml =
               <ENROUEVETEV>
                 <PlaTEV10>{enRouteEventWithSealAndIncident.place}</PlaTEV10>
                 <PlaTEV10LNG>{LanguageCodeEnglish.code}</PlaTEV10LNG>
@@ -199,15 +196,14 @@ class EnRouteEventSpec
                 </CTLCTL>
                 {
                 incident.toXml
-                }
+              }
                 <SEAINFSF1>
                   <SeaNumSF12>1</SeaNumSF12>
                   {
-                  seal.toXml
-                  }
+                seal.toXml
+              }
                 </SEAINFSF1>
               </ENROUEVETEV>
-            }
 
             val result = XmlReader.of[EnRouteEvent].read(xml).toOption.value
 

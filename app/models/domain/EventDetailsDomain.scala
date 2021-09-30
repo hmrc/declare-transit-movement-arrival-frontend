@@ -136,7 +136,7 @@ object VehicularTranshipmentDomain {
       }
       .get
 
-  implicit lazy val vehicularTranshipmentJsonWrites: OWrites[VehicularTranshipmentDomain] = {
+  implicit lazy val vehicularTranshipmentJsonWrites: OWrites[VehicularTranshipmentDomain] =
     OWrites[VehicularTranshipmentDomain] {
       transhipment =>
         val transhipmentType: TranshipmentType =
@@ -155,7 +155,6 @@ object VehicularTranshipmentDomain {
           )
           .filterNulls
     }
-  }
 }
 
 final case class ContainerTranshipmentDomain(containers: Seq[ContainerDomain]) extends TranshipmentDomain {
