@@ -52,21 +52,21 @@ class AddEventsHelperSpec extends SpecBase {
           helper.listOfEvent(eventIndex) mustBe Some(
             Row(
               key = Key(
-                content = Message("addEvent.event.label", eventIndex.display),
+                content = Literal(place),
                 classes = Nil
               ),
-              value = Value(Literal(place)),
+              value = Value(Literal("")),
               actions = List(
                 Action(
                   content            = Message("site.edit"),
                   href               = CheckEventAnswersController.onPageLoad(mrn, eventIndex).url,
-                  visuallyHiddenText = Some(Message("addEvent.change.hidden", eventIndex.display, place)),
+                  visuallyHiddenText = Some(Literal(place)),
                   attributes         = Map("id" -> s"change-event-${eventIndex.display}")
                 ),
                 Action(
                   content            = Message("site.delete"),
                   href               = ConfirmRemoveEventController.onPageLoad(mrn, eventIndex, NormalMode).url,
-                  visuallyHiddenText = Some(Message("addEvent.remove.hidden", eventIndex.display, place)),
+                  visuallyHiddenText = Some(Literal(place)),
                   attributes         = Map("id" -> s"remove-event-${eventIndex.display}")
                 )
               )
@@ -84,21 +84,21 @@ class AddEventsHelperSpec extends SpecBase {
           helper.listOfEvent(eventIndex) mustBe Some(
             Row(
               key = Key(
-                content = Message("addEvent.event.label", eventIndex.display),
+                content = Literal(countryCode.code),
                 classes = Nil
               ),
-              value = Value(Literal(countryCode.code)),
+              value = Value(Literal("")),
               actions = List(
                 Action(
                   content            = Message("site.edit"),
                   href               = CheckEventAnswersController.onPageLoad(mrn, eventIndex).url,
-                  visuallyHiddenText = Some(Message("addEvent.change.hidden", eventIndex.display, countryCode.code)),
+                  visuallyHiddenText = Some(Literal(countryCode.code)),
                   attributes         = Map("id" -> s"change-event-${eventIndex.display}")
                 ),
                 Action(
                   content            = Message("site.delete"),
                   href               = ConfirmRemoveEventController.onPageLoad(mrn, eventIndex, NormalMode).url,
-                  visuallyHiddenText = Some(Message("addEvent.remove.hidden", eventIndex.display, countryCode.code)),
+                  visuallyHiddenText = Some(Literal(countryCode.code)),
                   attributes         = Map("id" -> s"remove-event-${eventIndex.display}")
                 )
               )

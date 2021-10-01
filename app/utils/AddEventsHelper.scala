@@ -19,7 +19,7 @@ package utils
 import controllers.events.{routes => eventRoutes}
 import models.{Index, NormalMode, UserAnswers}
 import pages.events._
-import uk.gov.hmrc.viewmodels.SummaryList.{Action, Key, Row, Value}
+import uk.gov.hmrc.viewmodels.SummaryList.Row
 import uk.gov.hmrc.viewmodels._
 
 class AddEventsHelper(userAnswers: UserAnswers) extends SummaryListRowHelper(userAnswers) {
@@ -27,43 +27,30 @@ class AddEventsHelper(userAnswers: UserAnswers) extends SummaryListRowHelper(use
   def listOfEvent(eventIndex: Index): Option[Row] =
     placeOfEvent(eventIndex).map {
       answer =>
-        Row(
-          key   = Key(msg"addEvent.event.label".withArgs(eventIndex.display)),
-          value = Value(lit"$answer"),
-          actions = List(
-            Action(
-              content            = msg"site.edit",
-              href               = eventRoutes.CheckEventAnswersController.onPageLoad(mrn, eventIndex).url,
-              visuallyHiddenText = Some(msg"addEvent.change.hidden".withArgs(eventIndex.display, answer)),
-              attributes         = Map("id" -> s"change-event-${eventIndex.display}")
-            ),
-            Action(
-              content            = msg"site.delete",
-              href               = eventRoutes.ConfirmRemoveEventController.onPageLoad(mrn, eventIndex, NormalMode).url,
-              visuallyHiddenText = Some(msg"addEvent.remove.hidden".withArgs(eventIndex.display, answer)),
-              attributes         = Map("id" -> s"remove-event-${eventIndex.display}")
-            )
-          )
+        buildRemovableRow(
+          label      = lit"$answer",
+          id         = s"event-${eventIndex.display}",
+          changeCall = eventRoutes.CheckEventAnswersController.onPageLoad(mrn, eventIndex),
+          removeCall = eventRoutes.ConfirmRemoveEventController.onPageLoad(mrn, eventIndex, NormalMode)
         )
     }
 
+  // format: off
   def cyaListOfEvent(eventIndex: Index): Option[Row] =
-    placeOfEvent(eventIndex).map {
+    placeOfEvent(eventIndex) map {
       answer =>
-        Row(
-          // TODO: Move hard coded interpretation of eventIndex to an Index Model
-          key   = Key(msg"addEvent.event.label".withArgs(eventIndex.display), classes = Seq("govuk-!-width-one-half")),
-          value = Value(lit"$answer"),
-          actions = List(
-            Action(
-              content            = msg"site.edit",
-              href               = eventRoutes.CheckEventAnswersController.onPageLoad(mrn, eventIndex).url,
-              visuallyHiddenText = Some(msg"addEvent.change.hidden".withArgs(eventIndex.display, answer))
-            )
-          )
+        buildSimpleRow(
+          prefix = "addEvent",
+          label  = msg"addEvent.event.label".withArgs(eventIndex.display),
+          answer = lit"$answer",
+          id     = None,
+          call   = eventRoutes.CheckEventAnswersController.onPageLoad(mrn, eventIndex),
+          args   = eventIndex.display, answer
         )
     }
+  // format: on
 
   private def placeOfEvent(eventIndex: Index): Option[String] =
-    userAnswers.get(EventPlacePage(eventIndex)) orElse userAnswers.get(EventCountryPage(eventIndex)).map(_.code)
+    userAnswers.get(EventPlacePage(eventIndex)) orElse
+      userAnswers.get(EventCountryPage(eventIndex)).map(_.code)
 }
