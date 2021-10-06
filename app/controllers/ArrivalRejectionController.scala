@@ -35,7 +35,6 @@ class ArrivalRejectionController @Inject()(
   identify: IdentifierAction,
   val controllerComponents: MessagesControllerComponents,
   val renderer: Renderer,
-  appConfig: FrontendAppConfig,
   arrivalRejectionService: ArrivalRejectionService,
   val viewModelConfig: ViewModelConfig
 )(implicit ec: ExecutionContext)
