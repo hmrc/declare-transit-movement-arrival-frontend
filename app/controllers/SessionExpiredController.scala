@@ -37,6 +37,6 @@ class SessionExpiredController @Inject()(val controllerComponents: MessagesContr
       val json = Json.obj(
         "signInUrl" -> s"${config.manageTransitMovementsUrl}/what-do-you-want-to-do"
       )
-      renderer.render("session-expired.njk", json).map(Ok(_))
+      renderer.render("session-expired.njk", json).map(Ok(_).withNewSession)
   }
 }
