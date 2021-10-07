@@ -46,8 +46,8 @@ final case class NormalNotification(movementReferenceNumber: MovementReferenceNu
                                     customsSubPlace: String,
                                     trader: TraderDomain,
                                     customsOffice: CustomsOffice,
-                                    enRouteEvents: Option[Seq[EnRouteEventDomain]])
-    extends ArrivalNotificationDomain {
+                                    enRouteEvents: Option[Seq[EnRouteEventDomain]]
+) extends ArrivalNotificationDomain {
 
   val procedure: ProcedureType = ProcedureType.Normal
 }

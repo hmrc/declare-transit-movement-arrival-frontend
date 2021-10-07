@@ -26,7 +26,7 @@ import logging.Logging
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class ArrivalRejectionService @Inject()(arrivalMovementConnector: ArrivalMovementConnector) extends Logging {
+class ArrivalRejectionService @Inject() (arrivalMovementConnector: ArrivalMovementConnector) extends Logging {
 
   def arrivalRejectionMessage(arrivalId: ArrivalId)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[ArrivalNotificationRejectionMessage]] =
     arrivalMovementConnector.getSummary(arrivalId) flatMap {

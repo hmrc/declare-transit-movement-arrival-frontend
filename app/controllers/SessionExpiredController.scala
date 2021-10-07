@@ -27,9 +27,9 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
 import scala.concurrent.ExecutionContext
 
-class SessionExpiredController @Inject()(val controllerComponents: MessagesControllerComponents, val config: FrontendAppConfig, renderer: Renderer)(
-  implicit ec: ExecutionContext)
-    extends FrontendBaseController
+class SessionExpiredController @Inject() (val controllerComponents: MessagesControllerComponents, val config: FrontendAppConfig, renderer: Renderer)(implicit
+  ec: ExecutionContext
+) extends FrontendBaseController
     with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = Action.async {

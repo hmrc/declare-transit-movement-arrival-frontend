@@ -25,7 +25,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class KeepAliveController @Inject()(
+class KeepAliveController @Inject() (
   identify: IdentifierAction,
   val controllerComponents: MessagesControllerComponents,
   sessionRepository: SessionRepository
@@ -40,7 +40,11 @@ class KeepAliveController @Inject()(
           case Some(refNumber) =>
             sessionRepository.get(refNumber, request.eoriNumber) flatMap {
               case Some(ua) =>
-                sessionRepository.set(ua).map(_ => NoContent)
+                sessionRepository
+                  .set(ua)
+                  .map(
+                    _ => NoContent
+                  )
               case _ =>
                 Future.successful(NoContent)
             }

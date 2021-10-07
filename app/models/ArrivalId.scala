@@ -22,7 +22,9 @@ import play.api.mvc.PathBindable
 case class ArrivalId(value: Int)
 
 object ArrivalId {
+
   implicit def pathBindable: PathBindable[ArrivalId] = new PathBindable[ArrivalId] {
+
     override def bind(key: String, value: String): Either[String, ArrivalId] =
       implicitly[PathBindable[Int]].bind(key, value) match {
         case Right(id) if id > 0 => Right(ArrivalId(id))
@@ -33,6 +35,9 @@ object ArrivalId {
       implicitly[PathBindable[Int]].unbind(key, value.value)
   }
 
-  implicit def reads: Reads[ArrivalId]   = (__).read[Int] map ArrivalId.apply
-  implicit def writes: Writes[ArrivalId] = Writes(arrivalId => JsNumber(arrivalId.value))
+  implicit def reads: Reads[ArrivalId] = __.read[Int] map ArrivalId.apply
+
+  implicit def writes: Writes[ArrivalId] = Writes(
+    arrivalId => JsNumber(arrivalId.value)
+  )
 }

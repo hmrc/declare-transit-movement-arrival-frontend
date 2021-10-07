@@ -34,7 +34,11 @@ object MappingsSpec {
     val values: Set[Foo] = Set(Bar, Baz)
 
     implicit val fooEnumerable: Enumerable[Foo] =
-      Enumerable(values.toSeq.map(v => v.toString -> v): _*)
+      Enumerable(
+        values.toSeq.map(
+          v => v.toString -> v
+        ): _*
+      )
   }
 }
 
@@ -208,7 +212,8 @@ class MappingsSpec extends FreeSpec with MustMatchers with OptionValues with Map
           value =>
             whenever(
               MovementReferenceNumber(value).isEmpty &&
-                !value.matches(MovementReferenceNumber.Constants.validCharactersRegex)) {
+                !value.matches(MovementReferenceNumber.Constants.validCharactersRegex)
+            ) {
               val result = testForm.bind(Map("value" -> value))
               result.errors must contain(FormError("value", "error.invalid.character"))
             }

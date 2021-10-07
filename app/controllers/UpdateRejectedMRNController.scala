@@ -35,16 +35,17 @@ import viewModels.sections.ViewModelConfig
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class UpdateRejectedMRNController @Inject()(override val messagesApi: MessagesApi,
-                                            navigator: Navigator,
-                                            identify: IdentifierAction,
-                                            formProvider: UpdateRejectedMRNFormProvider,
-                                            sessionRepository: SessionRepository,
-                                            arrivalMovementMessageService: ArrivalNotificationMessageService,
-                                            userAnswersService: UserAnswersService,
-                                            val viewModelConfig: ViewModelConfig,
-                                            val controllerComponents: MessagesControllerComponents,
-                                            val renderer: Renderer)(implicit ec: ExecutionContext)
+class UpdateRejectedMRNController @Inject() (override val messagesApi: MessagesApi,
+                                             navigator: Navigator,
+                                             identify: IdentifierAction,
+                                             formProvider: UpdateRejectedMRNFormProvider,
+                                             sessionRepository: SessionRepository,
+                                             arrivalMovementMessageService: ArrivalNotificationMessageService,
+                                             userAnswersService: UserAnswersService,
+                                             val viewModelConfig: ViewModelConfig,
+                                             val controllerComponents: MessagesControllerComponents,
+                                             val renderer: Renderer
+)(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
     with NunjucksSupport
@@ -82,7 +83,7 @@ class UpdateRejectedMRNController @Inject()(override val messagesApi: MessagesAp
                 sessionRepository.set(updatedUserAnswers)
                 Future.successful(Redirect(navigator.nextPage(UpdateRejectedMRNPage, NormalMode, updatedUserAnswers)))
               case _ => renderTechnicalDifficultiesPage
-          }
+            }
         )
   }
 }

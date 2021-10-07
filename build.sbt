@@ -13,7 +13,6 @@ lazy val root = (project in file("."))
   .disablePlugins(JUnitXmlReportPlugin) //Required to prevent https://github.com/scalatest/scalatest/issues/1427
   .configs(IntegrationTest)
   .settings(inConfig(IntegrationTest)(itSettings): _*)
-  .settings(inConfig(IntegrationTest)(scalafmtSettings): _*)
   .settings(DefaultBuildSettings.scalaSettings: _*)
   .settings(DefaultBuildSettings.defaultSettings(): _*)
   .settings(SbtDistributablesPlugin.publishingSettings: _*)
@@ -91,8 +90,7 @@ lazy val itSettings = Defaults.itSettings ++ Seq(
   javaOptions ++= Seq(
     "-Dconfig.resource=it.application.conf",
     "-Dlogger.resource=logback-it.xml"
-  ),
-  scalafmtTestOnCompile in ThisBuild := true
+  )
 )
 
 dependencyOverrides ++= AppDependencies.overrides

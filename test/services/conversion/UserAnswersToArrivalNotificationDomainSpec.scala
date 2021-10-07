@@ -58,9 +58,10 @@ class UserAnswersToArrivalNotificationDomainSpec extends SpecBase with AppWithDe
           val expectedResult = arrivalNotificationDomain match {
             case normalNotification: NormalNotification => normalNotification.copy(notificationDate = result.notificationDate)
             case simplifiedNotification: SimplifiedNotification =>
-              simplifiedNotification.copy(notificationDate  = result.notificationDate,
+              simplifiedNotification.copy(notificationDate = result.notificationDate,
                                           notificationPlace = result.trader.postCode,
-                                          authedEori        = userAnswers.eoriNumber)
+                                          authedEori = userAnswers.eoriNumber
+              )
           }
 
           result mustEqual expectedResult

@@ -156,9 +156,9 @@ class ConfirmRemoveContainerControllerSpec extends SpecBase with AppWithDefaultM
       val result = route(app, request).value
 
       val updateAnswers = UserAnswers(
-        id          = presetUserAnswers.id,
-        eoriNumber  = presetUserAnswers.eoriNumber,
-        data        = presetUserAnswers.remove(ContainerNumberPage(eventIndex, containerIndex)).success.value.data,
+        id = presetUserAnswers.id,
+        eoriNumber = presetUserAnswers.eoriNumber,
+        data = presetUserAnswers.remove(ContainerNumberPage(eventIndex, containerIndex)).success.value.data,
         lastUpdated = presetUserAnswers.lastUpdated
       )
 
@@ -182,9 +182,9 @@ class ConfirmRemoveContainerControllerSpec extends SpecBase with AppWithDefaultM
       val result = route(app, request).value
 
       val updateAnswers = UserAnswers(
-        id          = presetUserAnswers.id,
-        eoriNumber  = eoriNumber,
-        data        = presetUserAnswers.remove(ContainerNumberPage(eventIndex, containerIndex)).success.value.data,
+        id = presetUserAnswers.id,
+        eoriNumber = eoriNumber,
+        data = presetUserAnswers.remove(ContainerNumberPage(eventIndex, containerIndex)).success.value.data,
         lastUpdated = presetUserAnswers.lastUpdated
       )
 

@@ -44,7 +44,7 @@ class MetaSpec extends SpecBase with ScalaCheckPropertyChecks with MessagesModel
 
     "must create valid xml" in {
       forAll(arbitrary[Meta]) {
-        (meta) =>
+        meta =>
           val senderIdentificationCodeQualifier = meta.senderIdentificationCodeQualifier.fold(NodeSeq.Empty)(
             senderIdentification => <SenIdeCodQuaMES4>{senderIdentification}</SenIdeCodQuaMES4>
           )
@@ -90,28 +90,28 @@ class MetaSpec extends SpecBase with ScalaCheckPropertyChecks with MessagesModel
 
             <SynIdeMES1>{syntaxIdentifier}</SynIdeMES1> ++
               <SynVerNumMES2>{syntaxVersionNumber}</SynVerNumMES2> ++ {
-              senderIdentificationCodeQualifier ++
-                recipientIdentificationCodeQualifier
-            } ++
+                senderIdentificationCodeQualifier ++
+                  recipientIdentificationCodeQualifier
+              } ++
               <MesRecMES6>{messageRecipient}</MesRecMES6> ++
               <DatOfPreMES9>{Format.dateFormatted(meta.dateOfPreparation)}</DatOfPreMES9> ++
               <TimOfPreMES10>{Format.timeFormatted(meta.timeOfPreparation)}</TimOfPreMES10> ++ {
-              meta.interchangeControlReference.toXml ++
-                recipientsReferencePassword ++
-                recipientsReferencePasswordQualifier
-            } ++
+                meta.interchangeControlReference.toXml ++
+                  recipientsReferencePassword ++
+                  recipientsReferencePasswordQualifier
+              } ++
               <AppRefMES14>{applicationReference}</AppRefMES14> ++ {
-              priority ++
-                acknowledgementRequest ++
-                communicationsAgreementId
-            } ++
+                priority ++
+                  acknowledgementRequest ++
+                  communicationsAgreementId
+              } ++
               <TesIndMES18>{testIndicator}</TesIndMES18> ++
               <MesIdeMES19>{messageIndication}</MesIdeMES19> ++ {
-              <MesTypMES20>{messageCode}</MesTypMES20> ++
-                commonAccessReference ++
-                messageSequenceNumber ++
-                firstAndLastTransfer
-            }
+                <MesTypMES20>{messageCode}</MesTypMES20> ++
+                  commonAccessReference ++
+                  messageSequenceNumber ++
+                  firstAndLastTransfer
+              }
           }
 
           meta.toXml mustEqual expectedResult

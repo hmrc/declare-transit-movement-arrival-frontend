@@ -47,7 +47,7 @@ class ArrivalMovementRequestToUserAnswersServiceSpec extends SpecBase with Messa
       forAll(arbitrary[ArrivalMovementRequest], arbitrary[MovementReferenceNumber], arbitrary[EoriNumber], arbitrary[CustomsOffice]) {
         (arrivalMovementRequest, movementReferenceNumber, eoriNumber, customsOffice) =>
           val header: Header                                                 = arrivalMovementRequest.header.copy(movementReferenceNumber = "Invalid MRN")
-          val arrivalMovementRequestWithMalformedMrn: ArrivalMovementRequest = arrivalMovementRequest.copy(header                         = header)
+          val arrivalMovementRequestWithMalformedMrn: ArrivalMovementRequest = arrivalMovementRequest.copy(header = header)
 
           val result = arrivalMovementRequestToUserAnswersService.convertToUserAnswers(
             arrivalMovementRequestWithMalformedMrn,
