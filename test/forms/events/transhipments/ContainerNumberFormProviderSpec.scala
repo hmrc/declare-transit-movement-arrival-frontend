@@ -47,7 +47,7 @@ class ContainerNumberFormProviderSpec extends StringFieldBehaviours with Message
     behave like fieldWithMaxLength(
       form(containerIndex),
       fieldName,
-      maxLength   = maxLength,
+      maxLength = maxLength,
       lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
     )
 

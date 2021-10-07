@@ -27,97 +27,97 @@ import uk.gov.hmrc.viewmodels._
 class CheckYourAnswersHelper(userAnswers: UserAnswers) extends SummaryListRowHelper(userAnswers) {
 
   def eoriNumber: Option[Row] = getAnswerAndBuildNamedRow[String](
-    namePage     = ConsigneeNamePage,
-    answerPage   = ConsigneeEoriNumberPage,
+    namePage = ConsigneeNamePage,
+    answerPage = ConsigneeEoriNumberPage,
     formatAnswer = formatAsLiteral,
-    prefix       = "eoriNumber",
-    id           = Some("change-eori-number"),
-    call         = routes.ConsigneeEoriNumberController.onPageLoad(mrn, CheckMode)
+    prefix = "eoriNumber",
+    id = Some("change-eori-number"),
+    call = routes.ConsigneeEoriNumberController.onPageLoad(mrn, CheckMode)
   )
 
   def consigneeName: Option[Row] = getAnswerAndBuildRow[String](
-    page         = ConsigneeNamePage,
+    page = ConsigneeNamePage,
     formatAnswer = formatAsLiteral,
-    prefix       = "consigneeName",
-    id           = Some("change-consignee-name"),
-    call         = routes.ConsigneeNameController.onPageLoad(mrn, CheckMode)
+    prefix = "consigneeName",
+    id = Some("change-consignee-name"),
+    call = routes.ConsigneeNameController.onPageLoad(mrn, CheckMode)
   )
 
   def placeOfNotification: Option[Row] = getAnswerAndBuildRow[String](
-    page         = PlaceOfNotificationPage,
+    page = PlaceOfNotificationPage,
     formatAnswer = formatAsLiteral,
-    prefix       = "placeOfNotification",
-    id           = Some("change-place-of-notification"),
-    call         = routes.PlaceOfNotificationController.onPageLoad(mrn, CheckMode)
+    prefix = "placeOfNotification",
+    id = Some("change-place-of-notification"),
+    call = routes.PlaceOfNotificationController.onPageLoad(mrn, CheckMode)
   )
 
   def isTraderAddressPlaceOfNotification: Option[Row] = getAnswerAndBuildRow[Boolean](
-    page         = IsTraderAddressPlaceOfNotificationPage,
+    page = IsTraderAddressPlaceOfNotificationPage,
     formatAnswer = formatAsYesOrNo,
-    prefix       = "isTraderAddressPlaceOfNotification",
-    id           = Some("change-trader-address-place-of-notification"),
-    call         = routes.IsTraderAddressPlaceOfNotificationController.onPageLoad(mrn, CheckMode)
+    prefix = "isTraderAddressPlaceOfNotification",
+    id = Some("change-trader-address-place-of-notification"),
+    call = routes.IsTraderAddressPlaceOfNotificationController.onPageLoad(mrn, CheckMode)
   )
 
   def incidentOnRoute: Option[Row] = getAnswerAndBuildRow[Boolean](
-    page         = IncidentOnRoutePage,
+    page = IncidentOnRoutePage,
     formatAnswer = formatAsYesOrNo,
-    prefix       = "incidentOnRoute",
-    id           = Some("change-incident-on-route"),
-    call         = routes.IncidentOnRouteController.onPageLoad(mrn, CheckMode)
+    prefix = "incidentOnRoute",
+    id = Some("change-incident-on-route"),
+    call = routes.IncidentOnRouteController.onPageLoad(mrn, CheckMode)
   )
 
   def traderName: Option[Row] = getAnswerAndBuildRow[String](
-    page         = TraderNamePage,
+    page = TraderNamePage,
     formatAnswer = formatAsLiteral,
-    prefix       = "traderName",
-    id           = Some("change-trader-name"),
-    call         = routes.TraderNameController.onPageLoad(mrn, CheckMode)
+    prefix = "traderName",
+    id = Some("change-trader-name"),
+    call = routes.TraderNameController.onPageLoad(mrn, CheckMode)
   )
 
   def traderEori: Option[Row] = getAnswerAndBuildRow[String](
-    page         = TraderEoriPage,
+    page = TraderEoriPage,
     formatAnswer = formatAsLiteral,
-    prefix       = "traderEori",
-    id           = Some("change-trader-eori"),
-    call         = routes.TraderEoriController.onPageLoad(mrn, CheckMode)
+    prefix = "traderEori",
+    id = Some("change-trader-eori"),
+    call = routes.TraderEoriController.onPageLoad(mrn, CheckMode)
   )
 
   def traderAddress: Option[Row] = getAnswerAndBuildRow[Address](
-    page         = TraderAddressPage,
+    page = TraderAddressPage,
     formatAnswer = formatAsAddress,
-    prefix       = "traderAddress",
-    id           = Some("change-trader-address"),
-    call         = routes.TraderAddressController.onPageLoad(mrn, CheckMode)
+    prefix = "traderAddress",
+    id = Some("change-trader-address"),
+    call = routes.TraderAddressController.onPageLoad(mrn, CheckMode)
   )
 
   def consigneeAddress: Option[Row] = getAnswerAndBuildNamedRow[Address](
-    namePage     = ConsigneeNamePage,
-    answerPage   = ConsigneeAddressPage,
+    namePage = ConsigneeNamePage,
+    answerPage = ConsigneeAddressPage,
     formatAnswer = formatAsAddress,
-    prefix       = "consigneeAddress",
-    id           = Some("change-consignee-address"),
-    call         = routes.ConsigneeAddressController.onPageLoad(mrn, CheckMode)
+    prefix = "consigneeAddress",
+    id = Some("change-consignee-address"),
+    call = routes.ConsigneeAddressController.onPageLoad(mrn, CheckMode)
   )
 
   def authorisedLocation: Option[Row] = getAnswerAndBuildRow[String](
-    page         = AuthorisedLocationPage,
+    page = AuthorisedLocationPage,
     formatAnswer = formatAsLiteral,
-    prefix       = "authorisedLocation",
-    id           = Some("change-authorised-location"),
-    call         = routes.AuthorisedLocationController.onPageLoad(mrn, CheckMode)
+    prefix = "authorisedLocation",
+    id = Some("change-authorised-location"),
+    call = routes.AuthorisedLocationController.onPageLoad(mrn, CheckMode)
   )
 
   def customsSubPlace: Option[Row] = getAnswerAndBuildRow[String](
-    page         = CustomsSubPlacePage,
+    page = CustomsSubPlacePage,
     formatAnswer = formatAsLiteral,
-    prefix       = "customsSubPlace",
-    id           = Some("change-customs-sub-place"),
-    call         = routes.CustomsSubPlaceController.onPageLoad(mrn, CheckMode)
+    prefix = "customsSubPlace",
+    id = Some("change-customs-sub-place"),
+    call = routes.CustomsSubPlaceController.onPageLoad(mrn, CheckMode)
   )
 
   def movementReferenceNumber: Row = Row(
-    key   = Key(msg"movementReferenceNumber.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+    key = Key(msg"movementReferenceNumber.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
     value = Value(lit"$mrn")
   )
 
@@ -134,11 +134,11 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends SummaryListRowHel
     customsOffice(CustomsOfficePage, "customsOffice", routes.CustomsOfficeController.onPageLoad)
 
   def goodsLocation: Option[Row] = getAnswerAndBuildRow[GoodsLocation](
-    page         = GoodsLocationPage,
+    page = GoodsLocationPage,
     formatAnswer = goodsLocation => msg"goodsLocation.$goodsLocation",
-    prefix       = "goodsLocation",
-    id           = Some("change-goods-location"),
-    call         = routes.GoodsLocationController.onPageLoad(mrn, CheckMode)
+    prefix = "goodsLocation",
+    id = Some("change-goods-location"),
+    call = routes.GoodsLocationController.onPageLoad(mrn, CheckMode)
   )
 
   private def customsOffice(page: QuestionPage[CustomsOffice], messageKeyPrefix: String, call: (MovementReferenceNumber, Mode) => Call): Option[Row] =
@@ -160,9 +160,9 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends SummaryListRowHel
             buildRow(
               prefix = messageKeyPrefix,
               answer = lit"$customsOfficeValue",
-              id     = Some("change-presentation-office"),
-              call   = call(mrn, CheckMode),
-              args   = arg
+              id = Some("change-presentation-office"),
+              call = call(mrn, CheckMode),
+              args = arg
             )
         }
     }

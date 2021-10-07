@@ -27,8 +27,8 @@ private[mappings] class LocalDateFormatter(invalidKey: String,
                                            allRequiredKey: String,
                                            twoRequiredKey: String,
                                            requiredKey: String,
-                                           args: Seq[String] = Seq.empty)
-    extends Formatter[LocalDate]
+                                           args: Seq[String] = Seq.empty
+) extends Formatter[LocalDate]
     with Formatters {
 
   private val fieldKeys: List[String] = List("day", "month", "year")
@@ -44,9 +44,9 @@ private[mappings] class LocalDateFormatter(invalidKey: String,
   private def formatDate(key: String, data: Map[String, String]): Either[Seq[FormError], LocalDate] = {
 
     val int = intFormatter(
-      requiredKey    = invalidKey,
+      requiredKey = invalidKey,
       wholeNumberKey = invalidKey,
-      nonNumericKey  = invalidKey,
+      nonNumericKey = invalidKey,
       args
     )
 

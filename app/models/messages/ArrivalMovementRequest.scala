@@ -29,7 +29,8 @@ case class ArrivalMovementRequest(meta: Meta,
                                   header: Header,
                                   trader: Trader,
                                   customsOfficeOfPresentation: CustomsOfficeOfPresentation,
-                                  enRouteEvents: Option[Seq[EnRouteEvent]])
+                                  enRouteEvents: Option[Seq[EnRouteEvent]]
+)
 
 object ArrivalMovementRequest {
 
@@ -42,8 +43,8 @@ object ArrivalMovementRequest {
           arrivalRequest.header.toXml ++
           arrivalRequest.trader.toXml ++
           arrivalRequest.customsOfficeOfPresentation.toXml ++ {
-          arrivalRequest.enRouteEvents.map(_.flatMap(_.toXml)).getOrElse(NodeSeq.Empty)
-        }
+            arrivalRequest.enRouteEvents.map(_.flatMap(_.toXml)).getOrElse(NodeSeq.Empty)
+          }
       }
 
       Elem(parentNode.prefix, parentNode.label, parentNode.attributes, parentNode.scope, parentNode.child.isEmpty, parentNode.child ++ childNodes: _*)

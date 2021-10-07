@@ -30,12 +30,11 @@ import viewModels.sections.ViewModelConfig
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class ArrivalRejectionController @Inject()(
+class ArrivalRejectionController @Inject() (
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
   val controllerComponents: MessagesControllerComponents,
   val renderer: Renderer,
-  appConfig: FrontendAppConfig,
   arrivalRejectionService: ArrivalRejectionService,
   val viewModelConfig: ViewModelConfig
 )(implicit ec: ExecutionContext)

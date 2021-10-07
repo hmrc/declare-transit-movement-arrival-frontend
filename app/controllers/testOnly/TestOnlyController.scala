@@ -25,9 +25,9 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class TestOnlyController @Inject()(override val messagesApi: MessagesApi, mongo: ReactiveMongoApi, val controllerComponents: MessagesControllerComponents)(
-  implicit ec: ExecutionContext)
-    extends FrontendBaseController {
+class TestOnlyController @Inject() (override val messagesApi: MessagesApi, mongo: ReactiveMongoApi, val controllerComponents: MessagesControllerComponents)(
+  implicit ec: ExecutionContext
+) extends FrontendBaseController {
 
   def dropMongoCollection: Action[AnyContent] = Action.async {
     _ =>

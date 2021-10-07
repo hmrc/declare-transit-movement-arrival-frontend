@@ -35,5 +35,7 @@ object SealDomain {
   implicit val format: OFormat[SealDomain] = Json.format[SealDomain]
 
   implicit val sealStringEquivalenceCheck: StringEquivalence[SealDomain] =
-    StringEquivalence[SealDomain]((seal, sealNumberOrMark) => seal.numberOrMark == sealNumberOrMark)
+    StringEquivalence[SealDomain](
+      (seal, sealNumberOrMark) => seal.numberOrMark == sealNumberOrMark
+    )
 }

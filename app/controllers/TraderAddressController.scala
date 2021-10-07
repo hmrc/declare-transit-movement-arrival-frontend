@@ -32,15 +32,16 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class TraderAddressController @Inject()(override val messagesApi: MessagesApi,
-                                        sessionRepository: SessionRepository,
-                                        navigator: Navigator,
-                                        identify: IdentifierAction,
-                                        getData: DataRetrievalActionProvider,
-                                        requireData: DataRequiredAction,
-                                        formProvider: TraderAddressFormProvider,
-                                        val controllerComponents: MessagesControllerComponents,
-                                        renderer: Renderer)(implicit ec: ExecutionContext)
+class TraderAddressController @Inject() (override val messagesApi: MessagesApi,
+                                         sessionRepository: SessionRepository,
+                                         navigator: Navigator,
+                                         identify: IdentifierAction,
+                                         getData: DataRetrievalActionProvider,
+                                         requireData: DataRequiredAction,
+                                         formProvider: TraderAddressFormProvider,
+                                         val controllerComponents: MessagesControllerComponents,
+                                         renderer: Renderer
+)(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
     with NunjucksSupport {

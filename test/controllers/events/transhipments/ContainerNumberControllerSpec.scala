@@ -42,7 +42,7 @@ class ContainerNumberControllerSpec extends SpecBase with AppWithDefaultMockFixt
   private val form: Form[String] = formProvider(containerIndex, Seq.empty)
 
   private def containerNumberRoute(index: Index = containerIndex): String = routes.ContainerNumberController.onPageLoad(mrn, eventIndex, index, NormalMode).url
-  private lazy val containerNumberTemplate = "events/transhipments/containerNumber.njk"
+  private lazy val containerNumberTemplate                                = "events/transhipments/containerNumber.njk"
 
   "ContainerNumber Controller" - {
 

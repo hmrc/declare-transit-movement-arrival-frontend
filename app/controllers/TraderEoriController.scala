@@ -32,15 +32,16 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class TraderEoriController @Inject()(override val messagesApi: MessagesApi,
-                                     sessionRepository: SessionRepository,
-                                     navigator: Navigator,
-                                     identify: IdentifierAction,
-                                     getData: DataRetrievalActionProvider,
-                                     requireData: DataRequiredAction,
-                                     formProvider: TraderEoriFormProvider,
-                                     val controllerComponents: MessagesControllerComponents,
-                                     renderer: Renderer)(implicit ec: ExecutionContext)
+class TraderEoriController @Inject() (override val messagesApi: MessagesApi,
+                                      sessionRepository: SessionRepository,
+                                      navigator: Navigator,
+                                      identify: IdentifierAction,
+                                      getData: DataRetrievalActionProvider,
+                                      requireData: DataRequiredAction,
+                                      formProvider: TraderEoriFormProvider,
+                                      val controllerComponents: MessagesControllerComponents,
+                                      renderer: Renderer
+)(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
     with NunjucksSupport {

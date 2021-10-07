@@ -35,15 +35,16 @@ import uk.gov.hmrc.viewmodels.Radios
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class IsTraderAddressPlaceOfNotificationController @Inject()(override val messagesApi: MessagesApi,
-                                                             sessionRepository: SessionRepository,
-                                                             navigator: Navigator,
-                                                             identify: IdentifierAction,
-                                                             getData: DataRetrievalActionProvider,
-                                                             requireData: DataRequiredAction,
-                                                             formProvider: IsTraderAddressPlaceOfNotificationFormProvider,
-                                                             val controllerComponents: MessagesControllerComponents,
-                                                             renderer: Renderer)(implicit ec: ExecutionContext)
+class IsTraderAddressPlaceOfNotificationController @Inject() (override val messagesApi: MessagesApi,
+                                                              sessionRepository: SessionRepository,
+                                                              navigator: Navigator,
+                                                              identify: IdentifierAction,
+                                                              getData: DataRetrievalActionProvider,
+                                                              requireData: DataRequiredAction,
+                                                              formProvider: IsTraderAddressPlaceOfNotificationFormProvider,
+                                                              val controllerComponents: MessagesControllerComponents,
+                                                              renderer: Renderer
+)(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
     with uk.gov.hmrc.nunjucks.NunjucksSupport {
@@ -52,7 +53,7 @@ class IsTraderAddressPlaceOfNotificationController @Inject()(override val messag
     (identify andThen getData(mrn) andThen requireData).async {
       implicit request =>
         request.userAnswers.get(TraderAddressPage) match {
-          case Some(traderAddress) => {
+          case Some(traderAddress) =>
             val traderName = request.userAnswers.get(TraderNamePage).getOrElse("")
             val form       = formProvider(traderName)
 
@@ -63,7 +64,6 @@ class IsTraderAddressPlaceOfNotificationController @Inject()(override val messag
 
             renderPage(preparedForm, traderAddress, mode)
               .map(Ok(_))
-          }
           case _ => Future.successful(Redirect(routes.SessionExpiredController.onPageLoad()))
         }
 
@@ -73,25 +73,22 @@ class IsTraderAddressPlaceOfNotificationController @Inject()(override val messag
     (identify andThen getData(mrn) andThen requireData).async {
       implicit request =>
         request.userAnswers.get(TraderAddressPage) match {
-          case Some(traderAddress) => {
+          case Some(traderAddress) =>
             val traderName = request.userAnswers.get(TraderNamePage).getOrElse("")
             val form       = formProvider(traderName)
 
             form
               .bindFromRequest()
               .fold(
-                formWithErrors => {
-
+                formWithErrors =>
                   renderPage(formWithErrors, traderAddress, mode)
-                    .map(BadRequest(_))
-                },
+                    .map(BadRequest(_)),
                 value =>
                   for {
                     updatedAnswers <- Future.fromTry(request.userAnswers.set(IsTraderAddressPlaceOfNotificationPage, value))
                     _              <- sessionRepository.set(updatedAnswers)
                   } yield Redirect(navigator.nextPage(IsTraderAddressPlaceOfNotificationPage, mode, updatedAnswers))
               )
-          }
           case _ => Future.successful(Redirect(routes.SessionExpiredController.onPageLoad()))
         }
     }

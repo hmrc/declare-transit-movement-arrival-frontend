@@ -47,7 +47,8 @@ case class Header(movementReferenceNumber: String,
                   arrivalNotificationPlace: String,
                   arrivalAuthorisedLocationOfGoods: Option[String] = None,
                   procedureTypeFlag: ProcedureTypeFlag,
-                  notificationDate: LocalDate)
+                  notificationDate: LocalDate
+)
 
 object Header {
 
@@ -63,17 +64,19 @@ object Header {
       <HEAHEA>
         <DocNumHEA5>{escapeXml(header.movementReferenceNumber)}</DocNumHEA5>
           {
-            header.customsSubPlace.fold(NodeSeq.Empty) { place =>
-                <CusSubPlaHEA66>{escapeXml(place)}</CusSubPlaHEA66>
-              }
-          }
+        header.customsSubPlace.fold(NodeSeq.Empty) {
+          place =>
+            <CusSubPlaHEA66>{escapeXml(place)}</CusSubPlaHEA66>
+        }
+      }
           <ArrNotPlaHEA60>{escapeXml(header.arrivalNotificationPlace)}</ArrNotPlaHEA60>
           <ArrNotPlaHEA60LNG>{Header.Constants.languageCode.code}</ArrNotPlaHEA60LNG>
           {
-            header.arrivalAuthorisedLocationOfGoods.fold(NodeSeq.Empty) { location =>
-                <ArrAutLocOfGooHEA65>{escapeXml(location)}</ArrAutLocOfGooHEA65>
-              }
-          }
+        header.arrivalAuthorisedLocationOfGoods.fold(NodeSeq.Empty) {
+          location =>
+            <ArrAutLocOfGooHEA65>{escapeXml(location)}</ArrAutLocOfGooHEA65>
+        }
+      }
           <SimProFlaHEA132>{header.procedureTypeFlag.code}</SimProFlaHEA132>
           <ArrNotDatHEA141>{Format.dateFormatted(header.notificationDate)}</ArrNotDatHEA141>
       </HEAHEA>

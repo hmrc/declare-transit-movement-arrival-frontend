@@ -46,26 +46,23 @@ class UserAnswersToArrivalNotificationDomain {
       tradersAddress     <- userAnswers.get(ConsigneeAddressPage)
       traderEori         <- userAnswers.get(ConsigneeEoriNumberPage)
       traderName         <- userAnswers.get(ConsigneeNamePage)
-    } yield {
-
-      SimplifiedNotification(
-        movementReferenceNumber = userAnswers.id,
-        notificationPlace       = tradersAddress.postcode,
-        notificationDate        = LocalDate.now(),
-        authorisedLocation      = authorisedLocation,
-        trader = TraderDomain(
-          eori            = traderEori,
-          name            = traderName,
-          streetAndNumber = tradersAddress.buildingAndStreet,
-          postCode        = tradersAddress.postcode,
-          city            = tradersAddress.city,
-          countryCode     = countryCode_GB
-        ),
-        customsOffice = customsOffice,
-        enRouteEvents = enRouteEvents(userAnswers),
-        authedEori    = userAnswers.eoriNumber
-      )
-    }
+    } yield SimplifiedNotification(
+      movementReferenceNumber = userAnswers.id,
+      notificationPlace = tradersAddress.postcode,
+      notificationDate = LocalDate.now(),
+      authorisedLocation = authorisedLocation,
+      trader = TraderDomain(
+        eori = traderEori,
+        name = traderName,
+        streetAndNumber = tradersAddress.buildingAndStreet,
+        postCode = tradersAddress.postcode,
+        city = tradersAddress.city,
+        countryCode = countryCode_GB
+      ),
+      customsOffice = customsOffice,
+      enRouteEvents = enRouteEvents(userAnswers),
+      authedEori = userAnswers.eoriNumber
+    )
 
   private def createNormalNotification(userAnswers: UserAnswers): Option[NormalNotification] =
     for {
@@ -75,23 +72,22 @@ class UserAnswersToArrivalNotificationDomain {
       traderEori        <- userAnswers.get(TraderEoriPage)
       traderName        <- userAnswers.get(TraderNamePage)
       notificationPlace <- userAnswers.get(PlaceOfNotificationPage) orElse Some(tradersAddress.postcode)
-    } yield
-      NormalNotification(
-        movementReferenceNumber = userAnswers.id,
-        notificationPlace       = notificationPlace,
-        notificationDate        = LocalDate.now(),
-        customsSubPlace         = customsSubPlace,
-        trader = TraderDomain(
-          eori            = traderEori,
-          name            = traderName,
-          streetAndNumber = tradersAddress.buildingAndStreet,
-          postCode        = tradersAddress.postcode,
-          city            = tradersAddress.city,
-          countryCode     = countryCode_GB
-        ),
-        customsOffice = customsOffice,
-        enRouteEvents = enRouteEvents(userAnswers)
-      )
+    } yield NormalNotification(
+      movementReferenceNumber = userAnswers.id,
+      notificationPlace = notificationPlace,
+      notificationDate = LocalDate.now(),
+      customsSubPlace = customsSubPlace,
+      trader = TraderDomain(
+        eori = traderEori,
+        name = traderName,
+        streetAndNumber = tradersAddress.buildingAndStreet,
+        postCode = tradersAddress.postcode,
+        city = tradersAddress.city,
+        countryCode = countryCode_GB
+      ),
+      customsOffice = customsOffice,
+      enRouteEvents = enRouteEvents(userAnswers)
+    )
 
   private def eventDetails(
     incidentInformation: Option[String],
@@ -103,8 +99,8 @@ class UserAnswersToArrivalNotificationDomain {
       case (None, Some(transportIdentity), Some(transportCountry), containers) =>
         VehicularTranshipmentDomain(
           transportIdentity = transportIdentity,
-          transportCountry  = transportCountry,
-          containers        = containers
+          transportCountry = transportCountry,
+          containers = containers
         )
       case (None, None, None, Some(containers)) =>
         ContainerTranshipmentDomain(containers = containers)
@@ -127,15 +123,13 @@ class UserAnswersToArrivalNotificationDomain {
               transportIdentity   = userAnswers.get(TransportIdentityPage(eventIndex))
               transportCountry    = userAnswers.get(TransportNationalityPage(eventIndex))
               containers          = userAnswers.get(ContainersQuery(eventIndex))
-            } yield {
-              EnRouteEventDomain(
-                place         = place,
-                country       = country,
-                alreadyInNcts = isReported,
-                eventDetails  = eventDetails(incidentInformation, transportIdentity, transportCountry, containers),
-                seals         = userAnswers.get(SealsQuery(eventIndex))
-              )
-            }
+            } yield EnRouteEventDomain(
+              place = place,
+              country = country,
+              alreadyInNcts = isReported,
+              eventDetails = eventDetails(incidentInformation, transportIdentity, transportCountry, containers),
+              seals = userAnswers.get(SealsQuery(eventIndex))
+            )
         }
     }
 }

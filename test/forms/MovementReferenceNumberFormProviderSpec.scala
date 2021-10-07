@@ -63,7 +63,8 @@ class MovementReferenceNumberFormProviderSpec extends StringFieldBehaviours {
         value =>
           whenever(
             MovementReferenceNumber(value).isEmpty &&
-              !value.matches(MovementReferenceNumber.Constants.validCharactersRegex)) {
+              !value.matches(MovementReferenceNumber.Constants.validCharactersRegex)
+          ) {
             val result = form.bind(Map("value" -> value))
             result.errors must contain(FormError("value", invalidCharacterKey))
           }
