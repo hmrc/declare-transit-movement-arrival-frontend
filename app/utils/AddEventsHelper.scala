@@ -28,8 +28,8 @@ class AddEventsHelper(userAnswers: UserAnswers) extends SummaryListRowHelper(use
     placeOfEvent(eventIndex).map {
       answer =>
         buildRemovableRow(
-          label      = lit"$answer",
-          id         = s"event-${eventIndex.display}",
+          label = lit"$answer",
+          id = s"event-${eventIndex.display}",
           changeCall = eventRoutes.CheckEventAnswersController.onPageLoad(mrn, eventIndex),
           removeCall = eventRoutes.ConfirmRemoveEventController.onPageLoad(mrn, eventIndex, NormalMode)
         )

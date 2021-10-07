@@ -31,13 +31,14 @@ import viewModels.CheckEventAnswersViewModel
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class CheckEventAnswersController @Inject()(override val messagesApi: MessagesApi,
-                                            identify: IdentifierAction,
-                                            getData: DataRetrievalActionProvider,
-                                            requireData: DataRequiredAction,
-                                            val controllerComponents: MessagesControllerComponents,
-                                            referenceDataConnector: ReferenceDataConnector,
-                                            renderer: Renderer)(implicit ec: ExecutionContext)
+class CheckEventAnswersController @Inject() (override val messagesApi: MessagesApi,
+                                             identify: IdentifierAction,
+                                             getData: DataRetrievalActionProvider,
+                                             requireData: DataRequiredAction,
+                                             val controllerComponents: MessagesControllerComponents,
+                                             referenceDataConnector: ReferenceDataConnector,
+                                             renderer: Renderer
+)(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
     with NunjucksSupport {

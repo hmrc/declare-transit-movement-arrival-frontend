@@ -76,7 +76,7 @@ class UserAnswersToArrivalMovementRequestServiceSpec
 
           val expectedResult: ArrivalMovementRequest =
             arrivalMovementRequest.copy(
-              meta   = arrivalMovementRequest.meta.copy(dateOfPreparation  = dateOfPreparation, timeOfPreparation = timeOfPreparation),
+              meta = arrivalMovementRequest.meta.copy(dateOfPreparation = dateOfPreparation, timeOfPreparation = timeOfPreparation),
               header = arrivalMovementRequest.header.copy(notificationDate = dateOfPreparation)
             )
 

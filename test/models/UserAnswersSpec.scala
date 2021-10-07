@@ -32,6 +32,7 @@ class UserAnswersSpec extends SpecBase {
 
   final case object TestPage extends QuestionPage[String] {
     override def path: JsPath = JsPath \ testPagePath
+
     override def cleanup(value: Option[String], userAnswers: UserAnswers): Try[UserAnswers] =
       value match {
         case Some("1") => userAnswers.remove(TestCleanupPage)
@@ -49,11 +50,10 @@ class UserAnswersSpec extends SpecBase {
 
       val userAnswers = emptyUserAnswers.set(TestCleanupPage, testCleanupPageAnswer).success.value
       val result      = userAnswers.set(TestPage, testPageAnswer).success.value
-      val data = {
+      val data =
         Json.obj(
           testPagePath -> testPageAnswer
         )
-      }
 
       result mustBe UserAnswers(mrn, eoriNumber, data, result.lastUpdated)
     }
@@ -69,12 +69,11 @@ class UserAnswersSpec extends SpecBase {
         .value
 
       val result = userAnswers.set(TestPage, testPageAnswer).success.value
-      val data = {
+      val data =
         Json.obj(
           testPagePath        -> testPageAnswer,
           testCleanupPagePath -> testCleanupPageAnswer
         )
-      }
 
       result mustBe UserAnswers(mrn, eoriNumber, data, result.lastUpdated)
     }

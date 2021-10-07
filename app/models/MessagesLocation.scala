@@ -25,8 +25,7 @@ object MessagesLocation {
 
   import play.api.libs.functional.syntax._
 
-  implicit val reads: Reads[MessagesLocation] = {
+  implicit val reads: Reads[MessagesLocation] =
     ((__ \ "IE007").read[String] and
       (__ \ "IE008").readNullable[String])(MessagesLocation.apply _)
-  }
 }

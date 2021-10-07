@@ -27,16 +27,16 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
 import scala.concurrent.ExecutionContext
 
-class SessionExpiredController @Inject()(val controllerComponents: MessagesControllerComponents, val config: FrontendAppConfig, renderer: Renderer)(
-  implicit ec: ExecutionContext)
-    extends FrontendBaseController
+class SessionExpiredController @Inject() (val controllerComponents: MessagesControllerComponents, val config: FrontendAppConfig, renderer: Renderer)(implicit
+  ec: ExecutionContext
+) extends FrontendBaseController
     with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = Action.async {
     implicit request =>
       val json = Json.obj(
-        "nextPageUrl" -> s"${config.manageTransitMovementsUrl}/what-do-you-want-to-do"
+        "signInUrl" -> s"${config.manageTransitMovementsUrl}/what-do-you-want-to-do"
       )
-      renderer.render("session-expired.njk", json).map(Ok(_))
+      renderer.render("session-expired.njk", json).map(Ok(_).withNewSession)
   }
 }

@@ -28,8 +28,9 @@ object Trader {
   def messagesTraderToDomainTrader(trader: Trader): models.domain.TraderDomain =
     Trader.unapply(trader).map((models.domain.TraderDomain.apply _).tupled).get
 
-  implicit val writes: XMLWrites[Trader] = {
-    XMLWrites(trader => <TRADESTRD>
+  implicit val writes: XMLWrites[Trader] =
+    XMLWrites(
+      trader => <TRADESTRD>
       <NamTRD7>{trader.name}</NamTRD7>
       <StrAndNumTRD22>{trader.streetAndNumber}</StrAndNumTRD22>
       <PosCodTRD23>{trader.postCode}</PosCodTRD23>
@@ -37,8 +38,9 @@ object Trader {
       <CouTRD25>{trader.countryCode}</CouTRD25>
       <NADLNGRD>{LanguageCodeEnglish.code}</NADLNGRD>
       <TINTRD59>{trader.eori}</TINTRD59>
-    </TRADESTRD>)
-  }
+    </TRADESTRD>
+    )
+
   implicit val XmlReader: XmlReader[Trader] =
     (
       (xmlPath \ "NamTRD7").read[String],

@@ -37,15 +37,16 @@ import utils.AddEventsHelper
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class AddEventController @Inject()(override val messagesApi: MessagesApi,
-                                   sessionRepository: SessionRepository,
-                                   navigator: Navigator,
-                                   identify: IdentifierAction,
-                                   getData: DataRetrievalActionProvider,
-                                   requireData: DataRequiredAction,
-                                   formProvider: AddEventFormProvider,
-                                   val controllerComponents: MessagesControllerComponents,
-                                   renderer: Renderer)(implicit ec: ExecutionContext)
+class AddEventController @Inject() (override val messagesApi: MessagesApi,
+                                    sessionRepository: SessionRepository,
+                                    navigator: Navigator,
+                                    identify: IdentifierAction,
+                                    getData: DataRetrievalActionProvider,
+                                    requireData: DataRequiredAction,
+                                    formProvider: AddEventFormProvider,
+                                    val controllerComponents: MessagesControllerComponents,
+                                    renderer: Renderer
+)(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
     with NunjucksSupport {
@@ -66,9 +67,7 @@ class AddEventController @Inject()(override val messagesApi: MessagesApi,
       form
         .bindFromRequest()
         .fold(
-          formWithErrors => {
-            renderView(mrn, mode, formWithErrors, Results.BadRequest)
-          },
+          formWithErrors => renderView(mrn, mode, formWithErrors, Results.BadRequest),
           value =>
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(AddEventPage, value))
@@ -76,8 +75,9 @@ class AddEventController @Inject()(override val messagesApi: MessagesApi,
         )
   }
 
-  private def renderView(mrn: MovementReferenceNumber, mode: Mode, form: Form[Boolean], status: Results.Status)(
-    implicit request: DataRequest[AnyContent]): Future[Result] = {
+  private def renderView(mrn: MovementReferenceNumber, mode: Mode, form: Form[Boolean], status: Results.Status)(implicit
+    request: DataRequest[AnyContent]
+  ): Future[Result] = {
 
     val numberOfEvents = request.userAnswers.get(DeriveNumberOfEvents).getOrElse(0)
 

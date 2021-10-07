@@ -15,6 +15,7 @@
  */
 
 package views
+
 import generators.{Generators, MessagesModelGenerators}
 import models.messages.FunctionalError
 import org.jsoup.nodes.Element

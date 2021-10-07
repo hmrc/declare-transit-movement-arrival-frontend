@@ -35,7 +35,7 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class SimplifiedCustomsOfficeController @Inject()(
+class SimplifiedCustomsOfficeController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
   navigator: Navigator,
@@ -74,13 +74,13 @@ class SimplifiedCustomsOfficeController @Inject()(
                   case Some(value) => form.fill(value)
                 }
                 renderView(
-                  mrn            = mrn,
-                  mode           = mode,
-                  consigneeName  = consigneeName.getOrElse(""),
-                  customsOffice  = locationName,
-                  form           = preparedForm,
+                  mrn = mrn,
+                  mode = mode,
+                  consigneeName = consigneeName.getOrElse(""),
+                  customsOffice = locationName,
+                  form = preparedForm,
                   customsOffices = customsOffices,
-                  status         = Results.Ok
+                  status = Results.Ok
                 )
               case _ =>
                 Future.successful(Redirect(routes.SessionExpiredController.onPageLoad()))
@@ -128,17 +128,16 @@ class SimplifiedCustomsOfficeController @Inject()(
                 form
                   .bindFromRequest()
                   .fold(
-                    formWithErrors => {
+                    formWithErrors =>
                       renderView(
-                        mrn            = mrn,
-                        mode           = mode,
-                        consigneeName  = consigneeName.getOrElse(""),
-                        customsOffice  = locationName,
-                        form           = formWithErrors,
+                        mrn = mrn,
+                        mode = mode,
+                        consigneeName = consigneeName.getOrElse(""),
+                        customsOffice = locationName,
+                        form = formWithErrors,
                         customsOffices = customsOffices,
-                        status         = Results.BadRequest
-                      )
-                    },
+                        status = Results.BadRequest
+                      ),
                     value =>
                       for {
                         updatedAnswers <- Future.fromTry(request.userAnswers.set(SimplifiedCustomsOfficePage, value))

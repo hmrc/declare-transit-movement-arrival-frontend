@@ -50,7 +50,7 @@ class SectionSpec extends SpecBase with NunjucksSupport {
         sectionTitle = Some(sectionTitle),
         rows = Seq(
           Row(
-            key   = key,
+            key = key,
             value = value,
             actions = List(
               action

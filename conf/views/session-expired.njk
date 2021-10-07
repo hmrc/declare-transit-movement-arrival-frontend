@@ -22,11 +22,11 @@
         </p>
 
                {{ govukButton({
-                                          text: messages("session_expired.button"),
-                                          preventDoubleClick: true,
-                                          href: nextPageUrl,
-                                          attributes: {id:"submit"}
-                                        }) }}
+                  text: messages("session_expired.button"),
+                  preventDoubleClick: true,
+                  href: signInUrl,
+                  attributes: {id:"submit"}
+                }) }}
       </div>
     </div>
   </div>

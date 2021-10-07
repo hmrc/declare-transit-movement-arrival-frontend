@@ -32,7 +32,7 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class ConsigneeAddressController @Inject()(
+class ConsigneeAddressController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
   navigator: Navigator,

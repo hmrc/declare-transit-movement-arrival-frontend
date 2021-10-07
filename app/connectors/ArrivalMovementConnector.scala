@@ -31,7 +31,7 @@ import scala.xml.NodeSeq
 import logging.Logging
 import uk.gov.hmrc.http.HttpClient
 
-class ArrivalMovementConnector @Inject()(val config: FrontendAppConfig, val http: HttpClient)(implicit ec: ExecutionContext)
+class ArrivalMovementConnector @Inject() (val config: FrontendAppConfig, val http: HttpClient)(implicit ec: ExecutionContext)
     extends HttpErrorFunctions
     with Logging {
 

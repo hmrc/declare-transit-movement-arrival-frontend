@@ -37,7 +37,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 trait IdentifierAction extends ActionBuilder[IdentifierRequest, AnyContent] with ActionFunction[Request, IdentifierRequest]
 
-class AuthenticatedIdentifierAction @Inject()(
+class AuthenticatedIdentifierAction @Inject() (
   override val authConnector: AuthConnector,
   config: FrontendAppConfig,
   val parser: BodyParsers.Default,
@@ -81,15 +81,18 @@ class AuthenticatedIdentifierAction @Inject()(
   }
 
   private def checkForGroupEnrolment[A](maybeGroupId: Option[String], config: FrontendAppConfig)(implicit
-                                                                                                 hc: HeaderCarrier,
-                                                                                                 request: Request[A]): Future[Result] =
+    hc: HeaderCarrier,
+    request: Request[A]
+  ): Future[Result] =
     maybeGroupId match {
       case Some(groupId) =>
         val hasGroupEnrolment = for {
           newGroupEnrolment <- enrolmentStoreConnector.checkGroupEnrolments(groupId, config.newEnrolmentKey)
-          legacyGroupEnrolment <- if (newGroupEnrolment) { Future.successful(newGroupEnrolment) } else {
-            enrolmentStoreConnector.checkGroupEnrolments(groupId, config.legacyEnrolmentKey)
-          }
+          legacyGroupEnrolment <-
+            if (newGroupEnrolment) { Future.successful(newGroupEnrolment) }
+            else {
+              enrolmentStoreConnector.checkGroupEnrolments(groupId, config.legacyEnrolmentKey)
+            }
         } yield newGroupEnrolment || legacyGroupEnrolment
 
         hasGroupEnrolment flatMap {

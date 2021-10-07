@@ -45,10 +45,10 @@ class ArrivalRejectionViewModelSpec extends SpecBase with ScalaCheckPropertyChec
         val rejectionMessage =
           ArrivalNotificationRejectionMessage(
             movementReferenceNumber = mrn.toString,
-            rejectionDate           = LocalDate.now(),
-            action                  = None,
-            reason                  = None,
-            errors                  = Seq.empty
+            rejectionDate = LocalDate.now(),
+            action = None,
+            reason = None,
+            errors = Seq.empty
           )
 
         val vm = ArrivalRejectionViewModel(rejectionMessage, enquiriesUrl, arrivalId)
@@ -72,10 +72,10 @@ class ArrivalRejectionViewModelSpec extends SpecBase with ScalaCheckPropertyChec
         val rejectionMessage =
           ArrivalNotificationRejectionMessage(
             movementReferenceNumber = mrn.toString,
-            rejectionDate           = LocalDate.now(),
-            action                  = None,
-            reason                  = Some(rejectionInformation),
-            errors                  = Seq.empty
+            rejectionDate = LocalDate.now(),
+            action = None,
+            reason = Some(rejectionInformation),
+            errors = Seq.empty
           )
 
         val vm = ArrivalRejectionViewModel(rejectionMessage, enquiriesUrl, arrivalId)
@@ -107,10 +107,10 @@ class ArrivalRejectionViewModelSpec extends SpecBase with ScalaCheckPropertyChec
               val rejectionMessage =
                 ArrivalNotificationRejectionMessage(
                   movementReferenceNumber = mrn.toString,
-                  rejectionDate           = LocalDate.now(),
-                  action                  = None,
-                  reason                  = None,
-                  errors                  = Seq(FunctionalError(error, ErrorPointer(""), None, None))
+                  rejectionDate = LocalDate.now(),
+                  action = None,
+                  reason = None,
+                  errors = Seq(FunctionalError(error, ErrorPointer(""), None, None))
                 )
               val vm = ArrivalRejectionViewModel(rejectionMessage, enquiriesUrl, arrivalId)
 
@@ -135,10 +135,10 @@ class ArrivalRejectionViewModelSpec extends SpecBase with ScalaCheckPropertyChec
               val rejectionMessage =
                 ArrivalNotificationRejectionMessage(
                   movementReferenceNumber = mrn.toString,
-                  rejectionDate           = LocalDate.now(),
-                  action                  = None,
-                  reason                  = Some(rejectionInformation),
-                  errors                  = Seq(FunctionalError(error, ErrorPointer(""), None, None))
+                  rejectionDate = LocalDate.now(),
+                  action = None,
+                  reason = Some(rejectionInformation),
+                  errors = Seq(FunctionalError(error, ErrorPointer(""), None, None))
                 )
               val vm = ArrivalRejectionViewModel(rejectionMessage, enquiriesUrl, arrivalId)
 
@@ -168,10 +168,10 @@ class ArrivalRejectionViewModelSpec extends SpecBase with ScalaCheckPropertyChec
               val rejectionMessage =
                 ArrivalNotificationRejectionMessage(
                   movementReferenceNumber = mrn.toString,
-                  rejectionDate           = LocalDate.now(),
-                  action                  = None,
-                  reason                  = None,
-                  errors                  = Seq(FunctionalError(error, ErrorPointer(""), None, None))
+                  rejectionDate = LocalDate.now(),
+                  action = None,
+                  reason = None,
+                  errors = Seq(FunctionalError(error, ErrorPointer(""), None, None))
                 )
               val vm = ArrivalRejectionViewModel(rejectionMessage, enquiriesUrl, arrivalId)
 
@@ -197,10 +197,10 @@ class ArrivalRejectionViewModelSpec extends SpecBase with ScalaCheckPropertyChec
               val rejectionMessage =
                 ArrivalNotificationRejectionMessage(
                   movementReferenceNumber = mrn.toString,
-                  rejectionDate           = LocalDate.now(),
-                  action                  = None,
-                  reason                  = Some(rejectionInformation),
-                  errors                  = Seq(FunctionalError(error, ErrorPointer(""), None, None))
+                  rejectionDate = LocalDate.now(),
+                  action = None,
+                  reason = Some(rejectionInformation),
+                  errors = Seq(FunctionalError(error, ErrorPointer(""), None, None))
                 )
               val vm = ArrivalRejectionViewModel(rejectionMessage, enquiriesUrl, arrivalId)
 
@@ -232,10 +232,10 @@ class ArrivalRejectionViewModelSpec extends SpecBase with ScalaCheckPropertyChec
             val rejectionMessage =
               ArrivalNotificationRejectionMessage(
                 movementReferenceNumber = mrn.toString,
-                rejectionDate           = LocalDate.now(),
-                action                  = None,
-                reason                  = None,
-                errors                  = functionalErrors
+                rejectionDate = LocalDate.now(),
+                action = None,
+                reason = None,
+                errors = functionalErrors
               )
             val vm = ArrivalRejectionViewModel(rejectionMessage, enquiriesUrl, arrivalId)
 
@@ -261,10 +261,10 @@ class ArrivalRejectionViewModelSpec extends SpecBase with ScalaCheckPropertyChec
             val rejectionMessage =
               ArrivalNotificationRejectionMessage(
                 movementReferenceNumber = mrn.toString,
-                rejectionDate           = LocalDate.now(),
-                action                  = None,
-                reason                  = Some(rejectionInformation),
-                errors                  = functionalErrors
+                rejectionDate = LocalDate.now(),
+                action = None,
+                reason = Some(rejectionInformation),
+                errors = functionalErrors
               )
             val vm = ArrivalRejectionViewModel(rejectionMessage, enquiriesUrl, arrivalId)
 
@@ -294,10 +294,10 @@ class ArrivalRejectionViewModelSpec extends SpecBase with ScalaCheckPropertyChec
       val rejectionMessage =
         ArrivalNotificationRejectionMessage(
           movementReferenceNumber = mrn.toString,
-          rejectionDate           = LocalDate.now(),
-          action                  = None,
-          reason                  = None,
-          errors                  = Seq.empty
+          rejectionDate = LocalDate.now(),
+          action = None,
+          reason = None,
+          errors = Seq.empty
         )
       val vm = ArrivalRejectionViewModel(rejectionMessage, enquiriesUrl, arrivalId)
 
@@ -316,10 +316,10 @@ class ArrivalRejectionViewModelSpec extends SpecBase with ScalaCheckPropertyChec
             val rejectionMessage =
               ArrivalNotificationRejectionMessage(
                 movementReferenceNumber = mrn.toString,
-                rejectionDate           = LocalDate.now(),
-                action                  = None,
-                reason                  = None,
-                errors                  = Seq(FunctionalError(error, ErrorPointer(""), None, None))
+                rejectionDate = LocalDate.now(),
+                action = None,
+                reason = None,
+                errors = Seq(FunctionalError(error, ErrorPointer(""), None, None))
               )
             val vm = ArrivalRejectionViewModel(rejectionMessage, enquiriesUrl, arrivalId)
 
@@ -336,10 +336,10 @@ class ArrivalRejectionViewModelSpec extends SpecBase with ScalaCheckPropertyChec
             val rejectionMessage =
               ArrivalNotificationRejectionMessage(
                 movementReferenceNumber = mrn.toString,
-                rejectionDate           = LocalDate.now(),
-                action                  = None,
-                reason                  = None,
-                errors                  = Seq(FunctionalError(error, ErrorPointer(""), None, None))
+                rejectionDate = LocalDate.now(),
+                action = None,
+                reason = None,
+                errors = Seq(FunctionalError(error, ErrorPointer(""), None, None))
               )
             val vm = ArrivalRejectionViewModel(rejectionMessage, enquiriesUrl, arrivalId)
 
@@ -359,10 +359,10 @@ class ArrivalRejectionViewModelSpec extends SpecBase with ScalaCheckPropertyChec
           val rejectionMessage =
             ArrivalNotificationRejectionMessage(
               movementReferenceNumber = mrn.toString,
-              rejectionDate           = LocalDate.now(),
-              action                  = None,
-              reason                  = None,
-              errors                  = functionalErrors
+              rejectionDate = LocalDate.now(),
+              action = None,
+              reason = None,
+              errors = functionalErrors
             )
           val vm = ArrivalRejectionViewModel(rejectionMessage, enquiriesUrl, arrivalId)
 

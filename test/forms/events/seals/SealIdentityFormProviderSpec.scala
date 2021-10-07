@@ -52,7 +52,7 @@ class SealIdentityFormProviderSpec extends StringFieldBehaviours with MessagesMo
     behave like fieldWithMaxLength(
       form(sealIndex),
       fieldName,
-      maxLength   = maxLength,
+      maxLength = maxLength,
       lengthError = FormError(fieldName, lengthKey, Seq(maxLength)),
       validSealSringGenOverLength
     )

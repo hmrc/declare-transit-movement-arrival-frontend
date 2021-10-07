@@ -28,7 +28,7 @@ class MovementReferenceNumberFormProvider @Inject() extends Mappings {
       "value" -> mrn(
         "movementReferenceNumber.error.required",
         "movementReferenceNumber.error.invalid",
-        "movementReferenceNumber.error.invalidCharacter",
+        "movementReferenceNumber.error.invalidCharacter"
       )
     )
 }

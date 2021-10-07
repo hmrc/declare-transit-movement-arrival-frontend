@@ -38,7 +38,7 @@ import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class ConfirmRemoveEventController @Inject()(
+class ConfirmRemoveEventController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
   navigator: Navigator,
@@ -72,10 +72,8 @@ class ConfirmRemoveEventController @Inject()(
           formProvider(placeOrCountry)
             .bindFromRequest()
             .fold(
-              formWithErrors => {
-                renderPage(mrn, eventIndex, mode, formWithErrors, placeOrCountry).map(BadRequest(_))
-              },
-              value => {
+              formWithErrors => renderPage(mrn, eventIndex, mode, formWithErrors, placeOrCountry).map(BadRequest(_)),
+              value =>
                 if (value) {
                   for {
                     updatedAnswers <- Future.fromTry(request.userAnswers.remove(EventQuery(eventIndex)))
@@ -84,7 +82,6 @@ class ConfirmRemoveEventController @Inject()(
                 } else {
                   Future.successful(Redirect(navigator.nextPage(ConfirmRemoveEventPage(eventIndex), mode, request.userAnswers)))
                 }
-              }
             )
         case _ => renderErrorPage(request.userAnswers, eventIndex, mode)
       }
@@ -97,8 +94,9 @@ class ConfirmRemoveEventController @Inject()(
       case _            => userAnswers.get(EventCountryPage(eventIndex)).map(_.code)
     }
 
-  private def renderPage(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode, form: Form[Boolean], eventTitle: String)(
-    implicit request: DataRequest[AnyContent]): Future[Html] = {
+  private def renderPage(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode, form: Form[Boolean], eventTitle: String)(implicit
+    request: DataRequest[AnyContent]
+  ): Future[Html] = {
     val json = Json.obj(
       "form"        -> form,
       "mode"        -> mode,

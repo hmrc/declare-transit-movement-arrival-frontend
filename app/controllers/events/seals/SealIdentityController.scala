@@ -36,7 +36,7 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class SealIdentityController @Inject()(
+class SealIdentityController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
   navigator: Navigator,
@@ -81,8 +81,9 @@ class SealIdentityController @Inject()(
           )
     }
 
-  private def renderView(mrn: MovementReferenceNumber, mode: Mode, preparedForm: Form[String], eventIndex: Index, sealIndex: Index)(
-    implicit request: DataRequest[AnyContent]) = {
+  private def renderView(mrn: MovementReferenceNumber, mode: Mode, preparedForm: Form[String], eventIndex: Index, sealIndex: Index)(implicit
+    request: DataRequest[AnyContent]
+  ) = {
     val json = Json.obj(
       "form"        -> preparedForm,
       "mrn"         -> mrn,

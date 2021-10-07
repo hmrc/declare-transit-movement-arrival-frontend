@@ -25,7 +25,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class CustomsOfficesService @Inject()(
+class CustomsOfficesService @Inject() (
   frontendAppConfig: FrontendAppConfig,
   referenceDataConnector: ReferenceDataConnector
 )(implicit ec: ExecutionContext) {

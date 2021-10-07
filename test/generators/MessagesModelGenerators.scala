@@ -207,10 +207,7 @@ trait MessagesModelGenerators extends Generators {
         alreadyInNcts <- arbitrary[Boolean]
         eventDetails  <- arbitrary[EventDetails]
         seals         <- Gen.option(listWithMaxLength[Seal](1))
-      } yield {
-
-        EnRouteEvent(place, countryCode, alreadyInNcts, eventDetails, seals)
-      }
+      } yield EnRouteEvent(place, countryCode, alreadyInNcts, eventDetails, seals)
     }
 
   implicit lazy val arbitraryDomainEnRouteEvent: Arbitrary[EnRouteEventDomain] =
@@ -222,10 +219,7 @@ trait MessagesModelGenerators extends Generators {
         alreadyInNcts <- arbitrary[Boolean]
         eventDetails  <- arbitrary[EventDetailsDomain]
         seals         <- Gen.option(listWithMaxLength[SealDomain](1))
-      } yield {
-
-        EnRouteEventDomain(place, country, alreadyInNcts, eventDetails, seals)
-      }
+      } yield EnRouteEventDomain(place, country, alreadyInNcts, eventDetails, seals)
     }
 
   implicit lazy val arbitraryNormalNotification: Arbitrary[NormalNotification] =
@@ -273,57 +267,52 @@ trait MessagesModelGenerators extends Generators {
       } yield ArrivalNotificationRejectionMessage(mrn, date, action, reason, errors)
     }
 
-  implicit lazy val arbitraryCustomsOfficeOfPresentation: Arbitrary[CustomsOfficeOfPresentation] = {
+  implicit lazy val arbitraryCustomsOfficeOfPresentation: Arbitrary[CustomsOfficeOfPresentation] =
     Arbitrary {
       for {
         customsOffice <- stringsWithMaxLength(CustomsOfficeOfPresentation.Constants.customsOfficeLength)
       } yield CustomsOfficeOfPresentation(customsOffice)
     }
-  }
 
-  implicit lazy val arbitraryInterchangeControlReference: Arbitrary[InterchangeControlReference] = {
+  implicit lazy val arbitraryInterchangeControlReference: Arbitrary[InterchangeControlReference] =
     Arbitrary {
       for {
         date  <- localDateGen
         index <- Gen.posNum[Int]
       } yield InterchangeControlReference(dateFormatted(date), index)
     }
-  }
 
-  implicit lazy val arbitraryMeta: Arbitrary[Meta] = {
+  implicit lazy val arbitraryMeta: Arbitrary[Meta] =
     Arbitrary {
       for {
         interchangeControlReference <- arbitrary[InterchangeControlReference]
         date                        <- arbitrary[LocalDate]
         time                        <- arbitrary[LocalTime]
-      } yield
-        Meta(
-          interchangeControlReference,
-          date,
-          LocalTime.of(time.getHour, time.getMinute),
-          None,
-          None,
-          None,
-          None,
-          None,
-          None,
-          None,
-          None,
-          None,
-          None
-        )
+      } yield Meta(
+        interchangeControlReference,
+        date,
+        LocalTime.of(time.getHour, time.getMinute),
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None
+      )
     }
-  }
 
-  implicit lazy val arbitraryProcedureTypeFlag: Arbitrary[ProcedureTypeFlag] = {
+  implicit lazy val arbitraryProcedureTypeFlag: Arbitrary[ProcedureTypeFlag] =
     Arbitrary {
       for {
         procedureType <- Gen.oneOf(Seq(SimplifiedProcedureFlag, NormalProcedureFlag))
       } yield procedureType
     }
-  }
 
-  implicit lazy val arbitraryHeader: Arbitrary[Header] = {
+  implicit lazy val arbitraryHeader: Arbitrary[Header] =
     Arbitrary {
       for {
         movementReferenceNumber          <- arbitrary[MovementReferenceNumber].map(_.toString())
@@ -338,23 +327,24 @@ trait MessagesModelGenerators extends Generators {
         val authLocation          = if (procedureTypeFlag == SimplifiedProcedureFlag) Some(arrivalAuthorisedLocationOfGoods) else None
 
         Header(
-          movementReferenceNumber          = movementReferenceNumber,
-          customsSubPlace                  = customsSubPlaceToggle,
-          arrivalNotificationPlace         = arrivalNotificationPlace,
+          movementReferenceNumber = movementReferenceNumber,
+          customsSubPlace = customsSubPlaceToggle,
+          arrivalNotificationPlace = arrivalNotificationPlace,
           arrivalAuthorisedLocationOfGoods = authLocation,
-          procedureTypeFlag                = procedureTypeFlag,
-          notificationDate                 = notificationDate
+          procedureTypeFlag = procedureTypeFlag,
+          notificationDate = notificationDate
         )
       }
     }
-  }
 
-  implicit lazy val arbitraryArrivalMovementRequest: Arbitrary[ArrivalMovementRequest] = {
+  implicit lazy val arbitraryArrivalMovementRequest: Arbitrary[ArrivalMovementRequest] =
     Arbitrary {
       for {
-        eori          <- arbitrary[EoriNumber]
-        meta          <- arbitrary[Meta]
-        header        <- arbitrary[Header].map(header => header.copy(notificationDate = meta.dateOfPreparation))
+        eori <- arbitrary[EoriNumber]
+        meta <- arbitrary[Meta]
+        header <- arbitrary[Header].map(
+          header => header.copy(notificationDate = meta.dateOfPreparation)
+        )
         trader        <- arbitrary[Trader]
         customsOffice <- arbitrary[CustomsOfficeOfPresentation]
         enRouteEvents <- Gen.option(listWithMaxLength[EnRouteEvent](1))
@@ -365,7 +355,6 @@ trait MessagesModelGenerators extends Generators {
         ArrivalMovementRequest(meta, updatedHeader, traderWithEori, customsOffice, enRouteEvents)
       }
     }
-  }
 
   implicit lazy val mrnErrorType: Arbitrary[MRNError] =
     Arbitrary {
