@@ -59,7 +59,7 @@ abstract class SingleViewSpec(protected val viewUnderTest: String, hasSignOutLin
       assertPageHasSignOutLink(
         doc = doc,
         expectedText = "Sign out",
-        expectedHref = "http://localhost:9553/bas-gateway/sign-out-without-state?continue=http://localhost:9514/feedback/manage-transit-departures"
+        expectedHref = "http://localhost:9553/bas-gateway/sign-out-without-state?continue=http://localhost:9514/feedback/manage-transit-movements"
       )
     }
   } else {
