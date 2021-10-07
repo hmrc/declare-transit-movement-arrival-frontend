@@ -30,7 +30,7 @@ import java.time.LocalDateTime
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class DefaultSessionRepository @Inject()(mongo: ReactiveMongoApi, config: Configuration)(implicit ec: ExecutionContext) extends SessionRepository {
+class DefaultSessionRepository @Inject() (mongo: ReactiveMongoApi, config: Configuration)(implicit ec: ExecutionContext) extends SessionRepository {
 
   private val collectionName: String = "user-answers"
 
@@ -40,8 +40,8 @@ class DefaultSessionRepository @Inject()(mongo: ReactiveMongoApi, config: Config
     mongo.database.map(_.collection[JSONCollection](collectionName))
 
   private val lastUpdatedIndex = SimpleMongoIndexConfig(
-    key     = Seq("lastUpdated" -> IndexType.Ascending),
-    name    = Some("user-answers-last-updated-index"),
+    key = Seq("lastUpdated" -> IndexType.Ascending),
+    name = Some("user-answers-last-updated-index"),
     options = BSONDocument("expireAfterSeconds" -> cacheTtl)
   )
 
@@ -50,7 +50,9 @@ class DefaultSessionRepository @Inject()(mongo: ReactiveMongoApi, config: Config
       .flatMap {
         _.indexesManager.ensure(lastUpdatedIndex)
       }
-      .map(_ => ())
+      .map(
+        _ => ()
+      )
 
   override def get(id: String, eoriNumber: EoriNumber): Future[Option[UserAnswers]] = {
     implicit val dateWriter: Writes[LocalDateTime] = MongoDateTimeFormats.localDateTimeWrite
@@ -65,17 +67,17 @@ class DefaultSessionRepository @Inject()(mongo: ReactiveMongoApi, config: Config
 
     collection.flatMap {
       _.findAndUpdate(
-        selector                 = selector,
-        update                   = modifier,
-        fetchNewObject           = false,
-        upsert                   = false,
-        sort                     = None,
-        fields                   = None,
+        selector = selector,
+        update = modifier,
+        fetchNewObject = false,
+        upsert = false,
+        sort = None,
+        fields = None,
         bypassDocumentValidation = false,
-        writeConcern             = WriteConcern.Default,
-        maxTime                  = None,
-        collation                = None,
-        arrayFilters             = Nil
+        writeConcern = WriteConcern.Default,
+        maxTime = None,
+        collation = None,
+        arrayFilters = Nil
       ).map(_.value.map(_.as[UserAnswers]))
     }
   }
@@ -102,14 +104,16 @@ class DefaultSessionRepository @Inject()(mongo: ReactiveMongoApi, config: Config
 
   override def remove(id: String): Future[Unit] = collection.flatMap {
     _.findAndRemove(
-      selector     = Json.obj("_id" -> id),
-      sort         = None,
-      fields       = None,
+      selector = Json.obj("_id" -> id),
+      sort = None,
+      fields = None,
       writeConcern = WriteConcern.Default,
-      maxTime      = None,
-      collation    = None,
+      maxTime = None,
+      collation = None,
       arrayFilters = Nil
-    ).map(_ => ())
+    ).map(
+      _ => ()
+    )
   }
 }
 

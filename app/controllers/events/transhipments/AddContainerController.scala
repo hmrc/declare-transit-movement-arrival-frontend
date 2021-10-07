@@ -33,7 +33,7 @@ import viewModels.AddContainerViewModel
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class AddContainerController @Inject()(
+class AddContainerController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
   navigator: Navigator,

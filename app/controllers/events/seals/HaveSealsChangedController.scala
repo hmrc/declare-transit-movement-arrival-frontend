@@ -35,7 +35,7 @@ import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class HaveSealsChangedController @Inject()(
+class HaveSealsChangedController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
   navigator: Navigator,
@@ -76,8 +76,9 @@ class HaveSealsChangedController @Inject()(
         )
   }
 
-  private def renderView(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode, preparedForm: Form[Boolean])(
-    implicit request: DataRequest[AnyContent]): Future[Html] = {
+  private def renderView(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode, preparedForm: Form[Boolean])(implicit
+    request: DataRequest[AnyContent]
+  ): Future[Html] = {
     val json = Json.obj(
       "form"        -> preparedForm,
       "mode"        -> mode,

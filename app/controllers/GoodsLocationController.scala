@@ -32,14 +32,15 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class GoodsLocationController @Inject()(override val messagesApi: MessagesApi,
-                                        sessionRepository: SessionRepository,
-                                        identify: IdentifierAction,
-                                        getData: DataRetrievalActionProvider,
-                                        requireData: DataRequiredAction,
-                                        formProvider: GoodsLocationFormProvider,
-                                        val controllerComponents: MessagesControllerComponents,
-                                        renderer: Renderer)(implicit ec: ExecutionContext)
+class GoodsLocationController @Inject() (override val messagesApi: MessagesApi,
+                                         sessionRepository: SessionRepository,
+                                         identify: IdentifierAction,
+                                         getData: DataRetrievalActionProvider,
+                                         requireData: DataRequiredAction,
+                                         formProvider: GoodsLocationFormProvider,
+                                         val controllerComponents: MessagesControllerComponents,
+                                         renderer: Renderer
+)(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
     with NunjucksSupport {
@@ -83,10 +84,9 @@ class GoodsLocationController @Inject()(override val messagesApi: MessagesApi,
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(GoodsLocationPage, value))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield
-              value match {
-                case BorderForceOffice            => Redirect(routes.CustomsSubPlaceController.onPageLoad(updatedAnswers.id, mode))
-                case AuthorisedConsigneesLocation => Redirect(routes.AuthorisedLocationController.onPageLoad(updatedAnswers.id, mode))
+            } yield value match {
+              case BorderForceOffice            => Redirect(routes.CustomsSubPlaceController.onPageLoad(updatedAnswers.id, mode))
+              case AuthorisedConsigneesLocation => Redirect(routes.AuthorisedLocationController.onPageLoad(updatedAnswers.id, mode))
             }
         )
   }

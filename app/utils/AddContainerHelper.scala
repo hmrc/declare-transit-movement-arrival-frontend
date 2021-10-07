@@ -26,11 +26,11 @@ import uk.gov.hmrc.viewmodels._
 class AddContainerHelper(userAnswers: UserAnswers) extends SummaryListRowHelper(userAnswers) {
 
   def containerRow(eventIndex: Index, containerIndex: Index, mode: Mode): Option[Row] = getAnswerAndBuildRemovableRow[ContainerDomain](
-    page         = ContainerNumberPage(eventIndex, containerIndex),
+    page = ContainerNumberPage(eventIndex, containerIndex),
     formatAnswer = container => lit"${container.containerNumber}",
-    id           = s"container-${containerIndex.display}",
-    changeCall   = ContainerNumberController.onPageLoad(mrn, eventIndex, containerIndex, mode),
-    removeCall   = ConfirmRemoveContainerController.onPageLoad(mrn, eventIndex, containerIndex, mode)
+    id = s"container-${containerIndex.display}",
+    changeCall = ContainerNumberController.onPageLoad(mrn, eventIndex, containerIndex, mode),
+    removeCall = ConfirmRemoveContainerController.onPageLoad(mrn, eventIndex, containerIndex, mode)
   )
 }
 

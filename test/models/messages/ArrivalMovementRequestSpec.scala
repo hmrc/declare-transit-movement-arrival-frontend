@@ -47,11 +47,13 @@ class ArrivalMovementRequestSpec
 
             val validXml: Node =
               <CC007A>
-                {arrivalMovementRequest.meta.toXml ++
-                arrivalMovementRequest.header.toXml ++
-                arrivalMovementRequest.trader.toXml ++
-                arrivalMovementRequest.customsOfficeOfPresentation.toXml ++
-                arrivalMovementRequest.enRouteEvents.map(_.flatMap(_.toXml)).getOrElse(NodeSeq.Empty)}
+                {
+                arrivalMovementRequest.meta.toXml ++
+                  arrivalMovementRequest.header.toXml ++
+                  arrivalMovementRequest.trader.toXml ++
+                  arrivalMovementRequest.customsOfficeOfPresentation.toXml ++
+                  arrivalMovementRequest.enRouteEvents.map(_.flatMap(_.toXml)).getOrElse(NodeSeq.Empty)
+              }
               </CC007A>
 
             arrivalMovementRequest.toXml mustEqual validXml
@@ -69,11 +71,13 @@ class ArrivalMovementRequestSpec
 
             val xml: Node =
               <CC007A>
-                {updatedArrivalMovementRequest.meta.toXml ++
-                updatedArrivalMovementRequest.header.toXml ++
-                updatedArrivalMovementRequest.trader.toXml ++
-                updatedArrivalMovementRequest.customsOfficeOfPresentation.toXml ++
-                updatedArrivalMovementRequest.enRouteEvents.map(_.flatMap(_.toXml)).getOrElse(NodeSeq.Empty)}
+                {
+                updatedArrivalMovementRequest.meta.toXml ++
+                  updatedArrivalMovementRequest.header.toXml ++
+                  updatedArrivalMovementRequest.trader.toXml ++
+                  updatedArrivalMovementRequest.customsOfficeOfPresentation.toXml ++
+                  updatedArrivalMovementRequest.enRouteEvents.map(_.flatMap(_.toXml)).getOrElse(NodeSeq.Empty)
+              }
               </CC007A>
 
             val result = XmlReader.of[ArrivalMovementRequest].read(xml).toOption.value

@@ -32,14 +32,15 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class ConfirmationController @Inject()(override val messagesApi: MessagesApi,
-                                       appConfig: FrontendAppConfig,
-                                       sessionRepository: SessionRepository,
-                                       identify: IdentifierAction,
-                                       getData: DataRetrievalActionProvider,
-                                       requireData: DataRequiredAction,
-                                       val controllerComponents: MessagesControllerComponents,
-                                       renderer: Renderer)(implicit ec: ExecutionContext)
+class ConfirmationController @Inject() (override val messagesApi: MessagesApi,
+                                        appConfig: FrontendAppConfig,
+                                        sessionRepository: SessionRepository,
+                                        identify: IdentifierAction,
+                                        getData: DataRetrievalActionProvider,
+                                        requireData: DataRequiredAction,
+                                        val controllerComponents: MessagesControllerComponents,
+                                        renderer: Renderer
+)(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
     with NunjucksSupport {

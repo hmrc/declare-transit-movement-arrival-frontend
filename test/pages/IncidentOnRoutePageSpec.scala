@@ -102,7 +102,7 @@ class IncidentOnRoutePageSpec extends PageBehaviours {
 
           val result = ua.remove(IncidentOnRoutePage).success.value
 
-          result.get(EventsQuery) must not be (defined)
+          result.get(EventsQuery) must not be defined
       }
 
     }

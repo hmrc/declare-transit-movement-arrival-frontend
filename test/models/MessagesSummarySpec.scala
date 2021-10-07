@@ -30,7 +30,8 @@ class MessagesSummarySpec extends FreeSpec with MustMatchers {
                           "messages" -> Json.obj(
                             "IE007" -> "/movements/arrivals/1234/messages/3",
                             "IE008" -> "/movements/arrivals/1234/messages/5"
-                          ))
+                          )
+      )
 
       json.as[MessagesSummary] mustBe messageActions
     }

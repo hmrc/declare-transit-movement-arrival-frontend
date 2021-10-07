@@ -58,9 +58,9 @@ private[utils] class SummaryListRowHelper(userAnswers: UserAnswers) {
         buildRow(
           prefix = prefix,
           answer = formatAnswer(answer),
-          id     = id,
-          call   = call,
-          args   = args: _*
+          id = id,
+          call = call,
+          args = args: _*
         )
     }
 
@@ -75,12 +75,12 @@ private[utils] class SummaryListRowHelper(userAnswers: UserAnswers) {
     userAnswers.get(namePage) flatMap {
       name =>
         getAnswerAndBuildRow[T](
-          page         = answerPage,
+          page = answerPage,
           formatAnswer = formatAnswer,
-          prefix       = prefix,
-          id           = id,
-          call         = call,
-          args         = name
+          prefix = prefix,
+          id = id,
+          call = call,
+          args = name
         )
     }
 
@@ -96,11 +96,11 @@ private[utils] class SummaryListRowHelper(userAnswers: UserAnswers) {
       answer =>
         buildSimpleRow(
           prefix = prefix,
-          label  = label,
+          label = label,
           answer = lit"${formatAnswer(answer)}",
-          id     = id,
-          call   = call,
-          args   = formatAnswer(answer)
+          id = id,
+          call = call,
+          args = formatAnswer(answer)
         )
     }
 
@@ -114,8 +114,8 @@ private[utils] class SummaryListRowHelper(userAnswers: UserAnswers) {
     userAnswers.get(page) map {
       answer =>
         buildRemovableRow(
-          label      = formatAnswer(answer),
-          id         = id,
+          label = formatAnswer(answer),
+          id = id,
           changeCall = changeCall,
           removeCall = removeCall
         )
@@ -130,11 +130,11 @@ private[utils] class SummaryListRowHelper(userAnswers: UserAnswers) {
   ): Row =
     buildSimpleRow(
       prefix = prefix,
-      label  = msg"$prefix.checkYourAnswersLabel".withArgs(args: _*),
+      label = msg"$prefix.checkYourAnswersLabel".withArgs(args: _*),
       answer = answer,
-      id     = id,
-      call   = call,
-      args   = args: _*
+      id = id,
+      call = call,
+      args = args: _*
     )
 
   def buildSimpleRow(
@@ -146,12 +146,12 @@ private[utils] class SummaryListRowHelper(userAnswers: UserAnswers) {
     args: Any*
   ): Row =
     Row(
-      key   = Key(label, classes = Seq("govuk-!-width-one-half")),
+      key = Key(label, classes = Seq("govuk-!-width-one-half")),
       value = Value(answer),
       actions = List(
         Action(
-          content            = msg"site.edit",
-          href               = call.url,
+          content = msg"site.edit",
+          href = call.url,
           visuallyHiddenText = Some(msg"$prefix.change.hidden".withArgs(args: _*)),
           attributes = id.fold[Map[String, String]](Map.empty)(
             id => Map("id" -> id)
@@ -168,20 +168,20 @@ private[utils] class SummaryListRowHelper(userAnswers: UserAnswers) {
     removeCall: Call
   ): Row =
     Row(
-      key   = Key(label),
+      key = Key(label),
       value = Value(lit"$value"),
       actions = List(
         Action(
-          content            = msg"site.edit",
-          href               = changeCall.url,
+          content = msg"site.edit",
+          href = changeCall.url,
           visuallyHiddenText = Some(label),
-          attributes         = Map("id" -> s"change-$id")
+          attributes = Map("id" -> s"change-$id")
         ),
         Action(
-          content            = msg"site.delete",
-          href               = removeCall.url,
+          content = msg"site.delete",
+          href = removeCall.url,
           visuallyHiddenText = Some(label),
-          attributes         = Map("id" -> s"remove-$id")
+          attributes = Map("id" -> s"remove-$id")
         )
       )
     )

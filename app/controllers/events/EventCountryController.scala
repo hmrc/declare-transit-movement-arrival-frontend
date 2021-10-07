@@ -35,16 +35,17 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class EventCountryController @Inject()(override val messagesApi: MessagesApi,
-                                       sessionRepository: SessionRepository,
-                                       navigator: Navigator,
-                                       identify: IdentifierAction,
-                                       getData: DataRetrievalActionProvider,
-                                       requireData: DataRequiredAction,
-                                       formProvider: EventCountryFormProvider,
-                                       referenceDataConnector: ReferenceDataConnector,
-                                       val controllerComponents: MessagesControllerComponents,
-                                       renderer: Renderer)(implicit ec: ExecutionContext)
+class EventCountryController @Inject() (override val messagesApi: MessagesApi,
+                                        sessionRepository: SessionRepository,
+                                        navigator: Navigator,
+                                        identify: IdentifierAction,
+                                        getData: DataRetrievalActionProvider,
+                                        requireData: DataRequiredAction,
+                                        formProvider: EventCountryFormProvider,
+                                        referenceDataConnector: ReferenceDataConnector,
+                                        val controllerComponents: MessagesControllerComponents,
+                                        renderer: Renderer
+)(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
     with NunjucksSupport {
@@ -85,7 +86,8 @@ class EventCountryController @Inject()(override val messagesApi: MessagesApi,
     }
 
   private def renderPage(mrn: MovementReferenceNumber, mode: Mode, form: Form[Country], countries: Seq[Country], status: Results.Status, eventIndex: Index)(
-    implicit request: Request[AnyContent]): Future[Result] = {
+    implicit request: Request[AnyContent]
+  ): Future[Result] = {
     val json = Json.obj(
       "form"        -> form,
       "mrn"         -> mrn,

@@ -118,7 +118,8 @@ class ArrivalMovementConnectorSpec
 
         val messageAction =
           MessagesSummary(arrivalId,
-                          MessagesLocation(s"/movements/arrivals/${arrivalId.value}/messages/3", Some(s"/movements/arrivals/${arrivalId.value}/messages/5")))
+                          MessagesLocation(s"/movements/arrivals/${arrivalId.value}/messages/3", Some(s"/movements/arrivals/${arrivalId.value}/messages/5"))
+          )
 
         server.stubFor(
           get(urlEqualTo(s"/transit-movements-trader-at-destination/movements/arrivals/${arrivalId.value}/messages/summary"))
@@ -221,7 +222,8 @@ class ArrivalMovementConnectorSpec
             None,
             Some("Invalid IE007 Message"),
             List(FunctionalError(genRejectionError, ErrorPointer("Message type"), None, Some("GB007A")))
-          ))
+          )
+        )
         connector.getRejectionMessage(rejectionLocation).futureValue mustBe expectedResult
       }
 
@@ -263,7 +265,8 @@ class ArrivalMovementConnectorSpec
         .willReturn(
           aResponse()
             .withStatus(errorResponseCode)
-        ))
+        )
+    )
 
   private def stubResponse(expectedStatus: Int): StubMapping =
     server.stubFor(

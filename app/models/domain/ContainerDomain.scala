@@ -34,5 +34,7 @@ object ContainerDomain {
   implicit val formats: OFormat[ContainerDomain] = Json.format[ContainerDomain]
 
   implicit val containerStringEquivalenceCheck: StringEquivalence[ContainerDomain] =
-    StringEquivalence[ContainerDomain]((container, stringContainer) => container.containerNumber == stringContainer)
+    StringEquivalence[ContainerDomain](
+      (container, stringContainer) => container.containerNumber == stringContainer
+    )
 }

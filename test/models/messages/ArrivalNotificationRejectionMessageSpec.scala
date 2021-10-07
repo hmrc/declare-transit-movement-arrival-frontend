@@ -30,7 +30,7 @@ class ArrivalNotificationRejectionMessageSpec extends SpecBase with ScalaCheckDr
       forAll(arbitrary[ArrivalNotificationRejectionMessage], arbitrary[FunctionalError]) {
         (rejectionMessage, functionalError) =>
           val minimalFunctionalError = functionalError.copy(
-            reason                 = None,
+            reason = None,
             originalAttributeValue = None
           )
 
@@ -40,7 +40,7 @@ class ArrivalNotificationRejectionMessageSpec extends SpecBase with ScalaCheckDr
             errors = Seq(minimalFunctionalError)
           )
 
-          val xml = {
+          val xml =
             <CC008A>
               <HEAHEA>
                 <DocNumHEA5>{minimalRejectionMessage.movementReferenceNumber}</DocNumHEA5>
@@ -51,7 +51,6 @@ class ArrivalNotificationRejectionMessageSpec extends SpecBase with ScalaCheckDr
                 <ErrPoiER12>{functionalError.pointer.value}</ErrPoiER12>
               </FUNERRER1>
             </CC008A>
-          }
 
           val result = XmlReader.of[ArrivalNotificationRejectionMessage].read(xml).toOption.value
 
@@ -63,7 +62,7 @@ class ArrivalNotificationRejectionMessageSpec extends SpecBase with ScalaCheckDr
       forAll(arbitrary[ArrivalNotificationRejectionMessage], arbitrary[FunctionalError]) {
         (rejectionMessage, functionalError) =>
           val fullFunctionalError = functionalError.copy(
-            reason                 = Some(arbitrary[String].sample.value),
+            reason = Some(arbitrary[String].sample.value),
             originalAttributeValue = Some(arbitrary[String].sample.value)
           )
 
@@ -73,7 +72,7 @@ class ArrivalNotificationRejectionMessageSpec extends SpecBase with ScalaCheckDr
             errors = Seq(fullFunctionalError)
           )
 
-          val xml = {
+          val xml =
             <CC008A>
               <HEAHEA>
                 <DocNumHEA5>{fullRejectionMessage.movementReferenceNumber}</DocNumHEA5>
@@ -88,7 +87,6 @@ class ArrivalNotificationRejectionMessageSpec extends SpecBase with ScalaCheckDr
                 <OriAttValER14>{fullFunctionalError.originalAttributeValue.value}</OriAttValER14>
               </FUNERRER1>
             </CC008A>
-          }
 
           val result = XmlReader.of[ArrivalNotificationRejectionMessage].read(xml).toOption.value
 

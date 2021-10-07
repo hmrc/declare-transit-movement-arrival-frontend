@@ -15,10 +15,11 @@
  */
 
 package viewModels.sections
+
 import com.google.inject.Inject
 import play.api.Configuration
 
-class ViewModelConfig @Inject()(configuration: Configuration) {
+class ViewModelConfig @Inject() (configuration: Configuration) {
 
   val nctsEnquiriesUrl: String = configuration.get[String]("urls.nctsEnquiries")
 

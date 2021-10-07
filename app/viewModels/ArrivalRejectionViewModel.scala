@@ -31,6 +31,7 @@ import viewModels.NunjucksSupportObject._
 sealed trait RejectionViewData
 
 private object RejectionViewData {
+
   implicit def writes(implicit messages: Messages): OWrites[RejectionViewData] = OWrites {
     case x: RejectionViewDataNoFunctionalErrors => Json.toJsObject(x)(RejectionViewDataNoFunctionalErrors.writes)
     case x: RejectionViewDataFunctionalErrors   => Json.toJsObject(x)(RejectionViewDataFunctionalErrors.writes)
@@ -72,9 +73,9 @@ class ArrivalRejectionViewModel(
     rejectionMessage.errors match {
       case FunctionalError(mrnError: MRNError, _, _, _) :: Nil =>
         val data = RejectionViewDataNoFunctionalErrors(
-          mrn                        = rejectionMessage.movementReferenceNumber,
-          errorKey                   = MrnErrorDescription(mrnError),
-          contactUrl                 = enquiriesUrl,
+          mrn = rejectionMessage.movementReferenceNumber,
+          errorKey = MrnErrorDescription(mrnError),
+          contactUrl = enquiriesUrl,
           movementReferenceNumberUrl = routes.UpdateRejectedMRNController.onPageLoad(arrivalId).url
         )
 
@@ -82,9 +83,9 @@ class ArrivalRejectionViewModel(
 
       case _ =>
         val data = RejectionViewDataFunctionalErrors(
-          mrn              = rejectionMessage.movementReferenceNumber,
-          errors           = rejectionMessage.errors,
-          contactUrl       = enquiriesUrl,
+          mrn = rejectionMessage.movementReferenceNumber,
+          errors = rejectionMessage.errors,
+          contactUrl = enquiriesUrl,
           createArrivalUrl = routes.MovementReferenceNumberController.onPageLoad().url
         )
 

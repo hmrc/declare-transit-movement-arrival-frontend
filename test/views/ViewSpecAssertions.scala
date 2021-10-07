@@ -29,7 +29,7 @@ trait ViewSpecAssertions {
 
   def getByElementId(doc: Document, id: String): Element = {
     val elem: Element = doc.getElementById(id)
-    elem must not equal (null)
+    elem must not equal null
     elem
   }
 

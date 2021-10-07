@@ -176,7 +176,7 @@ class SimplifiedCustomsOfficeControllerSpec extends SpecBase with AppWithDefault
   private def verifyBadRequestOnSubmit(formValue: String) = {
     val customsOfficeJson = Seq(
       Json.obj("value" -> "", "text"         -> "Select a customs office"),
-      Json.obj("value" -> "id", "text"       -> "name (id)", "selected" -> false),
+      Json.obj("value" -> "id", "text"       -> "name (id)", "selected"           -> false),
       Json.obj("value" -> "officeId", "text" -> "someName (officeId)", "selected" -> false)
     )
 
@@ -232,7 +232,7 @@ class SimplifiedCustomsOfficeControllerSpec extends SpecBase with AppWithDefault
 
     val expectedCustomsOfficeJson = Seq(
       Json.obj("value" -> "", "text"         -> "Select a customs office"),
-      Json.obj("value" -> "id", "text"       -> "name (id)", "selected" -> false),
+      Json.obj("value" -> "id", "text"       -> "name (id)", "selected"           -> false),
       Json.obj("value" -> "officeId", "text" -> "someName (officeId)", "selected" -> preSelectOfficeId)
     )
 

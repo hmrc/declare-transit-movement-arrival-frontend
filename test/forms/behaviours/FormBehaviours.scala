@@ -32,13 +32,12 @@ trait FormBehaviours extends FormSpec {
     }
 
   def formWithOptionalTextFields(fields: String*): Unit =
-    for (field <- fields) {
+    for (field <- fields)
       s"must bind when $field is omitted" in {
         val data      = validData - field
         val boundForm = form.bind(data)
         boundForm.errors.isEmpty mustBe true
       }
-    }
 
   def formWithConditionallyMandatoryField(booleanField: String, field: String): Unit = {
     s"must bind when $booleanField is false and $field is omitted" in {

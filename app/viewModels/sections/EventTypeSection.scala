@@ -59,7 +59,8 @@ object VehicleInformationSection extends NunjucksSupport {
           helper.transportIdentity(eventIndex),
           helper.transportNationality(eventIndex)(codeList)
         ).flatten
-      ))
+      )
+    )
   }
 }
 
@@ -98,11 +99,13 @@ object DifferentVehicleSection extends NunjucksSupport {
       Section(
         msg"checkEventAnswers.section.title.differentVehicle",
         Seq(
-          if (isTranshipment) { helper.isTranshipment(eventIndex) } else None,
+          if (isTranshipment) { helper.isTranshipment(eventIndex) }
+          else None,
           helper.transhipmentType(eventIndex),
           helper.transportIdentity(eventIndex),
           helper.transportNationality(eventIndex)(codeList)
         ).flatten
-      ))
+      )
+    )
   }
 }

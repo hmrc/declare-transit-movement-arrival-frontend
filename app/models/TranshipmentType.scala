@@ -38,12 +38,18 @@ object TranshipmentType extends Enumerable.Implicits {
     val field = form("value")
     val items = values
       .map(_.toString)
-      .map(optionName => (msg"transhipmentType.$optionName", optionName))
+      .map(
+        optionName => (msg"transhipmentType.$optionName", optionName)
+      )
       .map(Radios.Radio.tupled)
 
     Radios(field, items)
   }
 
   implicit val enumerable: Enumerable[TranshipmentType] =
-    Enumerable(values.map(v => v.toString -> v): _*)
+    Enumerable(
+      values.map(
+        v => v.toString -> v
+      ): _*
+    )
 }

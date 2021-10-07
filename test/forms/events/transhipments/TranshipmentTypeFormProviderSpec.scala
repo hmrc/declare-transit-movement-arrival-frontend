@@ -32,7 +32,7 @@ class TranshipmentTypeFormProviderSpec extends OptionFieldBehaviours {
     behave like optionsField[TranshipmentType](
       form,
       fieldName,
-      validValues  = TranshipmentType.values,
+      validValues = TranshipmentType.values,
       invalidError = FormError(fieldName, "error.invalid")
     )
 

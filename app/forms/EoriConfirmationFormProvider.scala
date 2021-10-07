@@ -30,7 +30,7 @@ class EoriConfirmationFormProvider @Inject() extends Mappings {
     Form(
       "value" -> boolean(
         requiredKey = "eoriConfirmation.error.required",
-        args        = Seq(eoriNumber.value, traderName)
+        args = Seq(eoriNumber.value, traderName)
       )
     )
 }

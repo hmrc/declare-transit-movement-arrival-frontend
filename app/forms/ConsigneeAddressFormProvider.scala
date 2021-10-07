@@ -34,7 +34,8 @@ class ConsigneeAddressFormProvider @Inject() extends Mappings {
           StopOnFirstFail[String](
             maxLength(Address.Constants.buildingAndStreetLength,
                       "consigneeAddress.error.length",
-                      Seq(Address.Constants.Fields.buildingAndStreetName, authorisedConsignee)),
+                      Seq(Address.Constants.Fields.buildingAndStreetName, authorisedConsignee)
+            ),
             regexp(stringFieldRegexAsterisk, "consigneeAddress.error.invalid", Seq(Address.Constants.Fields.buildingAndStreetName, authorisedConsignee))
           )
         ),
@@ -48,8 +49,8 @@ class ConsigneeAddressFormProvider @Inject() extends Mappings {
       "postcode" -> text("consigneeAddress.error.postcode.required", args = Seq(authorisedConsignee))
         .verifying(
           StopOnFirstFail[String](
-            maxLength(Address.Constants.postcodeLength, "consigneeAddress.error.postcode.length", args          = Seq(authorisedConsignee)),
-            regexp(Address.Constants.postCodeRegex, "consigneeAddress.error.postcode.invalid", args             = Seq(authorisedConsignee)),
+            maxLength(Address.Constants.postcodeLength, "consigneeAddress.error.postcode.length", args = Seq(authorisedConsignee)),
+            regexp(Address.Constants.postCodeRegex, "consigneeAddress.error.postcode.invalid", args = Seq(authorisedConsignee)),
             regexp(Address.Constants.postCodeFormatRegex, "consigneeAddress.error.postcode.invalidFormat", args = Seq(authorisedConsignee))
           )
         )

@@ -33,8 +33,8 @@ object ArrivalNotificationDomainToArrivalMovementRequestService {
       case normalNotification: NormalNotification =>
         val meta = Meta(
           interchangeControlReference = interchangeControlReference,
-          dateOfPreparation           = normalNotification.notificationDate,
-          timeOfPreparation           = timeOfPresentation
+          dateOfPreparation = normalNotification.notificationDate,
+          timeOfPreparation = timeOfPresentation
         )
         val header            = buildHeader(normalNotification, NormalProcedureFlag)
         val traderDestination = TraderDomain.domainTraderToMessagesTrader(normalNotification.trader)
@@ -46,8 +46,8 @@ object ArrivalNotificationDomainToArrivalMovementRequestService {
       case simplifiedNotification: SimplifiedNotification =>
         val meta = Meta(
           interchangeControlReference = interchangeControlReference,
-          dateOfPreparation           = simplifiedNotification.notificationDate,
-          timeOfPreparation           = timeOfPresentation
+          dateOfPreparation = simplifiedNotification.notificationDate,
+          timeOfPreparation = timeOfPresentation
         )
         val header                                   = buildSimplifiedHeader(simplifiedNotification, SimplifiedProcedureFlag)
         val traderDestination                        = TraderDomain.domainTraderToMessagesTrader(simplifiedNotification.trader)
@@ -59,20 +59,20 @@ object ArrivalNotificationDomainToArrivalMovementRequestService {
 
   private def buildHeader(arrivalNotification: NormalNotification, procedureTypeFlag: ProcedureTypeFlag): Header =
     Header(
-      movementReferenceNumber  = arrivalNotification.movementReferenceNumber.toString,
-      customsSubPlace          = Some(arrivalNotification.customsSubPlace),
+      movementReferenceNumber = arrivalNotification.movementReferenceNumber.toString,
+      customsSubPlace = Some(arrivalNotification.customsSubPlace),
       arrivalNotificationPlace = arrivalNotification.notificationPlace,
-      procedureTypeFlag        = procedureTypeFlag,
-      notificationDate         = arrivalNotification.notificationDate
+      procedureTypeFlag = procedureTypeFlag,
+      notificationDate = arrivalNotification.notificationDate
     )
 
   private def buildSimplifiedHeader(arrivalNotification: SimplifiedNotification, procedureTypeFlag: ProcedureTypeFlag): Header =
     Header(
-      movementReferenceNumber          = arrivalNotification.movementReferenceNumber.toString,
-      customsSubPlace                  = None,
-      arrivalNotificationPlace         = arrivalNotification.notificationPlace,
-      procedureTypeFlag                = procedureTypeFlag,
-      notificationDate                 = arrivalNotification.notificationDate,
+      movementReferenceNumber = arrivalNotification.movementReferenceNumber.toString,
+      customsSubPlace = None,
+      arrivalNotificationPlace = arrivalNotification.notificationPlace,
+      procedureTypeFlag = procedureTypeFlag,
+      notificationDate = arrivalNotification.notificationDate,
       arrivalAuthorisedLocationOfGoods = Some(arrivalNotification.authorisedLocation)
     )
 }
