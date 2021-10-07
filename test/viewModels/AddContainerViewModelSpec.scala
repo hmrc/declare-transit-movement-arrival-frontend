@@ -24,7 +24,7 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.events.transhipments.ContainerNumberPage
 import play.api.libs.json.{JsObject, Json}
-import uk.gov.hmrc.viewmodels.Text.{Literal, Message}
+import uk.gov.hmrc.viewmodels.Text.Message
 import uk.gov.hmrc.viewmodels._
 
 class AddContainerViewModelSpec extends SpecBase with ScalaCheckPropertyChecks with MessagesModelGenerators {
@@ -79,14 +79,9 @@ class AddContainerViewModelSpec extends SpecBase with ScalaCheckPropertyChecks w
 
           vm.containers must be(defined)
 
-          val rows: Seq[Content] = vm.containers.value.rows.map(_.value.content)
+          val rows = vm.containers.value.rows
 
           rows.length mustEqual containers.length
-
-          containers.foreach {
-            c =>
-              rows must contain(Literal(c.containerNumber))
-          }
       }
     }
 

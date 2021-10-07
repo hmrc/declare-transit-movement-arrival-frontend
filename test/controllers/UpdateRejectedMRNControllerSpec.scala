@@ -207,7 +207,8 @@ class UpdateRejectedMRNControllerSpec extends SpecBase with AppWithDefaultMockFi
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form" -> boundForm
+        "form"      -> boundForm,
+        "arrivalId" -> arrivalId.value
       )
 
       templateCaptor.getValue mustEqual "updateMovementReferenceNumber.njk"

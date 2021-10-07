@@ -73,7 +73,7 @@ class UpdateRejectedMRNController @Inject() (override val messagesApi: MessagesA
         .bindFromRequest()
         .fold(
           formWithErrors => {
-            val json = Json.obj("form" -> formWithErrors)
+            val json = Json.obj("form" -> formWithErrors, "arrivalId" -> arrivalId.value)
             renderer.render("updateMovementReferenceNumber.njk", json).map(BadRequest(_))
           },
           value =>

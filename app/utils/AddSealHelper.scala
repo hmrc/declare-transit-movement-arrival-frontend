@@ -17,35 +17,21 @@
 package utils
 
 import controllers.events.seals.routes._
+import models.domain.SealDomain
 import models.{Index, Mode, UserAnswers}
 import pages.events.seals._
-import uk.gov.hmrc.viewmodels.SummaryList.{Action, Key, Row, Value}
+import uk.gov.hmrc.viewmodels.SummaryList.Row
 import uk.gov.hmrc.viewmodels._
 
 class AddSealHelper(userAnswers: UserAnswers) extends SummaryListRowHelper(userAnswers) {
 
-  def sealRow(eventIndex: Index, sealIndex: Index, mode: Mode): Option[Row] =
-    userAnswers.get(SealIdentityPage(eventIndex, sealIndex)).map {
-      answer =>
-        Row(
-          key = Key(msg"addSeal.sealList.label".withArgs(sealIndex.display)),
-          value = Value(lit"${answer.numberOrMark}"),
-          actions = List(
-            Action(
-              content = msg"site.edit",
-              href = SealIdentityController.onPageLoad(mrn, eventIndex, sealIndex, mode).url,
-              visuallyHiddenText = Some(msg"addSeal.sealList.change.hidden".withArgs(answer.numberOrMark)),
-              attributes = Map("id" -> s"change-seal-${sealIndex.display}")
-            ),
-            Action(
-              content = msg"site.delete",
-              href = ConfirmRemoveSealController.onPageLoad(mrn, eventIndex, sealIndex, mode).url,
-              visuallyHiddenText = Some(msg"addSeal.sealList.delete.hidden".withArgs(answer.numberOrMark)),
-              attributes = Map("id" -> s"remove-seal-${sealIndex.display}")
-            )
-          )
-        )
-    }
+  def sealRow(eventIndex: Index, sealIndex: Index, mode: Mode): Option[Row] = getAnswerAndBuildRemovableRow[SealDomain](
+    page = SealIdentityPage(eventIndex, sealIndex),
+    formatAnswer = seal => lit"${seal.numberOrMark}",
+    id = s"seal-${sealIndex.display}",
+    changeCall = SealIdentityController.onPageLoad(mrn, eventIndex, sealIndex, mode),
+    removeCall = ConfirmRemoveSealController.onPageLoad(mrn, eventIndex, sealIndex, mode)
+  )
 }
 
 object AddSealHelper {

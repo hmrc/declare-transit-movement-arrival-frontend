@@ -39,4 +39,12 @@ trait ViewSpecAssertions {
   def findByElementId(doc: Document, id: String): Option[Element] =
     Option(doc.getElementById(id))
 
+  def assertPageHasLink(doc: Document, id: String, expectedText: String, expectedHref: String) = {
+    val link = doc.select(s"a[id=$id]").first()
+    link.text() mustBe expectedText
+    link.attr("href") mustBe expectedHref
+  }
+
+  def assertPageHasNoLink(doc: Document, id: String) =
+    doc.select(s"a[id=$id]").isEmpty mustBe true
 }

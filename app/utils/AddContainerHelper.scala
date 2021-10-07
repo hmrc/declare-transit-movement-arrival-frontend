@@ -16,38 +16,22 @@
 
 package utils
 
-import controllers.events.transhipments.routes.ContainerNumberController
-import controllers.events.transhipments.routes.ConfirmRemoveContainerController
+import controllers.events.transhipments.routes.{ConfirmRemoveContainerController, ContainerNumberController}
 import models.domain.ContainerDomain
 import models.{Index, Mode, UserAnswers}
 import pages.events.transhipments.ContainerNumberPage
-import uk.gov.hmrc.viewmodels.SummaryList.{Action, Key, Row, Value}
+import uk.gov.hmrc.viewmodels.SummaryList.Row
 import uk.gov.hmrc.viewmodels._
 
 class AddContainerHelper(userAnswers: UserAnswers) extends SummaryListRowHelper(userAnswers) {
 
-  def containerRow(eventIndex: Index, containerIndex: Index, mode: Mode): Option[Row] =
-    userAnswers.get(ContainerNumberPage(eventIndex, containerIndex)).map {
-      case ContainerDomain(answer) =>
-        Row(
-          key = Key(msg"addContainer.containerList.label".withArgs(containerIndex.display)),
-          value = Value(lit"$answer"),
-          actions = List(
-            Action(
-              content = msg"site.edit",
-              href = ContainerNumberController.onPageLoad(mrn, eventIndex, containerIndex, mode).url,
-              visuallyHiddenText = Some(msg"addContainer.containerList.change.hidden".withArgs(answer)),
-              attributes = Map("id" -> s"change-container-${containerIndex.display}")
-            ),
-            Action(
-              content = msg"site.delete",
-              href = ConfirmRemoveContainerController.onPageLoad(mrn, eventIndex, containerIndex, mode).url,
-              visuallyHiddenText = Some(msg"addContainer.containerList.delete.hidden".withArgs(answer)),
-              attributes = Map("id" -> s"remove-container-${containerIndex.display}")
-            )
-          )
-        )
-    }
+  def containerRow(eventIndex: Index, containerIndex: Index, mode: Mode): Option[Row] = getAnswerAndBuildRemovableRow[ContainerDomain](
+    page = ContainerNumberPage(eventIndex, containerIndex),
+    formatAnswer = container => lit"${container.containerNumber}",
+    id = s"container-${containerIndex.display}",
+    changeCall = ContainerNumberController.onPageLoad(mrn, eventIndex, containerIndex, mode),
+    removeCall = ConfirmRemoveContainerController.onPageLoad(mrn, eventIndex, containerIndex, mode)
+  )
 }
 
 object AddContainerHelper {

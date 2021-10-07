@@ -52,21 +52,21 @@ class AddSealHelperSpec extends SpecBase {
           helper.sealRow(eventIndex, sealIndex, CheckMode) mustBe Some(
             Row(
               key = Key(
-                content = Message("addSeal.sealList.label", sealIndex.display),
+                content = Literal(seal.numberOrMark),
                 classes = Nil
               ),
-              value = Value(Literal(seal.numberOrMark)),
+              value = Value(Literal("")),
               actions = List(
                 Action(
                   content            = Message("site.edit"),
                   href               = SealIdentityController.onPageLoad(mrn, eventIndex, sealIndex, CheckMode).url,
-                  visuallyHiddenText = Some(Message("addSeal.sealList.change.hidden", seal.numberOrMark)),
+                  visuallyHiddenText = Some(Literal(seal.numberOrMark)),
                   attributes         = Map("id" -> s"change-seal-${sealIndex.display}")
                 ),
                 Action(
                   content            = Message("site.delete"),
                   href               = ConfirmRemoveSealController.onPageLoad(mrn, eventIndex, sealIndex, CheckMode).url,
-                  visuallyHiddenText = Some(Message("addSeal.sealList.delete.hidden", seal.numberOrMark)),
+                  visuallyHiddenText = Some(Literal(seal.numberOrMark)),
                   attributes         = Map("id" -> s"remove-seal-${sealIndex.display}")
                 )
               )

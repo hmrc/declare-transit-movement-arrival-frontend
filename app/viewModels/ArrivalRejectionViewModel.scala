@@ -20,6 +20,7 @@ import controllers.routes
 import models.ArrivalId
 import models.messages.ErrorType._
 import models.messages.{ArrivalNotificationRejectionMessage, FunctionalError}
+import play.api.i18n.Messages
 import play.api.libs.json.{JsObject, Json, OWrites}
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
@@ -29,7 +30,7 @@ sealed trait RejectionViewData
 
 private object RejectionViewData {
 
-  implicit def writes: OWrites[RejectionViewData] = OWrites {
+  implicit def writes(implicit messages: Messages): OWrites[RejectionViewData] = OWrites {
     case x: RejectionViewDataNoFunctionalErrors => Json.toJsObject(x)(RejectionViewDataNoFunctionalErrors.writes)
     case x: RejectionViewDataFunctionalErrors   => Json.toJsObject(x)(RejectionViewDataFunctionalErrors.writes)
   }
@@ -43,7 +44,7 @@ final private case class RejectionViewDataNoFunctionalErrors(
 ) extends RejectionViewData
 
 private object RejectionViewDataNoFunctionalErrors {
-  implicit def writes: OWrites[RejectionViewDataNoFunctionalErrors] = Json.writes[RejectionViewDataNoFunctionalErrors]
+  implicit def writes(implicit messages: Messages): OWrites[RejectionViewDataNoFunctionalErrors] = Json.writes[RejectionViewDataNoFunctionalErrors]
 }
 
 final private case class RejectionViewDataFunctionalErrors(
@@ -54,7 +55,7 @@ final private case class RejectionViewDataFunctionalErrors(
 ) extends RejectionViewData
 
 private object RejectionViewDataFunctionalErrors {
-  implicit def writes: OWrites[RejectionViewDataFunctionalErrors] = Json.writes[RejectionViewDataFunctionalErrors]
+  implicit def writes(implicit messages: Messages): OWrites[RejectionViewDataFunctionalErrors] = Json.writes[RejectionViewDataFunctionalErrors]
 }
 
 class ArrivalRejectionViewModel(
@@ -91,7 +92,7 @@ class ArrivalRejectionViewModel(
 
   val page = _page
 
-  def viewData: JsObject = Json.toJsObject(_viewData)
+  def viewData(implicit messages: Messages): JsObject = Json.toJsObject(_viewData)
 }
 
 object ArrivalRejectionViewModel {

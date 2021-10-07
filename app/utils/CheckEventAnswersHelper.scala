@@ -19,7 +19,9 @@ package utils
 import controllers.events.seals.{routes => sealRoutes}
 import controllers.events.transhipments.{routes => transhipmentRoutes}
 import controllers.events.{routes => eventRoutes}
-import models.{CheckMode, CountryList, Index, UserAnswers}
+import models.domain.{ContainerDomain, SealDomain}
+import models.reference.CountryCode
+import models.{CheckMode, CountryList, Index, TranshipmentType, UserAnswers}
 import pages.events._
 import pages.events.seals._
 import pages.events.transhipments._
@@ -28,187 +30,94 @@ import uk.gov.hmrc.viewmodels._
 
 class CheckEventAnswersHelper(userAnswers: UserAnswers) extends SummaryListRowHelper(userAnswers) {
 
-  def isTranshipment(eventIndex: Index): Option[Row] = userAnswers.get(IsTranshipmentPage(eventIndex)) map {
-    answer =>
-      Row(
-        key = Key(msg"isTranshipment.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value = Value(yesOrNo(answer)),
-        actions = List(
-          Action(
-            content = msg"site.edit",
-            href = eventRoutes.IsTranshipmentController.onPageLoad(mrn, eventIndex, CheckMode).url,
-            visuallyHiddenText = Some(msg"isTranshipment.change.hidden"),
-            attributes = Map("id" -> s"change-is-transhipment-${eventIndex.display}")
-          )
-        )
-      )
-  }
+  def isTranshipment(eventIndex: Index): Option[Row] = getAnswerAndBuildRow[Boolean](
+    page = IsTranshipmentPage(eventIndex),
+    formatAnswer = formatAsYesOrNo,
+    prefix = "isTranshipment",
+    id = Some(s"change-is-transhipment-${eventIndex.display}"),
+    call = eventRoutes.IsTranshipmentController.onPageLoad(mrn, eventIndex, CheckMode)
+  )
 
-  def transhipmentType(eventIndex: Index): Option[Row] = userAnswers.get(TranshipmentTypePage(eventIndex)) map {
-    answer =>
-      Row(
-        key = Key(msg"transhipmentType.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value = Value(msg"transhipmentType.checkYourAnswers.$answer"),
-        actions = List(
-          Action(
-            content = msg"site.edit",
-            href = transhipmentRoutes.TranshipmentTypeController.onPageLoad(mrn, eventIndex, CheckMode).url,
-            visuallyHiddenText = Some(msg"transhipmentType.change.hidden"),
-            attributes = Map("id" -> s"transhipment-type-${eventIndex.display}")
-          )
-        )
-      )
-  }
+  def transhipmentType(eventIndex: Index): Option[Row] = getAnswerAndBuildRow[TranshipmentType](
+    page = TranshipmentTypePage(eventIndex),
+    formatAnswer = transhipmentType => msg"transhipmentType.checkYourAnswers.$transhipmentType",
+    prefix = "transhipmentType",
+    id = Some(s"transhipment-type-${eventIndex.display}"),
+    call = transhipmentRoutes.TranshipmentTypeController.onPageLoad(mrn, eventIndex, CheckMode)
+  )
 
-  def containerNumber(eventIndex: Index, containerIndex: Index): Option[Row] = userAnswers.get(ContainerNumberPage(eventIndex, containerIndex)) map {
-    answer =>
-      Row(
-        key = Key(msg"addContainer.containerList.label".withArgs(containerIndex.display), classes = Seq("govuk-!-width-one-half")),
-        value = Value(lit"${answer.containerNumber}"),
-        actions = List(
-          Action(
-            content = msg"site.edit",
-            href = transhipmentRoutes.ContainerNumberController.onPageLoad(mrn, eventIndex, containerIndex, CheckMode).url,
-            visuallyHiddenText = Some(msg"containerNumber.change.hidden".withArgs(answer.containerNumber)),
-            attributes = Map("id" -> s"change-container-${containerIndex.display}")
-          )
-        )
-      )
-  }
+  def containerNumber(eventIndex: Index, containerIndex: Index): Option[Row] = getAnswerAndBuildSectionRow[ContainerDomain](
+    page = ContainerNumberPage(eventIndex, containerIndex),
+    formatAnswer = _.containerNumber,
+    prefix = "containerNumber",
+    label = msg"addContainer.containerList.label".withArgs(containerIndex.display),
+    id = Some(s"change-container-${containerIndex.display}"),
+    call = transhipmentRoutes.ContainerNumberController.onPageLoad(mrn, eventIndex, containerIndex, CheckMode)
+  )
 
-  def eventCountry(eventIndex: Index)(codeList: CountryList): Option[Row] =
-    userAnswers
-      .get(EventCountryPage(eventIndex))
-      .map {
-        answer =>
-          val countryName = codeList.getCountry(answer).map(_.description).getOrElse(answer.code)
+  def eventCountry(eventIndex: Index)(codeList: CountryList): Option[Row] = getAnswerAndBuildRow[CountryCode](
+    page = EventCountryPage(eventIndex),
+    formatAnswer = formatAsCountry(codeList),
+    prefix = "eventCountry",
+    id = Some(s"change-event-country-${eventIndex.display}"),
+    call = eventRoutes.EventCountryController.onPageLoad(mrn, eventIndex, CheckMode)
+  )
 
-          Row(
-            key = Key(msg"eventCountry.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-            value = Value(lit"$countryName"),
-            actions = List(
-              Action(
-                content = msg"site.edit",
-                href = eventRoutes.EventCountryController.onPageLoad(mrn, eventIndex, CheckMode).url,
-                visuallyHiddenText = Some(msg"eventCountry.change.hidden"),
-                attributes = Map("id" -> s"change-event-country-${eventIndex.display}")
-              )
-            )
-          )
-      }
+  def eventPlace(eventIndex: Index): Option[Row] = getAnswerAndBuildRow[String](
+    page = EventPlacePage(eventIndex),
+    formatAnswer = formatAsLiteral,
+    prefix = "eventPlace",
+    id = Some(s"change-event-place-${eventIndex.display}"),
+    call = eventRoutes.EventPlaceController.onPageLoad(mrn, eventIndex, CheckMode)
+  )
 
-  def eventPlace(eventIndex: Index): Option[Row] = userAnswers.get(EventPlacePage(eventIndex)) map {
-    answer =>
-      Row(
-        key = Key(msg"eventPlace.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value = Value(lit"$answer"),
-        actions = List(
-          Action(
-            content = msg"site.edit",
-            href = eventRoutes.EventPlaceController.onPageLoad(mrn, eventIndex, CheckMode).url,
-            visuallyHiddenText = Some(msg"eventPlace.change.hidden"),
-            attributes = Map("id" -> s"change-event-place-${eventIndex.display}")
-          )
-        )
-      )
-  }
+  def eventReported(eventIndex: Index): Option[Row] = getAnswerAndBuildRow[Boolean](
+    page = EventReportedPage(eventIndex),
+    formatAnswer = formatAsYesOrNo,
+    prefix = "eventReported",
+    id = Some(s"change-event-reported-${eventIndex.display}"),
+    call = eventRoutes.EventReportedController.onPageLoad(mrn, eventIndex, CheckMode)
+  )
 
-  def eventReported(eventIndex: Index): Option[Row] = userAnswers.get(EventReportedPage(eventIndex)) map {
-    answer =>
-      Row(
-        key = Key(msg"eventReported.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value = Value(yesOrNo(answer)),
-        actions = List(
-          Action(
-            content = msg"site.edit",
-            href = eventRoutes.EventReportedController.onPageLoad(mrn, eventIndex, CheckMode).url,
-            visuallyHiddenText = Some(msg"eventReported.change.hidden"),
-            attributes = Map("id" -> s"change-event-reported-${eventIndex.display}")
-          )
-        )
-      )
-  }
+  def incidentInformation(eventIndex: Index): Option[Row] = getAnswerAndBuildRow[String](
+    page = IncidentInformationPage(eventIndex),
+    formatAnswer = formatAsLiteral,
+    prefix = "incidentInformation",
+    id = Some(s"change-incident-information-${eventIndex.display}"),
+    call = eventRoutes.IncidentInformationController.onPageLoad(mrn, eventIndex, CheckMode)
+  )
 
-  def incidentInformation(eventIndex: Index): Option[Row] = userAnswers.get(IncidentInformationPage(eventIndex)) map {
-    answer =>
-      Row(
-        key = Key(msg"incidentInformation.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value = Value(lit"$answer"),
-        actions = List(
-          Action(
-            content = msg"site.edit",
-            href = eventRoutes.IncidentInformationController.onPageLoad(mrn, eventIndex, CheckMode).url,
-            visuallyHiddenText = Some(msg"incidentInformation.change.hidden"),
-            attributes = Map("id" -> s"change-incident-information-${eventIndex.display}")
-          )
-        )
-      )
-  }
+  def transportIdentity(eventIndex: Index): Option[Row] = getAnswerAndBuildRow[String](
+    page = TransportIdentityPage(eventIndex),
+    formatAnswer = formatAsLiteral,
+    prefix = "transportIdentity",
+    id = Some(s"transport-identity-${eventIndex.display}"),
+    call = transhipmentRoutes.TransportIdentityController.onPageLoad(mrn, eventIndex, CheckMode)
+  )
 
-  def transportIdentity(eventIndex: Index): Option[Row] = userAnswers.get(TransportIdentityPage(eventIndex)) map {
-    answer =>
-      Row(
-        key = Key(msg"transportIdentity.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value = Value(lit"$answer"),
-        actions = List(
-          Action(
-            content = msg"site.edit",
-            href = transhipmentRoutes.TransportIdentityController.onPageLoad(mrn, eventIndex, CheckMode).url,
-            visuallyHiddenText = Some(msg"transportIdentity.change.hidden"),
-            attributes = Map("id" -> s"transport-identity-${eventIndex.display}")
-          )
-        )
-      )
-  }
+  def transportNationality(eventIndex: Index)(codeList: CountryList): Option[Row] = getAnswerAndBuildRow[CountryCode](
+    page = TransportNationalityPage(eventIndex),
+    formatAnswer = formatAsCountry(codeList),
+    prefix = "transportNationality",
+    id = Some(s"transport-nationality-${eventIndex.display}"),
+    call = transhipmentRoutes.TransportNationalityController.onPageLoad(mrn, eventIndex, CheckMode)
+  )
 
-  def transportNationality(eventIndex: Index)(codeList: CountryList): Option[Row] = userAnswers.get(TransportNationalityPage(eventIndex)) map {
-    answer =>
-      val countryName = codeList.getCountry(answer).map(_.description).getOrElse(answer.code)
+  def haveSealsChanged(eventIndex: Index): Option[Row] = getAnswerAndBuildRow[Boolean](
+    page = HaveSealsChangedPage(eventIndex),
+    formatAnswer = formatAsYesOrNo,
+    prefix = "haveSealsChanged",
+    id = Some(s"seals-changed-${eventIndex.display}"),
+    call = sealRoutes.HaveSealsChangedController.onPageLoad(mrn, eventIndex, CheckMode)
+  )
 
-      Row(
-        key = Key(msg"transportNationality.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value = Value(lit"$countryName"),
-        actions = List(
-          Action(
-            content = msg"site.edit",
-            href = transhipmentRoutes.TransportNationalityController.onPageLoad(mrn, eventIndex, CheckMode).url,
-            visuallyHiddenText = Some(msg"transportNationality.change.hidden"),
-            attributes = Map("id" -> s"transport-nationality-${eventIndex.display}")
-          )
-        )
-      )
-  }
-
-  def haveSealsChanged(eventIndex: Index): Option[Row] = userAnswers.get(HaveSealsChangedPage(eventIndex)) map {
-    answer =>
-      Row(
-        key = Key(msg"haveSealsChanged.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value = Value(yesOrNo(answer)),
-        actions = List(
-          Action(
-            content = msg"site.edit",
-            href = sealRoutes.HaveSealsChangedController.onPageLoad(mrn, eventIndex, CheckMode).url,
-            visuallyHiddenText = Some(msg"haveSealsChanged.change.hidden"),
-            attributes = Map("id" -> s"seals-changed-${eventIndex.display}")
-          )
-        )
-      )
-  }
-
-  def sealIdentity(eventIndex: Index, sealIndex: Index): Option[Row] = userAnswers.get(SealIdentityPage(eventIndex, sealIndex)) map {
-    answer =>
-      Row(
-        key = Key(msg"addSeal.sealList.label".withArgs(sealIndex.display), classes = Seq("govuk-!-width-one-half")),
-        value = Value(lit"${answer.numberOrMark}"),
-        actions = List(
-          Action(
-            content = msg"site.edit",
-            href = sealRoutes.SealIdentityController.onPageLoad(mrn, eventIndex, sealIndex, CheckMode).url,
-            visuallyHiddenText = Some(msg"sealIdentity.change.hidden".withArgs(answer.numberOrMark)),
-            attributes = Map("id" -> s"change-seal-${sealIndex.display}")
-          )
-        )
-      )
-  }
+  def sealIdentity(eventIndex: Index, sealIndex: Index): Option[Row] = getAnswerAndBuildSectionRow[SealDomain](
+    page = SealIdentityPage(eventIndex, sealIndex),
+    formatAnswer = _.numberOrMark,
+    prefix = "sealIdentity",
+    label = msg"addSeal.sealList.label".withArgs(sealIndex.display),
+    id = Some(s"change-seal-${sealIndex.display}"),
+    call = sealRoutes.SealIdentityController.onPageLoad(mrn, eventIndex, sealIndex, CheckMode)
+  )
 
 }

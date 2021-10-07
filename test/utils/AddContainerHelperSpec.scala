@@ -52,21 +52,21 @@ class AddContainerHelperSpec extends SpecBase {
           helper.containerRow(eventIndex, containerIndex, CheckMode) mustBe Some(
             Row(
               key = Key(
-                content = Message("addContainer.containerList.label", containerIndex.display),
+                content = Literal(container.containerNumber),
                 classes = Nil
               ),
-              value = Value(Literal(container.containerNumber)),
+              value = Value(Literal("")),
               actions = List(
                 Action(
                   content            = Message("site.edit"),
                   href               = ContainerNumberController.onPageLoad(mrn, eventIndex, containerIndex, CheckMode).url,
-                  visuallyHiddenText = Some(Message("addContainer.containerList.change.hidden", container.containerNumber)),
+                  visuallyHiddenText = Some(Literal(container.containerNumber)),
                   attributes         = Map("id" -> s"change-container-${containerIndex.display}")
                 ),
                 Action(
                   content            = Message("site.delete"),
                   href               = ConfirmRemoveContainerController.onPageLoad(mrn, eventIndex, containerIndex, CheckMode).url,
-                  visuallyHiddenText = Some(Message("addContainer.containerList.delete.hidden", container.containerNumber)),
+                  visuallyHiddenText = Some(Literal(container.containerNumber)),
                   attributes         = Map("id" -> s"remove-container-${containerIndex.display}")
                 )
               )
