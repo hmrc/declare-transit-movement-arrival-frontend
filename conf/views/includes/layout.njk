@@ -41,10 +41,10 @@
 {% block content %}
   {% block mainContent %}{% endblock %}
 
-{{ hmrcReportTechnicalIssue({
-  serviceCode: config.serviceIdentifier,
-  baseUrl: config.contactHost
-}) }}
+  {{ hmrcReportTechnicalIssue({
+    serviceCode: config.serviceIdentifier,
+    baseUrl: config.contactHost
+  }) }}
 
 {% endblock %}
 
