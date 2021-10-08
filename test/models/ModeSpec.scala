@@ -18,24 +18,31 @@ package models
 
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
+import play.api.libs.json.{JsString, Json}
 
 class ModeSpec extends AnyFreeSpec with Matchers {
   "NormalMode" - {
+    val mode: Mode = NormalMode
     "convert to string" in {
-      NormalMode.toString mustEqual "NormalMode"
+      mode.toString mustEqual "NormalMode"
+    }
+    "serialise correctly" in {
+      Json.toJson(mode) mustEqual JsString("NormalMode")
     }
     "return correct jsLiteral" in {
-      val mode: Mode = NormalMode
       Mode.jsLiteral.to(mode) mustEqual """"NormalMode""""
     }
   }
 
   "CheckMode" - {
+    val mode: Mode = CheckMode
     "convert to string" in {
-      CheckMode.toString mustEqual "CheckMode"
+      mode.toString mustEqual "CheckMode"
+    }
+    "serialise correctly" in {
+      Json.toJson(mode) mustEqual JsString("CheckMode")
     }
     "return correct jsLiteral" in {
-      val mode: Mode = CheckMode
       Mode.jsLiteral.to(mode) mustEqual """"CheckMode""""
     }
   }

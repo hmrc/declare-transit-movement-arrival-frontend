@@ -23,24 +23,16 @@ sealed trait Mode
 
 case object NormalMode extends Mode {
   override def toString: String = "NormalMode"
-
-  implicit val writes: Writes[NormalMode.type] = Writes {
-    mode => JsString(mode.toString)
-  }
 }
 
 case object CheckMode extends Mode {
-  override val toString: String = "CheckMode"
-
-  implicit val writes: Writes[CheckMode.type] = Writes {
-    mode => JsString(mode.toString)
-  }
+  override def toString: String = "CheckMode"
 }
 
 object Mode {
-  implicit val jsLiteral: JavascriptLiteral[Mode] = (value: Mode) => s""""${value.toString}""""
+  implicit val jsLiteral: JavascriptLiteral[Mode] = (mode: Mode) => s""""$mode""""
 
-  implicit val writes: Writes[Mode] = Writes(
+  implicit def writes[T <: Mode]: Writes[T] = Writes {
     mode => JsString(mode.toString)
-  )
+  }
 }
