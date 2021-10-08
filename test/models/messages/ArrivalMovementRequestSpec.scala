@@ -21,7 +21,9 @@ import generators.MessagesModelGenerators
 import models.NormalProcedureFlag
 import models.XMLWrites._
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalatest.{FreeSpec, MustMatchers, OptionValues, StreamlinedXmlEquality}
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.must.Matchers
+import org.scalatest.{OptionValues, StreamlinedXmlEquality}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import utils.Format
@@ -31,8 +33,8 @@ import java.time.LocalTime
 import scala.xml.{Node, NodeSeq}
 
 class ArrivalMovementRequestSpec
-    extends FreeSpec
-    with MustMatchers
+    extends AnyFreeSpec
+    with Matchers
     with GuiceOneAppPerSuite
     with MessagesModelGenerators
     with ScalaCheckDrivenPropertyChecks

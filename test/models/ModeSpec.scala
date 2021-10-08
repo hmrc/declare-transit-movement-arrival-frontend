@@ -18,28 +18,33 @@ package models
 
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
-import org.scalatest.OptionValues
+import play.api.libs.json.{JsString, Json}
 
-class IndexSpec extends AnyFreeSpec with Matchers with OptionValues {
-
-  "Index display must return correct Int" in {
-    Index(0).display mustEqual 1
-  }
-
-  "indexPathBindable" - {
-    val binder = Index.indexPathBindable
-    val key    = "index"
-
-    "bind a valid index" in {
-      binder.bind(key, "1") mustEqual Right(Index(0))
+class ModeSpec extends AnyFreeSpec with Matchers {
+  "NormalMode" - {
+    val mode: Mode = NormalMode
+    "convert to string" in {
+      mode.toString mustEqual "NormalMode"
     }
-
-    "fail to bind an index with negative value" in {
-      binder.bind(key, "-1") mustEqual Left("Index binding failed")
+    "serialise correctly" in {
+      Json.toJson(mode) mustEqual JsString("NormalMode")
     }
-
-    "unbind an index" in {
-      binder.unbind(key, Index(0)) mustEqual "1"
+    "return correct jsLiteral" in {
+      Mode.jsLiteral.to(mode) mustEqual """"NormalMode""""
     }
   }
+
+  "CheckMode" - {
+    val mode: Mode = CheckMode
+    "convert to string" in {
+      mode.toString mustEqual "CheckMode"
+    }
+    "serialise correctly" in {
+      Json.toJson(mode) mustEqual JsString("CheckMode")
+    }
+    "return correct jsLiteral" in {
+      Mode.jsLiteral.to(mode) mustEqual """"CheckMode""""
+    }
+  }
+
 }

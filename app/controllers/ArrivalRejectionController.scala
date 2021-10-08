@@ -16,8 +16,8 @@
 
 package controllers
 
-import config.FrontendAppConfig
 import controllers.actions._
+import javax.inject.Inject
 import models.ArrivalId
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -27,7 +27,6 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewModels.ArrivalRejectionViewModel
 import viewModels.sections.ViewModelConfig
 
-import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class ArrivalRejectionController @Inject() (

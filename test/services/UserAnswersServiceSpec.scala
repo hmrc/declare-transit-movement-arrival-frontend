@@ -22,7 +22,7 @@ import generators.MessagesModelGenerators
 import models.messages.ArrivalMovementRequest
 import models.reference.CustomsOffice
 import models.{ArrivalId, EoriNumber, UserAnswers}
-import org.mockito.ArgumentMatchers.any
+import org.mockito.Matchers.any
 import org.mockito.Mockito._
 import org.scalacheck.Arbitrary.arbitrary
 import play.api.inject.bind

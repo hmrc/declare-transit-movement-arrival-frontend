@@ -22,11 +22,9 @@ import models.messages.ErrorType._
 import models.messages.{ArrivalNotificationRejectionMessage, FunctionalError}
 import play.api.i18n.Messages
 import play.api.libs.json.{JsObject, Json, OWrites}
-import uk.gov.hmrc.viewmodels.{NunjucksSupport, Text}
-import uk.gov.hmrc.viewmodels.Text.Literal
+import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 object NunjucksSupportObject extends NunjucksSupport
-import viewModels.NunjucksSupportObject._
 
 sealed trait RejectionViewData
 
