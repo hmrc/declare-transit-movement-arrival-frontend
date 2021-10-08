@@ -25,7 +25,7 @@ case object NormalMode extends Mode {
   override def toString: String = "NormalMode"
 
   implicit val writes: Writes[NormalMode.type] = Writes {
-    _ => JsString(toString)
+    mode => JsString(mode.toString)
   }
 }
 
@@ -33,7 +33,7 @@ case object CheckMode extends Mode {
   override val toString: String = "CheckMode"
 
   implicit val writes: Writes[CheckMode.type] = Writes {
-    _ => JsString(toString)
+    mode => JsString(mode.toString)
   }
 }
 
