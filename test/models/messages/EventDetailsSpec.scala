@@ -24,15 +24,17 @@ import models.domain.{ContainerTranshipmentDomain, IncidentWithInformationDomain
 import models.messages.behaviours.JsonBehaviours
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.OptionValues._
-import org.scalatest.{FreeSpec, MustMatchers, StreamlinedXmlEquality}
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.must.Matchers
+import org.scalatest.StreamlinedXmlEquality
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import utils.Format
 
 import scala.xml.NodeSeq
 
 class EventDetailsSpec
-    extends FreeSpec
-    with MustMatchers
+    extends AnyFreeSpec
+    with Matchers
     with ScalaCheckPropertyChecks
     with MessagesModelGenerators
     with JsonBehaviours

@@ -19,7 +19,9 @@ package forms.mappings
 import generators.Generators
 import models.{Enumerable, MovementReferenceNumber}
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalatest.{FreeSpec, MustMatchers, OptionValues}
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.must.Matchers
+import org.scalatest.OptionValues
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.data.{Form, FormError}
 
@@ -42,7 +44,7 @@ object MappingsSpec {
   }
 }
 
-class MappingsSpec extends FreeSpec with MustMatchers with OptionValues with Mappings with ScalaCheckPropertyChecks with Generators {
+class MappingsSpec extends AnyFreeSpec with Matchers with OptionValues with Mappings with ScalaCheckPropertyChecks with Generators {
 
   import MappingsSpec._
 

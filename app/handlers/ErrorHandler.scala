@@ -17,7 +17,9 @@
 package handlers
 
 import javax.inject.{Inject, Singleton}
+import logging.Logging
 import models.requests.DataRequest
+import play.api.PlayException
 import play.api.http.HeaderNames.CACHE_CONTROL
 import play.api.http.HttpErrorHandler
 import play.api.http.Status._
@@ -25,7 +27,6 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.Results._
 import play.api.mvc.{AnyContent, RequestHeader, Result, Results}
-import play.api.{Logger, PlayException}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.http.ApplicationException
 import uk.gov.hmrc.viewmodels.NunjucksSupport
@@ -37,7 +38,8 @@ import scala.concurrent.{ExecutionContext, Future}
 class ErrorHandler @Inject() (renderer: Renderer, val messagesApi: MessagesApi)(implicit ec: ExecutionContext)
     extends HttpErrorHandler
     with I18nSupport
-    with NunjucksSupport {
+    with NunjucksSupport
+    with Logging {
 
   override def onClientError(request: RequestHeader, statusCode: Int, message: String = ""): Future[Result] = {
 
@@ -85,7 +87,7 @@ class ErrorHandler @Inject() (renderer: Renderer, val messagesApi: MessagesApi)(
   }
 
   private def logError(request: RequestHeader, ex: Throwable): Unit =
-    Logger.error(
+    logger.error(
       """
         |
         |! %sInternal server error, for (%s) [%s] ->

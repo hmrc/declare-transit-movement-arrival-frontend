@@ -22,12 +22,14 @@ import models.LanguageCodeEnglish
 import models.XMLWrites._
 import models.messages.behaviours.JsonBehaviours
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalatest.{FreeSpec, MustMatchers, OptionValues, StreamlinedXmlEquality}
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.must.Matchers
+import org.scalatest.{OptionValues, StreamlinedXmlEquality}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
 class EnRouteEventSpec
-    extends FreeSpec
-    with MustMatchers
+    extends AnyFreeSpec
+    with Matchers
     with ScalaCheckPropertyChecks
     with MessagesModelGenerators
     with JsonBehaviours

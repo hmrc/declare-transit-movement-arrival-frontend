@@ -21,7 +21,7 @@ import connectors.ArrivalMovementConnector
 import generators.MessagesModelGenerators
 import models.messages.ArrivalMovementRequest
 import models.{ArrivalId, MessagesLocation, MessagesSummary}
-import org.mockito.ArgumentMatchers.any
+import org.mockito.Matchers.any
 import org.mockito.Mockito.{reset, _}
 import org.scalacheck.Arbitrary.arbitrary
 import play.api.inject.bind
