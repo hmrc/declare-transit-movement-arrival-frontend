@@ -18,7 +18,9 @@ package repositories
 
 import models.{EoriNumber, MovementReferenceNumber, UserAnswers}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
-import org.scalatest.{BeforeAndAfterEach, FreeSpec, MustMatchers, OptionValues}
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.must.Matchers
+import org.scalatest.{BeforeAndAfterEach, OptionValues}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.libs.json.Json
 import reactivemongo.play.json.collection.JSONCollection
@@ -26,8 +28,8 @@ import services.mocks.MockDateTimeService
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class SessionRepositorySpec extends FreeSpec
-  with MustMatchers
+class SessionRepositorySpec extends AnyFreeSpec
+  with Matchers
   with MongoSuite
   with ScalaFutures
   with BeforeAndAfterEach
