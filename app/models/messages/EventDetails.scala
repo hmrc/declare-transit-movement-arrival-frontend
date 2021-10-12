@@ -48,8 +48,8 @@ object EventDetails {
 
   implicit def xmlReader: XmlReader[EventDetails] = XmlReader {
     xml =>
-      val transhipmentPath = (xmlPath \ "TRASHP")
-      val incidentPath     = (xmlPath \ "INCINC")
+      val transhipmentPath = xmlPath \ "TRASHP"
+      val incidentPath     = xmlPath \ "INCINC"
 
       if (transhipmentPath(xml).nonEmpty)
         transhipmentPath.read(Transhipment.xmlReader).read(xml)
@@ -67,10 +67,10 @@ object Incident {
 
 final case class IncidentWithInformation(
   incidentInformation: String,
-  date: Option[LocalDate]   = None,
+  date: Option[LocalDate] = None,
   authority: Option[String] = None,
-  place: Option[String]     = None,
-  country: Option[String]   = None
+  place: Option[String] = None,
+  country: Option[String] = None
 ) extends Incident
 
 object IncidentWithInformation {
@@ -94,20 +94,20 @@ object IncidentWithInformation {
       {
         <IncInfINC4>{escapeXml(incident.incidentInformation)}</IncInfINC4>
         <IncInfINC4LNG>{Header.Constants.languageCode.code}</IncInfINC4LNG> ++
-        incident.date.fold[NodeSeq](NodeSeq.Empty)(date =>
-          <EndDatINC6>{Format.dateFormatted(date)}</EndDatINC6>
-        ) ++
-        incident.authority.fold[NodeSeq](NodeSeq.Empty)(authority =>
-          <EndAutINC7>{escapeXml(authority)}</EndAutINC7>
-        ) ++
-        <EndAutINC7LNG>{Header.Constants.languageCode.code}</EndAutINC7LNG> ++
-        incident.place.fold(NodeSeq.Empty)(place =>
-          <EndPlaINC10>{escapeXml(place)}</EndPlaINC10>
-        ) ++
-        <EndPlaINC10LNG>{Header.Constants.languageCode.code}</EndPlaINC10LNG> ++
-        incident.country.fold(NodeSeq.Empty)(country =>
-          <EndCouINC12>{escapeXml(country)}</EndCouINC12>
-        )
+          incident.date.fold[NodeSeq](NodeSeq.Empty)(
+            date => <EndDatINC6>{Format.dateFormatted(date)}</EndDatINC6>
+          ) ++
+          incident.authority.fold[NodeSeq](NodeSeq.Empty)(
+            authority => <EndAutINC7>{escapeXml(authority)}</EndAutINC7>
+          ) ++
+          <EndAutINC7LNG>{Header.Constants.languageCode.code}</EndAutINC7LNG> ++
+          incident.place.fold(NodeSeq.Empty)(
+            place => <EndPlaINC10>{escapeXml(place)}</EndPlaINC10>
+          ) ++
+          <EndPlaINC10LNG>{Header.Constants.languageCode.code}</EndPlaINC10LNG> ++
+          incident.country.fold(NodeSeq.Empty)(
+            country => <EndCouINC12>{escapeXml(country)}</EndCouINC12>
+          )
       }
     </INCINC>
   }
@@ -123,10 +123,10 @@ object IncidentWithInformation {
 }
 
 final case class IncidentWithoutInformation(
-  date: Option[LocalDate]   = None,
+  date: Option[LocalDate] = None,
   authority: Option[String] = None,
-  place: Option[String]     = None,
-  country: Option[String]   = None
+  place: Option[String] = None,
+  country: Option[String] = None
 ) extends Incident
 
 object IncidentWithoutInformation {
@@ -135,23 +135,25 @@ object IncidentWithoutInformation {
     incident =>
       <INCINC>
         {
-          <IncFlaINC3>1</IncFlaINC3>
+        <IncFlaINC3>1</IncFlaINC3>
           <IncInfINC4LNG>{Header.Constants.languageCode.code}</IncInfINC4LNG> ++
-          incident.date.fold[NodeSeq](NodeSeq.Empty)(date =>
-            <EndDatINC6>{Format.dateFormatted(date)}</EndDatINC6>
+          incident.date.fold[NodeSeq](NodeSeq.Empty)(
+            date => <EndDatINC6>{Format.dateFormatted(date)}</EndDatINC6>
           ) ++
-          incident.authority.fold[NodeSeq](NodeSeq.Empty)(authority =>
-            <EndAutINC7>{escapeXml(authority)}</EndAutINC7>
+          incident.authority.fold[NodeSeq](NodeSeq.Empty)(
+            authority => <EndAutINC7>{escapeXml(authority)}</EndAutINC7>
           ) ++
-          <EndAutINC7LNG>{Header.Constants.languageCode.code}</EndAutINC7LNG> ++ //TODO This potentially needs to be included in the above fold as the elements are paired
-          incident.place.fold(NodeSeq.Empty)(place =>
-            <EndPlaINC10>{escapeXml(place)}</EndPlaINC10>
+          <EndAutINC7LNG>{
+            Header.Constants.languageCode.code
+          }</EndAutINC7LNG> ++ //TODO This potentially needs to be included in the above fold as the elements are paired
+          incident.place.fold(NodeSeq.Empty)(
+            place => <EndPlaINC10>{escapeXml(place)}</EndPlaINC10>
           ) ++
           <EndPlaINC10LNG>{Header.Constants.languageCode.code}</EndPlaINC10LNG> ++
-          incident.country.fold(NodeSeq.Empty)(country =>
-            <EndCouINC12>{escapeXml(country)}</EndCouINC12>
+          incident.country.fold(NodeSeq.Empty)(
+            country => <EndCouINC12>{escapeXml(country)}</EndCouINC12>
           )
-        }
+      }
       </INCINC>
   }
 
@@ -180,10 +182,10 @@ final case class VehicularTranshipment(
   transportIdentity: String,
   transportCountry: CountryCode,
   containers: Option[Seq[Container]],
-  date: Option[LocalDate]   = None,
+  date: Option[LocalDate] = None,
   authority: Option[String] = None,
-  place: Option[String]     = None,
-  country: Option[String]   = None
+  place: Option[String] = None,
+  country: Option[String] = None
 ) extends Transhipment
 
 object VehicularTranshipment {
@@ -209,28 +211,28 @@ object VehicularTranshipment {
     transhipment =>
       <TRASHP>
         {
-          <NewTraMeaIdeSHP26>{escapeXml(transhipment.transportIdentity)}</NewTraMeaIdeSHP26> ++
-            <NewTraMeaIdeSHP26LNG>{Header.Constants.languageCode.code}</NewTraMeaIdeSHP26LNG> ++
-            <NewTraMeaNatSHP54>{escapeXml(transhipment.transportCountry.code)}</NewTraMeaNatSHP54> ++ {
-            transhipment.date.fold(NodeSeq.Empty)(date =>
-              <EndDatSHP60> {Format.dateFormatted(date)} </EndDatSHP60>
+        <NewTraMeaIdeSHP26>{escapeXml(transhipment.transportIdentity)}</NewTraMeaIdeSHP26> ++
+          <NewTraMeaIdeSHP26LNG>{Header.Constants.languageCode.code}</NewTraMeaIdeSHP26LNG> ++
+          <NewTraMeaNatSHP54>{escapeXml(transhipment.transportCountry.code)}</NewTraMeaNatSHP54> ++ {
+            transhipment.date.fold(NodeSeq.Empty)(
+              date => <EndDatSHP60> {Format.dateFormatted(date)} </EndDatSHP60>
             )
           } ++ {
-            transhipment.authority.fold(NodeSeq.Empty)(authority =>
-              <EndAutSHP61> {escapeXml(authority)} </EndAutSHP61>
+            transhipment.authority.fold(NodeSeq.Empty)(
+              authority => <EndAutSHP61> {escapeXml(authority)} </EndAutSHP61>
             )
           } ++
-            <EndAutSHP61LNG> {Header.Constants.languageCode.code} </EndAutSHP61LNG> ++ {
-            transhipment.place.fold(NodeSeq.Empty)(place =>
-              <EndPlaSHP63> {escapeXml(place)} </EndPlaSHP63>
+          <EndAutSHP61LNG> {Header.Constants.languageCode.code} </EndAutSHP61LNG> ++ {
+            transhipment.place.fold(NodeSeq.Empty)(
+              place => <EndPlaSHP63> {escapeXml(place)} </EndPlaSHP63>
             )
           } ++
-            <EndPlaSHP63LNG> {Header.Constants.languageCode.code} </EndPlaSHP63LNG> ++ {
-            transhipment.country.fold(NodeSeq.Empty)(country =>
-              <EndCouSHP65> {escapeXml(country)} </EndCouSHP65>
+          <EndPlaSHP63LNG> {Header.Constants.languageCode.code} </EndPlaSHP63LNG> ++ {
+            transhipment.country.fold(NodeSeq.Empty)(
+              country => <EndCouSHP65> {escapeXml(country)} </EndCouSHP65>
             )
           } ++ transhipment.containers.fold(NodeSeq.Empty)(_.flatMap(_.toXml))
-        }
+      }
       </TRASHP>
   }
 
@@ -247,10 +249,10 @@ object VehicularTranshipment {
 
 final case class ContainerTranshipment(
   containers: Seq[Container],
-  date: Option[LocalDate]   = None,
+  date: Option[LocalDate] = None,
   authority: Option[String] = None,
-  place: Option[String]     = None,
-  country: Option[String]   = None
+  place: Option[String] = None,
+  country: Option[String] = None
 ) extends Transhipment {
   require(containers.nonEmpty, "At least one container number must be provided")
 }
@@ -272,23 +274,19 @@ object ContainerTranshipment {
     transhipment =>
       <TRASHP>
         {
-          transhipment.date.fold(NodeSeq.Empty) (
-            date =>
-              <EndDatSHP60> {Format.dateFormatted(date)} </EndDatSHP60>
+        transhipment.date.fold(NodeSeq.Empty)(
+          date => <EndDatSHP60> {Format.dateFormatted(date)} </EndDatSHP60>
+        ) ++
+          transhipment.authority.fold(NodeSeq.Empty)(
+            authority => <EndAutSHP61> {escapeXml(authority)} </EndAutSHP61>
           ) ++
-          transhipment.authority.fold(NodeSeq.Empty) (
-            authority =>
-            <EndAutSHP61> {escapeXml(authority)} </EndAutSHP61>
+          <EndAutSHP61LNG> {Header.Constants.languageCode.code} </EndAutSHP61LNG> ++
+          transhipment.place.fold(NodeSeq.Empty)(
+            place => <EndPlaSHP63> {escapeXml(place)} </EndPlaSHP63>
           ) ++
-            <EndAutSHP61LNG> {Header.Constants.languageCode.code} </EndAutSHP61LNG> ++
-          transhipment.place.fold(NodeSeq.Empty) (
-            place =>
-              <EndPlaSHP63> {escapeXml(place)} </EndPlaSHP63>
-          ) ++
-            <EndPlaSHP63LNG> {Header.Constants.languageCode.code} </EndPlaSHP63LNG> ++
-          transhipment.country.fold(NodeSeq.Empty) (
-              country =>
-                <EndCouSHP65> {escapeXml(country)} </EndCouSHP65>
+          <EndPlaSHP63LNG> {Header.Constants.languageCode.code} </EndPlaSHP63LNG> ++
+          transhipment.country.fold(NodeSeq.Empty)(
+            country => <EndCouSHP65> {escapeXml(country)} </EndCouSHP65>
           ) ++ transhipment.containers.map(_.toXml)
       }
       </TRASHP>

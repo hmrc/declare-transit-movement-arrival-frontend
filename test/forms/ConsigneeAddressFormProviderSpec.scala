@@ -57,7 +57,7 @@ class ConsigneeAddressFormProviderSpec extends StringFieldBehaviours with SpecBa
       behave like fieldWithMaxLength(
         form,
         fieldName,
-        maxLength   = Address.Constants.buildingAndStreetLength,
+        maxLength = Address.Constants.buildingAndStreetLength,
         lengthError = FormError(fieldName, consigneeAddressLengthKey, args),
         validAdressOverLength
       )
@@ -103,7 +103,7 @@ class ConsigneeAddressFormProviderSpec extends StringFieldBehaviours with SpecBa
       behave like fieldWithMaxLength(
         form,
         fieldName,
-        maxLength   = Address.Constants.cityLength,
+        maxLength = Address.Constants.cityLength,
         lengthError = FormError(fieldName, consigneeAddressLengthKey, args),
         validAddressOverLength
       )
@@ -147,7 +147,7 @@ class ConsigneeAddressFormProviderSpec extends StringFieldBehaviours with SpecBa
       behave like fieldWithMaxLength(
         form,
         fieldName,
-        maxLength   = Address.Constants.postcodeLength,
+        maxLength = Address.Constants.postcodeLength,
         lengthError = FormError(fieldName, postcodeLengthKey, Seq(consigneeName)),
         validAdressOverLength
       )

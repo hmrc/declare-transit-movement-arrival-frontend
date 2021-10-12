@@ -35,9 +35,9 @@ object Seal {
     seal =>
       <SEAIDSI1>
         {
-          <SeaIdeSI11>{ escapeXml(seal.numberOrMark) }</SeaIdeSI11> ++
-          <SeaIdeSI11LNG>{ Seal.Constants.languageCode.code }</SeaIdeSI11LNG>
-        }
+        <SeaIdeSI11>{escapeXml(seal.numberOrMark)}</SeaIdeSI11> ++
+          <SeaIdeSI11LNG>{Seal.Constants.languageCode.code}</SeaIdeSI11LNG>
+      }
       </SEAIDSI1>
   }
 

@@ -25,7 +25,7 @@ import uk.gov.hmrc.nunjucks.NunjucksRenderer
 
 import scala.concurrent.Future
 
-class Renderer @Inject()(appConfig: FrontendAppConfig, renderer: NunjucksRenderer) {
+class Renderer @Inject() (appConfig: FrontendAppConfig, renderer: NunjucksRenderer) {
 
   def render(template: String)(implicit request: RequestHeader): Future[Html] =
     renderTemplate(template, Json.obj())
@@ -49,6 +49,9 @@ class Renderer @Inject()(appConfig: FrontendAppConfig, renderer: NunjucksRendere
     "countdown"                      -> appConfig.countdownSeconds,
     "trackingConsentUrl"             -> appConfig.trackingConsentUrl,
     "gtmContainer"                   -> appConfig.gtmContainer,
-    "serviceUrl"                     -> appConfig.serviceUrl
+    "serviceUrl"                     -> appConfig.serviceUrl,
+    "userResearchUrl"                -> appConfig.userResearchUrl,
+    "showPhaseBanner"                -> appConfig.showPhaseBanner,
+    "showUserResearchBanner"         -> appConfig.showUserResearchBanner
   )
 }

@@ -21,7 +21,7 @@ import connectors.ArrivalMovementConnector
 import models.messages.ErrorType.DuplicateMrn
 import models.messages.{ArrivalNotificationRejectionMessage, ErrorPointer, FunctionalError}
 import models.{ArrivalId, MessagesLocation, MessagesSummary}
-import org.mockito.ArgumentMatchers.any
+import org.mockito.Matchers.any
 import org.mockito.Mockito._
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder

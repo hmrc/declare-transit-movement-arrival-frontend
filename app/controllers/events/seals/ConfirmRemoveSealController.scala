@@ -38,7 +38,7 @@ import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class ConfirmRemoveSealController @Inject()(
+class ConfirmRemoveSealController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
   navigator: Navigator,
@@ -85,15 +85,16 @@ class ConfirmRemoveSealController @Inject()(
                     } yield Redirect(navigator.nextPage(ConfirmRemoveSealPage(eventIndex), mode, updatedAnswers))
                   } else {
                     Future.successful(Redirect(navigator.nextPage(ConfirmRemoveSealPage(eventIndex), mode, request.userAnswers)))
-                }
+                  }
               )
           case _ =>
             renderErrorPage(eventIndex, mode)
         }
     }
 
-  private def renderPage(mrn: MovementReferenceNumber, eventIndex: Index, sealIndex: Index, mode: Mode, form: Form[Boolean], seal: SealDomain)(
-    implicit request: DataRequest[AnyContent]): Future[Html] = {
+  private def renderPage(mrn: MovementReferenceNumber, eventIndex: Index, sealIndex: Index, mode: Mode, form: Form[Boolean], seal: SealDomain)(implicit
+    request: DataRequest[AnyContent]
+  ): Future[Html] = {
     val json = Json.obj(
       "form"        -> form,
       "mode"        -> mode,
@@ -105,6 +106,7 @@ class ConfirmRemoveSealController @Inject()(
     renderer.render(confirmRemoveSealTemplate, json)
 
   }
+
   private def renderErrorPage(eventIndex: Index, mode: Mode)(implicit request: DataRequest[AnyContent]): Future[Result] = {
     val redirectLinkText = if (request.userAnswers.get(DeriveNumberOfSeals(eventIndex)).contains(0)) "noSeal" else "multipleSeal"
     val redirectLink     = navigator.nextPage(ConfirmRemoveSealPage(eventIndex), mode, request.userAnswers).url

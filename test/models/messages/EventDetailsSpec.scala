@@ -24,15 +24,17 @@ import models.domain.{ContainerTranshipmentDomain, IncidentWithInformationDomain
 import models.messages.behaviours.JsonBehaviours
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.OptionValues._
-import org.scalatest.{FreeSpec, MustMatchers, StreamlinedXmlEquality}
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.must.Matchers
+import org.scalatest.StreamlinedXmlEquality
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import utils.Format
 
 import scala.xml.NodeSeq
 
 class EventDetailsSpec
-    extends FreeSpec
-    with MustMatchers
+    extends AnyFreeSpec
+    with Matchers
     with ScalaCheckPropertyChecks
     with MessagesModelGenerators
     with JsonBehaviours
@@ -95,9 +97,8 @@ class EventDetailsSpec
 
       forAll(arbitrary[ContainerTranshipment], arbitrary[Container], arbitrary[Container]) {
         (transhipment, container1, container2) =>
-          val containerTranshipment: ContainerTranshipment = {
+          val containerTranshipment: ContainerTranshipment =
             transhipment.copy(containers = Seq(container1, container2))
-          }
 
           val endorsementDateNode = containerTranshipment.date.map {
             date =>
@@ -121,15 +122,15 @@ class EventDetailsSpec
               {
               endorsementDateNode.getOrElse(NodeSeq.Empty) ++
                 endorsementAuthority.getOrElse(NodeSeq.Empty)
-              }
+            }
               <EndAutSHP61LNG>{LanguageCodeEnglish.code}</EndAutSHP61LNG>
               {
               endorsementPlace.getOrElse(NodeSeq.Empty)
-              }
+            }
               <EndPlaSHP63LNG>{LanguageCodeEnglish.code}</EndPlaSHP63LNG>
               {
               endorsementCountry.getOrElse(NodeSeq.Empty)
-              }
+            }
               <CONNR3>
                 <ConNumNR31>{containerTranshipment.containers.head.containerNumber}</ConNumNR31>
               </CONNR3>
@@ -146,9 +147,8 @@ class EventDetailsSpec
 
       forAll(arbitrary[ContainerTranshipment], arbitrary[Container], arbitrary[Container]) {
         (transhipment, container1, container2) =>
-          val containerTranshipment: ContainerTranshipment = {
+          val containerTranshipment: ContainerTranshipment =
             transhipment.copy(containers = Seq(container1, container2))
-          }
 
           val endorsementDateNode = containerTranshipment.date.map {
             date =>
@@ -172,15 +172,15 @@ class EventDetailsSpec
               {
               endorsementDateNode.getOrElse(NodeSeq.Empty) ++
                 endorsementAuthority.getOrElse(NodeSeq.Empty)
-              }
+            }
               <EndAutSHP61LNG>{LanguageCodeEnglish.code}</EndAutSHP61LNG>
               {
               endorsementPlace.getOrElse(NodeSeq.Empty)
-              }
+            }
               <EndPlaSHP63LNG>{LanguageCodeEnglish.code}</EndPlaSHP63LNG>
               {
               endorsementCountry.getOrElse(NodeSeq.Empty)
-              }
+            }
               <CONNR3>
                 <ConNumNR31>{containerTranshipment.containers.head.containerNumber}</ConNumNR31>
               </CONNR3>
@@ -248,15 +248,15 @@ class EventDetailsSpec
               {
               endorsementDateNode.getOrElse(NodeSeq.Empty) ++
                 endorsementAuthority.getOrElse(NodeSeq.Empty)
-              }
+            }
               <EndAutSHP61LNG>{LanguageCodeEnglish.code}</EndAutSHP61LNG>
               {
               endorsementPlace.getOrElse(NodeSeq.Empty)
-              }
+            }
               <EndPlaSHP63LNG>{LanguageCodeEnglish.code}</EndPlaSHP63LNG>
               {
               endorsementCountry.getOrElse(NodeSeq.Empty)
-              }
+            }
             </TRASHP>
 
           vehicularTranshipment.toXml mustEqual expectedResult
@@ -293,15 +293,15 @@ class EventDetailsSpec
               {
               endorsementDateNode.getOrElse(NodeSeq.Empty) ++
                 endorsementAuthority.getOrElse(NodeSeq.Empty)
-              }
+            }
               <EndAutSHP61LNG>{LanguageCodeEnglish.code}</EndAutSHP61LNG>
               {
               endorsementPlace.getOrElse(NodeSeq.Empty)
-              }
+            }
               <EndPlaSHP63LNG>{LanguageCodeEnglish.code}</EndPlaSHP63LNG>
               {
               endorsementCountry.getOrElse(NodeSeq.Empty)
-              }
+            }
             </TRASHP>
 
           val result = XmlReader.of[VehicularTranshipment].read(xml).toOption.value
@@ -339,15 +339,15 @@ class EventDetailsSpec
               {
               endorsementDateNode.getOrElse(NodeSeq.Empty) ++
                 endorsementAuthority.getOrElse(NodeSeq.Empty)
-              }
+            }
               <EndAutSHP61LNG>{LanguageCodeEnglish.code}</EndAutSHP61LNG>
               {
               endorsementPlace.getOrElse(NodeSeq.Empty)
-              }
+            }
               <EndPlaSHP63LNG>{LanguageCodeEnglish.code}</EndPlaSHP63LNG>
               {
               endorsementCountry.getOrElse(NodeSeq.Empty)
-              }
+            }
               <CONNR3>
                 <ConNumNR31>{vehicularTranshipment.containers.value.head.containerNumber}</ConNumNR31>
               </CONNR3>
@@ -390,15 +390,15 @@ class EventDetailsSpec
               {
               endorsementDateNode.getOrElse(NodeSeq.Empty) ++
                 endorsementAuthority.getOrElse(NodeSeq.Empty)
-              }
+            }
               <EndAutSHP61LNG>{LanguageCodeEnglish.code}</EndAutSHP61LNG>
               {
               endorsementPlace.getOrElse(NodeSeq.Empty)
-              }
+            }
               <EndPlaSHP63LNG>{LanguageCodeEnglish.code}</EndPlaSHP63LNG>
               {
               endorsementCountry.getOrElse(NodeSeq.Empty)
-              }
+            }
               <CONNR3>
                 <ConNumNR31>{vehicularTranshipment.containers.value.head.containerNumber}</ConNumNR31>
               </CONNR3>

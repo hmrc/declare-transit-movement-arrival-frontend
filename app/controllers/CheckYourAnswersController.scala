@@ -36,15 +36,16 @@ import viewModels.sections.{Section, ViewModelConfig}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class CheckYourAnswersController @Inject()(override val messagesApi: MessagesApi,
-                                           identify: IdentifierAction,
-                                           getData: DataRetrievalActionProvider,
-                                           requireData: DataRequiredAction,
-                                           service: ArrivalSubmissionService,
-                                           errorHandler: ErrorHandler,
-                                           val viewModelConfig: ViewModelConfig,
-                                           val controllerComponents: MessagesControllerComponents,
-                                           val renderer: Renderer)(implicit ec: ExecutionContext)
+class CheckYourAnswersController @Inject() (override val messagesApi: MessagesApi,
+                                            identify: IdentifierAction,
+                                            getData: DataRetrievalActionProvider,
+                                            requireData: DataRequiredAction,
+                                            service: ArrivalSubmissionService,
+                                            errorHandler: ErrorHandler,
+                                            val viewModelConfig: ViewModelConfig,
+                                            val controllerComponents: MessagesControllerComponents,
+                                            val renderer: Renderer
+)(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
     with NunjucksSupport
@@ -122,6 +123,7 @@ class CheckYourAnswersController @Inject()(override val messagesApi: MessagesApi
       case _                       => Seq(mrn, whereAreTheGoods, consigneeDetails, events)
     }
   }
+
   private def eventList(userAnswers: UserAnswers): Seq[SummaryList.Row] = {
     val numberOfEvents = userAnswers.get(DeriveNumberOfEvents).getOrElse(0)
     val cyaHelper      = new AddEventsHelper(userAnswers)

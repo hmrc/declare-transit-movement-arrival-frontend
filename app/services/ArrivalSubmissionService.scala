@@ -25,7 +25,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class ArrivalSubmissionService @Inject()(
+class ArrivalSubmissionService @Inject() (
   connector: ArrivalMovementConnector,
   userAnswersToArrivalMovementRequestService: UserAnswersToArrivalMovementRequestService
 )(implicit ec: ExecutionContext) {
@@ -40,7 +40,7 @@ class ArrivalSubmissionService @Inject()(
               case Some(arrivalId) => connector.updateArrivalMovement(arrivalId, arrivalMovementRequest)
               case _               => connector.submitArrivalMovement(arrivalMovementRequest)
 
-          }
+            }
         )
       )
 }

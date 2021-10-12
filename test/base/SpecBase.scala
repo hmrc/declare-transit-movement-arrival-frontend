@@ -20,7 +20,9 @@ import models.domain.{ContainerDomain, SealDomain}
 import models.messages.{Container, Seal}
 import models.{Address, EoriNumber, Index, MovementReferenceNumber, UserAnswers}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
-import org.scalatest.{FreeSpec, MustMatchers, OptionValues, TryValues}
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.must.Matchers
+import org.scalatest.{OptionValues, TryValues}
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.i18n.Messages
@@ -29,8 +31,8 @@ import play.api.mvc.AnyContentAsEmpty
 import play.api.test.{FakeRequest, Helpers}
 
 trait SpecBase
-    extends FreeSpec
-    with MustMatchers
+    extends AnyFreeSpec
+    with Matchers
     with ScalaCheckPropertyChecks
     with OptionValues
     with TryValues

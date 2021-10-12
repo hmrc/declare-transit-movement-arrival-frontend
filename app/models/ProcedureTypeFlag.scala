@@ -36,6 +36,7 @@ object ProcedureTypeFlag {
 
   implicit val procedureTypeFlagXmlReads: XmlReader[ProcedureTypeFlag] =
     new XmlReader[ProcedureTypeFlag] {
+
       override def read(xml: NodeSeq): ParseResult[ProcedureTypeFlag] = {
 
         case class ProcedureTypeFlagParseFailure(message: String) extends ParseError

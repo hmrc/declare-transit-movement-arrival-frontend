@@ -25,7 +25,8 @@ object ArrivalMovementRequestToArrivalNotificationService {
 
   def convertToArrivalNotification(arrivalMovementRequest: ArrivalMovementRequest,
                                    customsOffice: CustomsOffice,
-                                   authEoriNumber: EoriNumber): Option[ArrivalNotificationDomain] =
+                                   authEoriNumber: EoriNumber
+  ): Option[ArrivalNotificationDomain] =
     (
       arrivalMovementRequest.header.procedureTypeFlag,
       MovementReferenceNumber(arrivalMovementRequest.header.movementReferenceNumber),
@@ -35,12 +36,12 @@ object ArrivalMovementRequestToArrivalNotificationService {
         Some(
           NormalNotification(
             movementReferenceNumber = mrn,
-            notificationPlace       = arrivalMovementRequest.header.arrivalNotificationPlace,
-            notificationDate        = arrivalMovementRequest.header.notificationDate,
-            customsSubPlace         = customsSubPlace,
-            trader                  = Trader.messagesTraderToDomainTrader(arrivalMovementRequest.trader),
-            customsOffice           = customsOffice,
-            enRouteEvents           = arrivalMovementRequest.enRouteEvents.map(_.map(EnRouteEvent.enRouteEventToDomain))
+            notificationPlace = arrivalMovementRequest.header.arrivalNotificationPlace,
+            notificationDate = arrivalMovementRequest.header.notificationDate,
+            customsSubPlace = customsSubPlace,
+            trader = Trader.messagesTraderToDomainTrader(arrivalMovementRequest.trader),
+            customsOffice = customsOffice,
+            enRouteEvents = arrivalMovementRequest.enRouteEvents.map(_.map(EnRouteEvent.enRouteEventToDomain))
           )
         )
       case (SimplifiedProcedureFlag, Some(mrn), _) =>
@@ -48,13 +49,13 @@ object ArrivalMovementRequestToArrivalNotificationService {
           authLocation =>
             SimplifiedNotification(
               movementReferenceNumber = mrn,
-              notificationPlace       = arrivalMovementRequest.header.arrivalNotificationPlace,
-              notificationDate        = arrivalMovementRequest.header.notificationDate,
-              authorisedLocation      = authLocation,
-              trader                  = Trader.messagesTraderToDomainTrader(arrivalMovementRequest.trader),
-              customsOffice           = customsOffice,
-              enRouteEvents           = arrivalMovementRequest.enRouteEvents.map(_.map(EnRouteEvent.enRouteEventToDomain)),
-              authedEori              = authEoriNumber
+              notificationPlace = arrivalMovementRequest.header.arrivalNotificationPlace,
+              notificationDate = arrivalMovementRequest.header.notificationDate,
+              authorisedLocation = authLocation,
+              trader = Trader.messagesTraderToDomainTrader(arrivalMovementRequest.trader),
+              customsOffice = customsOffice,
+              enRouteEvents = arrivalMovementRequest.enRouteEvents.map(_.map(EnRouteEvent.enRouteEventToDomain)),
+              authedEori = authEoriNumber
             )
         }
 

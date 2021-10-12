@@ -27,7 +27,7 @@ class ConfirmRemoveContainerFormProvider @Inject() extends Mappings {
     Form(
       "value" -> boolean(
         requiredKey = "confirmRemoveContainer.error.required",
-        args        = Seq(container.containerNumber)
+        args = Seq(container.containerNumber)
       )
     )
 }

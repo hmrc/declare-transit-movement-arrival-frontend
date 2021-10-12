@@ -20,18 +20,16 @@ import controllers.routes
 import models.ArrivalId
 import models.messages.ErrorType._
 import models.messages.{ArrivalNotificationRejectionMessage, FunctionalError}
-import play.api.i18n.Messages
 import play.api.libs.json.{JsObject, Json, OWrites}
-import uk.gov.hmrc.viewmodels.{NunjucksSupport, Text}
-import uk.gov.hmrc.viewmodels.Text.Literal
+import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 object NunjucksSupportObject extends NunjucksSupport
-import viewModels.NunjucksSupportObject._
 
 sealed trait RejectionViewData
 
 private object RejectionViewData {
-  implicit def writes(implicit messages: Messages): OWrites[RejectionViewData] = OWrites {
+
+  implicit val writes: OWrites[RejectionViewData] = OWrites {
     case x: RejectionViewDataNoFunctionalErrors => Json.toJsObject(x)(RejectionViewDataNoFunctionalErrors.writes)
     case x: RejectionViewDataFunctionalErrors   => Json.toJsObject(x)(RejectionViewDataFunctionalErrors.writes)
   }
@@ -45,7 +43,7 @@ final private case class RejectionViewDataNoFunctionalErrors(
 ) extends RejectionViewData
 
 private object RejectionViewDataNoFunctionalErrors {
-  implicit def writes(implicit messages: Messages): OWrites[RejectionViewDataNoFunctionalErrors] = Json.writes[RejectionViewDataNoFunctionalErrors]
+  implicit val writes: OWrites[RejectionViewDataNoFunctionalErrors] = Json.writes[RejectionViewDataNoFunctionalErrors]
 }
 
 final private case class RejectionViewDataFunctionalErrors(
@@ -56,7 +54,7 @@ final private case class RejectionViewDataFunctionalErrors(
 ) extends RejectionViewData
 
 private object RejectionViewDataFunctionalErrors {
-  implicit def writes(implicit messages: Messages): OWrites[RejectionViewDataFunctionalErrors] = Json.writes[RejectionViewDataFunctionalErrors]
+  implicit val writes: OWrites[RejectionViewDataFunctionalErrors] = Json.writes[RejectionViewDataFunctionalErrors]
 }
 
 class ArrivalRejectionViewModel(
@@ -72,9 +70,9 @@ class ArrivalRejectionViewModel(
     rejectionMessage.errors match {
       case FunctionalError(mrnError: MRNError, _, _, _) :: Nil =>
         val data = RejectionViewDataNoFunctionalErrors(
-          mrn                        = rejectionMessage.movementReferenceNumber,
-          errorKey                   = MrnErrorDescription(mrnError),
-          contactUrl                 = enquiriesUrl,
+          mrn = rejectionMessage.movementReferenceNumber,
+          errorKey = MrnErrorDescription(mrnError),
+          contactUrl = enquiriesUrl,
           movementReferenceNumberUrl = routes.UpdateRejectedMRNController.onPageLoad(arrivalId).url
         )
 
@@ -82,18 +80,18 @@ class ArrivalRejectionViewModel(
 
       case _ =>
         val data = RejectionViewDataFunctionalErrors(
-          mrn              = rejectionMessage.movementReferenceNumber,
-          errors           = rejectionMessage.errors,
-          contactUrl       = enquiriesUrl,
+          mrn = rejectionMessage.movementReferenceNumber,
+          errors = rejectionMessage.errors,
+          contactUrl = enquiriesUrl,
           createArrivalUrl = routes.MovementReferenceNumberController.onPageLoad().url
         )
 
         (genericRejectionPage, data)
     }
 
-  val page = _page
+  val page: String = _page
 
-  def viewData(implicit messages: Messages): JsObject = Json.toJsObject(_viewData)
+  def viewData: JsObject = Json.toJsObject(_viewData)
 }
 
 object ArrivalRejectionViewModel {

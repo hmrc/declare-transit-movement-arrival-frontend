@@ -15,9 +15,11 @@
  */
 
 package viewModels
+
 import models.messages.ErrorType.{DuplicateMrn, InvalidMrn, MRNError, UnknownMrn}
 
 private[viewModels] object MrnErrorDescription extends (MRNError => String) {
+
   override def apply(v1: MRNError): String = v1 match {
     case UnknownMrn   => "movementReferenceNumberRejection.error.unknown"
     case DuplicateMrn => "movementReferenceNumberRejection.error.duplicate"

@@ -43,7 +43,7 @@ class CountryListSpec extends SpecBase with ScalaCheckPropertyChecks with Messag
 
         forAll(arbitrary[Country]) {
           country =>
-            val genUniqueCountryVector = arbitrary[Vector[Country]] suchThat (!_.exists(_.code == country.code))
+            val genUniqueCountryVector = arbitrary[Vector[Country]] retryUntil (!_.exists(_.code == country.code))
 
             forAll(genUniqueCountryVector) {
               countries =>
@@ -57,7 +57,9 @@ class CountryListSpec extends SpecBase with ScalaCheckPropertyChecks with Messag
 
         forAll(arbitrary[Vector[Country]]) {
           countries =>
-            val genCountry: Gen[Country] = arbitrary[Country].suchThat(value => !countries.exists(_.code == value.code))
+            val genCountry: Gen[Country] = arbitrary[Country].retryUntil(
+              value => !countries.exists(_.code == value.code)
+            )
             forAll(genCountry) {
               country =>
                 CountryList(countries).getCountry(country.code) mustBe None

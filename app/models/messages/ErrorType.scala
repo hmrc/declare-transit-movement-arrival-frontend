@@ -76,7 +76,9 @@ object ErrorType extends Enumerable.Implicits with Logging {
   implicit val xmlErrorTypeReads: XmlReader[ErrorType] =
     XmlReader.of[Int].map {
       code =>
-        (mrnValues ++ genericValues).find(knownError => knownError.code == code) match {
+        (mrnValues ++ genericValues).find(
+          knownError => knownError.code == code
+        ) match {
           case Some(errorType) => errorType
           case None =>
             logger.warn(s"[read] No known error type found instead found errorType: $code")

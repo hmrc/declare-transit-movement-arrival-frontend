@@ -20,7 +20,7 @@ import com.google.inject.{Inject, Singleton}
 import play.api.Configuration
 
 @Singleton
-class FrontendAppConfig @Inject()(configuration: Configuration) {
+class FrontendAppConfig @Inject() (configuration: Configuration) {
 
   lazy val contactHost: String             = configuration.get[Service]("microservice.services.contact-frontend").baseUrl
   lazy val contactFrontendUrl: String      = configuration.get[Service]("microservice.services.contact-frontend").fullServiceUrl
@@ -29,6 +29,10 @@ class FrontendAppConfig @Inject()(configuration: Configuration) {
 
   val trackingConsentUrl: String = configuration.get[String]("microservice.services.tracking-consent-frontend.url")
   val gtmContainer: String       = configuration.get[String]("microservice.services.tracking-consent-frontend.gtm.container")
+
+  val showPhaseBanner: Boolean        = configuration.get[Boolean]("banners.showPhase")
+  val userResearchUrl: String         = configuration.get[String]("urls.userResearch")
+  val showUserResearchBanner: Boolean = configuration.get[Boolean]("banners.showUserResearch")
 
   val analyticsHost: String          = configuration.get[String](s"google-analytics.host")
   val betaFeedbackUrl                = s"$contactFrontendUrl/beta-feedback"

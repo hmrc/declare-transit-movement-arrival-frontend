@@ -17,11 +17,12 @@
 package models.messages
 
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalatest.{FreeSpec, MustMatchers}
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.{JsError, JsString, JsSuccess, Json}
 
-class ProcedureTypeSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks {
+class ProcedureTypeSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyChecks {
 
   "must deserialise from normal procedure" in {
 

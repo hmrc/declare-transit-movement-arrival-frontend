@@ -26,11 +26,11 @@ import uk.gov.hmrc.viewmodels._
 class AddSealHelper(userAnswers: UserAnswers) extends SummaryListRowHelper(userAnswers) {
 
   def sealRow(eventIndex: Index, sealIndex: Index, mode: Mode): Option[Row] = getAnswerAndBuildRemovableRow[SealDomain](
-    page         = SealIdentityPage(eventIndex, sealIndex),
+    page = SealIdentityPage(eventIndex, sealIndex),
     formatAnswer = seal => lit"${seal.numberOrMark}",
-    id           = s"seal-${sealIndex.display}",
-    changeCall   = SealIdentityController.onPageLoad(mrn, eventIndex, sealIndex, mode),
-    removeCall   = ConfirmRemoveSealController.onPageLoad(mrn, eventIndex, sealIndex, mode)
+    id = s"seal-${sealIndex.display}",
+    changeCall = SealIdentityController.onPageLoad(mrn, eventIndex, sealIndex, mode),
+    removeCall = ConfirmRemoveSealController.onPageLoad(mrn, eventIndex, sealIndex, mode)
   )
 }
 

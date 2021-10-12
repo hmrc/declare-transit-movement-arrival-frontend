@@ -14,13 +14,6 @@
  * limitations under the License.
  */
 
-package viewModels.sections
+package views
 
-import com.google.inject.Inject
-import play.api.Configuration
-
-class ViewModelConfig @Inject() (configuration: Configuration) {
-
-  val nctsEnquiriesUrl: String = configuration.get[String]("urls.nctsEnquiries")
-
-}
+class SessionExpiredViewSpec extends SingleViewSpec("session-expired.njk", hasSignOutLink = false)

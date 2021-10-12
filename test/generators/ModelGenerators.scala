@@ -46,19 +46,22 @@ trait ModelGenerators {
   implicit lazy val arbitraryMovementReferenceNumber: Arbitrary[MovementReferenceNumber] =
     Arbitrary {
       for {
-        year    <- Gen.choose(0, 99).map(y => f"$y%02d")
+        year <- Gen
+          .choose(0, 99)
+          .map(
+            y => f"$y%02d"
+          )
         country <- Gen.pick(2, 'A' to 'Z')
         serial  <- Gen.pick(13, ('A' to 'Z') ++ ('0' to '9'))
       } yield MovementReferenceNumber(year, country.mkString, serial.mkString)
     }
 
-  implicit lazy val arbitraryEoriNumber: Arbitrary[EoriNumber] = {
+  implicit lazy val arbitraryEoriNumber: Arbitrary[EoriNumber] =
     Arbitrary {
       for {
         number <- stringsWithMaxLength(domain.TraderDomain.Constants.eoriLength)
       } yield EoriNumber(number)
     }
-  }
 
   implicit lazy val arbitraryCustomsOffice: Arbitrary[CustomsOffice] = {
 
@@ -76,15 +79,18 @@ trait ModelGenerators {
 
   implicit lazy val arbitraryCountryCode: Arbitrary[CountryCode] =
     Arbitrary {
-      Gen.pick(CountryCode.Constants.countryCodeLength, 'A' to 'Z').map(code => CountryCode(code.mkString))
+      Gen
+        .pick(CountryCode.Constants.countryCodeLength, 'A' to 'Z')
+        .map(
+          code => CountryCode(code.mkString)
+        )
     }
 
-  implicit lazy val arbitraryCountry: Arbitrary[Country] = {
+  implicit lazy val arbitraryCountry: Arbitrary[Country] =
     Arbitrary {
       for {
         code <- arbitrary[CountryCode]
         name <- arbitrary[String]
       } yield Country(code, name)
     }
-  }
 }

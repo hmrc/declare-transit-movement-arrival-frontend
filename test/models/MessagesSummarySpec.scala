@@ -16,10 +16,11 @@
 
 package models
 
-import org.scalatest.{FreeSpec, MustMatchers}
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.must.Matchers
 import play.api.libs.json.Json
 
-class MessagesSummarySpec extends FreeSpec with MustMatchers {
+class MessagesSummarySpec extends AnyFreeSpec with Matchers {
 
   "MessageActionsSpec" - {
     "De-serialise to Model" in {
@@ -30,7 +31,8 @@ class MessagesSummarySpec extends FreeSpec with MustMatchers {
                           "messages" -> Json.obj(
                             "IE007" -> "/movements/arrivals/1234/messages/3",
                             "IE008" -> "/movements/arrivals/1234/messages/5"
-                          ))
+                          )
+      )
 
       json.as[MessagesSummary] mustBe messageActions
     }

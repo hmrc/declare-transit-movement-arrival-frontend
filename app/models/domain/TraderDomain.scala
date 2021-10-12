@@ -41,8 +41,7 @@ object TraderDomain {
     val cityLength            = 35
   }
 
-  /**
-    * letters a to z
+  /** letters a to z
     * numbers 0 to 9
     * ampersands (&)
     * apostrophes

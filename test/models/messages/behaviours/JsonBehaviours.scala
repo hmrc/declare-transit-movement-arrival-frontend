@@ -18,11 +18,12 @@ package models.messages.behaviours
 
 import generators.MessagesModelGenerators
 import org.scalacheck.Gen
-import org.scalatest.{FreeSpec, MustMatchers}
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.{JsSuccess, Json, Reads, Writes}
 
-trait JsonBehaviours extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with MessagesModelGenerators {
+trait JsonBehaviours extends AnyFreeSpec with Matchers with ScalaCheckPropertyChecks with MessagesModelGenerators {
 
   class DualReadsAndWrites[A] {
 

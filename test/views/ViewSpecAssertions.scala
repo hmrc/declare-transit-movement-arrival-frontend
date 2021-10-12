@@ -17,19 +17,20 @@
 package views
 
 import org.jsoup.nodes.{Document, Element}
-import org.scalatest.MustMatchers
+import org.scalatest.Assertion
+import org.scalatest.matchers.must.Matchers
 import play.api.i18n.Messages
 
 import scala.collection.JavaConverters._
 
 trait ViewSpecAssertions {
-  self: MustMatchers =>
+  self: Matchers =>
 
   def messages: Messages
 
   def getByElementId(doc: Document, id: String): Element = {
     val elem: Element = doc.getElementById(id)
-    elem must not equal (null)
+    elem must not equal null
     elem
   }
 
@@ -39,4 +40,12 @@ trait ViewSpecAssertions {
   def findByElementId(doc: Document, id: String): Option[Element] =
     Option(doc.getElementById(id))
 
+  def assertPageHasSignOutLink(doc: Document, expectedText: String, expectedHref: String): Assertion = {
+    val link = doc.getElementsByClass("hmrc-sign-out-nav__link").first()
+    link.text() mustBe expectedText
+    link.attr("href") mustBe expectedHref
+  }
+
+  def assertPageHasNoSignOutLink(doc: Document): Assertion =
+    doc.getElementsByClass("hmrc-sign-out-nav__link").isEmpty mustBe true
 }

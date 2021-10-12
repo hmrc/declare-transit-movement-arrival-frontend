@@ -21,7 +21,7 @@ import forms.CustomsOfficeFormProvider
 import matchers.JsonMatchers
 import models.reference.CustomsOffice
 import models.{CustomsOfficeList, NormalMode, UserAnswers}
-import org.mockito.ArgumentMatchers.any
+import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.mockito.{ArgumentCaptor, Mockito}
 import pages.{ConsigneeNamePage, CustomsOfficePage, CustomsSubPlacePage}
@@ -171,7 +171,7 @@ class CustomsOfficeControllerSpec extends SpecBase with AppWithDefaultMockFixtur
   private def verifyBadRequestOnSubmit(formValue: String) = {
     val customsOfficeJson = Seq(
       Json.obj("value" -> "", "text"         -> "Select a customs office"),
-      Json.obj("value" -> "id", "text"       -> "name (id)", "selected" -> false),
+      Json.obj("value" -> "id", "text"       -> "name (id)", "selected"           -> false),
       Json.obj("value" -> "officeId", "text" -> "someName (officeId)", "selected" -> false)
     )
 
@@ -229,7 +229,7 @@ class CustomsOfficeControllerSpec extends SpecBase with AppWithDefaultMockFixtur
 
     val expectedCustomsOfficeJson = Seq(
       Json.obj("value" -> "", "text"         -> "Select a customs office"),
-      Json.obj("value" -> "id", "text"       -> "name (id)", "selected" -> false),
+      Json.obj("value" -> "id", "text"       -> "name (id)", "selected"           -> false),
       Json.obj("value" -> "officeId", "text" -> "someName (officeId)", "selected" -> preSelectOfficeId)
     )
 
