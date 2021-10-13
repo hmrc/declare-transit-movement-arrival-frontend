@@ -22,7 +22,6 @@ import models.StringFieldRegex.stringFieldRegex
 import javax.inject.Inject
 import play.api.data.Form
 import models.messages.IncidentWithInformation.Constants.informationLength
-import uk.gov.hmrc.play.mappers.StopOnFirstFail
 
 class IncidentInformationFormProvider @Inject() extends Mappings {
 

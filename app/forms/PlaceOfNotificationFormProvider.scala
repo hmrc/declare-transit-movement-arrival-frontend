@@ -20,7 +20,6 @@ import forms.mappings.Mappings
 import javax.inject.Inject
 import play.api.data.Form
 import models.domain.NormalNotification.Constants.notificationPlaceLength
-import uk.gov.hmrc.play.mappers.StopOnFirstFail
 import models.StringFieldRegex._
 
 class PlaceOfNotificationFormProvider @Inject() extends Mappings {

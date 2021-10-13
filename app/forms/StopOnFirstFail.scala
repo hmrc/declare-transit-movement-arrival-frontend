@@ -16,22 +16,20 @@
 
 package forms
 
-import forms.mappings.Mappings
-import models.StringFieldRegex.stringFieldRegex
-import models.domain.SimplifiedNotification
-import play.api.data.Form
-import javax.inject.Inject
+import play.api.data.validation.{Constraint, Invalid, Valid, ValidationError}
 
-class AuthorisedLocationFormProvider @Inject() extends Mappings {
+object StopOnFirstFail {
 
-  def apply(): Form[String] =
-    Form(
-      "value" -> text("authorisedLocation.error.required")
-        .verifying(
-          StopOnFirstFail[String](
-            maxLength(SimplifiedNotification.Constants.approvedLocationLength, "authorisedLocation.error.length"),
-            regexp(stringFieldRegex, "authorisedLocation.error.invalid", Seq.empty)
-          )
-        )
+  def apply[T](constraints: Constraint[T]*) = Constraint {
+    field: T =>
+      constraints.toList dropWhile (_(field) == Valid) match {
+        case Nil             => Valid
+        case constraint :: _ => constraint(field)
+      }
+  }
+
+  def constraint[T](message: String, validator: (T) => Boolean) =
+    Constraint(
+      (data: T) => if (validator(data)) Valid else Invalid(Seq(ValidationError(message)))
     )
 }
