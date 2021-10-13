@@ -19,8 +19,6 @@ package forms
 import forms.mappings.Mappings
 import models.domain.TraderDomain.{eoriLengthRegex, eoriRegex, eoriUkXiRegex}
 import play.api.data.Form
-import uk.gov.hmrc.play.mappers.StopOnFirstFail
-
 import javax.inject.Inject
 
 class EoriNumberFormProvider @Inject() extends Mappings {

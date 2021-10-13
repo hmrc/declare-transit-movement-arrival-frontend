@@ -16,12 +16,11 @@
 
 package forms.events
 
+import forms.StopOnFirstFail
 import forms.mappings.Mappings
 import models.StringFieldRegex.stringFieldRegex
 import models.messages.EnRouteEvent.Constants.placeLength
 import play.api.data.Form
-import uk.gov.hmrc.play.mappers.StopOnFirstFail
-
 import javax.inject.Inject
 
 class EventPlaceFormProvider @Inject() extends Mappings {
