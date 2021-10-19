@@ -41,7 +41,7 @@ object AddContainerViewModel {
       msg"addContainer.title.plural".withArgs(containerCount)
     }
 
-    val addContainerHelper = AddContainerHelper(userAnswers)
+    val addContainerHelper = AddContainerHelper(userAnswers, mode)
     val containers: Option[Section] = userAnswers
       .get(DeriveNumberOfContainers(eventIndex))
       .map {
@@ -50,7 +50,7 @@ object AddContainerViewModel {
 
           val rows = listOfContainerIndex.flatMap {
             index =>
-              addContainerHelper.containerRow(eventIndex, index, mode)
+              addContainerHelper.containerRow(eventIndex, index)
           }
 
           Section(rows)

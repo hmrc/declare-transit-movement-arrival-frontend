@@ -22,7 +22,7 @@ import controllers.events.seals.routes._
 import controllers.events.transhipments.routes._
 import models.domain.{ContainerDomain, SealDomain}
 import models.reference.{Country, CountryCode}
-import models.{CheckMode, CountryList, TranshipmentType}
+import models.{CheckMode, CountryList, Mode, TranshipmentType}
 import pages.events._
 import pages.events.seals._
 import pages.events.transhipments._
@@ -31,7 +31,7 @@ import uk.gov.hmrc.viewmodels.Text.{Literal, Message}
 
 class CheckEventAnswersHelperSpec extends SpecBase {
 
-  // format: off
+  val mode: Mode = CheckMode
 
   "CheckEventAnswersHelper" - {
 
@@ -40,7 +40,7 @@ class CheckEventAnswersHelperSpec extends SpecBase {
       "must return None" - {
         "when IsTranshipmentPage undefined" in {
 
-          val helper = new CheckEventAnswersHelper(emptyUserAnswers)
+          val helper = new CheckEventAnswersHelper(emptyUserAnswers, mode)
           helper.isTranshipment(eventIndex) mustBe None
         }
       }
@@ -49,24 +49,28 @@ class CheckEventAnswersHelperSpec extends SpecBase {
         "when IsTranshipmentPage defined" in {
 
           val answers = emptyUserAnswers
-            .set(IsTranshipmentPage(eventIndex), true).success.value
+            .set(IsTranshipmentPage(eventIndex), true)
+            .success
+            .value
 
-          val helper = new CheckEventAnswersHelper(answers)
-          helper.isTranshipment(eventIndex) mustBe Some(Row(
-            key = Key(
-              content = Message("isTranshipment.checkYourAnswersLabel"),
-              classes = Seq("govuk-!-width-one-half")
-            ),
-            value = Value(Message("site.yes")),
-            actions = List(
-              Action(
-                content            = Message("site.edit"),
-                href               = IsTranshipmentController.onPageLoad(mrn, eventIndex, CheckMode).url,
-                visuallyHiddenText = Some(Message("isTranshipment.change.hidden")),
-                attributes         = Map("id" -> s"change-is-transhipment-${eventIndex.display}")
+          val helper = new CheckEventAnswersHelper(answers, mode)
+          helper.isTranshipment(eventIndex) mustBe Some(
+            Row(
+              key = Key(
+                content = Message("isTranshipment.checkYourAnswersLabel"),
+                classes = Seq("govuk-!-width-one-half")
+              ),
+              value = Value(Message("site.yes")),
+              actions = List(
+                Action(
+                  content = Message("site.edit"),
+                  href = IsTranshipmentController.onPageLoad(mrn, eventIndex, mode).url,
+                  visuallyHiddenText = Some(Message("isTranshipment.change.hidden")),
+                  attributes = Map("id" -> s"change-is-transhipment-${eventIndex.display}")
+                )
               )
             )
-          ))
+          )
         }
       }
     }
@@ -78,7 +82,7 @@ class CheckEventAnswersHelperSpec extends SpecBase {
       "must return None" - {
         "when TranshipmentTypePage undefined" in {
 
-          val helper = new CheckEventAnswersHelper(emptyUserAnswers)
+          val helper = new CheckEventAnswersHelper(emptyUserAnswers, mode)
           helper.transhipmentType(eventIndex) mustBe None
         }
       }
@@ -87,24 +91,28 @@ class CheckEventAnswersHelperSpec extends SpecBase {
         "when TranshipmentTypePage defined" in {
 
           val answers = emptyUserAnswers
-            .set(TranshipmentTypePage(eventIndex), transhipmentType).success.value
+            .set(TranshipmentTypePage(eventIndex), transhipmentType)
+            .success
+            .value
 
-          val helper = new CheckEventAnswersHelper(answers)
-          helper.transhipmentType(eventIndex) mustBe Some(Row(
-            key = Key(
-              content = Message("transhipmentType.checkYourAnswersLabel"),
-              classes = Seq("govuk-!-width-one-half")
-            ),
-            value = Value(Message(s"transhipmentType.checkYourAnswers.$transhipmentType")),
-            actions = List(
-              Action(
-                content            = Message("site.edit"),
-                href               = TranshipmentTypeController.onPageLoad(mrn, eventIndex, CheckMode).url,
-                visuallyHiddenText = Some(Message("transhipmentType.change.hidden")),
-                attributes         = Map("id" -> s"transhipment-type-${eventIndex.display}")
+          val helper = new CheckEventAnswersHelper(answers, mode)
+          helper.transhipmentType(eventIndex) mustBe Some(
+            Row(
+              key = Key(
+                content = Message("transhipmentType.checkYourAnswersLabel"),
+                classes = Seq("govuk-!-width-one-half")
+              ),
+              value = Value(Message(s"transhipmentType.checkYourAnswers.$transhipmentType")),
+              actions = List(
+                Action(
+                  content = Message("site.edit"),
+                  href = TranshipmentTypeController.onPageLoad(mrn, eventIndex, mode).url,
+                  visuallyHiddenText = Some(Message("transhipmentType.change.hidden")),
+                  attributes = Map("id" -> s"transhipment-type-${eventIndex.display}")
+                )
               )
             )
-          ))
+          )
         }
       }
     }
@@ -116,7 +124,7 @@ class CheckEventAnswersHelperSpec extends SpecBase {
       "must return None" - {
         "when ContainerNumberPage undefined" in {
 
-          val helper = new CheckEventAnswersHelper(emptyUserAnswers)
+          val helper = new CheckEventAnswersHelper(emptyUserAnswers, mode)
           helper.containerNumber(eventIndex, containerIndex) mustBe None
         }
       }
@@ -125,24 +133,28 @@ class CheckEventAnswersHelperSpec extends SpecBase {
         "when ContainerNumberPage defined" in {
 
           val answers = emptyUserAnswers
-            .set(ContainerNumberPage(eventIndex, containerIndex), containerDomain).success.value
+            .set(ContainerNumberPage(eventIndex, containerIndex), containerDomain)
+            .success
+            .value
 
-          val helper = new CheckEventAnswersHelper(answers)
-          helper.containerNumber(eventIndex, containerIndex) mustBe Some(Row(
-            key = Key(
-              content = Message("addContainer.containerList.label", containerIndex.display),
-              classes = Seq("govuk-!-width-one-half")
-            ),
-            value = Value(Literal(containerDomain.containerNumber)),
-            actions = List(
-              Action(
-                content            = Message("site.edit"),
-                href               = ContainerNumberController.onPageLoad(mrn, eventIndex, containerIndex, CheckMode).url,
-                visuallyHiddenText = Some(Message("containerNumber.change.hidden", containerDomain.containerNumber)),
-                attributes         = Map("id" -> s"change-container-${containerIndex.display}")
+          val helper = new CheckEventAnswersHelper(answers, mode)
+          helper.containerNumber(eventIndex, containerIndex) mustBe Some(
+            Row(
+              key = Key(
+                content = Message("addContainer.containerList.label", containerIndex.display),
+                classes = Seq("govuk-!-width-one-half")
+              ),
+              value = Value(Literal(containerDomain.containerNumber)),
+              actions = List(
+                Action(
+                  content = Message("site.edit"),
+                  href = ContainerNumberController.onPageLoad(mrn, eventIndex, containerIndex, mode).url,
+                  visuallyHiddenText = Some(Message("containerNumber.change.hidden", containerDomain.containerNumber)),
+                  attributes = Map("id" -> s"change-container-${containerIndex.display}")
+                )
               )
             )
-          ))
+          )
         }
       }
     }
@@ -154,7 +166,7 @@ class CheckEventAnswersHelperSpec extends SpecBase {
       "must return None" - {
         "when EventCountryPage undefined" in {
 
-          val helper = new CheckEventAnswersHelper(emptyUserAnswers)
+          val helper = new CheckEventAnswersHelper(emptyUserAnswers, mode)
           helper.eventCountry(eventIndex)(CountryList(Nil)) mustBe None
         }
       }
@@ -165,24 +177,28 @@ class CheckEventAnswersHelperSpec extends SpecBase {
           "country not found" in {
 
             val answers = emptyUserAnswers
-              .set(EventCountryPage(eventIndex), countryCode).success.value
+              .set(EventCountryPage(eventIndex), countryCode)
+              .success
+              .value
 
-            val helper = new CheckEventAnswersHelper(answers)
-            helper.eventCountry(eventIndex)(CountryList(Nil)) mustBe Some(Row(
-              key = Key(
-                content = Message("eventCountry.checkYourAnswersLabel"),
-                classes = Seq("govuk-!-width-one-half")
-              ),
-              value = Value(Literal(countryCode.code)),
-              actions = List(
-                Action(
-                  content = Message("site.edit"),
-                  href = EventCountryController.onPageLoad(mrn, eventIndex, CheckMode).url,
-                  visuallyHiddenText = Some(Message("eventCountry.change.hidden")),
-                  attributes = Map("id" -> s"change-event-country-${eventIndex.display}")
+            val helper = new CheckEventAnswersHelper(answers, mode)
+            helper.eventCountry(eventIndex)(CountryList(Nil)) mustBe Some(
+              Row(
+                key = Key(
+                  content = Message("eventCountry.checkYourAnswersLabel"),
+                  classes = Seq("govuk-!-width-one-half")
+                ),
+                value = Value(Literal(countryCode.code)),
+                actions = List(
+                  Action(
+                    content = Message("site.edit"),
+                    href = EventCountryController.onPageLoad(mrn, eventIndex, mode).url,
+                    visuallyHiddenText = Some(Message("eventCountry.change.hidden")),
+                    attributes = Map("id" -> s"change-event-country-${eventIndex.display}")
+                  )
                 )
               )
-            ))
+            )
           }
 
           "country found" in {
@@ -190,24 +206,28 @@ class CheckEventAnswersHelperSpec extends SpecBase {
             val country = Country(countryCode, "DESCRIPTION")
 
             val answers = emptyUserAnswers
-              .set(EventCountryPage(eventIndex), countryCode).success.value
+              .set(EventCountryPage(eventIndex), countryCode)
+              .success
+              .value
 
-            val helper = new CheckEventAnswersHelper(answers)
-            helper.eventCountry(eventIndex)(CountryList(Seq(country))) mustBe Some(Row(
-              key = Key(
-                content = Message("eventCountry.checkYourAnswersLabel"),
-                classes = Seq("govuk-!-width-one-half")
-              ),
-              value = Value(Literal(country.description)),
-              actions = List(
-                Action(
-                  content = Message("site.edit"),
-                  href = EventCountryController.onPageLoad(mrn, eventIndex, CheckMode).url,
-                  visuallyHiddenText = Some(Message("eventCountry.change.hidden")),
-                  attributes = Map("id" -> s"change-event-country-${eventIndex.display}")
+            val helper = new CheckEventAnswersHelper(answers, mode)
+            helper.eventCountry(eventIndex)(CountryList(Seq(country))) mustBe Some(
+              Row(
+                key = Key(
+                  content = Message("eventCountry.checkYourAnswersLabel"),
+                  classes = Seq("govuk-!-width-one-half")
+                ),
+                value = Value(Literal(country.description)),
+                actions = List(
+                  Action(
+                    content = Message("site.edit"),
+                    href = EventCountryController.onPageLoad(mrn, eventIndex, mode).url,
+                    visuallyHiddenText = Some(Message("eventCountry.change.hidden")),
+                    attributes = Map("id" -> s"change-event-country-${eventIndex.display}")
+                  )
                 )
               )
-            ))
+            )
           }
         }
       }
@@ -220,7 +240,7 @@ class CheckEventAnswersHelperSpec extends SpecBase {
       "must return None" - {
         "when EventPlacePage undefined" in {
 
-          val helper = new CheckEventAnswersHelper(emptyUserAnswers)
+          val helper = new CheckEventAnswersHelper(emptyUserAnswers, mode)
           helper.eventPlace(eventIndex) mustBe None
         }
       }
@@ -229,24 +249,28 @@ class CheckEventAnswersHelperSpec extends SpecBase {
         "when EventPlacePage defined" in {
 
           val answers = emptyUserAnswers
-            .set(EventPlacePage(eventIndex), place).success.value
+            .set(EventPlacePage(eventIndex), place)
+            .success
+            .value
 
-          val helper = new CheckEventAnswersHelper(answers)
-          helper.eventPlace(eventIndex) mustBe Some(Row(
-            key = Key(
-              content = Message("eventPlace.checkYourAnswersLabel"),
-              classes = Seq("govuk-!-width-one-half")
-            ),
-            value = Value(Literal(place)),
-            actions = List(
-              Action(
-                content            = Message("site.edit"),
-                href               = EventPlaceController.onPageLoad(mrn, eventIndex, CheckMode).url,
-                visuallyHiddenText = Some(Message("eventPlace.change.hidden")),
-                attributes         = Map("id" -> s"change-event-place-${eventIndex.display}")
+          val helper = new CheckEventAnswersHelper(answers, mode)
+          helper.eventPlace(eventIndex) mustBe Some(
+            Row(
+              key = Key(
+                content = Message("eventPlace.checkYourAnswersLabel"),
+                classes = Seq("govuk-!-width-one-half")
+              ),
+              value = Value(Literal(place)),
+              actions = List(
+                Action(
+                  content = Message("site.edit"),
+                  href = EventPlaceController.onPageLoad(mrn, eventIndex, mode).url,
+                  visuallyHiddenText = Some(Message("eventPlace.change.hidden")),
+                  attributes = Map("id" -> s"change-event-place-${eventIndex.display}")
+                )
               )
             )
-          ))
+          )
         }
       }
     }
@@ -256,7 +280,7 @@ class CheckEventAnswersHelperSpec extends SpecBase {
       "must return None" - {
         "when EventReportedPage undefined" in {
 
-          val helper = new CheckEventAnswersHelper(emptyUserAnswers)
+          val helper = new CheckEventAnswersHelper(emptyUserAnswers, mode)
           helper.eventReported(eventIndex) mustBe None
         }
       }
@@ -265,24 +289,28 @@ class CheckEventAnswersHelperSpec extends SpecBase {
         "when EventReportedPage defined" in {
 
           val answers = emptyUserAnswers
-            .set(EventReportedPage(eventIndex), false).success.value
+            .set(EventReportedPage(eventIndex), false)
+            .success
+            .value
 
-          val helper = new CheckEventAnswersHelper(answers)
-          helper.eventReported(eventIndex) mustBe Some(Row(
-            key = Key(
-              content = Message("eventReported.checkYourAnswersLabel"),
-              classes = Seq("govuk-!-width-one-half")
-            ),
-            value = Value(Message("site.no")),
-            actions = List(
-              Action(
-                content            = Message("site.edit"),
-                href               = EventReportedController.onPageLoad(mrn, eventIndex, CheckMode).url,
-                visuallyHiddenText = Some(Message("eventReported.change.hidden")),
-                attributes         = Map("id" -> s"change-event-reported-${eventIndex.display}")
+          val helper = new CheckEventAnswersHelper(answers, mode)
+          helper.eventReported(eventIndex) mustBe Some(
+            Row(
+              key = Key(
+                content = Message("eventReported.checkYourAnswersLabel"),
+                classes = Seq("govuk-!-width-one-half")
+              ),
+              value = Value(Message("site.no")),
+              actions = List(
+                Action(
+                  content = Message("site.edit"),
+                  href = EventReportedController.onPageLoad(mrn, eventIndex, mode).url,
+                  visuallyHiddenText = Some(Message("eventReported.change.hidden")),
+                  attributes = Map("id" -> s"change-event-reported-${eventIndex.display}")
+                )
               )
             )
-          ))
+          )
         }
       }
     }
@@ -294,7 +322,7 @@ class CheckEventAnswersHelperSpec extends SpecBase {
       "must return None" - {
         "when IncidentInformationPage undefined" in {
 
-          val helper = new CheckEventAnswersHelper(emptyUserAnswers)
+          val helper = new CheckEventAnswersHelper(emptyUserAnswers, mode)
           helper.incidentInformation(eventIndex) mustBe None
         }
       }
@@ -303,24 +331,28 @@ class CheckEventAnswersHelperSpec extends SpecBase {
         "when IncidentInformationPage defined" in {
 
           val answers = emptyUserAnswers
-            .set(IncidentInformationPage(eventIndex), incident).success.value
+            .set(IncidentInformationPage(eventIndex), incident)
+            .success
+            .value
 
-          val helper = new CheckEventAnswersHelper(answers)
-          helper.incidentInformation(eventIndex) mustBe Some(Row(
-            key = Key(
-              content = Message("incidentInformation.checkYourAnswersLabel"),
-              classes = Seq("govuk-!-width-one-half")
-            ),
-            value = Value(Literal(incident)),
-            actions = List(
-              Action(
-                content            = Message("site.edit"),
-                href               = IncidentInformationController.onPageLoad(mrn, eventIndex, CheckMode).url,
-                visuallyHiddenText = Some(Message("incidentInformation.change.hidden")),
-                attributes         = Map("id" -> s"change-incident-information-${eventIndex.display}")
+          val helper = new CheckEventAnswersHelper(answers, mode)
+          helper.incidentInformation(eventIndex) mustBe Some(
+            Row(
+              key = Key(
+                content = Message("incidentInformation.checkYourAnswersLabel"),
+                classes = Seq("govuk-!-width-one-half")
+              ),
+              value = Value(Literal(incident)),
+              actions = List(
+                Action(
+                  content = Message("site.edit"),
+                  href = IncidentInformationController.onPageLoad(mrn, eventIndex, mode).url,
+                  visuallyHiddenText = Some(Message("incidentInformation.change.hidden")),
+                  attributes = Map("id" -> s"change-incident-information-${eventIndex.display}")
+                )
               )
             )
-          ))
+          )
         }
       }
     }
@@ -332,7 +364,7 @@ class CheckEventAnswersHelperSpec extends SpecBase {
       "must return None" - {
         "when TransportIdentityPage undefined" in {
 
-          val helper = new CheckEventAnswersHelper(emptyUserAnswers)
+          val helper = new CheckEventAnswersHelper(emptyUserAnswers, mode)
           helper.transportIdentity(eventIndex) mustBe None
         }
       }
@@ -341,24 +373,28 @@ class CheckEventAnswersHelperSpec extends SpecBase {
         "when TransportIdentityPage defined" in {
 
           val answers = emptyUserAnswers
-            .set(TransportIdentityPage(eventIndex), vehicle).success.value
+            .set(TransportIdentityPage(eventIndex), vehicle)
+            .success
+            .value
 
-          val helper = new CheckEventAnswersHelper(answers)
-          helper.transportIdentity(eventIndex) mustBe Some(Row(
-            key = Key(
-              content = Message("transportIdentity.checkYourAnswersLabel"),
-              classes = Seq("govuk-!-width-one-half")
-            ),
-            value = Value(Literal(vehicle)),
-            actions = List(
-              Action(
-                content            = Message("site.edit"),
-                href               = TransportIdentityController.onPageLoad(mrn, eventIndex, CheckMode).url,
-                visuallyHiddenText = Some(Message("transportIdentity.change.hidden")),
-                attributes         = Map("id" -> s"transport-identity-${eventIndex.display}")
+          val helper = new CheckEventAnswersHelper(answers, mode)
+          helper.transportIdentity(eventIndex) mustBe Some(
+            Row(
+              key = Key(
+                content = Message("transportIdentity.checkYourAnswersLabel"),
+                classes = Seq("govuk-!-width-one-half")
+              ),
+              value = Value(Literal(vehicle)),
+              actions = List(
+                Action(
+                  content = Message("site.edit"),
+                  href = TransportIdentityController.onPageLoad(mrn, eventIndex, mode).url,
+                  visuallyHiddenText = Some(Message("transportIdentity.change.hidden")),
+                  attributes = Map("id" -> s"transport-identity-${eventIndex.display}")
+                )
               )
             )
-          ))
+          )
         }
       }
     }
@@ -370,7 +406,7 @@ class CheckEventAnswersHelperSpec extends SpecBase {
       "must return None" - {
         "when TransportNationalityPage undefined" in {
 
-          val helper = new CheckEventAnswersHelper(emptyUserAnswers)
+          val helper = new CheckEventAnswersHelper(emptyUserAnswers, mode)
           helper.transportNationality(eventIndex)(CountryList(Nil)) mustBe None
         }
       }
@@ -381,24 +417,28 @@ class CheckEventAnswersHelperSpec extends SpecBase {
           "country not found" in {
 
             val answers = emptyUserAnswers
-              .set(TransportNationalityPage(eventIndex), countryCode).success.value
+              .set(TransportNationalityPage(eventIndex), countryCode)
+              .success
+              .value
 
-            val helper = new CheckEventAnswersHelper(answers)
-            helper.transportNationality(eventIndex)(CountryList(Nil)) mustBe Some(Row(
-              key = Key(
-                content = Message("transportNationality.checkYourAnswersLabel"),
-                classes = Seq("govuk-!-width-one-half")
-              ),
-              value = Value(Literal(countryCode.code)),
-              actions = List(
-                Action(
-                  content = Message("site.edit"),
-                  href = TransportNationalityController.onPageLoad(mrn, eventIndex, CheckMode).url,
-                  visuallyHiddenText = Some(Message("transportNationality.change.hidden")),
-                  attributes = Map("id" -> s"transport-nationality-${eventIndex.display}")
+            val helper = new CheckEventAnswersHelper(answers, mode)
+            helper.transportNationality(eventIndex)(CountryList(Nil)) mustBe Some(
+              Row(
+                key = Key(
+                  content = Message("transportNationality.checkYourAnswersLabel"),
+                  classes = Seq("govuk-!-width-one-half")
+                ),
+                value = Value(Literal(countryCode.code)),
+                actions = List(
+                  Action(
+                    content = Message("site.edit"),
+                    href = TransportNationalityController.onPageLoad(mrn, eventIndex, mode).url,
+                    visuallyHiddenText = Some(Message("transportNationality.change.hidden")),
+                    attributes = Map("id" -> s"transport-nationality-${eventIndex.display}")
+                  )
                 )
               )
-            ))
+            )
           }
 
           "country found" in {
@@ -406,24 +446,28 @@ class CheckEventAnswersHelperSpec extends SpecBase {
             val country = Country(countryCode, "DESCRIPTION")
 
             val answers = emptyUserAnswers
-              .set(TransportNationalityPage(eventIndex), countryCode).success.value
+              .set(TransportNationalityPage(eventIndex), countryCode)
+              .success
+              .value
 
-            val helper = new CheckEventAnswersHelper(answers)
-            helper.transportNationality(eventIndex)(CountryList(Seq(country))) mustBe Some(Row(
-              key = Key(
-                content = Message("transportNationality.checkYourAnswersLabel"),
-                classes = Seq("govuk-!-width-one-half")
-              ),
-              value = Value(Literal(country.description)),
-              actions = List(
-                Action(
-                  content = Message("site.edit"),
-                  href = TransportNationalityController.onPageLoad(mrn, eventIndex, CheckMode).url,
-                  visuallyHiddenText = Some(Message("transportNationality.change.hidden")),
-                  attributes = Map("id" -> s"transport-nationality-${eventIndex.display}")
+            val helper = new CheckEventAnswersHelper(answers, mode)
+            helper.transportNationality(eventIndex)(CountryList(Seq(country))) mustBe Some(
+              Row(
+                key = Key(
+                  content = Message("transportNationality.checkYourAnswersLabel"),
+                  classes = Seq("govuk-!-width-one-half")
+                ),
+                value = Value(Literal(country.description)),
+                actions = List(
+                  Action(
+                    content = Message("site.edit"),
+                    href = TransportNationalityController.onPageLoad(mrn, eventIndex, mode).url,
+                    visuallyHiddenText = Some(Message("transportNationality.change.hidden")),
+                    attributes = Map("id" -> s"transport-nationality-${eventIndex.display}")
+                  )
                 )
               )
-            ))
+            )
           }
         }
       }
@@ -434,7 +478,7 @@ class CheckEventAnswersHelperSpec extends SpecBase {
       "must return None" - {
         "when HaveSealsChangedPage undefined" in {
 
-          val helper = new CheckEventAnswersHelper(emptyUserAnswers)
+          val helper = new CheckEventAnswersHelper(emptyUserAnswers, mode)
           helper.haveSealsChanged(eventIndex) mustBe None
         }
       }
@@ -443,24 +487,28 @@ class CheckEventAnswersHelperSpec extends SpecBase {
         "when HaveSealsChangedPage defined" in {
 
           val answers = emptyUserAnswers
-            .set(HaveSealsChangedPage(eventIndex), true).success.value
+            .set(HaveSealsChangedPage(eventIndex), true)
+            .success
+            .value
 
-          val helper = new CheckEventAnswersHelper(answers)
-          helper.haveSealsChanged(eventIndex) mustBe Some(Row(
-            key = Key(
-              content = Message("haveSealsChanged.checkYourAnswersLabel"),
-              classes = Seq("govuk-!-width-one-half")
-            ),
-            value = Value(Message("site.yes")),
-            actions = List(
-              Action(
-                content            = Message("site.edit"),
-                href               = HaveSealsChangedController.onPageLoad(mrn, eventIndex, CheckMode).url,
-                visuallyHiddenText = Some(Message("haveSealsChanged.change.hidden")),
-                attributes         = Map("id" -> s"seals-changed-${eventIndex.display}")
+          val helper = new CheckEventAnswersHelper(answers, mode)
+          helper.haveSealsChanged(eventIndex) mustBe Some(
+            Row(
+              key = Key(
+                content = Message("haveSealsChanged.checkYourAnswersLabel"),
+                classes = Seq("govuk-!-width-one-half")
+              ),
+              value = Value(Message("site.yes")),
+              actions = List(
+                Action(
+                  content = Message("site.edit"),
+                  href = HaveSealsChangedController.onPageLoad(mrn, eventIndex, mode).url,
+                  visuallyHiddenText = Some(Message("haveSealsChanged.change.hidden")),
+                  attributes = Map("id" -> s"seals-changed-${eventIndex.display}")
+                )
               )
             )
-          ))
+          )
         }
       }
     }
@@ -472,7 +520,7 @@ class CheckEventAnswersHelperSpec extends SpecBase {
       "must return None" - {
         "when SealIdentityPage undefined" in {
 
-          val helper = new CheckEventAnswersHelper(emptyUserAnswers)
+          val helper = new CheckEventAnswersHelper(emptyUserAnswers, mode)
           helper.sealIdentity(eventIndex, sealIndex) mustBe None
         }
       }
@@ -481,30 +529,32 @@ class CheckEventAnswersHelperSpec extends SpecBase {
         "when SealIdentityPage defined" in {
 
           val answers = emptyUserAnswers
-            .set(SealIdentityPage(eventIndex, sealIndex), seal).success.value
+            .set(SealIdentityPage(eventIndex, sealIndex), seal)
+            .success
+            .value
 
-          val helper = new CheckEventAnswersHelper(answers)
-          helper.sealIdentity(eventIndex, sealIndex) mustBe Some(Row(
-            key = Key(
-              content = Message("addSeal.sealList.label", sealIndex.display),
-              classes = Seq("govuk-!-width-one-half")
-            ),
-            value = Value(Literal(seal.numberOrMark)),
-            actions = List(
-              Action(
-                content            = Message("site.edit"),
-                href               = SealIdentityController.onPageLoad(mrn, eventIndex, sealIndex, CheckMode).url,
-                visuallyHiddenText = Some(Message("sealIdentity.change.hidden", seal.numberOrMark)),
-                attributes         = Map("id" -> s"change-seal-${sealIndex.display}")
+          val helper = new CheckEventAnswersHelper(answers, mode)
+          helper.sealIdentity(eventIndex, sealIndex) mustBe Some(
+            Row(
+              key = Key(
+                content = Message("addSeal.sealList.label", sealIndex.display),
+                classes = Seq("govuk-!-width-one-half")
+              ),
+              value = Value(Literal(seal.numberOrMark)),
+              actions = List(
+                Action(
+                  content = Message("site.edit"),
+                  href = SealIdentityController.onPageLoad(mrn, eventIndex, sealIndex, mode).url,
+                  visuallyHiddenText = Some(Message("sealIdentity.change.hidden", seal.numberOrMark)),
+                  attributes = Map("id" -> s"change-seal-${sealIndex.display}")
+                )
               )
             )
-          ))
+          )
         }
       }
     }
 
   }
-
-  // format: on
 
 }
