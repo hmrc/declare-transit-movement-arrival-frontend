@@ -30,11 +30,11 @@ object CheckEventAnswersViewModel {
 
     val isTranshipment: Boolean = userAnswers.get(IsTranshipmentPage(eventIndex)).getOrElse(false)
 
-    val eventInfoSection: Section = EventInfoSection(userAnswers, eventIndex, isTranshipment, codeList)
+    val eventInfoSection: Section = EventInfoSection(userAnswers, mode, eventIndex, isTranshipment, codeList)
 
-    val eventTypeSection: Seq[Section] = EventTypeSection(userAnswers, eventIndex, isTranshipment, codeList)
+    val eventTypeSection: Seq[Section] = EventTypeSection(userAnswers, mode, eventIndex, isTranshipment, codeList)
 
-    val sealSection: Section = SealSection(userAnswers, eventIndex)
+    val sealSection: Section = SealSection(userAnswers, mode, eventIndex)
 
     CheckEventAnswersViewModel(
       Seq(eventInfoSection) ++

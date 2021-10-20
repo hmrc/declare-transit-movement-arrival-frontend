@@ -18,15 +18,15 @@ package utils
 
 import base.SpecBase
 import controllers.events.transhipments.routes.{ConfirmRemoveContainerController, ContainerNumberController}
-import models.CheckMode
 import models.domain.ContainerDomain
+import models.{CheckMode, Mode}
 import pages.events.transhipments.ContainerNumberPage
 import uk.gov.hmrc.viewmodels.SummaryList.{Action, Key, Row, Value}
 import uk.gov.hmrc.viewmodels.Text.{Literal, Message}
 
 class AddContainerHelperSpec extends SpecBase {
 
-  // format: off
+  val mode: Mode = CheckMode
 
   "AddContainerHelper" - {
 
@@ -37,8 +37,8 @@ class AddContainerHelperSpec extends SpecBase {
       "must return None" - {
         "when ContainerNumberPage undefined" in {
 
-          val helper = new AddContainerHelper(emptyUserAnswers)
-          helper.containerRow(eventIndex, containerIndex, CheckMode) mustBe None
+          val helper = new AddContainerHelper(emptyUserAnswers, mode)
+          helper.containerRow(eventIndex, containerIndex) mustBe None
         }
       }
 
@@ -46,10 +46,12 @@ class AddContainerHelperSpec extends SpecBase {
         "when ContainerNumberPage defined" in {
 
           val answers = emptyUserAnswers
-            .set(ContainerNumberPage(eventIndex, containerIndex), container).success.value
+            .set(ContainerNumberPage(eventIndex, containerIndex), container)
+            .success
+            .value
 
-          val helper = new AddContainerHelper(answers)
-          helper.containerRow(eventIndex, containerIndex, CheckMode) mustBe Some(
+          val helper = new AddContainerHelper(answers, mode)
+          helper.containerRow(eventIndex, containerIndex) mustBe Some(
             Row(
               key = Key(
                 content = Literal(container.containerNumber),
@@ -58,24 +60,23 @@ class AddContainerHelperSpec extends SpecBase {
               value = Value(Literal("")),
               actions = List(
                 Action(
-                  content            = Message("site.edit"),
-                  href               = ContainerNumberController.onPageLoad(mrn, eventIndex, containerIndex, CheckMode).url,
+                  content = Message("site.edit"),
+                  href = ContainerNumberController.onPageLoad(mrn, eventIndex, containerIndex, mode).url,
                   visuallyHiddenText = Some(Literal(container.containerNumber)),
-                  attributes         = Map("id" -> s"change-container-${containerIndex.display}")
+                  attributes = Map("id" -> s"change-container-${containerIndex.display}")
                 ),
                 Action(
-                  content            = Message("site.delete"),
-                  href               = ConfirmRemoveContainerController.onPageLoad(mrn, eventIndex, containerIndex, CheckMode).url,
+                  content = Message("site.delete"),
+                  href = ConfirmRemoveContainerController.onPageLoad(mrn, eventIndex, containerIndex, mode).url,
                   visuallyHiddenText = Some(Literal(container.containerNumber)),
-                  attributes         = Map("id" -> s"remove-container-${containerIndex.display}")
+                  attributes = Map("id" -> s"remove-container-${containerIndex.display}")
                 )
               )
-            ))
+            )
+          )
         }
       }
     }
   }
-
-  // format: on
 
 }

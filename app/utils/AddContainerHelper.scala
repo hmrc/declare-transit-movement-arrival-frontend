@@ -23,9 +23,9 @@ import pages.events.transhipments.ContainerNumberPage
 import uk.gov.hmrc.viewmodels.SummaryList.Row
 import uk.gov.hmrc.viewmodels._
 
-class AddContainerHelper(userAnswers: UserAnswers) extends SummaryListRowHelper(userAnswers) {
+class AddContainerHelper(userAnswers: UserAnswers, mode: Mode) extends SummaryListRowHelper(userAnswers) {
 
-  def containerRow(eventIndex: Index, containerIndex: Index, mode: Mode): Option[Row] = getAnswerAndBuildRemovableRow[ContainerDomain](
+  def containerRow(eventIndex: Index, containerIndex: Index): Option[Row] = getAnswerAndBuildRemovableRow[ContainerDomain](
     page = ContainerNumberPage(eventIndex, containerIndex),
     formatAnswer = container => lit"${container.containerNumber}",
     id = s"container-${containerIndex.display}",
@@ -35,5 +35,5 @@ class AddContainerHelper(userAnswers: UserAnswers) extends SummaryListRowHelper(
 }
 
 object AddContainerHelper {
-  def apply(userAnswers: UserAnswers): AddContainerHelper = new AddContainerHelper(userAnswers)
+  def apply(userAnswers: UserAnswers, mode: Mode): AddContainerHelper = new AddContainerHelper(userAnswers, mode)
 }

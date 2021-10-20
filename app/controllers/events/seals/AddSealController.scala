@@ -19,7 +19,6 @@ package controllers.events.seals
 import controllers.actions.{DataRequiredAction, DataRetrievalActionProvider, IdentifierAction}
 import derivable.DeriveNumberOfSeals
 import forms.events.seals.AddSealFormProvider
-import javax.inject.Inject
 import models.requests.DataRequest
 import models.{Index, Mode, MovementReferenceNumber}
 import navigation.Navigator
@@ -34,6 +33,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 import utils.AddSealHelper
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class AddSealController @Inject() (override val messagesApi: MessagesApi,
@@ -80,7 +80,7 @@ class AddSealController @Inject() (override val messagesApi: MessagesApi,
     val listOfSealsIndex = List.range(0, numberOfSeals).map(Index(_))
     val sealsRows = listOfSealsIndex.flatMap {
       index =>
-        AddSealHelper.apply(request.userAnswers).sealRow(eventIndex, index, mode)
+        AddSealHelper.apply(request.userAnswers, mode).sealRow(eventIndex, index)
 
     }
 

@@ -17,12 +17,12 @@
 package utils
 
 import controllers.events.{routes => eventRoutes}
-import models.{Index, NormalMode, UserAnswers}
+import models.{Index, Mode, UserAnswers}
 import pages.events._
 import uk.gov.hmrc.viewmodels.SummaryList.Row
 import uk.gov.hmrc.viewmodels._
 
-class AddEventsHelper(userAnswers: UserAnswers) extends SummaryListRowHelper(userAnswers) {
+class AddEventsHelper(userAnswers: UserAnswers, mode: Mode) extends SummaryListRowHelper(userAnswers) {
 
   def listOfEvent(eventIndex: Index): Option[Row] =
     placeOfEvent(eventIndex).map {
@@ -31,7 +31,7 @@ class AddEventsHelper(userAnswers: UserAnswers) extends SummaryListRowHelper(use
           label = lit"$answer",
           id = s"event-${eventIndex.display}",
           changeCall = eventRoutes.CheckEventAnswersController.onPageLoad(mrn, eventIndex),
-          removeCall = eventRoutes.ConfirmRemoveEventController.onPageLoad(mrn, eventIndex, NormalMode)
+          removeCall = eventRoutes.ConfirmRemoveEventController.onPageLoad(mrn, eventIndex, mode)
         )
     }
 

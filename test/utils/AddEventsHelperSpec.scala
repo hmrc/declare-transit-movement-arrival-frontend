@@ -18,15 +18,15 @@ package utils
 
 import base.SpecBase
 import controllers.events.routes._
-import models.NormalMode
 import models.reference.CountryCode
+import models.{CheckMode, Mode}
 import pages.events.{EventCountryPage, EventPlacePage}
 import uk.gov.hmrc.viewmodels.SummaryList.{Action, Key, Row, Value}
 import uk.gov.hmrc.viewmodels.Text.{Literal, Message}
 
 class AddEventsHelperSpec extends SpecBase {
 
-  // format: off
+  val mode: Mode = CheckMode
 
   "AddEventsHelper" - {
 
@@ -35,7 +35,7 @@ class AddEventsHelperSpec extends SpecBase {
       "must return None" - {
         "when EventPlacePage and EventCountryPage undefined" in {
 
-          val helper = new AddEventsHelper(emptyUserAnswers)
+          val helper = new AddEventsHelper(emptyUserAnswers, mode)
           helper.listOfEvent(eventIndex) mustBe None
         }
       }
@@ -46,9 +46,11 @@ class AddEventsHelperSpec extends SpecBase {
           val place = "PLACE"
 
           val answers = emptyUserAnswers
-            .set(EventPlacePage(eventIndex), place).success.value
+            .set(EventPlacePage(eventIndex), place)
+            .success
+            .value
 
-          val helper = new AddEventsHelper(answers)
+          val helper = new AddEventsHelper(answers, mode)
           helper.listOfEvent(eventIndex) mustBe Some(
             Row(
               key = Key(
@@ -58,19 +60,20 @@ class AddEventsHelperSpec extends SpecBase {
               value = Value(Literal("")),
               actions = List(
                 Action(
-                  content            = Message("site.edit"),
-                  href               = CheckEventAnswersController.onPageLoad(mrn, eventIndex).url,
+                  content = Message("site.edit"),
+                  href = CheckEventAnswersController.onPageLoad(mrn, eventIndex).url,
                   visuallyHiddenText = Some(Literal(place)),
-                  attributes         = Map("id" -> s"change-event-${eventIndex.display}")
+                  attributes = Map("id" -> s"change-event-${eventIndex.display}")
                 ),
                 Action(
-                  content            = Message("site.delete"),
-                  href               = ConfirmRemoveEventController.onPageLoad(mrn, eventIndex, NormalMode).url,
+                  content = Message("site.delete"),
+                  href = ConfirmRemoveEventController.onPageLoad(mrn, eventIndex, mode).url,
                   visuallyHiddenText = Some(Literal(place)),
-                  attributes         = Map("id" -> s"remove-event-${eventIndex.display}")
+                  attributes = Map("id" -> s"remove-event-${eventIndex.display}")
                 )
               )
-            ))
+            )
+          )
         }
 
         "when EventCountryPage defined" in {
@@ -78,9 +81,11 @@ class AddEventsHelperSpec extends SpecBase {
           val countryCode = CountryCode("CODE")
 
           val answers = emptyUserAnswers
-            .set(EventCountryPage(eventIndex), countryCode).success.value
+            .set(EventCountryPage(eventIndex), countryCode)
+            .success
+            .value
 
-          val helper = new AddEventsHelper(answers)
+          val helper = new AddEventsHelper(answers, mode)
           helper.listOfEvent(eventIndex) mustBe Some(
             Row(
               key = Key(
@@ -90,19 +95,20 @@ class AddEventsHelperSpec extends SpecBase {
               value = Value(Literal("")),
               actions = List(
                 Action(
-                  content            = Message("site.edit"),
-                  href               = CheckEventAnswersController.onPageLoad(mrn, eventIndex).url,
+                  content = Message("site.edit"),
+                  href = CheckEventAnswersController.onPageLoad(mrn, eventIndex).url,
                   visuallyHiddenText = Some(Literal(countryCode.code)),
-                  attributes         = Map("id" -> s"change-event-${eventIndex.display}")
+                  attributes = Map("id" -> s"change-event-${eventIndex.display}")
                 ),
                 Action(
-                  content            = Message("site.delete"),
-                  href               = ConfirmRemoveEventController.onPageLoad(mrn, eventIndex, NormalMode).url,
+                  content = Message("site.delete"),
+                  href = ConfirmRemoveEventController.onPageLoad(mrn, eventIndex, mode).url,
                   visuallyHiddenText = Some(Literal(countryCode.code)),
-                  attributes         = Map("id" -> s"remove-event-${eventIndex.display}")
+                  attributes = Map("id" -> s"remove-event-${eventIndex.display}")
                 )
               )
-            ))
+            )
+          )
         }
       }
     }
@@ -112,7 +118,7 @@ class AddEventsHelperSpec extends SpecBase {
       "must return None" - {
         "when EventPlacePage and EventCountryPage undefined" in {
 
-          val helper = new AddEventsHelper(emptyUserAnswers)
+          val helper = new AddEventsHelper(emptyUserAnswers, mode)
           helper.cyaListOfEvent(eventIndex) mustBe None
         }
       }
@@ -123,9 +129,11 @@ class AddEventsHelperSpec extends SpecBase {
           val place = "PLACE"
 
           val answers = emptyUserAnswers
-            .set(EventPlacePage(eventIndex), place).success.value
+            .set(EventPlacePage(eventIndex), place)
+            .success
+            .value
 
-          val helper = new AddEventsHelper(answers)
+          val helper = new AddEventsHelper(answers, mode)
           helper.cyaListOfEvent(eventIndex) mustBe Some(
             Row(
               key = Key(
@@ -135,12 +143,13 @@ class AddEventsHelperSpec extends SpecBase {
               value = Value(Literal(place)),
               actions = List(
                 Action(
-                  content            = Message("site.edit"),
-                  href               = CheckEventAnswersController.onPageLoad(mrn, eventIndex).url,
+                  content = Message("site.edit"),
+                  href = CheckEventAnswersController.onPageLoad(mrn, eventIndex).url,
                   visuallyHiddenText = Some(Message("addEvent.change.hidden", eventIndex.display, place))
                 )
               )
-            ))
+            )
+          )
         }
 
         "when EventCountryPage defined" in {
@@ -148,9 +157,11 @@ class AddEventsHelperSpec extends SpecBase {
           val countryCode = CountryCode("CODE")
 
           val answers = emptyUserAnswers
-            .set(EventCountryPage(eventIndex), countryCode).success.value
+            .set(EventCountryPage(eventIndex), countryCode)
+            .success
+            .value
 
-          val helper = new AddEventsHelper(answers)
+          val helper = new AddEventsHelper(answers, mode)
           helper.cyaListOfEvent(eventIndex) mustBe Some(
             Row(
               key = Key(
@@ -160,17 +171,16 @@ class AddEventsHelperSpec extends SpecBase {
               value = Value(Literal(countryCode.code)),
               actions = List(
                 Action(
-                  content            = Message("site.edit"),
-                  href               = CheckEventAnswersController.onPageLoad(mrn, eventIndex).url,
+                  content = Message("site.edit"),
+                  href = CheckEventAnswersController.onPageLoad(mrn, eventIndex).url,
                   visuallyHiddenText = Some(Message("addEvent.change.hidden", eventIndex.display, countryCode.code))
                 )
               )
-            ))
+            )
+          )
         }
       }
     }
   }
-
-  // format: on
 
 }
