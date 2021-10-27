@@ -26,6 +26,7 @@ import queries.Gettable
 import scala.util.{Failure, Success, Try}
 
 final case class UserAnswers(id: MovementReferenceNumber,
+                             movementReferenceNumber: Option[MovementReferenceNumber],
                              eoriNumber: EoriNumber,
                              data: JsObject = Json.obj(),
                              lastUpdated: LocalDateTime = LocalDateTime.now,
@@ -76,6 +77,7 @@ object UserAnswers {
 
     (
       (__ \ "_id").read[MovementReferenceNumber] and
+        (__ \ "movementReferenceNumber").readNullable[MovementReferenceNumber] and
         (__ \ "eoriNumber").read[EoriNumber] and
         (__ \ "data").read[JsObject] and
         (__ \ "lastUpdated").read(MongoDateTimeFormats.localDateTimeRead) and
@@ -89,6 +91,7 @@ object UserAnswers {
 
     (
       (__ \ "_id").write[MovementReferenceNumber] and
+        (__ \ "movementReferenceNumber").writeNullable[MovementReferenceNumber] and
         (__ \ "eoriNumber").write[EoriNumber] and
         (__ \ "data").write[JsObject] and
         (__ \ "lastUpdated").write(MongoDateTimeFormats.localDateTimeWrite) and

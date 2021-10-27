@@ -41,6 +41,7 @@ class TraderAddressControllerSpec extends SpecBase with AppWithDefaultMockFixtur
 
   val userAnswers = UserAnswers(
     mrn,
+    Some(mrn),
     eoriNumber,
     Json.obj(
       TraderAddressPage.toString -> Json.obj(

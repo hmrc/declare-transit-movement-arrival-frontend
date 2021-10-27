@@ -160,6 +160,7 @@ class ConfirmRemoveSealControllerSpec extends SpecBase with AppWithDefaultMockFi
 
       val newUserAnswers = UserAnswers(
         id = userAnswersWithSeal.id,
+        movementReferenceNumber = Some(userAnswersWithSeal.id),
         eoriNumber = userAnswersWithSeal.eoriNumber,
         userAnswersWithSeal.remove(SealIdentityPage(eventIndex, sealIndex)).success.value.data,
         userAnswersWithSeal.lastUpdated

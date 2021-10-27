@@ -33,6 +33,6 @@ object ArrivalMovementRequestToUserAnswersService {
       .convertToArrivalNotification(arrivalMovementRequest, customsOffice, eoriNumber)
       .map {
         value =>
-          UserAnswers(movementReferenceNumber, eoriNumber, Json.toJsObject(value))
+          UserAnswers(movementReferenceNumber, Some(movementReferenceNumber), eoriNumber, Json.toJsObject(value))
       }
 }

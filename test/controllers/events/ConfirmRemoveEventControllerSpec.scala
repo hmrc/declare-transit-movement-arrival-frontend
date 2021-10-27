@@ -154,6 +154,7 @@ class ConfirmRemoveEventControllerSpec extends SpecBase with AppWithDefaultMockF
 
       val uaRemoveEvent = UserAnswers(
         userAnswersWithEventPlace.id,
+        Some(userAnswersWithEventPlace.id),
         userAnswersWithEventPlace.eoriNumber,
         userAnswersWithEventPlace.remove(EventQuery(eventIndex)).success.value.data,
         userAnswersWithEventPlace.lastUpdated
@@ -180,6 +181,7 @@ class ConfirmRemoveEventControllerSpec extends SpecBase with AppWithDefaultMockF
 
       val uaRemoveEvent = UserAnswers(
         userAnswersWithEventPlace.id,
+        Some(userAnswersWithEventPlace.id),
         userAnswersWithEventPlace.eoriNumber,
         userAnswersWithEventPlace.remove(EventQuery(eventIndex)).success.value.data,
         userAnswersWithEventPlace.lastUpdated
