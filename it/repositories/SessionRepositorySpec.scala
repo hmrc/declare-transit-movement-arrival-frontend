@@ -40,8 +40,8 @@ class SessionRepositorySpec extends AnyFreeSpec
 
   private val service = app.injector.instanceOf[SessionRepository]
 
-  private val userAnswer1 = UserAnswers(MovementReferenceNumber("99IT9876AB88901209").get, EoriNumber("EoriNumber1"), Json.obj("foo" -> "bar"))
-  private val userAnswer2 = UserAnswers(MovementReferenceNumber("18GB0000601001EB15").get, EoriNumber("EoriNumber2"), Json.obj("bar" -> "foo"))
+  private val userAnswer1 = UserAnswers(MovementReferenceNumber("99IT9876AB88901209").get, MovementReferenceNumber("99IT9876AB88901209"), EoriNumber("EoriNumber1"), Json.obj("foo" -> "bar"))
+  private val userAnswer2 = UserAnswers(MovementReferenceNumber("18GB0000601001EB15").get, MovementReferenceNumber("99IT9876AB88901209"), EoriNumber("EoriNumber2"), Json.obj("bar" -> "foo"))
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -93,7 +93,7 @@ class SessionRepositorySpec extends AnyFreeSpec
 
       "must create new document when given valid UserAnswers" in {
 
-        val userAnswer = UserAnswers(MovementReferenceNumber("18GB0000601001EBD1").get, EoriNumber("EoriNumber3"), Json.obj("foo" -> "bar"))
+        val userAnswer = UserAnswers(MovementReferenceNumber("18GB0000601001EBD1").get, MovementReferenceNumber("18GB0000601001EBD1"), EoriNumber("EoriNumber3"), Json.obj("foo" -> "bar"))
 
         val setResult = service.set(userAnswer).futureValue
 
