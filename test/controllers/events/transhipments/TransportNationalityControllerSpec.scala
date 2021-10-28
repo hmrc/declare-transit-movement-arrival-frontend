@@ -63,7 +63,7 @@ class TransportNationalityControllerSpec extends SpecBase with AppWithDefaultMoc
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
       val filledForm  = form.bind(Map("value" -> "GB"))
-      val userAnswers = UserAnswers(mrn, Some(mrn), eoriNumber).set(TransportNationalityPage(eventIndex), country.code).success.value
+      val userAnswers = UserAnswers(mrn, eoriNumber).set(TransportNationalityPage(eventIndex), country.code).success.value
 
       verifyOnPageLoad(filledForm, userAnswers, preSelect = true)
     }

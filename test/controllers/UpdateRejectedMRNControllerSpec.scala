@@ -154,7 +154,7 @@ class UpdateRejectedMRNControllerSpec extends SpecBase with AppWithDefaultMockFi
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual onwardRoute.url
       verify(mockUserAnswersService, times(1)).getUserAnswers(any(), any())(any())
-      verify(mockSessionRepository, times(1)).set(meq(emptyUserAnswers.copy(id = MovementReferenceNumber(mrn).get, arrivalId = Some(arrivalId))))
+      verify(mockSessionRepository, times(1)).set(meq(emptyUserAnswers.copy(MovementReferenceNumber(mrn).get, arrivalId = Some(arrivalId))))
     }
 
     "must render to TechnicalDifficulties page when UserAnswersService return 'none'" in {

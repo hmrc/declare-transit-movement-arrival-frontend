@@ -130,7 +130,7 @@ class UserAnswersServiceSpec extends SpecBase with AppWithDefaultMockFixtures wi
       val result: UserAnswers = userAnswersService.getOrCreateUserAnswers(eoriNumber, mrn).futureValue
 
       result.eoriNumber mustBe emptyUserAnswers.eoriNumber
-      result.id mustBe mrn
+      result.movementReferenceNumber mustBe mrn
     }
   }
 }

@@ -86,7 +86,7 @@ class DataRetrievalActionSpec extends AnyFreeSpec with Matchers with GuiceOneApp
 
       "when there are existing answers for this MRN" in {
 
-        when(sessionRepository.get(any(), any())) thenReturn Future.successful(Some(UserAnswers(mrn, Some(mrn), eoriNumber)))
+        when(sessionRepository.get(any(), any())) thenReturn Future.successful(Some(UserAnswers(mrn, eoriNumber)))
 
         harness(mrn, request => request.userAnswers mustBe defined)
       }

@@ -26,7 +26,7 @@ import uk.gov.hmrc.viewmodels.{Content, Html, MessageInterpolators, Text}
 
 private[utils] class SummaryListRowHelper(userAnswers: UserAnswers) {
 
-  def mrn: MovementReferenceNumber = userAnswers.id
+  def mrn: MovementReferenceNumber = userAnswers.movementReferenceNumber
 
   def formatAsYesOrNo(answer: Boolean): Content =
     if (answer) {

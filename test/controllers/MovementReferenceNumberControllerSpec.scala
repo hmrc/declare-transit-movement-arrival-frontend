@@ -99,7 +99,7 @@ class MovementReferenceNumberControllerSpec extends SpecBase with AppWithDefault
       redirectLocation(result).value mustEqual onwardRoute.url
       verify(mockSessionRepository).set(userAnswersCaptor.capture())
 
-      userAnswersCaptor.getValue.id mustBe mrn
+      userAnswersCaptor.getValue.movementReferenceNumber mustBe mrn
       userAnswersCaptor.getValue.eoriNumber mustBe eoriNumber
     }
 
