@@ -40,13 +40,18 @@ class UserAnswersService @Inject() (arrivalNotificationMessageService: ArrivalNo
           movementReferenceNumber =>
             customsOffices.find(_.id == arrivalMovementRequest.customsOfficeOfPresentation.office).flatMap {
               customsOffice =>
-                ArrivalMovementRequestToUserAnswersService.convertToUserAnswers(arrivalMovementRequest, eoriNumber, movementReferenceNumber, customsOffice)
+                ArrivalMovementRequestToUserAnswersService.convertToUserAnswers(
+                  arrivalMovementRequest,
+                  eoriNumber,
+                  movementReferenceNumber,
+                  customsOffice
+                )
             }
         }
     }
 
   def getOrCreateUserAnswers(eoriNumber: EoriNumber, value: MovementReferenceNumber): Future[UserAnswers] = {
-    val initialUserAnswers = UserAnswers(id = value, eoriNumber = eoriNumber)
+    val initialUserAnswers = UserAnswers(id = value, movementReferenceNumber = Some(value), eoriNumber = eoriNumber)
 
     sessionRepository.get(id = value.toString, eoriNumber = eoriNumber) map {
       userAnswers =>

@@ -159,7 +159,8 @@ class ConfirmRemoveContainerControllerSpec extends SpecBase with AppWithDefaultM
         id = presetUserAnswers.id,
         eoriNumber = presetUserAnswers.eoriNumber,
         data = presetUserAnswers.remove(ContainerNumberPage(eventIndex, containerIndex)).success.value.data,
-        lastUpdated = presetUserAnswers.lastUpdated
+        lastUpdated = presetUserAnswers.lastUpdated,
+        movementReferenceNumber = Some(presetUserAnswers.id)
       )
 
       status(result) mustEqual SEE_OTHER
@@ -185,7 +186,8 @@ class ConfirmRemoveContainerControllerSpec extends SpecBase with AppWithDefaultM
         id = presetUserAnswers.id,
         eoriNumber = eoriNumber,
         data = presetUserAnswers.remove(ContainerNumberPage(eventIndex, containerIndex)).success.value.data,
-        lastUpdated = presetUserAnswers.lastUpdated
+        lastUpdated = presetUserAnswers.lastUpdated,
+        movementReferenceNumber = Some(presetUserAnswers.id)
       )
 
       status(result) mustEqual SEE_OTHER

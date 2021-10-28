@@ -55,7 +55,7 @@ class UserAnswersSpec extends SpecBase {
           testPagePath -> testPageAnswer
         )
 
-      result mustBe UserAnswers(mrn, eoriNumber, data, result.lastUpdated)
+      result mustBe UserAnswers(mrn, Some(mrn), eoriNumber, data, result.lastUpdated)
     }
 
     s"must not run cleanup when the new answer is equal to the existing answer" in {
@@ -75,7 +75,7 @@ class UserAnswersSpec extends SpecBase {
           testCleanupPagePath -> testCleanupPageAnswer
         )
 
-      result mustBe UserAnswers(mrn, eoriNumber, data, result.lastUpdated)
+      result mustBe UserAnswers(mrn, Some(mrn), eoriNumber, data, result.lastUpdated)
     }
   }
 
