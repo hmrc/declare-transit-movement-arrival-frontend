@@ -68,7 +68,7 @@ class ConfirmationController @Inject() (override val messagesApi: MessagesApi,
             "manageTransitMovementsUrl" -> appConfig.manageTransitMovementsViewArrivalsUrl,
             "movementReferencePageUrl"  -> routes.MovementReferenceNumberController.onPageLoad().url
           )
-          sessionRepository.remove(mrn.toString)
+          sessionRepository.remove(mrn.toString, request.eoriNumber)
           renderer.render("arrivalComplete.njk", json).map(Ok(_))
         case _ => Future.successful(Redirect(routes.SessionExpiredController.onPageLoad()))
 

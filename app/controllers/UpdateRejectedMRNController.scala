@@ -79,7 +79,7 @@ class UpdateRejectedMRNController @Inject() (override val messagesApi: MessagesA
           value =>
             userAnswersService.getUserAnswers(arrivalId, request.eoriNumber) flatMap {
               case Some(userAnswers) =>
-                val updatedUserAnswers = userAnswers.copy(id = value, arrivalId = Some(arrivalId))
+                val updatedUserAnswers = userAnswers.copy(movementReferenceNumber = value, arrivalId = Some(arrivalId))
                 sessionRepository.set(updatedUserAnswers)
                 Future.successful(Redirect(navigator.nextPage(UpdateRejectedMRNPage, NormalMode, updatedUserAnswers)))
               case _ => renderTechnicalDifficultiesPage

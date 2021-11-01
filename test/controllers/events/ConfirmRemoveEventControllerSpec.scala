@@ -153,11 +153,11 @@ class ConfirmRemoveEventControllerSpec extends SpecBase with AppWithDefaultMockF
       redirectLocation(result).value mustEqual onwardRoute.url
 
       val uaRemoveEvent = UserAnswers(
-        userAnswersWithEventPlace.id,
-        Some(userAnswersWithEventPlace.id),
+        userAnswersWithEventPlace.movementReferenceNumber,
         userAnswersWithEventPlace.eoriNumber,
         userAnswersWithEventPlace.remove(EventQuery(eventIndex)).success.value.data,
-        userAnswersWithEventPlace.lastUpdated
+        userAnswersWithEventPlace.lastUpdated,
+        id = userAnswersWithEventPlace.id
       )
 
       verify(mockSessionRepository, times(1)).set(uaRemoveEvent)
@@ -180,8 +180,7 @@ class ConfirmRemoveEventControllerSpec extends SpecBase with AppWithDefaultMockF
       redirectLocation(result).value mustEqual onwardRoute.url
 
       val uaRemoveEvent = UserAnswers(
-        userAnswersWithEventPlace.id,
-        Some(userAnswersWithEventPlace.id),
+        userAnswersWithEventPlace.movementReferenceNumber,
         userAnswersWithEventPlace.eoriNumber,
         userAnswersWithEventPlace.remove(EventQuery(eventIndex)).success.value.data,
         userAnswersWithEventPlace.lastUpdated

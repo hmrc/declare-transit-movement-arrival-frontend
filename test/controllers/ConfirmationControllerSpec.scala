@@ -63,7 +63,7 @@ class ConfirmationControllerSpec extends SpecBase with AppWithDefaultMockFixture
       status(result) mustEqual OK
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-      verify(mockSessionRepository, times(1)).remove(mrn.toString)
+      verify(mockSessionRepository, times(1)).remove(mrn.toString, eoriNumber)
 
       val expectedJson =
         Json.obj(
@@ -105,7 +105,7 @@ class ConfirmationControllerSpec extends SpecBase with AppWithDefaultMockFixture
       status(result) mustEqual OK
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-      verify(mockSessionRepository, times(1)).remove(mrn.toString)
+      verify(mockSessionRepository, times(1)).remove(mrn.toString, eoriNumber)
 
       val expectedJson = Json.obj(
         "mrn"                       -> mrn,
@@ -145,7 +145,7 @@ class ConfirmationControllerSpec extends SpecBase with AppWithDefaultMockFixture
       status(result) mustEqual OK
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-      verify(mockSessionRepository, times(1)).remove(mrn.toString)
+      verify(mockSessionRepository, times(1)).remove(mrn.toString, eoriNumber)
 
       val expectedJson = Json.obj(
         "mrn"                       -> mrn,

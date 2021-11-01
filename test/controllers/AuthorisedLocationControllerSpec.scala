@@ -73,7 +73,7 @@ class AuthorisedLocationControllerSpec extends SpecBase with AppWithDefaultMockF
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(mrn, Some(mrn), eoriNumber).set(AuthorisedLocationPage, "answer").success.value
+      val userAnswers = UserAnswers(mrn, eoriNumber).set(AuthorisedLocationPage, "answer").success.value
       setExistingUserAnswers(userAnswers)
 
       val request        = FakeRequest(GET, authorisedLocationRoute)

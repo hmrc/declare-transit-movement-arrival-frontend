@@ -65,7 +65,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
             navigator
               .nextPage(MovementReferenceNumberPage, NormalMode, answers)
-              .mustBe(routes.GoodsLocationController.onPageLoad(answers.id, NormalMode))
+              .mustBe(routes.GoodsLocationController.onPageLoad(answers.movementReferenceNumber, NormalMode))
         }
       }
       "must go from 'goods location' to  'customs approved location' when user chooses 'Border Force Office' " in {
@@ -75,7 +75,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(GoodsLocationPage, NormalMode, updatedAnswers)
-              .mustBe(routes.CustomsSubPlaceController.onPageLoad(updatedAnswers.id, NormalMode))
+              .mustBe(routes.CustomsSubPlaceController.onPageLoad(updatedAnswers.movementReferenceNumber, NormalMode))
         }
       }
       "must go from 'authorisedLocationCode page to consigneeName page" in {
@@ -83,7 +83,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
             navigator
               .nextPage(AuthorisedLocationPage, NormalMode, answers)
-              .mustBe(routes.ConsigneeNameController.onPageLoad(answers.id, NormalMode))
+              .mustBe(routes.ConsigneeNameController.onPageLoad(answers.movementReferenceNumber, NormalMode))
         }
       }
       "must go from 'consigneeName page to eoriConfirmation page" in {
@@ -91,7 +91,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
             navigator
               .nextPage(ConsigneeNamePage, NormalMode, answers)
-              .mustBe(routes.ConsigneeEoriNumberController.onPageLoad(answers.id, NormalMode))
+              .mustBe(routes.ConsigneeEoriNumberController.onPageLoad(answers.movementReferenceNumber, NormalMode))
         }
       }
 
@@ -100,7 +100,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
             navigator
               .nextPage(ConsigneeEoriNumberPage, NormalMode, answers)
-              .mustBe(routes.ConsigneeAddressController.onPageLoad(answers.id, NormalMode))
+              .mustBe(routes.ConsigneeAddressController.onPageLoad(answers.movementReferenceNumber, NormalMode))
         }
       }
 
@@ -109,7 +109,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
             navigator
               .nextPage(ConsigneeAddressPage, NormalMode, answers)
-              .mustBe(routes.SimplifiedCustomsOfficeController.onPageLoad(answers.id, NormalMode))
+              .mustBe(routes.SimplifiedCustomsOfficeController.onPageLoad(answers.movementReferenceNumber, NormalMode))
         }
       }
 
@@ -122,7 +122,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
                 .remove(IncidentOnRoutePage).success.value
               navigator
                 .nextPage(SimplifiedCustomsOfficePage, NormalMode, ua)
-                .mustBe(routes.IncidentOnRouteController.onPageLoad(ua.id, NormalMode))
+                .mustBe(routes.IncidentOnRouteController.onPageLoad(ua.movementReferenceNumber, NormalMode))
           }
         }
 
@@ -134,7 +134,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
                 .remove(TraderNamePage).success.value
               navigator
                 .nextPage(CustomsOfficePage, NormalMode, ua)
-                .mustBe(routes.TraderNameController.onPageLoad(ua.id, NormalMode))
+                .mustBe(routes.TraderNameController.onPageLoad(ua.movementReferenceNumber, NormalMode))
           }
         }
 
@@ -150,7 +150,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
             navigator
               .nextPage(CustomsSubPlacePage, NormalMode, answers)
-              .mustBe(routes.CustomsOfficeController.onPageLoad(answers.id, NormalMode))
+              .mustBe(routes.CustomsOfficeController.onPageLoad(answers.movementReferenceNumber, NormalMode))
         }
       }
 
@@ -159,7 +159,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
             navigator
               .nextPage(TraderNamePage, NormalMode, answers)
-              .mustBe(routes.TraderEoriController.onPageLoad(answers.id, NormalMode))
+              .mustBe(routes.TraderEoriController.onPageLoad(answers.movementReferenceNumber, NormalMode))
         }
       }
 
@@ -168,7 +168,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
             navigator
               .nextPage(TraderAddressPage, NormalMode, answers)
-              .mustBe(routes.IsTraderAddressPlaceOfNotificationController.onPageLoad(answers.id, NormalMode))
+              .mustBe(routes.IsTraderAddressPlaceOfNotificationController.onPageLoad(answers.movementReferenceNumber, NormalMode))
         }
       }
 
@@ -177,7 +177,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
             navigator
               .nextPage(TraderEoriPage, NormalMode, answers)
-              .mustBe(routes.TraderAddressController.onPageLoad(answers.id, NormalMode))
+              .mustBe(routes.TraderAddressController.onPageLoad(answers.movementReferenceNumber, NormalMode))
         }
       }
 
@@ -189,7 +189,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
               navigator
                 .nextPage(IsTraderAddressPlaceOfNotificationPage, NormalMode, updatedUserAnswers)
-                .mustBe(routes.IncidentOnRouteController.onPageLoad(updatedUserAnswers.id, NormalMode))
+                .mustBe(routes.IncidentOnRouteController.onPageLoad(updatedUserAnswers.movementReferenceNumber, NormalMode))
           }
         }
 
@@ -200,7 +200,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
               navigator
                 .nextPage(IsTraderAddressPlaceOfNotificationPage, NormalMode, updatedUserAnswers)
-                .mustBe(routes.PlaceOfNotificationController.onPageLoad(updatedUserAnswers.id, NormalMode))
+                .mustBe(routes.PlaceOfNotificationController.onPageLoad(updatedUserAnswers.movementReferenceNumber, NormalMode))
           }
 
         }
@@ -214,7 +214,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(PlaceOfNotificationPage, NormalMode, updatedUserAnswers)
-              .mustBe(routes.IncidentOnRouteController.onPageLoad(updatedUserAnswers.id, NormalMode))
+              .mustBe(routes.IncidentOnRouteController.onPageLoad(updatedUserAnswers.movementReferenceNumber, NormalMode))
         }
       }
 
@@ -228,7 +228,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
               navigator
                 .nextPage(IncidentOnRoutePage, NormalMode, updatedAnswers)
-                .mustBe(routes.CheckYourAnswersController.onPageLoad(answers.id))
+                .mustBe(routes.CheckYourAnswersController.onPageLoad(answers.movementReferenceNumber))
           }
         }
 
@@ -257,7 +257,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
               navigator
                 .nextPage(IncidentOnRoutePage, NormalMode, updatedAnswers)
-                .mustBe(eventRoutes.AddEventController.onPageLoad(answers.id, NormalMode))
+                .mustBe(eventRoutes.AddEventController.onPageLoad(answers.movementReferenceNumber, NormalMode))
           }
         }
 
@@ -277,7 +277,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
               navigator
                 .nextPage(IncidentOnRoutePage, NormalMode, updatedAnswers)
-                .mustBe(eventRoutes.EventCountryController.onPageLoad(answers.id, eventIndex, NormalMode))
+                .mustBe(eventRoutes.EventCountryController.onPageLoad(answers.movementReferenceNumber, eventIndex, NormalMode))
           }
         }
 
@@ -300,7 +300,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
             navigator
               .nextPage(EventCountryPage(eventIndex), NormalMode, answers)
-              .mustBe(eventRoutes.EventPlaceController.onPageLoad(answers.id, eventIndex, NormalMode))
+              .mustBe(eventRoutes.EventPlaceController.onPageLoad(answers.movementReferenceNumber, eventIndex, NormalMode))
         }
       }
 
@@ -310,7 +310,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
             navigator
               .nextPage(EventPlacePage(eventIndex), NormalMode, answers)
-              .mustBe(eventRoutes.EventReportedController.onPageLoad(answers.id, eventIndex, NormalMode))
+              .mustBe(eventRoutes.EventReportedController.onPageLoad(answers.movementReferenceNumber, eventIndex, NormalMode))
         }
       }
 
@@ -320,7 +320,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
             navigator
               .nextPage(EventReportedPage(eventIndex), NormalMode, answers)
-              .mustBe(eventRoutes.IsTranshipmentController.onPageLoad(answers.id, eventIndex, NormalMode))
+              .mustBe(eventRoutes.IsTranshipmentController.onPageLoad(answers.movementReferenceNumber, eventIndex, NormalMode))
         }
       }
 
@@ -340,7 +340,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
               navigator
                 .nextPage(IsTranshipmentPage(eventIndex), NormalMode, updatedAnswers)
-                .mustBe(eventRoutes.IncidentInformationController.onPageLoad(updatedAnswers.id, eventIndex, NormalMode))
+                .mustBe(eventRoutes.IncidentInformationController.onPageLoad(updatedAnswers.movementReferenceNumber, eventIndex, NormalMode))
           }
         }
 
@@ -358,7 +358,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
               navigator
                 .nextPage(IsTranshipmentPage(eventIndex), NormalMode, updatedAnswers)
-                .mustBe(sealRoutes.HaveSealsChangedController.onPageLoad(updatedAnswers.id, eventIndex, NormalMode))
+                .mustBe(sealRoutes.HaveSealsChangedController.onPageLoad(updatedAnswers.movementReferenceNumber, eventIndex, NormalMode))
           }
         }
 
@@ -373,7 +373,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
               navigator
                 .nextPage(IsTranshipmentPage(eventIndex), NormalMode, updatedAnswers)
-                .mustBe(transhipmentRoutes.TranshipmentTypeController.onPageLoad(updatedAnswers.id, eventIndex, NormalMode))
+                .mustBe(transhipmentRoutes.TranshipmentTypeController.onPageLoad(updatedAnswers.movementReferenceNumber, eventIndex, NormalMode))
           }
         }
 
@@ -425,7 +425,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
                 .value
               navigator
                 .nextPage(ConfirmRemoveContainerPage(eventIndex), NormalMode, updatedAnswers)
-                .mustBe(transhipmentRoutes.AddContainerController.onPageLoad(updatedAnswers.id, eventIndex, NormalMode))
+                .mustBe(transhipmentRoutes.AddContainerController.onPageLoad(updatedAnswers.movementReferenceNumber, eventIndex, NormalMode))
           }
         }
 
@@ -453,7 +453,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
                 .value
               navigator
                 .nextPage(ConfirmRemoveContainerPage(eventIndex), NormalMode, updatedAnswers)
-                .mustBe(eventRoutes.IsTranshipmentController.onPageLoad(updatedAnswers.id, eventIndex, NormalMode))
+                .mustBe(eventRoutes.IsTranshipmentController.onPageLoad(updatedAnswers.movementReferenceNumber, eventIndex, NormalMode))
           }
         }
       }
@@ -470,7 +470,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
               navigator
                 .nextPage(TranshipmentTypePage(eventIndex), NormalMode, updatedAnswers)
-                .mustBe(transhipmentRoutes.TransportIdentityController.onPageLoad(updatedAnswers.id, eventIndex, NormalMode))
+                .mustBe(transhipmentRoutes.TransportIdentityController.onPageLoad(updatedAnswers.movementReferenceNumber, eventIndex, NormalMode))
           }
         }
 
@@ -498,7 +498,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
                 .value
               navigator
                 .nextPage(TranshipmentTypePage(eventIndex), NormalMode, updatedAnswers)
-                .mustBe(transhipmentRoutes.ContainerNumberController.onPageLoad(updatedAnswers.id, eventIndex, containerIndex, NormalMode))
+                .mustBe(transhipmentRoutes.ContainerNumberController.onPageLoad(updatedAnswers.movementReferenceNumber, eventIndex, containerIndex, NormalMode))
           }
         }
 
@@ -526,7 +526,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
                 .value
               navigator
                 .nextPage(TranshipmentTypePage(eventIndex), NormalMode, updatedAnswers)
-                .mustBe(transhipmentRoutes.AddContainerController.onPageLoad(updatedAnswers.id, eventIndex, NormalMode))
+                .mustBe(transhipmentRoutes.AddContainerController.onPageLoad(updatedAnswers.movementReferenceNumber, eventIndex, NormalMode))
           }
         }
 
@@ -555,7 +555,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
               navigator
                 .nextPage(TranshipmentTypePage(eventIndex), NormalMode, updatedAnswers)
-                .mustBe(transhipmentRoutes.ContainerNumberController.onPageLoad(updatedAnswers.id, eventIndex, containerIndex, NormalMode))
+                .mustBe(transhipmentRoutes.ContainerNumberController.onPageLoad(updatedAnswers.movementReferenceNumber, eventIndex, containerIndex, NormalMode))
           }
         }
 
@@ -584,7 +584,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
               navigator
                 .nextPage(TranshipmentTypePage(eventIndex), NormalMode, updatedAnswers)
-                .mustBe(transhipmentRoutes.AddContainerController.onPageLoad(updatedAnswers.id, eventIndex, NormalMode))
+                .mustBe(transhipmentRoutes.AddContainerController.onPageLoad(updatedAnswers.movementReferenceNumber, eventIndex, NormalMode))
           }
         }
       }
@@ -594,7 +594,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
             navigator
               .nextPage(TransportIdentityPage(eventIndex), NormalMode, answers)
-              .mustBe(transhipmentRoutes.TransportNationalityController.onPageLoad(answers.id, eventIndex, NormalMode))
+              .mustBe(transhipmentRoutes.TransportNationalityController.onPageLoad(answers.movementReferenceNumber, eventIndex, NormalMode))
         }
       }
 
@@ -603,7 +603,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
             navigator
               .nextPage(TransportNationalityPage(eventIndex), NormalMode, answers)
-              .mustBe(sealRoutes.HaveSealsChangedController.onPageLoad(answers.id, eventIndex, NormalMode))
+              .mustBe(sealRoutes.HaveSealsChangedController.onPageLoad(answers.movementReferenceNumber, eventIndex, NormalMode))
         }
       }
 
@@ -613,7 +613,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
             navigator
               .nextPage(IncidentInformationPage(eventIndex), NormalMode, answers)
-              .mustBe(sealRoutes.HaveSealsChangedController.onPageLoad(answers.id, eventIndex, NormalMode))
+              .mustBe(sealRoutes.HaveSealsChangedController.onPageLoad(answers.movementReferenceNumber, eventIndex, NormalMode))
         }
       }
 
@@ -622,7 +622,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
             navigator
               .nextPage(ContainerNumberPage(eventIndex, containerIndex), NormalMode, answers)
-              .mustBe(transhipmentRoutes.AddContainerController.onPageLoad(answers.id, eventIndex, NormalMode))
+              .mustBe(transhipmentRoutes.AddContainerController.onPageLoad(answers.movementReferenceNumber, eventIndex, NormalMode))
         }
       }
 
@@ -641,7 +641,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
               navigator
                 .nextPage(AddContainerPage(eventIndex), NormalMode, updatedAnswers)
-                .mustBe(transhipmentRoutes.TransportIdentityController.onPageLoad(answers.id, eventIndex, NormalMode))
+                .mustBe(transhipmentRoutes.TransportIdentityController.onPageLoad(answers.movementReferenceNumber, eventIndex, NormalMode))
           }
         }
 
@@ -660,7 +660,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
               navigator
                 .nextPage(AddContainerPage(eventIndex), NormalMode, updatedAnswers)
-                .mustBe(sealRoutes.HaveSealsChangedController.onPageLoad(answers.id, eventIndex, NormalMode))
+                .mustBe(sealRoutes.HaveSealsChangedController.onPageLoad(answers.movementReferenceNumber, eventIndex, NormalMode))
           }
         }
 
@@ -677,7 +677,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
               navigator
                 .nextPage(AddContainerPage(eventIndex), NormalMode, updatedAnswers)
-                .mustBe(transhipmentRoutes.ContainerNumberController.onPageLoad(answers.id, eventIndex, containerIndex, NormalMode))
+                .mustBe(transhipmentRoutes.ContainerNumberController.onPageLoad(answers.movementReferenceNumber, eventIndex, containerIndex, NormalMode))
           }
         }
 
@@ -699,7 +699,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
               navigator
                 .nextPage(AddContainerPage(eventIndex), NormalMode, updatedAnswers)
-                .mustBe(transhipmentRoutes.ContainerNumberController.onPageLoad(answers.id, eventIndex, nextIndex, NormalMode))
+                .mustBe(transhipmentRoutes.ContainerNumberController.onPageLoad(answers.movementReferenceNumber, eventIndex, nextIndex, NormalMode))
           }
         }
       }
@@ -729,7 +729,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
               }
               navigator
                 .nextPage(ConfirmRemoveEventPage(eventIndex), NormalMode, updatedAnswers)
-                .mustBe(eventRoutes.AddEventController.onPageLoad(answers.id, NormalMode))
+                .mustBe(eventRoutes.AddEventController.onPageLoad(answers.movementReferenceNumber, NormalMode))
           }
         }
 
@@ -756,7 +756,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
               }
               navigator
                 .nextPage(ConfirmRemoveEventPage(eventIndex), NormalMode, updatedAnswers)
-                .mustBe(eventRoutes.AddEventController.onPageLoad(answers.id, NormalMode))
+                .mustBe(eventRoutes.AddEventController.onPageLoad(answers.movementReferenceNumber, NormalMode))
           }
         }
 
@@ -766,7 +766,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
               val withoutEvents = answers.remove(EventsQuery).success.value
               navigator
                 .nextPage(ConfirmRemoveEventPage(eventIndex), NormalMode, withoutEvents)
-                .mustBe(routes.IncidentOnRouteController.onPageLoad(answers.id, NormalMode))
+                .mustBe(routes.IncidentOnRouteController.onPageLoad(answers.movementReferenceNumber, NormalMode))
           }
         }
       }
@@ -783,7 +783,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
                 navigator
                   .nextPage(AddEventPage, NormalMode, updatedAnswers)
-                  .mustBe(eventRoutes.EventCountryController.onPageLoad(answers.id, eventIndex, NormalMode))
+                  .mustBe(eventRoutes.EventCountryController.onPageLoad(answers.movementReferenceNumber, eventIndex, NormalMode))
             }
           }
 
@@ -815,7 +815,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
                 navigator
                   .nextPage(AddEventPage, NormalMode, updatedAnswers)
-                  .mustBe(eventRoutes.EventCountryController.onPageLoad(emptyUserAnswers.id, Index(1), NormalMode))
+                  .mustBe(eventRoutes.EventCountryController.onPageLoad(emptyUserAnswers.movementReferenceNumber, Index(1), NormalMode))
             }
           }
         }
@@ -827,7 +827,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
               navigator
                 .nextPage(AddEventPage, NormalMode, updatedAnswers)
-                .mustBe(routes.CheckYourAnswersController.onPageLoad(answers.id))
+                .mustBe(routes.CheckYourAnswersController.onPageLoad(answers.movementReferenceNumber))
           }
         }
       }
@@ -841,7 +841,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
               navigator
                 .nextPage(HaveSealsChangedPage(eventIndex), NormalMode, updatedAnswers)
-                .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(answers.id, eventIndex))
+                .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(answers.movementReferenceNumber, eventIndex))
           }
         }
 
@@ -858,7 +858,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
               navigator
                 .nextPage(HaveSealsChangedPage(eventIndex), NormalMode, updatedAnswers)
-                .mustBe(sealRoutes.SealIdentityController.onPageLoad(answers.id, eventIndex, sealIndex, NormalMode))
+                .mustBe(sealRoutes.SealIdentityController.onPageLoad(answers.movementReferenceNumber, eventIndex, sealIndex, NormalMode))
           }
         }
 
@@ -875,7 +875,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
               navigator
                 .nextPage(HaveSealsChangedPage(eventIndex), NormalMode, updatedAnswers)
-                .mustBe(sealRoutes.AddSealController.onPageLoad(answers.id, eventIndex, NormalMode))
+                .mustBe(sealRoutes.AddSealController.onPageLoad(answers.movementReferenceNumber, eventIndex, NormalMode))
           }
         }
       }
@@ -889,7 +889,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
               navigator
                 .nextPage(SealIdentityPage(eventIndex, sealIndex), NormalMode, updatedAnswers)
-                .mustBe(sealRoutes.AddSealController.onPageLoad(answers.id, eventIndex, NormalMode))
+                .mustBe(sealRoutes.AddSealController.onPageLoad(answers.movementReferenceNumber, eventIndex, NormalMode))
           }
         }
       }
@@ -903,7 +903,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
               navigator
                 .nextPage(AddSealPage(eventIndex), NormalMode, updatedAnswers)
-                .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(answers.id, eventIndex))
+                .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(answers.movementReferenceNumber, eventIndex))
 
           }
         }
@@ -920,7 +920,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
           navigator
             .nextPage(AddSealPage(eventIndex), NormalMode, updatedAnswers)
-            .mustBe(sealRoutes.SealIdentityController.onPageLoad(updatedAnswers.id, eventIndex, nextIndex, NormalMode))
+            .mustBe(sealRoutes.SealIdentityController.onPageLoad(updatedAnswers.movementReferenceNumber, eventIndex, nextIndex, NormalMode))
         }
       }
 
@@ -935,7 +935,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
               navigator
                 .nextPage(ConfirmRemoveSealPage(eventIndex), NormalMode, updatedAnswers)
-                .mustBe(sealRoutes.AddSealController.onPageLoad(updatedAnswers.id, eventIndex, NormalMode))
+                .mustBe(sealRoutes.AddSealController.onPageLoad(updatedAnswers.movementReferenceNumber, eventIndex, NormalMode))
           }
 
         }
@@ -950,7 +950,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
               navigator
                 .nextPage(ConfirmRemoveSealPage(eventIndex), NormalMode, updatedAnswers)
-                .mustBe(sealRoutes.HaveSealsChangedController.onPageLoad(updatedAnswers.id, eventIndex, NormalMode))
+                .mustBe(sealRoutes.HaveSealsChangedController.onPageLoad(updatedAnswers.movementReferenceNumber, eventIndex, NormalMode))
           }
 
         }

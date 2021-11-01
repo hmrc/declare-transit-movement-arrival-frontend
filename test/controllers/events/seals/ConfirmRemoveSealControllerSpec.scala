@@ -159,11 +159,11 @@ class ConfirmRemoveSealControllerSpec extends SpecBase with AppWithDefaultMockFi
       redirectLocation(result).value mustEqual onwardRoute.url
 
       val newUserAnswers = UserAnswers(
-        id = userAnswersWithSeal.id,
-        movementReferenceNumber = Some(userAnswersWithSeal.id),
+        movementReferenceNumber = userAnswersWithSeal.movementReferenceNumber,
         eoriNumber = userAnswersWithSeal.eoriNumber,
         userAnswersWithSeal.remove(SealIdentityPage(eventIndex, sealIndex)).success.value.data,
-        userAnswersWithSeal.lastUpdated
+        userAnswersWithSeal.lastUpdated,
+        id = userAnswersWithSeal.id
       )
 
       verify(mockSessionRepository, times(1)).set(newUserAnswers)
