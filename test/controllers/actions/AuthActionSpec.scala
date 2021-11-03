@@ -87,11 +87,12 @@ class AuthActionSpec extends SpecBase with AppWithDefaultMockFixtures {
         val bodyParsers       = app.injector.instanceOf[BodyParsers.Default]
         val frontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
-        val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new MissingBearerToken),
-                                                           frontendAppConfig,
-                                                           bodyParsers,
-                                                           mockEnrolmentStoreConnector,
-                                                           mockUIRender
+        val authAction = new AuthenticatedIdentifierAction(
+          new FakeFailingAuthConnector(new MissingBearerToken),
+          frontendAppConfig,
+          bodyParsers,
+          mockEnrolmentStoreConnector,
+          mockUIRender
         )
 
         val controller = new Harness(authAction)
