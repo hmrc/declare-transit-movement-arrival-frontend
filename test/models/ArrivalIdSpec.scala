@@ -29,7 +29,7 @@ class ArrivalIdSpec extends SpecBase with EitherValues {
       val arrivalId    = ArrivalId(12)
 
       val bind: Either[String, ArrivalId] = pathBindable.bind("arrivalId", "12")
-      bind.right.value mustBe arrivalId
+      bind.value mustBe arrivalId
     }
 
     "unbind to path value" in {

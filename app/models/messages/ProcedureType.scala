@@ -23,21 +23,22 @@ sealed trait ProcedureType
 object ProcedureType {
 
   case object Normal extends ProcedureType {
-    override def toString: String = "normal"
+    val typeString: String        = "normal"
+    override def toString: String = typeString
   }
 
   case object Simplified extends ProcedureType {
-    override def toString: String = "simplified"
+    val typeString: String        = "simplified"
+    override def toString: String = typeString
   }
 
   implicit lazy val reads: Reads[ProcedureType] = Reads {
-    case JsString("normal")     => JsSuccess(Normal)
-    case JsString("simplified") => JsSuccess(Simplified)
-    case _                      => JsError("Unknown procedure type")
+    case JsString(Normal.typeString)     => JsSuccess(Normal)
+    case JsString(Simplified.typeString) => JsSuccess(Simplified)
+    case _                               => JsError("Unknown procedure type")
   }
 
-  implicit lazy val writes: Writes[ProcedureType] = Writes {
-    case Normal     => JsString("normal")
-    case Simplified => JsString("simplified")
+  implicit def writes[T <: ProcedureType]: Writes[T] = Writes {
+    procedureType => JsString(procedureType.toString)
   }
 }

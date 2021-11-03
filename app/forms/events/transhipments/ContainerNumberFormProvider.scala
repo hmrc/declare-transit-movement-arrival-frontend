@@ -16,15 +16,14 @@
 
 package forms.events.transhipments
 
+import forms.StopOnFirstFail
 import forms.mappings.Mappings
-
 import javax.inject.Inject
 import models.Index
 import models.StringFieldRegex.stringFieldRegex
 import models.domain.ContainerDomain
 import models.messages.Transhipment
 import play.api.data.Form
-import uk.gov.hmrc.play.mappers.StopOnFirstFail
 
 class ContainerNumberFormProvider @Inject() extends Mappings {
 

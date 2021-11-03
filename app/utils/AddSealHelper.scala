@@ -23,9 +23,9 @@ import pages.events.seals._
 import uk.gov.hmrc.viewmodels.SummaryList.Row
 import uk.gov.hmrc.viewmodels._
 
-class AddSealHelper(userAnswers: UserAnswers) extends SummaryListRowHelper(userAnswers) {
+class AddSealHelper(userAnswers: UserAnswers, mode: Mode) extends SummaryListRowHelper(userAnswers) {
 
-  def sealRow(eventIndex: Index, sealIndex: Index, mode: Mode): Option[Row] = getAnswerAndBuildRemovableRow[SealDomain](
+  def sealRow(eventIndex: Index, sealIndex: Index): Option[Row] = getAnswerAndBuildRemovableRow[SealDomain](
     page = SealIdentityPage(eventIndex, sealIndex),
     formatAnswer = seal => lit"${seal.numberOrMark}",
     id = s"seal-${sealIndex.display}",
@@ -35,5 +35,5 @@ class AddSealHelper(userAnswers: UserAnswers) extends SummaryListRowHelper(userA
 }
 
 object AddSealHelper {
-  def apply(userAnswers: UserAnswers): AddSealHelper = new AddSealHelper(userAnswers)
+  def apply(userAnswers: UserAnswers, mode: Mode): AddSealHelper = new AddSealHelper(userAnswers, mode)
 }

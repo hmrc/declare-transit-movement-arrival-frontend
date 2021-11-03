@@ -21,8 +21,6 @@ import models.Address
 import models.StringFieldRegex.stringFieldRegexAsterisk
 import play.api.data.Form
 import play.api.data.Forms._
-import uk.gov.hmrc.play.mappers.StopOnFirstFail
-
 import javax.inject.Inject
 
 class ConsigneeAddressFormProvider @Inject() extends Mappings {

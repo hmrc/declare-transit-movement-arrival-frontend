@@ -17,15 +17,15 @@
 package viewModels.sections
 
 import derivable.DeriveNumberOfSeals
-import models.{Index, UserAnswers}
+import models.{Index, Mode, UserAnswers}
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 import utils.CheckEventAnswersHelper
 
 object SealSection extends NunjucksSupport {
 
-  def apply(userAnswers: UserAnswers, eventIndex: Index): Section = {
+  def apply(userAnswers: UserAnswers, mode: Mode, eventIndex: Index): Section = {
 
-    val helper: CheckEventAnswersHelper = new CheckEventAnswersHelper(userAnswers)
+    val helper: CheckEventAnswersHelper = new CheckEventAnswersHelper(userAnswers, mode)
 
     val numberOfSeals    = userAnswers.get(DeriveNumberOfSeals(eventIndex)).getOrElse(0)
     val listOfSealsIndex = List.range(0, numberOfSeals).map(Index(_))

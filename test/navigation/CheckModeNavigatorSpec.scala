@@ -52,7 +52,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
         answers =>
           navigator
             .nextPage(UnknownPage, CheckMode, answers)
-            .mustBe(routes.CheckYourAnswersController.onPageLoad(answers.id))
+            .mustBe(routes.CheckYourAnswersController.onPageLoad(answers.movementReferenceNumber))
       }
     }
 
@@ -68,7 +68,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
               navigator
                 .nextPage(GoodsLocationPage, CheckMode, updatedAnswers)
-                .mustBe(routes.CheckYourAnswersController.onPageLoad(answers.id))
+                .mustBe(routes.CheckYourAnswersController.onPageLoad(answers.movementReferenceNumber))
           }
         }
       }
@@ -84,7 +84,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
               navigator
                 .nextPage(GoodsLocationPage, CheckMode, updatedAnswers)
-                .mustBe(routes.CustomsSubPlaceController.onPageLoad(answers.id, CheckMode))
+                .mustBe(routes.CustomsSubPlaceController.onPageLoad(answers.movementReferenceNumber, CheckMode))
           }
         }
       }
@@ -99,7 +99,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
               navigator
                 .nextPage(CustomsSubPlacePage, CheckMode, updatedAnswers)
-                .mustBe(routes.CustomsOfficeController.onPageLoad(answers.id, CheckMode))
+                .mustBe(routes.CustomsOfficeController.onPageLoad(answers.movementReferenceNumber, CheckMode))
           }
         }
 
@@ -113,7 +113,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
               navigator
                 .nextPage(CustomsSubPlacePage, CheckMode, updatedAnswers)
-                .mustBe(routes.CheckYourAnswersController.onPageLoad(answers.id))
+                .mustBe(routes.CheckYourAnswersController.onPageLoad(answers.movementReferenceNumber))
 
           }
         }
@@ -129,7 +129,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
               navigator
                 .nextPage(CustomsSubPlacePage, CheckMode, updatedAnswers)
-                .mustBe(routes.CheckYourAnswersController.onPageLoad(answers.id))
+                .mustBe(routes.CheckYourAnswersController.onPageLoad(answers.movementReferenceNumber))
 
           }
         }
@@ -147,7 +147,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
               navigator
                 .nextPage(CustomsOfficePage, CheckMode, updatedAnswers)
-                .mustBe(routes.TraderNameController.onPageLoad(answers.id, CheckMode))
+                .mustBe(routes.TraderNameController.onPageLoad(answers.movementReferenceNumber, CheckMode))
 
           }
         }
@@ -162,7 +162,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
                 navigator
                   .nextPage(TraderNamePage, CheckMode, updatedAnswers)
-                  .mustBe(routes.CheckYourAnswersController.onPageLoad(answers.id))
+                  .mustBe(routes.CheckYourAnswersController.onPageLoad(answers.movementReferenceNumber))
 
             }
           }
@@ -174,7 +174,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
                 navigator
                   .nextPage(TraderNamePage, CheckMode, updatedAnswers)
-                  .mustBe(routes.TraderEoriController.onPageLoad(answers.id, CheckMode))
+                  .mustBe(routes.TraderEoriController.onPageLoad(answers.movementReferenceNumber, CheckMode))
 
             }
           }
@@ -190,7 +190,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
                 navigator
                   .nextPage(TraderEoriPage, CheckMode, updatedAnswers)
-                  .mustBe(routes.CheckYourAnswersController.onPageLoad(answers.id))
+                  .mustBe(routes.CheckYourAnswersController.onPageLoad(answers.movementReferenceNumber))
 
             }
           }
@@ -204,7 +204,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
                 navigator
                   .nextPage(TraderEoriPage, CheckMode, updatedAnswers)
-                  .mustBe(routes.TraderAddressController.onPageLoad(answers.id, CheckMode))
+                  .mustBe(routes.TraderAddressController.onPageLoad(answers.movementReferenceNumber, CheckMode))
 
             }
           }
@@ -220,7 +220,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
                 navigator
                   .nextPage(TraderAddressPage, CheckMode, userAnswers)
-                  .mustBe(routes.IsTraderAddressPlaceOfNotificationController.onPageLoad(userAnswers.id, CheckMode))
+                  .mustBe(routes.IsTraderAddressPlaceOfNotificationController.onPageLoad(userAnswers.movementReferenceNumber, CheckMode))
             }
           }
 
@@ -232,7 +232,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
                 navigator
                   .nextPage(TraderAddressPage, CheckMode, userAnswers)
-                  .mustBe(routes.CheckYourAnswersController.onPageLoad(userAnswers.id))
+                  .mustBe(routes.CheckYourAnswersController.onPageLoad(userAnswers.movementReferenceNumber))
             }
 
           }
@@ -247,7 +247,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
                   .remove(PlaceOfNotificationPage).success.value
                 navigator
                   .nextPage(IsTraderAddressPlaceOfNotificationPage, CheckMode, userAnswers)
-                  .mustBe(routes.PlaceOfNotificationController.onPageLoad(userAnswers.id, CheckMode))
+                  .mustBe(routes.PlaceOfNotificationController.onPageLoad(userAnswers.movementReferenceNumber, CheckMode))
             }
           }
 
@@ -259,7 +259,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
                 navigator
                   .nextPage(IsTraderAddressPlaceOfNotificationPage, CheckMode, userAnswers)
-                  .mustBe(routes.CheckYourAnswersController.onPageLoad(answers.id))
+                  .mustBe(routes.CheckYourAnswersController.onPageLoad(answers.movementReferenceNumber))
             }
           }
 
@@ -272,7 +272,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
                 navigator
                   .nextPage(IsTraderAddressPlaceOfNotificationPage, CheckMode, userAnswers)
-                  .mustBe(routes.CheckYourAnswersController.onPageLoad(answers.id))
+                  .mustBe(routes.CheckYourAnswersController.onPageLoad(answers.movementReferenceNumber))
             }
           }
 
@@ -284,7 +284,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
               answers =>
                 navigator
                   .nextPage(PlaceOfNotificationPage, CheckMode, answers)
-                  .mustBe(routes.CheckYourAnswersController.onPageLoad(answers.id))
+                  .mustBe(routes.CheckYourAnswersController.onPageLoad(answers.movementReferenceNumber))
             }
           }
         }
@@ -299,7 +299,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
                 navigator
                   .nextPage(AuthorisedLocationPage, CheckMode, updatedAnswers)
-                  .mustBe(routes.CheckYourAnswersController.onPageLoad(answers.id))
+                  .mustBe(routes.CheckYourAnswersController.onPageLoad(answers.movementReferenceNumber))
             }
           }
 
@@ -317,7 +317,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
                 navigator
                   .nextPage(ConsigneeNamePage, CheckMode, updatedAnswers)
-                  .mustBe(routes.ConsigneeEoriNumberController.onPageLoad(answers.id, CheckMode))
+                  .mustBe(routes.ConsigneeEoriNumberController.onPageLoad(answers.movementReferenceNumber, CheckMode))
             }
           }
           "'CYA page' when address is present" in {
@@ -330,7 +330,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
                 navigator
                   .nextPage(ConsigneeNamePage, CheckMode, updatedAnswers)
-                  .mustBe(routes.CheckYourAnswersController.onPageLoad(answers.id))
+                  .mustBe(routes.CheckYourAnswersController.onPageLoad(answers.movementReferenceNumber))
             }
           }
 
@@ -345,7 +345,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
                 navigator
                   .nextPage(ConsigneeEoriNumberPage, CheckMode, updatedAnswers)
-                  .mustBe(routes.ConsigneeAddressController.onPageLoad(updatedAnswers.id, CheckMode))
+                  .mustBe(routes.ConsigneeAddressController.onPageLoad(updatedAnswers.movementReferenceNumber, CheckMode))
             }
           }
 
@@ -356,7 +356,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
                   .set(ConsigneeAddressPage, traderAddress ).success.value
                 navigator
                   .nextPage(ConsigneeEoriNumberPage, CheckMode, updatedAnswers)
-                  .mustBe(routes.CheckYourAnswersController.onPageLoad(updatedAnswers.id))
+                  .mustBe(routes.CheckYourAnswersController.onPageLoad(updatedAnswers.movementReferenceNumber))
             }
           }
 
@@ -370,7 +370,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
                 navigator
                   .nextPage(GoodsLocationPage, CheckMode, updatedAnswers)
-                  .mustBe(routes.UseDifferentServiceController.onPageLoad(answers.id))
+                  .mustBe(routes.UseDifferentServiceController.onPageLoad(answers.movementReferenceNumber))
             }
           }
         }
@@ -387,7 +387,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
               answers =>
                 navigator
                   .nextPage(page, CheckMode, answers)
-                  .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(answers.id, eventIndex))
+                  .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(answers.movementReferenceNumber, eventIndex))
             }
           }
       }
@@ -400,7 +400,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
               navigator
                 .nextPage(EventReportedPage(eventIndex), CheckMode, ua)
-                .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, eventIndex))
+                .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(ua.movementReferenceNumber, eventIndex))
           }
         }
 
@@ -412,7 +412,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
                 .set(IsTranshipmentPage(eventIndex), true).success.value
               navigator
                 .nextPage(EventReportedPage(eventIndex), CheckMode, ua)
-                .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, eventIndex))
+                .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(ua.movementReferenceNumber, eventIndex))
           }
 
         }
@@ -426,7 +426,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
               navigator
                 .nextPage(EventReportedPage(eventIndex), CheckMode, ua)
-                .mustBe(eventRoutes.IncidentInformationController.onPageLoad(ua.id, eventIndex, CheckMode))
+                .mustBe(eventRoutes.IncidentInformationController.onPageLoad(ua.movementReferenceNumber, eventIndex, CheckMode))
           }
         }
 
@@ -443,7 +443,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
               navigator
                 .nextPage(IsTranshipmentPage(eventIndex), CheckMode, ua)
-                .mustBe(transhipmentRoutes.TranshipmentTypeController.onPageLoad(ua.id, eventIndex, CheckMode))
+                .mustBe(transhipmentRoutes.TranshipmentTypeController.onPageLoad(ua.movementReferenceNumber, eventIndex, CheckMode))
           }
         }
 
@@ -456,7 +456,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
               navigator
                 .nextPage(IsTranshipmentPage(eventIndex), CheckMode, ua)
-                .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, eventIndex))
+                .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(ua.movementReferenceNumber, eventIndex))
           }
         }
 
@@ -470,7 +470,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
               navigator
                 .nextPage(IsTranshipmentPage(eventIndex), CheckMode, ua)
-                .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, eventIndex))
+                .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(ua.movementReferenceNumber, eventIndex))
           }
         }
 
@@ -484,7 +484,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
               navigator
                 .nextPage(IsTranshipmentPage(eventIndex), CheckMode, ua)
-                .mustBe(transhipmentRoutes.TranshipmentTypeController.onPageLoad(ua.id, eventIndex, CheckMode))
+                .mustBe(transhipmentRoutes.TranshipmentTypeController.onPageLoad(ua.movementReferenceNumber, eventIndex, CheckMode))
           }
         }
 
@@ -497,7 +497,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
               navigator
                 .nextPage(IsTranshipmentPage(eventIndex), CheckMode, ua)
-                .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, eventIndex))
+                .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(ua.movementReferenceNumber, eventIndex))
           }
         }
 
@@ -511,7 +511,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
               navigator
                 .nextPage(IsTranshipmentPage(eventIndex), CheckMode, ua)
-                .mustBe(eventRoutes.IncidentInformationController.onPageLoad(ua.id, eventIndex, CheckMode))
+                .mustBe(eventRoutes.IncidentInformationController.onPageLoad(ua.movementReferenceNumber, eventIndex, CheckMode))
           }
         }
 
@@ -525,7 +525,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
               navigator
                 .nextPage(IsTranshipmentPage(eventIndex), CheckMode, ua)
-                .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(ua.id, eventIndex))
+                .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(ua.movementReferenceNumber, eventIndex))
           }
         }
       }
@@ -541,7 +541,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
               navigator
                 .nextPage(TranshipmentTypePage(eventIndex), CheckMode, updatedUserAnswers)
-                .mustBe(transhipmentRoutes.ContainerNumberController.onPageLoad(updatedUserAnswers.id, eventIndex, containerIndex, CheckMode))
+                .mustBe(transhipmentRoutes.ContainerNumberController.onPageLoad(updatedUserAnswers.movementReferenceNumber, eventIndex, containerIndex, CheckMode))
           }
         }
 
@@ -554,7 +554,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
               navigator
                 .nextPage(TranshipmentTypePage(eventIndex), CheckMode, updatedUserAnswers)
-                .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(updatedUserAnswers.id, eventIndex))
+                .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(updatedUserAnswers.movementReferenceNumber, eventIndex))
           }
         }
 
@@ -567,7 +567,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
               navigator
                 .nextPage(TranshipmentTypePage(eventIndex), CheckMode, updatedUserAnswers)
-                .mustBe(transhipmentRoutes.TransportIdentityController.onPageLoad(updatedUserAnswers.id, eventIndex, CheckMode))
+                .mustBe(transhipmentRoutes.TransportIdentityController.onPageLoad(updatedUserAnswers.movementReferenceNumber, eventIndex, CheckMode))
           }
         }
 
@@ -580,7 +580,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
               navigator
                 .nextPage(TranshipmentTypePage(eventIndex), CheckMode, updatedUserAnswers)
-                .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(updatedUserAnswers.id, eventIndex))
+                .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(updatedUserAnswers.movementReferenceNumber, eventIndex))
           }
         }
 
@@ -593,7 +593,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
               navigator
                 .nextPage(TranshipmentTypePage(eventIndex), CheckMode, updatedUserAnswers)
-                .mustBe(transhipmentRoutes.ContainerNumberController.onPageLoad(updatedUserAnswers.id, eventIndex, containerIndex, CheckMode))
+                .mustBe(transhipmentRoutes.ContainerNumberController.onPageLoad(updatedUserAnswers.movementReferenceNumber, eventIndex, containerIndex, CheckMode))
           }
         }
 
@@ -607,7 +607,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
                 .set(TransportNationalityPage(eventIndex), transportNationality).success.value
               navigator
                 .nextPage(TranshipmentTypePage(eventIndex), CheckMode, updatedUserAnswers)
-                .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(updatedUserAnswers.id, eventIndex))
+                .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(updatedUserAnswers.movementReferenceNumber, eventIndex))
           }
         }
 
@@ -622,7 +622,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
               navigator
                 .nextPage(TranshipmentTypePage(eventIndex), CheckMode, updatedUserAnswers)
-                .mustBe(transhipmentRoutes.AddContainerController.onPageLoad(updatedUserAnswers.id, eventIndex, CheckMode))
+                .mustBe(transhipmentRoutes.AddContainerController.onPageLoad(updatedUserAnswers.movementReferenceNumber, eventIndex, CheckMode))
           }
         }
 
@@ -636,7 +636,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
               navigator
                 .nextPage(TranshipmentTypePage(eventIndex), CheckMode, updatedUserAnswers)
-                .mustBe(transhipmentRoutes.AddContainerController.onPageLoad(updatedUserAnswers.id, eventIndex, CheckMode))
+                .mustBe(transhipmentRoutes.AddContainerController.onPageLoad(updatedUserAnswers.movementReferenceNumber, eventIndex, CheckMode))
           }
         }
 
@@ -650,7 +650,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
               navigator
                 .nextPage(TranshipmentTypePage(eventIndex), CheckMode, updatedUserAnswers)
-                .mustBe(transhipmentRoutes.AddContainerController.onPageLoad(updatedUserAnswers.id, eventIndex, CheckMode))
+                .mustBe(transhipmentRoutes.AddContainerController.onPageLoad(updatedUserAnswers.movementReferenceNumber, eventIndex, CheckMode))
           }
         }
 
@@ -663,7 +663,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
             answers =>
               navigator
                 .nextPage(ContainerNumberPage(eventIndex, containerIndex), CheckMode, answers)
-                .mustBe(transhipmentRoutes.AddContainerController.onPageLoad(answers.id, eventIndex, CheckMode))
+                .mustBe(transhipmentRoutes.AddContainerController.onPageLoad(answers.movementReferenceNumber, eventIndex, CheckMode))
           }
         }
 
@@ -680,7 +680,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
               navigator
                 .nextPage(TransportIdentityPage(eventIndex), CheckMode, updatedUserAnswers)
-                .mustBe(transhipmentRoutes.TransportNationalityController.onPageLoad(answers.id, eventIndex, CheckMode))
+                .mustBe(transhipmentRoutes.TransportNationalityController.onPageLoad(answers.movementReferenceNumber, eventIndex, CheckMode))
           }
         }
 
@@ -693,7 +693,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
               navigator
                 .nextPage(TransportIdentityPage(eventIndex), CheckMode, updatedUserAnswers)
-                .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(answers.id, eventIndex))
+                .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(answers.movementReferenceNumber, eventIndex))
           }
         }
       }
@@ -705,7 +705,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
             answers =>
               navigator
                 .nextPage(TransportNationalityPage(eventIndex), CheckMode, answers)
-                .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(answers.id, eventIndex))
+                .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(answers.movementReferenceNumber, eventIndex))
           }
         }
       }
@@ -721,7 +721,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
               navigator
                 .nextPage(AddContainerPage(eventIndex), CheckMode, updatedAnswers)
-                .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(updatedAnswers.id, eventIndex))
+                .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(updatedAnswers.movementReferenceNumber, eventIndex))
           }
         }
 
@@ -736,7 +736,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
               navigator
                 .nextPage(AddContainerPage(eventIndex), CheckMode, updatedAnswers)
-                .mustBe(transhipmentRoutes.TransportIdentityController.onPageLoad(updatedAnswers.id, eventIndex, CheckMode))
+                .mustBe(transhipmentRoutes.TransportIdentityController.onPageLoad(updatedAnswers.movementReferenceNumber, eventIndex, CheckMode))
           }
         }
 
@@ -751,7 +751,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
               navigator
                 .nextPage(AddContainerPage(eventIndex), CheckMode, updatedAnswers)
-                .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(updatedAnswers.id, eventIndex))
+                .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(updatedAnswers.movementReferenceNumber, eventIndex))
           }
         }
 
@@ -765,7 +765,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
               navigator
                 .nextPage(AddContainerPage(eventIndex), CheckMode, updatedAnswers)
-                .mustBe(transhipmentRoutes.ContainerNumberController.onPageLoad(updatedAnswers.id, eventIndex, nextIndex, CheckMode))
+                .mustBe(transhipmentRoutes.ContainerNumberController.onPageLoad(updatedAnswers.movementReferenceNumber, eventIndex, nextIndex, CheckMode))
           }
         }
 
@@ -780,7 +780,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
               navigator
                 .nextPage(SealIdentityPage(eventIndex, sealIndex), CheckMode, updatedAnswers)
-                .mustBe(sealRoutes.AddSealController.onPageLoad(answers.id, eventIndex, CheckMode))
+                .mustBe(sealRoutes.AddSealController.onPageLoad(answers.movementReferenceNumber, eventIndex, CheckMode))
           }
         }
 
@@ -791,7 +791,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
               navigator
                 .nextPage(HaveSealsChangedPage(eventIndex), CheckMode, updatedAnswers)
-                .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(answers.id, eventIndex))
+                .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(answers.movementReferenceNumber, eventIndex))
           }
         }
 
@@ -804,7 +804,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
               navigator
                 .nextPage(HaveSealsChangedPage(eventIndex), CheckMode, updatedAnswers)
-                .mustBe(sealRoutes.SealIdentityController.onPageLoad(answers.id, eventIndex, sealIndex, CheckMode))
+                .mustBe(sealRoutes.SealIdentityController.onPageLoad(answers.movementReferenceNumber, eventIndex, sealIndex, CheckMode))
           }
         }
 
@@ -817,7 +817,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
               navigator
                 .nextPage(AddSealPage(eventIndex), CheckMode, updatedAnswers)
-                .mustBe(sealRoutes.SealIdentityController.onPageLoad(answers.id, eventIndex, sealIndex, CheckMode))
+                .mustBe(sealRoutes.SealIdentityController.onPageLoad(answers.movementReferenceNumber, eventIndex, sealIndex, CheckMode))
           }
         }
 
@@ -829,7 +829,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
               navigator
                 .nextPage(AddSealPage(eventIndex), CheckMode, updatedAnswers)
-                .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(answers.id, eventIndex))
+                .mustBe(eventRoutes.CheckEventAnswersController.onPageLoad(answers.movementReferenceNumber, eventIndex))
           }
         }
       }
@@ -844,7 +844,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
               navigator
                 .nextPage(IsTraderAddressPlaceOfNotificationPage, CheckMode, updatedUserAnswers)
-                .mustBe(routes.CheckYourAnswersController.onPageLoad(updatedUserAnswers.id))
+                .mustBe(routes.CheckYourAnswersController.onPageLoad(updatedUserAnswers.movementReferenceNumber))
           }
         }
 
@@ -857,7 +857,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
               navigator
                 .nextPage(IsTraderAddressPlaceOfNotificationPage, CheckMode, updatedUserAnswers)
-                .mustBe(routes.PlaceOfNotificationController.onPageLoad(updatedUserAnswers.id, CheckMode))
+                .mustBe(routes.PlaceOfNotificationController.onPageLoad(updatedUserAnswers.movementReferenceNumber, CheckMode))
           }
         }
 
@@ -868,7 +868,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
               navigator
                 .nextPage(IsTraderAddressPlaceOfNotificationPage, CheckMode, updatedUserAnswers)
-                .mustBe(routes.CheckYourAnswersController.onPageLoad(updatedUserAnswers.id))
+                .mustBe(routes.CheckYourAnswersController.onPageLoad(updatedUserAnswers.movementReferenceNumber))
           }
         }
       }
@@ -882,7 +882,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
             navigator
               .nextPage(PlaceOfNotificationPage, CheckMode, updatedUserAnswers)
-              .mustBe(routes.CheckYourAnswersController.onPageLoad(updatedUserAnswers.id))
+              .mustBe(routes.CheckYourAnswersController.onPageLoad(updatedUserAnswers.movementReferenceNumber))
         }
       }
 
@@ -901,7 +901,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
                 .set(ContainerNumberPage(eventIndex, containerIndex), ContainerDomain("1")).success.value
               navigator
                 .nextPage(ConfirmRemoveContainerPage(eventIndex), CheckMode, updatedAnswers)
-                .mustBe(transhipmentRoutes.AddContainerController.onPageLoad(updatedAnswers.id, eventIndex, CheckMode))
+                .mustBe(transhipmentRoutes.AddContainerController.onPageLoad(updatedAnswers.movementReferenceNumber, eventIndex, CheckMode))
           }
         }
 
@@ -917,7 +917,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
                 .set(TranshipmentTypePage(eventIndex), DifferentContainer).success.value
               navigator
                 .nextPage(ConfirmRemoveContainerPage(eventIndex), CheckMode, updatedAnswers)
-                .mustBe(eventRoutes.IsTranshipmentController.onPageLoad(updatedAnswers.id, eventIndex, CheckMode))
+                .mustBe(eventRoutes.IsTranshipmentController.onPageLoad(updatedAnswers.movementReferenceNumber, eventIndex, CheckMode))
           }
         }
 
@@ -931,7 +931,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
                   .set(IncidentOnRoutePage, true).success.value
                 navigator
                   .nextPage(IncidentOnRoutePage, CheckMode, updatedAnswers)
-                  .mustBe(eventRoutes.EventCountryController.onPageLoad(answers.id, eventIndex, NormalMode))
+                  .mustBe(eventRoutes.EventCountryController.onPageLoad(answers.movementReferenceNumber, eventIndex, NormalMode))
 
             }
           }

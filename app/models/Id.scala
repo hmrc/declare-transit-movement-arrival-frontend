@@ -14,23 +14,24 @@
  * limitations under the License.
  */
 
-package models.domain
+package models
 
-import generators.MessagesModelGenerators
-import models.messages.Seal
-import models.messages.behaviours.JsonBehaviours
-import org.scalacheck.Arbitrary.arbitrary
-import org.scalatest.freespec.AnyFreeSpec
-import org.scalatest.matchers.must.Matchers
+import play.api.libs.json._
 
-class SealDomainSpec extends AnyFreeSpec with Matchers with MessagesModelGenerators with JsonBehaviours {
+import java.util.UUID
 
-  "must convert to Seal model" in {
+final case class Id(uuid: String)
 
-    forAll(arbitrary[SealDomain]) {
-      sealDomain =>
-        SealDomain.domainSealToSeal(sealDomain) mustBe an[Seal]
-    }
+object Id {
+
+  def apply() =
+    new Id(UUID.randomUUID().toString)
+
+  implicit def reads: Reads[Id] =
+    __.read[String].map(Id.apply)
+
+  implicit def writes: Writes[Id] = Writes {
+    id =>
+      JsString(id.uuid)
   }
-
 }

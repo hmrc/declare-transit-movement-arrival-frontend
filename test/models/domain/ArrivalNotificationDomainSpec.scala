@@ -20,13 +20,14 @@ import generators.MessagesModelGenerators
 import models.GoodsLocation
 import models.messages.behaviours.JsonBehaviours
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalatest.{FreeSpec, MustMatchers}
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages._
 import play.api.libs.json.{JsObject, Json}
 import queries.EventsQuery
 
-class ArrivalNotificationDomainSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with MessagesModelGenerators with JsonBehaviours {
+class ArrivalNotificationDomainSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyChecks with MessagesModelGenerators with JsonBehaviours {
 
   "Normal notification" - {
 

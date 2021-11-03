@@ -21,7 +21,7 @@ import controllers.actions.{DataRequiredAction, DataRetrievalActionProvider, Ide
 import derivable.DeriveNumberOfEvents
 import handlers.ErrorHandler
 import models.GoodsLocation.{AuthorisedConsigneesLocation, BorderForceOffice}
-import models.{EoriNumber, Index, MovementReferenceNumber, UserAnswers}
+import models.{CheckMode, EoriNumber, Index, MovementReferenceNumber, UserAnswers}
 import pages.GoodsLocationPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -79,7 +79,7 @@ class CheckYourAnswersController @Inject() (override val messagesApi: MessagesAp
     }
 
   private def createSections(userAnswers: UserAnswers, eori: EoriNumber): Seq[Section] = {
-    val helper = new CheckYourAnswersHelper(userAnswers)
+    val helper = new CheckYourAnswersHelper(userAnswers, CheckMode)
     val mrn    = Section(Seq(helper.movementReferenceNumber))
 
     val whereAreTheGoods = Section(
@@ -126,7 +126,7 @@ class CheckYourAnswersController @Inject() (override val messagesApi: MessagesAp
 
   private def eventList(userAnswers: UserAnswers): Seq[SummaryList.Row] = {
     val numberOfEvents = userAnswers.get(DeriveNumberOfEvents).getOrElse(0)
-    val cyaHelper      = new AddEventsHelper(userAnswers)
+    val cyaHelper      = new AddEventsHelper(userAnswers, CheckMode)
     val listOfEvents   = List.range(0, numberOfEvents).map(Index(_))
     listOfEvents.flatMap(cyaHelper.cyaListOfEvent)
   }

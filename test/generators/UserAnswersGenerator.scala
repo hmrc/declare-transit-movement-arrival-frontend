@@ -67,14 +67,14 @@ trait UserAnswersGenerator extends TryValues {
 
     Arbitrary {
       for {
-        id         <- arbitrary[MovementReferenceNumber]
-        eoriNumber <- arbitrary[EoriNumber]
+        movementReferenceNumber <- arbitrary[MovementReferenceNumber]
+        eoriNumber              <- arbitrary[EoriNumber]
         data <- generators match {
           case Nil => Gen.const(Map[QuestionPage[_], JsValue]())
           case _   => Gen.mapOf(oneOf(generators))
         }
       } yield UserAnswers(
-        id = id,
+        movementReferenceNumber = movementReferenceNumber,
         eoriNumber = eoriNumber,
         data = data.foldLeft(Json.obj()) {
           case (obj, (path, value)) =>

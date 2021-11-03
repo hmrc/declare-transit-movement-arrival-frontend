@@ -14,23 +14,22 @@
  * limitations under the License.
  */
 
-package models.domain
+package forms
 
-import generators.MessagesModelGenerators
-import models.messages.Seal
-import models.messages.behaviours.JsonBehaviours
-import org.scalacheck.Arbitrary.arbitrary
-import org.scalatest.freespec.AnyFreeSpec
-import org.scalatest.matchers.must.Matchers
+import play.api.data.validation.{Constraint, Invalid, Valid, ValidationError}
 
-class SealDomainSpec extends AnyFreeSpec with Matchers with MessagesModelGenerators with JsonBehaviours {
+object StopOnFirstFail {
 
-  "must convert to Seal model" in {
-
-    forAll(arbitrary[SealDomain]) {
-      sealDomain =>
-        SealDomain.domainSealToSeal(sealDomain) mustBe an[Seal]
-    }
+  def apply[T](constraints: Constraint[T]*) = Constraint {
+    field: T =>
+      constraints.toList dropWhile (_(field) == Valid) match {
+        case Nil             => Valid
+        case constraint :: _ => constraint(field)
+      }
   }
 
+  def constraint[T](message: String, validator: (T) => Boolean) =
+    Constraint(
+      (data: T) => if (validator(data)) Valid else Invalid(Seq(ValidationError(message)))
+    )
 }

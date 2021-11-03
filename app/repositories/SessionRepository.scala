@@ -16,7 +16,7 @@
 
 package repositories
 
-import models.{EoriNumber, MongoDateTimeFormats, UserAnswers}
+import models.{EoriNumber, MongoDateTimeFormats, MovementReferenceNumber, UserAnswers}
 import play.api.Configuration
 import play.api.libs.json._
 import play.modules.reactivemongo.ReactiveMongoApi
@@ -54,11 +54,11 @@ class DefaultSessionRepository @Inject() (mongo: ReactiveMongoApi, config: Confi
         _ => ()
       )
 
-  override def get(id: String, eoriNumber: EoriNumber): Future[Option[UserAnswers]] = {
+  override def get(movementReferenceNumber: String, eoriNumber: EoriNumber): Future[Option[UserAnswers]] = {
     implicit val dateWriter: Writes[LocalDateTime] = MongoDateTimeFormats.localDateTimeWrite
     val selector = Json.obj(
-      "_id"        -> id,
-      "eoriNumber" -> eoriNumber.value
+      "movementReferenceNumber" -> movementReferenceNumber,
+      "eoriNumber"              -> eoriNumber.value
     )
 
     val modifier = Json.obj(
@@ -85,7 +85,7 @@ class DefaultSessionRepository @Inject() (mongo: ReactiveMongoApi, config: Confi
   override def set(userAnswers: UserAnswers): Future[Boolean] = {
 
     val selector = Json.obj(
-      "_id" -> userAnswers.id
+      "movementReferenceNumber" -> userAnswers.movementReferenceNumber
     )
 
     val modifier = Json.obj(
@@ -102,18 +102,26 @@ class DefaultSessionRepository @Inject() (mongo: ReactiveMongoApi, config: Confi
     }
   }
 
-  override def remove(id: String): Future[Unit] = collection.flatMap {
-    _.findAndRemove(
-      selector = Json.obj("_id" -> id),
-      sort = None,
-      fields = None,
-      writeConcern = WriteConcern.Default,
-      maxTime = None,
-      collation = None,
-      arrayFilters = Nil
-    ).map(
-      _ => ()
+  override def remove(movementReferenceNumber: String, eoriNumber: EoriNumber): Future[Unit] = {
+
+    val selector = Json.obj(
+      "movementReferenceNumber" -> movementReferenceNumber,
+      "eoriNumber"              -> eoriNumber.value
     )
+
+    collection.flatMap {
+      _.findAndRemove(
+        selector = selector,
+        sort = None,
+        fields = None,
+        writeConcern = WriteConcern.Default,
+        maxTime = None,
+        collation = None,
+        arrayFilters = Nil
+      ).map(
+        _ => ()
+      )
+    }
   }
 }
 
@@ -121,9 +129,9 @@ trait SessionRepository {
 
   val started: Future[Unit]
 
-  def get(id: String, eoriNumber: EoriNumber): Future[Option[UserAnswers]]
+  def get(movementReferenceNumber: String, eoriNumber: EoriNumber): Future[Option[UserAnswers]]
 
   def set(userAnswers: UserAnswers): Future[Boolean]
 
-  def remove(id: String): Future[Unit]
+  def remove(movementReferenceNumber: String, eoriNumber: EoriNumber): Future[Unit]
 }

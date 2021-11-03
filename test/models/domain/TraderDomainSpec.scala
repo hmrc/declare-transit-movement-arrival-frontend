@@ -20,9 +20,10 @@ import generators.MessagesModelGenerators
 import models.messages.Trader
 import models.messages.behaviours.JsonBehaviours
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalatest.{FreeSpec, MustMatchers}
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.must.Matchers
 
-class TraderDomainSpec extends FreeSpec with MustMatchers with MessagesModelGenerators with JsonBehaviours {
+class TraderDomainSpec extends AnyFreeSpec with Matchers with MessagesModelGenerators with JsonBehaviours {
 
   "must convert to Trader model" in {
     forAll(arbitrary[TraderDomain]) {

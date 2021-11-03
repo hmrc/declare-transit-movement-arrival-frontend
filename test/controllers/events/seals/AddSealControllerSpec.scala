@@ -19,9 +19,9 @@ package controllers.events.seals
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import forms.events.seals.AddSealFormProvider
 import matchers.JsonMatchers
-import models.NormalMode
+import models.{Mode, NormalMode}
 import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers.any
+import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import pages.events.seals.SealIdentityPage
 import play.api.data.Form
@@ -38,8 +38,9 @@ class AddSealControllerSpec extends SpecBase with AppWithDefaultMockFixtures wit
 
   val formProvider        = new AddSealFormProvider()
   val form: Form[Boolean] = formProvider()
+  val mode: Mode          = NormalMode
 
-  lazy val addSealRoute: String = routes.AddSealController.onPageLoad(mrn, eventIndex, NormalMode).url
+  lazy val addSealRoute: String = routes.AddSealController.onPageLoad(mrn, eventIndex, mode).url
 
   "AddSeal Controller" - {
 
@@ -63,13 +64,13 @@ class AddSealControllerSpec extends SpecBase with AppWithDefaultMockFixtures wit
 
       val expectedJson = Json.obj(
         "form"        -> form,
-        "mode"        -> NormalMode,
+        "mode"        -> mode,
         "mrn"         -> mrn,
         "pageTitle"   -> "addSeal.title.singular",
         "heading"     -> "addSeal.heading.singular",
-        "seals"       -> Json.toJson(Seq(AddSealHelper.apply(ua).sealRow(eventIndex, sealIndex, NormalMode).value)),
+        "seals"       -> Json.toJson(Seq(AddSealHelper.apply(ua, mode).sealRow(eventIndex, sealIndex).value)),
         "radios"      -> Radios.yesNo(form("value")),
-        "onSubmitUrl" -> routes.AddSealController.onSubmit(mrn, eventIndex, NormalMode).url
+        "onSubmitUrl" -> routes.AddSealController.onSubmit(mrn, eventIndex, mode).url
       )
 
       templateCaptor.getValue mustEqual "events/seals/addSeal.njk"
@@ -111,13 +112,13 @@ class AddSealControllerSpec extends SpecBase with AppWithDefaultMockFixtures wit
 
       val expectedJson = Json.obj(
         "form"        -> boundForm,
-        "mode"        -> NormalMode,
+        "mode"        -> mode,
         "mrn"         -> mrn,
         "pageTitle"   -> "addSeal.title.singular",
         "heading"     -> "addSeal.heading.singular",
-        "seals"       -> Json.toJson(Seq(AddSealHelper.apply(ua).sealRow(eventIndex, sealIndex, NormalMode).value)),
+        "seals"       -> Json.toJson(Seq(AddSealHelper.apply(ua, mode).sealRow(eventIndex, sealIndex).value)),
         "radios"      -> Radios.yesNo(boundForm("value")),
-        "onSubmitUrl" -> routes.AddSealController.onSubmit(mrn, eventIndex, NormalMode).url
+        "onSubmitUrl" -> routes.AddSealController.onSubmit(mrn, eventIndex, mode).url
       )
 
       templateCaptor.getValue mustEqual "events/seals/addSeal.njk"

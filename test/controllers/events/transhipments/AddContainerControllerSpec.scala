@@ -20,10 +20,10 @@ import base.{AppWithDefaultMockFixtures, SpecBase}
 import forms.events.transhipments.AddContainerFormProvider
 import generators.MessagesModelGenerators
 import matchers.JsonMatchers
-import models.NormalMode
 import models.domain.ContainerDomain
+import models.{Mode, NormalMode}
 import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers.any
+import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalacheck.Arbitrary.arbitrary
 import pages.events.transhipments.ContainerNumberPage
@@ -42,8 +42,9 @@ class AddContainerControllerSpec extends SpecBase with AppWithDefaultMockFixture
 
   private val formProvider        = new AddContainerFormProvider()
   private val form: Form[Boolean] = formProvider()
+  val mode: Mode                  = NormalMode
 
-  private lazy val addContainerRoute: String = routes.AddContainerController.onPageLoad(mrn, eventIndex, NormalMode).url
+  private lazy val addContainerRoute: String = routes.AddContainerController.onPageLoad(mrn, eventIndex, mode).url
   private lazy val addContainerTemplate      = "events/transhipments/addContainer.njk"
 
   "AddContainer Controller" - {
@@ -53,8 +54,8 @@ class AddContainerControllerSpec extends SpecBase with AppWithDefaultMockFixture
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val containterNumber = arbitrary[ContainerDomain].sample.value
-      val ua               = emptyUserAnswers.set(ContainerNumberPage(eventIndex, containerIndex), containterNumber).success.value
+      val containerNumber = arbitrary[ContainerDomain].sample.value
+      val ua              = emptyUserAnswers.set(ContainerNumberPage(eventIndex, containerIndex), containerNumber).success.value
       setExistingUserAnswers(ua)
 
       val request        = FakeRequest(GET, addContainerRoute)
@@ -69,11 +70,11 @@ class AddContainerControllerSpec extends SpecBase with AppWithDefaultMockFixture
 
       val expectedJson = Json.obj(
         "form"        -> form,
-        "mode"        -> NormalMode,
+        "mode"        -> mode,
         "mrn"         -> mrn,
         "radios"      -> Radios.yesNo(form("value")),
-        "containers"  -> Section(Seq(AddContainerHelper(ua).containerRow(eventIndex, containerIndex, NormalMode).value)),
-        "onSubmitUrl" -> routes.AddContainerController.onSubmit(mrn, eventIndex, NormalMode).url
+        "containers"  -> Section(Seq(AddContainerHelper(ua, mode).containerRow(eventIndex, containerIndex).value)),
+        "onSubmitUrl" -> routes.AddContainerController.onSubmit(mrn, eventIndex, mode).url
       )
 
       templateCaptor.getValue mustEqual addContainerTemplate
@@ -117,10 +118,10 @@ class AddContainerControllerSpec extends SpecBase with AppWithDefaultMockFixture
 
       val expectedJson = Json.obj(
         "form"        -> boundForm,
-        "mode"        -> NormalMode,
+        "mode"        -> mode,
         "mrn"         -> mrn,
         "radios"      -> Radios.yesNo(boundForm("value")),
-        "onSubmitUrl" -> routes.AddContainerController.onSubmit(mrn, eventIndex, NormalMode).url
+        "onSubmitUrl" -> routes.AddContainerController.onSubmit(mrn, eventIndex, mode).url
       )
 
       templateCaptor.getValue mustEqual addContainerTemplate

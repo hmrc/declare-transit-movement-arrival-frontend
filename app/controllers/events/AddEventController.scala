@@ -16,10 +16,9 @@
 
 package controllers.events
 
-import derivable.DeriveNumberOfEvents
 import controllers.actions._
+import derivable.DeriveNumberOfEvents
 import forms.events.AddEventFormProvider
-import javax.inject.Inject
 import models.requests.DataRequest
 import models.{Index, Mode, MovementReferenceNumber}
 import navigation.Navigator
@@ -29,16 +28,15 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc._
 import renderer.Renderer
-import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.SummaryList.Row
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 import utils.AddEventsHelper
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class AddEventController @Inject() (override val messagesApi: MessagesApi,
-                                    sessionRepository: SessionRepository,
                                     navigator: Navigator,
                                     identify: IdentifierAction,
                                     getData: DataRetrievalActionProvider,
@@ -81,29 +79,19 @@ class AddEventController @Inject() (override val messagesApi: MessagesApi,
 
     val numberOfEvents = request.userAnswers.get(DeriveNumberOfEvents).getOrElse(0)
 
-    val cyaHelper            = new AddEventsHelper(request.userAnswers)
+    val cyaHelper            = new AddEventsHelper(request.userAnswers, mode)
     val listOfEvents         = List.range(0, numberOfEvents).map(Index(_))
     val eventsRows: Seq[Row] = listOfEvents.flatMap(cyaHelper.listOfEvent)
 
-    val title =
-      if (numberOfEvents == 1)
-        msg"addEvent.title.singular".withArgs(numberOfEvents)
-      else
-        msg"addEvent.title.plural".withArgs(numberOfEvents)
-
-    val heading =
-      if (numberOfEvents == 1)
-        msg"addEvent.heading.singular".withArgs(numberOfEvents)
-      else
-        msg"addEvent.heading.plural".withArgs(numberOfEvents)
+    val singularOrPlural = if (numberOfEvents == 1) "singular" else "plural"
 
     val json = Json.obj(
       "form"        -> form,
       "mode"        -> mode,
       "mrn"         -> mrn,
       "radios"      -> Radios.yesNo(form("value")),
-      "titleOfPage" -> title,
-      "heading"     -> heading,
+      "titleOfPage" -> msg"addEvent.title.$singularOrPlural".withArgs(numberOfEvents),
+      "heading"     -> msg"addEvent.heading.$singularOrPlural".withArgs(numberOfEvents),
       "events"      -> eventsRows
     )
 

@@ -18,15 +18,15 @@ package utils
 
 import base.SpecBase
 import controllers.events.seals.routes._
-import models.CheckMode
 import models.domain.SealDomain
+import models.{CheckMode, Mode}
 import pages.events.seals.SealIdentityPage
 import uk.gov.hmrc.viewmodels.SummaryList.{Action, Key, Row, Value}
 import uk.gov.hmrc.viewmodels.Text.{Literal, Message}
 
 class AddSealHelperSpec extends SpecBase {
 
-  // format: off
+  val mode: Mode = CheckMode
 
   "AddSealHelper" - {
 
@@ -37,8 +37,8 @@ class AddSealHelperSpec extends SpecBase {
       "must return None" - {
         "when SealIdentityPage undefined" in {
 
-          val helper = new AddSealHelper(emptyUserAnswers)
-          helper.sealRow(eventIndex, sealIndex, CheckMode) mustBe None
+          val helper = new AddSealHelper(emptyUserAnswers, mode)
+          helper.sealRow(eventIndex, sealIndex) mustBe None
         }
       }
 
@@ -46,10 +46,12 @@ class AddSealHelperSpec extends SpecBase {
         "when SealIdentityPage defined" in {
 
           val answers = emptyUserAnswers
-            .set(SealIdentityPage(eventIndex, sealIndex), seal).success.value
+            .set(SealIdentityPage(eventIndex, sealIndex), seal)
+            .success
+            .value
 
-          val helper = new AddSealHelper(answers)
-          helper.sealRow(eventIndex, sealIndex, CheckMode) mustBe Some(
+          val helper = new AddSealHelper(answers, mode)
+          helper.sealRow(eventIndex, sealIndex) mustBe Some(
             Row(
               key = Key(
                 content = Literal(seal.numberOrMark),
@@ -58,24 +60,23 @@ class AddSealHelperSpec extends SpecBase {
               value = Value(Literal("")),
               actions = List(
                 Action(
-                  content            = Message("site.edit"),
-                  href               = SealIdentityController.onPageLoad(mrn, eventIndex, sealIndex, CheckMode).url,
+                  content = Message("site.edit"),
+                  href = SealIdentityController.onPageLoad(mrn, eventIndex, sealIndex, mode).url,
                   visuallyHiddenText = Some(Literal(seal.numberOrMark)),
-                  attributes         = Map("id" -> s"change-seal-${sealIndex.display}")
+                  attributes = Map("id" -> s"change-seal-${sealIndex.display}")
                 ),
                 Action(
-                  content            = Message("site.delete"),
-                  href               = ConfirmRemoveSealController.onPageLoad(mrn, eventIndex, sealIndex, CheckMode).url,
+                  content = Message("site.delete"),
+                  href = ConfirmRemoveSealController.onPageLoad(mrn, eventIndex, sealIndex, mode).url,
                   visuallyHiddenText = Some(Literal(seal.numberOrMark)),
-                  attributes         = Map("id" -> s"remove-seal-${sealIndex.display}")
+                  attributes = Map("id" -> s"remove-seal-${sealIndex.display}")
                 )
               )
-            ))
+            )
+          )
         }
       }
     }
   }
-
-  // format: on
 
 }

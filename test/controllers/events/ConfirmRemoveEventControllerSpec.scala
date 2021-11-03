@@ -21,7 +21,7 @@ import forms.events.ConfirmRemoveEventFormProvider
 import matchers.JsonMatchers
 import models.{Index, NormalMode, UserAnswers}
 import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers.any
+import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import pages.events.EventPlacePage
 import play.api.libs.json.{JsObject, Json}
@@ -153,10 +153,11 @@ class ConfirmRemoveEventControllerSpec extends SpecBase with AppWithDefaultMockF
       redirectLocation(result).value mustEqual onwardRoute.url
 
       val uaRemoveEvent = UserAnswers(
-        userAnswersWithEventPlace.id,
+        userAnswersWithEventPlace.movementReferenceNumber,
         userAnswersWithEventPlace.eoriNumber,
         userAnswersWithEventPlace.remove(EventQuery(eventIndex)).success.value.data,
-        userAnswersWithEventPlace.lastUpdated
+        userAnswersWithEventPlace.lastUpdated,
+        id = userAnswersWithEventPlace.id
       )
 
       verify(mockSessionRepository, times(1)).set(uaRemoveEvent)
@@ -179,7 +180,7 @@ class ConfirmRemoveEventControllerSpec extends SpecBase with AppWithDefaultMockF
       redirectLocation(result).value mustEqual onwardRoute.url
 
       val uaRemoveEvent = UserAnswers(
-        userAnswersWithEventPlace.id,
+        userAnswersWithEventPlace.movementReferenceNumber,
         userAnswersWithEventPlace.eoriNumber,
         userAnswersWithEventPlace.remove(EventQuery(eventIndex)).success.value.data,
         userAnswersWithEventPlace.lastUpdated

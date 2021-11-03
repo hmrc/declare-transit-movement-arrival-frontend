@@ -103,7 +103,7 @@ class IsTraderAddressPlaceOfNotificationController @Inject() (override val messa
     val json = Json.obj(
       "form"           -> form,
       "mode"           -> mode,
-      "mrn"            -> request.userAnswers.id,
+      "mrn"            -> request.userAnswers.movementReferenceNumber,
       "traderLine1"    -> addressLine1,
       "traderTown"     -> addressTown,
       "traderPostcode" -> addressPostcode,

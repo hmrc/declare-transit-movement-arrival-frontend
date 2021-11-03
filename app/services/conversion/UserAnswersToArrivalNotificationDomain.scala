@@ -47,7 +47,7 @@ class UserAnswersToArrivalNotificationDomain {
       traderEori         <- userAnswers.get(ConsigneeEoriNumberPage)
       traderName         <- userAnswers.get(ConsigneeNamePage)
     } yield SimplifiedNotification(
-      movementReferenceNumber = userAnswers.id,
+      movementReferenceNumber = userAnswers.movementReferenceNumber,
       notificationPlace = tradersAddress.postcode,
       notificationDate = LocalDate.now(),
       authorisedLocation = authorisedLocation,
@@ -73,7 +73,7 @@ class UserAnswersToArrivalNotificationDomain {
       traderName        <- userAnswers.get(TraderNamePage)
       notificationPlace <- userAnswers.get(PlaceOfNotificationPage) orElse Some(tradersAddress.postcode)
     } yield NormalNotification(
-      movementReferenceNumber = userAnswers.id,
+      movementReferenceNumber = userAnswers.movementReferenceNumber,
       notificationPlace = notificationPlace,
       notificationDate = LocalDate.now(),
       customsSubPlace = customsSubPlace,

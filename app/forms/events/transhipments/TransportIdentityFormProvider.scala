@@ -16,13 +16,12 @@
 
 package forms.events.transhipments
 
+import forms.StopOnFirstFail
 import forms.mappings.Mappings
 import models.StringFieldRegex.stringFieldRegex
-
 import javax.inject.Inject
 import models.messages.VehicularTranshipment
 import play.api.data.Form
-import uk.gov.hmrc.play.mappers.StopOnFirstFail
 
 class TransportIdentityFormProvider @Inject() extends Mappings {
 

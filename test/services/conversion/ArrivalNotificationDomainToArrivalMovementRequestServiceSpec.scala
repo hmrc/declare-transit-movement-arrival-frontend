@@ -21,14 +21,16 @@ import models.EoriNumber
 import models.messages.ArrivalMovementRequest
 import models.reference.CustomsOffice
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalatest.{FreeSpec, MustMatchers, OptionValues}
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.must.Matchers
+import org.scalatest.OptionValues
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import play.api.inject.Injector
 
 class ArrivalNotificationDomainToArrivalMovementRequestServiceSpec
-    extends FreeSpec
-    with MustMatchers
+    extends AnyFreeSpec
+    with Matchers
     with GuiceOneAppPerSuite
     with MessagesModelGenerators
     with ScalaCheckDrivenPropertyChecks
