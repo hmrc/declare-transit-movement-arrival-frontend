@@ -29,10 +29,9 @@ import play.api.http.Status._
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import repositories.InterchangeControlReferenceIdRepository
-import services.conversion.UserAnswersToArrivalNotificationDomain
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
-
 import java.time.LocalDate
+import conversion.UserAnswersToArrivalNotificationDomain
 import scala.concurrent.Future
 
 class ArrivalSubmissionServiceSpec extends SpecBase with AppWithDefaultMockFixtures with MessagesModelGenerators {
