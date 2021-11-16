@@ -16,6 +16,8 @@
 
 package config
 
+import java.time.{Clock, ZoneOffset}
+
 import com.google.inject.AbstractModule
 import controllers.actions._
 import repositories.{DefaultSessionRepository, SessionRepository}
@@ -35,5 +37,7 @@ class Module extends AbstractModule {
     bind(classOf[DateTimeService]).to(classOf[DateTimeServiceImpl]).asEagerSingleton()
 
     bind(classOf[DataRetrievalActionProvider]).to(classOf[DataRetrievalActionProviderImpl]).asEagerSingleton()
+
+    bind(classOf[Clock]).toInstance(Clock.systemUTC)
   }
 }

@@ -16,15 +16,16 @@
 
 package services
 
-import java.time.LocalDateTime
-
 import com.google.inject.Singleton
 import utils.Format
+import java.time.{Clock, LocalDateTime}
+
+import javax.inject.Inject
 
 @Singleton
-class DateTimeServiceImpl extends DateTimeService {
+class DateTimeServiceImpl @Inject() (clock: Clock) extends DateTimeService {
 
-  override def currentDateTime: LocalDateTime = LocalDateTime.now()
+  def currentDateTime: LocalDateTime = LocalDateTime.now(clock)
 
   def dateFormatted: String = currentDateTime.format(Format.dateFormatter)
 }
@@ -34,4 +35,5 @@ trait DateTimeService {
   def currentDateTime: LocalDateTime
 
   def dateFormatted: String
+
 }
