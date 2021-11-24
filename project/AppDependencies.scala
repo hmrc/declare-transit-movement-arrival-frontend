@@ -21,8 +21,7 @@ object AppDependencies {
   )
 
   val test: Seq[ModuleID] = Seq(
-    "com.vladsch.flexmark"   % "flexmark-all"           % "0.36.8",
-    "org.scalatest"          %% "scalatest"             % "3.2.9",
+    "org.scalatest"          %% "scalatest"             % "3.2.10",
     "org.scalatestplus.play" %% "scalatestplus-play"    % "5.1.0",
     "org.scalatestplus"      %% "scalatestplus-mockito" % "1.0.0-M2",
     "org.scalatestplus"      %% "scalacheck-1-15"       % "3.2.9.0",
@@ -32,7 +31,8 @@ object AppDependencies {
     "org.mockito"            % "mockito-all"            % "1.10.19",
     "org.scalacheck"         %% "scalacheck"            % "1.15.4",
     "com.github.tomakehurst" % "wiremock-standalone"    % "2.27.2",
-    "wolfendale"             %% "scalacheck-gen-regexp" % "0.1.2"
+    "wolfendale"             %% "scalacheck-gen-regexp" % "0.1.2",
+    "com.vladsch.flexmark"   % "flexmark-all"           % "0.62.2"
   ).map(_ % "test, it")
 
   def apply(): Seq[ModuleID] = compile ++ test
