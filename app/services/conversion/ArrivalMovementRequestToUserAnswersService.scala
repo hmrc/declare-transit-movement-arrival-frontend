@@ -18,7 +18,7 @@ package services.conversion
 
 import models.messages.ArrivalMovementRequest
 import models.reference.CustomsOffice
-import models.{EoriNumber, Id, MovementReferenceNumber, UserAnswers}
+import models.{EoriNumber, MovementReferenceNumber, UserAnswers}
 import play.api.libs.json.Json
 
 object ArrivalMovementRequestToUserAnswersService {

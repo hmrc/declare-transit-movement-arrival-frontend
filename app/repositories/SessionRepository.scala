@@ -16,7 +16,7 @@
 
 package repositories
 
-import models.{EoriNumber, MongoDateTimeFormats, MovementReferenceNumber, UserAnswers}
+import models.{EoriNumber, MongoDateTimeFormats, UserAnswers}
 import play.api.Configuration
 import play.api.libs.json._
 import play.modules.reactivemongo.ReactiveMongoApi

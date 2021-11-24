@@ -19,7 +19,7 @@ package services
 import connectors.ReferenceDataConnector
 
 import javax.inject.Inject
-import models.{ArrivalId, EoriNumber, Id, MovementReferenceNumber, UserAnswers}
+import models.{ArrivalId, EoriNumber, MovementReferenceNumber, UserAnswers}
 import repositories.SessionRepository
 import services.conversion.ArrivalMovementRequestToUserAnswersService
 import uk.gov.hmrc.http.HeaderCarrier
