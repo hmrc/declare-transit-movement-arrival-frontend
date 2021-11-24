@@ -18,7 +18,7 @@ package controllers
 
 import controllers.actions._
 import forms.MovementReferenceNumberFormProvider
-import models.{NormalMode, UserAnswers}
+import models.NormalMode
 import navigation.Navigator
 import pages.MovementReferenceNumberPage
 import play.api.i18n.{I18nSupport, MessagesApi}
