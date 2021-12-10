@@ -16,7 +16,7 @@
 
 package repositories
 
-import models.{EoriNumber, MovementReferenceNumber, UserAnswers}
+import models.{EoriNumber, Id, MovementReferenceNumber, UserAnswers}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
@@ -26,7 +26,10 @@ import play.api.libs.json.Json
 import reactivemongo.play.json.collection.JSONCollection
 import services.mocks.MockDateTimeService
 
+import java.time.{LocalDate, LocalDateTime}
+import java.util.UUID
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 class SessionRepositorySpec extends AnyFreeSpec
   with Matchers
@@ -104,6 +107,27 @@ class SessionRepositorySpec extends AnyFreeSpec
         getResult.id         mustBe userAnswer.id
         getResult.eoriNumber mustBe userAnswer.eoriNumber
         getResult.data       mustBe userAnswer.data
+      }
+
+      "must create new document when given valid UserAnswers when an MRN is already defined" in {
+
+        val userAnswer1 = UserAnswers(
+          MovementReferenceNumber("18GB0000601001EBD1").get,
+          EoriNumber("EoriNumber1"),
+          Json.obj("foo" -> "bar")
+        )
+
+        val userAnswer2 = UserAnswers(
+          MovementReferenceNumber("18GB0000601001EBD1").get,
+          EoriNumber("EoriNumber2"),
+          Json.obj("foo" -> "bar")
+        )
+
+        val setResult1 = service.set(userAnswer1).futureValue
+        val setResult2 = service.set(userAnswer2).futureValue
+
+        setResult1 mustBe true
+        setResult2 mustBe true
       }
     }
 

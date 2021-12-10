@@ -85,7 +85,8 @@ class DefaultSessionRepository @Inject() (mongo: ReactiveMongoApi, config: Confi
   override def set(userAnswers: UserAnswers): Future[Boolean] = {
 
     val selector = Json.obj(
-      "movementReferenceNumber" -> userAnswers.movementReferenceNumber
+      "movementReferenceNumber" -> userAnswers.movementReferenceNumber,
+      "eoriNumber"              -> userAnswers.eoriNumber
     )
 
     val modifier = Json.obj(
