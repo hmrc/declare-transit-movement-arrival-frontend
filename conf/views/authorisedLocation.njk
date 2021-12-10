@@ -1,7 +1,6 @@
 {% extends "includes/layout.njk" %}
 
 {% from "govuk/components/back-link/macro.njk"     import govukBackLink %}
-{% from "macros/headerForId.njk"                   import headerForId %}
 {% from "govuk/components/input/macro.njk"         import govukInput %}
 {% from "govuk/components/button/macro.njk"        import govukButton %}
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
@@ -31,13 +30,12 @@
 
           {{ csrf() | safe }}
 
-          {{ headerForId({
-              header: messages('authorisedLocation.heading'),
-              id: "value"
-             })
-          }}
-
           {{ govukInput({
+            label: {
+              text: messages('authorisedLocation.heading'),
+              isPageHeading: true,
+              classes: "govuk-label--xl govuk-!-padding-bottom-5"
+            },
             id: "value",
             name: "value",
             hint: {
