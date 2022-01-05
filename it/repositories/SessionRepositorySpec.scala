@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package repositories
 
-import models.{EoriNumber, Id, MovementReferenceNumber, UserAnswers}
+import models.{EoriNumber, MovementReferenceNumber, UserAnswers}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
@@ -26,10 +26,7 @@ import play.api.libs.json.Json
 import reactivemongo.play.json.collection.JSONCollection
 import services.mocks.MockDateTimeService
 
-import java.time.{LocalDate, LocalDateTime}
-import java.util.UUID
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
 
 class SessionRepositorySpec extends AnyFreeSpec
   with Matchers
