@@ -1,0 +1,52 @@
+{% from "govuk/components/input/macro.njk"         import govukInput %}
+{% from "govuk/components/fieldset/macro.njk"      import govukFieldset %}
+
+{% macro hmrcInputAddress(params) %}
+
+  {% call govukFieldset({
+    legend: {
+      text: messages([params.prefix, ".heading"] | join, params.name),
+      classes: "govuk-fieldset__legend--l",
+      isPageHeading: true
+    }
+  }) %}
+
+    {{ govukInput({
+      classes: "govuk-!-width-two-thirds",
+      label: {
+        text: messages([params.prefix, ".buildingAndStreet"] | join)
+      },
+      id: "buildingAndStreet",
+      name: "buildingAndStreet",
+      value: params.form.buildingAndStreet.value,
+      errorMessage: params.form.buildingAndStreet.error,
+      autocomplete: "address-level1"
+    }) }}
+
+    {{ govukInput({
+      classes: "govuk-!-width-two-thirds",
+      label: {
+        text: messages([params.prefix, ".city"] | join)
+      },
+      id: "city",
+      name: "city",
+      value: params.form.city.value,
+      errorMessage: params.form.city.error,
+      autocomplete: "address-level2"
+    }) }}
+
+    {{ govukInput({
+      classes: "govuk-input--width-10",
+      label: {
+        text: messages([params.prefix, ".postcode"] | join)
+      },
+      id: "postcode",
+      name: "postcode",
+      value: params.form.postcode.value,
+      errorMessage: params.form.postcode.error,
+      autocomplete: "postal-code"
+    }) }}
+
+  {% endcall %}
+
+{% endmacro %}
