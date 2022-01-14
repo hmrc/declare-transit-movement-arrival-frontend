@@ -32,11 +32,12 @@ class CustomsOfficesServiceSpec extends SpecBase with BeforeAndAfterEach {
 
   val mockRefDataConnector: ReferenceDataConnector = mock[ReferenceDataConnector]
 
-  val gbCustomsOffice1: CustomsOffice      = CustomsOffice("officeId", Some("someName"), None)
-  val gbCustomsOffice2: CustomsOffice      = CustomsOffice("id", Some("name"), None)
-  val xiCustomsOffice1: CustomsOffice      = CustomsOffice("xi", Some("ni"), None)
+  val gbCustomsOffice1: CustomsOffice      = CustomsOffice("1", Some("BOSTON"), None)
+  val gbCustomsOffice2: CustomsOffice      = CustomsOffice("2", Some("Appledore"), None)
+  val xiCustomsOffice1: CustomsOffice      = CustomsOffice("3", Some("Belfast"), None)
+  val xiCustomsOffice2: CustomsOffice      = CustomsOffice("4", None, None)
   val gbCustomsOffices: Seq[CustomsOffice] = Seq(gbCustomsOffice1, gbCustomsOffice2)
-  val xiCustomsOffices: Seq[CustomsOffice] = Seq(xiCustomsOffice1)
+  val xiCustomsOffices: Seq[CustomsOffice] = Seq(xiCustomsOffice1, xiCustomsOffice2)
   val customsOffices: CustomsOfficeList    = CustomsOfficeList(gbCustomsOffices ++ xiCustomsOffices)
 
   implicit val hc: HeaderCarrier = new HeaderCarrier()
@@ -55,7 +56,8 @@ class CustomsOfficesServiceSpec extends SpecBase with BeforeAndAfterEach {
       when(mockRefDataConnector.getCustomsOfficesForCountry(eqTo(CountryCode("XI")))(any(), any())).thenReturn(Future.successful(xiCustomsOffices))
       when(mockRefDataConnector.getCustomsOfficesForCountry(eqTo(CountryCode("GB")))(any(), any())).thenReturn(Future.successful(gbCustomsOffices))
 
-      service.getCustomsOfficesOfArrival.futureValue mustBe CustomsOfficeList(Seq(gbCustomsOffice2, xiCustomsOffice1, gbCustomsOffice1))
+      service.getCustomsOfficesOfArrival.futureValue mustBe
+        CustomsOfficeList(Seq(xiCustomsOffice2, gbCustomsOffice2, xiCustomsOffice1, gbCustomsOffice1))
 
       verify(mockRefDataConnector).getCustomsOfficesForCountry(eqTo(CountryCode("XI")))(any(), any())
       verify(mockRefDataConnector).getCustomsOfficesForCountry(eqTo(CountryCode("GB")))(any(), any())
