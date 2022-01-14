@@ -27,39 +27,6 @@ class CountryListSpec extends SpecBase with ScalaCheckPropertyChecks with Messag
 
   "CountryList" - {
 
-    "fullList" - {
-
-      "must return all countries" in {
-
-        forAll(arbitrary[Vector[Country]]) {
-          countries =>
-            CountryList(countries).fullList must contain theSameElementsAs countries
-        }
-      }
-
-      "return a list of countries sorted by description when given an unsorted list of countries" in {
-        val unsortedCountries = Seq(
-          Country(CountryCode("AA"), "country5"),
-          Country(CountryCode("BB"), "country6"),
-          Country(CountryCode("CC"), "country1"),
-          Country(CountryCode("DD"), "country3"),
-          Country(CountryCode("EE"), "country4"),
-          Country(CountryCode("FF"), "country2")
-        )
-
-        val sortedCountries = Seq(
-          Country(CountryCode("CC"), "country1"),
-          Country(CountryCode("FF"), "country2"),
-          Country(CountryCode("DD"), "country3"),
-          Country(CountryCode("EE"), "country4"),
-          Country(CountryCode("AA"), "country5"),
-          Country(CountryCode("BB"), "country6")
-        )
-
-        CountryList(unsortedCountries).fullList mustEqual sortedCountries
-      }
-    }
-
     "getCountry" - {
       "must return correct country when in the fullList" in {
 

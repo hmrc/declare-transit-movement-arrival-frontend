@@ -17,7 +17,6 @@
 package controllers.events.transhipments
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
-import connectors.ReferenceDataConnector
 import forms.events.transhipments.TransportNationalityFormProvider
 import matchers.JsonMatchers
 import models.reference.{Country, CountryCode}
@@ -33,6 +32,7 @@ import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
+import services.CountriesService
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
@@ -44,14 +44,14 @@ class TransportNationalityControllerSpec extends SpecBase with AppWithDefaultMoc
   val countries       = CountryList(Seq(country))
   val form            = formProvider(countries)
 
-  val mockReferenceDataConnector: ReferenceDataConnector = mock[ReferenceDataConnector]
-  lazy val transportNationalityRoute: String             = routes.TransportNationalityController.onPageLoad(mrn, eventIndex, NormalMode).url
-  private val transportNationalityTemplate               = "events/transhipments/transportNationality.njk"
+  private val mockCountriesService           = mock[CountriesService]
+  lazy val transportNationalityRoute: String = routes.TransportNationalityController.onPageLoad(mrn, eventIndex, NormalMode).url
+  private val transportNationalityTemplate   = "events/transhipments/transportNationality.njk"
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
       .guiceApplicationBuilder()
-      .overrides(bind[ReferenceDataConnector].toInstance(mockReferenceDataConnector))
+      .overrides(bind[CountriesService].toInstance(mockCountriesService))
 
   "TransportNationality Controller" - {
 
@@ -70,7 +70,7 @@ class TransportNationalityControllerSpec extends SpecBase with AppWithDefaultMoc
 
     "must redirect to the next page when valid data is submitted" in {
 
-      when(mockReferenceDataConnector.getCountryList(any())(any(), any())).thenReturn(Future.successful(countries))
+      when(mockCountriesService.getCountries(any())(any())).thenReturn(Future.successful(countries))
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       setExistingUserAnswers(emptyUserAnswers)
@@ -87,7 +87,7 @@ class TransportNationalityControllerSpec extends SpecBase with AppWithDefaultMoc
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      when(mockReferenceDataConnector.getCountryList(any())(any(), any())).thenReturn(Future.successful(countries))
+      when(mockCountriesService.getCountries(any())(any())).thenReturn(Future.successful(countries))
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
@@ -147,7 +147,7 @@ class TransportNationalityControllerSpec extends SpecBase with AppWithDefaultMoc
 
   private def verifyOnPageLoad(form: Form[Country], userAnswers: UserAnswers, preSelect: Boolean) = {
 
-    when(mockReferenceDataConnector.getCountryList(any())(any(), any())).thenReturn(Future.successful(countries))
+    when(mockCountriesService.getCountries(any())(any())).thenReturn(Future.successful(countries))
     when(mockRenderer.render(any(), any())(any()))
       .thenReturn(Future.successful(Html("")))
 

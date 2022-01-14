@@ -21,7 +21,6 @@ import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, okJson, 
 import generators.MessagesModelGenerators
 import helper.WireMockServerHandler
 import models.reference._
-import models.{CountryList, CustomsOfficeList}
 import org.scalacheck.Gen
 import org.scalatest.Assertion
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -115,23 +114,20 @@ class ReferenceDataConnectorSpec
             .willReturn(okJson(customsOfficeResponseJson))
         )
 
-        val expectedResult =
-          CustomsOfficeList(
-            Seq(
-              CustomsOffice("GBtestId1", Some("testName1"), Some("testPhoneNumber")),
-              CustomsOffice("GBtestId2", Some("testName2"), None)
-            )
-          )
+        val expectedResult = Seq(
+          CustomsOffice("GBtestId1", Some("testName1"), Some("testPhoneNumber")),
+          CustomsOffice("GBtestId2", Some("testName2"), None)
+        )
 
-        connector.getCustomsOfficesOfTheCountry(country).futureValue mustBe expectedResult
+        connector.getCustomsOfficesForCountry(country).futureValue mustBe expectedResult
       }
 
       "must return an exception when an error response is returned" in {
-        checkErrorResponse(s"/$startUrl/customs-offices/$country", connector.getCustomsOfficesOfTheCountry(country))
+        checkErrorResponse(s"/$startUrl/customs-offices/$country", connector.getCustomsOfficesForCountry(country))
       }
     }
 
-    "getCountryList" - {
+    "getCountries" - {
 
       "for CountryFullList must" - {
 
@@ -141,18 +137,16 @@ class ReferenceDataConnectorSpec
               .willReturn(okJson(countryListResponseJson))
           )
 
-          val expectedResult: CountryList = CountryList(
-            Seq(
-              Country(CountryCode("GB"), "United Kingdom"),
-              Country(CountryCode("AD"), "Andorra")
-            )
+          val expectedResult: Seq[Country] = Seq(
+            Country(CountryCode("GB"), "United Kingdom"),
+            Country(CountryCode("AD"), "Andorra")
           )
 
-          connector.getCountryList(CountryFullList).futureValue mustEqual expectedResult
+          connector.getCountries(CountryFullList).futureValue mustEqual expectedResult
         }
 
         "return an exception when an error response is returned" in {
-          checkErrorResponse(s"/$startUrl/countries-full-list", connector.getCountryList(CountryFullList))
+          checkErrorResponse(s"/$startUrl/countries-full-list", connector.getCountries(CountryFullList))
         }
       }
 
@@ -164,18 +158,16 @@ class ReferenceDataConnectorSpec
               .willReturn(okJson(countryListResponseJson))
           )
 
-          val expectedResult: CountryList = CountryList(
-            Seq(
-              Country(CountryCode("GB"), "United Kingdom"),
-              Country(CountryCode("AD"), "Andorra")
-            )
+          val expectedResult: Seq[Country] = Seq(
+            Country(CountryCode("GB"), "United Kingdom"),
+            Country(CountryCode("AD"), "Andorra")
           )
 
-          connector.getCountryList(CountryTransitList).futureValue mustEqual expectedResult
+          connector.getCountries(CountryTransitList).futureValue mustEqual expectedResult
         }
 
         "return an exception when an error response is returned" in {
-          checkErrorResponse(s"/$startUrl/transit-countries", connector.getCountryList(CountryTransitList))
+          checkErrorResponse(s"/$startUrl/transit-countries", connector.getCountries(CountryTransitList))
         }
       }
 

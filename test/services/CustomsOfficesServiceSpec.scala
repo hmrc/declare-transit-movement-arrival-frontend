@@ -17,12 +17,11 @@
 package services
 
 import base.SpecBase
-import config.FrontendAppConfig
 import connectors.ReferenceDataConnector
 import models.CustomsOfficeList
 import models.reference.{CountryCode, CustomsOffice}
 import org.mockito.Matchers.{any, eq => eqTo}
-import org.mockito.Mockito.{reset, times, verify, when}
+import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -31,48 +30,35 @@ import scala.concurrent.Future
 
 class CustomsOfficesServiceSpec extends SpecBase with BeforeAndAfterEach {
 
-  val mockRefDataConnector                = mock[ReferenceDataConnector]
-  val mockFrontendAppConfig               = mock[FrontendAppConfig]
-  val gbCustomsOffice1: CustomsOffice     = CustomsOffice("officeId", Some("someName"), None)
-  val gbCustomsOffice2: CustomsOffice     = CustomsOffice("id", Some("name"), None)
-  val xiCustomsOffice1: CustomsOffice     = CustomsOffice("xi", Some("ni"), None)
-  val gbCustomsOffices: CustomsOfficeList = CustomsOfficeList(Seq(gbCustomsOffice1, gbCustomsOffice2))
-  val xiCustomsOffices: CustomsOfficeList = CustomsOfficeList(Seq(xiCustomsOffice1))
-  val customsOffices: CustomsOfficeList   = CustomsOfficeList(gbCustomsOffices.getAll ++ xiCustomsOffices.getAll)
-  implicit val hc                         = new HeaderCarrier()
+  val mockRefDataConnector: ReferenceDataConnector = mock[ReferenceDataConnector]
 
-  val service = new CustomsOfficesService(mockFrontendAppConfig, mockRefDataConnector)
+  val gbCustomsOffice1: CustomsOffice      = CustomsOffice("officeId", Some("someName"), None)
+  val gbCustomsOffice2: CustomsOffice      = CustomsOffice("id", Some("name"), None)
+  val xiCustomsOffice1: CustomsOffice      = CustomsOffice("xi", Some("ni"), None)
+  val gbCustomsOffices: Seq[CustomsOffice] = Seq(gbCustomsOffice1, gbCustomsOffice2)
+  val xiCustomsOffices: Seq[CustomsOffice] = Seq(xiCustomsOffice1)
+  val customsOffices: CustomsOfficeList    = CustomsOfficeList(gbCustomsOffices ++ xiCustomsOffices)
 
-  override def beforeEach = {
-    reset(mockFrontendAppConfig, mockRefDataConnector)
-    super.beforeEach
+  implicit val hc: HeaderCarrier = new HeaderCarrier()
+
+  val service = new CustomsOfficesService(mockRefDataConnector)
+
+  override def beforeEach(): Unit = {
+    reset(mockRefDataConnector)
+    super.beforeEach()
   }
 
   "CustomsOfficesService" - {
 
     "must return a list of GB and NI customs offices" in {
 
-      when(mockRefDataConnector.getCustomsOfficesOfTheCountry(eqTo(CountryCode("XI")))(any(), any())).thenReturn(Future.successful(xiCustomsOffices))
-      when(mockRefDataConnector.getCustomsOfficesOfTheCountry(eqTo(CountryCode("GB")))(any(), any())).thenReturn(Future.successful(gbCustomsOffices))
-      when(mockFrontendAppConfig.isNIJourneyEnabled).thenReturn(true)
-      service.getCustomsOfficesOfArrival.futureValue.getAll mustBe customsOffices.getAll
+      when(mockRefDataConnector.getCustomsOfficesForCountry(eqTo(CountryCode("XI")))(any(), any())).thenReturn(Future.successful(xiCustomsOffices))
+      when(mockRefDataConnector.getCustomsOfficesForCountry(eqTo(CountryCode("GB")))(any(), any())).thenReturn(Future.successful(gbCustomsOffices))
 
-      verify(mockRefDataConnector, times(1)).getCustomsOfficesOfTheCountry(eqTo(CountryCode("XI")))(any(), any())
-      verify(mockRefDataConnector, times(1)).getCustomsOfficesOfTheCountry(eqTo(CountryCode("GB")))(any(), any())
+      service.getCustomsOfficesOfArrival.futureValue mustBe CustomsOfficeList(Seq(gbCustomsOffice2, xiCustomsOffice1, gbCustomsOffice1))
 
-    }
-
-    "must return a list of GB customs offices" in {
-
-      when(mockRefDataConnector.getCustomsOfficesOfTheCountry(eqTo(CountryCode("XI")))(any(), any())).thenReturn(Future.successful(xiCustomsOffices))
-      when(mockRefDataConnector.getCustomsOfficesOfTheCountry(eqTo(CountryCode("GB")))(any(), any())).thenReturn(Future.successful(gbCustomsOffices))
-      when(mockFrontendAppConfig.isNIJourneyEnabled).thenReturn(false)
-
-      service.getCustomsOfficesOfArrival.futureValue.getAll mustBe gbCustomsOffices.getAll
-
-      verify(mockRefDataConnector, times(1)).getCustomsOfficesOfTheCountry(eqTo(CountryCode("GB")))(any(), any())
-      verify(mockRefDataConnector, times(0)).getCustomsOfficesOfTheCountry(eqTo(CountryCode("XI")))(any(), any())
-
+      verify(mockRefDataConnector).getCustomsOfficesForCountry(eqTo(CountryCode("XI")))(any(), any())
+      verify(mockRefDataConnector).getCustomsOfficesForCountry(eqTo(CountryCode("GB")))(any(), any())
     }
 
   }

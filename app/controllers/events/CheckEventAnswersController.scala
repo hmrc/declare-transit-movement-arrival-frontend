@@ -17,7 +17,6 @@
 package controllers.events
 
 import com.google.inject.Inject
-import connectors.ReferenceDataConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalActionProvider, IdentifierAction}
 import models.reference.CountryTransitList
 import models.{CheckMode, Index, MovementReferenceNumber, NormalMode}
@@ -25,19 +24,21 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
+import services.CountriesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 import viewModels.CheckEventAnswersViewModel
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class CheckEventAnswersController @Inject() (override val messagesApi: MessagesApi,
-                                             identify: IdentifierAction,
-                                             getData: DataRetrievalActionProvider,
-                                             requireData: DataRequiredAction,
-                                             val controllerComponents: MessagesControllerComponents,
-                                             referenceDataConnector: ReferenceDataConnector,
-                                             renderer: Renderer
+class CheckEventAnswersController @Inject() (
+  override val messagesApi: MessagesApi,
+  identify: IdentifierAction,
+  getData: DataRetrievalActionProvider,
+  requireData: DataRequiredAction,
+  val controllerComponents: MessagesControllerComponents,
+  countriesService: CountriesService,
+  renderer: Renderer
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
@@ -45,8 +46,8 @@ class CheckEventAnswersController @Inject() (override val messagesApi: MessagesA
 
   def onPageLoad(mrn: MovementReferenceNumber, eventIndex: Index): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
-      referenceDataConnector
-        .getCountryList(CountryTransitList)
+      countriesService
+        .getCountries(CountryTransitList)
         .flatMap {
           countryList =>
             val json = Json.obj(

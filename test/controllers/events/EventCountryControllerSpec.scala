@@ -17,7 +17,6 @@
 package controllers.events
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
-import connectors.ReferenceDataConnector
 import forms.events.EventCountryFormProvider
 import matchers.JsonMatchers
 import models.reference.{Country, CountryCode}
@@ -33,23 +32,24 @@ import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
+import services.CountriesService
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
 class EventCountryControllerSpec extends SpecBase with AppWithDefaultMockFixtures with NunjucksSupport with JsonMatchers {
 
-  val formProvider                                       = new EventCountryFormProvider()
-  private val country                                    = Country(CountryCode("GB"), "United Kingdom")
-  val countries                                          = CountryList(Vector(country))
-  val form                                               = formProvider(countries)
-  val mockReferenceDataConnector: ReferenceDataConnector = mock[ReferenceDataConnector]
-  lazy val eventCountryRoute: String                     = routes.EventCountryController.onPageLoad(mrn, eventIndex, NormalMode).url
+  val formProvider                   = new EventCountryFormProvider()
+  private val country                = Country(CountryCode("GB"), "United Kingdom")
+  val countries                      = CountryList(Vector(country))
+  val form                           = formProvider(countries)
+  private val mockCountriesService   = mock[CountriesService]
+  lazy val eventCountryRoute: String = routes.EventCountryController.onPageLoad(mrn, eventIndex, NormalMode).url
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
       .guiceApplicationBuilder()
-      .overrides(bind[ReferenceDataConnector].toInstance(mockReferenceDataConnector))
+      .overrides(bind[CountriesService].toInstance(mockCountriesService))
 
   "EventCountry Controller" - {
 
@@ -67,7 +67,7 @@ class EventCountryControllerSpec extends SpecBase with AppWithDefaultMockFixture
     "must redirect to the next page when valid data is submitted" in {
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-      when(mockReferenceDataConnector.getCountryList(any())(any(), any())).thenReturn(Future.successful(countries))
+      when(mockCountriesService.getCountries(any())(any())).thenReturn(Future.successful(countries))
 
       setExistingUserAnswers(emptyUserAnswers)
 
@@ -85,7 +85,7 @@ class EventCountryControllerSpec extends SpecBase with AppWithDefaultMockFixture
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
-      when(mockReferenceDataConnector.getCountryList(any())(any(), any())).thenReturn(Future.successful(countries))
+      when(mockCountriesService.getCountries(any())(any())).thenReturn(Future.successful(countries))
 
       val json = Seq(
         Json.obj("text" -> "Select a country", "value" -> ""),
@@ -150,7 +150,7 @@ class EventCountryControllerSpec extends SpecBase with AppWithDefaultMockFixture
     when(mockRenderer.render(any(), any())(any()))
       .thenReturn(Future.successful(Html("")))
 
-    when(mockReferenceDataConnector.getCountryList(any())(any(), any())).thenReturn(Future.successful(countries))
+    when(mockCountriesService.getCountries(any())(any())).thenReturn(Future.successful(countries))
 
     val countriesJson = Seq(
       Json.obj("text" -> "Select a country", "value" -> ""),

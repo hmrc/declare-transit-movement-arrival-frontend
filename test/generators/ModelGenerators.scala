@@ -17,7 +17,7 @@
 package generators
 
 import models._
-import models.reference.{Country, CountryCode, CustomsOffice}
+import models.reference._
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 
@@ -92,5 +92,10 @@ trait ModelGenerators {
         code <- arbitrary[CountryCode]
         name <- arbitrary[String]
       } yield Country(code, name)
+    }
+
+  implicit lazy val arbitraryCountryReferenceDataEndpoint: Arbitrary[CountryReferenceDataEndpoint] =
+    Arbitrary {
+      Gen.oneOf(CountryFullList, CountryTransitList)
     }
 }

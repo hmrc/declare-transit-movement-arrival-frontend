@@ -17,14 +17,12 @@
 package connectors
 
 import config.FrontendAppConfig
+import metrics.{MetricsService, Monitors}
+import models.reference.{Country, CountryCode, CountryReferenceDataEndpoint, CustomsOffice}
+import uk.gov.hmrc.http.HttpReads.Implicits.readFromJson
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
 import javax.inject.Inject
-import metrics.{MetricsService, Monitors}
-import models.{CountryList, CustomsOfficeList}
-import models.reference.{Country, CountryCode, CountryReferenceDataEndpoint, CustomsOffice}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
-import uk.gov.hmrc.http.HttpReads.Implicits.readFromJson
-
 import scala.concurrent.{ExecutionContext, Future}
 
 class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpClient, metricsService: MetricsService) {
@@ -37,20 +35,19 @@ class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpCli
     }
   }
 
-  def getCustomsOfficesOfTheCountry(countryCode: CountryCode)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[CustomsOfficeList] = {
+  def getCustomsOfficesForCountry(countryCode: CountryCode)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[CustomsOffice]] = {
     val serviceUrl = s"${config.referenceDataUrl}/customs-offices/${countryCode.code}"
-    metricsService
-      .timeAsyncCall(Monitors.getCustomsOfficesOfTheCountryMonitor) {
-        http.GET[Seq[CustomsOffice]](serviceUrl)
-      }
-      .map(CustomsOfficeList(_))
+
+    metricsService.timeAsyncCall(Monitors.getCustomsOfficesOfTheCountryMonitor) {
+      http.GET[Seq[CustomsOffice]](serviceUrl)
+    }
   }
 
-  def getCountryList(endpoint: CountryReferenceDataEndpoint)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[CountryList] = {
+  def getCountries(endpoint: CountryReferenceDataEndpoint)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[Country]] = {
     val serviceUrl = s"${config.referenceDataUrl}/${endpoint.value}"
 
     metricsService.timeAsyncCall(Monitors.getCountryListMonitor) {
-      http.GET[Vector[Country]](serviceUrl).map(CountryList(_))
+      http.GET[Seq[Country]](serviceUrl)
     }
   }
 }

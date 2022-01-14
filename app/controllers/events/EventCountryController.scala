@@ -16,10 +16,8 @@
 
 package controllers.events
 
-import connectors.ReferenceDataConnector
 import controllers.actions._
 import forms.events.EventCountryFormProvider
-import javax.inject.Inject
 import models.reference.{Country, CountryTransitList}
 import models.{Index, Mode, MovementReferenceNumber}
 import navigation.Navigator
@@ -30,21 +28,24 @@ import play.api.libs.json.{JsObject, Json}
 import play.api.mvc._
 import renderer.Renderer
 import repositories.SessionRepository
+import services.CountriesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class EventCountryController @Inject() (override val messagesApi: MessagesApi,
-                                        sessionRepository: SessionRepository,
-                                        navigator: Navigator,
-                                        identify: IdentifierAction,
-                                        getData: DataRetrievalActionProvider,
-                                        requireData: DataRequiredAction,
-                                        formProvider: EventCountryFormProvider,
-                                        referenceDataConnector: ReferenceDataConnector,
-                                        val controllerComponents: MessagesControllerComponents,
-                                        renderer: Renderer
+class EventCountryController @Inject() (
+  override val messagesApi: MessagesApi,
+  sessionRepository: SessionRepository,
+  navigator: Navigator,
+  identify: IdentifierAction,
+  getData: DataRetrievalActionProvider,
+  requireData: DataRequiredAction,
+  formProvider: EventCountryFormProvider,
+  countriesService: CountriesService,
+  val controllerComponents: MessagesControllerComponents,
+  renderer: Renderer
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
@@ -53,29 +54,29 @@ class EventCountryController @Inject() (override val messagesApi: MessagesApi,
   def onPageLoad(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode): Action[AnyContent] =
     (identify andThen getData(mrn) andThen requireData).async {
       implicit request =>
-        referenceDataConnector.getCountryList(CountryTransitList) flatMap {
-          countries =>
-            val form = formProvider(countries)
+        countriesService.getCountries(CountryTransitList) flatMap {
+          countryList =>
+            val form = formProvider(countryList)
 
             val preparedForm = request.userAnswers
               .get(EventCountryPage(eventIndex))
-              .flatMap(countries.getCountry)
+              .flatMap(countryList.getCountry)
               .map(form.fill)
               .getOrElse(form)
 
-            renderPage(mrn, mode, preparedForm, countries.fullList, Results.Ok, eventIndex)
+            renderPage(mrn, mode, preparedForm, countryList.countries, Results.Ok, eventIndex)
         }
     }
 
   def onSubmit(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode): Action[AnyContent] =
     (identify andThen getData(mrn) andThen requireData).async {
       implicit request =>
-        referenceDataConnector.getCountryList(CountryTransitList) flatMap {
-          countries =>
-            formProvider(countries)
+        countriesService.getCountries(CountryTransitList) flatMap {
+          countryList =>
+            formProvider(countryList)
               .bindFromRequest()
               .fold(
-                formWithErrors => renderPage(mrn, mode, formWithErrors, countries.fullList, Results.BadRequest, eventIndex),
+                formWithErrors => renderPage(mrn, mode, formWithErrors, countryList.countries, Results.BadRequest, eventIndex),
                 value =>
                   for {
                     updatedAnswers <- Future.fromTry(request.userAnswers.set(EventCountryPage(eventIndex), value.code))
