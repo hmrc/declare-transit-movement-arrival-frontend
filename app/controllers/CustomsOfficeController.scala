@@ -153,10 +153,8 @@ class CustomsOfficeController @Inject() (override val messagesApi: MessagesApi,
     val customsOfficeObjects = customsOffices.getAll.map {
       office =>
         Json.obj(
-          "value" -> office.id,
-          "text" -> office.name.fold(s"${office.id}")(
-            name => s"$name (${office.id})"
-          ),
+          "value"    -> office.id,
+          "text"     -> office.toString,
           "selected" -> value.contains(office)
         )
     }

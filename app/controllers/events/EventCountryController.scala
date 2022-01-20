@@ -103,7 +103,7 @@ class EventCountryController @Inject() (
   private def countryJsonList(value: Option[Country], countries: Seq[Country]): Seq[JsObject] = {
     val countryJsonList = countries.map {
       country =>
-        Json.obj("text" -> country.description, "value" -> country.code, "selected" -> value.contains(country))
+        Json.obj("text" -> country.toString, "value" -> country.code, "selected" -> value.contains(country))
     }
 
     Json.obj("value" -> "", "text" -> "Select a country") +: countryJsonList

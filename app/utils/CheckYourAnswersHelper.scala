@@ -152,14 +152,9 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers, mode: Mode) extends Summa
 
         location map {
           arg =>
-            val customsOfficeValue = answer.name match {
-              case Some(name) => s"$name (${answer.id})"
-              case None       => answer.id
-            }
-
             buildRow(
               prefix = messageKeyPrefix,
-              answer = lit"$customsOfficeValue",
+              answer = lit"${answer.toString}",
               id = Some("change-presentation-office"),
               call = call(mrn, mode),
               args = arg
