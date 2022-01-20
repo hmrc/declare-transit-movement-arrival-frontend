@@ -17,7 +17,6 @@
 package controllers.events
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
-import connectors.ReferenceDataConnector
 import generators.MessagesModelGenerators
 import matchers.JsonMatchers
 import models.reference.Country
@@ -32,17 +31,18 @@ import play.api.libs.json.JsObject
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
+import services.CountriesService
 
 import scala.concurrent.Future
 
 class CheckEventAnswersControllerSpec extends SpecBase with AppWithDefaultMockFixtures with JsonMatchers with MessagesModelGenerators {
 
-  private val mockReferenceDataConnector = mock[ReferenceDataConnector]
+  private val mockCountriesService = mock[CountriesService]
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
       .guiceApplicationBuilder()
-      .overrides(bind[ReferenceDataConnector].toInstance(mockReferenceDataConnector))
+      .overrides(bind[CountriesService].toInstance(mockCountriesService))
 
   "Check Event Answers Controller" - {
 
@@ -50,7 +50,7 @@ class CheckEventAnswersControllerSpec extends SpecBase with AppWithDefaultMockFi
 
       val sampleCountryList = arbitrary[Seq[Country]].sample.value
 
-      when(mockReferenceDataConnector.getCountryList(any())(any(), any()))
+      when(mockCountriesService.getCountries(any())(any()))
         .thenReturn(Future.successful(CountryList(sampleCountryList)))
 
       when(mockRenderer.render(any(), any())(any()))

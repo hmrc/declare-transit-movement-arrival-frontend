@@ -17,28 +17,20 @@
 package services
 
 import connectors.ReferenceDataConnector
-import models.CustomsOfficeList
-import models.reference.{CountryCode, CustomsOffice}
+import models.CountryList
+import models.reference.{Country, CountryReferenceDataEndpoint}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class CustomsOfficesService @Inject() (
-  referenceDataConnector: ReferenceDataConnector
-)(implicit ec: ExecutionContext) {
+class CountriesService @Inject() (referenceDataConnector: ReferenceDataConnector)(implicit ec: ExecutionContext) {
 
-  def getCustomsOfficesOfArrival(implicit hc: HeaderCarrier): Future[CustomsOfficeList] = {
+  def getCountries(endpoint: CountryReferenceDataEndpoint)(implicit hc: HeaderCarrier): Future[CountryList] =
+    referenceDataConnector
+      .getCountries(endpoint)
+      .map(sort)
 
-    def getCustomsOfficesForCountry(countryCode: String): Future[Seq[CustomsOffice]] =
-      referenceDataConnector.getCustomsOfficesForCountry(CountryCode(countryCode))
-
-    for {
-      gbOffices <- getCustomsOfficesForCountry("GB")
-      niOffices <- getCustomsOfficesForCountry("XI")
-    } yield sort(gbOffices ++ niOffices)
-  }
-
-  private def sort(customsOffices: Seq[CustomsOffice]): CustomsOfficeList =
-    CustomsOfficeList(customsOffices.sortBy(_.name.map(_.toLowerCase)))
+  private def sort(countries: Seq[Country]): CountryList =
+    CountryList(countries.sortBy(_.description.toLowerCase))
 }

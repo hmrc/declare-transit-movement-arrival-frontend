@@ -16,12 +16,11 @@
 
 package models
 
-import java.time.{LocalDate, LocalTime}
-
-import com.lucidchart.open.xtract._
 import com.lucidchart.open.xtract.XmlReader._
+import com.lucidchart.open.xtract._
 import utils.Format.{dateFormatter, timeFormatter}
 
+import java.time.{LocalDate, LocalTime}
 import scala.util.{Failure, Success, Try}
 import scala.xml.NodeSeq
 
@@ -50,9 +49,7 @@ object XMLReads {
         }
     }
 
-  implicit val booleanFromIntReader: XmlReader[Boolean] = intReader.map(
-    intValue => if (intValue == 1) true else false
-  )
+  implicit val booleanFromIntReader: XmlReader[Boolean] = intReader.map(_ == 1)
 
   implicit def strictReadOptionSeq[A](implicit reader: XmlReader[A]): XmlReader[Option[Seq[A]]] =
     XmlReader {
