@@ -22,10 +22,10 @@ import play.api.Configuration
 @Singleton
 class FrontendAppConfig @Inject() (configuration: Configuration) {
 
-  lazy val contactHost: String             = configuration.get[Service]("microservice.services.contact-frontend").baseUrl
-  lazy val contactFrontendUrl: String      = configuration.get[Service]("microservice.services.contact-frontend").fullServiceUrl
+  val contactHost: String                  = configuration.get[String]("contact-frontend.host")
   val contactFormServiceIdentifier: String = "CTCTraders"
-  val analyticsToken: String               = configuration.get[String](s"google-analytics.token")
+
+  val analyticsToken: String = configuration.get[String](s"google-analytics.token")
 
   val trackingConsentUrl: String = configuration.get[String]("microservice.services.tracking-consent-frontend.url")
   val gtmContainer: String       = configuration.get[String]("microservice.services.tracking-consent-frontend.gtm.container")
@@ -34,11 +34,13 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
   val userResearchUrl: String         = configuration.get[String]("urls.userResearch")
   val showUserResearchBanner: Boolean = configuration.get[Boolean]("banners.showUserResearch")
 
-  val analyticsHost: String          = configuration.get[String](s"google-analytics.host")
-  val betaFeedbackUrl                = s"$contactFrontendUrl/beta-feedback"
-  val betaFeedbackUnauthenticatedUrl = s"$contactFrontendUrl/beta-feedback-unauthenticated"
-  val signOutUrl: String             = configuration.get[String]("urls.logoutContinue") + configuration.get[String]("urls.feedback")
-  val loginHmrcServiceUrl: String    = configuration.get[String]("urls.loginHmrcService")
+  val analyticsHost: String = configuration.get[String](s"google-analytics.host")
+
+  val betaFeedbackUrl                = s"$contactHost/contact/beta-feedback"
+  val betaFeedbackUnauthenticatedUrl = s"$contactHost/contact/beta-feedback-unauthenticated"
+
+  val signOutUrl: String          = configuration.get[String]("urls.logoutContinue") + configuration.get[String]("urls.feedback")
+  val loginHmrcServiceUrl: String = configuration.get[String]("urls.loginHmrcService")
 
   lazy val manageTransitMovementsUrl: String             = configuration.get[String]("urls.manageTransitMovementsFrontend")
   lazy val serviceUrl: String                            = s"$manageTransitMovementsUrl/what-do-you-want-to-do"
