@@ -11,6 +11,10 @@
     }
   }) %}
 
+     {% if params.paragraph %}
+        <p class="govuk-body">{{messages(params.paragraph)}}</p>
+    {% endif %}
+
     {{ govukInput({
       classes: "govuk-!-width-two-thirds",
       label: {

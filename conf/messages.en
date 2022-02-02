@@ -399,12 +399,14 @@ eoriNumber.error.format =  {0}’s  EORI number must start with GB or XI
 
 consigneeAddress.title = What is the authorised consignee’s address?
 consigneeAddress.heading =  What is {0}’s address?
+consigneeAddress.paragraph =  This should be the business’ registered address.
 consigneeAddress.checkYourAnswersLabel =  What is {0}’s address?
 consigneeAddress.change.hidden = {0}’s address
 
 consigneeAddress.buildingAndStreet = Building and street
 consigneeAddress.city = Town or city
 consigneeAddress.postcode = Postcode
+consigneeAddress.country = Country
 consigneeAddress.checkYourAnswersLabel = Address
 
 consigneeAddress.error.postcode.required = Enter the postcode of {0}’s address
