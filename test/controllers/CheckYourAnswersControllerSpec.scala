@@ -19,7 +19,7 @@ package controllers
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import matchers.JsonMatchers
 import org.mockito.ArgumentCaptor
-import org.mockito.Matchers.any
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalacheck.Gen
 import play.api.inject.bind
@@ -112,26 +112,6 @@ class CheckYourAnswersControllerSpec extends SpecBase with AppWithDefaultMockFix
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
 
       templateCaptor.getValue mustEqual "badRequest.njk"
-    }
-
-    "must fail with an Unauthorised error when backend returns 401" in {
-
-      setExistingUserAnswers(emptyUserAnswers)
-
-      when(mockRenderer.render(any(), any())(any())).thenReturn(Future.successful(Html("")))
-      when(mockService.submit(any())(any())).thenReturn(Future.successful(Some(HttpResponse(UNAUTHORIZED, ""))))
-
-      val request = FakeRequest(POST, routes.CheckYourAnswersController.onPost(mrn).url)
-
-      val result = route(app, request).value
-
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-
-      status(result) mustEqual UNAUTHORIZED
-
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
-
-      templateCaptor.getValue mustEqual "unauthorised.njk"
     }
 
     "must redirected to TechnicalDifficulties page when there is a server side error" in {

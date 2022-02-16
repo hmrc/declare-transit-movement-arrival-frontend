@@ -19,7 +19,7 @@ package controllers.actions
 import generators.Generators
 import models.requests.{IdentifierRequest, OptionalDataRequest}
 import models.{EoriNumber, MovementReferenceNumber, UserAnswers}
-import org.mockito.Matchers._
+import org.mockito.ArgumentMatchers._
 import org.mockito.Mockito._
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.freespec.AnyFreeSpec

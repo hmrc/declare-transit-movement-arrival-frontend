@@ -23,7 +23,7 @@ import connectors.EnrolmentStoreConnector
 import controllers.actions.AuthActionSpec._
 import controllers.routes
 import org.mockito.ArgumentCaptor
-import org.mockito.Matchers.{any, eq => eqTo}
+import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.Mockito.{reset, times, verify, when}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder

@@ -22,7 +22,7 @@ import matchers.JsonMatchers
 import models.GoodsLocation
 import models.reference.CustomsOffice
 import org.mockito.ArgumentCaptor
-import org.mockito.Matchers.any
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{times, verify, when}
 import pages.{CustomsOfficePage, GoodsLocationPage}
 import play.api.libs.json.{JsObject, Json}
@@ -52,11 +52,11 @@ class ConfirmationControllerSpec extends SpecBase with AppWithDefaultMockFixture
         .value
       setExistingUserAnswers(userAnswers)
 
-      val frontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
-      val request           = FakeRequest(GET, routes.ConfirmationController.onPageLoad(mrn).url)
-      val templateCaptor    = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor        = ArgumentCaptor.forClass(classOf[JsObject])
-      val result            = route(app, request).value
+      val frontendAppConfig                      = app.injector.instanceOf[FrontendAppConfig]
+      val request                                = FakeRequest(GET, routes.ConfirmationController.onPageLoad(mrn).url)
+      val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor: ArgumentCaptor[JsObject]   = ArgumentCaptor.forClass(classOf[JsObject])
+      val result                                 = route(app, request).value
 
       val contactUsMessage: Text.Message = msg"arrivalComplete.contact.withOffice".withArgs(customsOffice.name)
 

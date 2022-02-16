@@ -46,17 +46,12 @@ class ErrorHandler @Inject() (renderer: Renderer, val messagesApi: MessagesApi)(
     implicit val rh: RequestHeader = request
 
     statusCode match {
-      case BAD_REQUEST =>
-        renderer.render("badRequest.njk").map(BadRequest(_))
       case NOT_FOUND =>
         renderer.render("notFound.njk", Json.obj()).map(NotFound(_))
-      case UNAUTHORIZED =>
-        renderer.render("unauthorised.njk", Json.obj()).map(Unauthorized(_))
+      case result if isClientError(result) =>
+        renderer.render("badRequest.njk").map(Results.Status(statusCode)(_))
       case _ =>
-        renderer.render("error.njk", Json.obj()).map {
-          content =>
-            Results.Status(statusCode)(content)
-        }
+        renderer.render("technicalDifficulties.njk").map(Results.Status(statusCode)(_))
     }
   }
 
