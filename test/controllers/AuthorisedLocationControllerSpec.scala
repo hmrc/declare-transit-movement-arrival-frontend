@@ -21,7 +21,7 @@ import forms.AuthorisedLocationFormProvider
 import matchers.JsonMatchers
 import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentCaptor
-import org.mockito.Matchers.any
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{times, verify, when}
 import pages.AuthorisedLocationPage
 import play.api.libs.json.{JsObject, Json}

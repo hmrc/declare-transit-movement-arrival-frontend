@@ -21,7 +21,7 @@ import connectors.ReferenceDataConnector
 import generators.Generators
 import models.CountryList
 import models.reference.{Country, CountryCode, CountryReferenceDataEndpoint}
-import org.mockito.Matchers.{any, eq => eqTo}
+import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.Mockito.{reset, verify, when}
 import org.scalacheck.Arbitrary._
 import org.scalatest.BeforeAndAfterEach
