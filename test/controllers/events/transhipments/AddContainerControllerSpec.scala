@@ -21,7 +21,7 @@ import forms.events.transhipments.AddContainerFormProvider
 import generators.MessagesModelGenerators
 import matchers.JsonMatchers
 import models.domain.ContainerDomain
-import models.{Mode, NormalMode}
+import models.{Index, Mode, NormalMode}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{times, verify, when}
@@ -41,7 +41,7 @@ import scala.concurrent.Future
 class AddContainerControllerSpec extends SpecBase with AppWithDefaultMockFixtures with NunjucksSupport with JsonMatchers with MessagesModelGenerators {
 
   private val formProvider        = new AddContainerFormProvider()
-  private val form: Form[Boolean] = formProvider()
+  private val form: Form[Boolean] = formProvider(true)
   val mode: Mode                  = NormalMode
 
   private lazy val addContainerRoute: String = routes.AddContainerController.onPageLoad(mrn, eventIndex, mode).url
@@ -69,12 +69,13 @@ class AddContainerControllerSpec extends SpecBase with AppWithDefaultMockFixture
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form"        -> form,
-        "mode"        -> mode,
-        "mrn"         -> mrn,
-        "radios"      -> Radios.yesNo(form("value")),
-        "containers"  -> Section(Seq(AddContainerHelper(ua, mode).containerRow(eventIndex, containerIndex).value)),
-        "onSubmitUrl" -> routes.AddContainerController.onSubmit(mrn, eventIndex, mode).url
+        "form"                -> form,
+        "mode"                -> mode,
+        "mrn"                 -> mrn,
+        "radios"              -> Radios.yesNo(form("value")),
+        "containers"          -> Section(Seq(AddContainerHelper(ua, mode).containerRow(eventIndex, containerIndex).value)),
+        "allowMoreContainers" -> true,
+        "onSubmitUrl"         -> routes.AddContainerController.onSubmit(mrn, eventIndex, mode).url
       )
 
       templateCaptor.getValue mustEqual addContainerTemplate
@@ -90,6 +91,34 @@ class AddContainerControllerSpec extends SpecBase with AppWithDefaultMockFixture
       val request =
         FakeRequest(POST, addContainerRoute)
           .withFormUrlEncodedBody(("value", "true"))
+
+      val result = route(app, request).value
+
+      status(result) mustEqual SEE_OTHER
+
+      redirectLocation(result).value mustEqual onwardRoute.url
+    }
+
+    "must redirect to the next page when invalid data but we have the max containers" in {
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val userAnswers = emptyUserAnswers
+        .set(ContainerNumberPage(Index(0), Index(0)), ContainerDomain("12345"))
+        .success
+        .value
+        .set(ContainerNumberPage(Index(0), Index(1)), ContainerDomain("12345"))
+        .success
+        .value
+        .set(ContainerNumberPage(Index(0), Index(2)), ContainerDomain("12345"))
+        .success
+        .value
+
+      setExistingUserAnswers(userAnswers)
+
+      val request =
+        FakeRequest(POST, addContainerRoute)
+          .withFormUrlEncodedBody(("value", ""))
 
       val result = route(app, request).value
 
@@ -117,11 +146,12 @@ class AddContainerControllerSpec extends SpecBase with AppWithDefaultMockFixture
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form"        -> boundForm,
-        "mode"        -> mode,
-        "mrn"         -> mrn,
-        "radios"      -> Radios.yesNo(boundForm("value")),
-        "onSubmitUrl" -> routes.AddContainerController.onSubmit(mrn, eventIndex, mode).url
+        "form"                -> boundForm,
+        "mode"                -> mode,
+        "mrn"                 -> mrn,
+        "radios"              -> Radios.yesNo(boundForm("value")),
+        "allowMoreContainers" -> true,
+        "onSubmitUrl"         -> routes.AddContainerController.onSubmit(mrn, eventIndex, mode).url
       )
 
       templateCaptor.getValue mustEqual addContainerTemplate
