@@ -23,7 +23,6 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalacheck.Gen
 import org.scalatest.OptionValues
-import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll
 import play.api.libs.typedmap.TypedMap
 import play.api.mvc.request.{RemoteConnection, RequestTarget}
 import play.api.mvc.{Headers, RequestHeader, Result}
