@@ -19,7 +19,8 @@ package controllers.events.seals
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import forms.events.seals.AddSealFormProvider
 import matchers.JsonMatchers
-import models.{Mode, NormalMode}
+import models.domain.SealDomain
+import models.{Index, Mode, NormalMode}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{times, verify, when}
@@ -85,6 +86,34 @@ class AddSealControllerSpec extends SpecBase with AppWithDefaultMockFixtures wit
       val request =
         FakeRequest(POST, addSealRoute)
           .withFormUrlEncodedBody(("value", "true"))
+
+      val result = route(app, request).value
+
+      status(result) mustEqual SEE_OTHER
+
+      redirectLocation(result).value mustEqual onwardRoute.url
+    }
+
+    "must redirect to the next page when invalid data but we have the max containers" in {
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val userAnswers = emptyUserAnswers
+        .set(SealIdentityPage(Index(0), Index(0)), SealDomain("12345"))
+        .success
+        .value
+        .set(SealIdentityPage(Index(0), Index(1)), SealDomain("12345"))
+        .success
+        .value
+        .set(SealIdentityPage(Index(0), Index(2)), SealDomain("12345"))
+        .success
+        .value
+
+      setExistingUserAnswers(userAnswers)
+
+      val request =
+        FakeRequest(POST, addSealRoute)
+          .withFormUrlEncodedBody(("value", ""))
 
       val result = route(app, request).value
 
