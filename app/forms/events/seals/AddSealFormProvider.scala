@@ -22,8 +22,8 @@ import play.api.data.Form
 
 class AddSealFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[Boolean] =
+  def apply(allowMoreSeals: Boolean): Form[Boolean] =
     Form(
-      "value" -> boolean("addSeal.error.required")
+      "value" -> mandatoryIfBoolean(allowMoreSeals, "addSeal.error.required", false)
     )
 }

@@ -354,6 +354,7 @@ addSeal.sealList.heading = Official customs seals
 addSeal.sealList.label = Official customs seal {0}
 addSeal.sealList.change.hidden = official customs seal {0}
 addSeal.sealList.delete.hidden = official customs seal {0}
+addSeal.maxLimit.label = You cannot add any more official customs seals
 
 haveSealsChanged.title = Have any of the official customs seals changed?
 haveSealsChanged.heading = Have any of the official customs seals changed?

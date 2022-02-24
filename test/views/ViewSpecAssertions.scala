@@ -40,6 +40,12 @@ trait ViewSpecAssertions {
   def findByElementId(doc: Document, id: String): Option[Element] =
     Option(doc.getElementById(id))
 
+  def assertContainsClass(doc: Document, expectedClass: String) =
+    assert(doc.getElementsByClass(expectedClass).isEmpty == false, s"\n\nPage should have class $expectedClass")
+
+  def assertContainsNoClass(doc: Document, expectedClass: String) =
+    assert(doc.getElementsByClass(expectedClass).isEmpty, s"\n\nPage should not have class $expectedClass")
+
   def assertPageHasSignOutLink(doc: Document, expectedText: String, expectedHref: String): Assertion = {
     val link = doc.getElementsByClass("hmrc-sign-out-nav__link").first()
     link.text() mustBe expectedText
@@ -48,4 +54,5 @@ trait ViewSpecAssertions {
 
   def assertPageHasNoSignOutLink(doc: Document): Assertion =
     doc.getElementsByClass("hmrc-sign-out-nav__link").isEmpty mustBe true
+
 }

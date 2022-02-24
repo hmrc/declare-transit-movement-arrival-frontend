@@ -37,7 +37,7 @@ import scala.concurrent.Future
 class AddSealControllerSpec extends SpecBase with AppWithDefaultMockFixtures with NunjucksSupport with JsonMatchers {
 
   val formProvider        = new AddSealFormProvider()
-  val form: Form[Boolean] = formProvider()
+  val form: Form[Boolean] = formProvider(true)
   val mode: Mode          = NormalMode
 
   lazy val addSealRoute: String = routes.AddSealController.onPageLoad(mrn, eventIndex, mode).url
@@ -63,14 +63,15 @@ class AddSealControllerSpec extends SpecBase with AppWithDefaultMockFixtures wit
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form"        -> form,
-        "mode"        -> mode,
-        "mrn"         -> mrn,
-        "pageTitle"   -> "addSeal.title.singular",
-        "heading"     -> "addSeal.heading.singular",
-        "seals"       -> Json.toJson(Seq(AddSealHelper.apply(ua, mode).sealRow(eventIndex, sealIndex).value)),
-        "radios"      -> Radios.yesNo(form("value")),
-        "onSubmitUrl" -> routes.AddSealController.onSubmit(mrn, eventIndex, mode).url
+        "form"           -> form,
+        "mode"           -> mode,
+        "mrn"            -> mrn,
+        "pageTitle"      -> "addSeal.title.singular",
+        "heading"        -> "addSeal.heading.singular",
+        "seals"          -> Json.toJson(Seq(AddSealHelper.apply(ua, mode).sealRow(eventIndex, sealIndex).value)),
+        "radios"         -> Radios.yesNo(form("value")),
+        "allowMoreSeals" -> true,
+        "onSubmitUrl"    -> routes.AddSealController.onSubmit(mrn, eventIndex, mode).url
       )
 
       templateCaptor.getValue mustEqual "events/seals/addSeal.njk"
@@ -111,14 +112,15 @@ class AddSealControllerSpec extends SpecBase with AppWithDefaultMockFixtures wit
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form"        -> boundForm,
-        "mode"        -> mode,
-        "mrn"         -> mrn,
-        "pageTitle"   -> "addSeal.title.singular",
-        "heading"     -> "addSeal.heading.singular",
-        "seals"       -> Json.toJson(Seq(AddSealHelper.apply(ua, mode).sealRow(eventIndex, sealIndex).value)),
-        "radios"      -> Radios.yesNo(boundForm("value")),
-        "onSubmitUrl" -> routes.AddSealController.onSubmit(mrn, eventIndex, mode).url
+        "form"           -> boundForm,
+        "mode"           -> mode,
+        "mrn"            -> mrn,
+        "pageTitle"      -> "addSeal.title.singular",
+        "heading"        -> "addSeal.heading.singular",
+        "seals"          -> Json.toJson(Seq(AddSealHelper.apply(ua, mode).sealRow(eventIndex, sealIndex).value)),
+        "radios"         -> Radios.yesNo(boundForm("value")),
+        "allowMoreSeals" -> true,
+        "onSubmitUrl"    -> routes.AddSealController.onSubmit(mrn, eventIndex, mode).url
       )
 
       templateCaptor.getValue mustEqual "events/seals/addSeal.njk"
