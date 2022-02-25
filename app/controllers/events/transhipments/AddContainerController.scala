@@ -95,6 +95,6 @@ class AddContainerController @Inject() (
         )
   }
 
-  def allowMoreContainers(ua: UserAnswers, eventIndex: Index): Boolean =
+  private def allowMoreContainers(ua: UserAnswers, eventIndex: Index): Boolean =
     ua.get(DeriveNumberOfContainers(eventIndex)).getOrElse(0) < config.maxContainers
 }
