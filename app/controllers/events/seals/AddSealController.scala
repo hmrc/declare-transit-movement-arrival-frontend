@@ -101,6 +101,6 @@ class AddSealController @Inject() (override val messagesApi: MessagesApi,
     renderer.render("events/seals/addSeal.njk", json)
   }
 
-  def allowMoreSeals(ua: UserAnswers, eventIndex: Index): Boolean =
+  private def allowMoreSeals(ua: UserAnswers, eventIndex: Index): Boolean =
     ua.get(DeriveNumberOfSeals(eventIndex)).getOrElse(0) < config.maxSeals
 }
