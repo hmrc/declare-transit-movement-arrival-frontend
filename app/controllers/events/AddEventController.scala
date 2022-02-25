@@ -100,6 +100,6 @@ class AddEventController @Inject() (override val messagesApi: MessagesApi,
     renderer.render("events/addEvent.njk", json).map(status(_))
   }
 
-  def allowMoreEvents(ua: UserAnswers): Boolean =
+ private def allowMoreEvents(ua: UserAnswers): Boolean =
     ua.get(DeriveNumberOfEvents).getOrElse(0) < config.maxEvents
 }
