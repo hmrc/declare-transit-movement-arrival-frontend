@@ -54,7 +54,7 @@
                 <li>{{ messages("addEvent.hintText.planned.route") }} </li>
               </ul>
             </div>
-
+          {% if allowMoreEvents %}
             {{ govukRadios({
               classes: "govuk-radios--inline",
               name: 'value',
@@ -68,7 +68,9 @@
                 }
               }
             }) }}
-
+          {% else %}
+            <p class="govuk-body" data-testId="maxLimit"> {{ messages('addEvent.maxLimit.label') }} </p>
+          {% endif %}
           </div>
 
           {{ govukButton({

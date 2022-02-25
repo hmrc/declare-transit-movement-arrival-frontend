@@ -284,6 +284,7 @@ addEvent.hintText.planned.route = the planned route changed
 addEvent.error.required = Select yes if you need to add another event
 addEvent.change.hidden = event {0} at {1}
 addEvent.remove.hidden = event {0} at {1}
+addEvent.maxLimit.label = You cannot add any more events
 
 transhipmentType.title = Where were the goods moved?
 transhipmentType.heading = Where were the goods moved?
