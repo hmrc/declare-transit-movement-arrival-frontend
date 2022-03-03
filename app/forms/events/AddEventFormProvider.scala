@@ -22,8 +22,8 @@ import play.api.data.Form
 
 class AddEventFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[Boolean] =
+  def apply(allowMoreEvents: Boolean): Form[Boolean] =
     Form(
-      "value" -> boolean("addEvent.error.required")
+      "value" -> mandatoryIfBoolean(allowMoreEvents, "addEvent.error.required", false)
     )
 }

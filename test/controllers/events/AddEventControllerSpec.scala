@@ -19,11 +19,11 @@ package controllers.events
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import forms.events.AddEventFormProvider
 import matchers.JsonMatchers
-import models.NormalMode
+import models.{Index, NormalMode}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{times, verify, when}
-import pages.events.AddEventPage
+import pages.events.{AddEventPage, IncidentInformationPage}
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -35,7 +35,7 @@ import scala.concurrent.Future
 class AddEventControllerSpec extends SpecBase with AppWithDefaultMockFixtures with NunjucksSupport with JsonMatchers {
 
   val formProvider = new AddEventFormProvider()
-  val form         = formProvider()
+  val form         = formProvider(true)
 
   lazy val addEventRoute = routes.AddEventController.onPageLoad(mrn, NormalMode).url
 
@@ -109,6 +109,34 @@ class AddEventControllerSpec extends SpecBase with AppWithDefaultMockFixtures wi
       val request =
         FakeRequest(POST, addEventRoute)
           .withFormUrlEncodedBody(("value", "true"))
+
+      val result = route(app, request).value
+
+      status(result) mustEqual SEE_OTHER
+
+      redirectLocation(result).value mustEqual onwardRoute.url
+    }
+
+    "must redirect to the next page when invalid data but we have the max containers" in {
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val userAnswers = emptyUserAnswers
+        .set(IncidentInformationPage(Index(0)), "12345")
+        .success
+        .value
+        .set(IncidentInformationPage(Index(1)), "12345")
+        .success
+        .value
+        .set(IncidentInformationPage(Index(2)), "12345")
+        .success
+        .value
+
+      setExistingUserAnswers(userAnswers)
+
+      val request =
+        FakeRequest(POST, addEventRoute)
+          .withFormUrlEncodedBody(("value", ""))
 
       val result = route(app, request).value
 
