@@ -329,6 +329,7 @@ addContainer.error.required = Select yes if you need to add another container
 addContainer.containerList.label = Container {0}
 addContainer.containerList.change.hidden = container {0}
 addContainer.containerList.delete.hidden = container {0}
+addContainer.maxLimit.label = You cannot add any more containers
 
 confirmRemoveContainer.title = Are you sure you want to remove the container {0}?
 confirmRemoveContainer.heading = Are you sure you want to remove the container {0}?
@@ -354,6 +355,7 @@ addSeal.sealList.heading = Official customs seals
 addSeal.sealList.label = Official customs seal {0}
 addSeal.sealList.change.hidden = official customs seal {0}
 addSeal.sealList.delete.hidden = official customs seal {0}
+addSeal.maxLimit.label = You cannot add any more official customs seals
 
 haveSealsChanged.title = Have any of the official customs seals changed?
 haveSealsChanged.heading = Have any of the official customs seals changed?

@@ -17,29 +17,33 @@
 package forms.events.transhipments
 
 import forms.behaviours.BooleanFieldBehaviours
-import play.api.data.FormError
 
 class AddContainerFormProviderSpec extends BooleanFieldBehaviours {
 
   val requiredKey = "addContainer.error.required"
   val invalidKey  = "error.boolean"
 
-  val form = new AddContainerFormProvider()()
+  val form = new AddContainerFormProvider()
 
   ".value" - {
 
     val fieldName = "value"
 
-    behave like booleanField(
-      form,
-      fieldName,
-      invalidError = FormError(fieldName, invalidKey)
-    )
+    "when max limit hit" - {
+      "must bind true" in {
+        val result = form(false).bind(Map(fieldName -> "true"))
+        result.value.value mustBe false
+      }
 
-    behave like mandatoryField(
-      form,
-      fieldName,
-      requiredError = FormError(fieldName, requiredKey)
-    )
+      "must bind false to true" in {
+        val result = form(false).bind(Map(fieldName -> "false"))
+        result.value.value mustBe false
+      }
+
+      "must bind blank to true" in {
+        val result = form(false).bind(Map.empty[String, String])
+        result.value.value mustBe false
+      }
+    }
   }
 }

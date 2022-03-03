@@ -39,20 +39,23 @@
               classes:"govuk-summary-list govuk-!-margin-bottom-9 ctc-add-to-a-list"
           }) }}
 
-          {{ govukRadios({
-            classes: "govuk-radios--inline",
-            name: 'value',
-            fieldset: {
-              legend: {
-                text: messages("addContainer.radio.label"),
-                isPageHeading: false,
-                classes: "govuk-fieldset__legend govuk-fieldset__legend--m"
-              }
-            },
-            items: radios,
-            errorMessage: form.value.error
-          }) }}
-
+          {% if allowMoreContainers %}
+            {{ govukRadios({
+              classes: "govuk-radios--inline",
+              name: 'value',
+              fieldset: {
+                legend: {
+                  text: messages("addContainer.radio.label"),
+                  isPageHeading: false,
+                  classes: "govuk-fieldset__legend govuk-fieldset__legend--m"
+                }
+              },
+              items: radios,
+              errorMessage: form.value.error
+            }) }}
+          {% else %}
+            <p class="govuk-body" data-testId="maxLimit"> {{ messages('addContainer.maxLimit.label') }} </p>
+          {% endif %}
           {{ govukButton({
             text: messages("site.continue"),
             attributes: {id:"submit"}

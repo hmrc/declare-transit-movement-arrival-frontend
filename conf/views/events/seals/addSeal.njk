@@ -39,19 +39,23 @@
 
           {{ csrf() | safe }}
 
-          {{ govukRadios({
-            classes: "govuk-radios--inline",
-            name: 'value',
-            fieldset: {
-              legend: {
-                text: messages('addSeal.radio.label'),
-                isPageHeading: false,
-                classes: "govuk-fieldset__legend govuk-fieldset__legend--m"
-              }
-            },
-            items: radios,
-            errorMessage: form.value.error
-          }) }}
+          {% if allowMoreSeals %}
+            {{ govukRadios({
+              classes: "govuk-radios--inline",
+              name: 'value',
+              fieldset: {
+                legend: {
+                  text: messages('addSeal.radio.label'),
+                  isPageHeading: false,
+                  classes: "govuk-fieldset__legend govuk-fieldset__legend--m"
+                }
+              },
+              items: radios,
+              errorMessage: form.value.error
+            }) }}
+          {% else %}
+            <p class="govuk-body" data-testId="maxLimit"> {{ messages('addSeal.maxLimit.label') }} </p>
+          {% endif %}
 
           {{ govukButton({
             text: messages("site.continue"),

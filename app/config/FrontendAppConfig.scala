@@ -66,4 +66,6 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
   lazy val languageTranslationEnabled: Boolean =
     configuration.get[Boolean]("microservice.services.features.welsh-translation")
 
+  lazy val maxSeals: Int      = configuration.get[Int]("limits.maxSeals")
+  lazy val maxContainers: Int = configuration.get[Int]("limits.maxContainers")
 }

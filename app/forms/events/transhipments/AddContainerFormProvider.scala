@@ -22,8 +22,8 @@ import play.api.data.Form
 
 class AddContainerFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[Boolean] =
+  def apply(allowMoreContainers: Boolean): Form[Boolean] =
     Form(
-      "value" -> boolean("addContainer.error.required")
+      "value" -> mandatoryIfBoolean(allowMoreContainers, "addContainer.error.required", false)
     )
 }
