@@ -18,19 +18,17 @@ package services
 
 import base.SpecBase
 import connectors.ReferenceDataConnector
-import generators.Generators
 import models.CountryList
-import models.reference.{Country, CountryCode, CountryReferenceDataEndpoint}
+import models.reference.{Country, CountryCode}
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.Mockito.{reset, verify, when}
-import org.scalacheck.Arbitrary._
 import org.scalatest.BeforeAndAfterEach
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generators {
+class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach {
 
   private val mockRefDataConnector: ReferenceDataConnector = mock[ReferenceDataConnector]
   private val service                                      = new CountriesService(mockRefDataConnector)
@@ -52,18 +50,28 @@ class CountriesServiceSpec extends SpecBase with BeforeAndAfterEach with Generat
     "getCountries" - {
       "must return a list of sorted countries" in {
 
-        forAll(arbitrary[CountryReferenceDataEndpoint]) {
-          endpoint =>
-            beforeEach()
+        when(mockRefDataConnector.getCountries(any())(any(), any()))
+          .thenReturn(Future.successful(countries))
 
-            when(mockRefDataConnector.getCountries(any())(any(), any()))
-              .thenReturn(Future.successful(countries))
+        service.getCountries().futureValue mustBe
+          CountryList(Seq(country2, country3, country1))
 
-            service.getCountries(endpoint).futureValue mustBe
-              CountryList(Seq(country2, country3, country1))
+        verify(mockRefDataConnector).getCountries(eqTo(Nil))(any(), any())
+      }
+    }
 
-            verify(mockRefDataConnector).getCountries(eqTo(endpoint))(any(), any())
-        }
+    "getTransitCountries" - {
+      "must return a list of sorted transit countries" in {
+
+        when(mockRefDataConnector.getCountries(any())(any(), any()))
+          .thenReturn(Future.successful(countries))
+
+        service.getTransitCountries().futureValue mustBe
+          CountryList(Seq(country2, country3, country1))
+
+        val expectedQueryParams = Seq("membership" -> "ctc")
+
+        verify(mockRefDataConnector).getCountries(eqTo(expectedQueryParams))(any(), any())
       }
     }
   }

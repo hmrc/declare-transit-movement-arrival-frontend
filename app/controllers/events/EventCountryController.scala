@@ -18,7 +18,7 @@ package controllers.events
 
 import controllers.actions._
 import forms.events.EventCountryFormProvider
-import models.reference.{Country, CountryTransitList}
+import models.reference.Country
 import models.{Index, Mode, MovementReferenceNumber}
 import navigation.Navigator
 import pages.events.EventCountryPage
@@ -54,7 +54,7 @@ class EventCountryController @Inject() (
   def onPageLoad(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode): Action[AnyContent] =
     (identify andThen getData(mrn) andThen requireData).async {
       implicit request =>
-        countriesService.getCountries(CountryTransitList) flatMap {
+        countriesService.getTransitCountries() flatMap {
           countryList =>
             val form = formProvider(countryList)
 
@@ -71,7 +71,7 @@ class EventCountryController @Inject() (
   def onSubmit(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode): Action[AnyContent] =
     (identify andThen getData(mrn) andThen requireData).async {
       implicit request =>
-        countriesService.getCountries(CountryTransitList) flatMap {
+        countriesService.getTransitCountries() flatMap {
           countryList =>
             formProvider(countryList)
               .bindFromRequest()

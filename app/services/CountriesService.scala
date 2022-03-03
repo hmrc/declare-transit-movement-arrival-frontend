@@ -18,7 +18,7 @@ package services
 
 import connectors.ReferenceDataConnector
 import models.CountryList
-import models.reference.{Country, CountryReferenceDataEndpoint}
+import models.reference.Country
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
@@ -26,9 +26,17 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class CountriesService @Inject() (referenceDataConnector: ReferenceDataConnector)(implicit ec: ExecutionContext) {
 
-  def getCountries(endpoint: CountryReferenceDataEndpoint)(implicit hc: HeaderCarrier): Future[CountryList] =
+  def getCountries()(implicit hc: HeaderCarrier): Future[CountryList] =
+    getCountries(Nil)
+
+  def getTransitCountries()(implicit hc: HeaderCarrier): Future[CountryList] = {
+    val queryParameters = Seq("membership" -> "ctc")
+    getCountries(queryParameters)
+  }
+
+  private def getCountries(queryParameters: Seq[(String, String)])(implicit hc: HeaderCarrier): Future[CountryList] =
     referenceDataConnector
-      .getCountries(endpoint)
+      .getCountries(queryParameters)
       .map(sort)
 
   private def sort(countries: Seq[Country]): CountryList =

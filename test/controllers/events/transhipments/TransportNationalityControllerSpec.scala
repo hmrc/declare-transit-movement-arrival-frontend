@@ -70,7 +70,7 @@ class TransportNationalityControllerSpec extends SpecBase with AppWithDefaultMoc
 
     "must redirect to the next page when valid data is submitted" in {
 
-      when(mockCountriesService.getCountries(any())(any())).thenReturn(Future.successful(countries))
+      when(mockCountriesService.getCountries()(any())).thenReturn(Future.successful(countries))
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       setExistingUserAnswers(emptyUserAnswers)
@@ -87,7 +87,7 @@ class TransportNationalityControllerSpec extends SpecBase with AppWithDefaultMoc
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      when(mockCountriesService.getCountries(any())(any())).thenReturn(Future.successful(countries))
+      when(mockCountriesService.getCountries()(any())).thenReturn(Future.successful(countries))
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
@@ -147,7 +147,7 @@ class TransportNationalityControllerSpec extends SpecBase with AppWithDefaultMoc
 
   private def verifyOnPageLoad(form: Form[Country], userAnswers: UserAnswers, preSelect: Boolean) = {
 
-    when(mockCountriesService.getCountries(any())(any())).thenReturn(Future.successful(countries))
+    when(mockCountriesService.getCountries()(any())).thenReturn(Future.successful(countries))
     when(mockRenderer.render(any(), any())(any()))
       .thenReturn(Future.successful(Html("")))
 

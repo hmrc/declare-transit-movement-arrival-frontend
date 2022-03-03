@@ -50,7 +50,7 @@ class CheckEventAnswersControllerSpec extends SpecBase with AppWithDefaultMockFi
 
       val sampleCountryList = arbitrary[Seq[Country]].sample.value
 
-      when(mockCountriesService.getCountries(any())(any()))
+      when(mockCountriesService.getTransitCountries()(any()))
         .thenReturn(Future.successful(CountryList(sampleCountryList)))
 
       when(mockRenderer.render(any(), any())(any()))
@@ -64,8 +64,8 @@ class CheckEventAnswersControllerSpec extends SpecBase with AppWithDefaultMockFi
 
       status(result) mustEqual OK
 
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+      val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor: ArgumentCaptor[JsObject]   = ArgumentCaptor.forClass(classOf[JsObject])
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 

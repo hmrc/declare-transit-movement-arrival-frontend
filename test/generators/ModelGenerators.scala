@@ -93,9 +93,4 @@ trait ModelGenerators {
         name <- arbitrary[String]
       } yield Country(code, name)
     }
-
-  implicit lazy val arbitraryCountryReferenceDataEndpoint: Arbitrary[CountryReferenceDataEndpoint] =
-    Arbitrary {
-      Gen.oneOf(CountryFullList, CountryTransitList)
-    }
 }

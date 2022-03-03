@@ -18,7 +18,6 @@ package controllers.events
 
 import com.google.inject.Inject
 import controllers.actions.{DataRequiredAction, DataRetrievalActionProvider, IdentifierAction}
-import models.reference.CountryTransitList
 import models.{CheckMode, Index, MovementReferenceNumber, NormalMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -47,7 +46,7 @@ class CheckEventAnswersController @Inject() (
   def onPageLoad(mrn: MovementReferenceNumber, eventIndex: Index): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
       countriesService
-        .getCountries(CountryTransitList)
+        .getTransitCountries()
         .flatMap {
           countryList =>
             val json = Json.obj(

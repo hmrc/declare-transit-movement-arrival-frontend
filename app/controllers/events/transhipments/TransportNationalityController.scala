@@ -18,7 +18,7 @@ package controllers.events.transhipments
 
 import controllers.actions.{DataRequiredAction, DataRetrievalActionProvider, IdentifierAction}
 import forms.events.transhipments.TransportNationalityFormProvider
-import models.reference.{Country, CountryFullList}
+import models.reference.Country
 import models.{Index, Mode, MovementReferenceNumber}
 import navigation.Navigator
 import pages.events.transhipments.TransportNationalityPage
@@ -53,7 +53,7 @@ class TransportNationalityController @Inject() (
 
   def onPageLoad(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
-      countriesService.getCountries(CountryFullList) flatMap {
+      countriesService.getCountries() flatMap {
         countryList =>
           val form = formProvider(countryList)
 
@@ -69,7 +69,7 @@ class TransportNationalityController @Inject() (
 
   def onSubmit(mrn: MovementReferenceNumber, eventIndex: Index, mode: Mode): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
     implicit request =>
-      countriesService.getCountries(CountryFullList) flatMap {
+      countriesService.getCountries() flatMap {
         countryList =>
           val form = formProvider(countryList)
 
