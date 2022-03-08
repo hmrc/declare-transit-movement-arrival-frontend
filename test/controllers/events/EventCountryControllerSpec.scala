@@ -67,7 +67,7 @@ class EventCountryControllerSpec extends SpecBase with AppWithDefaultMockFixture
     "must redirect to the next page when valid data is submitted" in {
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-      when(mockCountriesService.getCountries(any())(any())).thenReturn(Future.successful(countries))
+      when(mockCountriesService.getTransitCountries()(any())).thenReturn(Future.successful(countries))
 
       setExistingUserAnswers(emptyUserAnswers)
 
@@ -85,7 +85,7 @@ class EventCountryControllerSpec extends SpecBase with AppWithDefaultMockFixture
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
-      when(mockCountriesService.getCountries(any())(any())).thenReturn(Future.successful(countries))
+      when(mockCountriesService.getTransitCountries()(any())).thenReturn(Future.successful(countries))
 
       val json = Seq(
         Json.obj("text" -> "Select a country", "value" -> ""),
@@ -150,7 +150,7 @@ class EventCountryControllerSpec extends SpecBase with AppWithDefaultMockFixture
     when(mockRenderer.render(any(), any())(any()))
       .thenReturn(Future.successful(Html("")))
 
-    when(mockCountriesService.getCountries(any())(any())).thenReturn(Future.successful(countries))
+    when(mockCountriesService.getTransitCountries()(any())).thenReturn(Future.successful(countries))
 
     val countriesJson = Seq(
       Json.obj("text" -> "Select a country", "value" -> ""),

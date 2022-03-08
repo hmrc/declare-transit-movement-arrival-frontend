@@ -18,7 +18,7 @@ package connectors
 
 import config.FrontendAppConfig
 import metrics.{MetricsService, Monitors}
-import models.reference.{Country, CountryCode, CountryReferenceDataEndpoint, CustomsOffice}
+import models.reference.{Country, CountryCode, CustomsOffice}
 import uk.gov.hmrc.http.HttpReads.Implicits.readFromJson
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
@@ -43,11 +43,11 @@ class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpCli
     }
   }
 
-  def getCountries(endpoint: CountryReferenceDataEndpoint)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[Country]] = {
-    val serviceUrl = s"${config.referenceDataUrl}/${endpoint.value}"
+  def getCountries(queryParameters: Seq[(String, String)])(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[Country]] = {
+    val serviceUrl = s"${config.referenceDataUrl}/countries"
 
     metricsService.timeAsyncCall(Monitors.getCountryListMonitor) {
-      http.GET[Seq[Country]](serviceUrl)
+      http.GET[Seq[Country]](serviceUrl, queryParameters)
     }
   }
 }

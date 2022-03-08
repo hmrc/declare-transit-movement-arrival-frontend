@@ -129,11 +129,11 @@ class ReferenceDataConnectorSpec
 
     "getCountries" - {
 
-      "for CountryFullList must" - {
+      "for all countries must" - {
 
         "return Seq of Country when successful" in {
           server.stubFor(
-            get(urlEqualTo(s"/$startUrl/countries-full-list"))
+            get(urlEqualTo(s"/$startUrl/countries"))
               .willReturn(okJson(countryListResponseJson))
           )
 
@@ -142,19 +142,21 @@ class ReferenceDataConnectorSpec
             Country(CountryCode("AD"), "Andorra")
           )
 
-          connector.getCountries(CountryFullList).futureValue mustEqual expectedResult
+          connector.getCountries(Nil).futureValue mustEqual expectedResult
         }
 
         "return an exception when an error response is returned" in {
-          checkErrorResponse(s"/$startUrl/countries-full-list", connector.getCountries(CountryFullList))
+          checkErrorResponse(s"/$startUrl/countries", connector.getCountries(Nil))
         }
       }
 
-      "for CountryTransitList must" - {
+      "for transit countries must" - {
+
+        val queryParameters = Seq("membership" -> "ctc")
 
         "return Seq of Country when successful" in {
           server.stubFor(
-            get(urlEqualTo(s"/$startUrl/transit-countries"))
+            get(urlEqualTo(s"/$startUrl/countries?membership=ctc"))
               .willReturn(okJson(countryListResponseJson))
           )
 
@@ -163,11 +165,11 @@ class ReferenceDataConnectorSpec
             Country(CountryCode("AD"), "Andorra")
           )
 
-          connector.getCountries(CountryTransitList).futureValue mustEqual expectedResult
+          connector.getCountries(queryParameters).futureValue mustEqual expectedResult
         }
 
         "return an exception when an error response is returned" in {
-          checkErrorResponse(s"/$startUrl/transit-countries", connector.getCountries(CountryTransitList))
+          checkErrorResponse(s"/$startUrl/countries?membership=ctc", connector.getCountries(queryParameters))
         }
       }
 
