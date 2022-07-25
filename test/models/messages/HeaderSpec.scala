@@ -45,10 +45,10 @@ class HeaderSpec extends SpecBase with ScalaCheckPropertyChecks with MessagesMod
 
           val expectedResult: NodeSeq =
             <HEAHEA>
-              <DocNumHEA5>{escapeXml(minimalHeader.movementReferenceNumber)}</DocNumHEA5>
-              <ArrNotPlaHEA60>{escapeXml(minimalHeader.arrivalNotificationPlace)}</ArrNotPlaHEA60>
+              <DocNumHEA5>{minimalHeader.movementReferenceNumber}</DocNumHEA5>
+              <ArrNotPlaHEA60>{minimalHeader.arrivalNotificationPlace}</ArrNotPlaHEA60>
               <ArrNotPlaHEA60LNG>{LanguageCodeEnglish.code}</ArrNotPlaHEA60LNG>
-              <SimProFlaHEA132>{escapeXml(minimalHeader.procedureTypeFlag.code)}</SimProFlaHEA132>
+              <SimProFlaHEA132>{minimalHeader.procedureTypeFlag.code}</SimProFlaHEA132>
               <ArrNotDatHEA141>{Format.dateFormatted(arrivalNotificationDate)}</ArrNotDatHEA141>
             </HEAHEA>
 
@@ -63,18 +63,18 @@ class HeaderSpec extends SpecBase with ScalaCheckPropertyChecks with MessagesMod
           val normalHeader: Header = header.copy(procedureTypeFlag = NormalProcedureFlag)
 
           val customsSubPlaceNode = normalHeader.customsSubPlace.map(
-            customsSubPlace => <CusSubPlaHEA66>{escapeXml(customsSubPlace)}</CusSubPlaHEA66>
+            customsSubPlace => <CusSubPlaHEA66>{customsSubPlace}</CusSubPlaHEA66>
           )
 
           val authorisedLocationOfGoods = normalHeader.arrivalAuthorisedLocationOfGoods.map(
-            arrivalAgreedLocationOfGoods => <ArrAutLocOfGooHEA65>{escapeXml(arrivalAgreedLocationOfGoods)}</ArrAutLocOfGooHEA65>
+            arrivalAgreedLocationOfGoods => <ArrAutLocOfGooHEA65>{arrivalAgreedLocationOfGoods}</ArrAutLocOfGooHEA65>
           )
 
           val expectedResult: NodeSeq =
             <HEAHEA>
-              <DocNumHEA5>{escapeXml(normalHeader.movementReferenceNumber)}</DocNumHEA5>
+              <DocNumHEA5>{normalHeader.movementReferenceNumber}</DocNumHEA5>
               {customsSubPlaceNode.getOrElse(NodeSeq.Empty)}
-              <ArrNotPlaHEA60>{escapeXml(normalHeader.arrivalNotificationPlace)}</ArrNotPlaHEA60>
+              <ArrNotPlaHEA60>{normalHeader.arrivalNotificationPlace}</ArrNotPlaHEA60>
               <ArrNotPlaHEA60LNG>{LanguageCodeEnglish.code}</ArrNotPlaHEA60LNG>
               {authorisedLocationOfGoods.getOrElse(NodeSeq.Empty)}
               <SimProFlaHEA132>{normalHeader.procedureTypeFlag.code}</SimProFlaHEA132>

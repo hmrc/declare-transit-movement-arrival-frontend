@@ -62,19 +62,19 @@ object Header {
   implicit def writes: XMLWrites[Header] = XMLWrites[Header] {
     header =>
       <HEAHEA>
-        <DocNumHEA5>{escapeXml(header.movementReferenceNumber)}</DocNumHEA5>
+        <DocNumHEA5>{header.movementReferenceNumber}</DocNumHEA5>
           {
         header.customsSubPlace.fold(NodeSeq.Empty) {
           place =>
-            <CusSubPlaHEA66>{escapeXml(place)}</CusSubPlaHEA66>
+            <CusSubPlaHEA66>{place}</CusSubPlaHEA66>
         }
       }
-          <ArrNotPlaHEA60>{escapeXml(header.arrivalNotificationPlace)}</ArrNotPlaHEA60>
+          <ArrNotPlaHEA60>{header.arrivalNotificationPlace}</ArrNotPlaHEA60>
           <ArrNotPlaHEA60LNG>{Header.Constants.languageCode.code}</ArrNotPlaHEA60LNG>
           {
         header.arrivalAuthorisedLocationOfGoods.fold(NodeSeq.Empty) {
           location =>
-            <ArrAutLocOfGooHEA65>{escapeXml(location)}</ArrAutLocOfGooHEA65>
+            <ArrAutLocOfGooHEA65>{location}</ArrAutLocOfGooHEA65>
         }
       }
           <SimProFlaHEA132>{header.procedureTypeFlag.code}</SimProFlaHEA132>
