@@ -63,7 +63,7 @@ object EnRouteEvent {
         case Some(seals) =>
           <SEAINFSF1>
             {
-            <SeaNumSF12> {escapeXml(seals.size.toString)} </SeaNumSF12> ++
+            <SeaNumSF12> {seals.size.toString} </SeaNumSF12> ++
               seals.map(_.toXml)
           }
           </SEAINFSF1>
@@ -72,7 +72,7 @@ object EnRouteEvent {
 
       <ENROUEVETEV>
         {
-        <PlaTEV10>{escapeXml(enRouteEvent.place)}</PlaTEV10> ++
+        <PlaTEV10>{enRouteEvent.place}</PlaTEV10> ++
           <PlaTEV10LNG>{LanguageCodeEnglish.code}</PlaTEV10LNG> ++
           <CouTEV13>{enRouteEvent.countryCode.code}</CouTEV13>
       }

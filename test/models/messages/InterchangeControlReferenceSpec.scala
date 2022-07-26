@@ -34,7 +34,7 @@ class InterchangeControlReferenceSpec extends SpecBase with ScalaCheckPropertyCh
       forAll(arbitrary[InterchangeControlReference]) {
         interchangeControlReference =>
           val expectedResult: NodeSeq =
-            <IntConRefMES11>{s"AF${escapeXml(interchangeControlReference.date)}${interchangeControlReference.index}"}</IntConRefMES11>
+            <IntConRefMES11>{s"AF${interchangeControlReference.date}${interchangeControlReference.index}"}</IntConRefMES11>
           val result: NodeSeq = interchangeControlReference.toXml
 
           result mustEqual expectedResult

@@ -30,6 +30,7 @@ import utils.Format
 import utils.Format.timeFormatter
 
 import java.time.LocalTime
+import scala.xml.Utility.trim
 import scala.xml.{Node, NodeSeq}
 
 class ArrivalMovementRequestSpec
@@ -59,6 +60,38 @@ class ArrivalMovementRequestSpec
               </CC007A>
 
             arrivalMovementRequest.toXml mustEqual validXml
+          }
+      }
+    }
+
+    "must escape special characters to create valid xml" in {
+      forAll(arbitrary[ArrivalMovementRequest]) {
+        arrivalMovementRequest =>
+          whenever(withNormalProcedure(arrivalMovementRequest)) {
+
+            val traderWithSpecialCharacters =
+              Trader(
+                "Test & Name",
+                "Test > Street",
+                "Test < Postcode",
+                "Test \" City",
+                "GB",
+                "Test Eori"
+              )
+
+            val expectedTrader = "<TRADESTRD>" +
+              "<NamTRD7>Test &amp; Name</NamTRD7>" +
+              "<StrAndNumTRD22>Test &gt; Street</StrAndNumTRD22>" +
+              "<PosCodTRD23>Test &lt; Postcode</PosCodTRD23>" +
+              "<CitTRD24>Test &quot; City</CitTRD24>" +
+              "<CouTRD25>GB</CouTRD25>" +
+              "<NADLNGRD>EN</NADLNGRD>" +
+              "<TINTRD59>Test Eori</TINTRD59>" +
+              "</TRADESTRD>"
+
+            val arrivalMovementRequestWithSpecialCharacters = arrivalMovementRequest.copy(trader = traderWithSpecialCharacters)
+
+            (arrivalMovementRequestWithSpecialCharacters.toXml \ "TRADESTRD").map(trim).toString mustBe expectedTrader
           }
       }
     }
