@@ -19,7 +19,7 @@ package repositories
 import config.FrontendAppConfig
 import models.{EoriNumber, UserAnswers}
 import org.mongodb.scala.model.Indexes.{ascending, compoundIndex}
-import org.mongodb.scala.model.{Filters, FindOneAndUpdateOptions, IndexModel, IndexOptions, Indexes, ReplaceOptions, Updates}
+import org.mongodb.scala.model._
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 
@@ -35,9 +35,10 @@ class SessionRepository @Inject() (
 )(implicit ec: ExecutionContext)
     extends PlayMongoRepository[UserAnswers](
       mongoComponent = mongoComponent,
-      collectionName = "user-answers",
+      collectionName = SessionRepository.collectionName,
       domainFormat = UserAnswers.format,
-      indexes = SessionRepository.indexes(appConfig)
+      indexes = SessionRepository.indexes(appConfig),
+      replaceIndexes = appConfig.replaceIndexes
     ) {
 
   def get(movementReferenceNumber: String, eoriNumber: EoriNumber): Future[Option[UserAnswers]] = {
@@ -79,6 +80,7 @@ class SessionRepository @Inject() (
 }
 
 object SessionRepository {
+  val collectionName: String = "user-answers"
 
   def indexes(appConfig: FrontendAppConfig): Seq[IndexModel] = {
     val userAnswersLastUpdatedIndex: IndexModel = IndexModel(
