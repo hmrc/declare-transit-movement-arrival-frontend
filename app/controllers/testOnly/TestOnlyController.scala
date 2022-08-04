@@ -18,26 +18,27 @@ package controllers.testOnly
 
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import play.modules.reactivemongo.ReactiveMongoApi
-import reactivemongo.play.json.collection.JSONCollection
+import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
-class TestOnlyController @Inject() (override val messagesApi: MessagesApi, mongo: ReactiveMongoApi, val controllerComponents: MessagesControllerComponents)(
+class TestOnlyController @Inject() (override val messagesApi: MessagesApi, mongo: MongoComponent, val controllerComponents: MessagesControllerComponents)(
   implicit ec: ExecutionContext
 ) extends FrontendBaseController {
 
   def dropMongoCollection: Action[AnyContent] = Action.async {
     _ =>
-      val collection: Future[JSONCollection] = mongo.database.map(_.collection[JSONCollection]("user-answers"))
-
-      collection.flatMap(
-        _.drop(failIfNotFound = false) map {
-          case true  => Ok("Dropped  'User-answers' Mongo collection")
-          case false => Ok("collection does not exist or something gone wrong")
+      mongo.database
+        .getCollection("user-answers")
+        .drop()
+        .toFuture()
+        .map {
+          _ => Ok("Dropped 'User-answers' Mongo collection")
         }
-      )
+        .recover {
+          case _ => Ok("collection does not exist or something gone wrong")
+        }
   }
 }
