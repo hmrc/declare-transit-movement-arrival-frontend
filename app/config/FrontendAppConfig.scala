@@ -73,4 +73,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
   lazy val maxSeals: Int      = configuration.get[Int]("limits.maxSeals")
   lazy val maxContainers: Int = configuration.get[Int]("limits.maxContainers")
   lazy val maxEvents: Int     = configuration.get[Int]("limits.maxEvents")
+
+  lazy val cacheTtl: Int           = configuration.get[Int]("mongodb.timeToLiveInSeconds")
+  lazy val replaceIndexes: Boolean = configuration.get[Boolean]("mongodb.replaceIndexes")
 }
