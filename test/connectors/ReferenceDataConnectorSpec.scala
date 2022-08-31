@@ -37,7 +37,7 @@ class ReferenceDataConnectorSpec
     with MessagesModelGenerators
     with ScalaCheckPropertyChecks {
 
-  private val startUrl = "transit-movements-trader-reference-data"
+  private val startUrl = "test-only/transit-movements-trader-reference-data"
   private val country  = CountryCode("GB")
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
