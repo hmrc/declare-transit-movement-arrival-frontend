@@ -29,3 +29,5 @@ yarn-error.log
 project/.bloop/
 project/metals.sbt
 .hydra
+.java-version
+
