@@ -9,8 +9,6 @@ object AppDependencies {
   val compile: Seq[ModuleID] = Seq(
     play.sbt.PlayImport.ws,
     "uk.gov.hmrc.mongo"    %% "hmrc-mongo-play-28"               % mongoVersion,
-//    "com.typesafe.play"    %% "play-iteratees"                   % "2.6.1",
-//    "com.typesafe.play"    %% "play-iteratees-reactive-streams"  % "2.6.1",
     "uk.gov.hmrc"          %% "play-conditional-form-mapping"    % "1.12.0-play-28",
     "uk.gov.hmrc"          %% "bootstrap-frontend-play-28"       % bootstrapVersion,
     "uk.gov.hmrc"          %% "play-allowlist-filter"            % "1.1.0",
