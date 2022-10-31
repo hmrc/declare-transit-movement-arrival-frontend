@@ -42,6 +42,7 @@ class TemplatesCompileSpec
       d.listFiles.flatMap {
         case file if file.isFile    => List(file)
         case dir if dir.isDirectory => getListOfFiles(dir.getPath)
+        case _ => Nil
       }.toList
     } else {
       List[File]()

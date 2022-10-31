@@ -99,11 +99,11 @@ class ReferenceDataConnectorSpec
             CustomsOffice("GBtestId2", Some("testName2"), None)
           )
 
-        connector.getCustomsOffices.futureValue mustBe expectedResult
+        connector.getCustomsOffices().futureValue mustBe expectedResult
       }
 
       "must return an exception when an error response is returned" in {
-        checkErrorResponse(s"/$startUrl/customs-offices", connector.getCustomsOffices)
+        checkErrorResponse(s"/$startUrl/customs-offices", connector.getCustomsOffices())
       }
     }
 

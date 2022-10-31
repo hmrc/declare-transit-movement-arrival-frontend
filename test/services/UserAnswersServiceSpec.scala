@@ -38,10 +38,11 @@ class UserAnswersServiceSpec extends SpecBase with AppWithDefaultMockFixtures wi
 
   implicit private val hc: HeaderCarrier = HeaderCarrier()
 
-  override def beforeEach: Unit = {
-    super.beforeEach()
+  override def beforeEach(): Unit = {
     reset(mockArrivalNotificationMessageService)
     reset(mockReferenceDataConnector)
+    super.beforeEach()
+
   }
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
