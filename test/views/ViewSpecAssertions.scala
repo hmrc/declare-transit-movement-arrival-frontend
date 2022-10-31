@@ -20,8 +20,7 @@ import org.jsoup.nodes.{Document, Element}
 import org.scalatest.Assertion
 import org.scalatest.matchers.must.Matchers
 import play.api.i18n.Messages
-
-import scala.collection.JavaConverters._
+import play.twirl.api.TwirlHelperImports.twirlJavaCollectionToScala
 
 trait ViewSpecAssertions {
   self: Matchers =>
@@ -35,7 +34,7 @@ trait ViewSpecAssertions {
   }
 
   def getByElementTestIdSelector(doc: Document, id: String): Seq[Element] =
-    (doc.select(s"[data-testid=$id]")).asScala
+    (doc.select(s"[data-testid=$id]")).toList
 
   def findByElementId(doc: Document, id: String): Option[Element] =
     Option(doc.getElementById(id))
