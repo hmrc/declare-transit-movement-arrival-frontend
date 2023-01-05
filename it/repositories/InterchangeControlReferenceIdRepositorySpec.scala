@@ -25,6 +25,8 @@ import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import services.mocks.MockDateTimeService
 import uk.gov.hmrc.mongo.test.DefaultPlayMongoRepositorySupport
 
+import scala.concurrent.ExecutionContext.Implicits.global
+
 class InterchangeControlReferenceIdRepositorySpec
     extends AnyFreeSpec
     with Matchers
