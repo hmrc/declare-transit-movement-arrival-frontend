@@ -41,7 +41,6 @@
   {% endmacro %}
 
   {% set phaseBanner = {tag: {text: "beta"}, html: phaseBanner()} if config.showPhaseBanner %}
-  {% set additionalBannersBlock = userResearchBanner() if config.showUserResearchBanner %}
   {% set isSignedOut = signInUrl | length %}
 
   {{ hmrcHeader({
@@ -50,7 +49,7 @@
     serviceName: messages("site.service_name"),
     serviceUrl: config.serviceUrl,
     phaseBanner: phaseBanner,
-    additionalBannersBlock: additionalBannersBlock,
+    additionalBannersBlock: userResearchBanner() if config.showUserResearchBanner,
     signOutHref: config.signOutUrl if not isSignedOut
   }) }}
 {% endblock %}
