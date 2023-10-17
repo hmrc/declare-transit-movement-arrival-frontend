@@ -75,12 +75,8 @@ object UserAnswers {
 
   implicit lazy val reads: Reads[UserAnswers] = {
     implicit val localDateTimeReader: Reads[LocalDateTime] = {
-      val reactiveMongoReads = (__ \ "$date").read[Long].map {
-        millis =>
-          LocalDateTime.ofInstant(Instant.ofEpochMilli(millis), ZoneOffset.UTC)
-      }
       val hmrcMongoReads = localDateTimeReads
-      hmrcMongoReads orElse reactiveMongoReads
+      hmrcMongoReads
     }
 
     (

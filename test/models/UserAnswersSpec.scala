@@ -86,24 +86,6 @@ class UserAnswersSpec extends SpecBase {
 
     val id = "9091dc9e-62d0-4974-9e5a-6fd2309268f1"
 
-    "must read old date format" in {
-
-      val json = Json.parse(s"""
-          |{
-          |    "_id" : "$id",
-          |    "eoriNumber" : "${eoriNumber.value}",
-          |    "movementReferenceNumber" : "$mrn",
-          |    "data" : {},
-          |    "lastUpdated" : {
-          |        "$$date" : $instant
-          |    }
-          |}""".stripMargin)
-
-      val result = json.as[UserAnswers]
-
-      result mustBe UserAnswers(mrn, eoriNumber, Json.obj(), dateTime, None, Id(id))
-    }
-
     "must read new date format" in {
 
       val json = Json.parse(s"""
