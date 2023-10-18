@@ -73,12 +73,7 @@ object UserAnswers {
 
   import play.api.libs.functional.syntax._
 
-  implicit lazy val reads: Reads[UserAnswers] = {
-    implicit val localDateTimeReader: Reads[LocalDateTime] = {
-      val hmrcMongoReads = localDateTimeReads
-      hmrcMongoReads
-    }
-
+  implicit lazy val reads: Reads[UserAnswers] =
     (
       (__ \ "movementReferenceNumber").read[MovementReferenceNumber] and
         (__ \ "eoriNumber").read[EoriNumber] and
@@ -87,14 +82,13 @@ object UserAnswers {
         (__ \ "arrivalId").readNullable[ArrivalId] and
         (__ \ "_id").read[Id]
     )(UserAnswers.apply _)
-  }
 
   implicit lazy val writes: OWrites[UserAnswers] =
     (
       (__ \ "movementReferenceNumber").write[MovementReferenceNumber] and
         (__ \ "eoriNumber").write[EoriNumber] and
         (__ \ "data").write[JsObject] and
-        (__ \ "lastUpdated").write(localDateTimeWrites) and
+        (__ \ "lastUpdated").write[LocalDateTime] and
         (__ \ "arrivalId").writeNullable[ArrivalId] and
         (__ \ "_id").write[Id]
     )(unlift(UserAnswers.unapply))
@@ -102,14 +96,14 @@ object UserAnswers {
   implicit lazy val format: Format[UserAnswers] = Format(reads, writes)
 
   //TODO: Change LocalDateTime to Instant and remove below methods
-  private val localDateTimeReads: Reads[LocalDateTime] =
+  implicit private val localDateTimeReads: Reads[LocalDateTime] =
     Reads
       .at[String](__ \ "$date" \ "$numberLong")
       .map(
         dateTime => Instant.ofEpochMilli(dateTime.toLong).atZone(ZoneOffset.UTC).toLocalDateTime
       )
 
-  private val localDateTimeWrites: Writes[LocalDateTime] =
+  implicit private val localDateTimeWrites: Writes[LocalDateTime] =
     Writes
       .at[String](__ \ "$date" \ "$numberLong")
       .contramap(_.toInstant(ZoneOffset.UTC).toEpochMilli.toString)
