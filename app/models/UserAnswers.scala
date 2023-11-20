@@ -20,15 +20,16 @@ import derivable.Derivable
 import pages._
 import play.api.libs.json._
 import queries.Gettable
+import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 
-import java.time.{Instant, LocalDateTime, ZoneOffset}
+import java.time.Instant
 import scala.util.{Failure, Success, Try}
 
 final case class UserAnswers(
   movementReferenceNumber: MovementReferenceNumber,
   eoriNumber: EoriNumber,
   data: JsObject = Json.obj(),
-  lastUpdated: LocalDateTime = LocalDateTime.now,
+  lastUpdated: Instant = Instant.now,
   arrivalId: Option[ArrivalId] = None,
   id: Id = Id()
 ) {
@@ -78,7 +79,7 @@ object UserAnswers {
       (__ \ "movementReferenceNumber").read[MovementReferenceNumber] and
         (__ \ "eoriNumber").read[EoriNumber] and
         (__ \ "data").read[JsObject] and
-        (__ \ "lastUpdated").read[LocalDateTime] and
+        (__ \ "lastUpdated").read[Instant](MongoJavatimeFormats.instantReads) and
         (__ \ "arrivalId").readNullable[ArrivalId] and
         (__ \ "_id").read[Id]
     )(UserAnswers.apply _)
@@ -88,23 +89,10 @@ object UserAnswers {
       (__ \ "movementReferenceNumber").write[MovementReferenceNumber] and
         (__ \ "eoriNumber").write[EoriNumber] and
         (__ \ "data").write[JsObject] and
-        (__ \ "lastUpdated").write[LocalDateTime] and
+        (__ \ "lastUpdated").write[Instant](MongoJavatimeFormats.instantWrites) and
         (__ \ "arrivalId").writeNullable[ArrivalId] and
         (__ \ "_id").write[Id]
     )(unlift(UserAnswers.unapply))
 
   implicit lazy val format: Format[UserAnswers] = Format(reads, writes)
-
-  //TODO: Change LocalDateTime to Instant and remove below methods
-  implicit private val localDateTimeReads: Reads[LocalDateTime] =
-    Reads
-      .at[String](__ \ "$date" \ "$numberLong")
-      .map(
-        dateTime => Instant.ofEpochMilli(dateTime.toLong).atZone(ZoneOffset.UTC).toLocalDateTime
-      )
-
-  implicit private val localDateTimeWrites: Writes[LocalDateTime] =
-    Writes
-      .at[String](__ \ "$date" \ "$numberLong")
-      .contramap(_.toInstant(ZoneOffset.UTC).toEpochMilli.toString)
 }

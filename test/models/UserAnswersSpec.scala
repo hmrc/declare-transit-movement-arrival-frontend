@@ -20,7 +20,7 @@ import base.SpecBase
 import pages.QuestionPage
 import play.api.libs.json.{JsPath, Json}
 
-import java.time.LocalDateTime
+import java.time.Instant
 import scala.util.Try
 
 class UserAnswersSpec extends SpecBase {
@@ -79,10 +79,7 @@ class UserAnswersSpec extends SpecBase {
       result mustBe UserAnswers(mrn, eoriNumber, data, result.lastUpdated, id = emptyUserAnswers.id)
     }
 
-    val (instant, dateTime) = (
-      "946684800000",
-      LocalDateTime.of(2000: Int, 1, 1, 0, 0)
-    )
+    val epochMilli = 946684800000L
 
     val id = "9091dc9e-62d0-4974-9e5a-6fd2309268f1"
 
@@ -96,14 +93,14 @@ class UserAnswersSpec extends SpecBase {
           |    "data" : {},
           |    "lastUpdated" : {
           |        "$$date" : {
-          |            "$$numberLong" : "$instant"
+          |            "$$numberLong" : "$epochMilli"
           |        }
           |    }
           |}""".stripMargin)
 
       val result = json.as[UserAnswers]
 
-      result mustBe UserAnswers(mrn, eoriNumber, Json.obj(), dateTime, None, Id(id))
+      result mustBe UserAnswers(mrn, eoriNumber, Json.obj(), Instant.ofEpochMilli(epochMilli), None, Id(id))
     }
   }
 
