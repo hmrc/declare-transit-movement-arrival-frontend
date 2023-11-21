@@ -38,6 +38,6 @@ object AppDependencies {
   def apply(): Seq[ModuleID] = compile ++ test
 
   val overrides: Seq[ModuleID] = Seq(
-    "org.apache.commons" % "commons-compress" % "1.21"
+    "org.apache.commons" % "commons-compress" % "1.25.0"
   )
 }
