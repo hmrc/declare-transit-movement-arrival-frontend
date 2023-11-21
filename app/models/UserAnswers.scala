@@ -22,14 +22,14 @@ import play.api.libs.json._
 import queries.Gettable
 import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 
-import java.time.{Instant, LocalDateTime, ZoneOffset}
+import java.time.Instant
 import scala.util.{Failure, Success, Try}
 
 final case class UserAnswers(
   movementReferenceNumber: MovementReferenceNumber,
   eoriNumber: EoriNumber,
   data: JsObject = Json.obj(),
-  lastUpdated: LocalDateTime = LocalDateTime.now,
+  lastUpdated: Instant = Instant.now,
   arrivalId: Option[ArrivalId] = None,
   id: Id = Id()
 ) {
@@ -74,32 +74,22 @@ object UserAnswers {
 
   import play.api.libs.functional.syntax._
 
-  implicit lazy val reads: Reads[UserAnswers] = {
-    implicit val localDateTimeReads: Reads[LocalDateTime] = {
-      val reactiveMongoReads = (__ \ "$date").read[Long].map {
-        millis =>
-          LocalDateTime.ofInstant(Instant.ofEpochMilli(millis), ZoneOffset.UTC)
-      }
-      val hmrcMongoReads = MongoJavatimeFormats.localDateTimeReads
-      hmrcMongoReads orElse reactiveMongoReads
-    }
-
+  implicit lazy val reads: Reads[UserAnswers] =
     (
       (__ \ "movementReferenceNumber").read[MovementReferenceNumber] and
         (__ \ "eoriNumber").read[EoriNumber] and
         (__ \ "data").read[JsObject] and
-        (__ \ "lastUpdated").read[LocalDateTime] and
+        (__ \ "lastUpdated").read[Instant](MongoJavatimeFormats.instantReads) and
         (__ \ "arrivalId").readNullable[ArrivalId] and
         (__ \ "_id").read[Id]
     )(UserAnswers.apply _)
-  }
 
   implicit lazy val writes: OWrites[UserAnswers] =
     (
       (__ \ "movementReferenceNumber").write[MovementReferenceNumber] and
         (__ \ "eoriNumber").write[EoriNumber] and
         (__ \ "data").write[JsObject] and
-        (__ \ "lastUpdated").write(MongoJavatimeFormats.localDateTimeWrites) and
+        (__ \ "lastUpdated").write[Instant](MongoJavatimeFormats.instantWrites) and
         (__ \ "arrivalId").writeNullable[ArrivalId] and
         (__ \ "_id").write[Id]
     )(unlift(UserAnswers.unapply))
