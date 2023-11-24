@@ -20,8 +20,10 @@ import base.{AppWithDefaultMockFixtures, SpecBase}
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, okJson, urlEqualTo}
 import generators.MessagesModelGenerators
 import helper.WireMockServerHandler
+import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.libs.json.Json
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -140,7 +142,7 @@ class EnrolmentStoreConnectorSpec
         await(result) mustBe true
       }
 
-      "return false when no NCTS enrolment is presesnt" in {
+      "return false when no NCTS enrolment is present" in {
         server.stubFor(
           get(urlEqualTo(s"/enrolment-store-proxy/enrolment-store/groups/$groupId/enrolments?type=principal&service=$enrolmentKey"))
             .willReturn(okJson(withOutGrpEnrolment))
@@ -161,7 +163,7 @@ class EnrolmentStoreConnectorSpec
         await(result) mustBe false
       }
 
-      "return false when the API call returns any other status code" in {
+      "return false when the API call returns 404 NOT_FOUND" in {
         server.stubFor(get(urlEqualTo(s"/enrolment-store-proxy/enrolment-store/groups/$groupId/enrolments?type=principal&service=$enrolmentKey")) willReturn {
           aResponse().withStatus(NOT_FOUND)
         })
@@ -171,20 +173,52 @@ class EnrolmentStoreConnectorSpec
         await(result) mustBe false
       }
 
-      "return false when the API call returns 200 and invalid JSON" in {
-        server.stubFor(get(urlEqualTo(s"/enrolment-store-proxy/enrolment-store/groups/$groupId/enrolments?type=principal&service=$enrolmentKey")) willReturn {
-          val response = aResponse().withStatus(OK)
-          response.withBody("""
-                              | {
-                              |   invalid
-                              |}
-                              |""".stripMargin)
+      "return false when the API call returns 400 BAD_REQUEST with message INVALID_GROUP_ID" in {
+        val body = Json.parse("""
+            |{
+            |  "code": "INVALID_GROUP_ID",
+            |  "message": "Invalid group ID"
+            |}
+            |""".stripMargin)
 
+        server.stubFor(get(urlEqualTo(s"/enrolment-store-proxy/enrolment-store/groups/$groupId/enrolments?type=principal&service=$enrolmentKey")) willReturn {
+          aResponse().withStatus(BAD_REQUEST).withBody(Json.stringify(body))
         })
 
         val result: Future[Boolean] = connector.checkGroupEnrolments(groupId, "HMCE-NCTS-ORG")
 
         await(result) mustBe false
+      }
+
+      "throw exception when the API call returns another 4xx/5xx" in {
+        forAll(Gen.choose(400, 599).retryUntil(_ != 404)) {
+          status =>
+            server.stubFor(
+              get(urlEqualTo(s"/enrolment-store-proxy/enrolment-store/groups/$groupId/enrolments?type=principal&service=$enrolmentKey")) willReturn {
+                aResponse().withStatus(status)
+              }
+            )
+
+            val result: Future[Boolean] = connector.checkGroupEnrolments(groupId, "HMCE-NCTS-ORG")
+
+            an[Exception] mustBe thrownBy(result.futureValue)
+        }
+      }
+
+      "throw exception when the API call returns 200 and invalid JSON" in {
+        server.stubFor(get(urlEqualTo(s"/enrolment-store-proxy/enrolment-store/groups/$groupId/enrolments?type=principal&service=$enrolmentKey")) willReturn {
+          aResponse()
+            .withStatus(OK)
+            .withBody("""
+                |{
+                |  invalid
+                |}
+                |""".stripMargin)
+        })
+
+        val result: Future[Boolean] = connector.checkGroupEnrolments(groupId, "HMCE-NCTS-ORG")
+
+        an[Exception] mustBe thrownBy(result.futureValue)
       }
     }
   }
