@@ -39,7 +39,7 @@ lazy val root = (project in file("."))
     libraryDependencies ++= AppDependencies(),
     dependencyOverrides ++= AppDependencies.overrides,
     retrieveManaged := true,
-    scalaVersion    := "2.13.8",
+    scalaVersion    := "2.13.12",
     resolvers ++= Seq(Resolver.jcenterRepo),
     Concat.groups := Seq(
       "javascripts/application.js" -> group(Seq("lib/govuk-frontend/govuk/all.js", "lib/hmrc-frontend/hmrc/all.js", "javascripts/ctc.js"))
