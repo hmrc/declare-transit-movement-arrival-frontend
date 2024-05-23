@@ -16,21 +16,26 @@
 
 package services
 
-import base.SpecBase
+import base.{AppWithDefaultMockFixtures, SpecBase}
 import connectors.ReferenceDataConnector
 import models.CustomsOfficeList
 import models.reference.{CountryCode, CustomsOffice}
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.Mockito.{reset, verify, when}
-import org.scalatest.BeforeAndAfterEach
+import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
 import uk.gov.hmrc.http.HeaderCarrier
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class CustomsOfficesServiceSpec extends SpecBase with BeforeAndAfterEach {
+class CustomsOfficesServiceSpec extends SpecBase with AppWithDefaultMockFixtures {
 
   val mockRefDataConnector: ReferenceDataConnector = mock[ReferenceDataConnector]
+
+  override def guiceApplicationBuilder(): GuiceApplicationBuilder =
+    super
+      .guiceApplicationBuilder()
+      .overrides(bind(classOf[ReferenceDataConnector]).toInstance(mockRefDataConnector))
 
   val gbCustomsOffice1: CustomsOffice      = CustomsOffice("1", Some("BOSTON"), None)
   val gbCustomsOffice2: CustomsOffice      = CustomsOffice("2", Some("Appledore"), None)
@@ -42,7 +47,7 @@ class CustomsOfficesServiceSpec extends SpecBase with BeforeAndAfterEach {
 
   implicit val hc: HeaderCarrier = new HeaderCarrier()
 
-  val service = new CustomsOfficesService(mockRefDataConnector)
+  val service: CustomsOfficesService = app.injector.instanceOf[CustomsOfficesService]
 
   override def beforeEach(): Unit = {
     reset(mockRefDataConnector)
